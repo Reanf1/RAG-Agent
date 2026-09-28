@@ -1,0 +1,31 @@
+# 当前入口只读取 app；其余部分为后续实现的参数样例，尚未接入运行逻辑。
+app:
+  name: 智能科研助理
+  description: 基于 RAG + Agent 的论文知识库问答系统
+
+# 默认本地推理；页面启动不要求安装或连接模型。
+llm:
+  provider: ollama
+  base_url: http://localhost:11434
+  model: qwen2.5:7b
+  temperature: 0.1
+
+# Embedding 与重排序计划由本地模型加载器接入，不视为 Ollama 模型名。
+embedding:
+  model: BAAI/bge-large-zh-v1.5
+retrieval:
+  vector_store: chroma
+  top_k: 5
+  candidate_k: 20
+  reranker_model: BAAI/bge-reranker-base
+chunking:
+  strategy: recursive
+  chunk_size: 512
+  chunk_overlap: 64
+agent:
+  max_iterations: 8
+  online_search_enabled: false
+paths:
+  raw_documents: data/raw
+  vector_index: data/index
+  logs: logs

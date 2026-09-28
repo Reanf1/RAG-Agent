@@ -1,0 +1,29 @@
+# 本地系统文件与开发环境。
+.DS_Store
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 密钥和本地私有配置。
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# 文献、索引和日志只保留目录占位，避免提交私有数据。
+/data/raw/*
+!/data/raw/.gitkeep
+/data/index/*
+!/data/index/.gitkeep
+/logs/*
+!/logs/.gitkeep
+
+# 构建输出。
+build/
+dist/
+*.egg-info/
+.streamlit/

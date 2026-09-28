@@ -1,0 +1,8 @@
+# 当前只启动初始化页面；模型与索引服务尚未接入。
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "127.0.0.1:8501:8501"
