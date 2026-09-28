@@ -32,4 +32,4 @@ st.write("先完成文档加载与来源元数据，再进行分块策略和检�
 with st.sidebar:
     st.header("课程资料")
     st.write("南京农业大学生产实习课程实践")
-    st.write("详细验收要求：docs/需求与验收清单.md")
+    st.write("技术设计与验收：docs/技术设计文档.md")
