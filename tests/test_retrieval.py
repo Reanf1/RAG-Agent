@@ -31,6 +31,7 @@ from src.chunking.recursive_chunk import split_recursive
 from src.chunking.semantic_chunk import split_semantic
 from src.retrieval.vector_store import VectorStore, batch_build_index, get_embeddings
 from src.retrieval.bm25_retriever import BM25Retriever, tokenize
+from src.retrieval.hybrid_retriever import HybridRetriever, rrf_fusion
 
 
 class SmallEmbeddings(Embeddings):
@@ -346,6 +347,170 @@ class TestBM25Retriever(unittest.TestCase):
         with patch.object(self.store, "list_chunks", side_effect=RuntimeError("数据库不可用")):
             with self.assertRaisesRegex(RuntimeError, "数据库不可用"):
                 BM25Retriever(self.store)
+
+
+class TestRRFFusion(unittest.TestCase):
+    """用明确排名和手算分数核验融合，不用原始分数冒充排名贡献。"""
+
+    def setUp(self):
+        self.documents = {key: Document(page_content=f"论文 {key}", metadata={
+            "chunk_id": key, "doc_id": key, "source_file": f"{key}.pdf", "page_number": 1})
+            for key in ("a", "b", "c", "d")}
+
+    def test_one_based_rank_formula_and_shared_chunk_bonus(self):
+        """两路共同命中的块分数累加，第一名贡献为 1/61。"""
+        d = self.documents
+        found = rrf_fusion([(d["a"], 0.9), (d["b"], 0.8), (d["c"], -0.2)],
+                           [(d["b"], 8.0), (d["c"], 2.0), (d["d"], 0.0)])
+        expected = {"a": 1 / 61, "b": 1 / 62 + 1 / 61,
+                    "c": 1 / 63 + 1 / 62, "d": 1 / 63}
+        self.assertEqual([doc.metadata["chunk_id"] for doc, _ in found], ["b", "c", "a", "d"])
+        for document, score in found:
+            self.assertAlmostEqual(score, expected[document.metadata["chunk_id"]])
+            self.assertIs(document, d[document.metadata["chunk_id"]])
+
+    def test_raw_score_scale_does_not_affect_fusion(self):
+        """负分、零分与大数的原始值都不参与 RRF，排名相同则结果相同。"""
+        d = self.documents
+        original = rrf_fusion([(d["a"], 0.9), (d["b"], 0.2)], [(d["b"], 5), (d["c"], 0)])
+        changed = rrf_fusion([(d["a"], 999), (d["b"], -1)], [(d["b"], -200), (d["c"], -800)])
+        self.assertEqual(original, changed)
+
+    def test_duplicate_within_one_route_counts_only_once(self):
+        """单路重复不多次加分，保留首次出现的位置，两路贡献仍可叠加。"""
+        d = self.documents
+        found = rrf_fusion([(d["a"], 1), (d["a"], 1), (d["b"], 0.5)],
+                           [(d["a"], 2), (d["a"], 2)])
+        self.assertEqual(len(found), 2)
+        self.assertAlmostEqual(found[0][1], 2 / 61)
+        self.assertAlmostEqual(found[1][1], 1 / 63)
+
+    def test_same_content_in_different_sources_is_not_merged(self):
+        """合并键是 chunk_id，正文相同也保留不同文件与页码。"""
+        a = Document(page_content="相同正文", metadata={"chunk_id": "a", "doc_id": "a",
+                     "source_file": "A.pdf", "page_number": 2, "page_end": 3})
+        b = Document(page_content="相同正文", metadata={"chunk_id": "b", "doc_id": "b",
+                     "source_file": "B.docx", "table_index": 1})
+        self.assertEqual([doc for doc, _ in rrf_fusion([(a, 1)], [(b, 2)])], [a, b])
+
+    def test_equal_scores_have_stable_chunk_id_order(self):
+        """两路交换同分候选的输入顺序，仍按稳定块 ID 打破平分。"""
+        d = self.documents
+        first = rrf_fusion([(d["b"], 1)], [(d["a"], 2)])
+        second = rrf_fusion([(d["a"], 2)], [(d["b"], 1)])
+        self.assertEqual(first, second)
+        self.assertEqual([doc.metadata["chunk_id"] for doc, _ in first], ["a", "b"])
+
+    def test_empty_routes_and_zero_smoothing(self):
+        """单路为空时只使用另一支，双空返回空；k=0 时分母从 1 开始。"""
+        d = self.documents
+        route = [(d["a"], -1), (d["b"], 0)]
+        self.assertEqual(rrf_fusion([], []), [])
+        self.assertEqual(rrf_fusion(route, []), rrf_fusion([], route))
+        self.assertEqual([score for _, score in rrf_fusion(route, [], rrf_k=0)], [1, 0.5])
+
+    def test_missing_ids_and_invalid_smoothing_are_rejected(self):
+        """身份缺失不能退回按正文合并；平滑常数的错误输入明确报错。"""
+        for value in (None, "", "  ", 1):
+            with self.subTest(value=value), self.assertRaisesRegex(ValueError, "chunk_id"):
+                rrf_fusion([(Document(page_content="正文", metadata={"chunk_id": value}), 1)], [])
+        for value in (-1, 1.5, True):
+            with self.subTest(value=value), self.assertRaisesRegex(ValueError, "rrf_k"):
+                rrf_fusion([], [], rrf_k=value)
+
+
+class TestHybridRetriever(unittest.TestCase):
+    """真实 Chroma/BM25 联调，两维向量仅用于确定行为与模型调用次数。"""
+
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        self.embeddings = SmallEmbeddings()
+        self.store = VectorStore(self.directory.name, self.embeddings)
+        self.chunks = [Document(page_content=text, metadata={
+            "chunk_id": str(i), "doc_id": str(i), "source_file": f"论文{i}.pdf", "page_number": i + 1})
+            for i, text in enumerate(("神经网络研究", "BatchNormalization BatchNormalization",
+                                     "BatchNormalization training training training", "农业数据", "反向向量"))]
+        self.store.add_chunks(self.chunks)
+        self.retriever = HybridRetriever(self.store)
+
+    def test_both_routes_take_candidates_before_final_top_k(self):
+        """最终只取 1 个也先各召回 20 个候选，不提前把两路截为 Top-1。"""
+        original_bm25_search = BM25Retriever.search
+        with (patch.object(self.store, "search", wraps=self.store.search) as vector,
+              patch.object(BM25Retriever, "search", autospec=True, side_effect=original_bm25_search) as bm25):
+            found = self.retriever.search("BatchNormalization", k=1)
+        vector.assert_called_once_with("BatchNormalization", k=20, doc_id=None)
+        self.assertEqual(bm25.call_args.kwargs, {"k": 20, "doc_id": None})
+        self.assertIs(bm25.call_args.args[0].vector_store, self.store)
+        self.assertEqual(len(found), 1)
+        self.assertIn(found[0][0], self.chunks[1:3])
+        self.assertGreater(found[0][1], 1 / 61)
+        self.assertEqual(self.embeddings.query_calls, ["BatchNormalization"])
+        self.assertEqual(self.embeddings.document_calls, [[doc.page_content for doc in self.chunks]])
+
+    def test_document_filter_and_empty_bm25_route(self):
+        """两路共同过滤文档，BM25 无匹配时保留向量路的排名贡献。"""
+        found = self.retriever.search("BatchNormalization", doc_id="3")
+        self.assertEqual([doc for doc, _ in found], [self.chunks[3]])
+        self.assertAlmostEqual(found[0][1], 1 / 61)
+        before = len(self.embeddings.query_calls)
+        self.assertEqual(self.retriever.search("BatchNormalization", doc_id="missing"), [])
+        self.assertEqual(len(self.embeddings.query_calls), before)
+
+    def test_blank_query_and_empty_store_do_not_load_model(self):
+        """空问题不调用两路，空库不会初始化 Embedding。"""
+        with patch.object(self.store, "search", side_effect=AssertionError("不应查询")):
+            self.assertEqual(self.retriever.search(" \n"), [])
+        with patch("src.retrieval.vector_store.get_embeddings", side_effect=AssertionError("不应加载模型")):
+            empty = HybridRetriever(VectorStore(Path(self.directory.name) / "empty"))
+            self.assertEqual(empty.search("BERT"), [])
+
+    def test_reused_retriever_reads_current_corpus_after_add_and_delete(self):
+        """同一个混合检索实例也读取最新正文，新增和删除后无陈旧 BM25 块。"""
+        new = Document(page_content="Reranker", metadata={"chunk_id": "new", "doc_id": "new"})
+        self.store.add_chunks([new])
+        self.assertEqual(self.retriever.search("Reranker", k=1)[0][0], new)
+        self.store.delete_document("new")
+        found = self.retriever.search("Reranker", k=20)
+        self.assertEqual({doc.metadata["chunk_id"] for doc, _ in found}, {str(i) for i in range(5)})
+        self.assertEqual(len(self.embeddings.document_calls), 2)
+
+    def test_default_k_large_k_and_yaml_smoothing(self):
+        """默认 K 与存储一致；更大的 K 扩大召回，平滑常数从 YAML 读取。"""
+        from src.utils.config import load_config
+        config = load_config()
+        config["retrieval"]["rrf_k"] = 0
+        self.store.top_k = 2
+        with patch("src.retrieval.hybrid_retriever.load_config", return_value=config):
+            retriever = HybridRetriever(self.store)
+        self.assertEqual(len(retriever.search("unknownkeyword")), 2)
+        self.assertEqual([score for _, score in retriever.search("unknownkeyword")], [1, 0.5])
+        extra = [Document(page_content="BatchNormalization", metadata={"chunk_id": f"extra-{i}", "doc_id": "extra"})
+                 for i in range(41)]
+        self.store.add_chunks(extra)
+        found = retriever.search("BatchNormalization", k=100)
+        self.assertEqual(len(found), 46)
+        self.assertEqual(len({doc.metadata["chunk_id"] for doc, _ in found}), 46)
+
+    def test_invalid_parameters_and_route_errors_do_not_silently_degrade(self):
+        """参数错误直接拒绝，两路异常明确上报，不能以半成品冒充混合检索。"""
+        from src.utils.config import load_config
+        for value in (0, -1, True, 1.5):
+            with self.subTest(k=value), self.assertRaises(ValueError):
+                self.retriever.search("BERT", k=value)
+        for key, value in (("candidate_k", 0), ("candidate_k", True), ("rrf_k", -1)):
+            config = load_config()
+            config["retrieval"][key] = value
+            with self.subTest(key=key), patch("src.retrieval.hybrid_retriever.load_config", return_value=config):
+                with self.assertRaisesRegex(ValueError, key):
+                    HybridRetriever(self.store)
+        with patch.object(self.store, "search", side_effect=RuntimeError("向量查询失败")):
+            with self.assertRaisesRegex(RuntimeError, "向量查询失败"):
+                self.retriever.search("BERT")
+        with patch.object(BM25Retriever, "search", side_effect=RuntimeError("BM25 查询失败")):
+            with self.assertRaisesRegex(RuntimeError, "BM25 查询失败"):
+                self.retriever.search("BERT")
 
 
 class TestLocalEmbeddings(unittest.TestCase):
@@ -1546,6 +1711,7 @@ class TestImportFrontend(unittest.TestCase):
         self.embeddings = SmallEmbeddings()
         for target, value in (("src.utils.config.load_config", config),
                               ("src.retrieval.vector_store.load_config", config),
+                              ("src.retrieval.hybrid_retriever.load_config", config),
                               ("src.retrieval.vector_store.get_embeddings", self.embeddings)):
             patcher = patch(target, return_value=value)
             patcher.start()
@@ -1783,6 +1949,74 @@ class TestImportFrontend(unittest.TestCase):
         self.assertFalse(app.error)
         self.assertEqual([element.value for element in app.text], ["Adam"])
         self.assertEqual(self.embeddings.query_calls, [])
+
+    def test_rrf_search_displays_fused_score_and_original_source(self):
+        """页面切换混合检索，共同命中的块排序提高，并保留 Word 位置。"""
+        VectorStore().add_chunks([
+            Document(page_content="神经网络", metadata={"chunk_id": "a", "doc_id": "a",
+                     "source_file": "论文A.pdf", "page_number": 1}),
+            Document(page_content="BatchNormalization", metadata={"chunk_id": "b", "doc_id": "b",
+                     "source_file": "论文B.docx", "paragraph_index": 3}),
+            Document(page_content="农业 BatchNormalization", metadata={"chunk_id": "c", "doc_id": "c",
+                     "source_file": "论文C.txt", "line_start": 1, "line_end": 1}),
+        ])
+        app = self.app
+        app.selectbox(key="retrieval_method").set_value("RRF 混合检索")
+        app.text_input(key="vector_query").set_value("BatchNormalization")
+        app.number_input(key="vector_top_k").set_value(1)
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual([element.value for element in app.text], ["BatchNormalization"])
+        self.assertIn("1. 论文B.docx · RRF 分数", app.expander[0].label)
+        self.assertIn("来源：论文B.docx；段落：3", [element.value for element in app.caption])
+        self.assertEqual(self.embeddings.query_calls, ["BatchNormalization"])
+
+    def test_rrf_empty_input_empty_store_and_model_error(self):
+        """空问题/空库无需权重；有数据但模型失败不静默改为 BM25。"""
+        app = self.app
+        app.selectbox(key="retrieval_method").set_value("RRF 混合检索")
+        with patch("src.retrieval.vector_store.get_embeddings", side_effect=AssertionError("不应加载模型")) as model:
+            app.button(key="vector_search").click().run()
+            app.text_input(key="vector_query").set_value("BERT")
+            app.button(key="vector_search").click().run()
+            model.assert_not_called()
+        self.assertFalse(app.exception)
+        self.assertFalse(app.error)
+        self.assertFalse(app.text)
+        VectorStore().add_chunks([Document(page_content="BERT", metadata={
+            "chunk_id": "b", "doc_id": "b", "source_file": "论文.txt", "line_start": 1, "line_end": 1})])
+        with patch("src.retrieval.vector_store.get_embeddings", side_effect=FileNotFoundError("本地模型不存在")):
+            app.button(key="vector_search").click().run()
+        self.assertFalse(app.exception)
+        self.assertTrue(any("本地模型不存在" in element.value for element in app.error))
+        self.assertFalse(app.text)
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.error)
+        self.assertEqual([element.value for element in app.text], ["BERT"])
+
+    def test_rrf_search_after_upload_and_database_recovery(self):
+        """新上传文档参加两路召回，数据库异常恢复后可查，删除过滤无陈旧块。"""
+        app = self.app
+        for filename, text in (("first.txt", b"BERT"), ("second.txt", b"Reranker")):
+            app.file_uploader[0].set_value([(filename, text, "text/plain")]).run()
+            app.button(key="start_import").click().run()
+        doc_id = app.session_state["import_tasks"][0]["documents"][0].metadata["doc_id"]
+        app.selectbox(key="retrieval_method").set_value("RRF 混合检索")
+        app.text_input(key="vector_query").set_value("Reranker")
+        app.number_input(key="vector_top_k").set_value(1)
+        with patch("src.retrieval.vector_store.VectorStore.list_chunks", side_effect=RuntimeError("语料读取失败")):
+            app.button(key="vector_search").click().run()
+        self.assertFalse(app.exception)
+        self.assertTrue(any("语料读取失败" in element.value for element in app.error))
+        self.assertFalse(app.text)
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.error)
+        self.assertEqual([element.value for element in app.text], ["Reranker"])
+        VectorStore().delete_document(doc_id)
+        app.text_input(key="vector_doc_id").set_value(doc_id)
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.text)
+        self.assertEqual(self.embeddings.document_calls, [["BERT"], ["Reranker"]])
 
 
 if __name__ == "__main__":

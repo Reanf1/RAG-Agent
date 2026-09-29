@@ -1,1 +1,60 @@
-"""待实现：手写 RRF 排名融合，合并向量与 BM25 候选结果。"""
+"""手写 RRF：按排名融合向量与 BM25，稳定块 ID 用于合并来源。"""
+
+from langchain_core.documents import Document
+
+from src.retrieval.bm25_retriever import BM25Retriever
+from src.retrieval.vector_store import VectorStore
+from src.utils.config import load_config
+
+
+def rrf_fusion(vector_results: list[tuple[Document, float]],
+               bm25_results: list[tuple[Document, float]],
+               rrf_k: int = 60) -> list[tuple[Document, float]]:
+    """返回全部融合候选；只使用排名，原始分数不参与计算。"""
+    if type(rrf_k) is not int or rrf_k < 0:
+        raise ValueError("rrf_k 必须为非负整数")
+    scores, documents = {}, {}
+    for results in (vector_results, bm25_results):
+        seen = set()
+        for rank, (document, _) in enumerate(results, 1):
+            chunk_id = document.metadata.get("chunk_id")
+            if not isinstance(chunk_id, str) or not chunk_id.strip():
+                raise ValueError("RRF 候选必须包含非空 chunk_id")
+            # 每路同一块只计首次出现；两路同时命中则累加各自的排名贡献。
+            if chunk_id in seen:
+                continue
+            seen.add(chunk_id)
+            scores[chunk_id] = scores.get(chunk_id, 0.0) + 1.0 / (rrf_k + rank)
+            documents.setdefault(chunk_id, document)
+    # 同分按稳定块 ID 排序，重复查询和独立公式核验可得到一致结果。
+    ranked = sorted(scores, key=lambda chunk_id: (-scores[chunk_id], chunk_id))
+    return [(documents[chunk_id], scores[chunk_id]) for chunk_id in ranked]
+
+
+class HybridRetriever:
+    """共享一个 Chroma，获取两路候选后融合，不做模型重排或答案生成。"""
+
+    def __init__(self, vector_store: VectorStore | None = None):
+        config = load_config()["retrieval"]
+        self.candidate_k = config["candidate_k"]
+        self.rrf_k = config["rrf_k"]
+        if type(self.candidate_k) is not int or self.candidate_k <= 0:
+            raise ValueError("candidate_k 必须为正整数")
+        if type(self.rrf_k) is not int or self.rrf_k < 0:
+            raise ValueError("rrf_k 必须为非负整数")
+        self.vector_store = vector_store if vector_store is not None else VectorStore()
+        self.top_k = self.vector_store.top_k
+
+    def search(self, query: str, k: int | None = None,
+               doc_id: str | None = None) -> list[tuple[Document, float]]:
+        """两路各召回足够候选，再按 RRF 分数降序取最终 Top-K。"""
+        k = self.top_k if k is None else k
+        if type(k) is not int or k <= 0:
+            raise ValueError("k 必须为正整数")
+        if not query.strip():
+            return []
+        candidate_k = max(self.candidate_k, k)
+        vector_results = self.vector_store.search(query, k=candidate_k, doc_id=doc_id)
+        # 每次读取当前正文，新增/删除后无需维护第二套语料或缓存失效规则。
+        bm25_results = BM25Retriever(self.vector_store).search(query, k=candidate_k, doc_id=doc_id)
+        return rrf_fusion(vector_results, bm25_results, self.rrf_k)[:k]
