@@ -1,0 +1,906 @@
+{
+  "name": "AI论文中英双语检索基准 v1",
+  "created_date": "2026-09-29",
+  "annotation_note": "开发者根据PDF原文编写并核对，未经独立人工双盲复核；运行前锁定，不按模型排名修改标注。",
+  "chunking": {
+    "strategy": "recursive",
+    "chunk_size": 512,
+    "chunk_overlap": 64
+  },
+  "selection_rule": "四组等权宏平均Hit@5优先；差距不超过1/96且MRR@10差不超过0.03时选更快更小模型，否则选质量领先者；逐组及最差组结果必须披露。",
+  "papers": [
+    {
+      "id": "attention",
+      "language": "en",
+      "title": "Attention Is All You Need",
+      "pdf_url": "https://arxiv.org/pdf/1706.03762v7",
+      "source_url": "https://arxiv.org/abs/1706.03762v7",
+      "pdf_sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+      "pages": 15,
+      "chunk_count": 94
+    },
+    {
+      "id": "bert",
+      "language": "en",
+      "title": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+      "pdf_url": "https://arxiv.org/pdf/1810.04805v2",
+      "source_url": "https://arxiv.org/abs/1810.04805v2",
+      "pdf_sha256": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+      "pages": 16,
+      "chunk_count": 154
+    },
+    {
+      "id": "vit",
+      "language": "en",
+      "title": "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale",
+      "pdf_url": "https://arxiv.org/pdf/2010.11929v2",
+      "source_url": "https://arxiv.org/abs/2010.11929v2",
+      "pdf_sha256": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+      "pages": 22,
+      "chunk_count": 167
+    },
+    {
+      "id": "cnn_survey",
+      "language": "zh",
+      "title": "卷积神经网络研究综述",
+      "pdf_url": "https://faculty.csu.edu.cn/_resources/group1/M00/00/67/wKiylmIpcuKATvp-ADXOYtDJS_Q829.pdf",
+      "source_url": "https://doi.org/10.11897/SP.J.1016.2017.01229",
+      "pdf_sha256": "738b17613ebbc031a8496792dad9442a4f2dd50f463008e3444d0e65167550a6",
+      "pages": 23,
+      "chunk_count": 156
+    },
+    {
+      "id": "compression",
+      "language": "zh",
+      "title": "深度网络模型压缩综述",
+      "pdf_url": "https://www.sciengine.com/doi/pdf/1F308D3A329944318FC2CC95F311D339",
+      "source_url": "https://www.jos.org.cn/jos/article/abstract/5428",
+      "pdf_sha256": "82e67c76c45bd8c4f348c6902429f84e2e0ea141569aeea8a55a3dd4bc1dcd20",
+      "pages": 16,
+      "chunk_count": 83
+    },
+    {
+      "id": "vision_survey",
+      "language": "zh",
+      "title": "视觉Transformer研究的关键问题: 现状及展望（作者修正版）",
+      "pdf_url": "https://hub-tian.github.io/papers/%E8%A7%86%E8%A7%89Transformer%E7%A0%94%E7%A9%B6%E7%9A%84%E5%85%B3%E9%94%AE%E9%97%AE%E9%A2%98%2B%E7%8E%B0%E7%8A%B6%E5%8F%8A%E5%B1%95%E6%9C%9B-v1.pdf",
+      "source_url": "https://hub-tian.github.io/aas-transformer-survey/",
+      "pdf_sha256": "644bf3d7a22e96926669c991ac835b82ce1a1128404614d80fb4fffebf35a31c",
+      "pages": 23,
+      "chunk_count": 167
+    }
+  ],
+  "questions": [
+    {
+      "id": "attention-01",
+      "paper_id": "attention",
+      "zh": "原始Transformer编码器堆叠了多少层？",
+      "en": "How many identical encoder layers are stacked in the original Transformer?",
+      "answer_note": "编码器六层。",
+      "relevant_chunks": [
+        {
+          "ordinal": 17,
+          "chunk_id": "92f8ad03bc04d4226530a55ec8ac4aff0e5285e51375e4c4b9ce4644505637f2",
+          "page_number": 3,
+          "start_index": 0,
+          "end_index": 501
+        }
+      ]
+    },
+    {
+      "id": "attention-02",
+      "paper_id": "attention",
+      "zh": "原始Transformer用了多少个注意力头，每个头的键和值维度是多少？",
+      "en": "How many attention heads does the original Transformer use, and what are the key and value dimensions per head?",
+      "answer_note": "八个头，每头键和值均为64维。",
+      "relevant_chunks": [
+        {
+          "ordinal": 28,
+          "chunk_id": "24be9fd29302ea14250272ebaf769b0ceb38ca69134eba0d9339da52d2d36894",
+          "page_number": 5,
+          "start_index": 439,
+          "end_index": 914
+        }
+      ]
+    },
+    {
+      "id": "attention-03",
+      "paper_id": "attention",
+      "zh": "Attention Is All You Need如何用三角函数表示序列位置？",
+      "en": "How does Attention Is All You Need represent token positions with trigonometric functions?",
+      "answer_note": "不同频率的正弦与余弦位置编码。",
+      "relevant_chunks": [
+        {
+          "ordinal": 36,
+          "chunk_id": "2c13b9df6937f0541f20d0da230490deafc0affc321654d02eb325d918249336",
+          "page_number": 6,
+          "start_index": 433,
+          "end_index": 929
+        },
+        {
+          "ordinal": 37,
+          "chunk_id": "e6d8d47c018314fed71e5e33431dc30c9b03dcb7b97e3f7ca48652aeb5e99fa2",
+          "page_number": 6,
+          "start_index": 929,
+          "end_index": 1350
+        }
+      ]
+    },
+    {
+      "id": "attention-04",
+      "paper_id": "attention",
+      "zh": "Attention Is All You Need使用的优化器及两个动量参数是什么？",
+      "en": "Which optimizer and two beta parameters are used in Attention Is All You Need?",
+      "answer_note": "Adam，beta为0.9和0.98。",
+      "relevant_chunks": [
+        {
+          "ordinal": 49,
+          "chunk_id": "a3f543d621e6f4b2e5ee228b1e85adb68e0856f82fc36f8ac11d08bb1842b1a4",
+          "page_number": 7,
+          "start_index": 2771,
+          "end_index": 3206
+        }
+      ]
+    },
+    {
+      "id": "attention-05",
+      "paper_id": "attention",
+      "zh": "Attention Is All You Need使用多大的标签平滑值，它对困惑度和BLEU有何影响？",
+      "en": "What label smoothing value is used in Attention Is All You Need, and how does it affect perplexity and BLEU?",
+      "answer_note": "0.1；困惑度变差，准确率及BLEU改善。",
+      "relevant_chunks": [
+        {
+          "ordinal": 53,
+          "chunk_id": "5c3387930c38036843912016a5882e75dc6ccb4505b422bc434c46cdd6bb4d6f",
+          "page_number": 8,
+          "start_index": 930,
+          "end_index": 1358
+        }
+      ]
+    },
+    {
+      "id": "attention-06",
+      "paper_id": "attention",
+      "zh": "原始Transformer解码器怎样避免看到尚未生成的词？",
+      "en": "How does the original Transformer decoder prevent attending to future tokens?",
+      "answer_note": "遮蔽后续位置，保留自回归约束。",
+      "relevant_chunks": [
+        {
+          "ordinal": 20,
+          "chunk_id": "59c17d4c9b041f54f7cd5ef4475a8909c9940ce946684ca148c76ec928a009fe",
+          "page_number": 3,
+          "start_index": 1339,
+          "end_index": 1843
+        },
+        {
+          "ordinal": 31,
+          "chunk_id": "66ba1ff8b27f1c1d8a75aacc22377ec30bd14bd6c58399080c584d5662105db6",
+          "page_number": 5,
+          "start_index": 1867,
+          "end_index": 2362
+        }
+      ]
+    },
+    {
+      "id": "attention-07",
+      "paper_id": "attention",
+      "zh": "Attention Is All You Need的英法训练集规模和词表大小分别是多少？",
+      "en": "What are the English-French training corpus size and vocabulary size in Attention Is All You Need?",
+      "answer_note": "3600万句对，32000词片。",
+      "relevant_chunks": [
+        {
+          "ordinal": 47,
+          "chunk_id": "9047ed5ba1da7ac7c9a6b4dc44db2bfd3e0c46a34cfb7e30a6583de41fc2de82",
+          "page_number": 7,
+          "start_index": 1857,
+          "end_index": 2362
+        }
+      ]
+    },
+    {
+      "id": "attention-08",
+      "paper_id": "attention",
+      "zh": "原始Transformer的子层输出如何结合残差连接与归一化？",
+      "en": "How are residual connections and normalization combined around sublayers in the original Transformer?",
+      "answer_note": "对输入与子层输出之和做LayerNorm。",
+      "relevant_chunks": [
+        {
+          "ordinal": 18,
+          "chunk_id": "3886ea477e1a0017784da198b3f729729854bd3f57d233ec1ca8c9a9df9429e1",
+          "page_number": 3,
+          "start_index": 501,
+          "end_index": 940
+        }
+      ]
+    },
+    {
+      "id": "bert-01",
+      "paper_id": "bert",
+      "zh": "BERT-base和BERT-large分别有多少层、隐藏维度和注意力头？",
+      "en": "What are the layer counts, hidden sizes, and attention head counts of BERT-base and BERT-large?",
+      "answer_note": "base为12/768/12；large为24/1024/16。",
+      "relevant_chunks": [
+        {
+          "ordinal": 27,
+          "chunk_id": "33c362adeeae964cd6ea9ff0fd62e1d726eb26e8c98eeeab6d96dfa4f1b5b572",
+          "page_number": 3,
+          "start_index": 3111,
+          "end_index": 3605
+        }
+      ]
+    },
+    {
+      "id": "bert-02",
+      "paper_id": "bert",
+      "zh": "BERT采用什么分词表示及多大的词表？",
+      "en": "Which token representation does BERT use and how large is its vocabulary?",
+      "answer_note": "WordPiece，30000词元。",
+      "relevant_chunks": [
+        {
+          "ordinal": 30,
+          "chunk_id": "e9341b201c3a10aac9e5574974ebfbe39b61dddece79e20d02c8c4edd99a3751",
+          "page_number": 4,
+          "start_index": 442,
+          "end_index": 919
+        }
+      ]
+    },
+    {
+      "id": "bert-03",
+      "paper_id": "bert",
+      "zh": "BERT掩码语言模型选取多大比例的词元用于预测？",
+      "en": "What proportion of tokens is selected for prediction in BERT masked language modeling?",
+      "answer_note": "随机选择15%的WordPiece词元。",
+      "relevant_chunks": [
+        {
+          "ordinal": 35,
+          "chunk_id": "2455ac31d7c5081283bea4e08ba43663279b3de9e534868747974ef3dfe6025c",
+          "page_number": 4,
+          "start_index": 2607,
+          "end_index": 3081
+        }
+      ]
+    },
+    {
+      "id": "bert-04",
+      "paper_id": "bert",
+      "zh": "BERT被选中的词元分别如何替换，三种情况比例是多少？",
+      "en": "How are selected BERT tokens replaced, and what are the proportions of the three cases?",
+      "answer_note": "80%掩码，10%随机，10%原样。",
+      "relevant_chunks": [
+        {
+          "ordinal": 37,
+          "chunk_id": "3ab7dcacf6350c63da2154e5a12b0bbba4e31159d4862a489b0fa41869202f30",
+          "page_number": 4,
+          "start_index": 3514,
+          "end_index": 4020
+        }
+      ]
+    },
+    {
+      "id": "bert-05",
+      "paper_id": "bert",
+      "zh": "BERT下一句预测中真实下一句和随机句各占多少？",
+      "en": "What are the proportions of actual next sentences and random sentences in BERT next sentence prediction?",
+      "answer_note": "真实下一句和随机句各50%。",
+      "relevant_chunks": [
+        {
+          "ordinal": 38,
+          "chunk_id": "69abe70f76fa951ff1f0193d2c207290f74ac883f2ac163208b6292b3c62c73c",
+          "page_number": 4,
+          "start_index": 3971,
+          "end_index": 4463
+        }
+      ]
+    },
+    {
+      "id": "bert-06",
+      "paper_id": "bert",
+      "zh": "BERT预训练使用哪两个语料，它们各有多少词？",
+      "en": "Which two corpora are used to pre-train BERT, and how many words does each contain?",
+      "answer_note": "BooksCorpus八亿，英文维基25亿。",
+      "relevant_chunks": [
+        {
+          "ordinal": 42,
+          "chunk_id": "3eaef451b505dc3b08c802073d6b413c3df9bcb41b9af1f6107db38fce757f92",
+          "page_number": 5,
+          "start_index": 896,
+          "end_index": 1388
+        },
+        {
+          "ordinal": 131,
+          "chunk_id": "6b9fb5b55ed52f2e4c86de178159c7cd6ff6171c4345dd1a6e9ba6291e115d7d",
+          "page_number": 14,
+          "start_index": 1324,
+          "end_index": 1817
+        }
+      ]
+    },
+    {
+      "id": "bert-07",
+      "paper_id": "bert",
+      "zh": "BERT预训练怎样分配短序列和长序列的训练步数？",
+      "en": "How does BERT pre-training allocate steps between short and long sequences?",
+      "answer_note": "90%步数长度128，10%长度512。",
+      "relevant_chunks": [
+        {
+          "ordinal": 124,
+          "chunk_id": "f000313f31e55a39528356a892253a12815b6b11338433c5d1f50107bd3b64e4",
+          "page_number": 13,
+          "start_index": 2237,
+          "end_index": 2708
+        }
+      ]
+    },
+    {
+      "id": "bert-08",
+      "paper_id": "bert",
+      "zh": "BERT微调时只训练输出层还是更新全部参数？",
+      "en": "Does BERT fine-tuning train only the output layer or update all parameters?",
+      "answer_note": "端到端更新全部参数。",
+      "relevant_chunks": [
+        {
+          "ordinal": 44,
+          "chunk_id": "5d0a6020f091b077abc4bc187e5d16d97b7ac3dbbbf134d9fb8cda242577e9a0",
+          "page_number": 5,
+          "start_index": 1769,
+          "end_index": 2259
+        }
+      ]
+    },
+    {
+      "id": "vit-01",
+      "paper_id": "vit",
+      "zh": "原始ViT怎样把图像变成Transformer的输入序列？",
+      "en": "How does the original ViT convert an image into a Transformer input sequence?",
+      "answer_note": "图像切块，展平并线性映射。",
+      "relevant_chunks": [
+        {
+          "ordinal": 6,
+          "chunk_id": "24f092f31d91ecf039431f64844afbb8b4d0866ec62f095ccae1a5852eb9b467",
+          "page_number": 1,
+          "start_index": 2789,
+          "end_index": 3235
+        },
+        {
+          "ordinal": 21,
+          "chunk_id": "0f68818744e481c34b21217028a043b89a427b643fd241c0654a4186705846b8",
+          "page_number": 3,
+          "start_index": 1284,
+          "end_index": 1703
+        },
+        {
+          "ordinal": 22,
+          "chunk_id": "86ba2115620a661a70986429a1a47b83847486a7be4485b5de6dfef2535af9cf",
+          "page_number": 3,
+          "start_index": 1703,
+          "end_index": 2205
+        }
+      ]
+    },
+    {
+      "id": "vit-02",
+      "paper_id": "vit",
+      "zh": "原始ViT使用哪个词符的输出作为图像表示？",
+      "en": "Which token output is used as the image representation in the original ViT?",
+      "answer_note": "可学习分类词符的编码器输出。",
+      "relevant_chunks": [
+        {
+          "ordinal": 22,
+          "chunk_id": "86ba2115620a661a70986429a1a47b83847486a7be4485b5de6dfef2535af9cf",
+          "page_number": 3,
+          "start_index": 1703,
+          "end_index": 2205
+        }
+      ]
+    },
+    {
+      "id": "vit-03",
+      "paper_id": "vit",
+      "zh": "原始ViT采用可学习的一维还是二维位置嵌入，为什么？",
+      "en": "Does the original ViT use learnable one-dimensional or two-dimensional position embeddings, and why?",
+      "answer_note": "可学习一维；复杂二维编码未见明显增益。",
+      "relevant_chunks": [
+        {
+          "ordinal": 23,
+          "chunk_id": "de306f230bef233d3c2829cdb31bc8d826bbe8b4747acd3592323bf8f3e3da17",
+          "page_number": 3,
+          "start_index": 2189,
+          "end_index": 2693
+        }
+      ]
+    },
+    {
+      "id": "vit-04",
+      "paper_id": "vit",
+      "zh": "原始ViT与CNN相比，图像归纳偏置有哪些区别？",
+      "en": "How does image-specific inductive bias in the original ViT differ from CNNs?",
+      "answer_note": "CNN内置局部性、二维邻域和平移等变；ViT较少。",
+      "relevant_chunks": [
+        {
+          "ordinal": 26,
+          "chunk_id": "5bde2de08ea00d3f03efdc5dfd18f8243b492a6302bdcbddbc7e7a994839f45a",
+          "page_number": 4,
+          "start_index": 389,
+          "end_index": 822
+        }
+      ]
+    },
+    {
+      "id": "vit-05",
+      "paper_id": "vit",
+      "zh": "原始ViT的混合架构从哪里取得图像块嵌入输入？",
+      "en": "Where do input patch embeddings come from in the original ViT hybrid architecture?",
+      "answer_note": "从CNN特征图提取块并映射。",
+      "relevant_chunks": [
+        {
+          "ordinal": 28,
+          "chunk_id": "a7ae255f3607aabdd562ba133b18da62873bdcbf1c3e5fe047cb960c7a1d2d66",
+          "page_number": 4,
+          "start_index": 1228,
+          "end_index": 1717
+        }
+      ]
+    },
+    {
+      "id": "vit-06",
+      "paper_id": "vit",
+      "zh": "原始ViT提高微调图像分辨率时如何调整位置嵌入？",
+      "en": "How does the original ViT adjust positional embeddings when fine-tuning at higher image resolution?",
+      "answer_note": "位置嵌入做二维插值。",
+      "relevant_chunks": [
+        {
+          "ordinal": 30,
+          "chunk_id": "3d62a45b1688a76e6d2622f03cb8698b0077cffd1deb5d214efa765a706cdc66",
+          "page_number": 4,
+          "start_index": 2228,
+          "end_index": 2718
+        }
+      ]
+    },
+    {
+      "id": "vit-07",
+      "paper_id": "vit",
+      "zh": "原始ViT的ImageNet-21k预训练集类别数和图像数是多少？",
+      "en": "How many classes and images are in the ImageNet-21k pre-training set of the original ViT?",
+      "answer_note": "21000类、1400万图像。",
+      "relevant_chunks": [
+        {
+          "ordinal": 32,
+          "chunk_id": "abe2f1d08bd659d3bfb96dc5918c09824c6db2b3b3ef1255557393dabfe91510",
+          "page_number": 4,
+          "start_index": 3225,
+          "end_index": 3673
+        }
+      ]
+    },
+    {
+      "id": "vit-08",
+      "paper_id": "vit",
+      "zh": "原始ViT微调采用什么优化器及动量值？",
+      "en": "Which optimizer and momentum value are used for fine-tuning the original ViT?",
+      "answer_note": "SGD，动量0.9。",
+      "relevant_chunks": [
+        {
+          "ordinal": 102,
+          "chunk_id": "35b8ef654a380ea45ef1b7ffd1e43d684631a2631267b5726ea857e8516d3b26",
+          "page_number": 13,
+          "start_index": 2289,
+          "end_index": 2734
+        }
+      ]
+    },
+    {
+      "id": "cnn_survey-01",
+      "paper_id": "cnn_survey",
+      "zh": "周飞燕等的CNN综述中，卷积层为什么能减少可训练参数？",
+      "en": "According to Zhou et al. CNN survey, why can convolutional layers reduce trainable parameters?",
+      "answer_note": "局部连接和同特征面共享权值。",
+      "relevant_chunks": [
+        {
+          "ordinal": 23,
+          "chunk_id": "74fc4cca37918b5b3f73903601612ff08d758eace300e12183231619455b15a3",
+          "page_number": 4,
+          "start_index": 1829,
+          "end_index": 2322
+        },
+        {
+          "ordinal": 40,
+          "chunk_id": "20032aa5fa82c5c62a77a4e8c6bc238c6b0657af8726a98a84b92aac2936ce8f",
+          "page_number": 8,
+          "start_index": 0,
+          "end_index": 512
+        }
+      ]
+    },
+    {
+      "id": "cnn_survey-02",
+      "paper_id": "cnn_survey",
+      "zh": "周飞燕等的CNN综述中，最大池化和均值池化分别怎么计算？",
+      "en": "According to Zhou et al. CNN survey, how are max pooling and average pooling computed?",
+      "answer_note": "局部区域取最大值或均值。",
+      "relevant_chunks": [
+        {
+          "ordinal": 31,
+          "chunk_id": "a30034f8a1e584a34adc512bcbf38207785740b004d43a18b42b7bc737281134",
+          "page_number": 6,
+          "start_index": 457,
+          "end_index": 945
+        }
+      ]
+    },
+    {
+      "id": "cnn_survey-03",
+      "paper_id": "cnn_survey",
+      "zh": "周飞燕等的CNN综述怎样解释dropout防止过拟合？",
+      "en": "How does Zhou et al. CNN survey explain the way dropout prevents overfitting?",
+      "answer_note": "随机置零隐层输出，减弱神经元相互适应。",
+      "relevant_chunks": [
+        {
+          "ordinal": 36,
+          "chunk_id": "cfca20a6a32ac95fd4aa2cb07f6794cdf2d7792f0a66db4ea3d5394d4cc24f02",
+          "page_number": 7,
+          "start_index": 451,
+          "end_index": 952
+        }
+      ]
+    },
+    {
+      "id": "cnn_survey-04",
+      "paper_id": "cnn_survey",
+      "zh": "周飞燕等的CNN综述中，网中网怎样替代卷积和全连接层？",
+      "en": "In Zhou et al. CNN survey, how does Network in Network replace convolution and fully connected layers?",
+      "answer_note": "微型MLP替代线性卷积，全局平均池化替代全连接。",
+      "relevant_chunks": [
+        {
+          "ordinal": 41,
+          "chunk_id": "e33f71e8fd9ec23f1ae08e1a119bd9c86151f9ab8dbde63e9c32bd51c0c39d6a",
+          "page_number": 8,
+          "start_index": 451,
+          "end_index": 949
+        },
+        {
+          "ordinal": 42,
+          "chunk_id": "7e86dfaddc48279cface880c4fcca87f4a089d5352a5b11f4beb4a03cc474513",
+          "page_number": 8,
+          "start_index": 897,
+          "end_index": 1395
+        }
+      ]
+    },
+    {
+      "id": "cnn_survey-05",
+      "paper_id": "cnn_survey",
+      "zh": "周飞燕等的CNN综述中，空间变换网络由哪些组件构成？",
+      "en": "In Zhou et al. CNN survey, which components make up a spatial transformer network?",
+      "answer_note": "本地化网络、网格生成器、采样器。",
+      "relevant_chunks": [
+        {
+          "ordinal": 44,
+          "chunk_id": "b659695fa2a5be25e6d5b138b88cb246052438ee755687a86384a77497f75f3c",
+          "page_number": 8,
+          "start_index": 1818,
+          "end_index": 1955
+        }
+      ]
+    },
+    {
+      "id": "cnn_survey-06",
+      "paper_id": "cnn_survey",
+      "zh": "周飞燕等的CNN综述为什么要求以不同的小随机数初始化权重？",
+      "en": "Why does Zhou et al. CNN survey require initializing weights with different small random numbers?",
+      "answer_note": "避免过大导致饱和，以及相同权值失去学习能力。",
+      "relevant_chunks": [
+        {
+          "ordinal": 48,
+          "chunk_id": "38f71ea35841a9df843cce1e155116a9c36d426e42e86bb6d5d4e0ff67a7ff4b",
+          "page_number": 9,
+          "start_index": 1356,
+          "end_index": 1866
+        }
+      ]
+    },
+    {
+      "id": "cnn_survey-07",
+      "paper_id": "cnn_survey",
+      "zh": "周飞燕等的CNN综述中，残差网络用什么连接缓解深层网络退化？",
+      "en": "In Zhou et al. CNN survey, what connection does ResNet use to alleviate degradation in deep networks?",
+      "answer_note": "捷径跨层传递输入，与卷积输出相加。",
+      "relevant_chunks": [
+        {
+          "ordinal": 62,
+          "chunk_id": "caf41a180249abb2ae055a49bf34fb7e394760f294817308fecdfd3264e5c178",
+          "page_number": 12,
+          "start_index": 0,
+          "end_index": 480
+        }
+      ]
+    },
+    {
+      "id": "cnn_survey-08",
+      "paper_id": "cnn_survey",
+      "zh": "周飞燕等的CNN综述中，SWWAE的what和where变量分别是什么？",
+      "en": "In Zhou et al. CNN survey, what do the what and where variables in SWWAE represent?",
+      "answer_note": "what为池化输出，where为最大值位置。",
+      "relevant_chunks": [
+        {
+          "ordinal": 47,
+          "chunk_id": "e9a22901773e5ef51a4dffe6547fbca890fa454fac186fc96462ac1b773da2ef",
+          "page_number": 9,
+          "start_index": 900,
+          "end_index": 1403
+        }
+      ]
+    },
+    {
+      "id": "compression-01",
+      "paper_id": "compression",
+      "zh": "雷杰等的模型压缩综述中，为什么删除Filter等同于删除Feature Map？",
+      "en": "According to Lei et al. model compression survey, why is removing a filter equivalent to removing a feature map?",
+      "answer_note": "一个Filter生成一个Feature Map。",
+      "relevant_chunks": [
+        {
+          "ordinal": 11,
+          "chunk_id": "432ae2b41f6182e3c45fc8850ea0765ae8167532757a90313d8c55e8bd79d8ee",
+          "page_number": 2,
+          "start_index": 1717,
+          "end_index": 2093
+        },
+        {
+          "ordinal": 19,
+          "chunk_id": "5b79a0dea268cd484ab9eeef5a32b9f827eac2c5d66aa24f02537c3fb742070f",
+          "page_number": 5,
+          "start_index": 0,
+          "end_index": 498
+        }
+      ]
+    },
+    {
+      "id": "compression-02",
+      "paper_id": "compression",
+      "zh": "雷杰等的模型压缩综述中，OBD用哪一阶导数估计权重重要性？",
+      "en": "In Lei et al. model compression survey, which derivative order does OBD use to estimate weight importance?",
+      "answer_note": "用二阶导数近似显著性。",
+      "relevant_chunks": [
+        {
+          "ordinal": 12,
+          "chunk_id": "02c45b6c85903bececa86f4462545a451021f0176f0f8f69d0ece1271369cbff",
+          "page_number": 3,
+          "start_index": 0,
+          "end_index": 463
+        }
+      ]
+    },
+    {
+      "id": "compression-03",
+      "paper_id": "compression",
+      "zh": "雷杰等的模型压缩综述中，非结构化剪枝为什么难以直接并行加速？",
+      "en": "Why is unstructured pruning difficult to accelerate in parallel according to Lei et al. model compression survey?",
+      "answer_note": "不规则稀疏需要索引和条件判断，常需专用库或硬件。",
+      "relevant_chunks": [
+        {
+          "ordinal": 16,
+          "chunk_id": "fc294e7efc80af8ba06447c23d7aa32938003cba900b6ca91a50f004b924159e",
+          "page_number": 4,
+          "start_index": 434,
+          "end_index": 903
+        }
+      ]
+    },
+    {
+      "id": "compression-04",
+      "paper_id": "compression",
+      "zh": "雷杰等的模型压缩综述中，通道与卷积核粗粒度剪枝有什么部署优势？",
+      "en": "What deployment advantage does coarse-grained channel and kernel pruning offer in Lei et al. model compression survey?",
+      "answer_note": "无需专用稀疏计算库或硬件，减少测试计算时间。",
+      "relevant_chunks": [
+        {
+          "ordinal": 19,
+          "chunk_id": "5b79a0dea268cd484ab9eeef5a32b9f827eac2c5d66aa24f02537c3fb742070f",
+          "page_number": 5,
+          "start_index": 0,
+          "end_index": 498
+        }
+      ]
+    },
+    {
+      "id": "compression-05",
+      "paper_id": "compression",
+      "zh": "雷杰等的模型压缩综述怎样用教师模型指导学生模型？",
+      "en": "How does Lei et al. model compression survey describe a teacher model guiding a student model?",
+      "answer_note": "以迁移数据和教师输出监督小模型拟合。",
+      "relevant_chunks": [
+        {
+          "ordinal": 24,
+          "chunk_id": "d379e7af7cd0abe2152cc0644eaa9c8e6ae31ae73f32560b5f5c50445f0bb3f5",
+          "page_number": 6,
+          "start_index": 0,
+          "end_index": 464
+        },
+        {
+          "ordinal": 25,
+          "chunk_id": "24b1ddfc9896e66a868ebc871906a0008b721348117fff0b5381da2e4d231601",
+          "page_number": 6,
+          "start_index": 405,
+          "end_index": 882
+        }
+      ]
+    },
+    {
+      "id": "compression-06",
+      "paper_id": "compression",
+      "zh": "雷杰等的模型压缩综述中，FitNet如何处理教师与学生中间层维度不同？",
+      "en": "How does FitNet handle different teacher and student intermediate dimensions in Lei et al. model compression survey?",
+      "answer_note": "加入回归器对齐中间层维度。",
+      "relevant_chunks": [
+        {
+          "ordinal": 29,
+          "chunk_id": "992536c010bca4934e85dabba3545b98826883534956649012860c9c7fc0a7c9",
+          "page_number": 7,
+          "start_index": 431,
+          "end_index": 898
+        }
+      ]
+    },
+    {
+      "id": "compression-07",
+      "paper_id": "compression",
+      "zh": "雷杰等的模型压缩综述将哪种矩阵分解推广到卷积核低秩表示？",
+      "en": "Which matrix decomposition is extended to low-rank convolution kernels in Lei et al. model compression survey?",
+      "answer_note": "奇异值分解SVD。",
+      "relevant_chunks": [
+        {
+          "ordinal": 34,
+          "chunk_id": "1e4f7f7596ce8831d2cfc86ea1eb385e92ac3e700c8eaa90f01292535d9f48c8",
+          "page_number": 8,
+          "start_index": 797,
+          "end_index": 1290
+        }
+      ]
+    },
+    {
+      "id": "compression-08",
+      "paper_id": "compression",
+      "zh": "雷杰等的模型压缩综述中，二值权重有哪些取值，SGD更新是否也二值化？",
+      "en": "In Lei et al. model compression survey, what values do binary weights take, and are SGD updates also binarized?",
+      "answer_note": "权重为正负1；SGD更新保留足够精度。",
+      "relevant_chunks": [
+        {
+          "ordinal": 41,
+          "chunk_id": "5ef634b107cb24d0e7e7290d236849610f9252e41869d52566cfe1aaa360f4aa",
+          "page_number": 10,
+          "start_index": 434,
+          "end_index": 905
+        }
+      ]
+    },
+    {
+      "id": "vision_survey-01",
+      "paper_id": "vision_survey",
+      "zh": "田永林等的视觉Transformer综述中，Transformer和CNN怎样扩展感受野？",
+      "en": "According to Tian et al. vision Transformer survey, how do Transformers and CNNs expand their receptive fields?",
+      "answer_note": "CNN层叠扩大；Transformer全局交互迅速扩大。",
+      "relevant_chunks": [
+        {
+          "ordinal": 19,
+          "chunk_id": "9ef90375cab82ba2e22861b3ba8714d397e272287dc5839838defa59ad256bbc",
+          "page_number": 3,
+          "start_index": 1810,
+          "end_index": 2318
+        }
+      ]
+    },
+    {
+      "id": "vision_survey-02",
+      "paper_id": "vision_survey",
+      "zh": "田永林等的视觉Transformer综述中，注意力权重与卷积权重的动态性有什么差异？",
+      "en": "How does weight dynamicity differ between attention and convolution in Tian et al. vision Transformer survey?",
+      "answer_note": "卷积训练后固定；注意力根据输入相似度变化。",
+      "relevant_chunks": [
+        {
+          "ordinal": 21,
+          "chunk_id": "7806d9463e35b33b515b2b73f8858ec6ae0b6b69d1c82d6d9c458e21fde3d2d4",
+          "page_number": 4,
+          "start_index": 0,
+          "end_index": 507
+        }
+      ]
+    },
+    {
+      "id": "vision_survey-03",
+      "paper_id": "vision_survey",
+      "zh": "田永林等的视觉Transformer综述指出ViT在计算、数据和训练上有哪些不足？",
+      "en": "What computation, data, and training weaknesses of ViT are identified in Tian et al. vision Transformer survey?",
+      "answer_note": "全局二次代价、依赖大量数据、训练不稳定且参数敏感。",
+      "relevant_chunks": [
+        {
+          "ordinal": 22,
+          "chunk_id": "fe92a83a9be35a8724e7475f9746fcdacfc253fbf962bb7e7c028d5b4837dbe8",
+          "page_number": 4,
+          "start_index": 452,
+          "end_index": 962
+        }
+      ]
+    },
+    {
+      "id": "vision_survey-04",
+      "paper_id": "vision_survey",
+      "zh": "田永林等的视觉Transformer综述中，Swin怎样通过窗口降低注意力计算量？",
+      "en": "How does Swin reduce attention computation using windows in Tian et al. vision Transformer survey?",
+      "answer_note": "图像分窗，仅窗口内交互。",
+      "relevant_chunks": [
+        {
+          "ordinal": 24,
+          "chunk_id": "ebf2c2354074f514be151eb5088e003286d50a40d2b3758a8d14000c65e760c6",
+          "page_number": 4,
+          "start_index": 1357,
+          "end_index": 1843
+        }
+      ]
+    },
+    {
+      "id": "vision_survey-05",
+      "paper_id": "vision_survey",
+      "zh": "田永林等的视觉Transformer综述列举了哪两类降低注意力复杂度的方法？",
+      "en": "Which two types of methods reduce attention complexity in Tian et al. vision Transformer survey?",
+      "answer_note": "核函数方法和低秩分解。",
+      "relevant_chunks": [
+        {
+          "ordinal": 25,
+          "chunk_id": "f015875761725eda57da9656bcddb5908764787ef520213d346b0277df6320ae",
+          "page_number": 4,
+          "start_index": 1818,
+          "end_index": 2300
+        }
+      ]
+    },
+    {
+      "id": "vision_survey-06",
+      "paper_id": "vision_survey",
+      "zh": "田永林等的视觉Transformer综述中，DETR怎样将预测和真值对应起来？",
+      "en": "How does DETR assign predictions to ground truth in Tian et al. vision Transformer survey?",
+      "answer_note": "基于二分匹配分配真值。",
+      "relevant_chunks": [
+        {
+          "ordinal": 75,
+          "chunk_id": "552293d11a748514100951d62d649daaf7ff3bc2b45a3b13770154776fe6ac14",
+          "page_number": 13,
+          "start_index": 893,
+          "end_index": 1395
+        }
+      ]
+    },
+    {
+      "id": "vision_survey-07",
+      "paper_id": "vision_survey",
+      "zh": "田永林等的视觉Transformer综述中，SETR采用哪些解码方案产生分割结果？",
+      "en": "Which decoding schemes does SETR use for segmentation in Tian et al. vision Transformer survey?",
+      "answer_note": "简单上采样、渐进式、多尺度融合三种。",
+      "relevant_chunks": [
+        {
+          "ordinal": 93,
+          "chunk_id": "670f5ed67a6d0e6cb52fa5c4f98572464ed43e4bc80f2125ef4cfd512b0048e1",
+          "page_number": 17,
+          "start_index": 2211,
+          "end_index": 2690
+        }
+      ]
+    },
+    {
+      "id": "vision_survey-08",
+      "paper_id": "vision_survey",
+      "zh": "田永林等的视觉Transformer综述中，SegFormer如何保留多尺度特征并去除位置编码？",
+      "en": "How does SegFormer preserve multiscale features and remove position encodings in Tian et al. vision Transformer survey?",
+      "answer_note": "层次结构保留粗细特征，注意力中引入卷积。",
+      "relevant_chunks": [
+        {
+          "ordinal": 93,
+          "chunk_id": "670f5ed67a6d0e6cb52fa5c4f98572464ed43e4bc80f2125ef4cfd512b0048e1",
+          "page_number": 17,
+          "start_index": 2211,
+          "end_index": 2690
+        }
+      ]
+    }
+  ]
+}
