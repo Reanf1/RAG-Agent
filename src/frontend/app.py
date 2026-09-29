@@ -22,7 +22,7 @@ max_file_size_mb = config["importing"]["max_file_size_mb"]
 st.set_page_config(page_title=app_config["name"], layout="wide")
 st.title(app_config["name"])
 st.caption(app_config["description"])
-st.info("当前支持文档保存与正文加载；分块、索引构建和智能问答将在后续模块接入。")
+st.info("当前支持文档保存与正文加载；三种分块策略已实现，导入流程尚未接入分块、索引和智能问答。")
 
 # 导入状态仅存于当前页面会话，原始文件成功加载后保存到本地。
 if "import_tasks" not in st.session_state:
@@ -93,7 +93,7 @@ else:
 st.subheader("模块开发状态")
 st.table(
     [
-        {"模块": "一：文档处理与检索", "状态": "部分实现", "范围": "已实现多格式批量导入、进度与重试；分块与检索待开发"},
+        {"模块": "一：文档处理与检索", "状态": "部分实现", "范围": "已实现批量导入及三种分块策略；分块接入与检索待开发"},
         {"模块": "二：RAG 生成", "状态": "未实现", "范围": "引用、流式、语义缓存、降级、日志"},
         {"模块": "三：Agent 决策", "状态": "未实现", "范围": "ReAct、工具、路由、恢复、记忆"},
         {"模块": "四：系统集成与前端", "状态": "部分实现", "范围": "已有文档导入界面，问答、文献管理与联调待开发"},
@@ -101,7 +101,7 @@ st.table(
     ]
 )
 st.subheader("下一步")
-st.write("实现分块策略和索引构建，再进行检索质量对比实验。")
+st.write("接入分块与索引构建，再进行检索质量对比实验。")
 with st.sidebar:
     st.header("课程资料")
     st.write("南京农业大学生产实习课程实践")

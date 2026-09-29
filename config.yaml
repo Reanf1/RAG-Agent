@@ -1,4 +1,4 @@
-# 当前入口读取 app、importing 和 paths.raw_documents；其余仍为参数样例。
+# 页面读取 app、importing 和 paths.raw_documents；分块入口读取 chunking。
 app:
   name: 智能科研助理
   description: 基于 RAG + Agent 的论文知识库问答系统
@@ -23,6 +23,8 @@ retrieval:
   candidate_k: 20
   reranker_model: BAAI/bge-reranker-base
 chunking:
+  # fixed / recursive / semantic；大小和重叠均以字符计，表格整块保留。
+  # 固定切分实验比较 256/512/1024；递归和句段策略使用以下默认参数。
   strategy: recursive
   chunk_size: 512
   chunk_overlap: 64
