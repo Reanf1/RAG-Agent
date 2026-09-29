@@ -21,6 +21,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from src.generation.prompt_template import RAG_PROMPT, RAG_SYSTEM_PROMPT, build_rag_messages
 from src.generation.rag_pipeline import build_context, generate_answer, resolve_citations
 from src.generation.streaming import render_partial_answer, stream_answer
+from src.generation.cache import SemanticCache, cache_scope
 from reports.compare_generation import evaluate_answer, summarize
 
 
@@ -747,6 +748,165 @@ class TestStreaming(unittest.TestCase):
         self.assertIn("当前知识库中未找到相关文档。", json.loads(self.opener.call_args.args[0].data)["messages"][1]["content"])
 
 
+class TestSemanticCache(unittest.TestCase):
+    """明确向量与真实引用快照验证缓存；真实 M3E 时延和误匹配另存 reports。"""
+
+    def setUp(self):
+        from src.utils.config import load_config
+        self.config = load_config()
+        patcher = patch("src.generation.cache.load_config", return_value=self.config)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        patcher = patch("src.generation.cache.get_embeddings")
+        self.embedding = patcher.start().return_value
+        self.addCleanup(patcher.stop)
+        self.embedding.embed_query.return_value = [3.0, 4.0]
+        self.cache = SemanticCache()
+        context = {"references": [{"id": 1, "source_file": "attention.pdf", "location": "第3页（物理页码）",
+                                  "text": "编码器有6层。", "metadata": {"chunk_id": "功能样例块"}, "truncated": False}]}
+        self.result = {"type": "done", **resolve_citations("编码器有6层。[参考文档1]", context),
+                       "done_reason": "stop", "model": "qwen2.5:7b", "raw_answer": "编码器有6层。[参考文档1]",
+                       "usage": {"prompt_eval_count": 400, "eval_count": 20, "total_duration": 1000000000}}
+
+    def test_empty_and_blank_requests_never_load_model(self):
+        self.assertIsNone(self.cache.lookup("问题", "scope"))
+        with self.assertRaisesRegex(ValueError, "不能为空"):
+            self.cache.lookup(" ", "scope")
+        self.embedding.embed_query.assert_not_called()
+
+    def test_exact_hit_skips_embedding_preserves_answer_and_uses_zero_current_tokens(self):
+        self.assertTrue(self.cache.put("层数？", self.result, "scope"))
+        self.embedding.embed_query.reset_mock()
+        hit = self.cache.lookup(" 层数？ ", "scope")
+        self.assertEqual(hit["cache"]["mode"], "exact")
+        self.assertEqual(hit["answer"], self.result["answer"])
+        self.assertEqual(hit["citations"], self.result["citations"])
+        self.assertEqual(hit["usage"]["prompt_eval_count"], 0)
+        self.assertEqual(hit["original_usage"]["prompt_eval_count"], 400)
+        self.embedding.embed_query.assert_not_called()
+
+    def test_semantic_matching_normalizes_vectors_and_selects_highest_score(self):
+        self.embedding.embed_query.return_value = [1.0, 0.0]
+        self.cache.put("介绍编码器层数", self.result, "scope")
+        self.embedding.embed_query.return_value = [0.98, 0.2]
+        self.cache.put("介绍编码器结构", self.result, "scope")
+        self.embedding.embed_query.return_value = [5.0, 0.0]
+        hit = self.cache.lookup("编码器包含多少层？", "scope")
+        self.assertEqual(hit["cache"]["mode"], "semantic")
+        self.assertEqual(hit["cache"]["question"], "介绍编码器层数")
+        self.assertAlmostEqual(hit["cache"]["similarity"], 1.0)
+
+    def test_threshold_includes_boundary_and_rejects_lower_score(self):
+        self.embedding.embed_query.return_value = [1.0, 0.0]
+        self.cache.put("编码器层数？", self.result, "scope")
+        for score, expected in ((0.97, True), (0.969, False), (0.5, False)):
+            self.embedding.embed_query.return_value = [score, (1 - score ** 2) ** 0.5]
+            self.assertEqual(self.cache.lookup("编码器有几层？", "scope") is not None, expected)
+
+    def test_changed_numbers_models_negation_and_language_never_reuse_identical_vectors(self):
+        pairs = [("BERT使用15%的掩码比例吗？", "BERT使用20%的掩码比例吗？"),
+                 ("BERT-base有几层？", "BERT-large有几层？"),
+                 ("论文A使用了什么方法？", "论文B使用了什么方法？"),
+                 ("使用多头注意力吗？", "没有使用多头注意力吗？"),
+                 ("It uses attention?", "It does not use attention?"),
+                 ("Answer in English: explain BERT.", "Answer in Chinese: explain BERT."),
+                 ("解释注意力", "Explain attention")]
+        for left, right in pairs:
+            self.cache.clear()
+            self.cache.put(left, self.result, "scope")
+            self.embedding.embed_query.reset_mock()
+            self.assertIsNone(self.cache.lookup(right, "scope"), (left, right))
+            self.embedding.embed_query.assert_not_called()
+
+    def test_long_questions_are_exact_only_to_avoid_embedding_tail_truncation(self):
+        left = "原始文献问题" * 60 + "甲"
+        self.cache.put(left, self.result, "scope")
+        self.assertEqual(self.cache.lookup(left, "scope")["cache"]["mode"], "exact")
+        self.assertIsNone(self.cache.lookup(left[:-1] + "乙", "scope"))
+        self.embedding.embed_query.assert_not_called()
+
+    def test_errors_length_missing_or_invalid_sources_and_empty_answers_are_not_stored(self):
+        invalid = [{"type": "error"}, {"done_reason": "length"}, {"warnings": ["未完整"]},
+                   {"citations": []}, {"missing_citations": True}, {"invalid_citation_ids": [9]}, {"answer": " "}]
+        for change in invalid:
+            self.assertFalse(self.cache.put("问题", {**self.result, **change}, "scope"))
+        self.assertFalse(self.cache.entries)
+        self.embedding.embed_query.assert_not_called()
+
+    def test_cache_input_and_returned_source_snapshots_are_independent(self):
+        original = deepcopy(self.result)
+        self.cache.put("问题", self.result, "scope")
+        self.result["citations"][0]["text"] = "外部修改"
+        hit = self.cache.lookup("问题", "scope")
+        self.assertEqual(hit["citations"], original["citations"])
+        hit["citations"][0]["metadata"]["chunk_id"] = "篡改"
+        hit["usage"]["eval_count"] = 999
+        self.assertEqual(self.cache.lookup("问题", "scope")["citations"], original["citations"])
+        self.assertEqual(self.cache.lookup("问题", "scope")["original_usage"]["eval_count"], 20)
+
+    def test_capacity_eviction_replacement_and_clear(self):
+        self.config["generation"]["cache"]["max_entries"] = 2
+        self.cache = SemanticCache()
+        for question in ("问题1", "问题2", "问题3"):
+            self.cache.put(question, self.result, "scope")
+        self.assertIsNone(self.cache.lookup("问题1", "scope"))
+        self.cache.put("问题2", {**self.result, "answer": "更新答案"}, "scope")
+        self.assertEqual(len(self.cache.entries), 2)
+        self.assertEqual(self.cache.lookup("问题2", "scope")["answer"], "更新答案")
+        self.cache.clear()
+        self.assertIsNone(self.cache.lookup("问题2", "scope"))
+
+    def test_scope_change_and_session_instances_are_isolated(self):
+        self.cache.put("问题", self.result, "scope-a")
+        other = SemanticCache()
+        self.assertIsNone(other.lookup("问题", "scope-a"))
+        self.assertIsNone(self.cache.lookup("问题", "scope-b"))
+        self.assertIsNone(self.cache.lookup("问题", "scope-a"))
+
+    def test_scope_detects_add_delete_same_count_replacement_and_position_changes(self):
+        from unittest.mock import Mock
+        doc = Document(page_content="原文", metadata={"chunk_id": "同ID", "page_number": 3})
+        store = Mock()
+        store.list_chunks.return_value = [doc]
+        scope = cache_scope(store)
+        for docs in ([], [doc, Document(page_content="新增", metadata={"chunk_id": "新ID"})],
+                     [Document(page_content="替换原文", metadata=doc.metadata)],
+                     [Document(page_content=doc.page_content, metadata={**doc.metadata, "page_number": 4})]):
+            store.list_chunks.return_value = docs
+            self.assertNotEqual(cache_scope(store), scope)
+        store.list_chunks.return_value = [doc]
+        self.assertEqual(cache_scope(store), scope)
+        self.embedding.embed_query.assert_not_called()
+
+    def test_scope_ignores_corpus_order_but_invalidates_prompt_and_model_parameters(self):
+        from unittest.mock import Mock
+        docs = [Document(page_content=content) for content in ("甲", "乙")]
+        store = Mock()
+        store.list_chunks.return_value = docs
+        scope = cache_scope(store)
+        store.list_chunks.return_value = list(reversed(docs))
+        self.assertEqual(cache_scope(store), scope)
+        self.config["llm"]["temperature"] += 0.1
+        self.assertNotEqual(cache_scope(store), scope)
+        self.config["llm"]["temperature"] -= 0.1
+        with patch("src.generation.cache.PROMPT_VERSION", "新版本"):
+            self.assertNotEqual(cache_scope(store), scope)
+
+    def test_invalid_configuration_and_vectors_are_explicit(self):
+        for key, value in (("max_entries", 0), ("max_entries", True),
+                           ("similarity_threshold", 0), ("similarity_threshold", 1.1),
+                           ("similarity_threshold", float("nan"))):
+            original = self.config["generation"]["cache"][key]
+            self.config["generation"]["cache"][key] = value
+            with self.assertRaises(ValueError):
+                SemanticCache()
+            self.config["generation"]["cache"][key] = original
+        for vector in ([], [0, 0], [float("nan"), 1]):
+            self.embedding.embed_query.return_value = vector
+            with self.assertRaises(ValueError):
+                self.cache.put("问题", self.result, "scope")
+
+
 class TestStreamingFrontend(unittest.TestCase):
     """实际操作 Streamlit 聊天组件；NDJSON 样例隔离模型，不证明生成质量。"""
 
@@ -758,12 +918,17 @@ class TestStreamingFrontend(unittest.TestCase):
         self.addCleanup(self.directory.cleanup)
         self.config["paths"]["raw_documents"] = str(Path(self.directory.name) / "raw")
         self.config["paths"]["vector_index"] = str(Path(self.directory.name) / "index")
-        for target in ("src.utils.config.load_config", "src.generation.rag_pipeline.load_config"):
+        for target in ("src.utils.config.load_config", "src.generation.rag_pipeline.load_config",
+                       "src.generation.cache.load_config"):
             patcher = patch(target, return_value=self.config)
             patcher.start()
             self.addCleanup(patcher.stop)
         patcher = patch("src.retrieval.hybrid_retriever.HybridRetriever")
         self.retriever = patcher.start().return_value
+        self.addCleanup(patcher.stop)
+        patcher = patch("src.generation.cache.get_embeddings")
+        self.cache_embedding = patcher.start().return_value
+        self.cache_embedding.embed_query.return_value = [1.0, 0.0]
         self.addCleanup(patcher.stop)
         self.retriever.search.return_value = [(Document(page_content="编码器有6层。", metadata={
             "source_file": "attention.pdf", "page_number": 3, "chunk_id": "功能样例块"}), 0.8)]
@@ -827,6 +992,71 @@ class TestStreamingFrontend(unittest.TestCase):
         self.assertFalse(self.app.exception)
         self.assertIn("本地模型不可用", self.app.session_state["rag_messages"][-1]["error"])
         self.assertEqual(self.opener.call_count, 1)
+
+    def test_repeated_and_similar_questions_skip_retrieval_and_model_and_keep_sources(self):
+        self.reply()
+        self.app.chat_input[0].set_value("层数？").run()
+        first = self.app.session_state["rag_messages"][0]
+        self.cache_embedding.embed_query.reset_mock()
+        self.app.chat_input[0].set_value("层数？").run()
+        self.cache_embedding.embed_query.assert_not_called()
+        self.app.chat_input[0].set_value("编码器有几层？").run()
+        self.assertFalse(self.app.exception)
+        self.assertEqual(self.opener.call_count, 1)
+        self.assertEqual(self.retriever.search.call_count, 1)
+        messages = self.app.session_state["rag_messages"]
+        self.assertEqual(messages[1]["cache"]["mode"], "exact")
+        self.assertEqual(messages[2]["cache"]["mode"], "semantic")
+        self.assertEqual(messages[2]["citations"], first["citations"])
+        self.assertEqual(messages[2]["usage"]["eval_count"], 0)
+        self.assertTrue(any("缓存已返回" in item.value for item in self.app.caption))
+
+    def test_knowledge_change_and_clear_invalidate_cache(self):
+        self.reply()
+        self.app.chat_input[0].set_value("层数？").run()
+        self.retriever.vector_store.list_chunks.return_value = [Document(page_content="新文献")]
+        self.reply()
+        self.app.chat_input[0].set_value("层数？").run()
+        self.assertEqual(self.opener.call_count, 2)
+        self.app.button(key="clear_rag_chat").click().run()
+        self.assertFalse(self.app.session_state["rag_cache"].entries)
+        self.reply()
+        self.app.chat_input[0].set_value("层数？").run()
+        self.assertEqual(self.opener.call_count, 3)
+
+    def test_interrupted_answer_is_not_cached_and_retry_calls_model(self):
+        self.reply(done=False)
+        self.app.chat_input[0].set_value("层数？").run()
+        self.assertFalse(self.app.session_state["rag_cache"].entries)
+        self.reply()
+        self.app.chat_input[0].set_value("层数？").run()
+        self.assertEqual(self.opener.call_count, 2)
+        self.assertTrue(self.app.session_state["rag_messages"][-1]["complete"])
+
+    def test_changed_generation_settings_do_not_reuse_old_answer(self):
+        self.reply()
+        self.app.chat_input[0].set_value("层数？").run()
+        self.config["llm"]["temperature"] = 0.2
+        self.reply()
+        self.app.chat_input[0].set_value("层数？").run()
+        self.assertEqual(self.opener.call_count, 2)
+        self.assertEqual(json.loads(self.opener.call_args.args[0].data)["options"]["temperature"], 0.2)
+
+    def test_cache_write_failure_keeps_completed_answer_and_gives_notice(self):
+        self.cache_embedding.embed_query.side_effect = RuntimeError("缓存向量化失败")
+        self.reply()
+        self.app.chat_input[0].set_value("层数？").run()
+        message = self.app.session_state["rag_messages"][-1]
+        self.assertTrue(message["complete"])
+        self.assertNotIn("error", message)
+        self.assertTrue(any("缓存未写入" in item.value for item in self.app.warning))
+
+    def test_knowledge_changed_during_generation_does_not_store_stale_answer(self):
+        self.retriever.vector_store.list_chunks.side_effect = [[], [Document(page_content="新加入")]]
+        self.reply()
+        self.app.chat_input[0].set_value("层数？").run()
+        self.assertTrue(self.app.session_state["rag_messages"][-1]["complete"])
+        self.assertFalse(self.app.session_state["rag_cache"].entries)
 
 
 class TestGenerationEvaluation(unittest.TestCase):

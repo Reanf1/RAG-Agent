@@ -41,3 +41,11 @@
 [流式 QA](../docs/QA/5.2.2%20流式输出与引用.md)：[verify_streaming.py](verify_streaming.py) 使用真实本地 Qwen，保存[片段、引用时序和最终答案](流式与引用验证结果.json)。三个固定真实上下文输入中，两题引用在结束前出现，一题只有英文末尾编号，正确提示正文缺引用。复测先启动本地 Ollama，再运行 `.venv/bin/python reports/verify_streaming.py --output /private/tmp/流式复测.json`，已有结果不覆盖。
 
 另保存真实 M3E/Chroma/RRF/BGE/Qwen 的[浏览器验证结果](流式页面验证结果.json)、[生成中截图](流式问答生成中.png)和[完成截图](流式问答完成.png)。验证显示动态引用和原文面板；该检索样例漏召回头数/维度事实块，答案未答出数字，不当作答案质量达标或独立人工评分。
+
+## 语义缓存验证
+
+[语义缓存 QA](../docs/QA/5.2.3%20语义缓存.md)、[真实结果](语义缓存验证结果.json)和[验证脚本](verify_semantic_cache.py)：10对真实M3E问题探测，数字变化造成0.9930的高相似度误判由规则阻止；4对等义改写中3对达阈值，标注由Codex编写，未独立人工复核。
+
+真实两篇论文标注块、临时Chroma、M3E/RRF/BGE/Qwen和Streamlit AppTest六次请求中，四次重复/近似命中跳过检索/生成，当前LLM Token为0，保留原答案/来源；中文处理12.4584秒降到0.0216秒，英文3.8273秒降到0.0222秒。中文原模型误拒答被缓存原样复用，速度结果不等于质量通过；真实删除块后旧缓存失效。默认用户索引/原始评测输入未改动，没有浏览器网络时延或并发评测。
+
+先按手册启动本地Ollama，复测使用 `.venv/bin/python reports/verify_semantic_cache.py --output /private/tmp/语义缓存复测.json`，避免覆盖已有记录。

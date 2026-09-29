@@ -13,6 +13,7 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 from src.data_loader import LOADERS, create_import_tasks
+from src.generation.cache import SemanticCache, cache_scope
 from src.generation.rag_pipeline import build_context
 from src.generation.streaming import stream_answer
 from src.retrieval.bm25_retriever import BM25Retriever
@@ -161,11 +162,14 @@ if search_submitted:
                     st.text(document.page_content)
 
 st.subheader("RAG 流式问答")
-st.caption("每个问题独立检索 Top-K，再由本地 Ollama 生成；当前历史仅保留页面展示，不作为多轮推理上下文。引用对应实际文件和位置，原文证据可展开查看。")
+st.caption("每个问题先匹配当前会话答案缓存；未命中再独立检索并由本地 Ollama 生成。历史仅保留展示，不作为多轮推理上下文。引用对应实际文件和位置，原文证据可展开查看。")
 if "rag_messages" not in st.session_state:
     st.session_state.rag_messages = []
+if "rag_cache" not in st.session_state or st.session_state.rag_cache.settings != config["generation"]["cache"]:
+    st.session_state.rag_cache = SemanticCache()
 if st.button("清空当前对话", key="clear_rag_chat"):
     st.session_state.rag_messages = []
+    st.session_state.rag_cache.clear()
     st.rerun()
 
 
@@ -175,9 +179,14 @@ def show_answer_details(message):
         st.error(f"回答未完成：{message['error']}。已保留部分文本；请检查本地服务或配置后重新提交问题。")
     elif message.get("complete"):
         usage = message["usage"]
-        st.caption(f"服务已结束 · 检索 {message['retrieval_seconds']:.2f} 秒 · "
+        status = "缓存已返回" if message.get("cache", {}).get("hit") else "服务已结束"
+        st.caption(f"{status} · 检索 {message['retrieval_seconds']:.2f} 秒 · "
                    f"总耗时 {message['elapsed_seconds']:.2f} 秒 · "
                    f"输入 Token {usage['prompt_eval_count']} · 输出 Token {usage['eval_count']}")
+        if message.get("cache", {}).get("hit"):
+            hit = message["cache"]
+            match = "相同问题" if hit["mode"] == "exact" else f"语义相似度 {hit['similarity']:.4f}"
+            st.info(f"缓存命中（{match}），本次未调用检索、重排或生成模型。原问题：{hit['question']}")
     for warning in message.get("warnings", []):
         st.warning(warning)
     for reference in message["citations"]:
@@ -202,25 +211,39 @@ if question and question.strip():
     with st.chat_message("assistant"):
         answer_placeholder = st.empty()
         try:
-            with st.spinner("正在检索本地文献…"):
-                results = HybridRetriever().search(question, k=config["retrieval"]["top_k"], rerank=True)
-                context = build_context(question, results)
-            message["retrieval_seconds"] = perf_counter() - started
-            if not results:
-                st.info("当前知识库中未找到相关文档；以下回答没有文献依据。")
-            answer_placeholder.markdown("正在等待本地模型输出…")
-            # 采用完整快照替换占位区，引用闭合后立即补全；不是先等全文再模拟打字。
-            for event in stream_answer(question, context):
-                if event["type"] == "token":
-                    message["answer"], message["citations"] = event["answer"], event["citations"]
-                    answer_placeholder.markdown(event["answer"] + " ▌")
-                else:
-                    message.update(event)
-                    message["complete"] = event["type"] == "done"
-            if not message["complete"] and not message.get("message"):
-                raise RuntimeError("生成流未返回完成标记")
-            if message.get("type") == "error":
-                message["error"] = message["message"]
+            retriever = HybridRetriever()
+            scope = cache_scope(retriever.vector_store)
+            cached = st.session_state.rag_cache.lookup(question, scope)
+            if cached:
+                message.update(cached, complete=True, retrieval_seconds=0.0)
+            else:
+                with st.spinner("正在检索本地文献…"):
+                    search_started = perf_counter()
+                    results = retriever.search(question, k=config["retrieval"]["top_k"], rerank=True)
+                    context = build_context(question, results)
+                message["retrieval_seconds"] = perf_counter() - search_started
+                if not results:
+                    st.info("当前知识库中未找到相关文档；以下回答没有文献依据。")
+                answer_placeholder.markdown("正在等待本地模型输出…")
+                # 使用完整快照替换占位区，引用闭合后立即补全。
+                for event in stream_answer(question, context):
+                    if event["type"] == "token":
+                        message["answer"], message["citations"] = event["answer"], event["citations"]
+                        answer_placeholder.markdown(event["answer"] + " ▌")
+                    else:
+                        message.update(event)
+                        message["complete"] = event["type"] == "done"
+                if not message["complete"] and not message.get("message"):
+                    raise RuntimeError("生成流未返回完成标记")
+                if message.get("type") == "error":
+                    message["error"] = message["message"]
+                # 生成期间文献改变时不写入旧答案；写入故障不能把完整回答伪装成失败。
+                elif message["complete"]:
+                    try:
+                        if cache_scope(retriever.vector_store) == scope:
+                            st.session_state.rag_cache.put(question, event, scope)
+                    except Exception as error:
+                        message["warnings"].append(f"本次答案已完成，但缓存未写入：{type(error).__name__}: {error}")
         except Exception as error:
             message["error"] = f"{type(error).__name__}: {error}"
         message["elapsed_seconds"] = perf_counter() - started
@@ -232,14 +255,14 @@ st.subheader("模块开发状态")
 st.table(
     [
         {"模块": "一：文档处理与检索", "状态": "部分实现", "范围": "已实现批量导入、分块、增量索引、向量/BM25/RRF 与模型重排；三档质量已评测，分块召回对比待完成"},
-        {"模块": "二：RAG 生成", "状态": "部分实现", "范围": "已实现 Prompt、上下文/引用、本地生成及流式页面，完成参数对照；缓存、完整降级、日志待完成"},
+        {"模块": "二：RAG 生成", "状态": "部分实现", "范围": "已实现 Prompt、上下文/引用、本地生成、流式与语义缓存，完成参数对照；完整降级、日志待完成"},
         {"模块": "三：Agent 决策", "状态": "未实现", "范围": "ReAct、工具、路由、恢复、记忆"},
         {"模块": "四：系统集成与前端", "状态": "部分实现", "范围": "已有文档入库、检索与 RAG 流式问答；Agent、持久会话、文献管理与完整联调待开发"},
         {"模块": "五：评测与交付", "状态": "部分实现", "范围": "已有三档检索实测、图表与 Excel；完整系统评测待完成"},
     ]
 )
 st.subheader("下一步")
-st.write("后续继续语义缓存、完整降级与日志；分块召回对比和 Agent 等课程要求仍保留。")
+st.write("后续继续完整降级与日志；分块召回对比和 Agent 等课程要求仍保留。")
 with st.sidebar:
     st.header("课程资料")
     st.write("南京农业大学生产实习课程实践")

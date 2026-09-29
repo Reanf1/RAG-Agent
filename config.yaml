@@ -26,6 +26,10 @@ generation:
   max_context_chars: 6000
   # 包含系统规范、用户问题、来源标记和分隔符，不包含模型回答。
   max_prompt_chars: 12000
+  # 只复用同知识库/配置且校验通过的答案；保守阈值依据见语义缓存 QA。
+  cache:
+    similarity_threshold: 0.97
+    max_entries: 100
 
 # 人工智能论文中英双语基准比较后保留 M3E；跨语言质量限制见 docs/QA。
 # Embedding 使用本地模型文件；模型名和 revision 用于权重准备与实验溯源。

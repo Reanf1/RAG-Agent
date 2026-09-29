@@ -1,0 +1,681 @@
+{
+  "started_at": "2026-09-29T19:10:55.597040+08:00",
+  "config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://localhost:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 8192,
+      "num_predict": 512,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "max_context_chars": 6000,
+      "max_prompt_chars": 12000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "online_search_enabled": false
+    },
+    "paths": {
+      "raw_documents": "data/raw",
+      "vector_index": "data/index",
+      "logs": "logs"
+    }
+  },
+  "scope": "两篇真实论文的两个标注片段，实际检索/生成与AppTest；小型开发验证，不是独立质量评测或浏览器视觉检查。",
+  "environment": {
+    "python": "3.10.10",
+    "platform": "macOS-27.0-arm64-arm-64bit"
+  },
+  "dataset_sha256": "d46fb56f5f41064faf223ff2d80c2cc8cc6dd329ef7792891b4b413c22cea099",
+  "papers": [
+    {
+      "id": "attention",
+      "language": "en",
+      "title": "Attention Is All You Need",
+      "pdf_url": "https://arxiv.org/pdf/1706.03762v7",
+      "source_url": "https://arxiv.org/abs/1706.03762v7",
+      "pdf_sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+      "pages": 15,
+      "chunk_count": 94
+    },
+    {
+      "id": "bert",
+      "language": "en",
+      "title": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+      "pdf_url": "https://arxiv.org/pdf/1810.04805v2",
+      "source_url": "https://arxiv.org/abs/1810.04805v2",
+      "pdf_sha256": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+      "pages": 16,
+      "chunk_count": 154
+    }
+  ],
+  "server": {
+    "version": "0.34.0"
+  },
+  "models": {
+    "models": [
+      {
+        "name": "qwen2.5:7b",
+        "model": "qwen2.5:7b",
+        "modified_at": "2026-09-29T18:09:48.516927965+08:00",
+        "size": 4683087332,
+        "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen2",
+          "families": [
+            "qwen2"
+          ],
+          "parameter_size": "7.6B",
+          "quantization_level": "Q4_K_M",
+          "context_length": 32768,
+          "embedding_length": 3584
+        },
+        "capabilities": [
+          "completion",
+          "tools"
+        ]
+      }
+    ]
+  },
+  "pairs": [
+    {
+      "equivalent_by_author": true,
+      "cached_question": "原始Transformer用了多少个注意力头？",
+      "query": "原始Transformer使用了几个注意力头？",
+      "cosine": 0.9892417413871963,
+      "constraints_match": true,
+      "threshold_only_hit": true,
+      "effective_hit": true
+    },
+    {
+      "equivalent_by_author": true,
+      "cached_question": "BERT-base的层数、隐藏维度和注意力头数分别是多少？",
+      "query": "BERT-base有几层、隐藏层维度多大、用了几个注意力头？",
+      "cosine": 0.9592571807171767,
+      "constraints_match": true,
+      "threshold_only_hit": false,
+      "effective_hit": false
+    },
+    {
+      "equivalent_by_author": true,
+      "cached_question": "How many layers does BERT-base have?",
+      "query": "How many layers are in BERT-base?",
+      "cosine": 0.9934818636938441,
+      "constraints_match": true,
+      "threshold_only_hit": true,
+      "effective_hit": true
+    },
+    {
+      "equivalent_by_author": true,
+      "cached_question": "What is the hidden size of BERT-base?",
+      "query": "What is BERT-base's hidden size?",
+      "cosine": 0.9821119465056166,
+      "constraints_match": true,
+      "threshold_only_hit": true,
+      "effective_hit": true
+    },
+    {
+      "equivalent_by_author": false,
+      "cached_question": "BERT-base的层数是多少？",
+      "query": "BERT-large的层数是多少？",
+      "cosine": 0.9509091699623166,
+      "constraints_match": false,
+      "threshold_only_hit": false,
+      "effective_hit": false
+    },
+    {
+      "equivalent_by_author": false,
+      "cached_question": "BERT-base的层数是多少？",
+      "query": "BERT-base的隐藏维度是多少？",
+      "cosine": 0.9157512489647177,
+      "constraints_match": true,
+      "threshold_only_hit": false,
+      "effective_hit": false
+    },
+    {
+      "equivalent_by_author": false,
+      "cached_question": "Transformer用了多少个注意力头？",
+      "query": "Transformer没有使用多头注意力吗？",
+      "cosine": 0.8844461800397765,
+      "constraints_match": false,
+      "threshold_only_hit": false,
+      "effective_hit": false
+    },
+    {
+      "equivalent_by_author": false,
+      "cached_question": "BERT使用15%的掩码比例吗？",
+      "query": "BERT使用20%的掩码比例吗？",
+      "cosine": 0.9929574191538878,
+      "constraints_match": false,
+      "threshold_only_hit": true,
+      "effective_hit": false
+    },
+    {
+      "equivalent_by_author": false,
+      "cached_question": "How many layers does BERT-base have?",
+      "query": "How many layers does BERT-large have?",
+      "cosine": 0.9389670567807012,
+      "constraints_match": false,
+      "threshold_only_hit": false,
+      "effective_hit": false
+    },
+    {
+      "equivalent_by_author": false,
+      "cached_question": "How many layers does BERT-base have?",
+      "query": "How many attention heads does BERT-base have?",
+      "cosine": 0.8913191693002854,
+      "constraints_match": true,
+      "threshold_only_hit": false,
+      "effective_hit": false
+    }
+  ],
+  "requests": [
+    {
+      "index": 0,
+      "message": {
+        "question": "原始Transformer用了多少个注意力头？请在结论后标注[参考文档1]。",
+        "answer": "## 回答\n原始Transformer中使用的注意力头数量未在提供的文档中明确说明。[参考文档1：attention.pdf；第5页（物理页码）]中讨论了注意力机制的实现细节，但没有提及注意力头的具体数量。[参考文档2：bert.pdf；第3页（物理页码）]中提到了BERT模型中使用的注意力头数量，但与原始Transformer的关系未明确说明。\n\n## 参考来源\n- [参考文档1] attention.pdf；第5页（物理页码）\n- [参考文档2] bert.pdf；第3页（物理页码）",
+        "citations": [
+          {
+            "id": 1,
+            "source_file": "attention.pdf",
+            "location": "第5页（物理页码）",
+            "text": "\ni ^{)}\nWhere the projections are parameter matrices W ^{Q}\n∈R^{d}^{model}^{×}^{d}^{k}, W ^{V}\n∈R^{d}^{model}^{×}^{d}^{v}\n∈R^{d}^{model}^{×}^{d}^{k}, W ^{K}\ni\ni\ni\nand W ^{O} ∈R^{hd}^{v}^{×}^{d}^{model}.\nIn this work we employ h = 8 parallel attention layers, or heads. For each of these we use\nd_{k} = d_{v} = d_{model}/h = 64. Due to the reduced dimension of each head, the total computational cost\nis similar to that of single-head attention with full dimensionality.\n3.2.3",
+            "metadata": {
+              "chunk_id": "24be9fd29302ea14250272ebaf769b0ceb38ca69134eba0d9339da52d2d36894",
+              "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+              "end_index": 914,
+              "page_number": 5,
+              "source_file": "attention.pdf",
+              "start_index": 439
+            },
+            "truncated": false
+          },
+          {
+            "id": 2,
+            "source_file": "bert.pdf",
+            "location": "第3页（物理页码）",
+            "text": "\nsuch as “The Annotated Transformer.”^{2}\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as\nH, and the number of self-attention heads as A.^{3}\nWe primarily report results on two model sizes:\nBERT_{BASE} (L=12, H=768, A=12, Total Param-\neters=110M) and BERT_{LARGE} (L=24, H=1024,\nA=16, Total Parameters=340M).\nBERT_{BASE} was chosen to have the same model\nsize as OpenAI GPT for comparison purposes.\nCritically, however, the BERT Transformer uses",
+            "metadata": {
+              "chunk_id": "33c362adeeae964cd6ea9ff0fd62e1d726eb26e8c98eeeab6d96dfa4f1b5b572",
+              "doc_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+              "end_index": 3605,
+              "page_number": 3,
+              "source_file": "bert.pdf",
+              "start_index": 3111
+            },
+            "truncated": false
+          }
+        ],
+        "warnings": [],
+        "complete": true,
+        "retrieval_seconds": 1.1405159159985487,
+        "type": "done",
+        "invalid_citation_ids": [],
+        "missing_citations": false,
+        "raw_answer": "## 回答\n原始Transformer中使用的注意力头数量未在提供的文档中明确说明。[参考文档1]中讨论了注意力机制的实现细节，但没有提及注意力头的具体数量。[参考文档2]中提到了BERT模型中使用的注意力头数量，但与原始Transformer的关系未明确说明。\n\n## 参考来源\n无可引用来源",
+        "model": "qwen2.5:7b",
+        "options": {
+          "temperature": 0.1,
+          "top_p": 0.9,
+          "top_k": 40,
+          "num_ctx": 8192,
+          "num_predict": 512,
+          "repeat_penalty": 1.0
+        },
+        "done_reason": "stop",
+        "usage": {
+          "prompt_eval_count": 777,
+          "eval_count": 77,
+          "total_duration": 10758760958,
+          "load_duration": 3608567125,
+          "prompt_eval_duration": 3488532000,
+          "eval_duration": 3644181000
+        },
+        "elapsed_seconds": 12.458405082994432
+      },
+      "app_run_seconds": 12.485258666994923,
+      "retrieval_calls": 1,
+      "llm_calls": 1
+    },
+    {
+      "index": 1,
+      "message": {
+        "question": "原始Transformer用了多少个注意力头？请在结论后标注[参考文档1]。",
+        "answer": "## 回答\n原始Transformer中使用的注意力头数量未在提供的文档中明确说明。[参考文档1：attention.pdf；第5页（物理页码）]中讨论了注意力机制的实现细节，但没有提及注意力头的具体数量。[参考文档2：bert.pdf；第3页（物理页码）]中提到了BERT模型中使用的注意力头数量，但与原始Transformer的关系未明确说明。\n\n## 参考来源\n- [参考文档1] attention.pdf；第5页（物理页码）\n- [参考文档2] bert.pdf；第3页（物理页码）",
+        "citations": [
+          {
+            "id": 1,
+            "source_file": "attention.pdf",
+            "location": "第5页（物理页码）",
+            "text": "\ni ^{)}\nWhere the projections are parameter matrices W ^{Q}\n∈R^{d}^{model}^{×}^{d}^{k}, W ^{V}\n∈R^{d}^{model}^{×}^{d}^{v}\n∈R^{d}^{model}^{×}^{d}^{k}, W ^{K}\ni\ni\ni\nand W ^{O} ∈R^{hd}^{v}^{×}^{d}^{model}.\nIn this work we employ h = 8 parallel attention layers, or heads. For each of these we use\nd_{k} = d_{v} = d_{model}/h = 64. Due to the reduced dimension of each head, the total computational cost\nis similar to that of single-head attention with full dimensionality.\n3.2.3",
+            "metadata": {
+              "chunk_id": "24be9fd29302ea14250272ebaf769b0ceb38ca69134eba0d9339da52d2d36894",
+              "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+              "end_index": 914,
+              "page_number": 5,
+              "source_file": "attention.pdf",
+              "start_index": 439
+            },
+            "truncated": false
+          },
+          {
+            "id": 2,
+            "source_file": "bert.pdf",
+            "location": "第3页（物理页码）",
+            "text": "\nsuch as “The Annotated Transformer.”^{2}\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as\nH, and the number of self-attention heads as A.^{3}\nWe primarily report results on two model sizes:\nBERT_{BASE} (L=12, H=768, A=12, Total Param-\neters=110M) and BERT_{LARGE} (L=24, H=1024,\nA=16, Total Parameters=340M).\nBERT_{BASE} was chosen to have the same model\nsize as OpenAI GPT for comparison purposes.\nCritically, however, the BERT Transformer uses",
+            "metadata": {
+              "chunk_id": "33c362adeeae964cd6ea9ff0fd62e1d726eb26e8c98eeeab6d96dfa4f1b5b572",
+              "doc_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+              "end_index": 3605,
+              "page_number": 3,
+              "source_file": "bert.pdf",
+              "start_index": 3111
+            },
+            "truncated": false
+          }
+        ],
+        "warnings": [],
+        "complete": true,
+        "type": "done",
+        "invalid_citation_ids": [],
+        "missing_citations": false,
+        "raw_answer": "## 回答\n原始Transformer中使用的注意力头数量未在提供的文档中明确说明。[参考文档1]中讨论了注意力机制的实现细节，但没有提及注意力头的具体数量。[参考文档2]中提到了BERT模型中使用的注意力头数量，但与原始Transformer的关系未明确说明。\n\n## 参考来源\n无可引用来源",
+        "model": "qwen2.5:7b",
+        "options": {
+          "temperature": 0.1,
+          "top_p": 0.9,
+          "top_k": 40,
+          "num_ctx": 8192,
+          "num_predict": 512,
+          "repeat_penalty": 1.0
+        },
+        "done_reason": "stop",
+        "usage": {
+          "prompt_eval_count": 0,
+          "eval_count": 0,
+          "total_duration": 0,
+          "load_duration": 0,
+          "prompt_eval_duration": 0,
+          "eval_duration": 0
+        },
+        "original_usage": {
+          "prompt_eval_count": 777,
+          "eval_count": 77,
+          "total_duration": 10758760958,
+          "load_duration": 3608567125,
+          "prompt_eval_duration": 3488532000,
+          "eval_duration": 3644181000
+        },
+        "cache": {
+          "hit": true,
+          "mode": "exact",
+          "similarity": 1.0,
+          "question": "原始Transformer用了多少个注意力头？请在结论后标注[参考文档1]。"
+        },
+        "retrieval_seconds": 0.0,
+        "elapsed_seconds": 0.004444624995812774
+      },
+      "app_run_seconds": 0.032395665999501944,
+      "retrieval_calls": 0,
+      "llm_calls": 0
+    },
+    {
+      "index": 2,
+      "message": {
+        "question": "原始Transformer使用了几个注意力头？请在结论后标注[参考文档1]。",
+        "answer": "## 回答\n原始Transformer中使用的注意力头数量未在提供的文档中明确说明。[参考文档1：attention.pdf；第5页（物理页码）]中讨论了注意力机制的实现细节，但没有提及注意力头的具体数量。[参考文档2：bert.pdf；第3页（物理页码）]中提到了BERT模型中使用的注意力头数量，但与原始Transformer的关系未明确说明。\n\n## 参考来源\n- [参考文档1] attention.pdf；第5页（物理页码）\n- [参考文档2] bert.pdf；第3页（物理页码）",
+        "citations": [
+          {
+            "id": 1,
+            "source_file": "attention.pdf",
+            "location": "第5页（物理页码）",
+            "text": "\ni ^{)}\nWhere the projections are parameter matrices W ^{Q}\n∈R^{d}^{model}^{×}^{d}^{k}, W ^{V}\n∈R^{d}^{model}^{×}^{d}^{v}\n∈R^{d}^{model}^{×}^{d}^{k}, W ^{K}\ni\ni\ni\nand W ^{O} ∈R^{hd}^{v}^{×}^{d}^{model}.\nIn this work we employ h = 8 parallel attention layers, or heads. For each of these we use\nd_{k} = d_{v} = d_{model}/h = 64. Due to the reduced dimension of each head, the total computational cost\nis similar to that of single-head attention with full dimensionality.\n3.2.3",
+            "metadata": {
+              "chunk_id": "24be9fd29302ea14250272ebaf769b0ceb38ca69134eba0d9339da52d2d36894",
+              "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+              "end_index": 914,
+              "page_number": 5,
+              "source_file": "attention.pdf",
+              "start_index": 439
+            },
+            "truncated": false
+          },
+          {
+            "id": 2,
+            "source_file": "bert.pdf",
+            "location": "第3页（物理页码）",
+            "text": "\nsuch as “The Annotated Transformer.”^{2}\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as\nH, and the number of self-attention heads as A.^{3}\nWe primarily report results on two model sizes:\nBERT_{BASE} (L=12, H=768, A=12, Total Param-\neters=110M) and BERT_{LARGE} (L=24, H=1024,\nA=16, Total Parameters=340M).\nBERT_{BASE} was chosen to have the same model\nsize as OpenAI GPT for comparison purposes.\nCritically, however, the BERT Transformer uses",
+            "metadata": {
+              "chunk_id": "33c362adeeae964cd6ea9ff0fd62e1d726eb26e8c98eeeab6d96dfa4f1b5b572",
+              "doc_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+              "end_index": 3605,
+              "page_number": 3,
+              "source_file": "bert.pdf",
+              "start_index": 3111
+            },
+            "truncated": false
+          }
+        ],
+        "warnings": [],
+        "complete": true,
+        "type": "done",
+        "invalid_citation_ids": [],
+        "missing_citations": false,
+        "raw_answer": "## 回答\n原始Transformer中使用的注意力头数量未在提供的文档中明确说明。[参考文档1]中讨论了注意力机制的实现细节，但没有提及注意力头的具体数量。[参考文档2]中提到了BERT模型中使用的注意力头数量，但与原始Transformer的关系未明确说明。\n\n## 参考来源\n无可引用来源",
+        "model": "qwen2.5:7b",
+        "options": {
+          "temperature": 0.1,
+          "top_p": 0.9,
+          "top_k": 40,
+          "num_ctx": 8192,
+          "num_predict": 512,
+          "repeat_penalty": 1.0
+        },
+        "done_reason": "stop",
+        "usage": {
+          "prompt_eval_count": 0,
+          "eval_count": 0,
+          "total_duration": 0,
+          "load_duration": 0,
+          "prompt_eval_duration": 0,
+          "eval_duration": 0
+        },
+        "original_usage": {
+          "prompt_eval_count": 777,
+          "eval_count": 77,
+          "total_duration": 10758760958,
+          "load_duration": 3608567125,
+          "prompt_eval_duration": 3488532000,
+          "eval_duration": 3644181000
+        },
+        "cache": {
+          "hit": true,
+          "mode": "semantic",
+          "similarity": 0.9877323129874044,
+          "question": "原始Transformer用了多少个注意力头？请在结论后标注[参考文档1]。"
+        },
+        "retrieval_seconds": 0.0,
+        "elapsed_seconds": 0.021612833996186964
+      },
+      "app_run_seconds": 0.04794166600186145,
+      "retrieval_calls": 0,
+      "llm_calls": 0
+    },
+    {
+      "index": 3,
+      "message": {
+        "question": "Answer in English: How many layers does BERT-base have? Cite [参考文档1] after the fact.",
+        "answer": "## Answer\nBERT-base has 12 layers. [参考文档1：bert.pdf；第3页（物理页码）]\n\n## 参考来源\n- [参考文档1] bert.pdf；第3页（物理页码）",
+        "citations": [
+          {
+            "id": 1,
+            "source_file": "bert.pdf",
+            "location": "第3页（物理页码）",
+            "text": "\nsuch as “The Annotated Transformer.”^{2}\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as\nH, and the number of self-attention heads as A.^{3}\nWe primarily report results on two model sizes:\nBERT_{BASE} (L=12, H=768, A=12, Total Param-\neters=110M) and BERT_{LARGE} (L=24, H=1024,\nA=16, Total Parameters=340M).\nBERT_{BASE} was chosen to have the same model\nsize as OpenAI GPT for comparison purposes.\nCritically, however, the BERT Transformer uses",
+            "metadata": {
+              "chunk_id": "33c362adeeae964cd6ea9ff0fd62e1d726eb26e8c98eeeab6d96dfa4f1b5b572",
+              "doc_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+              "end_index": 3605,
+              "page_number": 3,
+              "source_file": "bert.pdf",
+              "start_index": 3111
+            },
+            "truncated": false
+          }
+        ],
+        "warnings": [],
+        "complete": true,
+        "retrieval_seconds": 0.7755499589984538,
+        "type": "done",
+        "invalid_citation_ids": [],
+        "missing_citations": false,
+        "raw_answer": "## Answer\nBERT-base has 12 layers. [参考文档1]\n\n## Reference Sources\n[参考文档1]",
+        "model": "qwen2.5:7b",
+        "options": {
+          "temperature": 0.1,
+          "top_p": 0.9,
+          "top_k": 40,
+          "num_ctx": 8192,
+          "num_predict": 512,
+          "repeat_penalty": 1.0
+        },
+        "done_reason": "stop",
+        "usage": {
+          "prompt_eval_count": 782,
+          "eval_count": 26,
+          "total_duration": 3025014917,
+          "load_duration": 1243458,
+          "prompt_eval_duration": 1809939000,
+          "eval_duration": 1204433000
+        },
+        "elapsed_seconds": 3.8273052079966874
+      },
+      "app_run_seconds": 3.854716458998155,
+      "retrieval_calls": 1,
+      "llm_calls": 1
+    },
+    {
+      "index": 4,
+      "message": {
+        "question": "Answer in English: How many layers does BERT-base have? Cite [参考文档1] after the fact.",
+        "answer": "## Answer\nBERT-base has 12 layers. [参考文档1：bert.pdf；第3页（物理页码）]\n\n## 参考来源\n- [参考文档1] bert.pdf；第3页（物理页码）",
+        "citations": [
+          {
+            "id": 1,
+            "source_file": "bert.pdf",
+            "location": "第3页（物理页码）",
+            "text": "\nsuch as “The Annotated Transformer.”^{2}\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as\nH, and the number of self-attention heads as A.^{3}\nWe primarily report results on two model sizes:\nBERT_{BASE} (L=12, H=768, A=12, Total Param-\neters=110M) and BERT_{LARGE} (L=24, H=1024,\nA=16, Total Parameters=340M).\nBERT_{BASE} was chosen to have the same model\nsize as OpenAI GPT for comparison purposes.\nCritically, however, the BERT Transformer uses",
+            "metadata": {
+              "chunk_id": "33c362adeeae964cd6ea9ff0fd62e1d726eb26e8c98eeeab6d96dfa4f1b5b572",
+              "doc_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+              "end_index": 3605,
+              "page_number": 3,
+              "source_file": "bert.pdf",
+              "start_index": 3111
+            },
+            "truncated": false
+          }
+        ],
+        "warnings": [],
+        "complete": true,
+        "type": "done",
+        "invalid_citation_ids": [],
+        "missing_citations": false,
+        "raw_answer": "## Answer\nBERT-base has 12 layers. [参考文档1]\n\n## Reference Sources\n[参考文档1]",
+        "model": "qwen2.5:7b",
+        "options": {
+          "temperature": 0.1,
+          "top_p": 0.9,
+          "top_k": 40,
+          "num_ctx": 8192,
+          "num_predict": 512,
+          "repeat_penalty": 1.0
+        },
+        "done_reason": "stop",
+        "usage": {
+          "prompt_eval_count": 0,
+          "eval_count": 0,
+          "total_duration": 0,
+          "load_duration": 0,
+          "prompt_eval_duration": 0,
+          "eval_duration": 0
+        },
+        "original_usage": {
+          "prompt_eval_count": 782,
+          "eval_count": 26,
+          "total_duration": 3025014917,
+          "load_duration": 1243458,
+          "prompt_eval_duration": 1809939000,
+          "eval_duration": 1204433000
+        },
+        "cache": {
+          "hit": true,
+          "mode": "exact",
+          "similarity": 1.0,
+          "question": "Answer in English: How many layers does BERT-base have? Cite [参考文档1] after the fact."
+        },
+        "retrieval_seconds": 0.0,
+        "elapsed_seconds": 0.0030038750046514906
+      },
+      "app_run_seconds": 0.030504417001793627,
+      "retrieval_calls": 0,
+      "llm_calls": 0
+    },
+    {
+      "index": 5,
+      "message": {
+        "question": "Answer in English: How many layers are in BERT-base? Cite [参考文档1] after the fact.",
+        "answer": "## Answer\nBERT-base has 12 layers. [参考文档1：bert.pdf；第3页（物理页码）]\n\n## 参考来源\n- [参考文档1] bert.pdf；第3页（物理页码）",
+        "citations": [
+          {
+            "id": 1,
+            "source_file": "bert.pdf",
+            "location": "第3页（物理页码）",
+            "text": "\nsuch as “The Annotated Transformer.”^{2}\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as\nH, and the number of self-attention heads as A.^{3}\nWe primarily report results on two model sizes:\nBERT_{BASE} (L=12, H=768, A=12, Total Param-\neters=110M) and BERT_{LARGE} (L=24, H=1024,\nA=16, Total Parameters=340M).\nBERT_{BASE} was chosen to have the same model\nsize as OpenAI GPT for comparison purposes.\nCritically, however, the BERT Transformer uses",
+            "metadata": {
+              "chunk_id": "33c362adeeae964cd6ea9ff0fd62e1d726eb26e8c98eeeab6d96dfa4f1b5b572",
+              "doc_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+              "end_index": 3605,
+              "page_number": 3,
+              "source_file": "bert.pdf",
+              "start_index": 3111
+            },
+            "truncated": false
+          }
+        ],
+        "warnings": [],
+        "complete": true,
+        "type": "done",
+        "invalid_citation_ids": [],
+        "missing_citations": false,
+        "raw_answer": "## Answer\nBERT-base has 12 layers. [参考文档1]\n\n## Reference Sources\n[参考文档1]",
+        "model": "qwen2.5:7b",
+        "options": {
+          "temperature": 0.1,
+          "top_p": 0.9,
+          "top_k": 40,
+          "num_ctx": 8192,
+          "num_predict": 512,
+          "repeat_penalty": 1.0
+        },
+        "done_reason": "stop",
+        "usage": {
+          "prompt_eval_count": 0,
+          "eval_count": 0,
+          "total_duration": 0,
+          "load_duration": 0,
+          "prompt_eval_duration": 0,
+          "eval_duration": 0
+        },
+        "original_usage": {
+          "prompt_eval_count": 782,
+          "eval_count": 26,
+          "total_duration": 3025014917,
+          "load_duration": 1243458,
+          "prompt_eval_duration": 1809939000,
+          "eval_duration": 1204433000
+        },
+        "cache": {
+          "hit": true,
+          "mode": "semantic",
+          "similarity": 0.9932515103571479,
+          "question": "Answer in English: How many layers does BERT-base have? Cite [参考文档1] after the fact."
+        },
+        "retrieval_seconds": 0.0,
+        "elapsed_seconds": 0.022245082996960264
+      },
+      "app_run_seconds": 0.04984600000170758,
+      "retrieval_calls": 0,
+      "llm_calls": 0
+    }
+  ],
+  "invalidation": {
+    "deleted_chunks": 1,
+    "lookup_after_delete": null
+  },
+  "rendered_cache_notices": [
+    "上传文档后增量写入本地知识库；下方 RAG 问答使用混合检索与模型重排，本地模型逐步输出答案并补全文献引用。",
+    "缓存命中（相同问题），本次未调用检索、重排或生成模型。原问题：原始Transformer用了多少个注意力头？请在结论后标注[参考文档1]。",
+    "缓存命中（语义相似度 0.9877），本次未调用检索、重排或生成模型。原问题：原始Transformer用了多少个注意力头？请在结论后标注[参考文档1]。",
+    "缓存命中（相同问题），本次未调用检索、重排或生成模型。原问题：Answer in English: How many layers does BERT-base have? Cite [参考文档1] after the fact.",
+    "缓存命中（语义相似度 0.9933），本次未调用检索、重排或生成模型。原问题：Answer in English: How many layers does BERT-base have? Cite [参考文档1] after the fact."
+  ],
+  "rendered_metrics": [
+    "服务已结束 · 检索 1.14 秒 · 总耗时 12.46 秒 · 输入 Token 777 · 输出 Token 77",
+    "缓存已返回 · 检索 0.00 秒 · 总耗时 0.00 秒 · 输入 Token 0 · 输出 Token 0",
+    "缓存已返回 · 检索 0.00 秒 · 总耗时 0.02 秒 · 输入 Token 0 · 输出 Token 0",
+    "服务已结束 · 检索 0.78 秒 · 总耗时 3.83 秒 · 输入 Token 782 · 输出 Token 26",
+    "缓存已返回 · 检索 0.00 秒 · 总耗时 0.00 秒 · 输入 Token 0 · 输出 Token 0",
+    "缓存已返回 · 检索 0.00 秒 · 总耗时 0.02 秒 · 输入 Token 0 · 输出 Token 0"
+  ],
+  "loaded_models": {
+    "models": [
+      {
+        "name": "qwen2.5:7b",
+        "model": "qwen2.5:7b",
+        "size": 4979792280,
+        "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen2",
+          "families": [
+            "qwen2"
+          ],
+          "parameter_size": "7.6B",
+          "quantization_level": "Q4_K_M"
+        },
+        "expires_at": "2026-09-29T19:16:15.468076+08:00",
+        "size_vram": 4979792280,
+        "context_length": 8192
+      }
+    ]
+  },
+  "finished_at": "2026-09-29T19:11:15.584258+08:00"
+}
