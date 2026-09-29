@@ -1,7 +1,8 @@
-"""文档批量导入与向量检索页面；业务功能按课程模块逐步接入。"""
+"""批量导入、文档检索与本地 RAG 流式问答页面。"""
 
 import sys
 from pathlib import Path
+from time import perf_counter
 
 import streamlit as st
 
@@ -12,6 +13,8 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 from src.data_loader import LOADERS, create_import_tasks
+from src.generation.rag_pipeline import build_context
+from src.generation.streaming import stream_answer
 from src.retrieval.bm25_retriever import BM25Retriever
 from src.retrieval.hybrid_retriever import HybridRetriever
 from src.retrieval.vector_store import VectorStore, batch_build_index
@@ -25,7 +28,7 @@ max_file_size_mb = config["importing"]["max_file_size_mb"]
 st.set_page_config(page_title=app_config["name"], layout="wide")
 st.title(app_config["name"])
 st.caption(app_config["description"])
-st.info("上传文档后自动加载、分块、使用本地 M3E 批量向量化并写入 Chroma；新文档增量加入，重复块跳过。智能问答尚未接入。")
+st.info("上传文档后增量写入本地知识库；下方 RAG 问答使用混合检索与模型重排，本地模型逐步输出答案并补全文献引用。")
 
 # 导入状态仅存于当前页面会话，原始文件成功加载后保存到本地。
 if "import_tasks" not in st.session_state:
@@ -102,7 +105,7 @@ else:
     st.caption("在左侧选择文档后，点击“开始导入”。")
 
 st.subheader("文档 Top-K 检索")
-st.caption("搜索已持久化的知识库，返回相关文档块；可选向量、BM25、RRF 或 RRF + 模型重排。各类分数不可直接比较，也不是命中概率；当前不生成答案。")
+st.caption("此处只检索文档块；可选向量、BM25、RRF 或 RRF + 模型重排。各类分数不可直接比较，也不是命中概率。生成答案请使用下方 RAG 问答。")
 with st.form("vector_search_form"):
     method = st.selectbox("检索方式", ["向量相似度", "BM25 关键词", "RRF 混合检索", "RRF + 模型重排"], key="retrieval_method")
     query = st.text_input("查询内容（支持中英文）", key="vector_query")
@@ -157,18 +160,86 @@ if search_submitted:
                     st.caption(f"文档 ID：{metadata.get('doc_id', '')}；块 ID：{metadata.get('chunk_id', '')}")
                     st.text(document.page_content)
 
+st.subheader("RAG 流式问答")
+st.caption("每个问题独立检索 Top-K，再由本地 Ollama 生成；当前历史仅保留页面展示，不作为多轮推理上下文。引用对应实际文件和位置，原文证据可展开查看。")
+if "rag_messages" not in st.session_state:
+    st.session_state.rag_messages = []
+if st.button("清空当前对话", key="clear_rag_chat"):
+    st.session_state.rag_messages = []
+    st.rerun()
+
+
+def show_answer_details(message):
+    """历史与本轮共用完成状态、实际用量和原文证据展示。"""
+    if message.get("error"):
+        st.error(f"回答未完成：{message['error']}。已保留部分文本；请检查本地服务或配置后重新提交问题。")
+    elif message.get("complete"):
+        usage = message["usage"]
+        st.caption(f"服务已结束 · 检索 {message['retrieval_seconds']:.2f} 秒 · "
+                   f"总耗时 {message['elapsed_seconds']:.2f} 秒 · "
+                   f"输入 Token {usage['prompt_eval_count']} · 输出 Token {usage['eval_count']}")
+    for warning in message.get("warnings", []):
+        st.warning(warning)
+    for reference in message["citations"]:
+        with st.expander(f"参考文档{reference['id']} · {reference['source_file'] or '来源信息未提供'} · {reference['location']}"):
+            st.caption(f"块 ID：{reference['metadata'].get('chunk_id', '')}；仅展示本轮送入模型的原文证据。")
+            st.text(reference["text"])
+
+
+for message in st.session_state.rag_messages:
+    with st.chat_message("user"):
+        st.write(message["question"])
+    with st.chat_message("assistant"):
+        st.markdown(message["answer"])
+        show_answer_details(message)
+
+question = st.chat_input("询问已上传论文（支持中英文）", key="rag_question")
+if question and question.strip():
+    message = {"question": question, "answer": "", "citations": [], "warnings": [], "complete": False}
+    started = perf_counter()
+    with st.chat_message("user"):
+        st.write(question)
+    with st.chat_message("assistant"):
+        answer_placeholder = st.empty()
+        try:
+            with st.spinner("正在检索本地文献…"):
+                results = HybridRetriever().search(question, k=config["retrieval"]["top_k"], rerank=True)
+                context = build_context(question, results)
+            message["retrieval_seconds"] = perf_counter() - started
+            if not results:
+                st.info("当前知识库中未找到相关文档；以下回答没有文献依据。")
+            answer_placeholder.markdown("正在等待本地模型输出…")
+            # 采用完整快照替换占位区，引用闭合后立即补全；不是先等全文再模拟打字。
+            for event in stream_answer(question, context):
+                if event["type"] == "token":
+                    message["answer"], message["citations"] = event["answer"], event["citations"]
+                    answer_placeholder.markdown(event["answer"] + " ▌")
+                else:
+                    message.update(event)
+                    message["complete"] = event["type"] == "done"
+            if not message["complete"] and not message.get("message"):
+                raise RuntimeError("生成流未返回完成标记")
+            if message.get("type") == "error":
+                message["error"] = message["message"]
+        except Exception as error:
+            message["error"] = f"{type(error).__name__}: {error}"
+        message["elapsed_seconds"] = perf_counter() - started
+        answer_placeholder.markdown(message["answer"])
+        show_answer_details(message)
+    st.session_state.rag_messages.append(message)
+
 st.subheader("模块开发状态")
 st.table(
     [
         {"模块": "一：文档处理与检索", "状态": "部分实现", "范围": "已实现批量导入、分块、增量索引、向量/BM25/RRF 与模型重排；三档质量已评测，分块召回对比待完成"},
-        {"模块": "二：RAG 生成", "状态": "部分实现", "范围": "已实现 Prompt、上下文/引用与本地非流式生成，完成参数对照；页面问答、流式、缓存、降级、日志待完成"},
+        {"模块": "二：RAG 生成", "状态": "部分实现", "范围": "已实现 Prompt、上下文/引用、本地生成及流式页面，完成参数对照；缓存、完整降级、日志待完成"},
         {"模块": "三：Agent 决策", "状态": "未实现", "范围": "ReAct、工具、路由、恢复、记忆"},
-        {"模块": "四：系统集成与前端", "状态": "部分实现", "范围": "已有文档入库与向量搜索界面，问答、文献管理与联调待开发"},
+        {"模块": "四：系统集成与前端", "状态": "部分实现", "范围": "已有文档入库、检索与 RAG 流式问答；Agent、持久会话、文献管理与完整联调待开发"},
         {"模块": "五：评测与交付", "状态": "部分实现", "范围": "已有三档检索实测、图表与 Excel；完整系统评测待完成"},
     ]
 )
 st.subheader("下一步")
-st.write("三档检索评测已完成，后续继续分块召回对比与 RAG 生成层开发。")
+st.write("后续继续语义缓存、完整降级与日志；分块召回对比和 Agent 等课程要求仍保留。")
 with st.sidebar:
     st.header("课程资料")
     st.write("南京农业大学生产实习课程实践")

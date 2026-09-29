@@ -1,4 +1,4 @@
-"""上下文拼接、截断、本地非流式生成与答案引用溯源。"""
+"""上下文拼接、截断、本地生成共用逻辑与答案引用溯源。"""
 
 from copy import deepcopy
 import math
@@ -14,12 +14,9 @@ from src.generation.prompt_template import NO_CONTEXT_TEXT, build_rag_messages
 from src.utils.config import load_config
 
 
-def generate_answer(question: str, context: dict, *, options: dict | None = None) -> dict:
-    """使用 YAML 选定参数调用本地 Ollama，再用同一轮上下文补全文献引用。
-
-    options 仅供参数实验覆盖；不包含检索 top_k。只调用非流式原生接口，
-    不创建额外服务，不在失败时转云端；流式、缓存和完整检索流水线后续接入。
-    """
+def _build_generation_request(question: str, context: dict, options: dict | None = None,
+                              *, stream: bool = False) -> tuple[Request, dict]:
+    """流式和非流式共用消息及参数校验，避免出现两套模型配置。"""
     config = load_config()["llm"]
     url = urlparse(config["base_url"])
     if config["provider"] != "ollama" or url.scheme != "http" or url.hostname not in {
@@ -44,18 +41,31 @@ def generate_answer(question: str, context: dict, *, options: dict | None = None
     if "seed" in sampling and type(sampling["seed"]) is not int:
         raise ValueError("seed 必须为整数")
     messages = build_rag_messages(question, context["context"])
-    payload = {"model": config["model"], "stream": False, "options": sampling,
+    payload = {"model": config["model"], "stream": stream, "options": sampling,
                "messages": [{"role": "user" if message.type == "human" else message.type,
                              "content": message.content} for message in messages]}
     request = Request(config["base_url"].rstrip("/") + "/api/chat",
                       data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
                       headers={"Content-Type": "application/json"}, method="POST")
+    return request, sampling
+
+
+def generate_answer(question: str, context: dict, *, options: dict | None = None) -> dict:
+    """按 YAML 调用本地非流式 Ollama，再用同轮 Context 补全文献引用。
+
+    options 仅供参数实验覆盖；不包含检索 top_k，不创建额外业务服务。
+    """
+    request, sampling = _build_generation_request(question, context, options)
     try:
         with urlopen(request, timeout=300) as response:
             result = json.load(response)
     except (URLError, TimeoutError) as error:
         raise RuntimeError("本地 Ollama 调用失败，请检查服务、模型和超时情况") from error
-    # 不把错误响应、未完成响应或空文本当作有效答案；保留 length 终止供评测识别。
+    return _finish_generation(result, context, sampling)
+
+
+def _finish_generation(result: dict, context: dict, sampling: dict) -> dict:
+    """两种生成方式共用终止检查、引用映射和服务实际用量。"""
     raw_answer = result.get("message", {}).get("content", "")
     if result.get("error") or not result.get("done") or not raw_answer.strip():
         raise RuntimeError("本地 Ollama 未返回完整的非空答案")
@@ -212,7 +222,8 @@ def resolve_citations(answer: str, context: dict) -> dict:
             lines.append(line)
             continue
         # 该标题是 Prompt 约定的末尾来源区；由真实映射重建，不解析模型的页码。
-        if re.fullmatch(r"##[ \t]+参考来源[ \t]*(?:\r?\n)?", line):
+        if re.fullmatch(r"##[ \t]+(?:参考来源|References|Reference Sources|Sources)[ \t]*(?:\r?\n)?",
+                        line, re.I):
             break
         cursor = 0
         for code in re.finditer(r"(`+).*?\1", line):

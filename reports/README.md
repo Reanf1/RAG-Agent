@@ -35,3 +35,9 @@
 [QA与选型](../docs/QA/5.2.1%20生成参数对比与选择.md)：六篇真实中英文论文片段、10题、八组、两种子、160条本地Qwen2.5:7b回答，选择 T=0.1/p=0.9/k=40。保存 [实验输入](生成参数评测集.json)、[全部原始答案与用量](生成参数对比结果.json)、[Codex开发审阅](生成参数答案审阅.json)、[图表](生成参数质量对比.png)、[实验脚本](compare_generation.py) 和 [绘图脚本](plot_generation.py)。关键事实覆盖不等于正确率，正文编号覆盖不等于引用语义准确率；当前引用与格式缺陷明确保留，尚无独立人工打分。
 
 复测使用 `.venv/bin/python reports/compare_generation.py --output /private/tmp/生成参数复测.json`，避免覆盖历史答案。`--rescore` 仅重算默认结果的评分，`plot_generation.py` 仅绘制默认结果。此次固定提供标注相关片段，不重跑检索；正式 `评测集.json` 仍为空数组，不能用该控制实验替代50+端到端评测。
+
+## 流式与页面验证
+
+[流式 QA](../docs/QA/5.2.2%20流式输出与引用.md)：[verify_streaming.py](verify_streaming.py) 使用真实本地 Qwen，保存[片段、引用时序和最终答案](流式与引用验证结果.json)。三个固定真实上下文输入中，两题引用在结束前出现，一题只有英文末尾编号，正确提示正文缺引用。复测先启动本地 Ollama，再运行 `.venv/bin/python reports/verify_streaming.py --output /private/tmp/流式复测.json`，已有结果不覆盖。
+
+另保存真实 M3E/Chroma/RRF/BGE/Qwen 的[浏览器验证结果](流式页面验证结果.json)、[生成中截图](流式问答生成中.png)和[完成截图](流式问答完成.png)。验证显示动态引用和原文面板；该检索样例漏召回头数/维度事实块，答案未答出数字，不当作答案质量达标或独立人工评分。
