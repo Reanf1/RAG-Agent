@@ -53,7 +53,7 @@ class VectorStore:
                     "hnsw:num_threads": retrieval["index_threads"]}
         self._store = Chroma(
             collection_name=retrieval["collection_name"],
-            embedding_function=embeddings if embeddings is not None else get_embeddings(),
+            embedding_function=embeddings,
             persist_directory=str(directory.resolve()),
             client_settings=Settings(is_persistent=True, anonymized_telemetry=False),
             collection_metadata=expected,
@@ -62,6 +62,11 @@ class VectorStore:
         actual = self._store._collection.metadata or {}
         if any(actual.get(key) != value for key, value in expected.items()):
             raise ValueError("已有索引的模型版本或索引参数与配置不一致，请使用新索引目录重建")
+
+    def _ensure_embeddings(self):
+        """只有向量写入/查询才加载模型，BM25 读取正文无需准备权重。"""
+        if self._store.embeddings is None:
+            self._store._embedding_function = get_embeddings()
 
     def count(self) -> int:
         """返回真实块数；数据库异常直接上报，不把错误伪装成空库。"""
@@ -84,6 +89,7 @@ class VectorStore:
             existing = set(self._store.get(ids=ids, include=[])["ids"])
             new = [chunk for chunk in batch if chunk.metadata["chunk_id"] not in existing]
             if new:
+                self._ensure_embeddings()
                 self._store.add_documents(new, ids=[chunk.metadata["chunk_id"] for chunk in new])
                 added += len(new)
         return added
@@ -112,6 +118,7 @@ class VectorStore:
         count = len(self._store.get(where=where, include=[])["ids"]) if where else self.count()
         if count == 0:
             return []
+        self._ensure_embeddings()
         results = self._store.similarity_search_with_score(query, k=min(k, count), filter=where)
         return [(document, 1 - distance) for document, distance in results]
 

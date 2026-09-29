@@ -2,7 +2,7 @@
 
 基于 RAG + Agent 的论文知识库问答系统，依据南京农业大学生产实习课程要求建设。
 
-当前已实现 PDF、Word（.docx）及 TXT/Markdown 加载，以及 Streamlit 批量上传、进度显示、状态追踪和失败项重试。固定、递归、句段三种分块、本地 Embedding 和 Chroma 操作封装已实现；上传后自动分块、批量向量化并增量构建索引，页面支持向量相似度 Top-K 检索，共 113 个测试通过。PDF 已补常见双栏排序、表格与续表处理、公式符号/上下标及原文定位。Embedding 经人工智能论文中英双语基准重新比较后保留 M3E-base；跨语言质量仍不足。导入成功表示原文已保存、全部预期块已处理并写入索引；重复块跳过，新文献追加，混合检索、生成与 Agent 仍待实现。实现说明见 [PDF 加载器选择](docs/QA/5.1.1%20PDF加载器选择.md)、[Word 和纯文本加载](docs/QA/5.1.1%20Word与纯文本加载器实现.md)、[批量文档导入](docs/QA/5.1.1%20批量文档导入与状态追踪.md)、[学术 PDF 解析优化](docs/QA/5.1.2%20学术论文PDF解析优化.md)、[三种文本分块策略](docs/QA/5.1.2%20三种文本分块策略.md)、[Embedding 对比和选择](docs/QA/5.1.3%20Embedding模型对比与选择.md)、[向量数据库对比和选择](docs/QA/5.1.3%20向量数据库对比与选择.md)、[批量向量化及增量索引](docs/QA/5.1.3%20批量向量化与增量索引.md) 与 [向量 Top-K 检索](docs/QA/5.1.3%20向量相似度Top-K检索.md)。
+当前已实现 PDF、Word（.docx）及 TXT/Markdown 加载，以及 Streamlit 批量上传、进度显示、状态追踪和失败项重试。固定、递归、句段三种分块、本地 Embedding 和 Chroma 操作封装已实现；上传后自动分块、批量向量化并增量构建索引，页面支持向量与 BM25 Top-K 检索，共 128 个测试通过。PDF 已补常见双栏排序、表格与续表处理、公式符号/上下标及原文定位。Embedding 经人工智能论文中英双语基准重新比较后保留 M3E-base；跨语言质量仍不足。导入成功表示原文已保存、全部预期块已处理并写入索引；重复块跳过，新文献追加，混合检索、生成与 Agent 仍待实现。实现说明见 [PDF 加载器选择](docs/QA/5.1.1%20PDF加载器选择.md)、[Word 和纯文本加载](docs/QA/5.1.1%20Word与纯文本加载器实现.md)、[批量文档导入](docs/QA/5.1.1%20批量文档导入与状态追踪.md)、[学术 PDF 解析优化](docs/QA/5.1.2%20学术论文PDF解析优化.md)、[三种文本分块策略](docs/QA/5.1.2%20三种文本分块策略.md)、[Embedding 对比和选择](docs/QA/5.1.3%20Embedding模型对比与选择.md)、[向量数据库对比和选择](docs/QA/5.1.3%20向量数据库对比与选择.md)、[批量向量化及增量索引](docs/QA/5.1.3%20批量向量化与增量索引.md)、[向量 Top-K 检索](docs/QA/5.1.3%20向量相似度Top-K检索.md) 与 [BM25 关键词检索](docs/QA/5.1.4%20BM25关键词检索.md)。
 
 ## 课程依据
 
@@ -98,7 +98,7 @@ print(len(vectors), len(query_vector))  # 查询向量为 768 维，向量已归
 ```python
 from src.retrieval.vector_store import VectorStore
 
-store = VectorStore()  # 首次加载本地 M3E；Chroma 文件保存在 data/index/。
+store = VectorStore()  # 打开本地 Chroma；新增块或有效向量查询时才加载 M3E。
 print("新增块数：", store.add_chunks(chunks))  # 重复导入跳过已有 chunk_id。
 for document, score in store.search("论文使用了什么方法？"):
     print(document.metadata["source_file"], score, document.page_content)
@@ -109,7 +109,7 @@ print("库中块数：", store.count())
 
 两库实测、默认参数不足与最终选择见 [向量数据库 QA](docs/QA/5.1.3%20向量数据库对比与选择.md)。FAISS 仅用于独立实验，不是业务运行依赖。上传页面已自动构建索引，也可通过 `batch_build_index()` 完成多文件入库，见 [批量索引 QA](docs/QA/5.1.3%20批量向量化与增量索引.md)。
 
-页面中的“向量相似度 Top-K 检索”可直接搜索已持久化的知识库：输入中英文问题、设置 K（默认 5），可填写文档 ID 限定范围。结果按余弦相似度降序展示正文、文件名和来源位置；不足 K 个时返回全部匹配块。分数不是命中概率，当前返回片段，尚不生成答案。Python 接口为 `store.search(query, k=5, doc_id=None)`，详见 [Top-K QA](docs/QA/5.1.3%20向量相似度Top-K检索.md)。
+页面中的“文档 Top-K 检索”可选择向量相似度或 BM25 关键词检索，输入中英文问题、设置 K（默认 5），并可填写文档 ID 限定范围。两者均按各自分数降序展示正文、文件名和来源位置；分数不可直接比较，也不是命中概率。向量接口为 `store.search(query, k=5, doc_id=None)`；关键词接口为 `BM25Retriever().search(query, k=5, doc_id=None)`。BM25 从 Chroma 正文重建内存索引，无需 Embedding 权重；Python 长期复用实例时，在新增/删除后调用 `rebuild()`，页面每次提交自动读取最新语料。英文按词、中文按单字，支持全角字符归一化；没有词项交集返回空列表，命中结果保留零分/负分。说明见 [Top-K QA](docs/QA/5.1.3%20向量相似度Top-K检索.md) 与 [BM25 QA](docs/QA/5.1.4%20BM25关键词检索.md)。当前返回片段，尚不生成答案。
 
 ## 交付文档
 

@@ -1,0 +1,180 @@
+{
+  "verified_at": "2026-09-29T13:44:49.573310+08:00",
+  "python": "3.10.10",
+  "rank_bm25_version": "0.2.2",
+  "scenario": "已有中英 AI 论文语料 BM25 功能验证，不是问答质量或性能对比",
+  "sample_sha256": "63c22eddcf08f05b809dd888b4794993ea0364edf7d43d0c442e16ae76342707",
+  "corpus_chunks": 821,
+  "searchable_chunks": 821,
+  "excluded_no_tokens": 0,
+  "papers": 6,
+  "bm25": {
+    "algorithm": "BM25Okapi",
+    "k1": 1.5,
+    "b": 0.75,
+    "epsilon": 0.25,
+    "tokenizer": "英文/数字按词并小写，中文按单字，沿用固定参考仓库",
+    "normalization": "Unicode NFKC，仅用于词项，不改原文"
+  },
+  "embedding_model_loaded": false,
+  "query_vectors_computed": 0,
+  "cached_document_vectors": "仅用于临时 Chroma 写入正文，不参与 BM25 计分",
+  "cached_vectors_sha256": "da1e574184a448f4d3b9cc6b66149c141fcf188ef05da2bb01f0dea714648903",
+  "reopen_results_equal": true,
+  "document_filter_verified": true,
+  "empty_and_unknown_queries_verified": true,
+  "deleted_bert_chunks": 154,
+  "remaining_after_rebuild": 667,
+  "remaining_stored_chunks": 667,
+  "checks": [
+    {
+      "query": "Adam",
+      "k": 5,
+      "matched_chunks": 16,
+      "returned": 5,
+      "descending": true,
+      "source_preserved": true,
+      "ids": [
+        "95bfe4ba3a65be5126fb6dfd69ef261100462258380d96c210fc70c7ac00e549",
+        "a921dfbbbaf60090c63ec877b3f3ba1fdb06103786acfc097b2f87ca7d71ec44",
+        "e0b1e365d6e2b3f5fd9c27771f51e676b8241272f16bf6c8c08f2ed67888cca0",
+        "35cf30cef3f1df400f0ee381b47deb5fb79a02bd8e04d4c05d12ec943aaa4888",
+        "f9b221c961929e22d4f078fc14ac1473bf780834a1915aa74519dda4b1798bc5"
+      ],
+      "scores": [
+        7.146099253324409,
+        6.672658178567154,
+        6.29031204160694,
+        6.257009220432138,
+        5.090192073035225
+      ]
+    },
+    {
+      "query": "Transformer",
+      "k": 5,
+      "matched_chunks": 168,
+      "returned": 5,
+      "descending": true,
+      "source_preserved": true,
+      "ids": [
+        "ac03dc81db60eade776b972586adf708aedfeabaa13f870a873c843444b62f7f",
+        "e8d0118f0928e1fef19348b03ad45697f804e8f9b7e5f6288afcb9ac3e6cbddb",
+        "9e9acdbba6f720d3d5d743203fd149d3f8e84a050cd4d12cdbfebbb3782e62b3",
+        "e9421d560c4aef147dd3372395048bb2d712d95a5ac1e433dd7db157a0614db9",
+        "4377c8dddb67f34cee6385cfafa4278324626031dca927d8d7abdc8e5173a31d"
+      ],
+      "scores": [
+        2.7150442863156004,
+        2.658299841349849,
+        2.5946892152415493,
+        2.5892535987494663,
+        2.5238268633958647
+      ]
+    },
+    {
+      "query": "BERT",
+      "k": 5,
+      "matched_chunks": 73,
+      "returned": 5,
+      "descending": true,
+      "source_preserved": true,
+      "ids": [
+        "101db84f6127af853fff40cad2780df5f09768cdf075948fd924c389f4d8f753",
+        "6b9fb5b55ed52f2e4c86de178159c7cd6ff6171c4345dd1a6e9ba6291e115d7d",
+        "33c362adeeae964cd6ea9ff0fd62e1d726eb26e8c98eeeab6d96dfa4f1b5b572",
+        "19d0b670dc568d5ff73d8316d2203a7d2ac071b21799b7ef4f91a16da2c0ba7a",
+        "f106e1ebcbfadf65b33b2ab850ff4d4adfe7d289e1aeb386583eef7b2609110d"
+      ],
+      "scores": [
+        4.808542993619247,
+        4.544325006798471,
+        4.537018250157376,
+        4.333569020568997,
+        4.324713247000246
+      ]
+    },
+    {
+      "query": "卷积",
+      "k": 5,
+      "matched_chunks": 140,
+      "returned": 5,
+      "descending": true,
+      "source_preserved": true,
+      "ids": [
+        "5cef218475fb35dbda4e0819bedf99a8a5167043c92a1d5f5412cf3943263d3f",
+        "b82e65b526fbd40e7030bf1871961ea1bb609645a0b020b13f7c3317d034b74c",
+        "25088ebfcbb2ed411e356c6a16e9f47a2ad052c3e1cb792cfa68f0c0bddc890d",
+        "59cf668d4f71084d87b125c9e3b2bfe98432171b3c1f82b84c779c173e714939",
+        "643311f2d6d503e9fad14de964126617ad6e4d78dbf8aae299c53fe55e0adac1"
+      ],
+      "scores": [
+        6.826572687255551,
+        6.77151804597877,
+        6.681564618383938,
+        6.650014843877711,
+        6.6418084814556675
+      ]
+    },
+    {
+      "query": "注意力",
+      "k": 5,
+      "matched_chunks": 116,
+      "returned": 5,
+      "descending": true,
+      "source_preserved": true,
+      "ids": [
+        "f5e33198e92930ade852511a4946f777fb145e3d5f75000a248c3e2c763a3558",
+        "37c56a4b86deb9431f5f1ad5bd5904c6accca31bc8871940e6ac5a29263e9cab",
+        "3e9ac45fc11f6ad82523dc65b13273e5cf4fe2e48a010b6257a791a670cc941f",
+        "4ee4a24a628e2d711d76fe4c8a56b17feb0391d0f7522ac6acf6fe4137f10237",
+        "36bcd9a8b40b5e7c6ae7fc5861ee9fbadf24a97cdc122ee1db36679bb08d4463"
+      ],
+      "scores": [
+        13.856496702315537,
+        13.334899978620136,
+        13.17221040607961,
+        13.148163989221135,
+        12.990852280722132
+      ]
+    },
+    {
+      "query": "正则化",
+      "k": 5,
+      "matched_chunks": 174,
+      "returned": 5,
+      "descending": true,
+      "source_preserved": true,
+      "ids": [
+        "20032aa5fa82c5c62a77a4e8c6bc238c6b0657af8726a98a84b92aac2936ce8f",
+        "eaffa99c94da7c585a9ed4029a786354b8e8f5358e57963e44644712addc77ca",
+        "42b4f550385e890ae60abca739398fa4520b23e0766af5d9cdad7b45da2636bc",
+        "1c3d229c932b44dc896bb5a96796bd811edd3c4657437366862e663732f03ec5",
+        "3e71610185c9e92ba0f4d25d6c5664d420d006b9cb6f84bf8faf8208a3d64f3a"
+      ],
+      "scores": [
+        7.411674803339752,
+        7.396104616842428,
+        6.570789294885038,
+        6.378348243734293,
+        5.968425578218089
+      ]
+    },
+    {
+      "query": "BatchNormalization",
+      "k": 5,
+      "matched_chunks": 0,
+      "returned": 0,
+      "descending": true,
+      "source_preserved": true,
+      "ids": [],
+      "scores": []
+    }
+  ],
+  "tokenless_chunks_before_nfkc": 42,
+  "real_m3e_vector_regression": {
+    "written_chunks": 2,
+    "vector_search_returned": 2,
+    "readonly_bm25_without_model": true,
+    "duplicate_added": 0
+  }
+}
