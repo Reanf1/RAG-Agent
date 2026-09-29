@@ -28,7 +28,7 @@ from src.chunking import split_documents
 from src.chunking.fixed_chunk import split_fixed
 from src.chunking.recursive_chunk import split_recursive
 from src.chunking.semantic_chunk import split_semantic
-from src.retrieval.vector_store import VectorStore, get_embeddings
+from src.retrieval.vector_store import VectorStore, batch_build_index, get_embeddings
 
 
 class SmallEmbeddings(Embeddings):
@@ -1193,18 +1193,191 @@ class TestBatchImport(unittest.TestCase):
         self.assertEqual(tasks[0]["status"], "success")
 
 
-class TestImportFrontend(unittest.TestCase):
-    """用 Streamlit 的真实上传组件驱动页面，隔离保存目录。"""
+class TestBatchIndex(unittest.TestCase):
+    """真实加载器/分块/Chroma 联调；二维向量用于核对是否重复编码。"""
 
     def setUp(self):
         self.directory = tempfile.TemporaryDirectory()
         self.addCleanup(self.directory.cleanup)
-        config = {"app": {"name": "智能科研助理", "description": "导入测试"},
-                  "paths": {"raw_documents": self.directory.name},
-                  "importing": {"max_file_size_mb": 20}}
-        configuration = patch("src.utils.config.load_config", return_value=config)
-        configuration.start()
-        self.addCleanup(configuration.stop)
+        self.raw_dir = Path(self.directory.name) / "raw"
+        self.embeddings = SmallEmbeddings()
+        self.store = VectorStore(Path(self.directory.name) / "index", self.embeddings)
+
+    def run_batch(self, tasks, **kwargs):
+        """复用实际入库流程与真实临时数据库。"""
+        return list(batch_build_index(tasks, self.raw_dir, vector_store=self.store, **kwargs))
+
+    def test_all_formats_complete_index_and_keep_sources(self):
+        """四类真实文件完成整个流程，只有写入索引后才标记成功。"""
+        word = WordDocument()
+        word.add_paragraph("Word 神经网络摘要")
+        buffer = io.BytesIO()
+        word.save(buffer)
+        with pymupdf.open() as pdf:
+            pdf.new_page().insert_text((72, 72), "PDF neural network")
+            pdf_data = pdf.tobytes()
+        tasks = create_import_tasks([("论文.pdf", pdf_data), ("论文.docx", buffer.getvalue()),
+                                     ("论文.txt", "农业论文正文".encode()), ("论文.md", b"# AI paper")])
+        progress = self.run_batch(tasks)
+        self.assertEqual(progress[-1], {"completed": 4, "total": 4})
+        self.assertTrue(all(task["status"] == "success" and task["indexed"] for task in tasks))
+        self.assertEqual(self.store.count(), sum(task["chunk_count"] for task in tasks))
+        for task in tasks:
+            self.assertEqual(task["attempts"], 1)
+            self.assertEqual(task["processed_chunks"], task["chunk_count"])
+            self.assertEqual(task["added_chunks"], task["chunk_count"])
+            for document in self.store.list_chunks(task["documents"][0].metadata["doc_id"]):
+                self.assertEqual(document.metadata["source"], task["path"])
+                self.assertEqual(document.metadata["source_file"], task["name"])
+
+    def test_new_document_keeps_old_index_and_only_encodes_new(self):
+        """新增一篇文献保留旧块，重新构造客户端不重算旧向量。"""
+        first = create_import_tasks([("first.md", b"# Neural network")])
+        self.run_batch(first)
+        old_chunks = self.store.list_chunks()
+        other_embeddings = SmallEmbeddings()
+        reopened = VectorStore(Path(self.directory.name) / "index", other_embeddings)
+        second = create_import_tasks([("second.txt", "农业论文".encode())])
+        list(batch_build_index(second, self.raw_dir, vector_store=reopened))
+        self.assertEqual(other_embeddings.document_calls, [["农业论文"]])
+        self.assertEqual(reopened.count(), 2)
+        self.assertEqual(reopened.list_chunks(old_chunks[0].metadata["doc_id"]), old_chunks)
+
+    def test_repeated_and_recreated_tasks_do_not_encode_old_chunks(self):
+        """页面重跑跳过完成任务，重新上传相同原文也不重新编码。"""
+        files = [("paper.txt", b"Neural network")]
+        tasks = create_import_tasks(files)
+        self.run_batch(tasks)
+        with patch("src.data_loader.load_document") as loader:
+            self.assertEqual(self.run_batch(tasks), [{"completed": 0, "total": 0}])
+            loader.assert_not_called()
+        again = create_import_tasks(files)
+        self.run_batch(again)
+        self.assertTrue(again[0]["indexed"])
+        self.assertEqual(again[0]["added_chunks"], 0)
+        self.assertEqual(self.store.count(), 1)
+        self.assertEqual(self.embeddings.document_calls, [["Neural network"]])
+
+    def test_index_error_keeps_loaded_file_and_retry_skips_loading(self):
+        """一个索引错误不阻断下一文档，重试保留加载结果并跳过成功任务。"""
+        tasks = create_import_tasks([("retry.txt", b"First"), ("good.txt", b"Second")])
+        real_add = self.store.add_chunks
+
+        def fail_first(chunks):
+            if chunks[0].metadata["source_file"] == "retry.txt":
+                raise OSError("索引暂时不可写")
+            return real_add(chunks)
+
+        with patch.object(self.store, "add_chunks", side_effect=fail_first):
+            self.run_batch(tasks)
+        self.assertEqual([task["status"] for task in tasks], ["failed", "success"])
+        self.assertTrue(Path(tasks[0]["path"]).is_file())
+        self.assertTrue(tasks[0]["documents"])
+        with patch("src.data_loader.load_document", side_effect=AssertionError("不应重载")):
+            progress = self.run_batch(tasks, retry_failed=True)
+        self.assertEqual(progress[-1], {"completed": 1, "total": 1})
+        self.assertEqual([task["attempts"] for task in tasks], [2, 1])
+        self.assertEqual(tasks[0]["error"], "")
+        self.assertTrue(all(task["indexed"] for task in tasks))
+        self.assertEqual(self.store.count(), 2)
+
+    def test_partial_batch_failure_only_retries_missing_chunks(self):
+        """第 501 块故障后保留前 500 块，下一次只编码剩余块。"""
+        tasks = create_import_tasks([("large.txt", ("神经网络。\n\n" * 200).encode())])
+        from src.chunking.fixed_chunk import split_fixed
+
+        # 小窗口获得 501+ 个真实原文块，便于验证批次边界而不加载真实大模型。
+        with patch("src.chunking.split_documents", side_effect=lambda docs: split_fixed(docs, 2, 0)):
+            real_add = self.store.add_chunks
+            calls = 0
+
+            def fail_second(chunks):
+                nonlocal calls
+                calls += 1
+                if calls == 2:
+                    raise OSError("第二批失败")
+                return real_add(chunks)
+
+            with patch.object(self.store, "add_chunks", side_effect=fail_second):
+                self.run_batch(tasks)
+            self.assertEqual(tasks[0]["status"], "failed")
+            self.assertFalse(tasks[0]["indexed"])
+            self.assertEqual(tasks[0]["processed_chunks"], 500)
+            self.assertEqual(self.store.count(), 500)
+            self.run_batch(tasks, retry_failed=True)
+        count = tasks[0]["chunk_count"]
+        self.assertGreater(count, 500)
+        self.assertEqual(tasks[0]["status"], "success")
+        self.assertEqual(self.store.count(), count)
+        self.assertEqual(tasks[0]["added_chunks"], count - 500)
+        self.assertEqual(sum(len(call) for call in self.embeddings.document_calls), count)
+
+    def test_stage_progress_and_interrupted_index_resume(self):
+        """观察分块/索引阶段；进度中断后可恢复，不误标为成功。"""
+        tasks = create_import_tasks([("paper.txt", b"Neural network")])
+        events = batch_build_index(tasks, self.raw_dir, vector_store=self.store)
+        statuses = []
+        for _ in events:
+            statuses.append(tasks[0]["status"])
+            if tasks[0]["status"] == "indexing":
+                break
+        events.close()
+        self.assertIn("loading", statuses)
+        self.assertIn("chunking", statuses)
+        self.assertFalse(tasks[0]["indexed"])
+        self.run_batch(tasks)
+        self.assertTrue(tasks[0]["indexed"])
+        self.assertEqual(self.store.count(), 1)
+
+    def test_loading_failures_and_empty_batch_do_not_initialize_model(self):
+        """空批次/解码失败无需模型，也不创建索引；加载错误仍可有界重试。"""
+        with patch("src.retrieval.vector_store.VectorStore") as factory:
+            self.assertEqual(list(batch_build_index([], self.raw_dir)), [{"completed": 0, "total": 0}])
+            tasks = create_import_tasks([("bad.txt", b"\xff")])
+            list(batch_build_index(tasks, self.raw_dir))
+            list(batch_build_index(tasks, self.raw_dir, retry_failed=True))
+            factory.assert_not_called()
+        self.assertEqual(tasks[0]["attempts"], 2)
+        self.assertIn("UnicodeDecodeError", tasks[0]["error"])
+
+    def test_loaded_documents_can_be_indexed_without_reload(self):
+        """原始加载接口的成功任务也可继续进入索引阶段。"""
+        tasks = create_import_tasks([("paper.txt", b"Neural network")])
+        list(batch_import(tasks, self.raw_dir))
+        with patch("src.data_loader.load_document", side_effect=AssertionError("不应重载")):
+            self.run_batch(tasks)
+        self.assertTrue(tasks[0]["indexed"])
+        self.assertEqual(tasks[0]["attempts"], 2)
+
+    def test_empty_content_after_loading_is_not_index_success(self):
+        """加载后没有有效分块不能算索引成功；保留原文供用户核对。"""
+        tasks = create_import_tasks([("paper.txt", b"Neural network")])
+        with patch("src.chunking.split_documents", return_value=[]):
+            self.run_batch(tasks)
+        self.assertEqual(tasks[0]["status"], "failed")
+        self.assertFalse(tasks[0]["indexed"])
+        self.assertTrue(Path(tasks[0]["path"]).is_file())
+        self.assertIn("没有可索引", tasks[0]["error"])
+        self.assertEqual(self.embeddings.document_calls, [])
+
+
+class TestImportFrontend(unittest.TestCase):
+    """真实上传组件与 Chroma，隔离原文/索引；小型向量隔离大模型。"""
+
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        from src.utils.config import load_config
+        config = load_config()
+        config["paths"]["raw_documents"] = str(Path(self.directory.name) / "raw")
+        config["paths"]["vector_index"] = str(Path(self.directory.name) / "index")
+        self.embeddings = SmallEmbeddings()
+        for target, value in (("src.utils.config.load_config", config),
+                              ("src.retrieval.vector_store.load_config", config),
+                              ("src.retrieval.vector_store.get_embeddings", self.embeddings)):
+            patcher = patch(target, return_value=value)
+            patcher.start()
+            self.addCleanup(patcher.stop)
         from streamlit.testing.v1 import AppTest
         app_path = Path(__file__).resolve().parents[1] / "src/frontend/app.py"
         # 新环境首次加载界面依赖较慢，避免默认 3 秒等待导致误报。
@@ -1214,6 +1387,13 @@ class TestImportFrontend(unittest.TestCase):
         """实际操作上传/按钮，核验混合结果、完整进度和重跑不重复执行。"""
         app = self.app
         self.assertTrue(app.button(key="start_import").disabled)
+        # 开发过程中页面可能保留上一阶段“只加载成功”的任务，不得显示索引成功。
+        loaded = create_import_tasks([("good.txt", "中文正文".encode("utf-8"))])
+        list(batch_import(loaded, Path(self.directory.name) / "raw"))
+        app.session_state["import_tasks"] = loaded
+        app.file_uploader[0].set_value([("good.txt", "中文正文".encode("utf-8"), "text/plain")]).run()
+        self.assertEqual(list(app.dataframe[0].value["状态"]), ["待索引"])
+        self.assertFalse(app.button(key="start_import").disabled)
         app.file_uploader[0].set_value([
             ("good.txt", "中文正文".encode("utf-8"), "text/plain"),
             ("bad.txt", b"\xff", "text/plain"),
@@ -1221,6 +1401,8 @@ class TestImportFrontend(unittest.TestCase):
         app.button(key="start_import").click().run()
         self.assertFalse(app.exception)
         self.assertEqual(list(app.dataframe[0].value["状态"]), ["成功", "失败"])
+        self.assertEqual(list(app.dataframe[0].value["本次新增块"]), [1, 0])
+        self.assertTrue(app.session_state["import_tasks"][0]["indexed"])
         self.assertEqual(app.session_state["import_progress"], {"completed": 2, "total": 2})
         self.assertEqual(app.get("progress")[0].proto.value, 100)
         self.assertTrue(app.button(key="start_import").disabled)
@@ -1245,6 +1427,35 @@ class TestImportFrontend(unittest.TestCase):
         self.assertEqual(task["error"], "")
         self.assertTrue(Path(task["path"]).is_file())
         self.assertTrue(app.button(key="retry_import").disabled)
+
+    def test_new_upload_is_incremental_and_repeat_upload_skips_encoding(self):
+        """改变文件选择新增文献，重新选原文也不重算已有向量。"""
+        app = self.app
+        for filename, content in (("first.txt", b"First"), ("second.txt", b"Second"), ("first.txt", b"First")):
+            app.file_uploader[0].set_value([(filename, content, "text/plain")]).run()
+            app.button(key="start_import").click().run()
+            self.assertFalse(app.exception)
+        task = app.session_state["import_tasks"][0]
+        self.assertEqual(task["added_chunks"], 0)
+        self.assertEqual(task["index_total"], 2)
+        self.assertEqual(self.embeddings.document_calls, [["First"], ["Second"]])
+
+    def test_model_error_keeps_file_and_retry_completes_index(self):
+        """缺失本地模型时不误报成功，恢复模型后仅重试索引。"""
+        app = self.app
+        app.file_uploader[0].set_value([("retry.txt", b"Retry", "text/plain")]).run()
+        with patch("src.retrieval.vector_store.get_embeddings", side_effect=FileNotFoundError("本地模型不存在")):
+            app.button(key="start_import").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(app.session_state["import_tasks"][0]["status"], "failed")
+        self.assertTrue(Path(app.session_state["import_tasks"][0]["path"]).is_file())
+        with patch("src.data_loader.load_document", side_effect=AssertionError("不应重新加载")):
+            app.button(key="retry_import").click().run()
+        task = app.session_state["import_tasks"][0]
+        self.assertEqual(task["status"], "success")
+        self.assertTrue(task["indexed"])
+        self.assertEqual(task["added_chunks"], 1)
+        self.assertEqual(task["attempts"], 2)
 
 
 if __name__ == "__main__":

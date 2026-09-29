@@ -2,7 +2,7 @@
 
 基于 RAG + Agent 的论文知识库问答系统，依据南京农业大学生产实习课程要求建设。
 
-当前已实现 PDF、Word（.docx）及 TXT/Markdown 加载，以及 Streamlit 批量上传、进度显示、状态追踪和失败项重试。固定、递归、句段三种分块、本地 Embedding 和 Chroma 操作封装已实现；共 96 个测试通过。PDF 已补常见双栏排序、表格与续表处理、公式符号/上下标及原文定位。Embedding 经人工智能论文中英双语基准重新比较后保留 M3E-base；跨语言质量仍不足。导入成功表示原始文件已保存、正文已加载；页面尚未接入分块和索引，混合检索、生成与 Agent 仍待实现。实现说明见 [PDF 加载器选择](docs/QA/5.1.1%20PDF加载器选择.md)、[Word 和纯文本加载](docs/QA/5.1.1%20Word与纯文本加载器实现.md)、[批量文档导入](docs/QA/5.1.1%20批量文档导入与状态追踪.md)、[学术 PDF 解析优化](docs/QA/5.1.2%20学术论文PDF解析优化.md)、[三种文本分块策略](docs/QA/5.1.2%20三种文本分块策略.md)、[Embedding 对比和选择](docs/QA/5.1.3%20Embedding模型对比与选择.md) 与 [向量数据库对比和选择](docs/QA/5.1.3%20向量数据库对比与选择.md)。
+当前已实现 PDF、Word（.docx）及 TXT/Markdown 加载，以及 Streamlit 批量上传、进度显示、状态追踪和失败项重试。固定、递归、句段三种分块、本地 Embedding 和 Chroma 操作封装已实现；上传后自动分块、批量向量化并增量构建索引，共 107 个测试通过。PDF 已补常见双栏排序、表格与续表处理、公式符号/上下标及原文定位。Embedding 经人工智能论文中英双语基准重新比较后保留 M3E-base；跨语言质量仍不足。导入成功表示原文已保存、全部预期块已处理并写入索引；重复块跳过，新文献追加，混合检索、生成与 Agent 仍待实现。实现说明见 [PDF 加载器选择](docs/QA/5.1.1%20PDF加载器选择.md)、[Word 和纯文本加载](docs/QA/5.1.1%20Word与纯文本加载器实现.md)、[批量文档导入](docs/QA/5.1.1%20批量文档导入与状态追踪.md)、[学术 PDF 解析优化](docs/QA/5.1.2%20学术论文PDF解析优化.md)、[三种文本分块策略](docs/QA/5.1.2%20三种文本分块策略.md)、[Embedding 对比和选择](docs/QA/5.1.3%20Embedding模型对比与选择.md)、[向量数据库对比和选择](docs/QA/5.1.3%20向量数据库对比与选择.md) 与 [批量向量化及增量索引](docs/QA/5.1.3%20批量向量化与增量索引.md)。
 
 ## 课程依据
 
@@ -24,11 +24,11 @@ source .venv/bin/activate
 # 安装页面、文档加载、分块、本地 Embedding 与 Chroma 依赖。
 python -m pip install -r requirements.txt
 
-# 启动文档导入应用。
+# 按用户手册准备本地 M3E 权重后，启动文档导入/索引应用。
 python -m streamlit run src/frontend/app.py
 ```
 
-打开 http://localhost:8501，在左侧选择多份文档并点击“开始导入”，查看进度、状态和失败原因；“重试失败项”只重新处理失败文件。单份文件默认最大 20 MB，可在 `config.yaml` 的 `importing.max_file_size_mb` 调整。问答尚未接入。
+打开 http://localhost:8501，先按 [用户手册](docs/用户使用手册.md) 准备本地 M3E 权重，在左侧选择多份文档并点击“开始导入”，查看加载/分块/索引阶段、分块数和本次新增数。新文献增量加入；“重试失败项”只处理失败文件，索引失败时复用已加载原文并跳过已写入块。单份文件默认最大 20 MB，可在 `config.yaml` 的 `importing.max_file_size_mb` 调整。问答尚未接入。
 
 `requirements.txt` 只声明当前实际使用的依赖。后续实现混合检索、重排和模型生成时，再加入对应依赖并验证版本。
 
@@ -107,7 +107,7 @@ print("库中块数：", store.count())
 # store.delete_document(chunks[0].metadata["doc_id"])
 ```
 
-两库实测、默认参数不足与最终选择见 [向量数据库 QA](docs/QA/5.1.3%20向量数据库对比与选择.md)。FAISS 仅用于独立实验，不是业务运行依赖。当前 Python 接口已支持增量入库与查询，上传页面尚未自动构建索引。
+两库实测、默认参数不足与最终选择见 [向量数据库 QA](docs/QA/5.1.3%20向量数据库对比与选择.md)。FAISS 仅用于独立实验，不是业务运行依赖。上传页面已自动构建索引，也可通过 `batch_build_index()` 完成多文件入库，见 [批量索引 QA](docs/QA/5.1.3%20批量向量化与增量索引.md)。
 
 ## 交付文档
 
