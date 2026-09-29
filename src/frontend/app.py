@@ -1,4 +1,4 @@
-"""文档批量导入页面；业务功能按课程模块逐步接入。"""
+"""文档批量导入与向量检索页面；业务功能按课程模块逐步接入。"""
 
 import sys
 from pathlib import Path
@@ -12,7 +12,7 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 from src.data_loader import LOADERS, create_import_tasks
-from src.retrieval.vector_store import batch_build_index
+from src.retrieval.vector_store import VectorStore, batch_build_index
 from src.utils.config import load_config
 
 config = load_config()
@@ -99,13 +99,57 @@ if tasks:
 else:
     st.caption("在左侧选择文档后，点击“开始导入”。")
 
+st.subheader("向量相似度 Top-K 检索")
+st.caption("搜索已持久化的知识库，返回相关文档块。相似度越高越相关，可能为负数，不是命中概率；当前不生成答案。")
+with st.form("vector_search_form"):
+    query = st.text_input("查询内容（支持中英文）", key="vector_query")
+    top_k = st.number_input("返回数量 Top-K", min_value=1,
+                            value=config["retrieval"]["top_k"], step=1, key="vector_top_k")
+    doc_id = st.text_input("限定文档 ID（可选，留空检索全部文档）", key="vector_doc_id")
+    search_submitted = st.form_submit_button("检索", key="vector_search")
+
+if search_submitted:
+    if not query.strip():
+        st.warning("请输入查询内容。")
+    else:
+        try:
+            # 仅用户提交查询时初始化；重开持久化索引，不重新编码文档。
+            with st.spinner("正在使用本地 M3E 检索…"):
+                results = VectorStore().search(query, k=top_k, doc_id=doc_id.strip() or None)
+        except Exception as error:
+            st.error(f"检索失败：{type(error).__name__}: {error}。请检查本地模型与索引配置后重新检索。")
+        else:
+            if not results:
+                st.info("没有可检索的文档块，请先导入文档；如填写了文档 ID，请检查是否正确。")
+            st.caption(f"返回 {len(results)} 个文档块（Top-K={top_k}）。")
+            for rank, (document, score) in enumerate(results, 1):
+                metadata = document.metadata
+                filename = metadata.get("source_file", "未知文件")
+                with st.expander(f"{rank}. {filename} · 余弦相似度 {score:.4f}", expanded=True):
+                    # PDF 使用物理页码；Word/文本使用各自位置，不能伪造页码。
+                    if "page_number" in metadata:
+                        location = f"物理页码：{metadata['page_number']}"
+                        if metadata.get("page_end", metadata["page_number"]) != metadata["page_number"]:
+                            location += f"–{metadata['page_end']}"
+                    elif "paragraph_index" in metadata:
+                        location = f"段落：{metadata['paragraph_index']}"
+                    elif "table_index" in metadata:
+                        location = f"表格：{metadata['table_index']}"
+                    elif "line_start" in metadata:
+                        location = f"行范围：{metadata['line_start']}–{metadata['line_end']}"
+                    else:
+                        location = "位置未记录"
+                    st.caption(f"来源：{filename}；{location}")
+                    st.caption(f"文档 ID：{metadata.get('doc_id', '')}；块 ID：{metadata.get('chunk_id', '')}")
+                    st.text(document.page_content)
+
 st.subheader("模块开发状态")
 st.table(
     [
-        {"模块": "一：文档处理与检索", "状态": "部分实现", "范围": "已实现批量导入、分块与增量索引；混合检索与重排待开发"},
+        {"模块": "一：文档处理与检索", "状态": "部分实现", "范围": "已实现批量导入、分块、增量索引与向量 Top-K 检索；混合检索与重排待开发"},
         {"模块": "二：RAG 生成", "状态": "未实现", "范围": "引用、流式、语义缓存、降级、日志"},
         {"模块": "三：Agent 决策", "状态": "未实现", "范围": "ReAct、工具、路由、恢复、记忆"},
-        {"模块": "四：系统集成与前端", "状态": "部分实现", "范围": "已有文档入库界面，问答、文献管理与联调待开发"},
+        {"模块": "四：系统集成与前端", "状态": "部分实现", "范围": "已有文档入库与向量搜索界面，问答、文献管理与联调待开发"},
         {"模块": "五：评测与交付", "状态": "部分实现", "范围": "已建文档骨架，评测数据和报告待完成"},
     ]
 )

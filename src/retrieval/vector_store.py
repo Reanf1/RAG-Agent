@@ -97,13 +97,20 @@ class VectorStore:
 
     def search(self, query: str, k: int | None = None,
                doc_id: str | None = None) -> list[tuple[Document, float]]:
-        """返回 Top-K 与余弦相似度（1−距离），分数不是命中概率。"""
+        """按余弦相似度降序返回 Top-K 正文、来源与分数。
+
+        k 默认取 YAML；不足 k 个时返回全部匹配块。Chroma 返回的
+        余弦距离越小越相关，转换为相似度 1−距离；保留负分，不设阈值。
+        """
         k = self.top_k if k is None else k
         if type(k) is not int or k <= 0:
             raise ValueError("k 必须为正整数")
+        # 空问题无需读取数据库或计算查询向量。
+        if not query.strip():
+            return []
         where = {"doc_id": doc_id} if doc_id is not None else None
         count = len(self._store.get(where=where, include=[])["ids"]) if where else self.count()
-        if not query.strip() or count == 0:
+        if count == 0:
             return []
         results = self._store.similarity_search_with_score(query, k=min(k, count), filter=where)
         return [(document, 1 - distance) for document, distance in results]

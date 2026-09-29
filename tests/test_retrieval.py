@@ -104,6 +104,26 @@ class TestVectorStore(unittest.TestCase):
         found = self.store.search("神经网络", doc_id="b")
         self.assertEqual([doc.metadata["chunk_id"] for doc, _ in found], ["b1"])
 
+    def test_default_top_k_and_query_change_without_reembedding_documents(self):
+        """默认 K 来自配置；新查询只编码问题，沿用持久化文档向量。"""
+        from src.utils.config import load_config
+        config = load_config()
+        config["retrieval"]["top_k"] = 2
+        self.store.add_chunks(self.chunks)
+        with patch("src.retrieval.vector_store.load_config", return_value=config):
+            reopened = VectorStore(self.directory.name, self.embeddings)
+        self.assertEqual([doc.metadata["chunk_id"] for doc, _ in reopened.search("神经网络")],
+                         ["a1", "b1"])
+        self.assertEqual(reopened.search("农业", k=1)[0][0], self.chunks[1])
+        self.assertEqual(self.embeddings.query_calls, ["神经网络", "农业"])
+        self.assertEqual(self.embeddings.document_calls, [[chunk.page_content for chunk in self.chunks]])
+
+    def test_blank_query_does_not_read_database(self):
+        """空问题直接结束，不依赖数据库连接或查询编码。"""
+        with patch.object(self.store, "count", side_effect=RuntimeError("数据库不可用")):
+            self.assertEqual(self.store.search(" \n\t"), [])
+        self.assertEqual(self.embeddings.query_calls, [])
+
     def test_duplicate_import_does_not_encode_again(self):
         self.assertEqual(self.store.add_chunks(self.chunks + self.chunks), 3)
         self.assertEqual(self.store.add_chunks(self.chunks), 0)
@@ -1456,6 +1476,99 @@ class TestImportFrontend(unittest.TestCase):
         self.assertTrue(task["indexed"])
         self.assertEqual(task["added_chunks"], 1)
         self.assertEqual(task["attempts"], 2)
+
+    def test_vector_search_uses_persisted_index_and_top_k(self):
+        """页面没有上传任务也能查旧库，展示排序、跨页来源与负相似度。"""
+        chunks = [
+            Document(page_content="神经网络实验", metadata={"chunk_id": "a1", "doc_id": "a",
+                     "source_file": "论文A.pdf", "page_number": 2, "page_end": 3}),
+            Document(page_content="农业实验", metadata={"chunk_id": "b1", "doc_id": "b",
+                     "source_file": "论文B.pdf", "page_number": 1}),
+            Document(page_content="反向向量实验", metadata={"chunk_id": "c1", "doc_id": "c",
+                     "source_file": "论文C.pdf", "page_number": 4}),
+        ]
+        VectorStore().add_chunks(chunks)
+        app = self.app
+        self.assertEqual(app.number_input(key="vector_top_k").value, 5)
+        self.assertEqual(app.session_state["import_tasks"], [])
+        app.text_input(key="vector_query").set_value("神经网络")
+        app.number_input(key="vector_top_k").set_value(2)
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual([element.value for element in app.text], ["神经网络实验", "农业实验"])
+        self.assertIn("1. 论文A.pdf · 余弦相似度 1.0000", app.expander[0].label)
+        self.assertIn("来源：论文A.pdf；物理页码：2–3", [element.value for element in app.caption])
+        app.number_input(key="vector_top_k").set_value(10)
+        app.button(key="vector_search").click().run()
+        self.assertEqual(len(app.text), 3)
+        self.assertIn("余弦相似度 -1.0000", app.expander[2].label)
+        self.assertEqual(self.embeddings.query_calls, ["神经网络", "神经网络"])
+        self.assertEqual(self.embeddings.document_calls, [[chunk.page_content for chunk in chunks]])
+
+    def test_vector_search_document_filter_and_non_pdf_locations(self):
+        """文档过滤生效，Word 显示段落/表格、TXT 显示行号，不伪造页码。"""
+        VectorStore().add_chunks([
+            Document(page_content="Word 神经网络正文", metadata={"chunk_id": "w1", "doc_id": "word",
+                     "source_file": "论文.docx", "paragraph_index": 3}),
+            Document(page_content="反向表格", metadata={"chunk_id": "w2", "doc_id": "word",
+                     "source_file": "论文.docx", "table_index": 2}),
+            Document(page_content="农业文本", metadata={"chunk_id": "t1", "doc_id": "text",
+                     "source_file": "论文.txt", "line_start": 4, "line_end": 8}),
+        ])
+        app = self.app
+        app.text_input(key="vector_query").set_value("神经网络")
+        app.text_input(key="vector_doc_id").set_value(" word ")
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual([element.value for element in app.text], ["Word 神经网络正文", "反向表格"])
+        captions = [element.value for element in app.caption]
+        self.assertIn("来源：论文.docx；段落：3", captions)
+        self.assertIn("来源：论文.docx；表格：2", captions)
+        self.assertFalse(any("物理页码" in value for value in captions))
+        app.text_input(key="vector_query").set_value("农业")
+        app.text_input(key="vector_doc_id").set_value("text")
+        app.button(key="vector_search").click().run()
+        self.assertEqual([element.value for element in app.text], ["农业文本"])
+        self.assertIn("来源：论文.txt；行范围：4–8", [element.value for element in app.caption])
+        app.text_input(key="vector_doc_id").set_value("missing")
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.text)
+        self.assertTrue(any("没有可检索的文档块" in element.value for element in app.info))
+        self.assertEqual(self.embeddings.query_calls, ["神经网络", "农业"])
+
+    def test_vector_search_blank_input_and_empty_index(self):
+        """启动/空问题不初始化模型，空库明确提示且不计算查询向量。"""
+        app = self.app
+        with patch("src.retrieval.vector_store.get_embeddings") as model:
+            app.run()
+            app.text_input(key="vector_query").set_value("  ")
+            app.button(key="vector_search").click().run()
+            model.assert_not_called()
+        self.assertFalse(app.exception)
+        self.assertTrue(any("请输入查询内容" in element.value for element in app.warning))
+        app.text_input(key="vector_query").set_value("神经网络")
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.exception)
+        self.assertTrue(any("没有可检索的文档块" in element.value for element in app.info))
+        self.assertEqual(self.embeddings.query_calls, [])
+
+    def test_vector_search_errors_are_visible_and_retryable(self):
+        """模型/数据库失败明确报错，修复后重新提交可检索，不当作空库。"""
+        VectorStore().add_chunks([Document(page_content="神经网络", metadata={
+            "chunk_id": "a1", "doc_id": "a", "source_file": "论文.txt", "line_start": 1, "line_end": 1})])
+        app = self.app
+        app.text_input(key="vector_query").set_value("神经网络")
+        for target, error in (("src.retrieval.vector_store.get_embeddings", FileNotFoundError("本地模型不存在")),
+                              ("src.retrieval.vector_store.VectorStore.search", RuntimeError("数据库不可用"))):
+            with self.subTest(target=target), patch(target, side_effect=error):
+                app.button(key="vector_search").click().run()
+            self.assertFalse(app.exception)
+            self.assertTrue(any(str(error) in element.value for element in app.error))
+            self.assertFalse(any("没有可检索的文档块" in element.value for element in app.info))
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.exception)
+        self.assertFalse(app.error)
+        self.assertEqual([element.value for element in app.text], ["神经网络"])
 
 
 if __name__ == "__main__":
