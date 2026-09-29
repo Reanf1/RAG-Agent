@@ -1,0 +1,547 @@
+{
+  "name": "AI论文生成参数开发集 v1",
+  "created_at": "2026-09-29",
+  "prompt_version": "rag-v2",
+  "annotation_note": "从既有六篇论文真实标注块构造 10 个控制输入；规则只检查关键事实出现和引用编号，语义由 Codex 核对，尚无独立人工复核。不是正式 50+ 端到端评测集。",
+  "source_sample_sha256": "63c22eddcf08f05b809dd888b4794993ea0364edf7d43d0c442e16ae76342707",
+  "source_manifest_sha256": "7a3cd90f5700601448feb2e42cfaeea296164fd9674e4962d66ba6bd84af218f",
+  "papers": [
+    {
+      "id": "attention",
+      "language": "en",
+      "title": "Attention Is All You Need",
+      "pdf_url": "https://arxiv.org/pdf/1706.03762v7",
+      "source_url": "https://arxiv.org/abs/1706.03762v7",
+      "pdf_sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+      "pages": 15,
+      "chunk_count": 94
+    },
+    {
+      "id": "bert",
+      "language": "en",
+      "title": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+      "pdf_url": "https://arxiv.org/pdf/1810.04805v2",
+      "source_url": "https://arxiv.org/abs/1810.04805v2",
+      "pdf_sha256": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+      "pages": 16,
+      "chunk_count": 154
+    },
+    {
+      "id": "vit",
+      "language": "en",
+      "title": "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale",
+      "pdf_url": "https://arxiv.org/pdf/2010.11929v2",
+      "source_url": "https://arxiv.org/abs/2010.11929v2",
+      "pdf_sha256": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+      "pages": 22,
+      "chunk_count": 167
+    },
+    {
+      "id": "cnn_survey",
+      "language": "zh",
+      "title": "卷积神经网络研究综述",
+      "pdf_url": "https://faculty.csu.edu.cn/_resources/group1/M00/00/67/wKiylmIpcuKATvp-ADXOYtDJS_Q829.pdf",
+      "source_url": "https://doi.org/10.11897/SP.J.1016.2017.01229",
+      "pdf_sha256": "738b17613ebbc031a8496792dad9442a4f2dd50f463008e3444d0e65167550a6",
+      "pages": 23,
+      "chunk_count": 156
+    },
+    {
+      "id": "compression",
+      "language": "zh",
+      "title": "深度网络模型压缩综述",
+      "pdf_url": "https://www.sciengine.com/doi/pdf/1F308D3A329944318FC2CC95F311D339",
+      "source_url": "https://www.jos.org.cn/jos/article/abstract/5428",
+      "pdf_sha256": "82e67c76c45bd8c4f348c6902429f84e2e0ea141569aeea8a55a3dd4bc1dcd20",
+      "pages": 16,
+      "chunk_count": 83
+    },
+    {
+      "id": "vision_survey",
+      "language": "zh",
+      "title": "视觉Transformer研究的关键问题: 现状及展望（作者修正版）",
+      "pdf_url": "https://hub-tian.github.io/papers/%E8%A7%86%E8%A7%89Transformer%E7%A0%94%E7%A9%B6%E7%9A%84%E5%85%B3%E9%94%AE%E9%97%AE%E9%A2%98%2B%E7%8E%B0%E7%8A%B6%E5%8F%8A%E5%B1%95%E6%9C%9B-v1.pdf",
+      "source_url": "https://hub-tian.github.io/aas-transformer-survey/",
+      "pdf_sha256": "644bf3d7a22e96926669c991ac835b82ce1a1128404614d80fb4fffebf35a31c",
+      "pages": 23,
+      "chunk_count": 167
+    }
+  ],
+  "cases": [
+    {
+      "id": "heads",
+      "question": "原始Transformer用了多少个注意力头，每个头的键和值维度是多少？请简洁回答。",
+      "intent_ids": [
+        "attention-02",
+        "bert-01"
+      ],
+      "expected_note": "8 个头，键和值都为 64 维；不要把 BERT 的头数混入。",
+      "fact_patterns": [
+        "\\b8\\b|八",
+        "\\b64\\b|六十四"
+      ],
+      "expected_citation_ids": [
+        1
+      ],
+      "context": {
+        "context": "[参考文档1 - 来源: attention.pdf；原始块位置: 第5页（物理页码）]\n\ni ^{)}\nWhere the projections are parameter matrices W ^{Q}\n∈R^{d}^{model}^{×}^{d}^{k}, W ^{V}\n∈R^{d}^{model}^{×}^{d}^{v}\n∈R^{d}^{model}^{×}^{d}^{k}, W ^{K}\ni\ni\ni\nand W ^{O} ∈R^{hd}^{v}^{×}^{d}^{model}.\nIn this work we employ h = 8 parallel attention layers, or heads. For each of these we use\nd_{k} = d_{v} = d_{model}/h = 64. Due to the reduced dimension of each head, the total computational cost\nis similar to that of single-head attention with full dimensionality.\n3.2.3\n\n---\n\n[参考文档2 - 来源: bert.pdf；原始块位置: 第3页（物理页码）]\n\nsuch as “The Annotated Transformer.”^{2}\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as\nH, and the number of self-attention heads as A.^{3}\nWe primarily report results on two model sizes:\nBERT_{BASE} (L=12, H=768, A=12, Total Param-\neters=110M) and BERT_{LARGE} (L=24, H=1024,\nA=16, Total Parameters=340M).\nBERT_{BASE} was chosen to have the same model\nsize as OpenAI GPT for comparison purposes.\nCritically, however, the BERT Transformer uses",
+        "sources": [
+          "attention.pdf",
+          "bert.pdf"
+        ],
+        "chunk_count": 2,
+        "references": [
+          {
+            "id": 1,
+            "source_file": "attention.pdf",
+            "location": "第5页（物理页码）",
+            "text": "\ni ^{)}\nWhere the projections are parameter matrices W ^{Q}\n∈R^{d}^{model}^{×}^{d}^{k}, W ^{V}\n∈R^{d}^{model}^{×}^{d}^{v}\n∈R^{d}^{model}^{×}^{d}^{k}, W ^{K}\ni\ni\ni\nand W ^{O} ∈R^{hd}^{v}^{×}^{d}^{model}.\nIn this work we employ h = 8 parallel attention layers, or heads. For each of these we use\nd_{k} = d_{v} = d_{model}/h = 64. Due to the reduced dimension of each head, the total computational cost\nis similar to that of single-head attention with full dimensionality.\n3.2.3",
+            "metadata": {
+              "source_file": "attention.pdf",
+              "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+              "chunk_id": "24be9fd29302ea14250272ebaf769b0ceb38ca69134eba0d9339da52d2d36894",
+              "page_number": 5,
+              "start_index": 439,
+              "end_index": 914
+            },
+            "truncated": false
+          },
+          {
+            "id": 2,
+            "source_file": "bert.pdf",
+            "location": "第3页（物理页码）",
+            "text": "\nsuch as “The Annotated Transformer.”^{2}\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as\nH, and the number of self-attention heads as A.^{3}\nWe primarily report results on two model sizes:\nBERT_{BASE} (L=12, H=768, A=12, Total Param-\neters=110M) and BERT_{LARGE} (L=24, H=1024,\nA=16, Total Parameters=340M).\nBERT_{BASE} was chosen to have the same model\nsize as OpenAI GPT for comparison purposes.\nCritically, however, the BERT Transformer uses",
+            "metadata": {
+              "source_file": "bert.pdf",
+              "doc_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+              "chunk_id": "33c362adeeae964cd6ea9ff0fd62e1d726eb26e8c98eeeab6d96dfa4f1b5b572",
+              "page_number": 3,
+              "start_index": 3111,
+              "end_index": 3605
+            },
+            "truncated": false
+          }
+        ],
+        "context_budget_chars": 6000,
+        "context_chars": 1061,
+        "prompt_chars": 1667,
+        "truncated": false,
+        "dropped_count": 0
+      },
+      "messages_sha256": "4adcad28f59e94c4ee63f2918d12ac8410ecd715b7d3cf3905d976fb8f33406f"
+    },
+    {
+      "id": "bert-sizes",
+      "question": "Answer in English: list the layers, hidden size and attention heads of BERT-base and BERT-large. Keep the answer concise.",
+      "intent_ids": [
+        "bert-01"
+      ],
+      "expected_note": "BASE: 12/768/12；LARGE: 24/1024/16，须审阅各数字与字段的对应关系。",
+      "fact_patterns": [
+        "\\b12\\b",
+        "\\b768\\b",
+        "\\b24\\b",
+        "\\b1024\\b",
+        "\\b16\\b"
+      ],
+      "expected_citation_ids": [
+        1
+      ],
+      "context": {
+        "context": "[参考文档1 - 来源: bert.pdf；原始块位置: 第3页（物理页码）]\n\nsuch as “The Annotated Transformer.”^{2}\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as\nH, and the number of self-attention heads as A.^{3}\nWe primarily report results on two model sizes:\nBERT_{BASE} (L=12, H=768, A=12, Total Param-\neters=110M) and BERT_{LARGE} (L=24, H=1024,\nA=16, Total Parameters=340M).\nBERT_{BASE} was chosen to have the same model\nsize as OpenAI GPT for comparison purposes.\nCritically, however, the BERT Transformer uses",
+        "sources": [
+          "bert.pdf"
+        ],
+        "chunk_count": 1,
+        "references": [
+          {
+            "id": 1,
+            "source_file": "bert.pdf",
+            "location": "第3页（物理页码）",
+            "text": "\nsuch as “The Annotated Transformer.”^{2}\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as\nH, and the number of self-attention heads as A.^{3}\nWe primarily report results on two model sizes:\nBERT_{BASE} (L=12, H=768, A=12, Total Param-\neters=110M) and BERT_{LARGE} (L=24, H=1024,\nA=16, Total Parameters=340M).\nBERT_{BASE} was chosen to have the same model\nsize as OpenAI GPT for comparison purposes.\nCritically, however, the BERT Transformer uses",
+            "metadata": {
+              "source_file": "bert.pdf",
+              "doc_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+              "chunk_id": "33c362adeeae964cd6ea9ff0fd62e1d726eb26e8c98eeeab6d96dfa4f1b5b572",
+              "page_number": 3,
+              "start_index": 3111,
+              "end_index": 3605
+            },
+            "truncated": false
+          }
+        ],
+        "context_budget_chars": 6000,
+        "context_chars": 534,
+        "prompt_chars": 1219,
+        "truncated": false,
+        "dropped_count": 0
+      },
+      "messages_sha256": "b7fb1c61f795d8f2d5ed931479752d28a9ff0eb89660d40877a9be3a937da6b1"
+    },
+    {
+      "id": "bert-mask",
+      "question": "BERT被选中的词元分别如何替换，三种情况比例是多少？请简洁回答。",
+      "intent_ids": [
+        "bert-04"
+      ],
+      "expected_note": "80% MASK、10%随机、10%原样；规则不能判断所有百分比对应关系。",
+      "fact_patterns": [
+        "80\\s*%",
+        "10\\s*%",
+        "\\[MASK\\]|掩码|遮蔽",
+        "随机|random",
+        "原样|不变|未改变|保持|unchanged"
+      ],
+      "expected_citation_ids": [
+        1
+      ],
+      "context": {
+        "context": "[参考文档1 - 来源: bert.pdf；原始块位置: 第4页（物理页码）]\n\nthe i-th token with (1) the [MASK] token 80% of\nthe time (2) a random token 10% of the time (3)\nthe unchanged i-th token 10% of the time. Then,\nT_{i} will be used to predict the original token with\ncross entropy loss. We compare variations of this\nprocedure in Appendix C.2.\nTask #2:\nNext Sentence Prediction (NSP)\nMany important downstream tasks such as Ques-\ntion Answering (QA) and Natural Language Infer-\nence (NLI) are based on understanding the rela-\ntionship between two sentences, which is not di-",
+        "sources": [
+          "bert.pdf"
+        ],
+        "chunk_count": 1,
+        "references": [
+          {
+            "id": 1,
+            "source_file": "bert.pdf",
+            "location": "第4页（物理页码）",
+            "text": "\nthe i-th token with (1) the [MASK] token 80% of\nthe time (2) a random token 10% of the time (3)\nthe unchanged i-th token 10% of the time. Then,\nT_{i} will be used to predict the original token with\ncross entropy loss. We compare variations of this\nprocedure in Appendix C.2.\nTask #2:\nNext Sentence Prediction (NSP)\nMany important downstream tasks such as Ques-\ntion Answering (QA) and Natural Language Infer-\nence (NLI) are based on understanding the rela-\ntionship between two sentences, which is not di-",
+            "metadata": {
+              "source_file": "bert.pdf",
+              "doc_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+              "chunk_id": "3ab7dcacf6350c63da2154e5a12b0bbba4e31159d4862a489b0fa41869202f30",
+              "page_number": 4,
+              "start_index": 3514,
+              "end_index": 4020
+            },
+            "truncated": false
+          }
+        ],
+        "context_budget_chars": 6000,
+        "context_chars": 546,
+        "prompt_chars": 1143,
+        "truncated": false,
+        "dropped_count": 0
+      },
+      "messages_sha256": "bd5adac2880d13bd27e1b262dd2dbf7f9d9a76e8a83bd36de8679c1cf0f360ab"
+    },
+    {
+      "id": "vit-position",
+      "question": "Answer in English: when fine-tuning ViT at higher image resolution, how are patch size and positional embeddings handled? Keep the answer concise.",
+      "intent_ids": [
+        "vit-06"
+      ],
+      "expected_note": "保持 patch 大小，对预训练位置嵌入按原图位置二维插值。",
+      "fact_patterns": [
+        "patch",
+        "same|unchanged|constant",
+        "2D|two.dimension",
+        "interpolat"
+      ],
+      "expected_citation_ids": [
+        1
+      ],
+      "context": {
+        "context": "[参考文档1 - 来源: vit.pdf；原始块位置: 第4页（物理页码）]\n\nof higher resolution, we keep the patch size the same, which results in a larger effective sequence\nlength. The Vision Transformer can handle arbitrary sequence lengths (up to memory constraints),\nhowever, the pre-trained position embeddings may no longer be meaningful. We therefore perform\n2D interpolation of the pre-trained position embeddings, according to their location in the original\nimage. Note that this resolution adjustment and patch extraction are the only points at which an",
+        "sources": [
+          "vit.pdf"
+        ],
+        "chunk_count": 1,
+        "references": [
+          {
+            "id": 1,
+            "source_file": "vit.pdf",
+            "location": "第4页（物理页码）",
+            "text": "\nof higher resolution, we keep the patch size the same, which results in a larger effective sequence\nlength. The Vision Transformer can handle arbitrary sequence lengths (up to memory constraints),\nhowever, the pre-trained position embeddings may no longer be meaningful. We therefore perform\n2D interpolation of the pre-trained position embeddings, according to their location in the original\nimage. Note that this resolution adjustment and patch extraction are the only points at which an",
+            "metadata": {
+              "source_file": "vit.pdf",
+              "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+              "chunk_id": "3d62a45b1688a76e6d2622f03cb8698b0077cffd1deb5d214efa765a706cdc66",
+              "page_number": 4,
+              "start_index": 2228,
+              "end_index": 2718
+            },
+            "truncated": false
+          }
+        ],
+        "context_budget_chars": 6000,
+        "context_chars": 529,
+        "prompt_chars": 1239,
+        "truncated": false,
+        "dropped_count": 0
+      },
+      "messages_sha256": "5010570ec5466c0b918d33a4b14c545a25b710eeba651e11b918016e5a343fc9"
+    },
+    {
+      "id": "stn-components",
+      "question": "周飞燕等的CNN综述中，空间变换网络由哪些组件构成？请简洁回答。",
+      "intent_ids": [
+        "cnn_survey-05"
+      ],
+      "expected_note": "本地化网络、网格生成器、采样器。",
+      "fact_patterns": [
+        "本地化|定位|locali[sz]ation",
+        "网格|grid",
+        "采样|sampler"
+      ],
+      "expected_citation_ids": [
+        1
+      ],
+      "context": {
+        "context": "[参考文档1 - 来源: cnn_survey.pdf；原始块位置: 第8页（物理页码）]\n\n变换网络（Ｓｐａｔｉａｌ　Ｔｒａｎｓｆｏｒｍｅｒ　Ｎｅｔｗｏｒｋｓ，ＳＴＮｓ）\n来解决此问题，该模块由３个部分组成：本地化网络\n（ｌｏｃａｌｉｓａｔｉｏｎ　ｎｅｔｗｏｒｋ）、网格生成器（ｇｒｉｄ　ｇｅｎｅｒａｔｏｒ）\n及采样器（ｓａｍｐｌｅｒ）．ＳＴＮｓ可用于输入层，也可",
+        "sources": [
+          "cnn_survey.pdf"
+        ],
+        "chunk_count": 1,
+        "references": [
+          {
+            "id": 1,
+            "source_file": "cnn_survey.pdf",
+            "location": "第8页（物理页码）",
+            "text": "\n变换网络（Ｓｐａｔｉａｌ　Ｔｒａｎｓｆｏｒｍｅｒ　Ｎｅｔｗｏｒｋｓ，ＳＴＮｓ）\n来解决此问题，该模块由３个部分组成：本地化网络\n（ｌｏｃａｌｉｓａｔｉｏｎ　ｎｅｔｗｏｒｋ）、网格生成器（ｇｒｉｄ　ｇｅｎｅｒａｔｏｒ）\n及采样器（ｓａｍｐｌｅｒ）．ＳＴＮｓ可用于输入层，也可",
+            "metadata": {
+              "source_file": "cnn_survey.pdf",
+              "doc_id": "738b17613ebbc031a8496792dad9442a4f2dd50f463008e3444d0e65167550a6",
+              "chunk_id": "b659695fa2a5be25e6d5b138b88cb246052438ee755687a86384a77497f75f3c",
+              "page_number": 8,
+              "start_index": 1818,
+              "end_index": 1955
+            },
+            "truncated": false
+          }
+        ],
+        "context_budget_chars": 6000,
+        "context_chars": 183,
+        "prompt_chars": 779,
+        "truncated": false,
+        "dropped_count": 0
+      },
+      "messages_sha256": "af86be0b0adc9859581a39bfd869dcbb75506aa680e10453fe58631e8e090068"
+    },
+    {
+      "id": "binary-sgd",
+      "question": "模型压缩综述中，二值权重有哪些取值，SGD参数更新是否也二值化？请简洁回答。",
+      "intent_ids": [
+        "compression-08"
+      ],
+      "expected_note": "权重为 -1/+1；前反向传播二值化，SGD 更新保留足够精度。",
+      "fact_patterns": [
+        "-\\s*1|负\\s*1|负一|正负",
+        "\\b1\\b|正一",
+        "精度|precision"
+      ],
+      "expected_citation_ids": [
+        1
+      ],
+      "context": {
+        "context": "[参考文档1 - 来源: compression.pdf；原始块位置: 第10页（物理页码）]\n\n[图像区域 20：原文第 10 页]\n[图像区域 21：原文第 10 页]\n[图像区域 22：原文第 10 页]\nFig.8  Multiplying a sparse matrix with a dense matrix^{[46]}\n图8  稀疏矩阵与稠密矩阵相乘^{[46]}\n4.3   权重量化\n文献[47]提出了二值化的权重策略来对网络的权重做较为极端的量化,即限制权重的取值只能是−1 或者1.\n通过这种方式,可以将很多乘法转化为消耗较少的加法,极大地简化了专用于深度学习的硬件的设计.为了在使\n用随机梯度下降(stochastic gradient descent,简称SGD)的过程中降低二值化权重的影响,文中提出:仅将二值化\n的策略用于前向和反向传播中,而在SGD 的参数更新中仍采用足够的精度.\n文献[48]通过实验证明了:通过权重量化的方式,可以获得比矩阵稀疏分解更好的效果.对于1000 类的\nImageNet 分类任务,作者获得了16 倍~24 倍的压缩率,同时,准确率下降小于1%.首先,使用K-均值方法量化权",
+        "sources": [
+          "compression.pdf"
+        ],
+        "chunk_count": 1,
+        "references": [
+          {
+            "id": 1,
+            "source_file": "compression.pdf",
+            "location": "第10页（物理页码）",
+            "text": "\n[图像区域 20：原文第 10 页]\n[图像区域 21：原文第 10 页]\n[图像区域 22：原文第 10 页]\nFig.8  Multiplying a sparse matrix with a dense matrix^{[46]}\n图8  稀疏矩阵与稠密矩阵相乘^{[46]}\n4.3   权重量化\n文献[47]提出了二值化的权重策略来对网络的权重做较为极端的量化,即限制权重的取值只能是−1 或者1.\n通过这种方式,可以将很多乘法转化为消耗较少的加法,极大地简化了专用于深度学习的硬件的设计.为了在使\n用随机梯度下降(stochastic gradient descent,简称SGD)的过程中降低二值化权重的影响,文中提出:仅将二值化\n的策略用于前向和反向传播中,而在SGD 的参数更新中仍采用足够的精度.\n文献[48]通过实验证明了:通过权重量化的方式,可以获得比矩阵稀疏分解更好的效果.对于1000 类的\nImageNet 分类任务,作者获得了16 倍~24 倍的压缩率,同时,准确率下降小于1%.首先,使用K-均值方法量化权",
+            "metadata": {
+              "source_file": "compression.pdf",
+              "doc_id": "82e67c76c45bd8c4f348c6902429f84e2e0ea141569aeea8a55a3dd4bc1dcd20",
+              "chunk_id": "5ef634b107cb24d0e7e7290d236849610f9252e41869d52566cfe1aaa360f4aa",
+              "page_number": 10,
+              "start_index": 434,
+              "end_index": 905
+            },
+            "truncated": false
+          }
+        ],
+        "context_budget_chars": 6000,
+        "context_chars": 519,
+        "prompt_chars": 1121,
+        "truncated": false,
+        "dropped_count": 0
+      },
+      "messages_sha256": "3de368b7eaa59c1342e990f1d550665fd7cfbb688b956e0526424c337f7e1a97"
+    },
+    {
+      "id": "vit-limitations",
+      "question": "依据田永林等的综述，用三点概括ViT在计算、数据和训练上的不足。",
+      "intent_ids": [
+        "vision_survey-03"
+      ],
+      "expected_note": "长序列全局注意力平方代价；需大量数据；训练不稳定、参数敏感。",
+      "fact_patterns": [
+        "平方|二次|quadratic",
+        "大量|大规模|数据依赖|依赖.*数据",
+        "不稳定|unstable",
+        "敏感|sensitive"
+      ],
+      "expected_citation_ids": [
+        1
+      ],
+      "context": {
+        "context": "[参考文档1 - 来源: vision_survey.pdf；原始块位置: 第4页（物理页码）]\n\n入位置的感知能力, 因此Transformer 依赖位置编\n码来实现对位置信息的补充. 相比之下, 卷积神经\n网络处理二维图像数据, 一方面卷积核中权重的排\n列方式使其具备了局部相对位置的感知能力, 另一\n方面, 有研究表明^{[}^{47}^{]}, 卷积神经网络使用的零填充\n（Zero padding）使其具备了绝对位置感知能力, 因\n此, 卷积神经网络不需要额外的位置编码模块.\nViT 的优劣势分析\n1.6\nViT^{[}^{15}^{]} 模型的优势在于其构建了全局信息交互\n机制, 有助于建立更为充分的特征表示. 此外, ViT\n采用了Transformer 中标准的数据流形式, 有助于\n同其它模态数据进行高效融合. ViT 存在的问题主\n要在三个方面, 首先全局注意力机制计算量较大, 尤\n其是面对一些长序列输入时, 其与输入长度成平方\n的计算代价极大地限制了其在高分辨率输入和密集\n预测任务中的应用; 其次, 不同于卷积中的局部归纳\n偏置, ViT 模型从全局关系中挖掘相关性, 对数据的\n依赖较大, 需要经过大量数据的训练才能具备较好\n效果; 此外, ViT 模型的训练过程不稳定且对参数\n敏感.",
+        "sources": [
+          "vision_survey.pdf"
+        ],
+        "chunk_count": 1,
+        "references": [
+          {
+            "id": 1,
+            "source_file": "vision_survey.pdf",
+            "location": "第4页（物理页码）",
+            "text": "\n入位置的感知能力, 因此Transformer 依赖位置编\n码来实现对位置信息的补充. 相比之下, 卷积神经\n网络处理二维图像数据, 一方面卷积核中权重的排\n列方式使其具备了局部相对位置的感知能力, 另一\n方面, 有研究表明^{[}^{47}^{]}, 卷积神经网络使用的零填充\n（Zero padding）使其具备了绝对位置感知能力, 因\n此, 卷积神经网络不需要额外的位置编码模块.\nViT 的优劣势分析\n1.6\nViT^{[}^{15}^{]} 模型的优势在于其构建了全局信息交互\n机制, 有助于建立更为充分的特征表示. 此外, ViT\n采用了Transformer 中标准的数据流形式, 有助于\n同其它模态数据进行高效融合. ViT 存在的问题主\n要在三个方面, 首先全局注意力机制计算量较大, 尤\n其是面对一些长序列输入时, 其与输入长度成平方\n的计算代价极大地限制了其在高分辨率输入和密集\n预测任务中的应用; 其次, 不同于卷积中的局部归纳\n偏置, ViT 模型从全局关系中挖掘相关性, 对数据的\n依赖较大, 需要经过大量数据的训练才能具备较好\n效果; 此外, ViT 模型的训练过程不稳定且对参数\n敏感.",
+            "metadata": {
+              "source_file": "vision_survey.pdf",
+              "doc_id": "644bf3d7a22e96926669c991ac835b82ce1a1128404614d80fb4fffebf35a31c",
+              "chunk_id": "fe92a83a9be35a8724e7475f9746fcdacfc253fbf962bb7e7c028d5b4837dbe8",
+              "page_number": 4,
+              "start_index": 452,
+              "end_index": 962
+            },
+            "truncated": false
+          }
+        ],
+        "context_budget_chars": 6000,
+        "context_chars": 559,
+        "prompt_chars": 1155,
+        "truncated": false,
+        "dropped_count": 0
+      },
+      "messages_sha256": "27ba9ea784244cb50e97f52f81739917e1001fbe53c3547166e5d884827cd897"
+    },
+    {
+      "id": "encoder-comparison",
+      "question": "仅按给定片段，对比原始Transformer与BERT-base、BERT-large的编码器层数，并说明BERT两种尺寸的隐藏维度。请简洁回答。",
+      "intent_ids": [
+        "attention-01",
+        "bert-01"
+      ],
+      "expected_note": "Transformer 6；BASE 12/768；LARGE 24/1024；分别引用两个来源。",
+      "fact_patterns": [
+        "\\b6\\b|六",
+        "\\b12\\b",
+        "\\b24\\b",
+        "\\b768\\b",
+        "\\b1024\\b"
+      ],
+      "expected_citation_ids": [
+        1,
+        2
+      ],
+      "context": {
+        "context": "[参考文档1 - 来源: attention.pdf；原始块位置: 第3页（物理页码）]\n[图像区域 1：原文第 3 页]\nFigure 1: The Transformer - model architecture.\nThe Transformer follows this overall architecture using stacked self-attention and point-wise, fully\nconnected layers for both the encoder and decoder, shown in the left and right halves of Figure 1,\nrespectively.\n3.1\nEncoder and Decoder Stacks\nThe encoder is composed of a stack of N = 6 identical layers. Each layer has two\nEncoder:\nsub-layers. The first is a multi-head self-attention mechanism, and the second is a simple, position-\n\n---\n\n[参考文档2 - 来源: bert.pdf；原始块位置: 第3页（物理页码）]\n\nsuch as “The Annotated Transformer.”^{2}\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as\nH, and the number of self-attention heads as A.^{3}\nWe primarily report results on two model sizes:\nBERT_{BASE} (L=12, H=768, A=12, Total Param-\neters=110M) and BERT_{LARGE} (L=24, H=1024,\nA=16, Total Parameters=340M).\nBERT_{BASE} was chosen to have the same model\nsize as OpenAI GPT for comparison purposes.\nCritically, however, the BERT Transformer uses",
+        "sources": [
+          "attention.pdf",
+          "bert.pdf"
+        ],
+        "chunk_count": 2,
+        "references": [
+          {
+            "id": 1,
+            "source_file": "attention.pdf",
+            "location": "第3页（物理页码）",
+            "text": "[图像区域 1：原文第 3 页]\nFigure 1: The Transformer - model architecture.\nThe Transformer follows this overall architecture using stacked self-attention and point-wise, fully\nconnected layers for both the encoder and decoder, shown in the left and right halves of Figure 1,\nrespectively.\n3.1\nEncoder and Decoder Stacks\nThe encoder is composed of a stack of N = 6 identical layers. Each layer has two\nEncoder:\nsub-layers. The first is a multi-head self-attention mechanism, and the second is a simple, position-",
+            "metadata": {
+              "source_file": "attention.pdf",
+              "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+              "chunk_id": "92f8ad03bc04d4226530a55ec8ac4aff0e5285e51375e4c4b9ce4644505637f2",
+              "page_number": 3,
+              "start_index": 0,
+              "end_index": 501
+            },
+            "truncated": false
+          },
+          {
+            "id": 2,
+            "source_file": "bert.pdf",
+            "location": "第3页（物理页码）",
+            "text": "\nsuch as “The Annotated Transformer.”^{2}\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as\nH, and the number of self-attention heads as A.^{3}\nWe primarily report results on two model sizes:\nBERT_{BASE} (L=12, H=768, A=12, Total Param-\neters=110M) and BERT_{LARGE} (L=24, H=1024,\nA=16, Total Parameters=340M).\nBERT_{BASE} was chosen to have the same model\nsize as OpenAI GPT for comparison purposes.\nCritically, however, the BERT Transformer uses",
+            "metadata": {
+              "source_file": "bert.pdf",
+              "doc_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+              "chunk_id": "33c362adeeae964cd6ea9ff0fd62e1d726eb26e8c98eeeab6d96dfa4f1b5b572",
+              "page_number": 3,
+              "start_index": 3111,
+              "end_index": 3605
+            },
+            "truncated": false
+          }
+        ],
+        "context_budget_chars": 6000,
+        "context_chars": 1087,
+        "prompt_chars": 1724,
+        "truncated": false,
+        "dropped_count": 0
+      },
+      "messages_sha256": "ae04d62e911eb46094ca1745e7b531c15cc0fe2a0ba11192fc66ccbf2bca6b73"
+    },
+    {
+      "id": "insufficient",
+      "question": "仅根据给定片段，原始Transformer训练用了多少块V100 GPU、耗时多少小时？若片段未说明，请明确指出，不得凭记忆补全。",
+      "intent_ids": [
+        "attention-01"
+      ],
+      "expected_note": "给定编码器片段没有 GPU/耗时信息，应说明不足，不输出训练数字。",
+      "fact_patterns": [
+        "未.{0,8}(提供|说明|提及|包含)|无法|不能确定|不足|没有.{0,8}(信息|说明|提及)"
+      ],
+      "expected_citation_ids": [],
+      "context": {
+        "context": "[参考文档1 - 来源: attention.pdf；原始块位置: 第3页（物理页码）]\n[图像区域 1：原文第 3 页]\nFigure 1: The Transformer - model architecture.\nThe Transformer follows this overall architecture using stacked self-attention and point-wise, fully\nconnected layers for both the encoder and decoder, shown in the left and right halves of Figure 1,\nrespectively.\n3.1\nEncoder and Decoder Stacks\nThe encoder is composed of a stack of N = 6 identical layers. Each layer has two\nEncoder:\nsub-layers. The first is a multi-head self-attention mechanism, and the second is a simple, position-",
+        "sources": [
+          "attention.pdf"
+        ],
+        "chunk_count": 1,
+        "references": [
+          {
+            "id": 1,
+            "source_file": "attention.pdf",
+            "location": "第3页（物理页码）",
+            "text": "[图像区域 1：原文第 3 页]\nFigure 1: The Transformer - model architecture.\nThe Transformer follows this overall architecture using stacked self-attention and point-wise, fully\nconnected layers for both the encoder and decoder, shown in the left and right halves of Figure 1,\nrespectively.\n3.1\nEncoder and Decoder Stacks\nThe encoder is composed of a stack of N = 6 identical layers. Each layer has two\nEncoder:\nsub-layers. The first is a multi-head self-attention mechanism, and the second is a simple, position-",
+            "metadata": {
+              "source_file": "attention.pdf",
+              "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+              "chunk_id": "92f8ad03bc04d4226530a55ec8ac4aff0e5285e51375e4c4b9ce4644505637f2",
+              "page_number": 3,
+              "start_index": 0,
+              "end_index": 501
+            },
+            "truncated": false
+          }
+        ],
+        "context_budget_chars": 6000,
+        "context_chars": 546,
+        "prompt_chars": 1175,
+        "truncated": false,
+        "dropped_count": 0
+      },
+      "messages_sha256": "f04c21a070218a25dbaa4b2a21963c4690881348bb1b0b7d2da31d499d62c083"
+    },
+    {
+      "id": "empty",
+      "question": "知识库中的那篇论文DOI是什么？请简洁回答；没有依据时不要猜测。",
+      "intent_ids": [],
+      "expected_note": "知识库为空，明确提示无文档，不能生成 DOI。",
+      "fact_patterns": [
+        "当前知识库中未找到相关文档",
+        "无法|不能|不足|未.{0,8}(提供|找到)|没有"
+      ],
+      "expected_citation_ids": [],
+      "context": {
+        "context": "",
+        "sources": [],
+        "chunk_count": 0,
+        "references": [],
+        "context_budget_chars": 6000,
+        "context_chars": 0,
+        "prompt_chars": 610,
+        "truncated": false,
+        "dropped_count": 0
+      },
+      "messages_sha256": "791e8521d1cf996fd210267944f61dc6bbf66cca1443e683f8b25e990a59b8f4"
+    }
+  ]
+}

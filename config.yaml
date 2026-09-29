@@ -12,7 +12,14 @@ llm:
   provider: ollama
   base_url: http://localhost:11434
   model: qwen2.5:7b
+  # 八组真实生成对照后保留低温起点；完整记录见 docs/QA/5.2.1 生成参数对比与选择.md。
   temperature: 0.1
+  top_p: 0.9
+  # 生成候选词数，不是 retrieval.top_k 的文档数；实测选型见生成参数 QA。
+  top_k: 40
+  num_ctx: 8192
+  num_predict: 512
+  repeat_penalty: 1.0
 
 # 上下文策略按字符计；不是模型 Token 上限，接入 LLM 时须核对实际窗口。
 generation:

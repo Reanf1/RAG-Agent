@@ -1,13 +1,73 @@
-"""上下文拼接、截断和答案引用溯源；模型生成与引用语义评测待接入。"""
+"""上下文拼接、截断、本地非流式生成与答案引用溯源。"""
 
 from copy import deepcopy
 import math
 import re
+import json
+from urllib.error import URLError
+from urllib.parse import urlparse
+from urllib.request import Request, urlopen
 
 from langchain_core.documents import Document
 
 from src.generation.prompt_template import NO_CONTEXT_TEXT, build_rag_messages
 from src.utils.config import load_config
+
+
+def generate_answer(question: str, context: dict, *, options: dict | None = None) -> dict:
+    """使用 YAML 选定参数调用本地 Ollama，再用同一轮上下文补全文献引用。
+
+    options 仅供参数实验覆盖；不包含检索 top_k。只调用非流式原生接口，
+    不创建额外服务，不在失败时转云端；流式、缓存和完整检索流水线后续接入。
+    """
+    config = load_config()["llm"]
+    url = urlparse(config["base_url"])
+    if config["provider"] != "ollama" or url.scheme != "http" or url.hostname not in {
+        "localhost", "127.0.0.1", "::1"
+    } or url.username or url.password or url.query or url.fragment:
+        raise ValueError("本项目生成接口只允许本机 Ollama HTTP 服务")
+    sampling = {key: config[key] for key in
+                ("temperature", "top_p", "top_k", "num_ctx", "num_predict", "repeat_penalty")}
+    if options:
+        if set(options) - (set(sampling) | {"seed"}):
+            raise ValueError("不支持的生成实验参数")
+        sampling.update(options)
+    for key in ("temperature", "top_p", "repeat_penalty"):
+        value = sampling[key]
+        if type(value) not in (int, float) or not math.isfinite(value):
+            raise ValueError(f"{key} 必须为有限数值")
+    if sampling["temperature"] < 0 or not 0 < sampling["top_p"] <= 1 or sampling["repeat_penalty"] <= 0:
+        raise ValueError("temperature 必须非负，top_p 在 (0, 1] 内，repeat_penalty 必须为正")
+    for key in ("top_k", "num_ctx", "num_predict"):
+        if type(sampling[key]) is not int or sampling[key] <= 0:
+            raise ValueError(f"{key} 必须为正整数")
+    if "seed" in sampling and type(sampling["seed"]) is not int:
+        raise ValueError("seed 必须为整数")
+    messages = build_rag_messages(question, context["context"])
+    payload = {"model": config["model"], "stream": False, "options": sampling,
+               "messages": [{"role": "user" if message.type == "human" else message.type,
+                             "content": message.content} for message in messages]}
+    request = Request(config["base_url"].rstrip("/") + "/api/chat",
+                      data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+                      headers={"Content-Type": "application/json"}, method="POST")
+    try:
+        with urlopen(request, timeout=300) as response:
+            result = json.load(response)
+    except (URLError, TimeoutError) as error:
+        raise RuntimeError("本地 Ollama 调用失败，请检查服务、模型和超时情况") from error
+    # 不把错误响应、未完成响应或空文本当作有效答案；保留 length 终止供评测识别。
+    raw_answer = result.get("message", {}).get("content", "")
+    if result.get("error") or not result.get("done") or not raw_answer.strip():
+        raise RuntimeError("本地 Ollama 未返回完整的非空答案")
+    resolved = resolve_citations(raw_answer, context)
+    if result.get("done_reason") == "length":
+        resolved["warnings"].append("回答已达到生成 Token 上限，内容可能尚未完整。")
+    return {**resolved, "raw_answer": raw_answer,
+            "model": result["model"], "options": sampling,
+            "done_reason": result.get("done_reason"),
+            "usage": {key: result.get(key) for key in
+                      ("prompt_eval_count", "eval_count", "total_duration", "load_duration",
+                       "prompt_eval_duration", "eval_duration")}}
 
 
 def build_context(question: str, results: list[tuple[Document, float]]) -> dict:
