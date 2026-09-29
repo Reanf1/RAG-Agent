@@ -2,6 +2,8 @@
 
 当前 `test_retrieval.py` 有 165 个测试：基础 PDF 11 个、学术 PDF 17 个、Word 8 个、TXT/Markdown 8 个、分块 21 个、Embedding 接口 3 个与评测公式 2 个、三档检索评测 5 个、Chroma 操作 15 个、BM25 11 个、RRF 融合 7 个、混合检索 9 个、精排 7 个、重排模型加载 3 个、批量导入 12 个、批量索引 9 个、Streamlit 界面 17 个。使用临时生成的实际文件验证中文、来源与位置、稳定文档标识、Word 正文/表格顺序、UTF-8 BOM 和 Markdown 保真。
 
+`test_generation.py` 新增 8 个 Prompt 测试，当前合计 173 个测试通过。直接使用真实 LangChain 模板，检查四部分与消息角色、空上下文提示、空问题拒绝、公式/花括号/Markdown 保真、动态文本不改变系统消息、调用之间互不污染、长文本/空白保留，以及上游 Context 字典的文本接口。样例由测试中明确构造，不调用模型或网络；消息结构检查不代表模型能抵御所有提示词注入，也不代表引用准确性或答案质量已验证。详见 [Prompt QA](../docs/QA/5.2.1%20RAG专用Prompt模板.md)。
+
 分块用例调用真实的三种策略，核验大小/重叠、256/512/1024 字符设置、段落与中英文句子、结束引号、小数与 DOI、超长单句兜底、空内容与参数校验、稳定块 ID、原文区间和 CRLF 行号。重复段落与大重叠的组合验证位置向前推进且正文非空白字符全部覆盖；实际 Word/PDF/TXT 加载结果可直接分块，独立表格与公式来源元数据保留。配置测试只替换配置输入，不替换切分器；不把这些测试当作检索召回评测。
 
 256/512/1024 三档大小效果对比只用于固定策略；递归和句段的实验使用 YAML 默认 512/64 参数。单元测试中的小大小/大重叠用于验证边界和缺陷回归，与参数选型实验区分。
@@ -35,13 +37,14 @@ AppTest 等待上限为 10 秒，兼顾新环境首次加载界面依赖的耗�
 在项目根目录执行：
 
 ```bash
-.venv/bin/python -m unittest discover -s tests -p 'test_retrieval.py' -v
+.venv/bin/python -m unittest discover -s tests -p 'test_*.py' -v
 ```
 
 也支持从任意目录直接运行测试文件。使用已安装 `requirements.txt` 依赖的 Python，例如项目虚拟环境：
 
 ```bash
 /Users/rean/github/RAG+Agent/.venv/bin/python /Users/rean/github/RAG+Agent/tests/test_retrieval.py -v
+/Users/rean/github/RAG+Agent/.venv/bin/python /Users/rean/github/RAG+Agent/tests/test_generation.py -v
 ```
 
 测试入口会按 `__file__` 定位项目根目录，避免直接运行时找不到 `src`。
