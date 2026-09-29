@@ -1,0 +1,146 @@
+{
+  "verified_at": "2026-09-29T15:15:59.497428+08:00",
+  "python": "3.10.10",
+  "platform": "macOS-27.0-arm64-arm-64bit",
+  "offline_models": true,
+  "temporary_index": true,
+  "embedding": {
+    "model": "moka-ai/m3e-base",
+    "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+    "local_path": "data/models/m3e-base",
+    "device": "cpu",
+    "batch_size": 32
+  },
+  "retrieval": {
+    "vector_store": "chroma",
+    "collection_name": "paper_chunks",
+    "search_ef": 100,
+    "index_threads": 4,
+    "top_k": 5,
+    "candidate_k": 20,
+    "rrf_k": 60,
+    "reranker_model": "BAAI/bge-reranker-base",
+    "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+    "reranker_local_path": "data/models/bge-reranker-base",
+    "reranker_device": "cpu",
+    "reranker_batch_size": 8,
+    "reranker_max_length": 512
+  },
+  "paper_sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+  "checks": {
+    "initial_import": {
+      "successes": 5,
+      "failures": 1,
+      "stored_chunks": 102,
+      "real_encoding_batches": [
+        94,
+        3,
+        2,
+        2,
+        1
+      ],
+      "progress": {
+        "completed": 6,
+        "total": 6
+      },
+      "phases": [
+        "chunking",
+        "failed",
+        "indexing",
+        "loading",
+        "pending",
+        "success"
+      ]
+    },
+    "five_chunk_settings": [
+      {
+        "strategy": "fixed",
+        "chunk_size": 256,
+        "body_chunks": 202,
+        "table_chunks": 3
+      },
+      {
+        "strategy": "fixed",
+        "chunk_size": 512,
+        "body_chunks": 93,
+        "table_chunks": 3
+      },
+      {
+        "strategy": "fixed",
+        "chunk_size": 1024,
+        "body_chunks": 46,
+        "table_chunks": 3
+      },
+      {
+        "strategy": "recursive",
+        "chunk_size": 512,
+        "body_chunks": 91,
+        "table_chunks": 3
+      },
+      {
+        "strategy": "semantic",
+        "chunk_size": 512,
+        "body_chunks": 97,
+        "table_chunks": 3
+      }
+    ],
+    "failed_only_retry": {
+      "successful_attempts_unchanged": true,
+      "corrupt_pdf_attempts": 2
+    },
+    "duplicate_import": {
+      "added_chunks": 0,
+      "additional_document_encoding": 0
+    },
+    "incremental_import": {
+      "added_chunks": 1,
+      "old_vectors_unchanged": true,
+      "only_new_chunks_encoded": true
+    },
+    "retrieval": {
+      "top5_ids": {
+        "vector": [
+          "d0bbe2756471f51672d55ce1a0726c5e0f3bcc9bd7ede9bfa8d17e78183c514b",
+          "f234c5fecc9de6aefcfc0c5e419bd2b665bb07ee83cbc7b4df5fbe1d2af09d26",
+          "2a551a2cc25914e96478e9862f9cf327825bc768e730822791b0788480c8b203",
+          "02e9f1fd3e3b534812114fde81d61932c2293b157f8d35fa673435a3a5747a11",
+          "9d7aacec547653a3b46b93725fad2f4af2367e9e9b5ee8bd8ccaa3e057e590fc"
+        ],
+        "bm25": [
+          "f234c5fecc9de6aefcfc0c5e419bd2b665bb07ee83cbc7b4df5fbe1d2af09d26",
+          "92f8ad03bc04d4226530a55ec8ac4aff0e5285e51375e4c4b9ce4644505637f2",
+          "d856ed37e02628b97cfc4fe505f74401e7c6d7dea87a6bf2a3656ed3b3af3fd5",
+          "d0bbe2756471f51672d55ce1a0726c5e0f3bcc9bd7ede9bfa8d17e78183c514b",
+          "c2d856b5bd28ea1c4cc640aee34d6c0357a2f667909c34a346d9aed9508a898d"
+        ],
+        "hybrid": [
+          "f234c5fecc9de6aefcfc0c5e419bd2b665bb07ee83cbc7b4df5fbe1d2af09d26",
+          "d0bbe2756471f51672d55ce1a0726c5e0f3bcc9bd7ede9bfa8d17e78183c514b",
+          "92f8ad03bc04d4226530a55ec8ac4aff0e5285e51375e4c4b9ce4644505637f2",
+          "2a551a2cc25914e96478e9862f9cf327825bc768e730822791b0788480c8b203",
+          "4cb7090e355322d1783abbf85719dae3afc7e8c36837e19ae783a43879c86f7a"
+        ],
+        "hybrid_rerank": [
+          "f234c5fecc9de6aefcfc0c5e419bd2b665bb07ee83cbc7b4df5fbe1d2af09d26",
+          "92f8ad03bc04d4226530a55ec8ac4aff0e5285e51375e4c4b9ce4644505637f2",
+          "d0bbe2756471f51672d55ce1a0726c5e0f3bcc9bd7ede9bfa8d17e78183c514b",
+          "c73aea4168720bb45256a720a9fb785e9026f408ee112022acab85c9e8de25ba",
+          "4cb7090e355322d1783abbf85719dae3afc7e8c36837e19ae783a43879c86f7a"
+        ]
+      },
+      "rrf_candidate_count": 20,
+      "filtered_sources_preserved": true,
+      "no_matching_document_returns_empty": true
+    },
+    "delete_from_index": {
+      "source_file_retained": true,
+      "deleted_document_unretrievable": true
+    },
+    "new_process_reopen": {
+      "stored_chunks": 102,
+      "content_and_metadata_equal": true,
+      "vector_top5_equal": true
+    }
+  },
+  "scope": "功能链路验证，不替代分块策略召回实验、独立人工标注或完整系统评测"
+}
