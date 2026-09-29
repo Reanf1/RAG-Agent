@@ -32,6 +32,7 @@ from src.chunking.semantic_chunk import split_semantic
 from src.retrieval.vector_store import VectorStore, batch_build_index, get_embeddings
 from src.retrieval.bm25_retriever import BM25Retriever, tokenize
 from src.retrieval.hybrid_retriever import HybridRetriever, rrf_fusion
+from src.retrieval.reranker import Reranker, get_reranker
 
 
 class SmallEmbeddings(Embeddings):
@@ -511,6 +512,167 @@ class TestHybridRetriever(unittest.TestCase):
         with patch.object(BM25Retriever, "search", side_effect=RuntimeError("BM25 查询失败")):
             with self.assertRaisesRegex(RuntimeError, "BM25 查询失败"):
                 self.retriever.search("BERT")
+
+    def test_model_reranks_fused_candidates_before_final_top_k(self):
+        """模型先看到融合 Top-20；候选末项也能经模型升到最终 Top-1。"""
+        self.store.add_chunks([Document(page_content=f"论文候选 {i}", metadata={
+            "chunk_id": f"extra-{i}", "doc_id": "extra"}) for i in range(25)])
+        candidates = self.retriever.search("unknownkeyword", k=20)
+        with patch("src.retrieval.reranker.get_reranker") as model:
+            model.return_value.predict.return_value = [0.01] * 19 + [0.99]
+            found = self.retriever.search("unknownkeyword", k=1, rerank=True)
+            self.assertEqual(found, [(candidates[-1][0], 0.99)])
+            model.return_value.predict.assert_called_once_with(
+                [["unknownkeyword", doc.page_content] for doc, _ in candidates],
+                batch_size=8, show_progress_bar=False)
+            # K 大于默认候选数时相应扩大，而不是返回不足 K 的人为截断结果。
+            model.return_value.predict.return_value = [0.5] * 25
+            found = self.retriever.search("unknownkeyword", k=25, rerank=True)
+            self.assertEqual(len(found), 25)
+        self.assertEqual(len(self.embeddings.document_calls), 2)
+
+    def test_model_reranking_respects_filter_and_empty_results(self):
+        """过滤先应用于两路，单条候选也精排；空结果和空问题不加载模型。"""
+        with patch("src.retrieval.reranker.get_reranker") as model:
+            model.return_value.predict.return_value = [0.7]
+            found = self.retriever.search("BatchNormalization", doc_id="3", rerank=True)
+            self.assertEqual(found, [(self.chunks[3], 0.7)])
+            model.return_value.predict.assert_called_once_with(
+                [["BatchNormalization", self.chunks[3].page_content]], batch_size=8, show_progress_bar=False)
+            model.reset_mock()
+            self.assertEqual(self.retriever.search("BatchNormalization", doc_id="missing", rerank=True), [])
+            self.assertEqual(self.retriever.search("  ", rerank=True), [])
+            model.assert_not_called()
+
+    def test_plain_rrf_does_not_load_model_and_model_failure_is_reported(self):
+        """不启用精排时不依赖重排权重；启用后失败不得返回未经重排的候选。"""
+        with patch("src.retrieval.reranker.get_reranker", side_effect=RuntimeError("重排推理失败")) as model:
+            self.assertTrue(self.retriever.search("BERT"))
+            model.assert_not_called()
+            with self.assertRaisesRegex(RuntimeError, "重排推理失败"):
+                self.retriever.search("BERT", rerank=True)
+
+
+class TestReranker(unittest.TestCase):
+    """大模型隔离，核验成对输入、排序与来源，不将模拟分数当实验效果。"""
+
+    def setUp(self):
+        from src.utils.config import load_config
+        self.config = load_config()
+        self.config["retrieval"]["top_k"] = 2
+        self.config["retrieval"]["reranker_batch_size"] = 2
+        patcher = patch("src.retrieval.reranker.load_config", return_value=self.config)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        self.reranker = Reranker()
+        self.candidates = [(Document(page_content=text, metadata={
+            "chunk_id": str(i), "source_file": f"论文{i}.pdf", "page_number": i + 1}), 10 - i)
+            for i, text in enumerate(("无关材料", "注意力机制", "Attention mechanism"))]
+
+    def test_pairs_model_scores_order_and_sources(self):
+        """只用模型分数精排，同分保持原候选顺序，正文和来源不修改。"""
+        original = [(doc.page_content, dict(doc.metadata)) for doc, _ in self.candidates]
+        with patch("src.retrieval.reranker.get_reranker") as model:
+            model.return_value.predict.return_value = [0.1, 0.9, 0.9]
+            found = self.reranker.rerank("注意力是什么？", self.candidates)
+            model.return_value.predict.assert_called_once_with(
+                [["注意力是什么？", doc.page_content] for doc, _ in self.candidates],
+                batch_size=2, show_progress_bar=False)
+        self.assertEqual(found, [(self.candidates[1][0], 0.9), (self.candidates[2][0], 0.9)])
+        self.assertIs(found[0][0], self.candidates[1][0])
+        self.assertEqual(original, [(doc.page_content, doc.metadata) for doc, _ in self.candidates])
+
+    def test_single_candidate_zero_score_and_large_k(self):
+        """单候选结果仍为列表，零分保留，K 超出候选数不补齐或重复。"""
+        with patch("src.retrieval.reranker.get_reranker") as model:
+            model.return_value.predict.return_value = [0.0]
+            self.assertEqual(self.reranker.rerank("query", self.candidates[:1], k=100),
+                             [(self.candidates[0][0], 0.0)])
+
+    def test_empty_query_or_candidates_do_not_load_model(self):
+        with patch("src.retrieval.reranker.get_reranker") as model:
+            self.assertEqual(self.reranker.rerank("  \n", self.candidates), [])
+            self.assertEqual(self.reranker.rerank("query", []), [])
+            model.assert_not_called()
+
+    def test_invalid_k_is_rejected_before_loading_model(self):
+        for value in (0, -1, True, 1.5):
+            with self.subTest(k=value), patch("src.retrieval.reranker.get_reranker") as model:
+                with self.assertRaisesRegex(ValueError, "k"):
+                    self.reranker.rerank("query", self.candidates, k=value)
+                model.assert_not_called()
+
+    def test_invalid_batch_and_token_length_are_rejected(self):
+        for key in ("reranker_batch_size", "reranker_max_length"):
+            old = self.config["retrieval"][key]
+            for value in (0, -1, True, 1.5):
+                with self.subTest(key=key, value=value):
+                    self.config["retrieval"][key] = value
+                    with self.assertRaisesRegex(ValueError, key):
+                        Reranker()
+            self.config["retrieval"][key] = old
+
+    def test_score_count_and_nonfinite_values_are_rejected(self):
+        for scores in ([0.1], [float("nan"), 0.1, 0.2], [float("inf"), 0.1, 0.2]):
+            with self.subTest(scores=scores), patch("src.retrieval.reranker.get_reranker") as model:
+                model.return_value.predict.return_value = scores
+                with self.assertRaisesRegex(ValueError, "分数"):
+                    self.reranker.rerank("query", self.candidates)
+
+    def test_inference_error_is_not_silently_replaced_by_rrf(self):
+        with patch("src.retrieval.reranker.get_reranker") as model:
+            model.return_value.predict.side_effect = RuntimeError("推理失败")
+            with self.assertRaisesRegex(RuntimeError, "推理失败"):
+                self.reranker.rerank("query", self.candidates)
+
+
+class TestLocalReranker(unittest.TestCase):
+    """核验本地权重加载、缓存与失败恢复，测试不下载真实模型。"""
+
+    def setUp(self):
+        from src.utils.config import load_config
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        self.config = load_config()
+        self.config["retrieval"]["reranker_local_path"] = self.directory.name
+        patcher = patch.dict(os.environ, {"HF_HOME": str(Path(self.directory.name) / "cache")})
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        get_reranker.cache_clear()
+        self.addCleanup(get_reranker.cache_clear)
+        patcher = patch("src.retrieval.reranker.load_config", return_value=self.config)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def test_local_loading_and_reuse(self):
+        """配置/模型/Tokenizer 均只读本地文件，不执行远程代码，重复调用只加载一次。"""
+        from torch.nn import Sigmoid
+        with patch("sentence_transformers.CrossEncoder") as model:
+            self.assertIs(get_reranker(), model.return_value)
+            self.assertIs(get_reranker(), model.return_value)
+            model.assert_called_once()
+            self.assertEqual(model.call_args.args, (self.directory.name,))
+            kwargs = dict(model.call_args.kwargs)
+            self.assertIsInstance(kwargs.pop("default_activation_function"), Sigmoid)
+            self.assertEqual(kwargs, {"device": "cpu", "max_length": 512,
+                                     "local_files_only": True, "trust_remote_code": False})
+
+    def test_missing_model_does_not_initialize_remote_client(self):
+        self.config["retrieval"]["reranker_local_path"] = str(Path(self.directory.name) / "missing")
+        with patch("sentence_transformers.CrossEncoder") as model:
+            with self.assertRaisesRegex(FileNotFoundError, "请先按用户手册下载权重"):
+                get_reranker()
+            model.assert_not_called()
+
+    def test_failed_loading_is_not_cached_and_can_retry(self):
+        """损坏权重错误保留，修复后下次调用重新加载而不是缓存失败。"""
+        with patch("sentence_transformers.CrossEncoder") as model:
+            model.side_effect = OSError("损坏的权重")
+            with self.assertRaisesRegex(OSError, "损坏的权重"):
+                get_reranker()
+            model.side_effect = None
+            self.assertIs(get_reranker(), model.return_value)
+            self.assertEqual(model.call_count, 2)
 
 
 class TestLocalEmbeddings(unittest.TestCase):
@@ -1712,6 +1874,7 @@ class TestImportFrontend(unittest.TestCase):
         for target, value in (("src.utils.config.load_config", config),
                               ("src.retrieval.vector_store.load_config", config),
                               ("src.retrieval.hybrid_retriever.load_config", config),
+                              ("src.retrieval.reranker.load_config", config),
                               ("src.retrieval.vector_store.get_embeddings", self.embeddings)):
             patcher = patch(target, return_value=value)
             patcher.start()
@@ -2016,6 +2179,80 @@ class TestImportFrontend(unittest.TestCase):
         app.text_input(key="vector_doc_id").set_value(doc_id)
         app.button(key="vector_search").click().run()
         self.assertFalse(app.text)
+        self.assertEqual(self.embeddings.document_calls, [["BERT"], ["Reranker"]])
+
+    def test_model_reranking_displays_new_order_score_and_sources(self):
+        """页面使用模型分数重新排列，保留 Word 段落与 TXT 行范围。"""
+        VectorStore().add_chunks([
+            Document(page_content="神经网络", metadata={"chunk_id": "a", "doc_id": "a",
+                     "source_file": "论文A.pdf", "page_number": 1}),
+            Document(page_content="BatchNormalization", metadata={"chunk_id": "b", "doc_id": "b",
+                     "source_file": "论文B.docx", "paragraph_index": 3}),
+            Document(page_content="农业 BatchNormalization", metadata={"chunk_id": "c", "doc_id": "c",
+                     "source_file": "论文C.txt", "line_start": 2, "line_end": 3}),
+        ])
+        app = self.app
+        app.selectbox(key="retrieval_method").set_value("RRF + 模型重排")
+        app.text_input(key="vector_query").set_value("BatchNormalization")
+        app.number_input(key="vector_top_k").set_value(2)
+        with patch("src.retrieval.reranker.get_reranker") as model:
+            # 按正文给出明确测试分数，模型无需与实际论文质量等同。
+            values = {"神经网络": 0.1, "BatchNormalization": 0.8, "农业 BatchNormalization": 0.9}
+            model.return_value.predict.side_effect = lambda pairs, **kwargs: [values[text] for _, text in pairs]
+            app.button(key="vector_search").click().run()
+            self.assertEqual(len(model.return_value.predict.call_args.args[0]), 3)
+        self.assertFalse(app.exception)
+        self.assertEqual([element.value for element in app.text], ["农业 BatchNormalization", "BatchNormalization"])
+        self.assertIn("论文C.txt · 模型相关性分数 0.9000", app.expander[0].label)
+        self.assertIn("来源：论文C.txt；行范围：2–3", [element.value for element in app.caption])
+        self.assertIn("来源：论文B.docx；段落：3", [element.value for element in app.caption])
+
+    def test_model_reranking_empty_cases_and_error_recovery(self):
+        """空问题/空库无需模型，模型缺失或推理失败有错误提示，修复后可重新提交。"""
+        app = self.app
+        app.selectbox(key="retrieval_method").set_value("RRF + 模型重排")
+        with patch("src.retrieval.reranker.get_reranker", side_effect=AssertionError("不应加载模型")) as model:
+            app.button(key="vector_search").click().run()
+            app.text_input(key="vector_query").set_value("BERT")
+            app.button(key="vector_search").click().run()
+            model.assert_not_called()
+        self.assertFalse(app.error)
+        VectorStore().add_chunks([Document(page_content="BERT", metadata={
+            "chunk_id": "b", "doc_id": "b", "source_file": "论文.txt", "line_start": 1, "line_end": 1})])
+        for message in ("重排模型不存在", "重排推理失败"):
+            with patch("src.retrieval.reranker.get_reranker", side_effect=RuntimeError(message)):
+                app.button(key="vector_search").click().run()
+            self.assertFalse(app.exception)
+            self.assertTrue(any(message in element.value for element in app.error))
+            self.assertFalse(app.text)
+        with patch("src.retrieval.reranker.get_reranker") as model:
+            model.return_value.predict.return_value = [0.8]
+            app.button(key="vector_search").click().run()
+        self.assertFalse(app.error)
+        self.assertEqual([element.value for element in app.text], ["BERT"])
+
+    def test_model_reranking_uploaded_document_filter_and_delete(self):
+        """新文献可精排，文档 ID 限定在模型评分前生效，删除后不加载重排模型。"""
+        app = self.app
+        for filename, text in (("first.txt", b"BERT"), ("second.txt", b"Reranker")):
+            app.file_uploader[0].set_value([(filename, text, "text/plain")]).run()
+            app.button(key="start_import").click().run()
+        doc_id = app.session_state["import_tasks"][0]["documents"][0].metadata["doc_id"]
+        app.selectbox(key="retrieval_method").set_value("RRF + 模型重排")
+        app.text_input(key="vector_query").set_value("Reranker")
+        app.text_input(key="vector_doc_id").set_value(doc_id)
+        with patch("src.retrieval.reranker.get_reranker") as model:
+            model.return_value.predict.return_value = [0.7]
+            app.button(key="vector_search").click().run()
+            self.assertEqual([element.value for element in app.text], ["Reranker"])
+            model.return_value.predict.assert_called_once_with(
+                [["Reranker", "Reranker"]], batch_size=8, show_progress_bar=False)
+            VectorStore().delete_document(doc_id)
+            model.reset_mock()
+            app.button(key="vector_search").click().run()
+            self.assertFalse(app.text)
+            model.assert_not_called()
+        self.assertFalse(app.exception)
         self.assertEqual(self.embeddings.document_calls, [["BERT"], ["Reranker"]])
 
 

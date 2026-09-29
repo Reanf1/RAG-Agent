@@ -1,0 +1,1327 @@
+{
+  "verified_at": "2026-09-29T14:16:31.104787+08:00",
+  "scenario": "真实模型接入/打分与来源核验，不是三档质量或性能实验",
+  "offline": true,
+  "retrieval": {
+    "vector_store": "chroma",
+    "collection_name": "paper_chunks",
+    "search_ef": 100,
+    "index_threads": 4,
+    "top_k": 5,
+    "candidate_k": 20,
+    "rrf_k": 60,
+    "reranker_model": "BAAI/bge-reranker-base",
+    "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+    "reranker_local_path": "data/models/bge-reranker-base",
+    "reranker_device": "cpu",
+    "reranker_batch_size": 8,
+    "reranker_max_length": 512
+  },
+  "embedding": {
+    "model": "moka-ai/m3e-base",
+    "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+    "local_path": "data/models/m3e-base",
+    "device": "cpu",
+    "batch_size": 32
+  },
+  "libraries": {
+    "sentence-transformers": "3.3.1",
+    "transformers": "4.46.3",
+    "torch": "2.5.1"
+  },
+  "device": "cpu",
+  "dtype": "torch.float32",
+  "torch_threads": 4,
+  "weight_bytes": 1112206140,
+  "weight_sha256": "ced967c45fd1902eb92716c9ceeca7c95a936770ea9db611f5a841b926e33fbd",
+  "sample_sha256": "63c22eddcf08f05b809dd888b4794993ea0364edf7d43d0c442e16ae76342707",
+  "cached_vectors_sha256": "da1e574184a448f4d3b9cc6b66149c141fcf188ef05da2bb01f0dea714648903",
+  "papers": 6,
+  "corpus_chunks": 821,
+  "selection": "每个语言组合在既有样本中的第一题，再加第一题的文档过滤；未按结果选题",
+  "document_vectors": "复用已有真实 M3E 缓存，查询现场编码，临时 Chroma 不写入业务索引",
+  "empty_inputs_no_model": true,
+  "model_reused": true,
+  "reopened_results_equal": true,
+  "single_long_candidate_input_tokens": 512,
+  "single_long_candidate_source_preserved": true,
+  "checks": [
+    {
+      "query_id": "attention-01-zh",
+      "group": "zh->en",
+      "query": "原始Transformer编码器堆叠了多少层？",
+      "doc_id_filter": null,
+      "candidate_count": 20,
+      "returned": 5,
+      "final_k": 5,
+      "direct_transformers_max_score_error": 0.0,
+      "ranking_verified": true,
+      "source_preserved": true,
+      "order_changed": true,
+      "candidates": [
+        {
+          "rrf_rank": 1,
+          "chunk_id": "6eab2dd1fd9ac9be3d0eadb1e685caeb09fe4e0e1f824e4dc8e898f0218f8840",
+          "doc_id": "vision_survey",
+          "source_file": "vision_survey.pdf",
+          "page_number": 12,
+          "rrf_score": 0.03047794966520434,
+          "model_score": 0.5199364423751831,
+          "direct_transformers_score": 0.5199364423751831,
+          "input_tokens": 359
+        },
+        {
+          "rrf_rank": 2,
+          "chunk_id": "132453b8955b8bc8144a23b3422f3b10eaa2e2d8e42dd75eac80bd95538f4089",
+          "doc_id": "vision_survey",
+          "source_file": "vision_survey.pdf",
+          "page_number": 12,
+          "rrf_score": 0.0304147465437788,
+          "model_score": 0.11845947057008743,
+          "direct_transformers_score": 0.11845947057008743,
+          "input_tokens": 344
+        },
+        {
+          "rrf_rank": 3,
+          "chunk_id": "670f5ed67a6d0e6cb52fa5c4f98572464ed43e4bc80f2125ef4cfd512b0048e1",
+          "doc_id": "vision_survey",
+          "source_file": "vision_survey.pdf",
+          "page_number": 17,
+          "rrf_score": 0.02928692699490662,
+          "model_score": 0.127792626619339,
+          "direct_transformers_score": 0.127792626619339,
+          "input_tokens": 338
+        },
+        {
+          "rrf_rank": 4,
+          "chunk_id": "b6d06d6818f58cd6250b3fb68a749674f9000752675601fab1efb5a50417fa5e",
+          "doc_id": "vision_survey",
+          "source_file": "vision_survey.pdf",
+          "page_number": 2,
+          "rrf_score": 0.01639344262295082,
+          "model_score": 0.9568195343017578,
+          "direct_transformers_score": 0.9568195343017578,
+          "input_tokens": 180
+        },
+        {
+          "rrf_rank": 5,
+          "chunk_id": "2ef7c88c1608d0690629c1fdf2ce156e7ded8d67f19ca74ee21eb71309e355db",
+          "doc_id": "vision_survey",
+          "source_file": "vision_survey.pdf",
+          "page_number": 14,
+          "rrf_score": 0.015873015873015872,
+          "model_score": 0.0036354304756969213,
+          "direct_transformers_score": 0.0036354304756969213,
+          "input_tokens": 301
+        },
+        {
+          "rrf_rank": 6,
+          "chunk_id": "92f8ad03bc04d4226530a55ec8ac4aff0e5285e51375e4c4b9ce4644505637f2",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 3,
+          "rrf_score": 0.015873015873015872,
+          "model_score": 0.998327910900116,
+          "direct_transformers_score": 0.998327910900116,
+          "input_tokens": 154
+        },
+        {
+          "rrf_rank": 7,
+          "chunk_id": "a8c1ab9fade58bb2830d67241ce223a8ddf8b52cce1564ec7eaae79ab85e37cf",
+          "doc_id": "bert",
+          "source_file": "bert.pdf",
+          "page_number": 8,
+          "rrf_score": 0.015625,
+          "model_score": 0.020136868581175804,
+          "direct_transformers_score": 0.020136868581175804,
+          "input_tokens": 158
+        },
+        {
+          "rrf_rank": 8,
+          "chunk_id": "b48ce56cc71a3bb4a33365fb6471694e508d5bccb39bca11a96db7174965c7df",
+          "doc_id": "vision_survey",
+          "source_file": "vision_survey.pdf",
+          "page_number": 9,
+          "rrf_score": 0.015625,
+          "model_score": 0.1859925091266632,
+          "direct_transformers_score": 0.1859925091266632,
+          "input_tokens": 335
+        },
+        {
+          "rrf_rank": 9,
+          "chunk_id": "33c362adeeae964cd6ea9ff0fd62e1d726eb26e8c98eeeab6d96dfa4f1b5b572",
+          "doc_id": "bert",
+          "source_file": "bert.pdf",
+          "page_number": 3,
+          "rrf_score": 0.015384615384615385,
+          "model_score": 0.39854300022125244,
+          "direct_transformers_score": 0.39854300022125244,
+          "input_tokens": 189
+        },
+        {
+          "rrf_rank": 10,
+          "chunk_id": "773e67c921d45fb1a0ea6c81510ebb7e67cbfd61bed527a7a945a3fedf63091f",
+          "doc_id": "vision_survey",
+          "source_file": "vision_survey.pdf",
+          "page_number": 13,
+          "rrf_score": 0.015384615384615385,
+          "model_score": 0.03672662749886513,
+          "direct_transformers_score": 0.03672662749886513,
+          "input_tokens": 359
+        },
+        {
+          "rrf_rank": 11,
+          "chunk_id": "7a8104b7b265e7a7e9b30cad99e692bea1399a72318871561731b5a4342fe3f2",
+          "doc_id": "vision_survey",
+          "source_file": "vision_survey.pdf",
+          "page_number": 3,
+          "rrf_score": 0.015151515151515152,
+          "model_score": 0.0003311999898869544,
+          "direct_transformers_score": 0.0003311999898869544,
+          "input_tokens": 332
+        },
+        {
+          "rrf_rank": 12,
+          "chunk_id": "d60fcd987e925e7168c61fac3d275bb0c69f5f702ce6443540b7332ab95219a5",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 2,
+          "rrf_score": 0.015151515151515152,
+          "model_score": 0.0008359298226423562,
+          "direct_transformers_score": 0.0008359298226423562,
+          "input_tokens": 132
+        },
+        {
+          "rrf_rank": 13,
+          "chunk_id": "061049af47295e9fe92e4a5518e3200c16528b5a1c413f0350ec592879e738fc",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 8,
+          "rrf_score": 0.014925373134328358,
+          "model_score": 0.19498778879642487,
+          "direct_transformers_score": 0.19498778879642487,
+          "input_tokens": 187
+        },
+        {
+          "rrf_rank": 14,
+          "chunk_id": "b5dad46f8fd0c7e1fbe0fcae692edcd5e9eb5e008d0cfa0bd17310925185fb9d",
+          "doc_id": "vision_survey",
+          "source_file": "vision_survey.pdf",
+          "page_number": 5,
+          "rrf_score": 0.014925373134328358,
+          "model_score": 0.07908865064382553,
+          "direct_transformers_score": 0.07908865064382553,
+          "input_tokens": 331
+        },
+        {
+          "rrf_rank": 15,
+          "chunk_id": "42985578f49269d66b35797f7d2298323cd340f5d1d1631b8faeda00ec8ffbe7",
+          "doc_id": "vision_survey",
+          "source_file": "vision_survey.pdf",
+          "page_number": 14,
+          "rrf_score": 0.014705882352941176,
+          "model_score": 0.019189393147826195,
+          "direct_transformers_score": 0.019189393147826195,
+          "input_tokens": 356
+        },
+        {
+          "rrf_rank": 16,
+          "chunk_id": "e8d0118f0928e1fef19348b03ad45697f804e8f9b7e5f6288afcb9ac3e6cbddb",
+          "doc_id": "vision_survey",
+          "source_file": "vision_survey.pdf",
+          "page_number": 10,
+          "rrf_score": 0.014705882352941176,
+          "model_score": 0.005052183289080858,
+          "direct_transformers_score": 0.005052183289080858,
+          "input_tokens": 306
+        },
+        {
+          "rrf_rank": 17,
+          "chunk_id": "1ec2c7d6431579aacdc19b9db0caf1979ba197a7b2cf248a63c65dcf19f0bfae",
+          "doc_id": "vision_survey",
+          "source_file": "vision_survey.pdf",
+          "page_number": 18,
+          "rrf_score": 0.014492753623188406,
+          "model_score": 0.0050493390299379826,
+          "direct_transformers_score": 0.0050493390299379826,
+          "input_tokens": 352
+        },
+        {
+          "rrf_rank": 18,
+          "chunk_id": "9e10368c42284977df008d07460cbdbcead16701f386e39753b005adc1d7fa56",
+          "doc_id": "bert",
+          "source_file": "bert.pdf",
+          "page_number": 3,
+          "rrf_score": 0.014492753623188406,
+          "model_score": 0.06267093122005463,
+          "direct_transformers_score": 0.06267093122005463,
+          "input_tokens": 138
+        },
+        {
+          "rrf_rank": 19,
+          "chunk_id": "51a5a062907acb9f6ec6924cf9561d6833e786fdeb127c420531f423a0114a5b",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 9,
+          "rrf_score": 0.014285714285714285,
+          "model_score": 0.0048371898010373116,
+          "direct_transformers_score": 0.0048371898010373116,
+          "input_tokens": 405
+        },
+        {
+          "rrf_rank": 20,
+          "chunk_id": "cfdd95b2d8a03c9897aca768aaf635f53992f8a3064ed6837f082d1e0dc828ff",
+          "doc_id": "compression",
+          "source_file": "compression.pdf",
+          "page_number": 13,
+          "rrf_score": 0.014084507042253521,
+          "model_score": 0.0022166322451084852,
+          "direct_transformers_score": 0.0022166322451084852,
+          "input_tokens": 340
+        }
+      ],
+      "top_k": [
+        {
+          "chunk_id": "92f8ad03bc04d4226530a55ec8ac4aff0e5285e51375e4c4b9ce4644505637f2",
+          "score": 0.998327910900116
+        },
+        {
+          "chunk_id": "b6d06d6818f58cd6250b3fb68a749674f9000752675601fab1efb5a50417fa5e",
+          "score": 0.9568195343017578
+        },
+        {
+          "chunk_id": "6eab2dd1fd9ac9be3d0eadb1e685caeb09fe4e0e1f824e4dc8e898f0218f8840",
+          "score": 0.5199364423751831
+        },
+        {
+          "chunk_id": "33c362adeeae964cd6ea9ff0fd62e1d726eb26e8c98eeeab6d96dfa4f1b5b572",
+          "score": 0.39854300022125244
+        },
+        {
+          "chunk_id": "061049af47295e9fe92e4a5518e3200c16528b5a1c413f0350ec592879e738fc",
+          "score": 0.19498778879642487
+        }
+      ]
+    },
+    {
+      "query_id": "attention-01-en",
+      "group": "en->en",
+      "query": "How many identical encoder layers are stacked in the original Transformer?",
+      "doc_id_filter": null,
+      "candidate_count": 20,
+      "returned": 5,
+      "final_k": 5,
+      "direct_transformers_max_score_error": 0.0,
+      "ranking_verified": true,
+      "source_preserved": true,
+      "order_changed": true,
+      "candidates": [
+        {
+          "rrf_rank": 1,
+          "chunk_id": "92f8ad03bc04d4226530a55ec8ac4aff0e5285e51375e4c4b9ce4644505637f2",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 3,
+          "rrf_score": 0.03278688524590164,
+          "model_score": 0.9993414282798767,
+          "direct_transformers_score": 0.9993414282798767,
+          "input_tokens": 159
+        },
+        {
+          "rrf_rank": 2,
+          "chunk_id": "6bf22889f3529dc02a90d47e81b007a34e244123a7af9110784c29b4d9f71c6c",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 3,
+          "rrf_score": 0.031746031746031744,
+          "model_score": 0.9170406460762024,
+          "direct_transformers_score": 0.9170406460762024,
+          "input_tokens": 142
+        },
+        {
+          "rrf_rank": 3,
+          "chunk_id": "5dfc694be5866eb09dbf0c59aafee3d13d60ca95e5ef3b02325087caad5cd37e",
+          "doc_id": "vit",
+          "source_file": "vit.pdf",
+          "page_number": 18,
+          "rrf_score": 0.03128054740957967,
+          "model_score": 0.006805730052292347,
+          "direct_transformers_score": 0.006805730052292347,
+          "input_tokens": 149
+        },
+        {
+          "rrf_rank": 4,
+          "chunk_id": "9e9acdbba6f720d3d5d743203fd149d3f8e84a050cd4d12cdbfebbb3782e62b3",
+          "doc_id": "vit",
+          "source_file": "vit.pdf",
+          "page_number": 3,
+          "rrf_score": 0.031009615384615385,
+          "model_score": 0.06165933981537819,
+          "direct_transformers_score": 0.06165933981537819,
+          "input_tokens": 126
+        },
+        {
+          "rrf_rank": 5,
+          "chunk_id": "9e10368c42284977df008d07460cbdbcead16701f386e39753b005adc1d7fa56",
+          "doc_id": "bert",
+          "source_file": "bert.pdf",
+          "page_number": 3,
+          "rrf_score": 0.030117753623188408,
+          "model_score": 0.1338224858045578,
+          "direct_transformers_score": 0.1338224858045578,
+          "input_tokens": 143
+        },
+        {
+          "rrf_rank": 6,
+          "chunk_id": "adfb6984b369d505ff02e56c15427f023f3aa948ba48f18953308a737f6d37a8",
+          "doc_id": "vit",
+          "source_file": "vit.pdf",
+          "page_number": 3,
+          "rrf_score": 0.029827662395050816,
+          "model_score": 0.43027448654174805,
+          "direct_transformers_score": 0.43027448654174805,
+          "input_tokens": 131
+        },
+        {
+          "rrf_rank": 7,
+          "chunk_id": "9d7aacec547653a3b46b93725fad2f4af2367e9e9b5ee8bd8ccaa3e057e590fc",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 5,
+          "rrf_score": 0.029631255487269532,
+          "model_score": 0.02988288551568985,
+          "direct_transformers_score": 0.02988288551568985,
+          "input_tokens": 144
+        },
+        {
+          "rrf_rank": 8,
+          "chunk_id": "b1be54a299af4561dfd73462407dfd823f73a744f9542f1601ddb75f1086a1ee",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 5,
+          "rrf_score": 0.02919863597612958,
+          "model_score": 0.008484541438519955,
+          "direct_transformers_score": 0.008484541438519955,
+          "input_tokens": 153
+        },
+        {
+          "rrf_rank": 9,
+          "chunk_id": "5b94a7819e50464ef67e4e46765090f2478fe83e24c8ac830e227b2e3f8db334",
+          "doc_id": "vit",
+          "source_file": "vit.pdf",
+          "page_number": 9,
+          "rrf_score": 0.028850145288501453,
+          "model_score": 0.0009147474775090814,
+          "direct_transformers_score": 0.0009147474775090814,
+          "input_tokens": 127
+        },
+        {
+          "rrf_rank": 10,
+          "chunk_id": "76c144c18e9aa8d4fa486eba9682dc531359bb1d0b0025b5926bc586d2566869",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 10,
+          "rrf_score": 0.027222222222222224,
+          "model_score": 0.02734505571424961,
+          "direct_transformers_score": 0.02734505571424961,
+          "input_tokens": 141
+        },
+        {
+          "rrf_rank": 11,
+          "chunk_id": "18622ae0815c67fb7f0d372597015fbac6e3365dbe225d57a57321486001ce1b",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 13,
+          "rrf_score": 0.027106227106227107,
+          "model_score": 0.023187419399619102,
+          "direct_transformers_score": 0.023187419399619102,
+          "input_tokens": 90
+        },
+        {
+          "rrf_rank": 12,
+          "chunk_id": "33c362adeeae964cd6ea9ff0fd62e1d726eb26e8c98eeeab6d96dfa4f1b5b572",
+          "doc_id": "bert",
+          "source_file": "bert.pdf",
+          "page_number": 3,
+          "rrf_score": 0.015384615384615385,
+          "model_score": 0.031938713043928146,
+          "direct_transformers_score": 0.031938713043928146,
+          "input_tokens": 194
+        },
+        {
+          "rrf_rank": 13,
+          "chunk_id": "b7a5603bef581cc9a6c705c4c537621adb8d3994c9a5feb83c2d6dcc64113355",
+          "doc_id": "bert",
+          "source_file": "bert.pdf",
+          "page_number": 14,
+          "rrf_score": 0.014925373134328358,
+          "model_score": 0.00023813812003936619,
+          "direct_transformers_score": 0.00023813812003936619,
+          "input_tokens": 135
+        },
+        {
+          "rrf_rank": 14,
+          "chunk_id": "0f68818744e481c34b21217028a043b89a427b643fd241c0654a4186705846b8",
+          "doc_id": "vit",
+          "source_file": "vit.pdf",
+          "page_number": 3,
+          "rrf_score": 0.014285714285714285,
+          "model_score": 0.009528041817247868,
+          "direct_transformers_score": 0.009528041817247868,
+          "input_tokens": 167
+        },
+        {
+          "rrf_rank": 15,
+          "chunk_id": "3ab7dcacf6350c63da2154e5a12b0bbba4e31159d4862a489b0fa41869202f30",
+          "doc_id": "bert",
+          "source_file": "bert.pdf",
+          "page_number": 4,
+          "rrf_score": 0.014084507042253521,
+          "model_score": 0.0003611759457271546,
+          "direct_transformers_score": 0.0003611759457271546,
+          "input_tokens": 163
+        },
+        {
+          "rrf_rank": 16,
+          "chunk_id": "ab37aa367379b7caca387bb160c54e2e21972e882890a776e9406b7f521e66a1",
+          "doc_id": "vision_survey",
+          "source_file": "vision_survey.pdf",
+          "page_number": 20,
+          "rrf_score": 0.014084507042253521,
+          "model_score": 0.00282281800173223,
+          "direct_transformers_score": 0.00282281800173223,
+          "input_tokens": 185
+        },
+        {
+          "rrf_rank": 17,
+          "chunk_id": "56eb4e6df574b186b34b1f4e1f5f874932e4ee8dd08885375b2cefb5fe28c5ee",
+          "doc_id": "bert",
+          "source_file": "bert.pdf",
+          "page_number": 9,
+          "rrf_score": 0.013888888888888888,
+          "model_score": 0.00010130598820978776,
+          "direct_transformers_score": 0.00010130598820978776,
+          "input_tokens": 130
+        },
+        {
+          "rrf_rank": 18,
+          "chunk_id": "061049af47295e9fe92e4a5518e3200c16528b5a1c413f0350ec592879e738fc",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 8,
+          "rrf_score": 0.013513513513513514,
+          "model_score": 0.3725227117538452,
+          "direct_transformers_score": 0.3725227117538452,
+          "input_tokens": 192
+        },
+        {
+          "rrf_rank": 19,
+          "chunk_id": "2c13b9df6937f0541f20d0da230490deafc0affc321654d02eb325d918249336",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 6,
+          "rrf_score": 0.013513513513513514,
+          "model_score": 0.12194635719060898,
+          "direct_transformers_score": 0.12194635719060898,
+          "input_tokens": 157
+        },
+        {
+          "rrf_rank": 20,
+          "chunk_id": "ec26059f1a64b6a99a89ffa09534a8e071d913610056cad0138be39afebc728e",
+          "doc_id": "vit",
+          "source_file": "vit.pdf",
+          "page_number": 3,
+          "rrf_score": 0.013333333333333334,
+          "model_score": 0.003435809165239334,
+          "direct_transformers_score": 0.003435809165239334,
+          "input_tokens": 160
+        }
+      ],
+      "top_k": [
+        {
+          "chunk_id": "92f8ad03bc04d4226530a55ec8ac4aff0e5285e51375e4c4b9ce4644505637f2",
+          "score": 0.9993414282798767
+        },
+        {
+          "chunk_id": "6bf22889f3529dc02a90d47e81b007a34e244123a7af9110784c29b4d9f71c6c",
+          "score": 0.9170406460762024
+        },
+        {
+          "chunk_id": "adfb6984b369d505ff02e56c15427f023f3aa948ba48f18953308a737f6d37a8",
+          "score": 0.43027448654174805
+        },
+        {
+          "chunk_id": "061049af47295e9fe92e4a5518e3200c16528b5a1c413f0350ec592879e738fc",
+          "score": 0.3725227117538452
+        },
+        {
+          "chunk_id": "9e10368c42284977df008d07460cbdbcead16701f386e39753b005adc1d7fa56",
+          "score": 0.1338224858045578
+        }
+      ]
+    },
+    {
+      "query_id": "cnn_survey-01-zh",
+      "group": "zh->zh",
+      "query": "周飞燕等的CNN综述中，卷积层为什么能减少可训练参数？",
+      "doc_id_filter": null,
+      "candidate_count": 20,
+      "returned": 5,
+      "final_k": 5,
+      "direct_transformers_max_score_error": 0.0,
+      "ranking_verified": true,
+      "source_preserved": true,
+      "order_changed": true,
+      "candidates": [
+        {
+          "rrf_rank": 1,
+          "chunk_id": "643311f2d6d503e9fad14de964126617ad6e4d78dbf8aae299c53fe55e0adac1",
+          "doc_id": "cnn_survey",
+          "source_file": "cnn_survey.pdf",
+          "page_number": 5,
+          "rrf_score": 0.032266458495966696,
+          "model_score": 0.9892770051956177,
+          "direct_transformers_score": 0.9892770051956177,
+          "input_tokens": 396
+        },
+        {
+          "rrf_rank": 2,
+          "chunk_id": "6e11ec046b73d4f391702ff3e6f0c9af1f318cffa63a1d0928f1df91cd6eba69",
+          "doc_id": "cnn_survey",
+          "source_file": "cnn_survey.pdf",
+          "page_number": 7,
+          "rrf_score": 0.032266458495966696,
+          "model_score": 0.9636516571044922,
+          "direct_transformers_score": 0.9636516571044922,
+          "input_tokens": 356
+        },
+        {
+          "rrf_rank": 3,
+          "chunk_id": "59cf668d4f71084d87b125c9e3b2bfe98432171b3c1f82b84c779c173e714939",
+          "doc_id": "cnn_survey",
+          "source_file": "cnn_survey.pdf",
+          "page_number": 9,
+          "rrf_score": 0.031754032258064516,
+          "model_score": 0.9576665163040161,
+          "direct_transformers_score": 0.9576665163040161,
+          "input_tokens": 384
+        },
+        {
+          "rrf_rank": 4,
+          "chunk_id": "a7d9bcbd8c51d3fe3f8957607578d5c690c43419eefc5381b829140d1c6a6d3d",
+          "doc_id": "cnn_survey",
+          "source_file": "cnn_survey.pdf",
+          "page_number": 3,
+          "rrf_score": 0.031054405392392875,
+          "model_score": 0.8211440443992615,
+          "direct_transformers_score": 0.8211440443992615,
+          "input_tokens": 353
+        },
+        {
+          "rrf_rank": 5,
+          "chunk_id": "cf37c35249bd3b04672c36d27756a1cede374fa4585b9b017926e901d762d15a",
+          "doc_id": "cnn_survey",
+          "source_file": "cnn_survey.pdf",
+          "page_number": 13,
+          "rrf_score": 0.03055037313432836,
+          "model_score": 0.8469609618186951,
+          "direct_transformers_score": 0.8469609618186951,
+          "input_tokens": 352
+        },
+        {
+          "rrf_rank": 6,
+          "chunk_id": "62b0af7539bfff4a92305cd7f4b7df3906a06c8812ce733c66ed06915d48d343",
+          "doc_id": "cnn_survey",
+          "source_file": "cnn_survey.pdf",
+          "page_number": 11,
+          "rrf_score": 0.029857397504456328,
+          "model_score": 0.9166204929351807,
+          "direct_transformers_score": 0.9166204929351807,
+          "input_tokens": 337
+        },
+        {
+          "rrf_rank": 7,
+          "chunk_id": "c0623f7b53311176650ded8c22b88f5e8801d942ffd35a9e657b310d5a7320dc",
+          "doc_id": "cnn_survey",
+          "source_file": "cnn_survey.pdf",
+          "page_number": 15,
+          "rrf_score": 0.027972027972027972,
+          "model_score": 0.9444330334663391,
+          "direct_transformers_score": 0.9444330334663391,
+          "input_tokens": 362
+        },
+        {
+          "rrf_rank": 8,
+          "chunk_id": "de71e3b3723184db7fa8465f15fb674fa50db33e08e7237f5644a2dcff012017",
+          "doc_id": "cnn_survey",
+          "source_file": "cnn_survey.pdf",
+          "page_number": 21,
+          "rrf_score": 0.02761904761904762,
+          "model_score": 0.1930033415555954,
+          "direct_transformers_score": 0.1930033415555954,
+          "input_tokens": 199
+        },
+        {
+          "rrf_rank": 9,
+          "chunk_id": "e7db5d667bb2e5ceae2f65585ed3c2bf49706e303d79a8a0a47595e368e11caf",
+          "doc_id": "cnn_survey",
+          "source_file": "cnn_survey.pdf",
+          "page_number": 23,
+          "rrf_score": 0.026144907723855092,
+          "model_score": 0.17791102826595306,
+          "direct_transformers_score": 0.17791102826595306,
+          "input_tokens": 158
+        },
+        {
+          "rrf_rank": 10,
+          "chunk_id": "fcd46ccd81b07c576b206ebf249ccfd33918b2537faef4c97cc7945b26ef1d06",
+          "doc_id": "cnn_survey",
+          "source_file": "cnn_survey.pdf",
+          "page_number": 1,
+          "rrf_score": 0.025158227848101268,
+          "model_score": 0.4435010552406311,
+          "direct_transformers_score": 0.4435010552406311,
+          "input_tokens": 318
+        },
+        {
+          "rrf_rank": 11,
+          "chunk_id": "4c330de3aa5513f40b65cf8bc3921c60b46bde830f21e98cf72d1f5dba36bb62",
+          "doc_id": "cnn_survey",
+          "source_file": "cnn_survey.pdf",
+          "page_number": 17,
+          "rrf_score": 0.015384615384615385,
+          "model_score": 0.9899202585220337,
+          "direct_transformers_score": 0.9899202585220337,
+          "input_tokens": 380
+        },
+        {
+          "rrf_rank": 12,
+          "chunk_id": "d2600e5d075803aecb471351b190fb686e4c11791332b3bdd1a1b1a3bde664bd",
+          "doc_id": "cnn_survey",
+          "source_file": "cnn_survey.pdf",
+          "page_number": 5,
+          "rrf_score": 0.015384615384615385,
+          "model_score": 0.9727330803871155,
+          "direct_transformers_score": 0.9727330803871155,
+          "input_tokens": 366
+        },
+        {
+          "rrf_rank": 13,
+          "chunk_id": "a1c660bbd4886415c566ab30d9b2b809f581bb01e486e1147e683190a9eb1295",
+          "doc_id": "cnn_survey",
+          "source_file": "cnn_survey.pdf",
+          "page_number": 10,
+          "rrf_score": 0.014705882352941176,
+          "model_score": 0.6530793309211731,
+          "direct_transformers_score": 0.6530793309211731,
+          "input_tokens": 370
+        },
+        {
+          "rrf_rank": 14,
+          "chunk_id": "2ce6708c8a4650658e19e5706e202f59bc3d936d6776a53d91aa29f88810aba6",
+          "doc_id": "cnn_survey",
+          "source_file": "cnn_survey.pdf",
+          "page_number": 1,
+          "rrf_score": 0.014492753623188406,
+          "model_score": 0.9366741180419922,
+          "direct_transformers_score": 0.9366741180419922,
+          "input_tokens": 381
+        },
+        {
+          "rrf_rank": 15,
+          "chunk_id": "a30034f8a1e584a34adc512bcbf38207785740b004d43a18b42b7bc737281134",
+          "doc_id": "cnn_survey",
+          "source_file": "cnn_survey.pdf",
+          "page_number": 6,
+          "rrf_score": 0.014492753623188406,
+          "model_score": 0.967358410358429,
+          "direct_transformers_score": 0.967358410358429,
+          "input_tokens": 381
+        },
+        {
+          "rrf_rank": 16,
+          "chunk_id": "432ae2b41f6182e3c45fc8850ea0765ae8167532757a90313d8c55e8bd79d8ee",
+          "doc_id": "compression",
+          "source_file": "compression.pdf",
+          "page_number": 2,
+          "rrf_score": 0.014285714285714285,
+          "model_score": 0.11007517576217651,
+          "direct_transformers_score": 0.11007517576217651,
+          "input_tokens": 252
+        },
+        {
+          "rrf_rank": 17,
+          "chunk_id": "5c79955f1235b737573913373bcbd744f5101d3e0c48dc38a5c10ca8f8bd6d1b",
+          "doc_id": "cnn_survey",
+          "source_file": "cnn_survey.pdf",
+          "page_number": 12,
+          "rrf_score": 0.014084507042253521,
+          "model_score": 0.21028827130794525,
+          "direct_transformers_score": 0.21028827130794525,
+          "input_tokens": 357
+        },
+        {
+          "rrf_rank": 18,
+          "chunk_id": "eb1d3a2e228a6aa36a10287cc5a493bc3883ed4418b62fbf26084df54b52e740",
+          "doc_id": "compression",
+          "source_file": "compression.pdf",
+          "page_number": 8,
+          "rrf_score": 0.014084507042253521,
+          "model_score": 0.8412387371063232,
+          "direct_transformers_score": 0.8412387371063232,
+          "input_tokens": 380
+        },
+        {
+          "rrf_rank": 19,
+          "chunk_id": "7806d9463e35b33b515b2b73f8858ec6ae0b6b69d1c82d6d9c458e21fde3d2d4",
+          "doc_id": "vision_survey",
+          "source_file": "vision_survey.pdf",
+          "page_number": 4,
+          "rrf_score": 0.013888888888888888,
+          "model_score": 0.033895183354616165,
+          "direct_transformers_score": 0.033895183354616165,
+          "input_tokens": 312
+        },
+        {
+          "rrf_rank": 20,
+          "chunk_id": "c3053e3519ffb834025570c13c3e1b04030f8ae172f2b0c4ef214c98ab19f853",
+          "doc_id": "cnn_survey",
+          "source_file": "cnn_survey.pdf",
+          "page_number": 19,
+          "rrf_score": 0.013888888888888888,
+          "model_score": 0.4380686581134796,
+          "direct_transformers_score": 0.4380686581134796,
+          "input_tokens": 242
+        }
+      ],
+      "top_k": [
+        {
+          "chunk_id": "4c330de3aa5513f40b65cf8bc3921c60b46bde830f21e98cf72d1f5dba36bb62",
+          "score": 0.9899202585220337
+        },
+        {
+          "chunk_id": "643311f2d6d503e9fad14de964126617ad6e4d78dbf8aae299c53fe55e0adac1",
+          "score": 0.9892770051956177
+        },
+        {
+          "chunk_id": "d2600e5d075803aecb471351b190fb686e4c11791332b3bdd1a1b1a3bde664bd",
+          "score": 0.9727330803871155
+        },
+        {
+          "chunk_id": "a30034f8a1e584a34adc512bcbf38207785740b004d43a18b42b7bc737281134",
+          "score": 0.967358410358429
+        },
+        {
+          "chunk_id": "6e11ec046b73d4f391702ff3e6f0c9af1f318cffa63a1d0928f1df91cd6eba69",
+          "score": 0.9636516571044922
+        }
+      ]
+    },
+    {
+      "query_id": "cnn_survey-01-en",
+      "group": "en->zh",
+      "query": "According to Zhou et al. CNN survey, why can convolutional layers reduce trainable parameters?",
+      "doc_id_filter": null,
+      "candidate_count": 20,
+      "returned": 5,
+      "final_k": 5,
+      "direct_transformers_max_score_error": 0.0,
+      "ranking_verified": true,
+      "source_preserved": true,
+      "order_changed": true,
+      "candidates": [
+        {
+          "rrf_rank": 1,
+          "chunk_id": "bc46516c6e0b18d9e132003fd9468f6164c10bd39ae6dcb29e3f8f978ee5843d",
+          "doc_id": "vit",
+          "source_file": "vit.pdf",
+          "page_number": 2,
+          "rrf_score": 0.0259915611814346,
+          "model_score": 0.0009384404984302819,
+          "direct_transformers_score": 0.0009384404984302819,
+          "input_tokens": 152
+        },
+        {
+          "rrf_rank": 2,
+          "chunk_id": "3fa2b491543f906078cf9b9d8a3e76dc0ec3bf6f0b4435106a32fcd1c9cda123",
+          "doc_id": "vit",
+          "source_file": "vit.pdf",
+          "page_number": 1,
+          "rrf_score": 0.01639344262295082,
+          "model_score": 0.00762562220916152,
+          "direct_transformers_score": 0.00762562220916152,
+          "input_tokens": 163
+        },
+        {
+          "rrf_rank": 3,
+          "chunk_id": "a147279522383817634696ec31bbb0d26243c52b332c54741cfef487f9d868e3",
+          "doc_id": "vision_survey",
+          "source_file": "vision_survey.pdf",
+          "page_number": 21,
+          "rrf_score": 0.01639344262295082,
+          "model_score": 0.0019039777107536793,
+          "direct_transformers_score": 0.0019039777107536793,
+          "input_tokens": 181
+        },
+        {
+          "rrf_rank": 4,
+          "chunk_id": "ba725efd54d8892c59bf826dfe87840dd77600935727b672180afc52da03af51",
+          "doc_id": "cnn_survey",
+          "source_file": "cnn_survey.pdf",
+          "page_number": 2,
+          "rrf_score": 0.016129032258064516,
+          "model_score": 0.04745185747742653,
+          "direct_transformers_score": 0.04745185747742653,
+          "input_tokens": 148
+        },
+        {
+          "rrf_rank": 5,
+          "chunk_id": "f6fa6b8498cbe06a80ccb7401f54986860e10549e6abf030701ed10e4039658b",
+          "doc_id": "vit",
+          "source_file": "vit.pdf",
+          "page_number": 2,
+          "rrf_score": 0.016129032258064516,
+          "model_score": 0.0008510050247423351,
+          "direct_transformers_score": 0.0008510050247423351,
+          "input_tokens": 124
+        },
+        {
+          "rrf_rank": 6,
+          "chunk_id": "605f8c14194d778e52ceff2f2f47ffebd1c68d68a993090fa6f58c92f31260d5",
+          "doc_id": "vit",
+          "source_file": "vit.pdf",
+          "page_number": 8,
+          "rrf_score": 0.015873015873015872,
+          "model_score": 0.017101461067795753,
+          "direct_transformers_score": 0.017101461067795753,
+          "input_tokens": 141
+        },
+        {
+          "rrf_rank": 7,
+          "chunk_id": "d424e63fbb7f3eb3787ac9eff95aba72112d3e29a8e77c7e7912342fa506ee3c",
+          "doc_id": "bert",
+          "source_file": "bert.pdf",
+          "page_number": 2,
+          "rrf_score": 0.015873015873015872,
+          "model_score": 0.00017887234571389854,
+          "direct_transformers_score": 0.00017887234571389854,
+          "input_tokens": 150
+        },
+        {
+          "rrf_rank": 8,
+          "chunk_id": "94c50374af3a6ee78f3d020e53fc8905c6fc87209e1bd4e6333273ad7a45ba95",
+          "doc_id": "bert",
+          "source_file": "bert.pdf",
+          "page_number": 1,
+          "rrf_score": 0.015625,
+          "model_score": 4.078350684721954e-05,
+          "direct_transformers_score": 4.078350684721954e-05,
+          "input_tokens": 150
+        },
+        {
+          "rrf_rank": 9,
+          "chunk_id": "b0e3ac9390a7d77608fc15933d6c20f46811ae072fe97bf63f7b253ba069f8d3",
+          "doc_id": "compression",
+          "source_file": "compression.pdf",
+          "page_number": 16,
+          "rrf_score": 0.015625,
+          "model_score": 0.00012794083158951253,
+          "direct_transformers_score": 0.00012794083158951253,
+          "input_tokens": 155
+        },
+        {
+          "rrf_rank": 10,
+          "chunk_id": "a8c1ab9fade58bb2830d67241ce223a8ddf8b52cce1564ec7eaae79ab85e37cf",
+          "doc_id": "bert",
+          "source_file": "bert.pdf",
+          "page_number": 8,
+          "rrf_score": 0.015384615384615385,
+          "model_score": 3.880700751324184e-05,
+          "direct_transformers_score": 3.880700751324184e-05,
+          "input_tokens": 168
+        },
+        {
+          "rrf_rank": 11,
+          "chunk_id": "c191794a741623ea730118cdc6b397379d6f8db4948a5ee979a93804a2d71792",
+          "doc_id": "vit",
+          "source_file": "vit.pdf",
+          "page_number": 10,
+          "rrf_score": 0.015384615384615385,
+          "model_score": 0.0014922659611329436,
+          "direct_transformers_score": 0.0014922659611329436,
+          "input_tokens": 158
+        },
+        {
+          "rrf_rank": 12,
+          "chunk_id": "0c607e5883668bc91fcf8e8b07ce46d889c7dbc70716e89bc73bd97ddf1494c5",
+          "doc_id": "compression",
+          "source_file": "compression.pdf",
+          "page_number": 16,
+          "rrf_score": 0.015151515151515152,
+          "model_score": 0.0001249565975740552,
+          "direct_transformers_score": 0.0001249565975740552,
+          "input_tokens": 184
+        },
+        {
+          "rrf_rank": 13,
+          "chunk_id": "6689608f567c6fcbf6618ae1cd7bcb96a88d192b45b9c84eb97fb8ff45cea5b1",
+          "doc_id": "cnn_survey",
+          "source_file": "cnn_survey.pdf",
+          "page_number": 23,
+          "rrf_score": 0.015151515151515152,
+          "model_score": 0.4250240623950958,
+          "direct_transformers_score": 0.4250240623950958,
+          "input_tokens": 146
+        },
+        {
+          "rrf_rank": 14,
+          "chunk_id": "430cc231bdbc69326431224296bc2322c98c08f799fbc035245353f3ea158d1c",
+          "doc_id": "vit",
+          "source_file": "vit.pdf",
+          "page_number": 1,
+          "rrf_score": 0.014925373134328358,
+          "model_score": 0.0026486068964004517,
+          "direct_transformers_score": 0.0026486068964004517,
+          "input_tokens": 145
+        },
+        {
+          "rrf_rank": 15,
+          "chunk_id": "a7ae255f3607aabdd562ba133b18da62873bdcbf1c3e5fe047cb960c7a1d2d66",
+          "doc_id": "vit",
+          "source_file": "vit.pdf",
+          "page_number": 4,
+          "rrf_score": 0.014925373134328358,
+          "model_score": 8.903745037969202e-05,
+          "direct_transformers_score": 8.903745037969202e-05,
+          "input_tokens": 153
+        },
+        {
+          "rrf_rank": 16,
+          "chunk_id": "9b8479d5dec23d519508d5d12d3926be11d9983e346a8d3a9fb52d55d239d66c",
+          "doc_id": "bert",
+          "source_file": "bert.pdf",
+          "page_number": 2,
+          "rrf_score": 0.014705882352941176,
+          "model_score": 5.2754050557268783e-05,
+          "direct_transformers_score": 5.2754050557268783e-05,
+          "input_tokens": 155
+        },
+        {
+          "rrf_rank": 17,
+          "chunk_id": "bfe93ac452dbd6dafd5fb99ea31e53c273587bb49eb30f4aeb37f64871c76f15",
+          "doc_id": "vit",
+          "source_file": "vit.pdf",
+          "page_number": 11,
+          "rrf_score": 0.014705882352941176,
+          "model_score": 3.728737647179514e-05,
+          "direct_transformers_score": 3.728737647179514e-05,
+          "input_tokens": 190
+        },
+        {
+          "rrf_rank": 18,
+          "chunk_id": "3d589a392ccc9f8fe0fe3f5712efdaa988f14d738aa6a92158dea1cfb12c16d8",
+          "doc_id": "vision_survey",
+          "source_file": "vision_survey.pdf",
+          "page_number": 20,
+          "rrf_score": 0.014492753623188406,
+          "model_score": 3.732986078830436e-05,
+          "direct_transformers_score": 3.732986078830436e-05,
+          "input_tokens": 180
+        },
+        {
+          "rrf_rank": 19,
+          "chunk_id": "b96f6b7b51caea46d55bc72e9c3b3678118c00493b6fe2cfc7bce58ef759efca",
+          "doc_id": "cnn_survey",
+          "source_file": "cnn_survey.pdf",
+          "page_number": 22,
+          "rrf_score": 0.014492753623188406,
+          "model_score": 0.028474368155002594,
+          "direct_transformers_score": 0.028474368155002594,
+          "input_tokens": 215
+        },
+        {
+          "rrf_rank": 20,
+          "chunk_id": "6fa0d8afc8beec62fe8094a18dd3ad21ef4c129d4b505e59e3dc654b903c2541",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 6,
+          "rrf_score": 0.014285714285714285,
+          "model_score": 0.008916666731238365,
+          "direct_transformers_score": 0.008916666731238365,
+          "input_tokens": 154
+        }
+      ],
+      "top_k": [
+        {
+          "chunk_id": "6689608f567c6fcbf6618ae1cd7bcb96a88d192b45b9c84eb97fb8ff45cea5b1",
+          "score": 0.4250240623950958
+        },
+        {
+          "chunk_id": "ba725efd54d8892c59bf826dfe87840dd77600935727b672180afc52da03af51",
+          "score": 0.04745185747742653
+        },
+        {
+          "chunk_id": "b96f6b7b51caea46d55bc72e9c3b3678118c00493b6fe2cfc7bce58ef759efca",
+          "score": 0.028474368155002594
+        },
+        {
+          "chunk_id": "605f8c14194d778e52ceff2f2f47ffebd1c68d68a993090fa6f58c92f31260d5",
+          "score": 0.017101461067795753
+        },
+        {
+          "chunk_id": "6fa0d8afc8beec62fe8094a18dd3ad21ef4c129d4b505e59e3dc654b903c2541",
+          "score": 0.008916666731238365
+        }
+      ]
+    },
+    {
+      "query_id": "attention-01-zh",
+      "group": "zh->en",
+      "query": "原始Transformer编码器堆叠了多少层？",
+      "doc_id_filter": "attention",
+      "candidate_count": 20,
+      "returned": 3,
+      "final_k": 3,
+      "direct_transformers_max_score_error": 0.0,
+      "ranking_verified": true,
+      "source_preserved": true,
+      "order_changed": true,
+      "candidates": [
+        {
+          "rrf_rank": 1,
+          "chunk_id": "92f8ad03bc04d4226530a55ec8ac4aff0e5285e51375e4c4b9ce4644505637f2",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 3,
+          "rrf_score": 0.03278688524590164,
+          "model_score": 0.998327910900116,
+          "direct_transformers_score": 0.998327910900116,
+          "input_tokens": 154
+        },
+        {
+          "rrf_rank": 2,
+          "chunk_id": "061049af47295e9fe92e4a5518e3200c16528b5a1c413f0350ec592879e738fc",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 8,
+          "rrf_score": 0.03036576949620428,
+          "model_score": 0.19498778879642487,
+          "direct_transformers_score": 0.19498778879642487,
+          "input_tokens": 187
+        },
+        {
+          "rrf_rank": 3,
+          "chunk_id": "76c144c18e9aa8d4fa486eba9682dc531359bb1d0b0025b5926bc586d2566869",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 10,
+          "rrf_score": 0.030090497737556562,
+          "model_score": 0.05095290392637253,
+          "direct_transformers_score": 0.05095290392637253,
+          "input_tokens": 136
+        },
+        {
+          "rrf_rank": 4,
+          "chunk_id": "6f706b0549216b7688eaceff91baaa88ef07c4e91b2953971b8f5bee555b5dc1",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 10,
+          "rrf_score": 0.029206349206349208,
+          "model_score": 0.10724199563264847,
+          "direct_transformers_score": 0.10724199563264847,
+          "input_tokens": 143
+        },
+        {
+          "rrf_rank": 5,
+          "chunk_id": "5c3387930c38036843912016a5882e75dc6ccb4505b422bc434c46cdd6bb4d6f",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 8,
+          "rrf_score": 0.028850145288501453,
+          "model_score": 0.002548221731558442,
+          "direct_transformers_score": 0.002548221731558442,
+          "input_tokens": 131
+        },
+        {
+          "rrf_rank": 6,
+          "chunk_id": "4cb7090e355322d1783abbf85719dae3afc7e8c36837e19ae783a43879c86f7a",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 2,
+          "rrf_score": 0.028370221327967807,
+          "model_score": 9.837238030740991e-05,
+          "direct_transformers_score": 9.837238030740991e-05,
+          "input_tokens": 110
+        },
+        {
+          "rrf_rank": 7,
+          "chunk_id": "9236abd98e0be38121b96c4da462460ace988f2214769a165cb5e39d87ad63b8",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 10,
+          "rrf_score": 0.027912386121341344,
+          "model_score": 0.4615006148815155,
+          "direct_transformers_score": 0.4615006148815155,
+          "input_tokens": 360
+        },
+        {
+          "rrf_rank": 8,
+          "chunk_id": "97a4644f336f6b4c58e3ae2079ce57ace4a26cc61dcb5b9e7a616bae714d4b9a",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 9,
+          "rrf_score": 0.027222222222222224,
+          "model_score": 0.06308918446302414,
+          "direct_transformers_score": 0.06308918446302414,
+          "input_tokens": 130
+        },
+        {
+          "rrf_rank": 9,
+          "chunk_id": "6b9eb1be935570c7abfdb5a7aa5445d0f9cc57acaccbd4c3dd332abde7fee634",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 2,
+          "rrf_score": 0.02667140825035562,
+          "model_score": 0.0016054889420047402,
+          "direct_transformers_score": 0.0016054889420047402,
+          "input_tokens": 154
+        },
+        {
+          "rrf_rank": 10,
+          "chunk_id": "5495fb82af899d6f56e6129da41d36477466c2a7f7fcd5b79e3efea1d8dfb4c0",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 9,
+          "rrf_score": 0.0261986301369863,
+          "model_score": 0.00034506351221352816,
+          "direct_transformers_score": 0.00034506351221352816,
+          "input_tokens": 125
+        },
+        {
+          "rrf_rank": 11,
+          "chunk_id": "211e7b5ec1092b5b2dda6cff64fd9207f136622bb968481ae4057f2508d4f19c",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 8,
+          "rrf_score": 0.025978407557354925,
+          "model_score": 0.00016445995424874127,
+          "direct_transformers_score": 0.00016445995424874127,
+          "input_tokens": 124
+        },
+        {
+          "rrf_rank": 12,
+          "chunk_id": "df22d1023b8974e4bc2addc8b03067b462d62a70c6d6465755e1b13af9038095",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 10,
+          "rrf_score": 0.025478740668614087,
+          "model_score": 0.00010514083260204643,
+          "direct_transformers_score": 0.00010514083260204643,
+          "input_tokens": 132
+        },
+        {
+          "rrf_rank": 13,
+          "chunk_id": "8fc271594dc54d548bcd2329a5bb1b0c4bb7d9fbdd925a125943d361af33038c",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 9,
+          "rrf_score": 0.016129032258064516,
+          "model_score": 0.0028892774134874344,
+          "direct_transformers_score": 0.0028892774134874344,
+          "input_tokens": 145
+        },
+        {
+          "rrf_rank": 14,
+          "chunk_id": "d60fcd987e925e7168c61fac3d275bb0c69f5f702ce6443540b7332ab95219a5",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 2,
+          "rrf_score": 0.016129032258064516,
+          "model_score": 0.0008359298226423562,
+          "direct_transformers_score": 0.0008359298226423562,
+          "input_tokens": 132
+        },
+        {
+          "rrf_rank": 15,
+          "chunk_id": "13c82fbbc8a5f42070574a30f35e4bd4afb854e8a2630a91a9639c3714d059f4",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 4,
+          "rrf_score": 0.015625,
+          "model_score": 0.00041083464748226106,
+          "direct_transformers_score": 0.00041083464748226106,
+          "input_tokens": 151
+        },
+        {
+          "rrf_rank": 16,
+          "chunk_id": "51a5a062907acb9f6ec6924cf9561d6833e786fdeb127c420531f423a0114a5b",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 9,
+          "rrf_score": 0.015625,
+          "model_score": 0.0048371898010373116,
+          "direct_transformers_score": 0.0048371898010373116,
+          "input_tokens": 405
+        },
+        {
+          "rrf_rank": 17,
+          "chunk_id": "9d7aacec547653a3b46b93725fad2f4af2367e9e9b5ee8bd8ccaa3e057e590fc",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 5,
+          "rrf_score": 0.015384615384615385,
+          "model_score": 0.07486671954393387,
+          "direct_transformers_score": 0.07486671954393387,
+          "input_tokens": 139
+        },
+        {
+          "rrf_rank": 18,
+          "chunk_id": "6bf22889f3529dc02a90d47e81b007a34e244123a7af9110784c29b4d9f71c6c",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 3,
+          "rrf_score": 0.015151515151515152,
+          "model_score": 0.95902019739151,
+          "direct_transformers_score": 0.95902019739151,
+          "input_tokens": 137
+        },
+        {
+          "rrf_rank": 19,
+          "chunk_id": "a7fd9c35104b29683c72a22bfd34e71f302b743d5d4c79ba69bcb0768d6d0bd7",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 5,
+          "rrf_score": 0.014925373134328358,
+          "model_score": 0.03737807646393776,
+          "direct_transformers_score": 0.03737807646393776,
+          "input_tokens": 48
+        },
+        {
+          "rrf_rank": 20,
+          "chunk_id": "c2d856b5bd28ea1c4cc640aee34d6c0357a2f667909c34a346d9aed9508a898d",
+          "doc_id": "attention",
+          "source_file": "attention.pdf",
+          "page_number": 6,
+          "rrf_score": 0.014705882352941176,
+          "model_score": 0.00047880521742627025,
+          "direct_transformers_score": 0.00047880521742627025,
+          "input_tokens": 131
+        }
+      ],
+      "top_k": [
+        {
+          "chunk_id": "92f8ad03bc04d4226530a55ec8ac4aff0e5285e51375e4c4b9ce4644505637f2",
+          "score": 0.998327910900116
+        },
+        {
+          "chunk_id": "6bf22889f3529dc02a90d47e81b007a34e244123a7af9110784c29b4d9f71c6c",
+          "score": 0.95902019739151
+        },
+        {
+          "chunk_id": "9236abd98e0be38121b96c4da462460ace988f2214769a165cb5e39d87ad63b8",
+          "score": 0.4615006148815155
+        }
+      ]
+    }
+  ]
+}

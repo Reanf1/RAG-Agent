@@ -29,10 +29,16 @@ retrieval:
   search_ef: 100
   index_threads: 4
   top_k: 5
-  # 两路各取足够候选后做 RRF；融合结果供后续 Top-20 模型重排使用。
+  # 两路各取足够候选后做 RRF；模型重排对融合后的 Top-20 精排。
   candidate_k: 20
   rrf_k: 60
   reranker_model: BAAI/bge-reranker-base
+  reranker_revision: 2cfc18c9415c912f9d8155881c133215df768a70
+  reranker_local_path: data/models/bge-reranker-base
+  reranker_device: cpu
+  reranker_batch_size: 8
+  # 问题与正文合计的 Token 上限；不等同于分块的字符数。
+  reranker_max_length: 512
 chunking:
   # fixed / recursive / semantic；大小和重叠均以字符计，表格整块保留。
   # 固定切分实验比较 256/512/1024；递归和句段策略使用以下默认参数。

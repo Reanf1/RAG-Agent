@@ -3,6 +3,7 @@
 from langchain_core.documents import Document
 
 from src.retrieval.bm25_retriever import BM25Retriever
+from src.retrieval.reranker import Reranker
 from src.retrieval.vector_store import VectorStore
 from src.utils.config import load_config
 
@@ -32,7 +33,7 @@ def rrf_fusion(vector_results: list[tuple[Document, float]],
 
 
 class HybridRetriever:
-    """共享一个 Chroma，获取两路候选后融合，不做模型重排或答案生成。"""
+    """共享一个 Chroma，两路融合后可选择模型精排，不生成答案。"""
 
     def __init__(self, vector_store: VectorStore | None = None):
         config = load_config()["retrieval"]
@@ -46,8 +47,8 @@ class HybridRetriever:
         self.top_k = self.vector_store.top_k
 
     def search(self, query: str, k: int | None = None,
-               doc_id: str | None = None) -> list[tuple[Document, float]]:
-        """两路各召回足够候选，再按 RRF 分数降序取最终 Top-K。"""
+               doc_id: str | None = None, *, rerank: bool = False) -> list[tuple[Document, float]]:
+        """两路先融合；启用重排时对候选精排后才截取最终 Top-K。"""
         k = self.top_k if k is None else k
         if type(k) is not int or k <= 0:
             raise ValueError("k 必须为正整数")
@@ -57,4 +58,7 @@ class HybridRetriever:
         vector_results = self.vector_store.search(query, k=candidate_k, doc_id=doc_id)
         # 每次读取当前正文，新增/删除后无需维护第二套语料或缓存失效规则。
         bm25_results = BM25Retriever(self.vector_store).search(query, k=candidate_k, doc_id=doc_id)
-        return rrf_fusion(vector_results, bm25_results, self.rrf_k)[:k]
+        fused = rrf_fusion(vector_results, bm25_results, self.rrf_k)
+        if rerank:
+            return Reranker().rerank(query, fused[:candidate_k], k=k)
+        return fused[:k]
