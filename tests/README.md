@@ -1,6 +1,22 @@
 # 测试计划
 
-当前业务模块仅有占位文件，不为占位代码编写无意义的测试。
+当前 `test_retrieval.py` 已加入 PDF 加载器的 11 个测试，使用临时生成的真实 PDF 验证中文文本、来源与页码、稳定文档标识、位置排序、空白页、扫描件及导入失败。使用标准库 `unittest`，不需要额外测试依赖。
+
+在项目根目录执行：
+
+```bash
+.venv/bin/python -m unittest discover -s tests -p 'test_retrieval.py' -v
+```
+
+也支持从任意目录直接运行测试文件。使用已安装 `requirements.txt` 依赖的 Python，例如项目虚拟环境：
+
+```bash
+/Users/rean/github/RAG+Agent/.venv/bin/python /Users/rean/github/RAG+Agent/tests/test_retrieval.py -v
+```
+
+测试入口会按 `__file__` 定位项目根目录，避免直接运行时找不到 `src`。
+
+其他业务仍为占位，不为占位代码编写无意义的测试。
 
 实现后按以下顺序添加有明确预期的用例：
 

@@ -2,7 +2,7 @@
 
 基于 RAG + Agent 的论文知识库问答系统，依据南京农业大学生产实习课程要求建设。
 
-当前已完成项目初始化：目录骨架、配置样例、Streamlit 启动页、Docker 部署骨架，以及需求和交付文档。文档加载、检索、生成与 Agent 等业务模块尚未实现，`src/` 中相应文件仅声明职责。
+当前已完成项目初始化和 PyMuPDF 分页文本加载器，支持来源与页码元数据，已通过文档加载测试。其他格式加载、检索、生成与 Agent 等业务模块仍为占位；前端尚未接入上传。PDF 选型依据见 [PDF 加载器选择](docs/QA/5.1.1%20PDF加载器选择.md)。
 
 ## 课程依据
 
@@ -21,7 +21,7 @@ Python 3.10 及以上；本次初始化使用 Python 3.12 验证。
 python3 -m venv .venv
 source .venv/bin/activate
 
-# 安装初始化页面需要的依赖。
+# 安装当前页面与 PDF 加载器需要的依赖。
 python -m pip install -r requirements.txt
 
 # 启动项目说明页。
