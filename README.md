@@ -14,11 +14,11 @@
 
 ## 快速启动
 
-Python 3.10 及以上；本次初始化使用 Python 3.12 验证。
+当前项目 `.venv` 使用 Python 3.10.10，根目录 `.python-version` 同步指定该版本，供 pyenv 选择解释器。重建环境前确认 `python3.10 --version` 输出 `Python 3.10.10`。
 
 ```bash
 # 在项目根目录创建并启用虚拟环境。
-python3 -m venv .venv
+python3.10 -m venv .venv
 source .venv/bin/activate
 
 # 安装当前页面与文档加载器需要的依赖。

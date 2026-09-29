@@ -485,7 +485,8 @@ class TestImportFrontend(unittest.TestCase):
         self.addCleanup(configuration.stop)
         from streamlit.testing.v1 import AppTest
         app_path = Path(__file__).resolve().parents[1] / "src/frontend/app.py"
-        self.app = AppTest.from_file(str(app_path)).run()
+        # 新环境首次加载界面依赖较慢，避免默认 3 秒等待导致误报。
+        self.app = AppTest.from_file(str(app_path), default_timeout=10).run()
 
     def test_batch_upload_progress_state_and_rerun(self):
         """实际操作上传/按钮，核验混合结果、完整进度和重跑不重复执行。"""
