@@ -2,7 +2,7 @@
 
 基于 RAG + Agent 的论文知识库问答系统，依据南京农业大学生产实习课程要求建设。
 
-当前已实现 PDF、Word（.docx）及 TXT/Markdown 加载，保留来源和位置元数据，文档加载测试通过。批量导入、分块、检索、生成与 Agent 仍待实现，前端尚未接入上传。实现说明见 [PDF 加载器选择](docs/QA/5.1.1%20PDF加载器选择.md) 与 [Word 和纯文本加载](docs/QA/5.1.1%20Word与纯文本加载器实现.md)。
+当前已实现 PDF、Word（.docx）及 TXT/Markdown 加载，以及 Streamlit 批量上传、进度显示、状态追踪和失败项重试；41 个测试通过。导入成功表示原始文件已保存、正文已加载，分块、索引、检索、生成与 Agent 仍待实现。实现说明见 [PDF 加载器选择](docs/QA/5.1.1%20PDF加载器选择.md)、[Word 和纯文本加载](docs/QA/5.1.1%20Word与纯文本加载器实现.md) 与 [批量文档导入](docs/QA/5.1.1%20批量文档导入与状态追踪.md)。
 
 ## 课程依据
 
@@ -24,11 +24,11 @@ source .venv/bin/activate
 # 安装当前页面与文档加载器需要的依赖。
 python -m pip install -r requirements.txt
 
-# 启动项目说明页。
+# 启动文档导入应用。
 python -m streamlit run src/frontend/app.py
 ```
 
-打开 http://localhost:8501。页面展示项目范围和模块状态，目前不提供文档上传或问答。
+打开 http://localhost:8501，在左侧选择多份文档并点击“开始导入”，查看进度、状态和失败原因；“重试失败项”只重新处理失败文件。单份文件默认最大 20 MB，可在 `config.yaml` 的 `importing.max_file_size_mb` 调整。问答尚未接入。
 
 `requirements.txt` 只声明当前实际使用的依赖。后续实现文档处理、向量检索和模型调用时，再加入对应依赖并验证版本。
 
@@ -47,8 +47,8 @@ RAG+Agent/
 │   ├── generation/             模块二：Prompt、RAG、流式、缓存
 │   ├── agent/                  模块三：ReAct、工具、路由、记忆
 │   ├── frontend/               模块四：Streamlit 入口、页面与组件
-│   └── utils/                  配置与日志的预留位置
-├── tests/                     后续有实际实现后添加测试
+│   └── utils/                  配置读取与日志预留位置
+├── tests/                     文档加载、批量导入及界面测试
 ├── data/                      原始文献与索引，内容默认不提交
 ├── logs/                      运行日志，内容默认不提交
 ├── docs/                      原始资料、需求、技术设计、使用手册、课程报告
@@ -75,4 +75,4 @@ RAG+Agent/
 - [分块策略对比实验报告](reports/分块策略对比实验报告.md)
 - [Bad Case 分析报告](reports/Bad_Case分析报告.md)
 
-Docker 启动：`docker compose -f docker/docker-compose.yml up --build`。当前镜像只运行初始化页面，后续接入模型与索引服务后再补充完整系统的部署验证。
+Docker 启动：`docker compose -f docker/docker-compose.yml up --build`。部署入口为同一 Streamlit 应用，当前未实测容器中的导入功能；后续接入模型与索引服务后再补充完整系统的部署验证。

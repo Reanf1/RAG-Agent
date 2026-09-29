@@ -1,7 +1,11 @@
-# 当前入口只读取 app；其余部分为后续实现的参数样例，尚未接入运行逻辑。
+# 当前入口读取 app、importing 和 paths.raw_documents；其余仍为参数样例。
 app:
   name: 智能科研助理
   description: 基于 RAG + Agent 的论文知识库问答系统
+
+# 单份上传文件大小参考上游 20 MB 限制。
+importing:
+  max_file_size_mb: 20
 
 # 默认本地推理；页面启动不要求安装或连接模型。
 llm:
