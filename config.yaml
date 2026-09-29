@@ -14,6 +14,12 @@ llm:
   model: qwen2.5:7b
   temperature: 0.1
 
+# 上下文策略按字符计；不是模型 Token 上限，接入 LLM 时须核对实际窗口。
+generation:
+  max_context_chars: 6000
+  # 包含系统规范、用户问题、来源标记和分隔符，不包含模型回答。
+  max_prompt_chars: 12000
+
 # 人工智能论文中英双语基准比较后保留 M3E；跨语言质量限制见 docs/QA。
 # Embedding 使用本地模型文件；模型名和 revision 用于权重准备与实验溯源。
 embedding:
