@@ -24,6 +24,10 @@ embedding:
   batch_size: 32
 retrieval:
   vector_store: chroma
+  collection_name: paper_chunks
+  # 双语论文基准中默认 search_ef=10 召回不足；100 已通过精确排名对照。
+  search_ef: 100
+  index_threads: 4
   top_k: 5
   candidate_k: 20
   reranker_model: BAAI/bge-reranker-base

@@ -1,4 +1,4 @@
-"""模块一测试：使用临时文档验证文本与来源，不依赖模型或向量数据库。"""
+"""模块一测试：临时文档与真实临时 Chroma；大模型只在独立实验中运行。"""
 
 import hashlib
 import io
@@ -14,6 +14,7 @@ import pymupdf
 from docx import Document as WordDocument
 from docx.opc.exceptions import PackageNotFoundError
 from langchain_core.documents import Document
+from langchain_core.embeddings import Embeddings
 
 # 直接运行测试文件时，按文件位置加入项目根目录，不依赖当前工作目录。
 if __name__ == "__main__":
@@ -27,7 +28,152 @@ from src.chunking import split_documents
 from src.chunking.fixed_chunk import split_fixed
 from src.chunking.recursive_chunk import split_recursive
 from src.chunking.semantic_chunk import split_semantic
-from src.retrieval.vector_store import get_embeddings
+from src.retrieval.vector_store import VectorStore, get_embeddings
+
+
+class SmallEmbeddings(Embeddings):
+    """测试使用明确的二维向量，不用于实验效果或速度结论。"""
+
+    def __init__(self):
+        self.document_calls = []
+        self.query_calls = []
+
+    def _vector(self, text):
+        if "农业" in text:
+            return [0.0, 1.0]
+        if "反向" in text:
+            return [-1.0, 0.0]
+        return [1.0, 0.0]
+
+    def embed_documents(self, texts):
+        self.document_calls.append(list(texts))
+        return [self._vector(text) for text in texts]
+
+    def embed_query(self, text):
+        self.query_calls.append(text)
+        return self._vector(text)
+
+
+class TestVectorStore(unittest.TestCase):
+    """验证选定库的实际写入、查重、余弦查询、持久化和删除。"""
+
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        self.embeddings = SmallEmbeddings()
+        self.store = VectorStore(self.directory.name, self.embeddings)
+        self.chunks = [
+            Document(page_content="神经网络论文", metadata={
+                "chunk_id": "a1", "doc_id": "a", "source_file": "论文A.pdf",
+                "page_number": 2, "start_index": 0, "end_index": 7,
+                "formula_layout": '[{"text":"x²","bbox":[1,2,3,4]}]',
+            }),
+            Document(page_content="农业数据论文", metadata={
+                "chunk_id": "b1", "doc_id": "b", "source_file": "论文B.pdf", "page_number": 1,
+            }),
+            Document(page_content="反向向量论文", metadata={
+                "chunk_id": "a2", "doc_id": "a", "source_file": "论文A.pdf", "page_number": 3,
+            }),
+        ]
+
+    def test_empty_store_and_empty_query(self):
+        self.assertEqual(self.store.count(), 0)
+        self.assertEqual(self.store.search("神经网络"), [])
+        self.store.add_chunks(self.chunks)
+        self.assertEqual(self.store.search(" \n"), [])
+        self.assertEqual(self.store.search("神经网络", doc_id="missing"), [])
+        self.assertEqual(self.embeddings.query_calls, [])
+
+    def test_text_and_source_roundtrip(self):
+        self.assertEqual(self.store.add_chunks(self.chunks), 3)
+        actual = {chunk.metadata["chunk_id"]: chunk for chunk in self.store.list_chunks()}
+        self.assertEqual(actual, {chunk.metadata["chunk_id"]: chunk for chunk in self.chunks})
+        self.assertEqual(len(self.store.list_chunks("a")), 2)
+        self.assertEqual(self.store.list_chunks("missing"), [])
+
+    def test_cosine_order_and_negative_score(self):
+        self.store.add_chunks(self.chunks)
+        found = self.store.search("神经网络", k=10)
+        self.assertEqual([doc.metadata["chunk_id"] for doc, _ in found], ["a1", "b1", "a2"])
+        for (_, score), expected in zip(found, (1, 0, -1)):
+            self.assertAlmostEqual(score, expected)
+
+    def test_document_filter_and_top_k(self):
+        self.store.add_chunks(self.chunks)
+        self.assertEqual(len(self.store.search("神经网络", k=1)), 1)
+        found = self.store.search("神经网络", doc_id="b")
+        self.assertEqual([doc.metadata["chunk_id"] for doc, _ in found], ["b1"])
+
+    def test_duplicate_import_does_not_encode_again(self):
+        self.assertEqual(self.store.add_chunks(self.chunks + self.chunks), 3)
+        self.assertEqual(self.store.add_chunks(self.chunks), 0)
+        self.assertEqual(self.store.add_chunks([]), 0)
+        self.assertEqual(self.embeddings.document_calls, [[chunk.page_content for chunk in self.chunks]])
+        self.assertEqual(self.store.count(), 3)
+
+    def test_incremental_import_only_encodes_new_chunks(self):
+        self.store.add_chunks(self.chunks[:1])
+        self.assertEqual(self.store.add_chunks(self.chunks), 2)
+        self.assertEqual(self.embeddings.document_calls, [["神经网络论文"], ["农业数据论文", "反向向量论文"]])
+        self.assertEqual(self.store.count(), 3)
+
+    def test_delete_document_and_repeat_delete(self):
+        self.store.add_chunks(self.chunks)
+        self.assertEqual(self.store.delete_document("a"), 2)
+        self.assertEqual(self.store.delete_document("a"), 0)
+        self.assertEqual(self.store.count(), 1)
+        self.assertEqual(self.store.list_chunks("a"), [])
+        self.assertEqual([doc.metadata["doc_id"] for doc, _ in self.store.search("神经网络")], ["b"])
+
+    def test_reopen_preserves_content_without_reembedding(self):
+        self.store.add_chunks(self.chunks)
+        other_embeddings = SmallEmbeddings()
+        reopened = VectorStore(self.directory.name, other_embeddings)
+        self.assertEqual(reopened.count(), 3)
+        self.assertEqual(reopened.search("神经网络", k=1)[0][0], self.chunks[0])
+        self.assertEqual(other_embeddings.document_calls, [])
+
+    def test_changed_model_or_index_parameters_are_rejected(self):
+        from src.utils.config import load_config
+
+        for section, key, value in (("embedding", "revision", "different-version"),
+                                    ("retrieval", "search_ef", 10)):
+            config = load_config()
+            config[section][key] = value
+            with self.subTest(key=key), patch("src.retrieval.vector_store.load_config", return_value=config):
+                with self.assertRaisesRegex(ValueError, "使用新索引目录重建"):
+                    VectorStore(self.directory.name, SmallEmbeddings())
+
+    def test_invalid_ids_are_rejected_before_any_write(self):
+        for metadata in ({}, {"chunk_id": "x"}, {"chunk_id": "", "doc_id": "a"}):
+            with self.subTest(metadata=metadata), self.assertRaises(ValueError):
+                self.store.add_chunks([self.chunks[0], Document(page_content="坏块", metadata=metadata)])
+        self.assertEqual(self.store.count(), 0)
+        self.assertEqual(self.embeddings.document_calls, [])
+        for value in (None, "", "  "):
+            with self.assertRaises(ValueError):
+                self.store.delete_document(value)
+        for k in (0, -1, 1.5, True):
+            with self.assertRaises(ValueError):
+                self.store.search("问题", k=k)
+
+    def test_same_text_in_different_documents_keeps_both_sources(self):
+        second = Document(page_content=self.chunks[0].page_content,
+                          metadata={"chunk_id": "c1", "doc_id": "c", "source_file": "论文C.pdf"})
+        self.assertEqual(self.store.add_chunks([self.chunks[0], second]), 2)
+        self.assertEqual({doc.metadata["doc_id"] for doc, _ in self.store.search("神经网络")}, {"a", "c"})
+
+    def test_real_text_loading_and_batches_over_500(self):
+        path = Path(self.directory.name) / "真实样本.md"
+        path.write_text("# 神经网络\n\n论文使用农业数据。", encoding="utf-8")
+        chunks = split_documents(load_document(path))
+        self.assertEqual(self.store.add_chunks(chunks), len(chunks))
+        self.assertEqual(self.store.search("农业")[0][0].metadata["source_file"], path.name)
+        extra = [Document(page_content="神经网络", metadata={"chunk_id": f"extra-{i}", "doc_id": "extra"})
+                 for i in range(501)]
+        self.assertEqual(self.store.add_chunks(extra), 501)
+        self.assertEqual(self.store.add_chunks(extra), 0)
+        self.assertEqual(self.store.count(), 501 + len(chunks))
 
 
 class TestLocalEmbeddings(unittest.TestCase):

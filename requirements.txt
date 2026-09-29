@@ -21,3 +21,10 @@ huggingface-hub==0.26.5
 torch==2.5.1
 # 避免当前 macOS 中 SciPy 1.15.3 的动态库加载错误。
 scipy==1.14.1
+
+# 沿用上游 Chroma 适配器；固定兼容版本，不启用独立数据库服务。
+langchain-chroma==0.1.4
+chromadb==0.5.23
+# 适配器要求 NumPy < 2；旧 Chroma 使用 PostHog 3 的 capture 接口。
+numpy==1.26.4
+posthog==3.25.0
