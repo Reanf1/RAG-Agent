@@ -23,6 +23,7 @@ llm:
 
 # 上下文策略按字符计；不是模型 Token 上限，接入 LLM 时须核对实际窗口。
 generation:
+  low_relevance_threshold: 0.1  # 仅用于 BGE sigmoid 重排分数；低于此值先确认，不代表命中概率。
   max_context_chars: 6000
   # 包含系统规范、用户问题、来源标记和分隔符，不包含模型回答。
   max_prompt_chars: 12000

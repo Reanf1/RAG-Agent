@@ -1,14 +1,17 @@
 """模块二 Prompt、上下文、引用与生成接口测试；真实模型实验单独保存在 reports。"""
 
 from copy import deepcopy
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from io import BytesIO
 import json
+import os
 import sys
 import tempfile
+from threading import Thread
 import unittest
 from pathlib import Path
 from unittest.mock import patch
-from urllib.error import URLError
+from urllib.error import HTTPError, URLError
 
 # 与检索测试入口一致，支持从其他目录直接运行测试文件。
 if __name__ == "__main__":
@@ -19,7 +22,9 @@ from langchain_core.documents import Document
 from langchain_core.prompts import ChatPromptTemplate
 
 from src.generation.prompt_template import RAG_PROMPT, RAG_SYSTEM_PROMPT, build_rag_messages
-from src.generation.rag_pipeline import build_context, generate_answer, resolve_citations
+from src.generation.rag_pipeline import (
+    build_context, generate_answer, prepare_rag_context, resolve_citations,
+)
 from src.generation.streaming import render_partial_answer, stream_answer
 from src.generation.cache import SemanticCache, cache_scope
 from reports.compare_generation import evaluate_answer, summarize
@@ -475,6 +480,96 @@ class TestCitations(unittest.TestCase):
                 self.assertIn(location, resolved["answer"])
 
 
+class TestDegradationContext(unittest.TestCase):
+    """使用确定分数验证策略边界；分数不是实际检索质量的标注。"""
+
+    def setUp(self):
+        from src.utils.config import load_config
+        self.config = load_config()
+        patcher = patch("src.generation.rag_pipeline.load_config", return_value=self.config)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        self.doc = Document(page_content="论文原文。", metadata={"source_file": "a.pdf", "page_number": 2})
+
+    def test_empty_and_blank_documents_use_pure_model_mode(self):
+        for results in ([], [(Document(page_content=" \n"), 0.9)]):
+            context = prepare_rag_context("什么是注意力？", results)
+            self.assertEqual(context["generation_mode"], "empty")
+            self.assertIsNone(context["top_score"])
+            self.assertEqual(context["references"], [])
+
+    def test_low_score_boundary_and_unsorted_top_score(self):
+        for score, mode in ((0, "low"), (0.099, "low"), (0.1, "grounded"), (1, "grounded")):
+            context = prepare_rag_context("问题", [(self.doc, score)])
+            self.assertEqual(context["generation_mode"], mode)
+            self.assertEqual(context["top_score"], score)
+            self.assertFalse(context["confirmed"])
+            self.assertEqual(context["references"][0]["text"], self.doc.page_content)
+        context = prepare_rag_context("问题", [(self.doc, 0.01), (self.doc, 0.8)])
+        self.assertEqual(context["generation_mode"], "grounded")
+
+    def test_invalid_scores_and_threshold_never_become_empty_results(self):
+        for score in (-1, 1.2, float("nan"), float("inf")):
+            with self.assertRaises(ValueError):
+                prepare_rag_context("问题", [(self.doc, score)])
+        for threshold in (0, 1, True, float("nan")):
+            self.config["generation"]["low_relevance_threshold"] = threshold
+            with self.assertRaises(ValueError):
+                prepare_rag_context("问题", [])
+
+    def test_unconfirmed_low_context_cannot_call_either_model_interface(self):
+        context = prepare_rag_context("问题", [(self.doc, 0.01)])
+        with patch("src.generation.rag_pipeline.urlopen") as sync, patch("src.generation.streaming.urlopen") as stream:
+            with self.assertRaisesRegex(ValueError, "先查看"):
+                generate_answer("问题", context)
+            event = list(stream_answer("问题", context))[-1]
+            self.assertEqual(event["type"], "error")
+            self.assertIn("确认", event["message"])
+            sync.assert_not_called()
+            stream.assert_not_called()
+
+    def test_relevance_uses_only_chunks_that_fit_context_budget(self):
+        self.config["generation"]["max_context_chars"] = 150
+        oversized_header = Document(page_content="短正文", metadata={"source_file": "长文件名" * 100})
+        context = prepare_rag_context("问题", [(oversized_header, 0.9), (self.doc, 0.01)])
+        self.assertEqual(context["generation_mode"], "low")
+        self.assertEqual(context["top_score"], 0.01)
+        self.assertEqual(context["sources"], ["a.pdf"])
+
+    def test_local_api_bypasses_environment_proxy_in_both_modes(self):
+        received = []
+
+        class Handler(BaseHTTPRequestHandler):
+            """真实本机 HTTP 服务模拟合法响应，不调用或测量模型。"""
+            def do_POST(self):
+                payload = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
+                received.append(payload)
+                result = {"model": "test", "done": True, "done_reason": "stop", "message": {"content": "概念说明。"}}
+                self.send_response(200)
+                self.end_headers()
+                self.wfile.write(json.dumps(result).encode() + b"\n")
+
+            def log_message(self, *args):
+                pass  # 测试不输出常规访问日志。
+
+        server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        thread = Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        self.config["llm"]["base_url"] = f"http://127.0.0.1:{server.server_port}"
+        context = prepare_rag_context("概念？", [])
+        try:
+            # 不可用的本机代理若被误用，将无法取得服务响应。
+            with patch.dict(os.environ, {"http_proxy": "http://127.0.0.1:9", "HTTP_PROXY": "http://127.0.0.1:9",
+                                         "no_proxy": "", "NO_PROXY": ""}):
+                self.assertEqual(generate_answer("概念？", context)["generation_mode"], "empty")
+                self.assertEqual(list(stream_answer("概念？", context))[-1]["type"], "done")
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=2)
+        self.assertEqual([request["stream"] for request in received], [False, True])
+
+
 class TestLocalGeneration(unittest.TestCase):
     """核对实际 HTTP 请求参数、失败边界与同轮引用；mock 不能证明答案质量。"""
 
@@ -553,7 +648,8 @@ class TestLocalGeneration(unittest.TestCase):
         for response in ({**self.response, "done": False}, {**self.response, "message": {"content": " "}},
                          {**self.response, "error": "模型不可用"}):
             self.set_response(response)
-            with self.subTest(response=response), self.assertRaisesRegex(RuntimeError, "非空答案"):
+            expected = "生成失败" if response.get("error") else "非空答案"
+            with self.subTest(response=response), self.assertRaisesRegex(RuntimeError, expected):
                 generate_answer("层数？", self.context)
 
     def test_length_stop_is_preserved_for_evaluation(self):
@@ -566,6 +662,25 @@ class TestLocalGeneration(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "问题不能为空"):
             generate_answer(" ", self.context)
         self.opener.assert_not_called()
+
+    def test_empty_fallback_is_explicit_even_when_model_omits_notice(self):
+        context = build_context("什么是注意力？", [])
+        self.set_response({**self.response, "message": {"content": "注意力是一种加权汇总机制。"}})
+        result = generate_answer("什么是注意力？", context)
+        self.assertTrue(result["answer"].startswith("当前知识库中未找到相关文档。"))
+        self.assertIn("纯模型回答", result["answer"])
+        self.assertEqual(result["generation_mode"], "empty")
+        self.assertEqual(result["citations"], [])
+        self.assertIn("模型自身知识", json.loads(self.opener.call_args.args[0].data)["messages"][0]["content"])
+
+    def test_http_failure_has_specific_advice_and_original_cause(self):
+        for code, expected in ((404, "ollama list"), (400, "生成参数"), (500, "可用内存")):
+            failure = HTTPError("http://localhost:11434/api/chat", code, "failed", {}, BytesIO(b'{"error":"local error"}'))
+            self.opener.side_effect = failure
+            with self.assertRaisesRegex(RuntimeError, expected) as raised:
+                generate_answer("层数？", self.context)
+            self.assertIs(raised.exception.__cause__, failure)
+            self.assertTrue(failure.closed)
 
 
 class StreamingResponse(BytesIO):
@@ -747,6 +862,39 @@ class TestStreaming(unittest.TestCase):
         self.assertFalse(final["missing_citations"])
         self.assertIn("当前知识库中未找到相关文档。", json.loads(self.opener.call_args.args[0].data)["messages"][1]["content"])
 
+    def test_error_categories_provide_retry_advice_without_retry_or_usage(self):
+        for failure, expected in ((URLError("refused"), "无法连接"),
+                                  (TimeoutError("timed out"), "超时"),
+                                  (URLError(TimeoutError("timed out")), "超时"),
+                                  (HTTPError("http://localhost", 404, "missing", {}, BytesIO(b"missing model")), "404")):
+            self.opener.reset_mock()
+            self.opener.side_effect = failure
+            event = list(stream_answer("层数？", self.context))[-1]
+            self.assertIn(expected, event["message"])
+            self.assertIn("重新提交问题", event["retry_advice"])
+            self.assertIn(type(failure).__name__, event["error_detail"])
+            self.assertNotIn("usage", event)
+            self.assertEqual(self.opener.call_count, 1)
+
+    def test_bad_response_shape_and_service_error_keep_partial_answer(self):
+        for tail, expected in (([], "格式"), ({"message": {"content": 123}}, "格式"),
+                               ({"done": True}, "格式"),
+                               ({"error": "out of memory"}, "生成失败")):
+            self.opener.return_value = StreamingResponse([{"message": {"content": "已有部分事实。"}}, tail])
+            event = list(stream_answer("层数？", self.context))[-1]
+            self.assertEqual(event["type"], "error")
+            self.assertIn(expected, event["message"])
+            self.assertEqual(event["answer"], "已有部分事实。")
+            self.assertIn("重新提交问题", event["retry_advice"])
+
+    def test_empty_notice_is_visible_during_stream_and_in_final_answer(self):
+        context = build_context("概念？", [])
+        self.reply(["这是", "概念解释。"])
+        events = list(stream_answer("概念？", context))
+        self.assertTrue(all(event["answer"].startswith("当前知识库中未找到相关文档。") for event in events))
+        self.assertTrue(all(event["citations"] == [] for event in events))
+        self.assertEqual(events[-1]["generation_mode"], "empty")
+
 
 class TestSemanticCache(unittest.TestCase):
     """明确向量与真实引用快照验证缓存；真实 M3E 时延和误匹配另存 reports。"""
@@ -773,6 +921,12 @@ class TestSemanticCache(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "不能为空"):
             self.cache.lookup(" ", "scope")
         self.embedding.embed_query.assert_not_called()
+
+    def test_degraded_answer_is_not_cached_even_after_user_confirmation(self):
+        for mode in ("empty", "low"):
+            self.assertFalse(self.cache.put("问题", {**self.result, "generation_mode": mode}, "scope"))
+        self.embedding.embed_query.assert_not_called()
+        self.assertEqual(self.cache.entries, [])
 
     def test_exact_hit_skips_embedding_preserves_answer_and_uses_zero_current_tokens(self):
         self.assertTrue(self.cache.put("层数？", self.result, "scope"))
@@ -1057,6 +1211,87 @@ class TestStreamingFrontend(unittest.TestCase):
         self.app.chat_input[0].set_value("层数？").run()
         self.assertTrue(self.app.session_state["rag_messages"][-1]["complete"])
         self.assertFalse(self.app.session_state["rag_cache"].entries)
+
+
+    def test_low_relevance_waits_for_confirmation_then_generates_once(self):
+        document = self.retriever.search.return_value[0][0]
+        self.retriever.search.return_value = [(document, 0.02)]
+        self.app.chat_input[0].set_value("层数？").run()
+        self.assertFalse(self.app.exception)
+        self.opener.assert_not_called()
+        self.assertEqual(self.app.session_state["rag_messages"], [])
+        self.assertIn("编码器有6层", self.app.text[0].value)
+        self.assertTrue(any("相关性低" in item.value for item in self.app.warning))
+        self.app.run()
+        self.opener.assert_not_called()
+        self.reply()
+        self.app.button(key="confirm_low_relevance").click().run()
+        self.assertFalse(self.app.exception)
+        message = self.app.session_state["rag_messages"][-1]
+        self.assertTrue(message["complete"])
+        self.assertEqual(message["generation_mode"], "low")
+        self.assertIn("相关性低", message["answer"])
+        self.assertEqual(message["citations"][0]["source_file"], "attention.pdf")
+        self.assertFalse(self.app.session_state["rag_cache"].entries)
+        self.app.run()
+        self.assertEqual(self.opener.call_count, 1)
+        self.app.chat_input[0].set_value("层数？").run()
+        self.assertIn("rag_pending", self.app.session_state)
+        self.assertEqual(self.opener.call_count, 1)
+
+    def test_cancel_and_clear_remove_pending_request_without_generation(self):
+        self.retriever.search.return_value = [(self.retriever.search.return_value[0][0], 0.01)]
+        self.app.chat_input[0].set_value("层数？").run()
+        self.app.button(key="cancel_low_relevance").click().run()
+        self.assertNotIn("rag_pending", self.app.session_state)
+        self.assertEqual(self.app.session_state["rag_messages"], [])
+        self.app.chat_input[0].set_value("层数？").run()
+        self.app.button(key="clear_rag_chat").click().run()
+        self.assertNotIn("rag_pending", self.app.session_state)
+        self.opener.assert_not_called()
+
+    def test_changed_knowledge_or_configuration_cannot_confirm_stale_context(self):
+        self.retriever.search.return_value = [(self.retriever.search.return_value[0][0], 0.01)]
+        for change in ("knowledge", "config"):
+            self.app.chat_input[0].set_value("层数？").run()
+            if change == "knowledge":
+                self.retriever.vector_store.list_chunks.return_value = [Document(page_content="新文献")]
+            else:
+                self.config["generation"]["low_relevance_threshold"] = 0.2
+            self.app.button(key="confirm_low_relevance").click().run()
+            self.assertFalse(self.app.exception)
+            message = self.app.session_state["rag_messages"][-1]
+            self.assertFalse(message["complete"])
+            self.assertIn("已改变", message["error"])
+        self.opener.assert_not_called()
+
+    def test_new_question_replaces_pending_low_relevance_question(self):
+        document = self.retriever.search.return_value[0][0]
+        self.retriever.search.return_value = [(document, 0.01)]
+        self.app.chat_input[0].set_value("旧问题").run()
+        self.retriever.search.return_value = [(document, 0.8)]
+        self.reply()
+        self.app.chat_input[0].set_value("新问题").run()
+        self.assertNotIn("rag_pending", self.app.session_state)
+        self.assertEqual(self.app.session_state["rag_messages"][0]["question"], "新问题")
+        self.assertEqual(self.opener.call_count, 1)
+
+    def test_empty_notice_and_error_advice_survive_history_rerun(self):
+        self.retriever.search.return_value = []
+        self.reply()
+        self.app.chat_input[0].set_value("概念？").run()
+        self.app.run()
+        self.assertTrue(any("纯模型回答" in item.value for item in self.app.info))
+        self.assertTrue(self.app.session_state["rag_messages"][0]["answer"].startswith("当前知识库中未找到相关文档。"))
+        self.opener.side_effect = TimeoutError("mock timeout")
+        self.app.chat_input[0].set_value("重试问题").run()
+        self.app.run()
+        message = self.app.session_state["rag_messages"][-1]
+        self.assertFalse(message["complete"])
+        self.assertIn("超时", message["error"])
+        self.assertTrue(any("缩短问题" in item.value for item in self.app.info))
+        self.assertFalse(self.app.session_state["rag_cache"].entries)
+        self.assertEqual(self.opener.call_count, 2)
 
 
 class TestGenerationEvaluation(unittest.TestCase):

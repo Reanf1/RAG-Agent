@@ -3,10 +3,10 @@
 import json
 import re
 from urllib.error import URLError
-from urllib.request import urlopen
 
 from src.generation.rag_pipeline import (
-    _build_generation_request, _finish_generation, resolve_citations,
+    _build_generation_request, _finish_generation, _with_generation_notice,
+    generation_error, resolve_citations, urlopen,
 )
 
 
@@ -49,12 +49,12 @@ def render_partial_answer(raw: str, context: dict) -> dict:
     """从完整原始前缀重算展示快照，不把已补全的编号再次当模型输入。"""
     visible = _visible_prefix(raw)
     if not visible.strip():
-        return {"answer": "", "citations": [], "invalid_citation_ids": [],
-                "missing_citations": False, "warnings": []}
+        return _with_generation_notice({"answer": "", "citations": [], "invalid_citation_ids": [],
+                                        "missing_citations": False, "warnings": []}, context)
     resolved = resolve_citations(visible, context)
     # 生成时只显示正文；来源清单在 done 时统一补齐，证据列表可即时更新。
     resolved["answer"] = resolved["answer"].rsplit("\n\n## 参考来源\n", 1)[0]
-    return resolved
+    return _with_generation_notice(resolved, context)
 
 
 def stream_answer(question: str, context: dict, *, options: dict | None = None):
@@ -72,9 +72,13 @@ def stream_answer(question: str, context: dict, *, options: dict | None = None):
                 if not line.strip():
                     continue
                 packet = json.loads(line)
+                if not isinstance(packet, dict) or not isinstance(packet.get("message", {}), dict):
+                    raise ValueError("本地 Ollama 返回的数据格式无法解析")
                 if packet.get("error"):
                     raise RuntimeError(f"本地 Ollama 返回错误：{packet['error']}")
                 content = packet.get("message", {}).get("content", "")
+                if not isinstance(content, str):
+                    raise ValueError("本地 Ollama 返回的数据格式无法解析")
                 if content:
                     raw += content
                     partial = render_partial_answer(raw, context)
@@ -95,4 +99,4 @@ def stream_answer(question: str, context: dict, *, options: dict | None = None):
                     return
         raise RuntimeError("本地 Ollama 流已断开，未收到完成标记；回答尚未完成。")
     except (URLError, OSError, ValueError, RuntimeError) as error:
-        yield {"type": "error", "message": str(error), "raw_answer": raw, **partial}
+        yield {"type": "error", **generation_error(error), "raw_answer": raw, **partial}

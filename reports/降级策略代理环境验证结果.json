@@ -1,0 +1,390 @@
+{
+  "started_at": "2026-09-29T19:42:41.806942+08:00",
+  "prompt_version": "rag-v3",
+  "config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://localhost:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 8192,
+      "num_predict": 512,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 6000,
+      "max_prompt_chars": 12000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "online_search_enabled": false
+    },
+    "paths": {
+      "raw_documents": "data/raw",
+      "vector_index": "data/index",
+      "logs": "logs"
+    }
+  },
+  "environment": {
+    "python": "3.10.10",
+    "platform": "macOS-27.0-arm64-arm-64bit"
+  },
+  "scope": "临时库中两篇公开论文的两个标注原文块，真实本地模型与AppTest；不是浏览器视觉验收或独立质量评测。",
+  "dataset_sha256": "d46fb56f5f41064faf223ff2d80c2cc8cc6dd329ef7792891b4b413c22cea099",
+  "papers": [
+    {
+      "id": "attention",
+      "language": "en",
+      "title": "Attention Is All You Need",
+      "pdf_url": "https://arxiv.org/pdf/1706.03762v7",
+      "source_url": "https://arxiv.org/abs/1706.03762v7",
+      "pdf_sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+      "pages": 15,
+      "chunk_count": 94
+    },
+    {
+      "id": "bert",
+      "language": "en",
+      "title": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+      "pdf_url": "https://arxiv.org/pdf/1810.04805v2",
+      "source_url": "https://arxiv.org/abs/1810.04805v2",
+      "pdf_sha256": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+      "pages": 16,
+      "chunk_count": 154
+    }
+  ],
+  "server": {
+    "version": "0.34.0"
+  },
+  "models": {
+    "models": [
+      {
+        "name": "qwen2.5:7b",
+        "model": "qwen2.5:7b",
+        "modified_at": "2026-09-29T18:09:48.516927965+08:00",
+        "size": 4683087332,
+        "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen2",
+          "families": [
+            "qwen2"
+          ],
+          "parameter_size": "7.6B",
+          "quantization_level": "Q4_K_M",
+          "context_length": 32768,
+          "embedding_length": 3584
+        },
+        "capabilities": [
+          "completion",
+          "tools"
+        ]
+      }
+    ]
+  },
+  "requests": [
+    {
+      "label": "空库：纯模型概念回答",
+      "elapsed_seconds": 7.639593084000808,
+      "chat_requests": 1,
+      "message": {
+        "question": "请用一句话解释机器学习。",
+        "answer": "当前知识库中未找到相关文档。以下为纯模型回答，没有知识库文献依据。\n\n## 回答\n机器学习是一种人工智能技术，它使计算机能够在不进行明确编程的情况下从数据中学习并改进其性能。\n\n## 参考来源\n无可引用来源",
+        "citations": [],
+        "warnings": [],
+        "complete": true,
+        "retrieval_seconds": 0.0016823749974719249,
+        "type": "done",
+        "invalid_citation_ids": [],
+        "missing_citations": false,
+        "generation_mode": "empty",
+        "notice": "当前知识库中未找到相关文档。以下为纯模型回答，没有知识库文献依据。",
+        "raw_answer": "## 回答\n机器学习是一种人工智能技术，它使计算机能够在不进行明确编程的情况下从数据中学习并改进其性能。\n## 参考来源\n无可引用来源",
+        "model": "qwen2.5:7b",
+        "options": {
+          "temperature": 0.1,
+          "top_p": 0.9,
+          "top_k": 40,
+          "num_ctx": 8192,
+          "num_predict": 512,
+          "repeat_penalty": 1.0
+        },
+        "done_reason": "stop",
+        "usage": {
+          "prompt_eval_count": 435,
+          "eval_count": 39,
+          "total_duration": 7600090417,
+          "load_duration": 3843330209,
+          "prompt_eval_duration": 1916041000,
+          "eval_duration": 1827543000
+        },
+        "elapsed_seconds": 7.609081374997913
+      },
+      "visible_errors": [],
+      "visible_notices": [
+        "上传文档后增量写入本地知识库；下方 RAG 问答使用混合检索与模型重排，本地模型逐步输出答案并补全文献引用。",
+        "当前知识库中未找到相关文档；以下回答没有文献依据，将使用纯模型生成。",
+        "当前知识库中未找到相关文档。以下为纯模型回答，没有知识库文献依据。"
+      ]
+    },
+    {
+      "label": "低相关：确认后使用候选",
+      "elapsed_seconds": 5.221113374995184,
+      "chat_requests": 1,
+      "message": {
+        "question": "南京地铁的票价是多少？",
+        "answer": "检索结果相关性低；已按你的确认使用候选内容，回答依据仍需核实。\n\n当前知识库中未找到相关文档。\n基于模型自身知识回答：南京地铁的票价可能会根据不同的线路和距离有所不同，具体票价可以参考南京地铁官方网站或官方公告获取最新信息。\n\n## 参考来源\n无可引用来源",
+        "citations": [],
+        "warnings": [
+          "回答未提供有效文献引用，不能作为已溯源答案。"
+        ],
+        "complete": true,
+        "retrieval_seconds": 1.2957874160056235,
+        "elapsed_seconds": 5.160092166996037,
+        "type": "done",
+        "invalid_citation_ids": [],
+        "missing_citations": true,
+        "generation_mode": "low",
+        "notice": "检索结果相关性低；已按你的确认使用候选内容，回答依据仍需核实。",
+        "raw_answer": "当前知识库中未找到相关文档。\n基于模型自身知识回答：南京地铁的票价可能会根据不同的线路和距离有所不同，具体票价可以参考南京地铁官方网站或官方公告获取最新信息。",
+        "model": "qwen2.5:7b",
+        "options": {
+          "temperature": 0.1,
+          "top_p": 0.9,
+          "top_k": 40,
+          "num_ctx": 8192,
+          "num_predict": 512,
+          "repeat_penalty": 1.0
+        },
+        "done_reason": "stop",
+        "usage": {
+          "prompt_eval_count": 815,
+          "eval_count": 42,
+          "total_duration": 3839562417,
+          "load_duration": 1457417,
+          "prompt_eval_duration": 1868521000,
+          "eval_duration": 1962554000
+        }
+      },
+      "visible_errors": [],
+      "visible_notices": [
+        "上传文档后增量写入本地知识库；下方 RAG 问答使用混合检索与模型重排，本地模型逐步输出答案并补全文献引用。",
+        "当前知识库中未找到相关文档。以下为纯模型回答，没有知识库文献依据。",
+        "检索结果相关性低；已按你的确认使用候选内容，回答依据仍需核实。"
+      ]
+    },
+    {
+      "label": "连接失败",
+      "elapsed_seconds": 3.1456606659994577,
+      "chat_requests": 1,
+      "message": {
+        "question": "How many layers does BERT-base have?",
+        "answer": "",
+        "citations": [],
+        "warnings": [],
+        "complete": false,
+        "retrieval_seconds": 0.10932908300310373,
+        "type": "error",
+        "message": "本地模型服务暂时无法完成请求（HTTP 502）",
+        "retry_advice": "等待当前任务结束，检查本地服务日志与可用内存，必要时重启 Ollama 后重新提交问题。",
+        "error_detail": "HTTPError: HTTP Error 502: Bad Gateway ",
+        "raw_answer": "",
+        "invalid_citation_ids": [],
+        "missing_citations": false,
+        "generation_mode": "grounded",
+        "notice": "",
+        "error": "本地模型服务暂时无法完成请求（HTTP 502）",
+        "elapsed_seconds": 3.1166659579976113
+      },
+      "visible_errors": [
+        "回答未完成：本地模型服务暂时无法完成请求（HTTP 502）。已保留部分文本。"
+      ],
+      "visible_notices": [
+        "上传文档后增量写入本地知识库；下方 RAG 问答使用混合检索与模型重排，本地模型逐步输出答案并补全文献引用。",
+        "当前知识库中未找到相关文档。以下为纯模型回答，没有知识库文献依据。",
+        "检索结果相关性低；已按你的确认使用候选内容，回答依据仍需核实。",
+        "等待当前任务结束，检查本地服务日志与可用内存，必要时重启 Ollama 后重新提交问题。"
+      ]
+    },
+    {
+      "label": "模型不存在",
+      "elapsed_seconds": 0.19201566600531805,
+      "chat_requests": 1,
+      "message": {
+        "question": "How many layers does BERT-base have?",
+        "answer": "",
+        "citations": [],
+        "warnings": [],
+        "complete": false,
+        "retrieval_seconds": 0.15168770899617812,
+        "type": "error",
+        "message": "本地模型或接口未找到（HTTP 404）",
+        "retry_advice": "检查 config.yaml 中的模型名称和服务地址，用 ollama list 确认本地模型已准备好后重新提交问题。",
+        "error_detail": "HTTPError: HTTP Error 404: Not Found {\"error\":\"model 'rag-degradation-missing-model-20260929' not found\"}",
+        "raw_answer": "",
+        "invalid_citation_ids": [],
+        "missing_citations": false,
+        "generation_mode": "grounded",
+        "notice": "",
+        "error": "本地模型或接口未找到（HTTP 404）",
+        "elapsed_seconds": 0.15793604200007394
+      },
+      "visible_errors": [
+        "回答未完成：本地模型服务暂时无法完成请求（HTTP 502）。已保留部分文本。",
+        "回答未完成：本地模型或接口未找到（HTTP 404）。已保留部分文本。"
+      ],
+      "visible_notices": [
+        "上传文档后增量写入本地知识库；下方 RAG 问答使用混合检索与模型重排，本地模型逐步输出答案并补全文献引用。",
+        "当前知识库中未找到相关文档。以下为纯模型回答，没有知识库文献依据。",
+        "检索结果相关性低；已按你的确认使用候选内容，回答依据仍需核实。",
+        "等待当前任务结束，检查本地服务日志与可用内存，必要时重启 Ollama 后重新提交问题。",
+        "检查 config.yaml 中的模型名称和服务地址，用 ollama list 确认本地模型已准备好后重新提交问题。"
+      ]
+    }
+  ],
+  "threshold_observation": {
+    "source_sha256": "8bed74881dfef0c41047d3a63a36dae861bcbe0bab577ac1657b9dca1e92f3e9",
+    "total": 96,
+    "below_threshold": 16,
+    "below_threshold_hit_at_5": 1,
+    "below_threshold_top1_correct": 0,
+    "note": "开发集观察，阈值不是概率或最优参数；高分仍可能不相关。"
+  },
+  "pending": {
+    "question": "南京地铁的票价是多少？",
+    "context": {
+      "context": "[参考文档1 - 来源: bert.pdf；原始块位置: 第3页（物理页码）]\n\nsuch as “The Annotated Transformer.”^{2}\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as\nH, and the number of self-attention heads as A.^{3}\nWe primarily report results on two model sizes:\nBERT_{BASE} (L=12, H=768, A=12, Total Param-\neters=110M) and BERT_{LARGE} (L=24, H=1024,\nA=16, Total Parameters=340M).\nBERT_{BASE} was chosen to have the same model\nsize as OpenAI GPT for comparison purposes.\nCritically, however, the BERT Transformer uses\n\n---\n\n[参考文档2 - 来源: attention.pdf；原始块位置: 第5页（物理页码）]\n\ni ^{)}\nWhere the projections are parameter matrices W ^{Q}\n∈R^{d}^{model}^{×}^{d}^{k}, W ^{V}\n∈R^{d}^{model}^{×}^{d}^{v}\n∈R^{d}^{model}^{×}^{d}^{k}, W ^{K}\ni\ni\ni\nand W ^{O} ∈R^{hd}^{v}^{×}^{d}^{model}.\nIn this work we employ h = 8 parallel attention layers, or heads. For each of these we use\nd_{k} = d_{v} = d_{model}/h = 64. Due to the reduced dimension of each head, the total computational cost\nis similar to that of single-head attention with full dimensionality.\n3.2.3",
+      "sources": [
+        "bert.pdf",
+        "attention.pdf"
+      ],
+      "chunk_count": 2,
+      "references": [
+        {
+          "id": 1,
+          "source_file": "bert.pdf",
+          "location": "第3页（物理页码）",
+          "text": "\nsuch as “The Annotated Transformer.”^{2}\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as\nH, and the number of self-attention heads as A.^{3}\nWe primarily report results on two model sizes:\nBERT_{BASE} (L=12, H=768, A=12, Total Param-\neters=110M) and BERT_{LARGE} (L=24, H=1024,\nA=16, Total Parameters=340M).\nBERT_{BASE} was chosen to have the same model\nsize as OpenAI GPT for comparison purposes.\nCritically, however, the BERT Transformer uses",
+          "metadata": {
+            "chunk_id": "33c362adeeae964cd6ea9ff0fd62e1d726eb26e8c98eeeab6d96dfa4f1b5b572",
+            "doc_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+            "end_index": 3605,
+            "page_number": 3,
+            "source_file": "bert.pdf",
+            "start_index": 3111
+          },
+          "truncated": false
+        },
+        {
+          "id": 2,
+          "source_file": "attention.pdf",
+          "location": "第5页（物理页码）",
+          "text": "\ni ^{)}\nWhere the projections are parameter matrices W ^{Q}\n∈R^{d}^{model}^{×}^{d}^{k}, W ^{V}\n∈R^{d}^{model}^{×}^{d}^{v}\n∈R^{d}^{model}^{×}^{d}^{k}, W ^{K}\ni\ni\ni\nand W ^{O} ∈R^{hd}^{v}^{×}^{d}^{model}.\nIn this work we employ h = 8 parallel attention layers, or heads. For each of these we use\nd_{k} = d_{v} = d_{model}/h = 64. Due to the reduced dimension of each head, the total computational cost\nis similar to that of single-head attention with full dimensionality.\n3.2.3",
+          "metadata": {
+            "chunk_id": "24be9fd29302ea14250272ebaf769b0ceb38ca69134eba0d9339da52d2d36894",
+            "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+            "end_index": 914,
+            "page_number": 5,
+            "source_file": "attention.pdf",
+            "start_index": 439
+          },
+          "truncated": false
+        }
+      ],
+      "context_budget_chars": 6000,
+      "context_chars": 1061,
+      "prompt_chars": 1721,
+      "truncated": false,
+      "dropped_count": 0,
+      "generation_mode": "low",
+      "top_score": 3.742192711797543e-05,
+      "threshold": 0.1,
+      "confirmed": false
+    },
+    "chat_requests": 0,
+    "search": {
+      "question": "南京地铁的票价是多少？",
+      "scores": [
+        3.742192711797543e-05,
+        3.739642124855891e-05
+      ]
+    },
+    "visible_warnings": [
+      "检索结果相关性低：最高重排分数 0.0000 < 0.1。请查看候选原文并确认是否使用；分数不是命中概率，确认也不代表原文能回答问题。"
+    ],
+    "visible_candidates": [
+      "such as “The Annotated Transformer.”^{2}\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as\nH, and the number of self-attention heads as A.^{3}\nWe primarily report results on two model sizes:\nBERT_{BASE} (L=12, H=768, A=12, Total Param-\neters=110M) and BERT_{LARGE} (L=24, H=1024,\nA=16, Total Parameters=340M).\nBERT_{BASE} was chosen to have the same model\nsize as OpenAI GPT for comparison purposes.\nCritically, however, the BERT Transformer uses",
+      "i ^{)}\nWhere the projections are parameter matrices W ^{Q}\n∈R^{d}^{model}^{×}^{d}^{k}, W ^{V}\n∈R^{d}^{model}^{×}^{d}^{v}\n∈R^{d}^{model}^{×}^{d}^{k}, W ^{K}\ni\ni\ni\nand W ^{O} ∈R^{hd}^{v}^{×}^{d}^{model}.\nIn this work we employ h = 8 parallel attention layers, or heads. For each of these we use\nd_{k} = d_{v} = d_{model}/h = 64. Due to the reduced dimension of each head, the total computational cost\nis similar to that of single-head attention with full dimensionality.\n3.2.3"
+    ]
+  },
+  "searches": [
+    {
+      "question": "请用一句话解释机器学习。",
+      "scores": []
+    },
+    {
+      "question": "南京地铁的票价是多少？",
+      "scores": [
+        3.742192711797543e-05,
+        3.739642124855891e-05
+      ]
+    },
+    {
+      "question": "How many layers does BERT-base have?",
+      "scores": [
+        0.43205904960632324,
+        0.10310818254947662
+      ]
+    },
+    {
+      "question": "How many layers does BERT-base have?",
+      "scores": [
+        0.43205904960632324,
+        0.10310818254947662
+      ]
+    }
+  ],
+  "finished_at": "2026-09-29T19:43:01.833638+08:00"
+}

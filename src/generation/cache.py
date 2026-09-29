@@ -106,6 +106,7 @@ class SemanticCache:
         self._bind(scope)
         question = question.strip()
         if not question or result.get("type") != "done" or result.get("done_reason") != "stop" \
+                or result.get("generation_mode") in {"empty", "low"} \
                 or not result.get("answer", "").strip() or not result.get("citations") \
                 or result.get("warnings") or result.get("invalid_citation_ids") or result.get("missing_citations"):
             return False

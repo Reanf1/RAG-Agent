@@ -14,7 +14,7 @@ if str(project_root) not in sys.path:
 
 from src.data_loader import LOADERS, create_import_tasks
 from src.generation.cache import SemanticCache, cache_scope
-from src.generation.rag_pipeline import build_context
+from src.generation.rag_pipeline import prepare_rag_context
 from src.generation.streaming import stream_answer
 from src.retrieval.bm25_retriever import BM25Retriever
 from src.retrieval.hybrid_retriever import HybridRetriever
@@ -170,13 +170,15 @@ if "rag_cache" not in st.session_state or st.session_state.rag_cache.settings !=
 if st.button("清空当前对话", key="clear_rag_chat"):
     st.session_state.rag_messages = []
     st.session_state.rag_cache.clear()
+    st.session_state.pop("rag_pending", None)
     st.rerun()
 
 
 def show_answer_details(message):
     """历史与本轮共用完成状态、实际用量和原文证据展示。"""
     if message.get("error"):
-        st.error(f"回答未完成：{message['error']}。已保留部分文本；请检查本地服务或配置后重新提交问题。")
+        st.error(f"回答未完成：{message['error']}。已保留部分文本。")
+        st.info(message.get("retry_advice", "请检查本地服务或配置后重新提交问题。"))
     elif message.get("complete"):
         usage = message["usage"]
         status = "缓存已返回" if message.get("cache", {}).get("hit") else "服务已结束"
@@ -187,12 +189,37 @@ def show_answer_details(message):
             hit = message["cache"]
             match = "相同问题" if hit["mode"] == "exact" else f"语义相似度 {hit['similarity']:.4f}"
             st.info(f"缓存命中（{match}），本次未调用检索、重排或生成模型。原问题：{hit['question']}")
+    if message.get("notice"):
+        st.info(message["notice"])
     for warning in message.get("warnings", []):
         st.warning(warning)
     for reference in message["citations"]:
         with st.expander(f"参考文档{reference['id']} · {reference['source_file'] or '来源信息未提供'} · {reference['location']}"):
             st.caption(f"块 ID：{reference['metadata'].get('chunk_id', '')}；仅展示本轮送入模型的原文证据。")
             st.text(reference["text"])
+
+
+def generate_message(message, context, retriever, scope, placeholder):
+    """正常回答和确认后的回答共用流式处理；未完成与低相关性答案不写缓存。"""
+    placeholder.markdown("正在等待本地模型输出…")
+    for event in stream_answer(message["question"], context):
+        if event["type"] == "token":
+            message["answer"], message["citations"] = event["answer"], event["citations"]
+            placeholder.markdown(event["answer"] + " ▌")
+        else:
+            message.update(event)
+            message["complete"] = event["type"] == "done"
+    if not message["complete"] and not message.get("message"):
+        raise RuntimeError("生成流未返回完成标记")
+    if message.get("type") == "error":
+        message["error"] = message["message"]
+    elif message["complete"] and context["generation_mode"] == "grounded":
+        # 生成期间文献改变时不写入旧答案；缓存故障不影响已完成回答。
+        try:
+            if cache_scope(retriever.vector_store) == scope:
+                st.session_state.rag_cache.put(message["question"], event, scope)
+        except Exception as error:
+            message["warnings"].append(f"本次答案已完成，但缓存未写入：{type(error).__name__}: {error}")
 
 
 for message in st.session_state.rag_messages:
@@ -204,6 +231,8 @@ for message in st.session_state.rag_messages:
 
 question = st.chat_input("询问已上传论文（支持中英文）", key="rag_question")
 if question and question.strip():
+    # 新问题取代旧的待确认请求，避免后来误点生成旧问题。
+    st.session_state.pop("rag_pending", None)
     message = {"question": question, "answer": "", "citations": [], "warnings": [], "complete": False}
     started = perf_counter()
     with st.chat_message("user"):
@@ -220,49 +249,68 @@ if question and question.strip():
                 with st.spinner("正在检索本地文献…"):
                     search_started = perf_counter()
                     results = retriever.search(question, k=config["retrieval"]["top_k"], rerank=True)
-                    context = build_context(question, results)
+                    context = prepare_rag_context(question, results)
                 message["retrieval_seconds"] = perf_counter() - search_started
-                if not results:
-                    st.info("当前知识库中未找到相关文档；以下回答没有文献依据。")
-                answer_placeholder.markdown("正在等待本地模型输出…")
-                # 使用完整快照替换占位区，引用闭合后立即补全。
-                for event in stream_answer(question, context):
-                    if event["type"] == "token":
-                        message["answer"], message["citations"] = event["answer"], event["citations"]
-                        answer_placeholder.markdown(event["answer"] + " ▌")
-                    else:
-                        message.update(event)
-                        message["complete"] = event["type"] == "done"
-                if not message["complete"] and not message.get("message"):
-                    raise RuntimeError("生成流未返回完成标记")
-                if message.get("type") == "error":
-                    message["error"] = message["message"]
-                # 生成期间文献改变时不写入旧答案；写入故障不能把完整回答伪装成失败。
-                elif message["complete"]:
-                    try:
-                        if cache_scope(retriever.vector_store) == scope:
-                            st.session_state.rag_cache.put(question, event, scope)
-                    except Exception as error:
-                        message["warnings"].append(f"本次答案已完成，但缓存未写入：{type(error).__name__}: {error}")
+                if context["generation_mode"] == "low":
+                    st.session_state.rag_pending = {"message": message, "context": context, "scope": scope}
+                else:
+                    if context["generation_mode"] == "empty":
+                        st.info("当前知识库中未找到相关文档；以下回答没有文献依据，将使用纯模型生成。")
+                    generate_message(message, context, retriever, scope, answer_placeholder)
         except Exception as error:
             message["error"] = f"{type(error).__name__}: {error}"
         message["elapsed_seconds"] = perf_counter() - started
         answer_placeholder.markdown(message["answer"])
-        show_answer_details(message)
-    st.session_state.rag_messages.append(message)
+        if "rag_pending" not in st.session_state:
+            show_answer_details(message)
+    if "rag_pending" not in st.session_state:
+        st.session_state.rag_messages.append(message)
+
+if "rag_pending" in st.session_state:
+    pending = st.session_state.rag_pending
+    context = pending["context"]
+    st.warning(f"检索结果相关性低：最高重排分数 {context['top_score']:.4f} < {context['threshold']}。"
+               "请查看候选原文并确认是否使用；分数不是命中概率，确认也不代表原文能回答问题。")
+    st.write(f"待确认问题：{pending['message']['question']}")
+    for reference in context["references"]:
+        with st.expander(f"候选{reference['id']} · {reference['source_file'] or '来源信息未提供'} · {reference['location']}", expanded=True):
+            st.text(reference["text"])
+    confirm = st.button("使用这些内容继续生成", key="confirm_low_relevance")
+    cancel = st.button("取消本次回答", key="cancel_low_relevance")
+    if confirm or cancel:
+        st.session_state.pop("rag_pending")
+        if cancel:
+            st.info("已取消本次回答。可以上传更相关的文献或重新描述问题。")
+        else:
+            message = pending["message"]
+            started = perf_counter()
+            with st.chat_message("assistant"):
+                placeholder = st.empty()
+                try:
+                    retriever = HybridRetriever()
+                    # 确认期间库或配置改变时，要求重提问题，不能使用过期原文。
+                    if cache_scope(retriever.vector_store) != pending["scope"]:
+                        raise ValueError("知识库或配置已改变，请重新提交问题并确认新的候选内容")
+                    generate_message(message, {**context, "confirmed": True}, retriever, pending["scope"], placeholder)
+                except Exception as error:
+                    message["error"] = str(error)
+                message["elapsed_seconds"] += perf_counter() - started  # 不计用户阅读等待时间。
+                placeholder.markdown(message["answer"])
+                show_answer_details(message)
+            st.session_state.rag_messages.append(message)
 
 st.subheader("模块开发状态")
 st.table(
     [
         {"模块": "一：文档处理与检索", "状态": "部分实现", "范围": "已实现批量导入、分块、增量索引、向量/BM25/RRF 与模型重排；三档质量已评测，分块召回对比待完成"},
-        {"模块": "二：RAG 生成", "状态": "部分实现", "范围": "已实现 Prompt、上下文/引用、本地生成、流式与语义缓存，完成参数对照；完整降级、日志待完成"},
+        {"模块": "二：RAG 生成", "状态": "部分实现", "范围": "已实现 Prompt、上下文/引用、本地生成、流式、缓存及三类降级，完成参数对照；日志待完成"},
         {"模块": "三：Agent 决策", "状态": "未实现", "范围": "ReAct、工具、路由、恢复、记忆"},
         {"模块": "四：系统集成与前端", "状态": "部分实现", "范围": "已有文档入库、检索与 RAG 流式问答；Agent、持久会话、文献管理与完整联调待开发"},
         {"模块": "五：评测与交付", "状态": "部分实现", "范围": "已有三档检索实测、图表与 Excel；完整系统评测待完成"},
     ]
 )
 st.subheader("下一步")
-st.write("后续继续完整降级与日志；分块召回对比和 Agent 等课程要求仍保留。")
+st.write("后续继续日志；分块召回对比和 Agent 等课程要求仍保留。")
 with st.sidebar:
     st.header("课程资料")
     st.write("南京农业大学生产实习课程实践")

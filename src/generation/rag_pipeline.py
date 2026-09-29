@@ -4,19 +4,82 @@ from copy import deepcopy
 import math
 import re
 import json
-from urllib.error import URLError
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
-from urllib.request import Request, urlopen
+from urllib.request import ProxyHandler, Request, build_opener
 
 from langchain_core.documents import Document
 
 from src.generation.prompt_template import NO_CONTEXT_TEXT, build_rag_messages
 from src.utils.config import load_config
 
+# 本机模型直接连接，避免系统 HTTP 代理改变故障类型或转发论文内容。
+urlopen = build_opener(ProxyHandler({})).open
+
+
+def prepare_rag_context(question: str, results: list[tuple[Document, float]]) -> dict:
+    """问答只接收 BGE sigmoid 重排结果；低相关性暂停生成，原文留待确认。"""
+    context = build_context(question, results)
+    threshold = load_config()["generation"]["low_relevance_threshold"]
+    if type(threshold) not in (int, float) or not math.isfinite(threshold) or not 0 < threshold < 1:
+        raise ValueError("low_relevance_threshold 必须在 (0, 1) 内")
+    scores = [score for document, score in results if document.page_content.strip()]
+    if any(not 0 <= score <= 1 for score in scores):
+        raise ValueError("问答降级判断只接受 0~1 的模型重排分数，不能传入 BM25 或 RRF 分数")
+    # 字符预算可能排除某些块，判断应依据实际送入模型的原文。
+    top_score = max(reference["score"] for reference in context["references"]) if scores else None
+    mode = "empty" if not scores else "low" if top_score < threshold else "grounded"
+    return {**context, "generation_mode": mode, "top_score": top_score, "threshold": threshold,
+            "confirmed": False}
+
+
+def _with_generation_notice(resolved: dict, context: dict) -> dict:
+    """由系统保证提示出现，不依赖模型遵守提示词；历史与流式快照保持一致。"""
+    mode = context.get("generation_mode", "grounded" if context.get("context", "").strip() else "empty")
+    notice = ""
+    if mode == "empty":
+        notice = NO_CONTEXT_TEXT + "以下为纯模型回答，没有知识库文献依据。"
+    elif mode == "low":
+        notice = ("检索结果相关性低；已按你的确认使用候选内容，回答依据仍需核实。"
+                  if context.get("confirmed") else "检索结果相关性低；尚未确认使用候选内容，未调用生成模型。")
+    if notice and resolved["answer"]:
+        resolved["answer"] = notice + "\n\n" + resolved["answer"]
+    return {**resolved, "generation_mode": mode, "notice": notice}
+
+
+def generation_error(error: Exception) -> dict:
+    """把本地 API 故障转为可操作提示，原始详情单独保留，不自动重试。"""
+    detail = f"{type(error).__name__}: {error}"
+    if isinstance(error, HTTPError):
+        # 404 也可能是接口路径错误，不能一律断言模型不存在。
+        with error:
+            detail += " " + error.read(4096).decode("utf-8", errors="replace")
+        if error.code == 404:
+            message, advice = "本地模型或接口未找到（HTTP 404）", "检查 config.yaml 中的模型名称和服务地址，用 ollama list 确认本地模型已准备好后重新提交问题。"
+        elif error.code == 400:
+            message, advice = "本地模型拒绝了请求（HTTP 400）", "检查模型名称、生成参数与请求格式，修正后重新提交问题。"
+        else:
+            message, advice = f"本地模型服务暂时无法完成请求（HTTP {error.code}）", "等待当前任务结束，检查本地服务日志与可用内存，必要时重启 Ollama 后重新提交问题。"
+    elif isinstance(error, TimeoutError) or isinstance(error, URLError) and isinstance(error.reason, TimeoutError):
+        message, advice = "本地模型响应超时", "等待模型加载完成，缩短问题或上下文，检查可用内存后重新提交问题。"
+    elif isinstance(error, (URLError, OSError)):
+        message, advice = "无法连接或读取本地 Ollama 服务", "启动本地 Ollama 服务并检查 config.yaml 中的地址和端口，恢复后重新提交问题。"
+    elif isinstance(error, json.JSONDecodeError):
+        message, advice = "本地模型返回的数据格式无法解析", "检查是否连接正确的 Ollama 接口及服务日志，恢复后重新提交问题。"
+    elif isinstance(error, ValueError):
+        message, advice = str(error), "检查本地配置和接口数据，修正后重新提交问题。"
+    elif str(error).startswith("本地 Ollama 返回错误："):
+        message, advice = "本地模型生成失败", "用 ollama list 检查模型已准备好，检查服务日志与可用内存，恢复后重新提交问题。"
+    else:
+        message, advice = str(error), "检查本地模型服务日志与可用内存，必要时重启 Ollama 后重新提交问题。"
+    return {"message": message, "retry_advice": advice, "error_detail": detail}
+
 
 def _build_generation_request(question: str, context: dict, options: dict | None = None,
                               *, stream: bool = False) -> tuple[Request, dict]:
     """流式和非流式共用消息及参数校验，避免出现两套模型配置。"""
+    if context.get("generation_mode") == "low" and not context.get("confirmed"):
+        raise ValueError("检索结果相关性低，请先查看候选原文并确认是否继续")
     config = load_config()["llm"]
     url = urlparse(config["base_url"])
     if config["provider"] != "ollama" or url.scheme != "http" or url.hostname not in {
@@ -59,17 +122,24 @@ def generate_answer(question: str, context: dict, *, options: dict | None = None
     try:
         with urlopen(request, timeout=300) as response:
             result = json.load(response)
-    except (URLError, TimeoutError) as error:
-        raise RuntimeError("本地 Ollama 调用失败，请检查服务、模型和超时情况") from error
-    return _finish_generation(result, context, sampling)
+        return _finish_generation(result, context, sampling)
+    except (OSError, ValueError, RuntimeError) as error:
+        failure = generation_error(error)
+        raise RuntimeError(f"本地 Ollama 调用失败：{failure['message']}。{failure['retry_advice']}") from error
 
 
 def _finish_generation(result: dict, context: dict, sampling: dict) -> dict:
     """两种生成方式共用终止检查、引用映射和服务实际用量。"""
+    if not isinstance(result, dict) or not isinstance(result.get("message", {}), dict):
+        raise ValueError("本地 Ollama 返回的数据格式无法解析")
     raw_answer = result.get("message", {}).get("content", "")
-    if result.get("error") or not result.get("done") or not raw_answer.strip():
+    if result.get("error"):
+        raise RuntimeError(f"本地 Ollama 返回错误：{result['error']}")
+    if not isinstance(raw_answer, str) or not result.get("done") or not raw_answer.strip():
         raise RuntimeError("本地 Ollama 未返回完整的非空答案")
-    resolved = resolve_citations(raw_answer, context)
+    if not isinstance(result.get("model"), str) or not result["model"]:
+        raise ValueError("本地 Ollama 返回的数据格式无法解析：缺少模型名称")
+    resolved = _with_generation_notice(resolve_citations(raw_answer, context), context)
     if result.get("done_reason") == "length":
         resolved["warnings"].append("回答已达到生成 Token 上限，内容可能尚未完整。")
     return {**resolved, "raw_answer": raw_answer,
@@ -109,7 +179,7 @@ def build_context(question: str, results: list[tuple[Document, float]]) -> dict:
     separator = "\n\n---\n\n"
     truncation_marker = "\n[正文已截断]"
 
-    for document, _ in candidates:
+    for document, score in candidates:
         metadata = document.metadata
         filename = metadata.get("source_file") or "来源信息未提供"
         # 只使用加载器的真实位置；Word/文本没有物理页码，不推造页码。
@@ -151,6 +221,7 @@ def build_context(question: str, results: list[tuple[Document, float]]) -> dict:
             "id": len(parts), "source_file": metadata.get("source_file"), "location": location,
             "text": text.removesuffix(truncation_marker) if partial else text,
             "metadata": deepcopy(metadata), "truncated": partial,
+            "score": score,
         })
         if metadata.get("source_file") and filename not in sources:
             sources.append(filename)
