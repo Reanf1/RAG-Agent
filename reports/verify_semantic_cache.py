@@ -11,7 +11,6 @@ import sys
 import tempfile
 from time import perf_counter
 from unittest.mock import patch
-from urllib.request import urlopen
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if __name__ == "__main__":
@@ -21,6 +20,7 @@ from langchain_core.documents import Document
 from streamlit.testing.v1 import AppTest
 
 from src.generation.cache import _constraints, cache_scope
+from src.generation.rag_pipeline import urlopen
 from src.retrieval.hybrid_retriever import HybridRetriever
 from src.retrieval.vector_store import VectorStore, get_embeddings
 from src.utils.config import load_config
@@ -60,7 +60,7 @@ def main():
               "dataset_sha256": hashlib.sha256(dataset_path.read_bytes()).hexdigest(), "papers": papers,
               "server": json.load(urlopen(config["llm"]["base_url"] + "/api/version", timeout=10)),
               "models": json.load(urlopen(config["llm"]["base_url"] + "/api/tags", timeout=10)),
-              "pairs": [], "requests": []}
+              "validation_complete": False, "pairs": [], "requests": []}
     embedding = get_embeddings()
     for equivalent, left, right in PAIRS:
         a, b = embedding.embed_query(left), embedding.embed_query(right)
@@ -109,10 +109,12 @@ def main():
                 wall = perf_counter() - started
                 assert not app.exception
                 message = deepcopy(app.session_state["rag_messages"][-1])
-                assert message["complete"] and not message.get("error") and not message["warnings"]
                 row = {"index": index, "message": message, "app_run_seconds": wall,
                        "retrieval_calls": len(calls) - before[0], "llm_calls": chat.call_count - before[1]}
                 report["requests"].append(row)
+                # 先保存真实答案：引用质量不合格时，断言失败也保留原因与已有探测数据。
+                args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                assert message["complete"] and not message.get("error") and not message["warnings"], message.get("warnings")
                 if index % 3:
                     assert message["cache"]["mode"] == ("exact" if index % 3 == 1 else "semantic")
                     assert (row["retrieval_calls"], row["llm_calls"]) == (0, 0)
@@ -131,6 +133,7 @@ def main():
             report["rendered_metrics"] = [item.value for item in app.caption if "Token" in item.value]
     report["loaded_models"] = json.load(urlopen(config["llm"]["base_url"] + "/api/ps", timeout=10))
     report["finished_at"] = datetime.now().astimezone().isoformat()
+    report["validation_complete"] = True
     args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 

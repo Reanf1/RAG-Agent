@@ -1,0 +1,1939 @@
+{
+  "started_at": "2026-09-30T18:07:14.762544+08:00",
+  "scope": "真实本地生成及增量引用验证；固定上下文，不是端到端检索质量/独立人工评分。",
+  "environment": {
+    "python": "3.10.10",
+    "platform": "macOS-27.0-arm64-arm-64bit"
+  },
+  "server": {
+    "version": "0.34.0"
+  },
+  "models": {
+    "models": [
+      {
+        "name": "qwen2.5:7b",
+        "model": "qwen2.5:7b",
+        "modified_at": "2026-09-29T18:09:48.516927965+08:00",
+        "size": 4683087332,
+        "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen2",
+          "families": [
+            "qwen2"
+          ],
+          "parameter_size": "7.6B",
+          "quantization_level": "Q4_K_M",
+          "context_length": 32768,
+          "embedding_length": 3584
+        },
+        "capabilities": [
+          "completion",
+          "tools"
+        ]
+      }
+    ]
+  },
+  "llm_config": {
+    "provider": "ollama",
+    "base_url": "http://localhost:11434",
+    "model": "qwen2.5:7b",
+    "temperature": 0.1,
+    "top_p": 0.9,
+    "top_k": 40,
+    "num_ctx": 8192,
+    "num_predict": 512,
+    "repeat_penalty": 1.0
+  },
+  "prompt_version": "rag-v3",
+  "dataset_sha256": "d46fb56f5f41064faf223ff2d80c2cc8cc6dd329ef7792891b4b413c22cea099",
+  "verified_pdfs": [
+    {
+      "path": "/Users/rean/github/RAG+Agent/data/raw/embedding_papers/attention.pdf",
+      "sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"
+    },
+    {
+      "path": "/Users/rean/github/RAG+Agent/data/raw/embedding_papers/bert.pdf",
+      "sha256": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e"
+    },
+    {
+      "path": "/Users/rean/github/RAG+Agent/data/raw/embedding_papers/vit.pdf",
+      "sha256": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6"
+    },
+    {
+      "path": "/Users/rean/github/RAG+Agent/data/raw/embedding_papers/cnn_survey.pdf",
+      "sha256": "738b17613ebbc031a8496792dad9442a4f2dd50f463008e3444d0e65167550a6"
+    },
+    {
+      "path": "/Users/rean/github/RAG+Agent/data/raw/embedding_papers/compression.pdf",
+      "sha256": "82e67c76c45bd8c4f348c6902429f84e2e0ea141569aeea8a55a3dd4bc1dcd20"
+    },
+    {
+      "path": "/Users/rean/github/RAG+Agent/data/raw/embedding_papers/vision_survey.pdf",
+      "sha256": "644bf3d7a22e96926669c991ac835b82ce1a1128404614d80fb4fffebf35a31c"
+    }
+  ],
+  "rows": [
+    {
+      "id": "heads",
+      "question": "原始Transformer用了多少个注意力头，每个头的键和值维度是多少？请简洁回答。",
+      "context": {
+        "context": "[参考文档1 - 来源: attention.pdf；原始块位置: 第5页（物理页码）]\n\ni ^{)}\nWhere the projections are parameter matrices W ^{Q}\n∈R^{d}^{model}^{×}^{d}^{k}, W ^{V}\n∈R^{d}^{model}^{×}^{d}^{v}\n∈R^{d}^{model}^{×}^{d}^{k}, W ^{K}\ni\ni\ni\nand W ^{O} ∈R^{hd}^{v}^{×}^{d}^{model}.\nIn this work we employ h = 8 parallel attention layers, or heads. For each of these we use\nd_{k} = d_{v} = d_{model}/h = 64. Due to the reduced dimension of each head, the total computational cost\nis similar to that of single-head attention with full dimensionality.\n3.2.3\n\n---\n\n[参考文档2 - 来源: bert.pdf；原始块位置: 第3页（物理页码）]\n\nsuch as “The Annotated Transformer.”^{2}\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as\nH, and the number of self-attention heads as A.^{3}\nWe primarily report results on two model sizes:\nBERT_{BASE} (L=12, H=768, A=12, Total Param-\neters=110M) and BERT_{LARGE} (L=24, H=1024,\nA=16, Total Parameters=340M).\nBERT_{BASE} was chosen to have the same model\nsize as OpenAI GPT for comparison purposes.\nCritically, however, the BERT Transformer uses",
+        "sources": [
+          "attention.pdf",
+          "bert.pdf"
+        ],
+        "chunk_count": 2,
+        "references": [
+          {
+            "id": 1,
+            "source_file": "attention.pdf",
+            "location": "第5页（物理页码）",
+            "text": "\ni ^{)}\nWhere the projections are parameter matrices W ^{Q}\n∈R^{d}^{model}^{×}^{d}^{k}, W ^{V}\n∈R^{d}^{model}^{×}^{d}^{v}\n∈R^{d}^{model}^{×}^{d}^{k}, W ^{K}\ni\ni\ni\nand W ^{O} ∈R^{hd}^{v}^{×}^{d}^{model}.\nIn this work we employ h = 8 parallel attention layers, or heads. For each of these we use\nd_{k} = d_{v} = d_{model}/h = 64. Due to the reduced dimension of each head, the total computational cost\nis similar to that of single-head attention with full dimensionality.\n3.2.3",
+            "metadata": {
+              "source_file": "attention.pdf",
+              "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+              "chunk_id": "24be9fd29302ea14250272ebaf769b0ceb38ca69134eba0d9339da52d2d36894",
+              "page_number": 5,
+              "start_index": 439,
+              "end_index": 914
+            },
+            "truncated": false
+          },
+          {
+            "id": 2,
+            "source_file": "bert.pdf",
+            "location": "第3页（物理页码）",
+            "text": "\nsuch as “The Annotated Transformer.”^{2}\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as\nH, and the number of self-attention heads as A.^{3}\nWe primarily report results on two model sizes:\nBERT_{BASE} (L=12, H=768, A=12, Total Param-\neters=110M) and BERT_{LARGE} (L=24, H=1024,\nA=16, Total Parameters=340M).\nBERT_{BASE} was chosen to have the same model\nsize as OpenAI GPT for comparison purposes.\nCritically, however, the BERT Transformer uses",
+            "metadata": {
+              "source_file": "bert.pdf",
+              "doc_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+              "chunk_id": "33c362adeeae964cd6ea9ff0fd62e1d726eb26e8c98eeeab6d96dfa4f1b5b572",
+              "page_number": 3,
+              "start_index": 3111,
+              "end_index": 3605
+            },
+            "truncated": false
+          }
+        ],
+        "context_budget_chars": 6000,
+        "context_chars": 1061,
+        "prompt_chars": 1667,
+        "truncated": false,
+        "dropped_count": 0
+      },
+      "packets": [
+        {
+          "seconds": 7.544774832998883,
+          "content": "##",
+          "answer": "",
+          "citation_ids": []
+        },
+        {
+          "seconds": 7.641467290999572,
+          "content": " 回",
+          "answer": "## 回",
+          "citation_ids": []
+        },
+        {
+          "seconds": 7.689401457999338,
+          "content": "答",
+          "answer": "## 回答",
+          "citation_ids": []
+        },
+        {
+          "seconds": 7.741224457999124,
+          "content": "\n",
+          "answer": "## 回答",
+          "citation_ids": []
+        },
+        {
+          "seconds": 7.789687790998869,
+          "content": "根据",
+          "answer": "## 回答\n根据",
+          "citation_ids": []
+        },
+        {
+          "seconds": 7.838498999999501,
+          "content": "参考",
+          "answer": "## 回答\n根据参考",
+          "citation_ids": []
+        },
+        {
+          "seconds": 7.886761582998588,
+          "content": "文档",
+          "answer": "## 回答\n根据参考文档",
+          "citation_ids": []
+        },
+        {
+          "seconds": 7.934794457998578,
+          "content": "1",
+          "answer": "## 回答\n根据参考文档1",
+          "citation_ids": []
+        },
+        {
+          "seconds": 7.982568624998748,
+          "content": "，",
+          "answer": "## 回答\n根据参考文档1，",
+          "citation_ids": []
+        },
+        {
+          "seconds": 8.030516875000103,
+          "content": "原始",
+          "answer": "## 回答\n根据参考文档1，原始",
+          "citation_ids": []
+        },
+        {
+          "seconds": 8.079084416000114,
+          "content": "Transformer",
+          "answer": "## 回答\n根据参考文档1，原始Transformer",
+          "citation_ids": []
+        },
+        {
+          "seconds": 8.127762915999483,
+          "content": "使用",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用",
+          "citation_ids": []
+        },
+        {
+          "seconds": 8.17686649999996,
+          "content": "了",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了",
+          "citation_ids": []
+        },
+        {
+          "seconds": 8.227679665998949,
+          "content": "8",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8",
+          "citation_ids": []
+        },
+        {
+          "seconds": 8.275101540999458,
+          "content": "个",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个",
+          "citation_ids": []
+        },
+        {
+          "seconds": 8.323964166000223,
+          "content": "并",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并",
+          "citation_ids": []
+        },
+        {
+          "seconds": 8.374710457999754,
+          "content": "行",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行",
+          "citation_ids": []
+        },
+        {
+          "seconds": 8.423039082999821,
+          "content": "的",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的",
+          "citation_ids": []
+        },
+        {
+          "seconds": 8.472261249999065,
+          "content": "注意力",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力",
+          "citation_ids": []
+        },
+        {
+          "seconds": 8.520937082999808,
+          "content": "层",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层",
+          "citation_ids": []
+        },
+        {
+          "seconds": 8.569119832998695,
+          "content": "（",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（",
+          "citation_ids": []
+        },
+        {
+          "seconds": 8.6169711249986,
+          "content": "头",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头",
+          "citation_ids": []
+        },
+        {
+          "seconds": 8.664738540999679,
+          "content": "），",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），",
+          "citation_ids": []
+        },
+        {
+          "seconds": 8.713390457998685,
+          "content": "每个",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个",
+          "citation_ids": []
+        },
+        {
+          "seconds": 8.761309415998767,
+          "content": "头",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头",
+          "citation_ids": []
+        },
+        {
+          "seconds": 8.809531957998843,
+          "content": "的",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的",
+          "citation_ids": []
+        },
+        {
+          "seconds": 8.85690295799941,
+          "content": "键",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键",
+          "citation_ids": []
+        },
+        {
+          "seconds": 8.904666958000234,
+          "content": "和",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和",
+          "citation_ids": []
+        },
+        {
+          "seconds": 8.952681916000074,
+          "content": "值",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值",
+          "citation_ids": []
+        },
+        {
+          "seconds": 9.000221499998588,
+          "content": "维度",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度",
+          "citation_ids": []
+        },
+        {
+          "seconds": 9.048532290998992,
+          "content": "都是",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是",
+          "citation_ids": []
+        },
+        {
+          "seconds": 9.098065207999753,
+          "content": "6",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是6",
+          "citation_ids": []
+        },
+        {
+          "seconds": 9.146093332999953,
+          "content": "4",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64",
+          "citation_ids": []
+        },
+        {
+          "seconds": 9.194075082999916,
+          "content": "。",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。",
+          "citation_ids": []
+        },
+        {
+          "seconds": 9.243647874998715,
+          "content": "具体",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体",
+          "citation_ids": []
+        },
+        {
+          "seconds": 9.290988499999003,
+          "content": "来说",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说",
+          "citation_ids": []
+        },
+        {
+          "seconds": 9.339046166000117,
+          "content": "，",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，",
+          "citation_ids": []
+        },
+        {
+          "seconds": 9.38676362499973,
+          "content": "文档",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档",
+          "citation_ids": []
+        },
+        {
+          "seconds": 9.43473937499948,
+          "content": "中",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中",
+          "citation_ids": []
+        },
+        {
+          "seconds": 9.48236041599921,
+          "content": "提到",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到",
+          "citation_ids": []
+        },
+        {
+          "seconds": 9.530187000000296,
+          "content": " \\(",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(",
+          "citation_ids": []
+        },
+        {
+          "seconds": 9.577971040998818,
+          "content": "d",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d",
+          "citation_ids": []
+        },
+        {
+          "seconds": 9.625680957999066,
+          "content": "_k",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k",
+          "citation_ids": []
+        },
+        {
+          "seconds": 9.673445207999976,
+          "content": " =",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k =",
+          "citation_ids": []
+        },
+        {
+          "seconds": 9.72158491600021,
+          "content": " d",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d",
+          "citation_ids": []
+        },
+        {
+          "seconds": 9.769259249998868,
+          "content": "_v",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v",
+          "citation_ids": []
+        },
+        {
+          "seconds": 9.817237125000247,
+          "content": " =",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v =",
+          "citation_ids": []
+        },
+        {
+          "seconds": 9.864924083000005,
+          "content": " d",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d",
+          "citation_ids": []
+        },
+        {
+          "seconds": 9.91271095799857,
+          "content": "_{",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{",
+          "citation_ids": []
+        },
+        {
+          "seconds": 9.960523582998576,
+          "content": "\\",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\",
+          "citation_ids": []
+        },
+        {
+          "seconds": 10.008578666000176,
+          "content": "text",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text",
+          "citation_ids": []
+        },
+        {
+          "seconds": 10.05627283299873,
+          "content": "{",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{",
+          "citation_ids": []
+        },
+        {
+          "seconds": 10.103811625000162,
+          "content": "model",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model",
+          "citation_ids": []
+        },
+        {
+          "seconds": 10.151853957999265,
+          "content": "}}",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}}",
+          "citation_ids": []
+        },
+        {
+          "seconds": 10.201616124999418,
+          "content": " /",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} /",
+          "citation_ids": []
+        },
+        {
+          "seconds": 10.251189124999655,
+          "content": " h",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h",
+          "citation_ids": []
+        },
+        {
+          "seconds": 10.298763415999929,
+          "content": " =",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h =",
+          "citation_ids": []
+        },
+        {
+          "seconds": 10.346471249999013,
+          "content": " ",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h =",
+          "citation_ids": []
+        },
+        {
+          "seconds": 10.396454582998558,
+          "content": "6",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 6",
+          "citation_ids": []
+        },
+        {
+          "seconds": 10.44501845800005,
+          "content": "4",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64",
+          "citation_ids": []
+        },
+        {
+          "seconds": 10.492922165998607,
+          "content": "\\)",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64\\)",
+          "citation_ids": []
+        },
+        {
+          "seconds": 10.541929540999263,
+          "content": "，",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64\\)，",
+          "citation_ids": []
+        },
+        {
+          "seconds": 10.59114204099933,
+          "content": "其中",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64\\)，其中",
+          "citation_ids": []
+        },
+        {
+          "seconds": 10.63937254099983,
+          "content": " \\(",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64\\)，其中 \\(",
+          "citation_ids": []
+        },
+        {
+          "seconds": 10.68777929099997,
+          "content": "h",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64\\)，其中 \\(h",
+          "citation_ids": []
+        },
+        {
+          "seconds": 10.737350624998726,
+          "content": " =",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64\\)，其中 \\(h =",
+          "citation_ids": []
+        },
+        {
+          "seconds": 10.785646582999107,
+          "content": " ",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64\\)，其中 \\(h =",
+          "citation_ids": []
+        },
+        {
+          "seconds": 10.834591499999078,
+          "content": "8",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64\\)，其中 \\(h = 8",
+          "citation_ids": []
+        },
+        {
+          "seconds": 10.882246416000271,
+          "content": "\\)",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64\\)，其中 \\(h = 8\\)",
+          "citation_ids": []
+        },
+        {
+          "seconds": 10.930311500000244,
+          "content": "。\n\n",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64\\)，其中 \\(h = 8\\)。",
+          "citation_ids": []
+        },
+        {
+          "seconds": 10.978231166000114,
+          "content": "##",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64\\)，其中 \\(h = 8\\)。",
+          "citation_ids": []
+        },
+        {
+          "seconds": 11.075827040998774,
+          "content": " 参",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64\\)，其中 \\(h = 8\\)。",
+          "citation_ids": []
+        },
+        {
+          "seconds": 11.123777082999368,
+          "content": "考",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64\\)，其中 \\(h = 8\\)。",
+          "citation_ids": []
+        },
+        {
+          "seconds": 11.171387165999477,
+          "content": "来源",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64\\)，其中 \\(h = 8\\)。",
+          "citation_ids": []
+        },
+        {
+          "seconds": 11.219679874999201,
+          "content": "\n",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64\\)，其中 \\(h = 8\\)。",
+          "citation_ids": []
+        },
+        {
+          "seconds": 11.267694874999506,
+          "content": "[",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64\\)，其中 \\(h = 8\\)。",
+          "citation_ids": []
+        },
+        {
+          "seconds": 11.316822499999034,
+          "content": "参考",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64\\)，其中 \\(h = 8\\)。",
+          "citation_ids": []
+        },
+        {
+          "seconds": 11.368154290999883,
+          "content": "文档",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64\\)，其中 \\(h = 8\\)。",
+          "citation_ids": []
+        },
+        {
+          "seconds": 11.419260915999985,
+          "content": "1",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64\\)，其中 \\(h = 8\\)。",
+          "citation_ids": []
+        },
+        {
+          "seconds": 11.466461915999389,
+          "content": "]",
+          "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64\\)，其中 \\(h = 8\\)。",
+          "citation_ids": []
+        }
+      ],
+      "result": {
+        "type": "done",
+        "answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64\\)，其中 \\(h = 8\\)。\n\n## 参考来源\n无可引用来源",
+        "citations": [],
+        "invalid_citation_ids": [],
+        "missing_citations": true,
+        "warnings": [
+          "回答未提供有效文献引用，不能作为已溯源答案。"
+        ],
+        "generation_mode": "grounded",
+        "notice": "",
+        "raw_answer": "## 回答\n根据参考文档1，原始Transformer使用了8个并行的注意力层（头），每个头的键和值维度都是64。具体来说，文档中提到 \\(d_k = d_v = d_{\\text{model}} / h = 64\\)，其中 \\(h = 8\\)。\n\n## 参考来源\n[参考文档1]",
+        "model": "qwen2.5:7b",
+        "options": {
+          "temperature": 0.1,
+          "top_p": 0.9,
+          "top_k": 40,
+          "num_ctx": 8192,
+          "num_predict": 512,
+          "repeat_penalty": 1.0,
+          "seed": 17
+        },
+        "done_reason": "stop",
+        "usage": {
+          "prompt_eval_count": 830,
+          "eval_count": 83,
+          "total_duration": 11524178000,
+          "load_duration": 3833962542,
+          "prompt_eval_duration": 3698235000,
+          "eval_duration": 3986286000
+        }
+      },
+      "timing": {
+        "first_packet_seconds": 7.544774832998883,
+        "first_text_seconds": 7.641467290999572,
+        "first_citation_seconds": null,
+        "done_seconds": 11.528134415999375,
+        "packet_count": 80
+      }
+    },
+    {
+      "id": "bert-sizes",
+      "question": "Answer in English: list the layers, hidden size and attention heads of BERT-base and BERT-large. Keep the answer concise.",
+      "context": {
+        "context": "[参考文档1 - 来源: bert.pdf；原始块位置: 第3页（物理页码）]\n\nsuch as “The Annotated Transformer.”^{2}\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as\nH, and the number of self-attention heads as A.^{3}\nWe primarily report results on two model sizes:\nBERT_{BASE} (L=12, H=768, A=12, Total Param-\neters=110M) and BERT_{LARGE} (L=24, H=1024,\nA=16, Total Parameters=340M).\nBERT_{BASE} was chosen to have the same model\nsize as OpenAI GPT for comparison purposes.\nCritically, however, the BERT Transformer uses",
+        "sources": [
+          "bert.pdf"
+        ],
+        "chunk_count": 1,
+        "references": [
+          {
+            "id": 1,
+            "source_file": "bert.pdf",
+            "location": "第3页（物理页码）",
+            "text": "\nsuch as “The Annotated Transformer.”^{2}\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as\nH, and the number of self-attention heads as A.^{3}\nWe primarily report results on two model sizes:\nBERT_{BASE} (L=12, H=768, A=12, Total Param-\neters=110M) and BERT_{LARGE} (L=24, H=1024,\nA=16, Total Parameters=340M).\nBERT_{BASE} was chosen to have the same model\nsize as OpenAI GPT for comparison purposes.\nCritically, however, the BERT Transformer uses",
+            "metadata": {
+              "source_file": "bert.pdf",
+              "doc_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+              "chunk_id": "33c362adeeae964cd6ea9ff0fd62e1d726eb26e8c98eeeab6d96dfa4f1b5b572",
+              "page_number": 3,
+              "start_index": 3111,
+              "end_index": 3605
+            },
+            "truncated": false
+          }
+        ],
+        "context_budget_chars": 6000,
+        "context_chars": 534,
+        "prompt_chars": 1219,
+        "truncated": false,
+        "dropped_count": 0
+      },
+      "packets": [
+        {
+          "seconds": 1.0037638329995389,
+          "content": "##",
+          "answer": "",
+          "citation_ids": []
+        },
+        {
+          "seconds": 1.0527003749994037,
+          "content": " Answer",
+          "answer": "## Answer",
+          "citation_ids": []
+        },
+        {
+          "seconds": 1.1019257080006355,
+          "content": "\n",
+          "answer": "## Answer",
+          "citation_ids": []
+        },
+        {
+          "seconds": 1.1487584580008843,
+          "content": "BERT",
+          "answer": "## Answer\nBERT",
+          "citation_ids": []
+        },
+        {
+          "seconds": 1.1963320830000157,
+          "content": "-B",
+          "answer": "## Answer\nBERT-B",
+          "citation_ids": []
+        },
+        {
+          "seconds": 1.2439885420008068,
+          "content": "ASE",
+          "answer": "## Answer\nBERT-BASE",
+          "citation_ids": []
+        },
+        {
+          "seconds": 1.2917540420003206,
+          "content": " has",
+          "answer": "## Answer\nBERT-BASE has",
+          "citation_ids": []
+        },
+        {
+          "seconds": 1.3395505000007688,
+          "content": " ",
+          "answer": "## Answer\nBERT-BASE has",
+          "citation_ids": []
+        },
+        {
+          "seconds": 1.388016458000493,
+          "content": "1",
+          "answer": "## Answer\nBERT-BASE has 1",
+          "citation_ids": []
+        },
+        {
+          "seconds": 1.4365474170008383,
+          "content": "2",
+          "answer": "## Answer\nBERT-BASE has 12",
+          "citation_ids": []
+        },
+        {
+          "seconds": 1.4832822080006736,
+          "content": " layers",
+          "answer": "## Answer\nBERT-BASE has 12 layers",
+          "citation_ids": []
+        },
+        {
+          "seconds": 1.5305974580005568,
+          "content": ",",
+          "answer": "## Answer\nBERT-BASE has 12 layers,",
+          "citation_ids": []
+        },
+        {
+          "seconds": 1.5780847919995722,
+          "content": " a",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a",
+          "citation_ids": []
+        },
+        {
+          "seconds": 1.6252624999997352,
+          "content": " hidden",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden",
+          "citation_ids": []
+        },
+        {
+          "seconds": 1.6728873749998456,
+          "content": " size",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size",
+          "citation_ids": []
+        },
+        {
+          "seconds": 1.7205112080009712,
+          "content": " of",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of",
+          "citation_ids": []
+        },
+        {
+          "seconds": 1.7681422919995384,
+          "content": " ",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of",
+          "citation_ids": []
+        },
+        {
+          "seconds": 1.8157383329998993,
+          "content": "7",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 7",
+          "citation_ids": []
+        },
+        {
+          "seconds": 1.8639980829993874,
+          "content": "6",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 76",
+          "citation_ids": []
+        },
+        {
+          "seconds": 1.9114810000010038,
+          "content": "8",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768",
+          "citation_ids": []
+        },
+        {
+          "seconds": 1.9589167920003092,
+          "content": ",",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768,",
+          "citation_ids": []
+        },
+        {
+          "seconds": 2.0065037500007747,
+          "content": " and",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and",
+          "citation_ids": []
+        },
+        {
+          "seconds": 2.0539814999992814,
+          "content": " ",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and",
+          "citation_ids": []
+        },
+        {
+          "seconds": 2.10144287500043,
+          "content": "1",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 1",
+          "citation_ids": []
+        },
+        {
+          "seconds": 2.1488865000010264,
+          "content": "2",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12",
+          "citation_ids": []
+        },
+        {
+          "seconds": 2.1966307919992687,
+          "content": " attention",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention",
+          "citation_ids": []
+        },
+        {
+          "seconds": 2.2441143750002084,
+          "content": " heads",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads",
+          "citation_ids": []
+        },
+        {
+          "seconds": 2.291736999999557,
+          "content": ".",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads.",
+          "citation_ids": []
+        },
+        {
+          "seconds": 2.339225333000286,
+          "content": " B",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. B",
+          "citation_ids": []
+        },
+        {
+          "seconds": 2.3866432499999064,
+          "content": "ERT",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT",
+          "citation_ids": []
+        },
+        {
+          "seconds": 2.43485150000015,
+          "content": "-L",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-L",
+          "citation_ids": []
+        },
+        {
+          "seconds": 2.4828529580008762,
+          "content": "ARGE",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE",
+          "citation_ids": []
+        },
+        {
+          "seconds": 2.53110395800104,
+          "content": " has",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has",
+          "citation_ids": []
+        },
+        {
+          "seconds": 2.577936125000633,
+          "content": " ",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has",
+          "citation_ids": []
+        },
+        {
+          "seconds": 2.626106792000428,
+          "content": "2",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 2",
+          "citation_ids": []
+        },
+        {
+          "seconds": 2.6743535000005068,
+          "content": "4",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24",
+          "citation_ids": []
+        },
+        {
+          "seconds": 2.721266917000321,
+          "content": " layers",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers",
+          "citation_ids": []
+        },
+        {
+          "seconds": 2.7698902080010157,
+          "content": ",",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers,",
+          "citation_ids": []
+        },
+        {
+          "seconds": 2.8172520000007353,
+          "content": " a",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a",
+          "citation_ids": []
+        },
+        {
+          "seconds": 2.8649663329997566,
+          "content": " hidden",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden",
+          "citation_ids": []
+        },
+        {
+          "seconds": 2.9123097920000873,
+          "content": " size",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size",
+          "citation_ids": []
+        },
+        {
+          "seconds": 2.9598166670002684,
+          "content": " of",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of",
+          "citation_ids": []
+        },
+        {
+          "seconds": 3.007411917000354,
+          "content": " ",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of",
+          "citation_ids": []
+        },
+        {
+          "seconds": 3.0547572079995007,
+          "content": "1",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of 1",
+          "citation_ids": []
+        },
+        {
+          "seconds": 3.1021627919999446,
+          "content": "0",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of 10",
+          "citation_ids": []
+        },
+        {
+          "seconds": 3.1511014999996405,
+          "content": "2",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of 102",
+          "citation_ids": []
+        },
+        {
+          "seconds": 3.198136999999406,
+          "content": "4",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of 1024",
+          "citation_ids": []
+        },
+        {
+          "seconds": 3.2455842079998547,
+          "content": ",",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of 1024,",
+          "citation_ids": []
+        },
+        {
+          "seconds": 3.2932261250007286,
+          "content": " and",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of 1024, and",
+          "citation_ids": []
+        },
+        {
+          "seconds": 3.3406648750005843,
+          "content": " ",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of 1024, and",
+          "citation_ids": []
+        },
+        {
+          "seconds": 3.389093750000029,
+          "content": "1",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of 1024, and 1",
+          "citation_ids": []
+        },
+        {
+          "seconds": 3.4365157920001366,
+          "content": "6",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of 1024, and 16",
+          "citation_ids": []
+        },
+        {
+          "seconds": 3.4839760419999948,
+          "content": " attention",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of 1024, and 16 attention",
+          "citation_ids": []
+        },
+        {
+          "seconds": 3.531370374999824,
+          "content": " heads",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of 1024, and 16 attention heads",
+          "citation_ids": []
+        },
+        {
+          "seconds": 3.5790269579993037,
+          "content": ".\n\n",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of 1024, and 16 attention heads.",
+          "citation_ids": []
+        },
+        {
+          "seconds": 3.626001458000246,
+          "content": "##",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of 1024, and 16 attention heads.",
+          "citation_ids": []
+        },
+        {
+          "seconds": 3.6731669170003443,
+          "content": " References",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of 1024, and 16 attention heads.",
+          "citation_ids": []
+        },
+        {
+          "seconds": 3.720908999999665,
+          "content": "\n",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of 1024, and 16 attention heads.",
+          "citation_ids": []
+        },
+        {
+          "seconds": 3.768080750000081,
+          "content": "[",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of 1024, and 16 attention heads.",
+          "citation_ids": []
+        },
+        {
+          "seconds": 3.8159992920009245,
+          "content": "参考",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of 1024, and 16 attention heads.",
+          "citation_ids": []
+        },
+        {
+          "seconds": 3.8633557079992897,
+          "content": "文档",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of 1024, and 16 attention heads.",
+          "citation_ids": []
+        },
+        {
+          "seconds": 3.9105295419994945,
+          "content": "1",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of 1024, and 16 attention heads.",
+          "citation_ids": []
+        },
+        {
+          "seconds": 3.9581056669994723,
+          "content": "]",
+          "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of 1024, and 16 attention heads.",
+          "citation_ids": []
+        }
+      ],
+      "result": {
+        "type": "done",
+        "answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of 1024, and 16 attention heads.\n\n## 参考来源\n无可引用来源",
+        "citations": [],
+        "invalid_citation_ids": [],
+        "missing_citations": true,
+        "warnings": [
+          "回答未提供有效文献引用，不能作为已溯源答案。"
+        ],
+        "generation_mode": "grounded",
+        "notice": "",
+        "raw_answer": "## Answer\nBERT-BASE has 12 layers, a hidden size of 768, and 12 attention heads. BERT-LARGE has 24 layers, a hidden size of 1024, and 16 attention heads.\n\n## References\n[参考文档1]",
+        "model": "qwen2.5:7b",
+        "options": {
+          "temperature": 0.1,
+          "top_p": 0.9,
+          "top_k": 40,
+          "num_ctx": 8192,
+          "num_predict": 512,
+          "repeat_penalty": 1.0,
+          "seed": 17
+        },
+        "done_reason": "stop",
+        "usage": {
+          "prompt_eval_count": 629,
+          "eval_count": 64,
+          "total_duration": 4000848542,
+          "load_duration": 848417,
+          "prompt_eval_duration": 984813000,
+          "eval_duration": 3002110000
+        }
+      },
+      "timing": {
+        "first_packet_seconds": 1.0037638329995389,
+        "first_text_seconds": 1.0527003749994037,
+        "first_citation_seconds": null,
+        "done_seconds": 4.005811000000904,
+        "packet_count": 63
+      }
+    },
+    {
+      "id": "bert-sizes-inline",
+      "question": "Answer in English: list the layers, hidden size and attention heads of BERT-base and BERT-large. Keep the answer concise. Cite [参考文档1] immediately after each factual sentence.",
+      "context": {
+        "context": "[参考文档1 - 来源: bert.pdf；原始块位置: 第3页（物理页码）]\n\nsuch as “The Annotated Transformer.”^{2}\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as\nH, and the number of self-attention heads as A.^{3}\nWe primarily report results on two model sizes:\nBERT_{BASE} (L=12, H=768, A=12, Total Param-\neters=110M) and BERT_{LARGE} (L=24, H=1024,\nA=16, Total Parameters=340M).\nBERT_{BASE} was chosen to have the same model\nsize as OpenAI GPT for comparison purposes.\nCritically, however, the BERT Transformer uses",
+        "sources": [
+          "bert.pdf"
+        ],
+        "chunk_count": 1,
+        "references": [
+          {
+            "id": 1,
+            "source_file": "bert.pdf",
+            "location": "第3页（物理页码）",
+            "text": "\nsuch as “The Annotated Transformer.”^{2}\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as\nH, and the number of self-attention heads as A.^{3}\nWe primarily report results on two model sizes:\nBERT_{BASE} (L=12, H=768, A=12, Total Param-\neters=110M) and BERT_{LARGE} (L=24, H=1024,\nA=16, Total Parameters=340M).\nBERT_{BASE} was chosen to have the same model\nsize as OpenAI GPT for comparison purposes.\nCritically, however, the BERT Transformer uses",
+            "metadata": {
+              "source_file": "bert.pdf",
+              "doc_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+              "chunk_id": "33c362adeeae964cd6ea9ff0fd62e1d726eb26e8c98eeeab6d96dfa4f1b5b572",
+              "page_number": 3,
+              "start_index": 3111,
+              "end_index": 3605
+            },
+            "truncated": false
+          }
+        ],
+        "context_budget_chars": 6000,
+        "context_chars": 534,
+        "prompt_chars": 1219,
+        "truncated": false,
+        "dropped_count": 0
+      },
+      "packets": [
+        {
+          "seconds": 0.16474479099997552,
+          "content": "##",
+          "answer": "",
+          "citation_ids": []
+        },
+        {
+          "seconds": 0.21442320799906156,
+          "content": " Answer",
+          "answer": "## Answer",
+          "citation_ids": []
+        },
+        {
+          "seconds": 0.2613377079997008,
+          "content": "\n",
+          "answer": "## Answer",
+          "citation_ids": []
+        },
+        {
+          "seconds": 0.3089904579992435,
+          "content": "The",
+          "answer": "## Answer\nThe",
+          "citation_ids": []
+        },
+        {
+          "seconds": 0.35780487500051095,
+          "content": " B",
+          "answer": "## Answer\nThe B",
+          "citation_ids": []
+        },
+        {
+          "seconds": 0.4046880410005542,
+          "content": "ERT",
+          "answer": "## Answer\nThe BERT",
+          "citation_ids": []
+        },
+        {
+          "seconds": 0.4521507079989533,
+          "content": "-base",
+          "answer": "## Answer\nThe BERT-base",
+          "citation_ids": []
+        },
+        {
+          "seconds": 0.49955674999910116,
+          "content": " model",
+          "answer": "## Answer\nThe BERT-base model",
+          "citation_ids": []
+        },
+        {
+          "seconds": 0.5469605830003275,
+          "content": " has",
+          "answer": "## Answer\nThe BERT-base model has",
+          "citation_ids": []
+        },
+        {
+          "seconds": 0.5944399580002937,
+          "content": " ",
+          "answer": "## Answer\nThe BERT-base model has",
+          "citation_ids": []
+        },
+        {
+          "seconds": 0.6417165410002781,
+          "content": "1",
+          "answer": "## Answer\nThe BERT-base model has 1",
+          "citation_ids": []
+        },
+        {
+          "seconds": 0.6889667079994979,
+          "content": "2",
+          "answer": "## Answer\nThe BERT-base model has 12",
+          "citation_ids": []
+        },
+        {
+          "seconds": 0.7364333330006048,
+          "content": " layers",
+          "answer": "## Answer\nThe BERT-base model has 12 layers",
+          "citation_ids": []
+        },
+        {
+          "seconds": 0.7849933329998748,
+          "content": " [",
+          "answer": "## Answer\nThe BERT-base model has 12 layers",
+          "citation_ids": []
+        },
+        {
+          "seconds": 0.8323920000002545,
+          "content": "参考",
+          "answer": "## Answer\nThe BERT-base model has 12 layers",
+          "citation_ids": []
+        },
+        {
+          "seconds": 0.8800538750001579,
+          "content": "文档",
+          "answer": "## Answer\nThe BERT-base model has 12 layers",
+          "citation_ids": []
+        },
+        {
+          "seconds": 0.9272216659992409,
+          "content": "1",
+          "answer": "## Answer\nThe BERT-base model has 12 layers",
+          "citation_ids": []
+        },
+        {
+          "seconds": 0.9744393750006566,
+          "content": "],",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）],",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 1.0216825000006793,
+          "content": " a",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 1.0686472079996747,
+          "content": " hidden",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 1.1155626660001872,
+          "content": " size",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 1.1625966659994447,
+          "content": " of",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 1.2102935829989292,
+          "content": " ",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 1.25763170800019,
+          "content": "7",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 7",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 1.3053028750000522,
+          "content": "6",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 76",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 1.3524633750002977,
+          "content": "8",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 1.3998296659992775,
+          "content": " [",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 1.447032207999655,
+          "content": "参考",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 1.4942661660006706,
+          "content": "文档",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 1.5420371660002274,
+          "content": "1",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 1.5898251660000824,
+          "content": "],",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）],",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 1.6373481659993558,
+          "content": " and",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 1.6890423749991896,
+          "content": " ",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 1.7365754999991623,
+          "content": "1",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 1",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 1.7877192079995439,
+          "content": "2",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 1.8370507079998788,
+          "content": " self",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 1.885614082999382,
+          "content": "-",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 1.9338940830002684,
+          "content": "attention",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 1.9825179999988904,
+          "content": " heads",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 2.0312004999996134,
+          "content": " [",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 2.07968824999989,
+          "content": "参考",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 2.128615749999881,
+          "content": "文档",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 2.1769063329993514,
+          "content": "1",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 2.2251000409996777,
+          "content": "].",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）].",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 2.2729118749994086,
+          "content": " The",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 2.3201056249999965,
+          "content": " B",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The B",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 2.367002124999999,
+          "content": "ERT",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 2.4149957499994343,
+          "content": "-large",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 2.463990250000279,
+          "content": " model",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 2.5130532080002013,
+          "content": " has",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 2.5623376660005306,
+          "content": " ",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 2.6111193750002712,
+          "content": "2",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 2",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 2.6587432910000643,
+          "content": "4",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 2.7060522079991642,
+          "content": " layers",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 2.7533732909996615,
+          "content": " [",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 2.8042007080002804,
+          "content": "参考",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 2.850785958000415,
+          "content": "文档",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 2.8977858329999435,
+          "content": "1",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 2.9449327910006105,
+          "content": "],",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）],",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 2.992158790999383,
+          "content": " a",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 3.039385874999425,
+          "content": " hidden",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 3.086515416000111,
+          "content": " size",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 3.1336449579994223,
+          "content": " of",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 3.1806589999996504,
+          "content": " ",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 3.2276968749993102,
+          "content": "1",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 3.27514145799978,
+          "content": "0",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 10",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 3.322100125000361,
+          "content": "2",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 102",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 3.368868999999904,
+          "content": "4",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 3.416364958000486,
+          "content": " [",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 3.4632797079993907,
+          "content": "参考",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 3.5108913330004725,
+          "content": "文档",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 3.558364458000142,
+          "content": "1",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 3.6062949579991255,
+          "content": "],",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）],",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 3.6555216659999132,
+          "content": " and",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 3.7048272079991875,
+          "content": " ",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 3.75401516599959,
+          "content": "1",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and 1",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 3.807455582998955,
+          "content": "6",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and 16",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 3.854437207999581,
+          "content": " self",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and 16 self",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 3.9014366659994266,
+          "content": "-",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and 16 self-",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 3.9738636660003976,
+          "content": "attention",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and 16 self-attention",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 4.0504206659988995,
+          "content": " heads",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and 16 self-attention heads",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 4.109626790999755,
+          "content": " [",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and 16 self-attention heads",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 4.170498874998884,
+          "content": "参考",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and 16 self-attention heads",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 4.226294500000222,
+          "content": "文档",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and 16 self-attention heads",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 4.283577415999389,
+          "content": "1",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and 16 self-attention heads",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 4.334458875000564,
+          "content": "].\n\n",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and 16 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）].",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 4.385167500000534,
+          "content": "##",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and 16 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）].",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 4.436101833000066,
+          "content": " Reference",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and 16 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）].",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 4.48747020799965,
+          "content": " Sources",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and 16 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）].",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 4.53821358300047,
+          "content": "\n",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and 16 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）].",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 4.590253665999626,
+          "content": "[",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and 16 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）].",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 4.640974457999619,
+          "content": "参考",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and 16 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）].",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 4.691259790999538,
+          "content": "文档",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and 16 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）].",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 4.741249000000607,
+          "content": "1",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and 16 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）].",
+          "citation_ids": [
+            1
+          ]
+        },
+        {
+          "seconds": 4.791497124999296,
+          "content": "]",
+          "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and 16 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）].",
+          "citation_ids": [
+            1
+          ]
+        }
+      ],
+      "result": {
+        "type": "done",
+        "answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 768 [参考文档1：bert.pdf；第3页（物理页码）], and 12 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）]. The BERT-large model has 24 layers [参考文档1：bert.pdf；第3页（物理页码）], a hidden size of 1024 [参考文档1：bert.pdf；第3页（物理页码）], and 16 self-attention heads [参考文档1：bert.pdf；第3页（物理页码）].\n\n## 参考来源\n- [参考文档1] bert.pdf；第3页（物理页码）",
+        "citations": [
+          {
+            "id": 1,
+            "source_file": "bert.pdf",
+            "location": "第3页（物理页码）",
+            "text": "\nsuch as “The Annotated Transformer.”^{2}\nIn this work, we denote the number of layers\n(i.e., Transformer blocks) as L, the hidden size as\nH, and the number of self-attention heads as A.^{3}\nWe primarily report results on two model sizes:\nBERT_{BASE} (L=12, H=768, A=12, Total Param-\neters=110M) and BERT_{LARGE} (L=24, H=1024,\nA=16, Total Parameters=340M).\nBERT_{BASE} was chosen to have the same model\nsize as OpenAI GPT for comparison purposes.\nCritically, however, the BERT Transformer uses",
+            "metadata": {
+              "source_file": "bert.pdf",
+              "doc_id": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+              "chunk_id": "33c362adeeae964cd6ea9ff0fd62e1d726eb26e8c98eeeab6d96dfa4f1b5b572",
+              "page_number": 3,
+              "start_index": 3111,
+              "end_index": 3605
+            },
+            "truncated": false
+          }
+        ],
+        "invalid_citation_ids": [],
+        "missing_citations": false,
+        "warnings": [],
+        "generation_mode": "grounded",
+        "notice": "",
+        "raw_answer": "## Answer\nThe BERT-base model has 12 layers [参考文档1], a hidden size of 768 [参考文档1], and 12 self-attention heads [参考文档1]. The BERT-large model has 24 layers [参考文档1], a hidden size of 1024 [参考文档1], and 16 self-attention heads [参考文档1].\n\n## Reference Sources\n[参考文档1]",
+        "model": "qwen2.5:7b",
+        "options": {
+          "temperature": 0.1,
+          "top_p": 0.9,
+          "top_k": 40,
+          "num_ctx": 8192,
+          "num_predict": 512,
+          "repeat_penalty": 1.0,
+          "seed": 17
+        },
+        "done_reason": "stop",
+        "usage": {
+          "prompt_eval_count": 642,
+          "eval_count": 96,
+          "total_duration": 4847038209,
+          "load_duration": 547334,
+          "prompt_eval_duration": 158311000,
+          "eval_duration": 4685596000
+        }
+      },
+      "timing": {
+        "first_packet_seconds": 0.16474479099997552,
+        "first_text_seconds": 0.21442320799906156,
+        "first_citation_seconds": 0.9744393750006566,
+        "done_seconds": 4.8506677909990685,
+        "packet_count": 95
+      }
+    }
+  ],
+  "loaded_models": {
+    "models": [
+      {
+        "name": "qwen2.5:7b",
+        "model": "qwen2.5:7b",
+        "size": 4979792280,
+        "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen2",
+          "families": [
+            "qwen2"
+          ],
+          "parameter_size": "7.6B",
+          "quantization_level": "Q4_K_M"
+        },
+        "expires_at": "2026-09-30T18:12:35.160445+08:00",
+        "size_vram": 4979792280,
+        "context_length": 8192
+      }
+    ]
+  },
+  "finished_at": "2026-09-30T18:07:35.161898+08:00"
+}

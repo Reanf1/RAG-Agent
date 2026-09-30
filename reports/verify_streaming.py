@@ -8,13 +8,13 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from time import perf_counter
-from urllib.request import urlopen
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if __name__ == "__main__":
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.generation.prompt_template import PROMPT_VERSION
+from src.generation.rag_pipeline import urlopen
 from src.generation.streaming import stream_answer
 from src.utils.config import load_config
 

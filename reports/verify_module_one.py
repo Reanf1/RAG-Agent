@@ -4,6 +4,7 @@
 公开论文用于真实 PDF 解析，不把这些样例当作质量评测数据。
 """
 
+import argparse
 import hashlib
 import io
 import json
@@ -188,7 +189,7 @@ def verify_ingestion(directory):
     print("入库、增量、分块与检索通过；结束进程后再核验重开。", flush=True)
 
 
-def verify_reopen(directory):
+def verify_reopen(directory, output):
     """前一模型进程已退出，新进程真实加载 M3E 并查询持久化索引。"""
     import torch
     from src.retrieval.vector_store import VectorStore
@@ -204,22 +205,30 @@ def verify_reopen(directory):
     report = state["report"]
     report["checks"]["new_process_reopen"] = {
         "stored_chunks": len(actual), "content_and_metadata_equal": True, "vector_top5_equal": True}
-    (ROOT / "reports/模块一完整性验证结果.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
+    Path(output).write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
     print("独立进程重开与真实模型检索通过，完整核验结果已保存。", flush=True)
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output", type=Path, default=ROOT / "reports/模块一完整性验证结果.json")
+    parser.add_argument("--ingestion", type=Path)
+    parser.add_argument("--reopen", type=Path)
+    args = parser.parse_args()
+    if args.output.exists():
+        raise FileExistsError("请指定新的结果路径，保留原验证记录")
     os.environ["HF_HUB_OFFLINE"] = "1"
     os.environ["TRANSFORMERS_OFFLINE"] = "1"
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
     os.environ.setdefault("HF_HOME", str(ROOT / "data/models/.hf-runtime"))
-    if len(sys.argv) == 3 and sys.argv[1] == "--ingestion":
-        verify_ingestion(sys.argv[2])
-    elif len(sys.argv) == 3 and sys.argv[1] == "--reopen":
-        verify_reopen(sys.argv[2])
+    if args.ingestion:
+        verify_ingestion(args.ingestion)
+    elif args.reopen:
+        verify_reopen(args.reopen, args.output)
     else:
         # 调度进程只导入标准库。先退出入库进程，再启动重开进程，模拟应用重启。
         with tempfile.TemporaryDirectory(prefix="rag-module-one-") as directory:
             for stage in ("--ingestion", "--reopen"):
-                subprocess.run([sys.executable, str(Path(__file__).resolve()), stage, directory],
+                subprocess.run([sys.executable, str(Path(__file__).resolve()), stage, directory,
+                                "--output", str(args.output)],
                                cwd=ROOT, env=os.environ.copy(), check=True, timeout=180)

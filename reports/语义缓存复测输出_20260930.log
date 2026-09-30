@@ -1,0 +1,10 @@
+2026-09-30 18:09:39.040 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+0 4.4121899999991 {'hit': False}
+1 0.00398437500007276 {'hit': True, 'mode': 'exact', 'similarity': 1.0, 'question': '原始Transformer用了多少个注意力头？请在结论后标注[参考文档1]。'}
+2 0.021222792000116897 {'hit': True, 'mode': 'semantic', 'similarity': 0.9877323129874044, 'question': '原始Transformer用了多少个注意力头？请在结论后标注[参考文档1]。'}
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/reports/verify_semantic_cache.py", line 141, in <module>
+    main()
+  File "/Users/rean/github/RAG+Agent/reports/verify_semantic_cache.py", line 117, in main
+    assert message["complete"] and not message.get("error") and not message["warnings"], message.get("warnings")
+AssertionError: ['回答未提供有效文献引用，不能作为已溯源答案。']
