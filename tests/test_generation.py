@@ -1,6 +1,7 @@
 """模块二 Prompt、上下文、引用与生成接口测试；真实模型实验单独保存在 reports。"""
 
 from copy import deepcopy
+from concurrent.futures import ThreadPoolExecutor
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from io import BytesIO
 import json
@@ -27,6 +28,7 @@ from src.generation.rag_pipeline import (
 )
 from src.generation.streaming import render_partial_answer, stream_answer
 from src.generation.cache import SemanticCache, cache_scope
+from src.utils.logger import read_rag_requests, record_rag_request, retrieval_score_distribution
 from reports.compare_generation import evaluate_answer, summarize
 
 
@@ -1061,6 +1063,132 @@ class TestSemanticCache(unittest.TestCase):
                 self.cache.put("问题", self.result, "scope")
 
 
+class TestRAGLogging(unittest.TestCase):
+    """实际临时 JSONL 文件与确定数据验证日志；不把样例用量当作模型实测。"""
+
+    def setUp(self):
+        from src.utils.config import load_config
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        self.config = load_config()
+        self.config["paths"]["logs"] = self.directory.name
+        patcher = patch("src.utils.logger.load_config", return_value=self.config)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        self.message = {"request_id": "request-1", "session_id": "session-1", "question": "论文结论是什么？",
+                        "started_at": "2026-09-30T12:00:00+08:00",
+                        "request_info": {"llm": self.config["llm"], "retrieval": self.config["retrieval"],
+                                         "prompt_version": "rag-v3"},
+                        "retrieval_status": "success", "retrieved_documents": [
+                            {"rank": 1, "text": "科研原文\n公式 $x^2$。", "score": 0.8,
+                             "metadata": {"source_file": "中文.pdf", "page_number": 3, "chunk_id": "块1"}}],
+                        "generation_attempted": True, "answer": "结论[参考文档1]", "raw_answer": "原始回答",
+                        "usage": {"prompt_eval_count": 400, "eval_count": 20},
+                        "retrieval_seconds": 0.2, "generation_seconds": 2.0, "elapsed_seconds": 2.3}
+
+    def test_full_utf8_record_preserves_original_text_metadata_and_actual_usage(self):
+        self.message["retrieved_documents"][0]["text"] *= 2000
+        before = deepcopy(self.message)
+        record_rag_request(self.message, "completed")
+        paths = list(Path(self.directory.name).glob("rag_*.jsonl"))
+        self.assertEqual(len(paths), 1)
+        raw = paths[0].read_text()
+        self.assertIn("科研原文", raw)
+        self.assertEqual(len(raw.splitlines()), 1)  # 正文换行编码为 JSON 转义。
+        record = json.loads(raw)
+        self.assertEqual(record["question"], self.message["question"])
+        self.assertEqual(record["retrieval"]["documents"], self.message["retrieved_documents"])
+        self.assertEqual(record["tokens"], {"input": 400, "output": 20, "total": 420, "source": "ollama"})
+        self.assertEqual(record["timing"], {"retrieval_seconds": 0.2, "generation_seconds": 2.0, "response_seconds": 2.3})
+        self.assertEqual(record["raw_answer"], "原始回答")
+        self.assertTrue(record["timestamp"].endswith("+08:00"))
+        self.assertEqual(self.message, before)
+
+    def test_unavailable_tokens_remain_unknown_and_not_called_is_zero(self):
+        self.message.pop("usage")
+        failed = record_rag_request(self.message, "error")
+        self.assertEqual(failed["tokens"], {"input": None, "output": None, "total": None, "source": "unavailable"})
+        pending = record_rag_request({**self.message, "generation_attempted": False}, "awaiting_confirmation")
+        self.assertEqual(pending["tokens"]["total"], 0)
+        self.assertEqual(pending["tokens"]["source"], "not_called")
+        cached = record_rag_request({**self.message, "cache": {"hit": True},
+                                     "original_usage": {"prompt_eval_count": 400, "eval_count": 20}}, "completed")
+        self.assertEqual(cached["tokens"]["total"], 0)
+        self.assertEqual(cached["original_usage"]["eval_count"], 20)
+
+    def test_daily_files_and_confirmation_snapshots_count_one_request(self):
+        with patch("src.utils.logger.request_time", side_effect=["2026-09-30T23:59:59+08:00", "2026-10-01T00:00:01+08:00"]):
+            record_rag_request(self.message, "awaiting_confirmation")
+            record_rag_request(self.message, "completed")
+        self.assertEqual(len(list(Path(self.directory.name).glob("rag_*.jsonl"))), 2)
+        records, invalid = read_rag_requests()
+        self.assertEqual(invalid, 0)
+        self.assertEqual(len(records), 1)
+        self.assertEqual(records[0]["status"], "completed")
+        self.assertEqual(retrieval_score_distribution()["distributions"][0]["count"], 1)
+
+    def test_histogram_boundaries_and_model_revisions_are_separate(self):
+        scores = [0, 0.0999, 0.1, 0.3, 0.7, 0.999, 1.0]
+        for index, score in enumerate(scores):
+            message = deepcopy(self.message)
+            message["request_id"] = f"sample-{index}"
+            message["retrieved_documents"][0]["score"] = score
+            record_rag_request(message, "completed")
+        other = deepcopy(self.message)
+        other["request_id"] = "new-model"
+        other["request_info"]["retrieval"]["reranker_revision"] = "another-revision"
+        record_rag_request(other, "completed")
+        summary = retrieval_score_distribution()
+        group = next(item for item in summary["distributions"] if item["revision"] == self.config["retrieval"]["reranker_revision"])
+        self.assertEqual([row["count"] for row in group["bins"]], [2, 1, 0, 1, 0, 0, 0, 1, 0, 2])
+        self.assertAlmostEqual(group["mean"], sum(scores) / 7)
+        self.assertEqual((group["min"], group["max"]), (0, 1))
+        self.assertEqual(len(summary["distributions"]), 2)
+
+    def test_empty_failed_and_cache_requests_do_not_add_zero_score_samples(self):
+        for index, status in enumerate(("empty", "error", "skipped_cache")):
+            message = {**self.message, "request_id": str(index), "retrieved_documents": [],
+                       "retrieval_status": status, "cache": {"hit": status == "skipped_cache"}}
+            record_rag_request(message, "error" if status == "error" else "completed")
+        summary = retrieval_score_distribution()
+        self.assertEqual(summary["requests"], 3)
+        self.assertEqual(summary["distributions"], [])
+        self.assertEqual((summary["empty_retrievals"], summary["failed_retrievals"], summary["cache_hits"]), (1, 1, 1))
+
+    def test_corrupted_tail_is_preserved_and_next_record_remains_readable(self):
+        record_rag_request(self.message, "started")
+        path = next(Path(self.directory.name).glob("rag_*.jsonl"))
+        with path.open("ab") as output:
+            output.write(b'{"broken":')
+        record_rag_request({**self.message, "request_id": "next"}, "completed")
+        records, invalid = read_rag_requests()
+        self.assertEqual(invalid, 1)
+        self.assertEqual({row["request_id"] for row in records}, {"request-1", "next"})
+        self.assertIn(b'{"broken":\n', path.read_bytes())
+        self.assertEqual(retrieval_score_distribution()["invalid_lines"], 1)
+        with path.open("ab") as output:
+            output.write(b'{"schema_version":1,"request_id":"invalid","retrieval":{"status":"success","top1_score":0.5}}\n')
+        self.assertEqual(retrieval_score_distribution()["invalid_lines"], 2)
+
+    def test_threaded_appends_keep_complete_independent_lines(self):
+        def write(index):
+            return record_rag_request({**self.message, "request_id": f"thread-{index}"}, "completed")
+        with ThreadPoolExecutor(max_workers=6) as pool:
+            list(pool.map(write, range(32)))
+        records, invalid = read_rag_requests()
+        self.assertEqual((len(records), invalid), (32, 0))
+        self.assertEqual(retrieval_score_distribution()["distributions"][0]["count"], 32)
+
+    def test_serialization_failure_does_not_damage_previous_records(self):
+        record_rag_request(self.message, "completed")
+        self.message["retrieved_documents"][0]["score"] = float("nan")
+        with self.assertRaises(ValueError):
+            record_rag_request(self.message, "error")
+        records, invalid = read_rag_requests()
+        self.assertEqual((len(records), invalid), (1, 0))
+        self.assertEqual(records[0]["retrieval"]["top1_score"], 0.8)
+
+
 class TestStreamingFrontend(unittest.TestCase):
     """实际操作 Streamlit 聊天组件；NDJSON 样例隔离模型，不证明生成质量。"""
 
@@ -1072,8 +1200,9 @@ class TestStreamingFrontend(unittest.TestCase):
         self.addCleanup(self.directory.cleanup)
         self.config["paths"]["raw_documents"] = str(Path(self.directory.name) / "raw")
         self.config["paths"]["vector_index"] = str(Path(self.directory.name) / "index")
+        self.config["paths"]["logs"] = str(Path(self.directory.name) / "logs")
         for target in ("src.utils.config.load_config", "src.generation.rag_pipeline.load_config",
-                       "src.generation.cache.load_config"):
+                       "src.generation.cache.load_config", "src.utils.logger.load_config"):
             patcher = patch(target, return_value=self.config)
             patcher.start()
             self.addCleanup(patcher.stop)
@@ -1292,6 +1421,107 @@ class TestStreamingFrontend(unittest.TestCase):
         self.assertTrue(any("缩短问题" in item.value for item in self.app.info))
         self.assertFalse(self.app.session_state["rag_cache"].entries)
         self.assertEqual(self.opener.call_count, 2)
+
+
+    def test_request_log_keeps_full_topk_separate_from_truncated_context(self):
+        text = "长原文。" * 1800
+        first = Document(page_content=text, metadata={"source_file": "长论文.pdf", "page_number": 5, "chunk_id": "long"})
+        second = Document(page_content="其他候选原文。", metadata={"source_file": "论文B.pdf", "page_number": 2, "chunk_id": "other"})
+        self.retriever.search.return_value = [(first, 0.8), (second, 0.2)]
+        self.reply()
+        self.app.chat_input[0].set_value("层数？").run()
+        records, invalid = read_rag_requests()
+        self.assertEqual((len(records), invalid), (1, 0))
+        record = records[0]
+        self.assertEqual(record["status"], "completed")
+        self.assertEqual(record["retrieval"]["documents"][0]["text"], text)
+        self.assertEqual(len(record["retrieval"]["documents"]), 2)
+        self.assertTrue(record["context"]["truncated"])
+        self.assertLess(len(record["context"]["references"][0]["text"]), len(text))
+        self.assertEqual(record["retrieval"]["top1_score"], 0.8)
+        self.assertEqual(record["tokens"]["total"], 420)
+        self.assertEqual(record["answer"], self.app.session_state["rag_messages"][0]["answer"])
+        self.assertGreater(record["timing"]["generation_seconds"], 0)
+        self.assertTrue(any("样本 1" in item.value for item in self.app.caption))
+        self.assertEqual(len(self.app.get("vega_lite_chart")), 1)
+        self.app.run()
+        self.assertEqual(len(read_rag_requests()[0]), 1)
+
+    def test_cache_hit_logs_zero_current_tokens_and_no_new_retrieval_score(self):
+        self.reply()
+        self.app.chat_input[0].set_value("层数？").run()
+        self.app.chat_input[0].set_value("层数？").run()
+        records, invalid = read_rag_requests()
+        self.assertEqual((len(records), invalid), (2, 0))
+        cached = next(row for row in records if row["cache"]["hit"])
+        self.assertEqual(cached["tokens"]["total"], 0)
+        self.assertEqual(cached["original_usage"]["eval_count"], 20)
+        self.assertEqual(cached["retrieval"]["status"], "skipped_cache")
+        self.assertIsNone(cached["retrieval"]["top1_score"])
+        self.assertEqual(cached["retrieval"]["documents"], [])
+        self.assertEqual(cached["citations"][0]["source_file"], "attention.pdf")
+        summary = retrieval_score_distribution()
+        self.assertEqual(summary["cache_hits"], 1)
+        self.assertEqual(summary["distributions"][0]["count"], 1)
+
+    def test_pending_confirmation_updates_one_log_and_one_score_sample(self):
+        self.retriever.search.return_value = [(self.retriever.search.return_value[0][0], 0.01)]
+        self.app.chat_input[0].set_value("层数？").run()
+        before = read_rag_requests()[0][0]
+        self.assertEqual(before["status"], "awaiting_confirmation")
+        self.assertEqual(before["tokens"]["total"], 0)
+        self.reply()
+        self.app.button(key="confirm_low_relevance").click().run()
+        records, _ = read_rag_requests()
+        self.assertEqual(len(records), 1)
+        self.assertEqual(records[0]["request_id"], before["request_id"])
+        self.assertEqual(records[0]["status"], "completed")
+        self.assertTrue(records[0]["context"]["confirmed"])
+        self.assertEqual(records[0]["tokens"]["total"], 420)
+        self.assertEqual(retrieval_score_distribution()["distributions"][0]["count"], 1)
+
+    def test_cancel_supersede_and_clear_keep_request_records(self):
+        self.retriever.search.return_value = [(self.retriever.search.return_value[0][0], 0.01)]
+        self.app.chat_input[0].set_value("旧问题").run()
+        self.app.chat_input[0].set_value("新问题").run()
+        self.app.button(key="cancel_low_relevance").click().run()
+        self.app.chat_input[0].set_value("清空前问题").run()
+        self.app.button(key="clear_rag_chat").click().run()
+        records, _ = read_rag_requests()
+        self.assertEqual(len(records), 3)
+        self.assertEqual([row["status"] for row in records], ["superseded", "cancelled", "cancelled"])
+        self.assertTrue(all(row["tokens"]["total"] == 0 for row in records))
+        self.assertEqual(retrieval_score_distribution()["distributions"][0]["count"], 3)
+        self.opener.assert_not_called()
+
+    def test_partial_failure_and_retrieval_failure_log_different_token_states(self):
+        self.reply(done=False)
+        self.app.chat_input[0].set_value("部分回答").run()
+        record = read_rag_requests()[0][0]
+        self.assertEqual(record["status"], "error")
+        self.assertIn("编码器有6层", record["raw_answer"])
+        self.assertIn("未收到完成标记", record["error"])
+        self.assertEqual(record["tokens"]["source"], "unavailable")
+        self.assertIsNone(record["tokens"]["total"])
+        self.retriever.search.side_effect = RuntimeError("检索失败样例")
+        self.app.chat_input[0].set_value("检索失败").run()
+        latest = read_rag_requests()[0][-1]
+        self.assertEqual(latest["retrieval"]["status"], "error")
+        self.assertEqual(latest["tokens"]["total"], 0)
+        self.assertGreater(latest["timing"]["retrieval_seconds"], 0)
+        self.assertEqual(retrieval_score_distribution()["failed_retrievals"], 1)
+        self.assertEqual(self.opener.call_count, 1)
+
+    def test_logging_failure_warns_without_losing_completed_answer(self):
+        self.reply()
+        with patch("src.utils.logger.record_rag_request", side_effect=OSError("日志目录不可写")):
+            self.app.chat_input[0].set_value("层数？").run()
+        self.assertFalse(self.app.exception)
+        message = self.app.session_state["rag_messages"][0]
+        self.assertTrue(message["complete"])
+        self.assertNotIn("error", message)
+        self.assertTrue(any("请求日志未保存" in item.value for item in self.app.warning))
+        self.assertTrue(self.app.session_state["rag_cache"].entries)
 
 
 class TestGenerationEvaluation(unittest.TestCase):

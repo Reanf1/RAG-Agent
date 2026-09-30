@@ -81,8 +81,9 @@ def main():
     with tempfile.TemporaryDirectory(prefix="rag-cache-verify-") as directory:
         config["paths"]["raw_documents"] = str(Path(directory) / "raw")
         config["paths"]["vector_index"] = str(Path(directory) / "index")
+        config["paths"]["logs"] = str(Path(directory) / "logs")
         config_targets = ("src.utils.config", "src.retrieval.vector_store", "src.retrieval.hybrid_retriever",
-                          "src.retrieval.reranker", "src.generation.rag_pipeline", "src.generation.cache")
+                          "src.retrieval.reranker", "src.generation.rag_pipeline", "src.generation.cache", "src.utils.logger")
         from contextlib import ExitStack
         with ExitStack() as stack:
             for target in config_targets:

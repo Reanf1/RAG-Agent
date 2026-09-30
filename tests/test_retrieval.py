@@ -1926,8 +1926,10 @@ class TestImportFrontend(unittest.TestCase):
         config = load_config()
         config["paths"]["raw_documents"] = str(Path(self.directory.name) / "raw")
         config["paths"]["vector_index"] = str(Path(self.directory.name) / "index")
+        config["paths"]["logs"] = str(Path(self.directory.name) / "logs")
         self.embeddings = SmallEmbeddings()
         for target, value in (("src.utils.config.load_config", config),
+                              ("src.utils.logger.load_config", config),
                               ("src.retrieval.vector_store.load_config", config),
                               ("src.retrieval.hybrid_retriever.load_config", config),
                               ("src.retrieval.reranker.load_config", config),

@@ -1,0 +1,294 @@
+{
+  "started_at": "2026-09-30T17:52:15.067468+08:00",
+  "config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://localhost:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 8192,
+      "num_predict": 512,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 6000,
+      "max_prompt_chars": 12000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "online_search_enabled": false
+    },
+    "paths": {
+      "raw_documents": "data/raw",
+      "vector_index": "data/index",
+      "logs": "logs"
+    }
+  },
+  "environment": {
+    "python": "3.10.10",
+    "platform": "macOS-27.0-arm64-arm-64bit"
+  },
+  "scope": "真实Qwen/M3E/BGE/临时Chroma与AppTest；两篇公开论文的两个标注块，不是独立质量或浏览器视觉评测。",
+  "source_sha256": "d46fb56f5f41064faf223ff2d80c2cc8cc6dd329ef7792891b4b413c22cea099",
+  "papers": [
+    {
+      "id": "attention",
+      "language": "en",
+      "title": "Attention Is All You Need",
+      "pdf_url": "https://arxiv.org/pdf/1706.03762v7",
+      "source_url": "https://arxiv.org/abs/1706.03762v7",
+      "pdf_sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+      "pages": 15,
+      "chunk_count": 94
+    },
+    {
+      "id": "bert",
+      "language": "en",
+      "title": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+      "pdf_url": "https://arxiv.org/pdf/1810.04805v2",
+      "source_url": "https://arxiv.org/abs/1810.04805v2",
+      "pdf_sha256": "5692a5514787a8c6727b4ff3b726a3385798bc68e12138d1d4af83947e2acf6e",
+      "pages": 16,
+      "chunk_count": 154
+    }
+  ],
+  "server": {
+    "version": "0.34.0"
+  },
+  "models": {
+    "models": [
+      {
+        "name": "qwen2.5:7b",
+        "model": "qwen2.5:7b",
+        "modified_at": "2026-09-29T18:09:48.516927965+08:00",
+        "size": 4683087332,
+        "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen2",
+          "families": [
+            "qwen2"
+          ],
+          "parameter_size": "7.6B",
+          "quantization_level": "Q4_K_M",
+          "context_length": 32768,
+          "embedding_length": 3584
+        },
+        "capabilities": [
+          "completion",
+          "tools"
+        ]
+      }
+    ]
+  },
+  "validation_complete": true,
+  "requests": [
+    {
+      "label": "空库纯模型",
+      "request_id": "63c6bfd383914a1b832f6f11e5d616e5",
+      "status": "completed",
+      "elapsed_seconds": 2.1152362499997253,
+      "generation_http_requests": 1,
+      "tokens": {
+        "input": 435,
+        "output": 39,
+        "total": 474,
+        "source": "ollama"
+      },
+      "top1_score": null,
+      "retrieved_chunks": 0,
+      "answer": "当前知识库中未找到相关文档。以下为纯模型回答，没有知识库文献依据。\n\n## 回答\n机器学习是一种人工智能技术，它使计算机能够在不进行明确编程的情况下从数据中学习并改进其性能。\n\n## 参考来源\n无可引用来源",
+      "warnings": [],
+      "error": null
+    },
+    {
+      "label": "正常论文问答",
+      "request_id": "a9f6c97c59f44af782598ea922378efe",
+      "status": "completed",
+      "elapsed_seconds": 4.734734584000762,
+      "generation_http_requests": 1,
+      "tokens": {
+        "input": 833,
+        "output": 21,
+        "total": 854,
+        "source": "ollama"
+      },
+      "top1_score": 0.683231770992279,
+      "retrieved_chunks": 2,
+      "answer": "## Answer\nBERT-base has 12 layers.\n\n## 参考来源\n无可引用来源",
+      "warnings": [
+        "回答未提供有效文献引用，不能作为已溯源答案。"
+      ],
+      "error": null
+    },
+    {
+      "label": "相同问题缓存复用检查",
+      "request_id": "e16341bc244a4a719c80d1ac01691419",
+      "status": "completed",
+      "elapsed_seconds": 1.253877791999912,
+      "generation_http_requests": 1,
+      "tokens": {
+        "input": 833,
+        "output": 21,
+        "total": 854,
+        "source": "ollama"
+      },
+      "top1_score": 0.683231770992279,
+      "retrieved_chunks": 2,
+      "answer": "## Answer\nBERT-base has 12 layers.\n\n## 参考来源\n无可引用来源",
+      "warnings": [
+        "回答未提供有效文献引用，不能作为已溯源答案。"
+      ],
+      "error": null
+    },
+    {
+      "label": "低相关候选取消",
+      "request_id": "f602bf957e404df08735ec1840ad737f",
+      "status": "cancelled",
+      "elapsed_seconds": 0.29985333399963565,
+      "generation_http_requests": 0,
+      "tokens": {
+        "input": 0,
+        "output": 0,
+        "total": 0,
+        "source": "not_called"
+      },
+      "top1_score": 3.742192711797543e-05,
+      "retrieved_chunks": 2,
+      "answer": "",
+      "warnings": [],
+      "error": null
+    },
+    {
+      "label": "真实不存在的模型HTTP404",
+      "request_id": "5514664478234ad5853318507f26e0e4",
+      "status": "error",
+      "elapsed_seconds": 0.194124624998949,
+      "generation_http_requests": 1,
+      "tokens": {
+        "input": null,
+        "output": null,
+        "total": null,
+        "source": "unavailable"
+      },
+      "top1_score": 0.683231770992279,
+      "retrieved_chunks": 2,
+      "answer": "",
+      "warnings": [],
+      "error": "本地模型或接口未找到（HTTP 404）"
+    }
+  ],
+  "distribution": {
+    "requests": 5,
+    "cache_hits": 0,
+    "empty_retrievals": 1,
+    "failed_retrievals": 0,
+    "invalid_lines": 0,
+    "distributions": [
+      {
+        "model": "BAAI/bge-reranker-base",
+        "revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+        "count": 4,
+        "mean": 0.5124331837259888,
+        "min": 3.742192711797543e-05,
+        "max": 0.683231770992279,
+        "bins": [
+          {
+            "range": "0.0–0.1",
+            "count": 1
+          },
+          {
+            "range": "0.1–0.2",
+            "count": 0
+          },
+          {
+            "range": "0.2–0.3",
+            "count": 0
+          },
+          {
+            "range": "0.3–0.4",
+            "count": 0
+          },
+          {
+            "range": "0.4–0.5",
+            "count": 0
+          },
+          {
+            "range": "0.5–0.6",
+            "count": 0
+          },
+          {
+            "range": "0.6–0.7",
+            "count": 3
+          },
+          {
+            "range": "0.7–0.8",
+            "count": 0
+          },
+          {
+            "range": "0.8–0.9",
+            "count": 0
+          },
+          {
+            "range": "0.9–1.0",
+            "count": 0
+          }
+        ]
+      }
+    ]
+  },
+  "log_snapshots": 15,
+  "log_sha256": "dd5b84d55b7f70597aef38794f21ce409592fb6be4574085e7df942db3b3cbe3",
+  "cache_probe": {
+    "original_answer_cacheable": false,
+    "actual_hit": false
+  },
+  "visible_statistics": [
+    "请求 5 · 缓存命中 0 · 空结果 1 · 检索失败 0",
+    "BAAI/bge-reranker-base · 版本 2cfc18c9415c912f9d8155881c133215df768a70 · 样本 4 · 均值 0.5124 · 范围 0.0000–0.6832"
+  ],
+  "visible_chart_count": 1,
+  "finished_at": "2026-09-30T17:52:27.337438+08:00"
+}

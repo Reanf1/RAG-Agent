@@ -1,8 +1,10 @@
 """批量导入、文档检索与本地 RAG 流式问答页面。"""
 
 import sys
+from copy import deepcopy
 from pathlib import Path
 from time import perf_counter
+from uuid import uuid4
 
 import streamlit as st
 
@@ -14,10 +16,12 @@ if str(project_root) not in sys.path:
 
 from src.data_loader import LOADERS, create_import_tasks
 from src.generation.cache import SemanticCache, cache_scope
+from src.generation.prompt_template import PROMPT_VERSION
 from src.generation.rag_pipeline import prepare_rag_context
 from src.generation.streaming import stream_answer
 from src.retrieval.bm25_retriever import BM25Retriever
 from src.retrieval.hybrid_retriever import HybridRetriever
+from src.utils.logger import record_rag_request, request_time, retrieval_score_distribution
 from src.retrieval.vector_store import VectorStore, batch_build_index
 from src.utils.config import load_config
 
@@ -161,13 +165,28 @@ if search_submitted:
                     st.caption(f"文档 ID：{metadata.get('doc_id', '')}；块 ID：{metadata.get('chunk_id', '')}")
                     st.text(document.page_content)
 
+def save_request(message, status):
+    """日志故障明确提示，不能把已完成回答改成生成失败。"""
+    try:
+        record_rag_request(message, status)
+        message.pop("log_error", None)
+    except (OSError, ValueError, TypeError) as error:
+        message["log_error"] = f"请求日志未保存：{type(error).__name__}: {error}"
+        st.session_state.rag_log_error = message["log_error"]  # 清空或替换请求后也能看见故障。
+
+
 st.subheader("RAG 流式问答")
 st.caption("每个问题先匹配当前会话答案缓存；未命中再独立检索并由本地 Ollama 生成。历史仅保留展示，不作为多轮推理上下文。引用对应实际文件和位置，原文证据可展开查看。")
 if "rag_messages" not in st.session_state:
     st.session_state.rag_messages = []
+if "rag_session_id" not in st.session_state:
+    st.session_state.rag_session_id = uuid4().hex
 if "rag_cache" not in st.session_state or st.session_state.rag_cache.settings != config["generation"]["cache"]:
     st.session_state.rag_cache = SemanticCache()
+st.caption("清空当前对话会移除历史展示和答案缓存，本地请求日志会保留。")
 if st.button("清空当前对话", key="clear_rag_chat"):
+    if "rag_pending" in st.session_state:
+        save_request(st.session_state.rag_pending["message"], "cancelled")
     st.session_state.rag_messages = []
     st.session_state.rag_cache.clear()
     st.session_state.pop("rag_pending", None)
@@ -191,6 +210,8 @@ def show_answer_details(message):
             st.info(f"缓存命中（{match}），本次未调用检索、重排或生成模型。原问题：{hit['question']}")
     if message.get("notice"):
         st.info(message["notice"])
+    if message.get("log_error"):
+        st.warning(message["log_error"])
     for warning in message.get("warnings", []):
         st.warning(warning)
     for reference in message["citations"]:
@@ -202,13 +223,19 @@ def show_answer_details(message):
 def generate_message(message, context, retriever, scope, placeholder):
     """正常回答和确认后的回答共用流式处理；未完成与低相关性答案不写缓存。"""
     placeholder.markdown("正在等待本地模型输出…")
-    for event in stream_answer(message["question"], context):
-        if event["type"] == "token":
-            message["answer"], message["citations"] = event["answer"], event["citations"]
-            placeholder.markdown(event["answer"] + " ▌")
-        else:
-            message.update(event)
-            message["complete"] = event["type"] == "done"
+    message["context"] = context
+    message["generation_attempted"] = True
+    started = perf_counter()
+    try:
+        for event in stream_answer(message["question"], context):
+            if event["type"] == "token":
+                message["answer"], message["citations"] = event["answer"], event["citations"]
+                placeholder.markdown(event["answer"] + " ▌")
+            else:
+                message.update(event)
+                message["complete"] = event["type"] == "done"
+    finally:
+        message["generation_seconds"] = perf_counter() - started
     if not message["complete"] and not message.get("message"):
         raise RuntimeError("生成流未返回完成标记")
     if message.get("type") == "error":
@@ -232,9 +259,15 @@ for message in st.session_state.rag_messages:
 question = st.chat_input("询问已上传论文（支持中英文）", key="rag_question")
 if question and question.strip():
     # 新问题取代旧的待确认请求，避免后来误点生成旧问题。
+    if "rag_pending" in st.session_state:
+        save_request(st.session_state.rag_pending["message"], "superseded")
     st.session_state.pop("rag_pending", None)
-    message = {"question": question, "answer": "", "citations": [], "warnings": [], "complete": False}
+    message = {"question": question, "answer": "", "citations": [], "warnings": [], "complete": False,
+               "request_id": uuid4().hex, "session_id": st.session_state.rag_session_id,
+               "started_at": request_time(), "request_info": {"llm": deepcopy(config["llm"]),
+               "retrieval": deepcopy(config["retrieval"]), "prompt_version": PROMPT_VERSION}}
     started = perf_counter()
+    save_request(message, "started")
     with st.chat_message("user"):
         st.write(question)
     with st.chat_message("assistant"):
@@ -245,12 +278,23 @@ if question and question.strip():
             cached = st.session_state.rag_cache.lookup(question, scope)
             if cached:
                 message.update(cached, complete=True, retrieval_seconds=0.0)
+                message["retrieval_status"] = "skipped_cache"
             else:
                 with st.spinner("正在检索本地文献…"):
                     search_started = perf_counter()
-                    results = retriever.search(question, k=config["retrieval"]["top_k"], rerank=True)
-                    context = prepare_rag_context(question, results)
-                message["retrieval_seconds"] = perf_counter() - search_started
+                    message["retrieval_status"] = "error"
+                    try:
+                        results = retriever.search(question, k=config["retrieval"]["top_k"], rerank=True)
+                        message["retrieved_documents"] = [
+                            {"rank": rank, "text": doc.page_content, "metadata": deepcopy(doc.metadata), "score": score}
+                            for rank, (doc, score) in enumerate(results, 1)]
+                        message["retrieval_status"] = "success" if results else "empty"
+                        context = prepare_rag_context(question, results)
+                    finally:
+                        message["retrieval_seconds"] = perf_counter() - search_started
+                message["context"], message["generation_mode"] = context, context["generation_mode"]
+                message["elapsed_seconds"] = perf_counter() - started
+                save_request(message, "awaiting_confirmation" if context["generation_mode"] == "low" else "retrieved")
                 if context["generation_mode"] == "low":
                     st.session_state.rag_pending = {"message": message, "context": context, "scope": scope}
                 else:
@@ -262,7 +306,10 @@ if question and question.strip():
         message["elapsed_seconds"] = perf_counter() - started
         answer_placeholder.markdown(message["answer"])
         if "rag_pending" not in st.session_state:
+            save_request(message, "completed" if message["complete"] else "error")
             show_answer_details(message)
+        elif message.get("log_error"):
+            st.warning(message["log_error"])
     if "rag_pending" not in st.session_state:
         st.session_state.rag_messages.append(message)
 
@@ -280,6 +327,9 @@ if "rag_pending" in st.session_state:
     if confirm or cancel:
         st.session_state.pop("rag_pending")
         if cancel:
+            save_request(pending["message"], "cancelled")
+            if pending["message"].get("log_error"):
+                st.warning(pending["message"]["log_error"])
             st.info("已取消本次回答。可以上传更相关的文献或重新描述问题。")
         else:
             message = pending["message"]
@@ -296,21 +346,41 @@ if "rag_pending" in st.session_state:
                     message["error"] = str(error)
                 message["elapsed_seconds"] += perf_counter() - started  # 不计用户阅读等待时间。
                 placeholder.markdown(message["answer"])
+                save_request(message, "completed" if message["complete"] else "error")
                 show_answer_details(message)
             st.session_state.rag_messages.append(message)
+
+st.subheader("检索分数分布")
+st.caption("统计本地请求日志中的实际 RAG 检索：Top-1 为 BGE sigmoid 重排分数，不是命中率或正确概率。空库、检索失败和缓存跳过均单独计数。")
+try:
+    statistics = retrieval_score_distribution()
+    st.caption(f"请求 {statistics['requests']} · 缓存命中 {statistics['cache_hits']} · "
+               f"空结果 {statistics['empty_retrievals']} · 检索失败 {statistics['failed_retrievals']}")
+    if statistics["invalid_lines"]:
+        st.warning(f"日志中有 {statistics['invalid_lines']} 行损坏或格式不符，统计已跳过并保留原文件。")
+    for group in statistics["distributions"]:
+        st.caption(f"{group['model']} · 版本 {group['revision'][:8]} · 样本 {group['count']} · "
+                   f"均值 {group['mean']:.4f} · 范围 {group['min']:.4f}–{group['max']:.4f}")
+        st.bar_chart(group["bins"], x="range", y="count", x_label="Top-1 分数区间", y_label="实际检索次数")
+    if not statistics["distributions"]:
+        st.info("尚无可统计的有结果 RAG 检索。提交问题并完成实际检索后显示分布。")
+except (OSError, ValueError) as error:
+    st.warning(f"无法读取检索统计：{type(error).__name__}: {error}。请检查本地日志目录。")
+if "rag_log_error" in st.session_state:
+    st.warning(st.session_state.pop("rag_log_error"))
 
 st.subheader("模块开发状态")
 st.table(
     [
         {"模块": "一：文档处理与检索", "状态": "部分实现", "范围": "已实现批量导入、分块、增量索引、向量/BM25/RRF 与模型重排；三档质量已评测，分块召回对比待完成"},
-        {"模块": "二：RAG 生成", "状态": "部分实现", "范围": "已实现 Prompt、上下文/引用、本地生成、流式、缓存及三类降级，完成参数对照；日志待完成"},
+        {"模块": "二：RAG 生成", "状态": "已实现", "范围": "已实现 Prompt、上下文/引用、本地生成、流式、缓存、降级、请求日志与分数分布，完成参数对照；独立答案质量评测待完成"},
         {"模块": "三：Agent 决策", "状态": "未实现", "范围": "ReAct、工具、路由、恢复、记忆"},
         {"模块": "四：系统集成与前端", "状态": "部分实现", "范围": "已有文档入库、检索与 RAG 流式问答；Agent、持久会话、文献管理与完整联调待开发"},
         {"模块": "五：评测与交付", "状态": "部分实现", "范围": "已有三档检索实测、图表与 Excel；完整系统评测待完成"},
     ]
 )
 st.subheader("下一步")
-st.write("后续继续日志；分块召回对比和 Agent 等课程要求仍保留。")
+st.write("后续继续分块召回对比和 Agent 等课程要求；独立答案质量评测仍保留。")
 with st.sidebar:
     st.header("课程资料")
     st.write("南京农业大学生产实习课程实践")

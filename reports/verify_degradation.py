@@ -68,8 +68,9 @@ def main():
     with tempfile.TemporaryDirectory(prefix="rag-degradation-") as directory, ExitStack() as stack:
         config["paths"]["vector_index"] = str(Path(directory) / "index")
         config["paths"]["raw_documents"] = str(Path(directory) / "raw")
+        config["paths"]["logs"] = str(Path(directory) / "logs")
         for target in ("src.utils.config", "src.retrieval.vector_store", "src.retrieval.hybrid_retriever",
-                       "src.retrieval.reranker", "src.generation.rag_pipeline", "src.generation.cache"):
+                       "src.retrieval.reranker", "src.generation.rag_pipeline", "src.generation.cache", "src.utils.logger"):
             stack.enter_context(patch(target + ".load_config", return_value=config))
         stack.enter_context(patch.object(HybridRetriever, "search", counted_search))
         chat = stack.enter_context(patch("src.generation.streaming.urlopen", wraps=urlopen))
