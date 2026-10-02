@@ -1,0 +1,803 @@
+{
+  "started_at": "2026-10-02T18:22:59.296938+08:00",
+  "validation_complete": true,
+  "rows": [
+    {
+      "name": "comparison",
+      "event": {
+        "type": "tool_result",
+        "call_id": "ef3d447a65074b1e815b17009fb49870",
+        "name": "paper_compare",
+        "args": {
+          "paper_a_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+          "paper_b_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6"
+        },
+        "status": "success",
+        "result": {
+          "papers": [
+            {
+              "label": "A",
+              "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+              "source_file": "attention.pdf",
+              "coverage": {
+                "方法": {
+                  "generation_mode": "grounded",
+                  "top_score": 0.6436458230018616
+                },
+                "数据集": {
+                  "generation_mode": "low",
+                  "top_score": 0.06313109397888184
+                },
+                "实验结果": {
+                  "generation_mode": "grounded",
+                  "top_score": 0.8040503263473511
+                }
+              },
+              "references": [
+                {
+                  "id": 1,
+                  "source_file": "attention.pdf",
+                  "location": "第8页（物理页码）",
+                  "text": "\npositional encodings in both the encoder and decoder stacks. For the base model, we use a rate of\nPdrop = 0.1.\nDuring training, we employed label smoothing of value ϵls = 0.1 [36]. This\nLabel Smoothing\nhurts perplexity, as the model learns to be more unsure, but improves accuracy and BLEU score.\n6\nResults\n6.1\nMachine Translation\nOn the WMT 2014 English-to-German translation task, the big transformer model (Transformer (big)",
+                  "metadata": {
+                    "chunk_id": "5c3387930c38036843912016a5882e75dc6ccb4505b422bc434c46cdd6bb4d6f",
+                    "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                    "file_type": ".pdf",
+                    "page": 7,
+                    "page_number": 8,
+                    "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                    "source_file": "attention.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.8040503263473511
+                },
+                {
+                  "id": 2,
+                  "source_file": "attention.pdf",
+                  "location": "第8页（物理页码）",
+                  "text": "\nthe competitive models.\nOn the WMT 2014 English-to-French translation task, our big model achieves a BLEU score of 41.0,\noutperforming all of the previously published single models, at less than 1/4 the training cost of the\nprevious state-of-the-art model. The Transformer (big) model trained for English-to-French used\ndropout rate P_{drop} = 0.1, instead of 0.3.\nFor the base models, we used a single model obtained by averaging the last 5 checkpoints, which",
+                  "metadata": {
+                    "chunk_id": "9a42ec0d16c8856c3469f9362a1cbf16f3191e8e4186c3e07440dc0e8651651d",
+                    "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                    "file_type": ".pdf",
+                    "page": 7,
+                    "page_number": 8,
+                    "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                    "source_file": "attention.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.6474555730819702
+                },
+                {
+                  "id": 3,
+                  "source_file": "attention.pdf",
+                  "location": "第3页（物理页码）",
+                  "text": "[图像区域 1：原文第 3 页]\nFigure 1: The Transformer - model architecture.\nThe Transformer follows this overall architecture using stacked self-attention and point-wise, fully\nconnected layers for both the encoder and decoder, shown in the left and right halves of Figure 1,\nrespectively.\n3.1\nEncoder and Decoder Stacks\nThe encoder is composed of a stack of N = 6 identical layers. Each layer has two\nEncoder:\nsub-layers. The first is a multi-head self-attention mechanism, and the second is a simple, position-",
+                  "metadata": {
+                    "chunk_id": "92f8ad03bc04d4226530a55ec8ac4aff0e5285e51375e4c4b9ce4644505637f2",
+                    "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                    "file_type": ".pdf",
+                    "page": 2,
+                    "page_number": 3,
+                    "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                    "source_file": "attention.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.6436458230018616
+                },
+                {
+                  "id": 4,
+                  "source_file": "attention.pdf",
+                  "location": "第2页（物理页码）",
+                  "text": "\ntion models in various tasks, allowing modeling of dependencies without regard to their distance in\nthe input or output sequences [2, 19]. In all but a few cases [27], however, such attention mechanisms\nare used in conjunction with a recurrent network.\nIn this work we propose the Transformer, a model architecture eschewing recurrence and instead\nrelying entirely on an attention mechanism to draw global dependencies between input and output.",
+                  "metadata": {
+                    "chunk_id": "c0f7198e6e1d99c345d7d2bb9f496ce27a49013850df30d9cc5a385bd7ca617d",
+                    "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                    "file_type": ".pdf",
+                    "page": 1,
+                    "page_number": 2,
+                    "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                    "source_file": "attention.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.3374370038509369
+                },
+                {
+                  "id": 5,
+                  "source_file": "attention.pdf",
+                  "location": "第7页（物理页码）",
+                  "text": "\nsentence pairs. Sentences were encoded using byte-pair encoding [3], which has a shared source-\ntarget vocabulary of about 37000 tokens. For English-French, we used the significantly larger WMT\n2014 English-French dataset consisting of 36M sentences and split tokens into a 32000 word-piece\nvocabulary [38]. Sentence pairs were batched together by approximate sequence length. Each training\nbatch contained a set of sentence pairs containing approximately 25000 source tokens and 25000\ntarget tokens.\n5.2",
+                  "metadata": {
+                    "chunk_id": "9047ed5ba1da7ac7c9a6b4dc44db2bfd3e0c46a34cfb7e30a6583de41fc2de82",
+                    "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                    "file_type": ".pdf",
+                    "page": 6,
+                    "page_number": 7,
+                    "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                    "source_file": "attention.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.06313109397888184
+                },
+                {
+                  "id": 6,
+                  "source_file": "attention.pdf",
+                  "location": "第8页（物理页码）",
+                  "text": "\nwere written at 10-minute intervals. For the big models, we averaged the last 20 checkpoints. We\nused beam search with a beam size of 4 and length penalty α = 0.6 [38]. These hyperparameters\nwere chosen after experimentation on the development set. We set the maximum output length during",
+                  "metadata": {
+                    "chunk_id": "4e864784392bb57f10b3b12921ab05520f463c2354157adf3ca2ed999b68f907",
+                    "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                    "file_type": ".pdf",
+                    "page": 7,
+                    "page_number": 8,
+                    "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                    "source_file": "attention.pdf"
+                  },
+                  "truncated": true,
+                  "score": 0.04124177247285843
+                }
+              ],
+              "truncated": true
+            },
+            {
+              "label": "B",
+              "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+              "source_file": "vit.pdf",
+              "coverage": {
+                "方法": {
+                  "generation_mode": "grounded",
+                  "top_score": 0.15133562684059143
+                },
+                "数据集": {
+                  "generation_mode": "grounded",
+                  "top_score": 0.2360960841178894
+                },
+                "实验结果": {
+                  "generation_mode": "grounded",
+                  "top_score": 0.10597559064626694
+                }
+              },
+              "references": [
+                {
+                  "id": 1,
+                  "source_file": "vit.pdf",
+                  "location": "第6页（物理页码）",
+                  "text": "\nexperiments.\nFirst, we pre-train ViT models on datasets of increasing size: ImageNet, ImageNet-21k, and JFT-\n300M. To boost the performance on the smaller datasets, we optimize three basic regularization\nparameters – weight decay, dropout, and label smoothing. Figure 3 shows the results after ﬁne-\ntuning to ImageNet (results on other datasets are shown in Table 5)^{2}. When pre-trained on the\nsmallest dataset, ImageNet, ViT-Large models underperform compared to ViT-Base models, despite",
+                  "metadata": {
+                    "chunk_id": "9b0b9c2680b6373faf4ec7710b687d77e099716d0d23d863a2bbadc88b0c9a32",
+                    "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                    "file_type": ".pdf",
+                    "page": 5,
+                    "page_number": 6,
+                    "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                    "source_file": "vit.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.2360960841178894
+                },
+                {
+                  "id": 2,
+                  "source_file": "vit.pdf",
+                  "location": "第3页（物理页码）",
+                  "text": "\nadd position embeddings, and feed the resulting sequence of vectors to a standard Transformer\nencoder. In order to perform classiﬁcation, we use the standard approach of adding an extra learnable\n“classiﬁcation token” to the sequence. The illustration of the Transformer encoder was inspired by\nVaswani et al. (2017).\n3\nMETHOD\nIn model design we follow the original Transformer (Vaswani et al., 2017) as closely as possible.",
+                  "metadata": {
+                    "chunk_id": "9e9acdbba6f720d3d5d743203fd149d3f8e84a050cd4d12cdbfebbb3782e62b3",
+                    "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                    "file_type": ".pdf",
+                    "page": 2,
+                    "page_number": 3,
+                    "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                    "source_file": "vit.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.15133562684059143
+                },
+                {
+                  "id": 3,
+                  "source_file": "vit.pdf",
+                  "location": "第13页（物理页码）",
+                  "text": "\nremaining data. For ﬁnal results we train on the entire training set and evaluate on the respective\ntest data. For ﬁne-tuning ResNets and hybrid models we use the exact same setup, with the only\nexception of ImageNet where we add another value 0.06 to the learning rate sweep. Additionally,\n13",
+                  "metadata": {
+                    "chunk_id": "b776ec377954aba1d269e52a0ebd44bd57d27a269b4c63a975847a68b27a1100",
+                    "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                    "file_type": ".pdf",
+                    "page": 12,
+                    "page_number": 13,
+                    "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                    "source_file": "vit.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.13574805855751038
+                },
+                {
+                  "id": 4,
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）",
+                  "text": "\nunprecedented size, with over 100B parameters (Brown et al., 2020; Lepikhin et al., 2020). With the\nmodels and datasets growing, there is still no sign of saturating performance.\nIn computer vision, however, convolutional architectures remain dominant (LeCun et al., 1989;\nKrizhevsky et al., 2012; He et al., 2016). Inspired by NLP successes, multiple works try combining\nCNN-like architectures with self-attention (Wang et al., 2018; Carion et al., 2020), some replacing",
+                  "metadata": {
+                    "chunk_id": "3fa2b491543f906078cf9b9d8a3e76dc0ec3bf6f0b4435106a32fcd1c9cda123",
+                    "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                    "file_type": ".pdf",
+                    "page": 0,
+                    "page_number": 1,
+                    "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                    "source_file": "vit.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.10597559064626694
+                },
+                {
+                  "id": 5,
+                  "source_file": "vit.pdf",
+                  "location": "第22页（物理页码）",
+                  "text": "\nViT-L/16 (I21k) 90.8 84.1 74.1 99.3 92.7 61.0 80.9 82.5 95.6 85.2 75.3 70.3 56.1 41.9 74.7 64.9 79.9 30.5 41.7 72.7\n22",
+                  "metadata": {
+                    "chunk_id": "16c65d443367b939f9c6bb48bf7e683f65bb6f8f34db6f235fa1880d9eaff426",
+                    "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                    "file_type": ".pdf",
+                    "page": 21,
+                    "page_number": 22,
+                    "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                    "source_file": "vit.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.06289305537939072
+                },
+                {
+                  "id": 6,
+                  "source_file": "vit.pdf",
+                  "location": "第4页（物理页码）",
+                  "text": "\nstructure is used very sparingly: in the beginning of the model by cutting the image into patches and\nat ﬁne-tuning time for adjusting the position embeddings for images of different resolution (as de-\nscribed below). Other than that, the position embeddings at initialization time carry no information\nabout the 2D positions of the patches and all spatial relations between the patches have to be learned\nfrom scratch.\nHybrid Architecture.",
+                  "metadata": {
+                    "chunk_id": "40f8d16aaec26221818e5cef5f5dfea9b8dbb10cc332121409640fa16a7ec23e",
+                    "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                    "file_type": ".pdf",
+                    "page": 3,
+                    "page_number": 4,
+                    "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                    "source_file": "vit.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.025796884670853615
+                }
+              ],
+              "truncated": false
+            }
+          ],
+          "missing_dimensions": [],
+          "low_relevance_dimensions": [
+            "论文A：数据集"
+          ],
+          "status": "needs_confirmation",
+          "answer": "检索相关性低，请用户核对候选原文。",
+          "citations": [],
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          },
+          "elapsed_seconds": 7.214065666001261
+        },
+        "error": "",
+        "elapsed_seconds": 7.2155907080014,
+        "message": {
+          "content": "{'papers': [{'label': 'A', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'source_file': 'attention.pdf', 'coverage': {'方法': {'generation_mode': 'grounded', 'top_score': 0.6436458230018616}, '数据集': {'generation_mode': 'low', 'top_score': 0.06313109397888184}, '实验结果': {'generation_mode': 'grounded', 'top_score': 0.8040503263473511}}, 'references': [{'id': 1, 'source_file': 'attention.pdf', 'location': '第8页（物理页码）', 'text': '\\npositional encodings in both the encoder and decoder stacks. For the base model, we use a rate of\\nPdrop = 0.1.\\nDuring training, we employed label smoothing of value ϵls = 0.1 [36]. This\\nLabel Smoothing\\nhurts perplexity, as the model learns to be more unsure, but improves accuracy and BLEU score.\\n6\\nResults\\n6.1\\nMachine Translation\\nOn the WMT 2014 English-to-German translation task, the big transformer model (Transformer (big)', 'metadata': {'chunk_id': '5c3387930c38036843912016a5882e75dc6ccb4505b422bc434c46cdd6bb4d6f', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'file_type': '.pdf', 'page': 7, 'page_number': 8, 'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf'}, 'truncated': False, 'score': 0.8040503263473511}, {'id': 2, 'source_file': 'attention.pdf', 'location': '第8页（物理页码）', 'text': '\\nthe competitive models.\\nOn the WMT 2014 English-to-French translation task, our big model achieves a BLEU score of 41.0,\\noutperforming all of the previously published single models, at less than 1/4 the training cost of the\\nprevious state-of-the-art model. The Transformer (big) model trained for English-to-French used\\ndropout rate P_{drop} = 0.1, instead of 0.3.\\nFor the base models, we used a single model obtained by averaging the last 5 checkpoints, which', 'metadata': {'chunk_id': '9a42ec0d16c8856c3469f9362a1cbf16f3191e8e4186c3e07440dc0e8651651d', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'file_type': '.pdf', 'page': 7, 'page_number': 8, 'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf'}, 'truncated': False, 'score': 0.6474555730819702}, {'id': 3, 'source_file': 'attention.pdf', 'location': '第3页（物理页码）', 'text': '[图像区域 1：原文第 3 页]\\nFigure 1: The Transformer - model architecture.\\nThe Transformer follows this overall architecture using stacked self-attention and point-wise, fully\\nconnected layers for both the encoder and decoder, shown in the left and right halves of Figure 1,\\nrespectively.\\n3.1\\nEncoder and Decoder Stacks\\nThe encoder is composed of a stack of N = 6 identical layers. Each layer has two\\nEncoder:\\nsub-layers. The first is a multi-head self-attention mechanism, and the second is a simple, position-', 'metadata': {'chunk_id': '92f8ad03bc04d4226530a55ec8ac4aff0e5285e51375e4c4b9ce4644505637f2', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'file_type': '.pdf', 'page': 2, 'page_number': 3, 'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf'}, 'truncated': False, 'score': 0.6436458230018616}, {'id': 4, 'source_file': 'attention.pdf', 'location': '第2页（物理页码）', 'text': '\\ntion models in various tasks, allowing modeling of dependencies without regard to their distance in\\nthe input or output sequences [2, 19]. In all but a few cases [27], however, such attention mechanisms\\nare used in conjunction with a recurrent network.\\nIn this work we propose the Transformer, a model architecture eschewing recurrence and instead\\nrelying entirely on an attention mechanism to draw global dependencies between input and output.', 'metadata': {'chunk_id': 'c0f7198e6e1d99c345d7d2bb9f496ce27a49013850df30d9cc5a385bd7ca617d', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'file_type': '.pdf', 'page': 1, 'page_number': 2, 'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf'}, 'truncated': False, 'score': 0.3374370038509369}, {'id': 5, 'source_file': 'attention.pdf', 'location': '第7页（物理页码）', 'text': '\\nsentence pairs. Sentences were encoded using byte-pair encoding [3], which has a shared source-\\ntarget vocabulary of about 37000 tokens. For English-French, we used the significantly larger WMT\\n2014 English-French dataset consisting of 36M sentences and split tokens into a 32000 word-piece\\nvocabulary [38]. Sentence pairs were batched together by approximate sequence length. Each training\\nbatch contained a set of sentence pairs containing approximately 25000 source tokens and 25000\\ntarget tokens.\\n5.2', 'metadata': {'chunk_id': '9047ed5ba1da7ac7c9a6b4dc44db2bfd3e0c46a34cfb7e30a6583de41fc2de82', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'file_type': '.pdf', 'page': 6, 'page_number': 7, 'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf'}, 'truncated': False, 'score': 0.06313109397888184}, {'id': 6, 'source_file': 'attention.pdf', 'location': '第8页（物理页码）', 'text': '\\nwere written at 10-minute intervals. For the big models, we averaged the last 20 checkpoints. We\\nused beam search with a beam size of 4 and length penalty α = 0.6 [38]. These hyperparameters\\nwere chosen after experimentation on the development set. We set the maximum output length during', 'metadata': {'chunk_id': '4e864784392bb57f10b3b12921ab05520f463c2354157adf3ca2ed999b68f907', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'file_type': '.pdf', 'page': 7, 'page_number': 8, 'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf'}, 'truncated': True, 'score': 0.04124177247285843}], 'truncated': True}, {'label': 'B', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'source_file': 'vit.pdf', 'coverage': {'方法': {'generation_mode': 'grounded', 'top_score': 0.15133562684059143}, '数据集': {'generation_mode': 'grounded', 'top_score': 0.2360960841178894}, '实验结果': {'generation_mode': 'grounded', 'top_score': 0.10597559064626694}}, 'references': [{'id': 1, 'source_file': 'vit.pdf', 'location': '第6页（物理页码）', 'text': '\\nexperiments.\\nFirst, we pre-train ViT models on datasets of increasing size: ImageNet, ImageNet-21k, and JFT-\\n300M. To boost the performance on the smaller datasets, we optimize three basic regularization\\nparameters – weight decay, dropout, and label smoothing. Figure 3 shows the results after ﬁne-\\ntuning to ImageNet (results on other datasets are shown in Table 5)^{2}. When pre-trained on the\\nsmallest dataset, ImageNet, ViT-Large models underperform compared to ViT-Base models, despite', 'metadata': {'chunk_id': '9b0b9c2680b6373faf4ec7710b687d77e099716d0d23d863a2bbadc88b0c9a32', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'file_type': '.pdf', 'page': 5, 'page_number': 6, 'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf'}, 'truncated': False, 'score': 0.2360960841178894}, {'id': 2, 'source_file': 'vit.pdf', 'location': '第3页（物理页码）', 'text': '\\nadd position embeddings, and feed the resulting sequence of vectors to a standard Transformer\\nencoder. In order to perform classiﬁcation, we use the standard approach of adding an extra learnable\\n“classiﬁcation token” to the sequence. The illustration of the Transformer encoder was inspired by\\nVaswani et al. (2017).\\n3\\nMETHOD\\nIn model design we follow the original Transformer (Vaswani et al., 2017) as closely as possible.', 'metadata': {'chunk_id': '9e9acdbba6f720d3d5d743203fd149d3f8e84a050cd4d12cdbfebbb3782e62b3', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'file_type': '.pdf', 'page': 2, 'page_number': 3, 'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf'}, 'truncated': False, 'score': 0.15133562684059143}, {'id': 3, 'source_file': 'vit.pdf', 'location': '第13页（物理页码）', 'text': '\\nremaining data. For ﬁnal results we train on the entire training set and evaluate on the respective\\ntest data. For ﬁne-tuning ResNets and hybrid models we use the exact same setup, with the only\\nexception of ImageNet where we add another value 0.06 to the learning rate sweep. Additionally,\\n13', 'metadata': {'chunk_id': 'b776ec377954aba1d269e52a0ebd44bd57d27a269b4c63a975847a68b27a1100', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'file_type': '.pdf', 'page': 12, 'page_number': 13, 'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf'}, 'truncated': False, 'score': 0.13574805855751038}, {'id': 4, 'source_file': 'vit.pdf', 'location': '第1页（物理页码）', 'text': '\\nunprecedented size, with over 100B parameters (Brown et al., 2020; Lepikhin et al., 2020). With the\\nmodels and datasets growing, there is still no sign of saturating performance.\\nIn computer vision, however, convolutional architectures remain dominant (LeCun et al., 1989;\\nKrizhevsky et al., 2012; He et al., 2016). Inspired by NLP successes, multiple works try combining\\nCNN-like architectures with self-attention (Wang et al., 2018; Carion et al., 2020), some replacing', 'metadata': {'chunk_id': '3fa2b491543f906078cf9b9d8a3e76dc0ec3bf6f0b4435106a32fcd1c9cda123', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'file_type': '.pdf', 'page': 0, 'page_number': 1, 'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf'}, 'truncated': False, 'score': 0.10597559064626694}, {'id': 5, 'source_file': 'vit.pdf', 'location': '第22页（物理页码）', 'text': '\\nViT-L/16 (I21k) 90.8 84.1 74.1 99.3 92.7 61.0 80.9 82.5 95.6 85.2 75.3 70.3 56.1 41.9 74.7 64.9 79.9 30.5 41.7 72.7\\n22', 'metadata': {'chunk_id': '16c65d443367b939f9c6bb48bf7e683f65bb6f8f34db6f235fa1880d9eaff426', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'file_type': '.pdf', 'page': 21, 'page_number': 22, 'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf'}, 'truncated': False, 'score': 0.06289305537939072}, {'id': 6, 'source_file': 'vit.pdf', 'location': '第4页（物理页码）', 'text': '\\nstructure is used very sparingly: in the beginning of the model by cutting the image into patches and\\nat ﬁne-tuning time for adjusting the position embeddings for images of different resolution (as de-\\nscribed below). Other than that, the position embeddings at initialization time carry no information\\nabout the 2D positions of the patches and all spatial relations between the patches have to be learned\\nfrom scratch.\\nHybrid Architecture.', 'metadata': {'chunk_id': '40f8d16aaec26221818e5cef5f5dfea9b8dbb10cc332121409640fa16a7ec23e', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'file_type': '.pdf', 'page': 3, 'page_number': 4, 'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf'}, 'truncated': False, 'score': 0.025796884670853615}], 'truncated': False}], 'missing_dimensions': [], 'low_relevance_dimensions': ['论文A：数据集'], 'status': 'needs_confirmation', 'answer': '检索相关性低，请用户核对候选原文。', 'citations': [], 'usage': {'prompt_eval_count': 0, 'eval_count': 0}, 'elapsed_seconds': 7.214065666001261}",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "tool",
+          "name": "paper_compare",
+          "id": null,
+          "tool_call_id": "ef3d447a65074b1e815b17009fb49870",
+          "artifact": null,
+          "status": "success"
+        }
+      },
+      "passed": false
+    },
+    {
+      "name": "question_keywords",
+      "event": {
+        "type": "tool_result",
+        "call_id": "309104ff4aaf453e9edb30dff05661b1",
+        "name": "keyword_extract",
+        "args": {
+          "text": "比较Transformer与ViT在机器翻译和图像分类任务上的数据集和准确率。"
+        },
+        "status": "success",
+        "result": {
+          "keywords": [
+            "Transformer",
+            "ViT",
+            "机器翻译",
+            "图像分类",
+            "数据集"
+          ],
+          "evidence": [
+            {
+              "keyword": "Transformer",
+              "locations": [
+                {
+                  "text": "比较Transformer与ViT在机器翻译和图像分类任务上的数据集和准确率。",
+                  "location": "问题第1行",
+                  "source_file": null
+                }
+              ]
+            },
+            {
+              "keyword": "ViT",
+              "locations": [
+                {
+                  "text": "比较Transformer与ViT在机器翻译和图像分类任务上的数据集和准确率。",
+                  "location": "问题第1行",
+                  "source_file": null
+                }
+              ]
+            },
+            {
+              "keyword": "机器翻译",
+              "locations": [
+                {
+                  "text": "比较Transformer与ViT在机器翻译和图像分类任务上的数据集和准确率。",
+                  "location": "问题第1行",
+                  "source_file": null
+                }
+              ]
+            },
+            {
+              "keyword": "图像分类",
+              "locations": [
+                {
+                  "text": "比较Transformer与ViT在机器翻译和图像分类任务上的数据集和准确率。",
+                  "location": "问题第1行",
+                  "source_file": null
+                }
+              ]
+            },
+            {
+              "keyword": "数据集",
+              "locations": [
+                {
+                  "text": "比较Transformer与ViT在机器翻译和图像分类任务上的数据集和准确率。",
+                  "location": "问题第1行",
+                  "source_file": null
+                }
+              ]
+            }
+          ],
+          "doc_id": null,
+          "source_file": null,
+          "input_truncated": false,
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 104,
+            "eval_count": 26
+          },
+          "elapsed_seconds": 5.9132390419981675
+        },
+        "error": "",
+        "elapsed_seconds": 5.914745292000589,
+        "message": {
+          "content": "{'keywords': ['Transformer', 'ViT', '机器翻译', '图像分类', '数据集'], 'evidence': [{'keyword': 'Transformer', 'locations': [{'text': '比较Transformer与ViT在机器翻译和图像分类任务上的数据集和准确率。', 'location': '问题第1行', 'source_file': None}]}, {'keyword': 'ViT', 'locations': [{'text': '比较Transformer与ViT在机器翻译和图像分类任务上的数据集和准确率。', 'location': '问题第1行', 'source_file': None}]}, {'keyword': '机器翻译', 'locations': [{'text': '比较Transformer与ViT在机器翻译和图像分类任务上的数据集和准确率。', 'location': '问题第1行', 'source_file': None}]}, {'keyword': '图像分类', 'locations': [{'text': '比较Transformer与ViT在机器翻译和图像分类任务上的数据集和准确率。', 'location': '问题第1行', 'source_file': None}]}, {'keyword': '数据集', 'locations': [{'text': '比较Transformer与ViT在机器翻译和图像分类任务上的数据集和准确率。', 'location': '问题第1行', 'source_file': None}]}], 'doc_id': None, 'source_file': None, 'input_truncated': False, 'model': 'qwen2.5:7b', 'usage': {'prompt_eval_count': 104, 'eval_count': 26}, 'elapsed_seconds': 5.9132390419981675}",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "tool",
+          "name": "keyword_extract",
+          "id": null,
+          "tool_call_id": "309104ff4aaf453e9edb30dff05661b1",
+          "artifact": null,
+          "status": "success"
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "document_keywords",
+      "event": {
+        "type": "tool_result",
+        "call_id": "182834b016c44bd186dadf81bec4a417",
+        "name": "keyword_extract",
+        "args": {
+          "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"
+        },
+        "status": "success",
+        "result": {
+          "keywords": [
+            "Transformer",
+            "attention mechanism",
+            "machine translation",
+            "sequence modeling",
+            "parallelization"
+          ],
+          "evidence": [
+            {
+              "keyword": "Transformer",
+              "locations": [
+                {
+                  "id": 33,
+                  "text": "mechanism. We propose a new simple network architecture, the Transformer,",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ]
+            },
+            {
+              "keyword": "attention mechanism",
+              "locations": [
+                {
+                  "id": 32,
+                  "text": "performing models also connect the encoder and decoder through an attention",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 33,
+                  "text": "mechanism. We propose a new simple network architecture, the Transformer,",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ]
+            },
+            {
+              "keyword": "machine translation",
+              "locations": [
+                {
+                  "id": 35,
+                  "text": "entirely. Experiments on two machine translation tasks show these models to",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ]
+            },
+            {
+              "keyword": "sequence modeling",
+              "locations": [
+                {
+                  "id": 60,
+                  "text": "in particular, have been firmly established as state of the art approaches in sequence modeling and",
+                  "source_file": "attention.pdf",
+                  "location": "第2页（物理页码）"
+                }
+              ]
+            },
+            {
+              "keyword": "parallelization",
+              "locations": [
+                {
+                  "id": 67,
+                  "text": "sequential nature precludes parallelization within training examples, which becomes critical at longer",
+                  "source_file": "attention.pdf",
+                  "location": "第2页（物理页码）"
+                }
+              ]
+            }
+          ],
+          "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+          "source_file": "attention.pdf",
+          "input_truncated": true,
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1398,
+            "eval_count": 26
+          },
+          "elapsed_seconds": 7.975463374998071
+        },
+        "error": "",
+        "elapsed_seconds": 7.977612083999702,
+        "message": {
+          "content": "{'keywords': ['Transformer', 'attention mechanism', 'machine translation', 'sequence modeling', 'parallelization'], 'evidence': [{'keyword': 'Transformer', 'locations': [{'id': 33, 'text': 'mechanism. We propose a new simple network architecture, the Transformer,', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}]}, {'keyword': 'attention mechanism', 'locations': [{'id': 32, 'text': 'performing models also connect the encoder and decoder through an attention', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 33, 'text': 'mechanism. We propose a new simple network architecture, the Transformer,', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}]}, {'keyword': 'machine translation', 'locations': [{'id': 35, 'text': 'entirely. Experiments on two machine translation tasks show these models to', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}]}, {'keyword': 'sequence modeling', 'locations': [{'id': 60, 'text': 'in particular, have been firmly established as state of the art approaches in sequence modeling and', 'source_file': 'attention.pdf', 'location': '第2页（物理页码）'}]}, {'keyword': 'parallelization', 'locations': [{'id': 67, 'text': 'sequential nature precludes parallelization within training examples, which becomes critical at longer', 'source_file': 'attention.pdf', 'location': '第2页（物理页码）'}]}], 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'source_file': 'attention.pdf', 'input_truncated': True, 'model': 'qwen2.5:7b', 'usage': {'prompt_eval_count': 1398, 'eval_count': 26}, 'elapsed_seconds': 7.975463374998071}",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "tool",
+          "name": "keyword_extract",
+          "id": null,
+          "tool_call_id": "182834b016c44bd186dadf81bec4a417",
+          "artifact": null,
+          "status": "success"
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "agent_keywords",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "提取给定句子中的关键词并返回原文位置证据。",
+          "next_step": "tool",
+          "tool_name": "keyword_extract",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1108,
+            "eval_count": 33
+          },
+          "elapsed_seconds": 6.4264639590001025,
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "call_id": "5ba0deaefd784173892d1956a24e3514",
+          "name": "keyword_extract",
+          "args": {
+            "text": "Transformer用于机器翻译，ViT用于图像分类。"
+          },
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 4.544960250001168,
+          "usage": {
+            "prompt_eval_count": 857,
+            "eval_count": 30
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "keyword_extract",
+                "args": {
+                  "text": "Transformer用于机器翻译，ViT用于图像分类。"
+                },
+                "id": "5ba0deaefd784173892d1956a24e3514",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "call_id": "5ba0deaefd784173892d1956a24e3514",
+          "name": "keyword_extract",
+          "args": {
+            "text": "Transformer用于机器翻译，ViT用于图像分类。"
+          },
+          "status": "success",
+          "result": {
+            "keywords": [
+              "Transformer",
+              "机器翻译",
+              "ViT",
+              "图像分类"
+            ],
+            "evidence": [
+              {
+                "keyword": "Transformer",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "机器翻译",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "ViT",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "图像分类",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              }
+            ],
+            "doc_id": null,
+            "source_file": null,
+            "input_truncated": false,
+            "model": "qwen2.5:7b",
+            "usage": {
+              "prompt_eval_count": 96,
+              "eval_count": 19
+            },
+            "elapsed_seconds": 1.0103678749983374
+          },
+          "error": "",
+          "elapsed_seconds": 1.0113419590015837,
+          "message": {
+            "content": "{'keywords': ['Transformer', '机器翻译', 'ViT', '图像分类'], 'evidence': [{'keyword': 'Transformer', 'locations': [{'text': 'Transformer用于机器翻译，ViT用于图像分类。', 'location': '问题第1行', 'source_file': None}]}, {'keyword': '机器翻译', 'locations': [{'text': 'Transformer用于机器翻译，ViT用于图像分类。', 'location': '问题第1行', 'source_file': None}]}, {'keyword': 'ViT', 'locations': [{'text': 'Transformer用于机器翻译，ViT用于图像分类。', 'location': '问题第1行', 'source_file': None}]}, {'keyword': '图像分类', 'locations': [{'text': 'Transformer用于机器翻译，ViT用于图像分类。', 'location': '问题第1行', 'source_file': None}]}], 'doc_id': None, 'source_file': None, 'input_truncated': False, 'model': 'qwen2.5:7b', 'usage': {'prompt_eval_count': 96, 'eval_count': 19}, 'elapsed_seconds': 1.0103678749983374}",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "keyword_extract",
+            "id": null,
+            "tool_call_id": "5ba0deaefd784173892d1956a24e3514",
+            "artifact": null,
+            "status": "success"
+          },
+          "iteration": 1
+        },
+        {
+          "type": "error",
+          "message": "Observation失败：结束时必须提供答案或无法完成的说明。检查本地配置和接口数据，修正后重新提交问题。",
+          "retry_advice": "检查本地模型服务日志与可用内存，必要时重启 Ollama 后重新提交问题。",
+          "error_detail": "RuntimeError: Observation失败：结束时必须提供答案或无法完成的说明。检查本地配置和接口数据，修正后重新提交问题。",
+          "iteration": 1
+        },
+        {
+          "type": "done",
+          "task_complete": false,
+          "stop_reason": "error",
+          "full_response": "Observation失败：结束时必须提供答案或无法完成的说明。检查本地配置和接口数据，修正后重新提交问题。。检查本地模型服务日志与可用内存，必要时重启 Ollama 后重新提交问题。",
+          "iterations": 1,
+          "context": {
+            "observations": [
+              {
+                "call_id": "5ba0deaefd784173892d1956a24e3514",
+                "name": "keyword_extract",
+                "args": {
+                  "text": "Transformer用于机器翻译，ViT用于图像分类。"
+                },
+                "status": "success",
+                "result": {
+                  "keywords": [
+                    "Transformer",
+                    "机器翻译",
+                    "ViT",
+                    "图像分类"
+                  ],
+                  "evidence": [
+                    {
+                      "keyword": "Transformer",
+                      "locations": [
+                        {
+                          "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                          "location": "问题第1行",
+                          "source_file": null
+                        }
+                      ]
+                    },
+                    {
+                      "keyword": "机器翻译",
+                      "locations": [
+                        {
+                          "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                          "location": "问题第1行",
+                          "source_file": null
+                        }
+                      ]
+                    },
+                    {
+                      "keyword": "ViT",
+                      "locations": [
+                        {
+                          "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                          "location": "问题第1行",
+                          "source_file": null
+                        }
+                      ]
+                    },
+                    {
+                      "keyword": "图像分类",
+                      "locations": [
+                        {
+                          "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                          "location": "问题第1行",
+                          "source_file": null
+                        }
+                      ]
+                    }
+                  ],
+                  "doc_id": null,
+                  "source_file": null,
+                  "input_truncated": false,
+                  "model": "qwen2.5:7b",
+                  "usage": {
+                    "prompt_eval_count": 96,
+                    "eval_count": 19
+                  },
+                  "elapsed_seconds": 1.0103678749983374
+                },
+                "error": "",
+                "elapsed_seconds": 1.0113419590015837
+              }
+            ]
+          }
+        }
+      ],
+      "passed": false
+    }
+  ],
+  "scope": "完整Attention/ViT PDF，真实上传/索引/检索/本地模型及默认Agent；只替换临时存储路径。",
+  "config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://localhost:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 8192,
+      "num_predict": 512,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 6000,
+      "max_prompt_chars": 12000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "online_search_enabled": false
+    },
+    "paths": {
+      "raw_documents": "/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/raw",
+      "vector_index": "/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/index",
+      "logs": "/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-yme5hp51/logs"
+    }
+  },
+  "ingestion": [
+    {
+      "file": "attention.pdf",
+      "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+      "chunks": 94
+    },
+    {
+      "file": "vit.pdf",
+      "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+      "chunks": 167
+    }
+  ],
+  "finished_at": "2026-10-02T18:24:00.298518+08:00"
+}

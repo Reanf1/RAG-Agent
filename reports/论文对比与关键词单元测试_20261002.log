@@ -1,0 +1,222 @@
+test_answer_plan_skips_model_and_tool_execution (__main__.TestAction) ... ok
+test_closing_after_call_event_does_not_execute_tool (__main__.TestAction) ... ok
+test_empty_multiple_wrong_name_and_non_dict_arguments_do_not_execute (__main__.TestAction) ... ok
+test_execution_keeps_selected_tool_when_caller_changes_registry_after_call_event (__main__.TestAction) ... ok
+test_executor_rejects_unknown_duplicate_and_non_dict_arguments (__main__.TestAction) ... ok
+test_invalid_thought_and_duplicate_tools_do_not_call_model (__main__.TestAction) ... ok
+test_native_call_executes_selected_tool_and_correlates_messages (__main__.TestAction) ... ok
+test_network_failure_and_cloud_configuration_do_not_execute (__main__.TestAction) ... ok
+test_no_argument_and_optional_default_tools_execute (__main__.TestAction) ... ok
+test_only_selected_tool_is_exposed_even_when_other_tools_are_available (__main__.TestAction) ... ok
+test_partial_response_service_errors_and_malformed_json_do_not_execute (__main__.TestAction) ... ok
+test_required_type_and_extra_argument_errors_are_tool_results_without_side_effects (__main__.TestAction) ... ok
+test_structured_results_and_mutating_tools_preserve_original_parameters (__main__.TestAction) ... ok
+test_tool_exception_is_preserved_and_not_retried (__main__.TestAction) ... ok
+test_all_stages_preserve_actual_tool_description_and_parameter_constraints (__main__.TestAgentSystemPrompt) ... ok
+test_empty_registry_constrains_model_plan_to_answer (__main__.TestAgentSystemPrompt) ... ok
+test_empty_registry_is_explicit_and_does_not_add_planned_production_tools (__main__.TestAgentSystemPrompt) ... ok
+test_unknown_stage_is_rejected_without_model_or_tool_execution (__main__.TestAgentSystemPrompt) ... ok
+test_user_documents_observations_and_thought_cannot_replace_system_rules (__main__.TestAgentSystemPrompt) ... ok
+test_comparison_balances_budget_and_reports_truncated_evidence (__main__.TestComparisonAndKeywords) ... <frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+ERROR
+test_comparison_deduplicates_chunks_without_mutating_source (__main__.TestComparisonAndKeywords) ... ERROR
+test_comparison_filters_each_paper_and_covers_three_dimensions (__main__.TestComparisonAndKeywords) ... ERROR
+test_comparison_low_relevance_cannot_generate_or_auto_confirm (__main__.TestComparisonAndKeywords) ... ERROR
+test_comparison_missing_one_paper_citation_is_warned (__main__.TestComparisonAndKeywords) ... ERROR
+test_comparison_network_failure_is_a_real_error_without_retry (__main__.TestComparisonAndKeywords) ... FAIL
+test_comparison_same_missing_or_invalid_id_fails_before_retrieval (__main__.TestComparisonAndKeywords) ... ok
+test_comparison_unindexed_paper_has_no_model_fallback (__main__.TestComparisonAndKeywords) ... ERROR
+test_insufficient_comparison_cannot_be_marked_complete (__main__.TestComparisonAndKeywords) ... ok
+test_keyword_cross_line_phrase_has_real_line_evidence (__main__.TestComparisonAndKeywords) ... ok
+test_keyword_deduplication_empty_result_and_unknown_usage (__main__.TestComparisonAndKeywords) ... ok
+test_keyword_document_uses_uploaded_original_and_locations (__main__.TestComparisonAndKeywords) ... ok
+test_keyword_invalid_expanded_or_embedded_terms_are_rejected (__main__.TestComparisonAndKeywords) ... ok
+test_keyword_question_preserves_bilingual_terms_and_evidence (__main__.TestComparisonAndKeywords) ... ok
+test_keyword_rejects_ambiguous_empty_and_invalid_input_before_model (__main__.TestComparisonAndKeywords) ... ok
+test_keyword_truncation_does_not_accept_terms_outside_input (__main__.TestComparisonAndKeywords) ... ok
+test_keyword_unfinished_malformed_and_network_response_fails (__main__.TestComparisonAndKeywords) ... ok
+test_new_tools_have_real_registered_parameter_schemas (__main__.TestComparisonAndKeywords) ... ok
+test_closing_loop_and_mutating_events_do_not_execute_or_change_state (__main__.TestObservationAndLoop) ... ok
+test_continue_stops_at_limit_without_extra_model_or_tool_calls (__main__.TestObservationAndLoop) ... ok
+test_direct_answer_finishes_without_tool_calling_request (__main__.TestObservationAndLoop) ... ok
+test_failed_tool_cannot_be_marked_successful (__main__.TestObservationAndLoop) ... ok
+test_invalid_limits_and_context_stop_before_model_calls (__main__.TestObservationAndLoop) ... ok
+test_missing_information_can_finish_without_claiming_completion (__main__.TestObservationAndLoop) ... ok
+test_model_errors_stop_in_each_stage_and_preserve_actual_results (__main__.TestObservationAndLoop) ... ok
+test_observation_rejects_inconsistent_decisions (__main__.TestObservationAndLoop) ... ok
+test_observation_rejects_partial_malformed_and_service_responses (__main__.TestObservationAndLoop) ... ok
+test_observation_unknown_usage_and_boundary_description (__main__.TestObservationAndLoop) ... ok
+test_observation_validates_state_before_call_and_never_uses_cloud (__main__.TestObservationAndLoop) ... ok
+test_tool_error_can_continue_to_a_real_alternative (__main__.TestObservationAndLoop) ... ok
+test_tool_failure_is_observed_and_stops_honestly (__main__.TestObservationAndLoop) ... ok
+test_two_real_tools_feed_next_round_and_native_observation_messages (__main__.TestObservationAndLoop) ... ok
+test_default_agent_can_execute_registered_rag_and_preserve_citations (__main__.TestResearchTools) ... ok
+test_generation_failure_is_real_tool_error_without_retry (__main__.TestResearchTools) ... ok
+test_metadata_character_budget_preserves_contiguous_prefix (__main__.TestResearchTools) ... ok
+test_metadata_hallucinated_author_year_or_doi_is_rejected (__main__.TestResearchTools) ... ok
+test_metadata_missing_fields_are_null_not_guessed_from_filename (__main__.TestResearchTools) ... ok
+test_metadata_rejects_invalid_types_ranges_and_extra_fields (__main__.TestResearchTools) ... ok
+test_metadata_returns_original_fields_and_real_evidence (__main__.TestResearchTools) ... ok
+test_metadata_reuses_pdf_and_word_loaders_with_real_locations (__main__.TestResearchTools) ... ok
+test_metadata_unfinished_or_malformed_model_results_do_not_return_partial_fields (__main__.TestResearchTools) ... ok
+test_metadata_unknown_usage_stays_unknown_and_cloud_is_rejected (__main__.TestResearchTools) ... ok
+test_rag_empty_library_preserves_explicit_fallback_notice (__main__.TestResearchTools) ... ok
+test_rag_filters_by_existing_uploaded_fingerprint (__main__.TestResearchTools) ... ok
+test_rag_logging_failure_warns_without_discarding_actual_answer (__main__.TestResearchTools) ... ok
+test_rag_low_relevance_returns_candidates_without_generation (__main__.TestResearchTools) ... ok
+test_rag_tool_keeps_sources_without_repeating_large_pdf_layout (__main__.TestResearchTools) ... ok
+test_rag_tool_logs_success_confirmation_and_model_error_with_real_usage (__main__.TestResearchTools) ... ok
+test_rag_uses_hybrid_rerank_and_real_module_two_citations (__main__.TestResearchTools) ... ok
+test_rag_validates_question_and_uploaded_document_before_retrieval (__main__.TestResearchTools) ... ok
+test_registry_contains_real_tools_with_schemas (__main__.TestResearchTools) ... ok
+test_unconfirmed_rag_candidates_cannot_be_marked_complete (__main__.TestResearchTools) ... ok
+test_unknown_fingerprint_stale_file_and_outside_symlink_never_call_model (__main__.TestResearchTools) ... ok
+test_cloud_and_invalid_addresses_are_rejected_before_network (__main__.TestThought) ... ok
+test_direct_answer_plan_with_no_tools_does_not_generate_answer (__main__.TestThought) ... ok
+test_dynamic_instructions_do_not_change_system_message (__main__.TestThought) ... ok
+test_input_errors_do_not_call_model (__main__.TestThought) ... ok
+test_invalid_json_and_content_shape_are_explicit_errors (__main__.TestThought) ... ok
+test_invalid_plan_fields_and_tool_decisions_are_rejected (__main__.TestThought) ... ok
+test_local_model_failure_is_not_retried (__main__.TestThought) ... ok
+test_message_roles_tools_schema_and_current_state_are_preserved (__main__.TestThought) ... ok
+test_no_tools_cannot_select_tool_and_boundary_length_is_valid (__main__.TestThought) ... ok
+test_plan_only_selects_registered_tool_and_uses_llm_config (__main__.TestThought) ... ok
+test_unfinished_length_stops_service_errors_and_bad_shapes_are_rejected (__main__.TestThought) ... ok
+test_unknown_usage_is_not_estimated (__main__.TestThought) ... ok
+
+======================================================================
+ERROR: test_comparison_balances_budget_and_reports_truncated_evidence (__main__.TestComparisonAndKeywords)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 1011, in test_comparison_balances_budget_and_reports_truncated_evidence
+    result, _, http = self.compare()
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 948, in compare
+    result = paper_compare.invoke(dict(zip(("paper_a_id", "paper_b_id"), self.ids)))
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/base.py", line 484, in invoke
+    return self.run(tool_input, **kwargs)
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/base.py", line 725, in run
+    raise error_to_raise
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/base.py", line 693, in run
+    response = context.run(self._run, *tool_args, **tool_kwargs)
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/structured.py", line 80, in _run
+    return self.func(*args, **kwargs)
+  File "/Users/rean/github/RAG+Agent/src/agent/tools.py", line 309, in paper_compare
+    key = document.metadata["chunk_id"]
+KeyError: 'chunk_id'
+
+======================================================================
+ERROR: test_comparison_deduplicates_chunks_without_mutating_source (__main__.TestComparisonAndKeywords)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 981, in test_comparison_deduplicates_chunks_without_mutating_source
+    result, _, _ = self.compare()
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 948, in compare
+    result = paper_compare.invoke(dict(zip(("paper_a_id", "paper_b_id"), self.ids)))
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/base.py", line 484, in invoke
+    return self.run(tool_input, **kwargs)
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/base.py", line 725, in run
+    raise error_to_raise
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/base.py", line 693, in run
+    response = context.run(self._run, *tool_args, **tool_kwargs)
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/structured.py", line 80, in _run
+    return self.func(*args, **kwargs)
+  File "/Users/rean/github/RAG+Agent/src/agent/tools.py", line 309, in paper_compare
+    key = document.metadata["chunk_id"]
+KeyError: 'chunk_id'
+
+======================================================================
+ERROR: test_comparison_filters_each_paper_and_covers_three_dimensions (__main__.TestComparisonAndKeywords)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 964, in test_comparison_filters_each_paper_and_covers_three_dimensions
+    result, retriever, http = self.compare()
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 948, in compare
+    result = paper_compare.invoke(dict(zip(("paper_a_id", "paper_b_id"), self.ids)))
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/base.py", line 484, in invoke
+    return self.run(tool_input, **kwargs)
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/base.py", line 725, in run
+    raise error_to_raise
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/base.py", line 693, in run
+    response = context.run(self._run, *tool_args, **tool_kwargs)
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/structured.py", line 80, in _run
+    return self.func(*args, **kwargs)
+  File "/Users/rean/github/RAG+Agent/src/agent/tools.py", line 309, in paper_compare
+    key = document.metadata["chunk_id"]
+KeyError: 'chunk_id'
+
+======================================================================
+ERROR: test_comparison_low_relevance_cannot_generate_or_auto_confirm (__main__.TestComparisonAndKeywords)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 987, in test_comparison_low_relevance_cannot_generate_or_auto_confirm
+    result, _, http = self.compare((0.9, 0.01))
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 948, in compare
+    result = paper_compare.invoke(dict(zip(("paper_a_id", "paper_b_id"), self.ids)))
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/base.py", line 484, in invoke
+    return self.run(tool_input, **kwargs)
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/base.py", line 725, in run
+    raise error_to_raise
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/base.py", line 693, in run
+    response = context.run(self._run, *tool_args, **tool_kwargs)
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/structured.py", line 80, in _run
+    return self.func(*args, **kwargs)
+  File "/Users/rean/github/RAG+Agent/src/agent/tools.py", line 309, in paper_compare
+    key = document.metadata["chunk_id"]
+KeyError: 'chunk_id'
+
+======================================================================
+ERROR: test_comparison_missing_one_paper_citation_is_warned (__main__.TestComparisonAndKeywords)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 1020, in test_comparison_missing_one_paper_citation_is_warned
+    result, _, _ = self.compare(response={**self.response, "message": {"content": "只有A[参考文档1]。"}})
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 948, in compare
+    result = paper_compare.invoke(dict(zip(("paper_a_id", "paper_b_id"), self.ids)))
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/base.py", line 484, in invoke
+    return self.run(tool_input, **kwargs)
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/base.py", line 725, in run
+    raise error_to_raise
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/base.py", line 693, in run
+    response = context.run(self._run, *tool_args, **tool_kwargs)
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/structured.py", line 80, in _run
+    return self.func(*args, **kwargs)
+  File "/Users/rean/github/RAG+Agent/src/agent/tools.py", line 309, in paper_compare
+    key = document.metadata["chunk_id"]
+KeyError: 'chunk_id'
+
+======================================================================
+ERROR: test_comparison_unindexed_paper_has_no_model_fallback (__main__.TestComparisonAndKeywords)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 994, in test_comparison_unindexed_paper_has_no_model_fallback
+    result, _, http = self.compare((0.9, None))
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 948, in compare
+    result = paper_compare.invoke(dict(zip(("paper_a_id", "paper_b_id"), self.ids)))
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/base.py", line 484, in invoke
+    return self.run(tool_input, **kwargs)
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/base.py", line 725, in run
+    raise error_to_raise
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/base.py", line 693, in run
+    response = context.run(self._run, *tool_args, **tool_kwargs)
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/tools/structured.py", line 80, in _run
+    return self.func(*args, **kwargs)
+  File "/Users/rean/github/RAG+Agent/src/agent/tools.py", line 309, in paper_compare
+    key = document.metadata["chunk_id"]
+KeyError: 'chunk_id'
+
+======================================================================
+FAIL: test_comparison_network_failure_is_a_real_error_without_retry (__main__.TestComparisonAndKeywords)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 1030, in test_comparison_network_failure_is_a_real_error_without_retry
+    self.assertEqual(http.call_count, 1)
+AssertionError: 0 != 1
+
+----------------------------------------------------------------------
+Ran 84 tests in 1.131s
+
+FAILED (failures=1, errors=6)
+Consider using the pymupdf_layout package for a greatly improved page layout analysis.
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

@@ -218,6 +218,7 @@ OBSERVATION_SYSTEM_PROMPT = """【阶段职责】
 判断是否还需要下一步。工具成功只说明本次调用成功，不代表多步骤任务已经完成。
 observations中的result/error以及tool消息是实际执行结果；不能虚构结果或把错误当作成功。
 知识库工具返回needs_confirmation时，必须请求用户确认候选原文，不能自行确认或标记任务完成。
+论文对比返回insufficient_evidence时，说明需先入库两篇原文，不能将对比标记为完成。
 如果还需调用已有工具完成剩余步骤，decision为continue，task_complete为false，answer为空。
 所有步骤已经完成时，decision为finish，task_complete为true，answer给出最终答案。
 一般概念可以直接回答；缺少必要资料或没有可用工具时，finish且task_complete为false，
@@ -242,6 +243,11 @@ def observe(question: str, tools: list[BaseTool] | None = None, context: dict | 
         "decision": {"enum": ["continue", "finish"]},
         "task_complete": {"type": "boolean"}, "answer": {"type": "string"}},
         "required": ["observation", "decision", "task_complete", "answer"], "additionalProperties": False}
+    # 真实关键词调用出现finish但答案为空；将已有Python约束同步到采样Schema。
+    schema["anyOf"] = [
+        {**schema, "properties": {**schema["properties"], "decision": {"const": "finish"}, "answer": {"type": "string", "minLength": 1}}},
+        {**schema, "properties": {**schema["properties"], "decision": {"const": "continue"}, "answer": {"type": "string", "maxLength": 0}, "task_complete": {"const": False}}},
+    ]
     request = _model_request(prompt, format=schema)
     started = perf_counter()
     try:
@@ -269,8 +275,8 @@ def observe(question: str, tools: list[BaseTool] | None = None, context: dict | 
             raise ValueError("结束时必须提供答案或无法完成的说明")
         if observations and observations[-1].get("status") == "error" and decision["task_complete"]:
             raise ValueError("最后一次工具调用失败，不能将原任务标记为成功")
-        if observations and isinstance(observations[-1].get("result"), dict) and observations[-1]["result"].get("status") == "needs_confirmation" and decision["task_complete"]:
-            raise ValueError("知识库候选尚待用户确认，不能将原任务标记为成功")
+        if observations and isinstance(observations[-1].get("result"), dict) and observations[-1]["result"].get("status") in {"needs_confirmation", "insufficient_evidence"} and decision["task_complete"]:
+            raise ValueError("工具资料不足或候选尚待用户确认，不能将原任务标记为成功")
         return {"type": "observation", **decision, "model": result["model"],
                 "usage": {key: result.get(key) for key in ("prompt_eval_count", "eval_count")},
                 "elapsed_seconds": perf_counter() - started}

@@ -1,0 +1,44 @@
+第 8 页三线表列边界不明确，保留原始正文与页码。
+Consider using the pymupdf_layout package for a greatly improved page layout analysis.
+入库 {'completed': 1, 'total': 2}
+入库 {'completed': 1, 'total': 2}
+入库 {'completed': 1, 'total': 2}
+入库 {'completed': 1, 'total': 2}
+入库 {'completed': 1, 'total': 2}
+入库 {'completed': 1, 'total': 2}
+入库 {'completed': 2, 'total': 2}
+comparison False ## 回答
+### 方法
+**论文A（attention.pdf）**：该论文提出了一种基于注意力机制的Transformer模型，完全摒弃了循环和卷积结构。实验主要集中在机器翻译任务上，使用了WMT 2014英法语数据集，该数据集包含约3600万个句子对。训练过程中，使用了字节对编码（BPE）进行编码，生成了一个约37000个共享词汇的源-目标词汇表。训练时，每隔10分钟保存一次检查点，最终使用了最后20个检查点的平均值。在推理时，使用了4倍的束搜索（beam size）和长度惩罚因子α=0.6。[参考文档1,5,7,12]
+
+**论文B（vit.pdf）**：该论文介绍了Vision Transformer（ViT）模型，该模型在逐步增大的数据集上进行预训练，包括ImageNet、ImageNet-21k和JFT-300M。为了提升小数据集上的性能，优化了权重衰减、dropout和标签平滑三个基本正则化参数。实验中，ViT-Large模型在ImageNet上的表现不如ViT-Base模型。[参考文档2,8,13]
+
+### 数据集
+**论文A（attention.pdf）**：主要使用了WMT 2014英法语数据集，包含约3600万个句子对。[参考文档5：attention.pdf；第7页（物理页码）]
+
+**论文B（vit.pdf）**：在逐步增大的数据集上进行预训练，包括ImageNet、ImageNet-21k和JFT-300M。[参考文档2,8,13]
+
+### 实验结果
+**论文A（attention.pdf）**：在机器翻译任务上，模型在WMT 2014英法语数据集上的BLEU分数为28.4。[参考文档12：attention.pdf；第1页（物理页码）]
+
+**论文B（vit.pdf）**：在多个图像识别基准测试上，Vision Transformer（ViT）模型取得了优异的结果，与最先进的卷积网络相比，性能更优。[参考文档8,13]
+
+资料不足：当前知识库中未找到相关文档，无法直接比较两篇论文在不同任务上的具体实验结果和指标。
+
+## 参考来源
+- [参考文档5] attention.pdf；第7页（物理页码）
+- [参考文档12] attention.pdf；第1页（物理页码） 
+question_keywords True ['Transformer', 'ViT', '机器翻译', '图像分类', '数据集'] 
+第 8 页三线表列边界不明确，保留原始正文与页码。
+document_keywords True ['Transformer', 'attention mechanism', 'machine translation', 'sequence modeling', 'parallelization'] 
+Agent thought 
+Agent tool_call 
+Agent tool_result 
+Agent observation 
+Agent done task_complete
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/reports/verify_comparison_keywords.py", line 95, in <module>
+    main()
+  File "/Users/rean/github/RAG+Agent/reports/verify_comparison_keywords.py", line 91, in main
+    assert all(row["passed"] for row in report["rows"]), "存在实测失败，保留原始结果供分析"
+AssertionError: 存在实测失败，保留原始结果供分析

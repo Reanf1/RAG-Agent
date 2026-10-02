@@ -1,0 +1,38 @@
+第 8 页三线表列边界不明确，保留原始正文与页码。
+Consider using the pymupdf_layout package for a greatly improved page layout analysis.
+入库 {'completed': 1, 'total': 2}
+入库 {'completed': 1, 'total': 2}
+入库 {'completed': 1, 'total': 2}
+入库 {'completed': 1, 'total': 2}
+入库 {'completed': 1, 'total': 2}
+入库 {'completed': 1, 'total': 2}
+入库 {'completed': 2, 'total': 2}
+comparison False ## 回答
+以下按三个维度并列展示两篇论文的原文证据，不改写实验数字或条件。
+| 维度 | 论文A | 论文B |
+| --- | --- | --- |
+| 方法 | 资料不足 | 原文摘录：\{adosovitskiy, neilhoulsby\}@google.com arXiv:2010.11929v2 \[cs.CV\] 3 Jun 2021 ABSTRACT While the Transformer architecture has become the de-facto standard for natural language processing tasks, its applications to computer vision remain limited. In vision, attention is either applied in conjunction with convolutional networks, or used to replace certain components of convolutional networks while keeping their overall structure in place. We show that this reliance on CNNs is not necessary [参考文档10：vit.pdf；第1页（物理页码）] |
+| 数据集 | 资料不足 | 原文摘录：303M high-resolution images. We de-duplicate the pre-training datasets w.r.t. the test sets of the downstream tasks following Kolesnikov et al. \(2020\). We transfer the models trained on these dataset to several benchmark tasks: ImageNet on the original validation labels and the cleaned-up ReaL labels \(Beyer et al., 2020\), CIFAR-10/100 \(Krizhevsky, 2009\), Oxford-IIIT Pets \(Parkhi et al., 2012\), and Oxford Flowers-102 \(Nilsback & Zisserman, 2008\). For these datasets, pre-processing [参考文档8：vit.pdf；第4页（物理页码）] |
+| 实验结果 | 原文摘录：were written at 10-minute intervals. For the big models, we averaged the last 20 checkpoints. We used beam search with a beam size of 4 and length penalty α = 0.6 \[38\]. These hyperparameters were chosen after experimentation on the development set. We set the maximum output length during inference to input length + 50, but terminate early when possible \[38\]. Table 2 summarizes our results and compares our translation quality and training costs to other model [参考文档1：attention.pdf；第8页（物理页码）] | 原文摘录：Fine-tuning accuracies capture the performance of each model after ﬁne-tuning it on the respective dataset. Few-shot accuracies are obtained by solving a regularized least-squares regression problem that maps the \(frozen\) representation of a subset of training images to \{−1, 1\}^\{K\} target vectors. This formulation allows us to recover the exact solution in closed form. Though we mainly focus on ﬁne-tuning performance, we sometimes use linear few-shot accuracies for fast on-the-ﬂy evaluation [参考文档6：vit.pdf；第5页（物理页码）] |
+
+不同任务、数据集和实验条件的指标不可直接比较优劣；证据选择的语义适用性仍需对照原文核验。
+
+## 参考来源
+- [参考文档10] vit.pdf；第1页（物理页码）
+- [参考文档8] vit.pdf；第4页（物理页码）
+- [参考文档1] attention.pdf；第8页（物理页码）
+- [参考文档6] vit.pdf；第5页（物理页码） 
+question_keywords True ['Transformer', 'ViT', '机器翻译', '图像分类', '数据集'] 
+第 8 页三线表列边界不明确，保留原始正文与页码。
+document_keywords True ['Transformer', 'attention mechanism', 'machine translation', 'sequence modeling', 'parallelization'] 
+Agent thought 
+Agent tool_call 
+Agent tool_result 
+Agent observation 
+Agent done task_complete
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/reports/verify_comparison_keywords.py", line 95, in <module>
+    main()
+  File "/Users/rean/github/RAG+Agent/reports/verify_comparison_keywords.py", line 91, in main
+    assert all(row["passed"] for row in report["rows"]), "存在实测失败，保留原始结果供分析"
+AssertionError: 存在实测失败，保留原始结果供分析

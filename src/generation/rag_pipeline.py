@@ -150,7 +150,7 @@ def _finish_generation(result: dict, context: dict, sampling: dict) -> dict:
                        "prompt_eval_duration", "eval_duration")}}
 
 
-def build_context(question: str, results: list[tuple[Document, float]]) -> dict:
+def build_context(question: str, results: list[tuple[Document, float]], *, max_context_chars: int | None = None) -> dict:
     """把同一检索方式的 Document/分数列表组织为参考项目风格的 Context。
 
     分数越高越相关，同分保持输入顺序；只读原 Document。不调用检索或模型。
@@ -167,6 +167,11 @@ def build_context(question: str, results: list[tuple[Document, float]]) -> dict:
         raise ValueError("用户问题与系统规范超过 Prompt 字符预算，请缩短问题或调整预算")
     fixed_chars = empty_prompt_chars - len(NO_CONTEXT_TEXT)
     budget = min(config["max_context_chars"], config["max_prompt_chars"] - fixed_chars)
+    # 论文对比为两篇原文各分配一半预算；普通RAG仍沿用原来的配置。
+    if max_context_chars is not None:
+        if type(max_context_chars) is not int or max_context_chars <= 0:
+            raise ValueError("本次上下文字符预算必须为正整数")
+        budget = min(budget, max_context_chars)
 
     # 空白正文不作为依据；负分仍可排序，不设置未经评测的相关性阈值。
     candidates = [(document, score) for document, score in results if document.page_content.strip()]

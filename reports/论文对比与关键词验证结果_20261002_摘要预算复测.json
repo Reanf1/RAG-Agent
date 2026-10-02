@@ -1,0 +1,552 @@
+{
+  "started_at": "2026-10-02T18:31:40.549215+08:00",
+  "validation_complete": true,
+  "rows": [
+    {
+      "name": "comparison",
+      "event": {
+        "type": "tool_result",
+        "call_id": "de937ff4c96b4549b3373f3cb4ccdb65",
+        "name": "paper_compare",
+        "args": {
+          "paper_a_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+          "paper_b_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6"
+        },
+        "status": "error",
+        "result": null,
+        "error": "ValueError: too many values to unpack (expected 2)",
+        "elapsed_seconds": 5.305271916997299,
+        "message": {
+          "content": "ValueError: too many values to unpack (expected 2)",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "tool",
+          "name": "paper_compare",
+          "id": null,
+          "tool_call_id": "de937ff4c96b4549b3373f3cb4ccdb65",
+          "artifact": null,
+          "status": "error"
+        }
+      },
+      "passed": false
+    },
+    {
+      "name": "question_keywords",
+      "event": {
+        "type": "tool_result",
+        "call_id": "9c926bf75d764c6abdde13c0b91c73f2",
+        "name": "keyword_extract",
+        "args": {
+          "text": "比较Transformer与ViT在机器翻译和图像分类任务上的数据集和准确率。"
+        },
+        "status": "success",
+        "result": {
+          "keywords": [
+            "Transformer",
+            "ViT",
+            "机器翻译",
+            "图像分类",
+            "数据集"
+          ],
+          "evidence": [
+            {
+              "keyword": "Transformer",
+              "locations": [
+                {
+                  "text": "比较Transformer与ViT在机器翻译和图像分类任务上的数据集和准确率。",
+                  "location": "问题第1行",
+                  "source_file": null
+                }
+              ]
+            },
+            {
+              "keyword": "ViT",
+              "locations": [
+                {
+                  "text": "比较Transformer与ViT在机器翻译和图像分类任务上的数据集和准确率。",
+                  "location": "问题第1行",
+                  "source_file": null
+                }
+              ]
+            },
+            {
+              "keyword": "机器翻译",
+              "locations": [
+                {
+                  "text": "比较Transformer与ViT在机器翻译和图像分类任务上的数据集和准确率。",
+                  "location": "问题第1行",
+                  "source_file": null
+                }
+              ]
+            },
+            {
+              "keyword": "图像分类",
+              "locations": [
+                {
+                  "text": "比较Transformer与ViT在机器翻译和图像分类任务上的数据集和准确率。",
+                  "location": "问题第1行",
+                  "source_file": null
+                }
+              ]
+            },
+            {
+              "keyword": "数据集",
+              "locations": [
+                {
+                  "text": "比较Transformer与ViT在机器翻译和图像分类任务上的数据集和准确率。",
+                  "location": "问题第1行",
+                  "source_file": null
+                }
+              ]
+            }
+          ],
+          "doc_id": null,
+          "source_file": null,
+          "input_truncated": false,
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 104,
+            "eval_count": 26
+          },
+          "elapsed_seconds": 1.4513398750023043
+        },
+        "error": "",
+        "elapsed_seconds": 1.4530946670020057,
+        "message": {
+          "content": "{'keywords': ['Transformer', 'ViT', '机器翻译', '图像分类', '数据集'], 'evidence': [{'keyword': 'Transformer', 'locations': [{'text': '比较Transformer与ViT在机器翻译和图像分类任务上的数据集和准确率。', 'location': '问题第1行', 'source_file': None}]}, {'keyword': 'ViT', 'locations': [{'text': '比较Transformer与ViT在机器翻译和图像分类任务上的数据集和准确率。', 'location': '问题第1行', 'source_file': None}]}, {'keyword': '机器翻译', 'locations': [{'text': '比较Transformer与ViT在机器翻译和图像分类任务上的数据集和准确率。', 'location': '问题第1行', 'source_file': None}]}, {'keyword': '图像分类', 'locations': [{'text': '比较Transformer与ViT在机器翻译和图像分类任务上的数据集和准确率。', 'location': '问题第1行', 'source_file': None}]}, {'keyword': '数据集', 'locations': [{'text': '比较Transformer与ViT在机器翻译和图像分类任务上的数据集和准确率。', 'location': '问题第1行', 'source_file': None}]}], 'doc_id': None, 'source_file': None, 'input_truncated': False, 'model': 'qwen2.5:7b', 'usage': {'prompt_eval_count': 104, 'eval_count': 26}, 'elapsed_seconds': 1.4513398750023043}",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "tool",
+          "name": "keyword_extract",
+          "id": null,
+          "tool_call_id": "9c926bf75d764c6abdde13c0b91c73f2",
+          "artifact": null,
+          "status": "success"
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "document_keywords",
+      "event": {
+        "type": "tool_result",
+        "call_id": "15d73aad8afa44c494e0a4dedb127cd3",
+        "name": "keyword_extract",
+        "args": {
+          "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"
+        },
+        "status": "success",
+        "result": {
+          "keywords": [
+            "Transformer",
+            "attention mechanism",
+            "machine translation",
+            "sequence modeling",
+            "parallelization"
+          ],
+          "evidence": [
+            {
+              "keyword": "Transformer",
+              "locations": [
+                {
+                  "id": 33,
+                  "text": "mechanism. We propose a new simple network architecture, the Transformer,",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ]
+            },
+            {
+              "keyword": "attention mechanism",
+              "locations": [
+                {
+                  "id": 32,
+                  "text": "performing models also connect the encoder and decoder through an attention",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 33,
+                  "text": "mechanism. We propose a new simple network architecture, the Transformer,",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ]
+            },
+            {
+              "keyword": "machine translation",
+              "locations": [
+                {
+                  "id": 35,
+                  "text": "entirely. Experiments on two machine translation tasks show these models to",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ]
+            },
+            {
+              "keyword": "sequence modeling",
+              "locations": [
+                {
+                  "id": 60,
+                  "text": "in particular, have been firmly established as state of the art approaches in sequence modeling and",
+                  "source_file": "attention.pdf",
+                  "location": "第2页（物理页码）"
+                }
+              ]
+            },
+            {
+              "keyword": "parallelization",
+              "locations": [
+                {
+                  "id": 67,
+                  "text": "sequential nature precludes parallelization within training examples, which becomes critical at longer",
+                  "source_file": "attention.pdf",
+                  "location": "第2页（物理页码）"
+                }
+              ]
+            }
+          ],
+          "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+          "source_file": "attention.pdf",
+          "input_truncated": true,
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1398,
+            "eval_count": 26
+          },
+          "elapsed_seconds": 2.1679058330009866
+        },
+        "error": "",
+        "elapsed_seconds": 2.1699393339986273,
+        "message": {
+          "content": "{'keywords': ['Transformer', 'attention mechanism', 'machine translation', 'sequence modeling', 'parallelization'], 'evidence': [{'keyword': 'Transformer', 'locations': [{'id': 33, 'text': 'mechanism. We propose a new simple network architecture, the Transformer,', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}]}, {'keyword': 'attention mechanism', 'locations': [{'id': 32, 'text': 'performing models also connect the encoder and decoder through an attention', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 33, 'text': 'mechanism. We propose a new simple network architecture, the Transformer,', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}]}, {'keyword': 'machine translation', 'locations': [{'id': 35, 'text': 'entirely. Experiments on two machine translation tasks show these models to', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}]}, {'keyword': 'sequence modeling', 'locations': [{'id': 60, 'text': 'in particular, have been firmly established as state of the art approaches in sequence modeling and', 'source_file': 'attention.pdf', 'location': '第2页（物理页码）'}]}, {'keyword': 'parallelization', 'locations': [{'id': 67, 'text': 'sequential nature precludes parallelization within training examples, which becomes critical at longer', 'source_file': 'attention.pdf', 'location': '第2页（物理页码）'}]}], 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'source_file': 'attention.pdf', 'input_truncated': True, 'model': 'qwen2.5:7b', 'usage': {'prompt_eval_count': 1398, 'eval_count': 26}, 'elapsed_seconds': 2.1679058330009866}",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "tool",
+          "name": "keyword_extract",
+          "id": null,
+          "tool_call_id": "15d73aad8afa44c494e0a4dedb127cd3",
+          "artifact": null,
+          "status": "success"
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "agent_keywords",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "提取给定句子中的关键词。",
+          "next_step": "tool",
+          "tool_name": "keyword_extract",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1108,
+            "eval_count": 32
+          },
+          "elapsed_seconds": 2.88948149999851,
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "call_id": "1036f895a80c4b3fb2890e34ac01623f",
+          "name": "keyword_extract",
+          "args": {
+            "text": "Transformer用于机器翻译，ViT用于图像分类。"
+          },
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 1.5556765420005831,
+          "usage": {
+            "prompt_eval_count": 850,
+            "eval_count": 30
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "keyword_extract",
+                "args": {
+                  "text": "Transformer用于机器翻译，ViT用于图像分类。"
+                },
+                "id": "1036f895a80c4b3fb2890e34ac01623f",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "call_id": "1036f895a80c4b3fb2890e34ac01623f",
+          "name": "keyword_extract",
+          "args": {
+            "text": "Transformer用于机器翻译，ViT用于图像分类。"
+          },
+          "status": "success",
+          "result": {
+            "keywords": [
+              "Transformer",
+              "机器翻译",
+              "ViT",
+              "图像分类"
+            ],
+            "evidence": [
+              {
+                "keyword": "Transformer",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "机器翻译",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "ViT",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "图像分类",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              }
+            ],
+            "doc_id": null,
+            "source_file": null,
+            "input_truncated": false,
+            "model": "qwen2.5:7b",
+            "usage": {
+              "prompt_eval_count": 96,
+              "eval_count": 19
+            },
+            "elapsed_seconds": 1.0488046669997857
+          },
+          "error": "",
+          "elapsed_seconds": 1.050116499998694,
+          "message": {
+            "content": "{'keywords': ['Transformer', '机器翻译', 'ViT', '图像分类'], 'evidence': [{'keyword': 'Transformer', 'locations': [{'text': 'Transformer用于机器翻译，ViT用于图像分类。', 'location': '问题第1行', 'source_file': None}]}, {'keyword': '机器翻译', 'locations': [{'text': 'Transformer用于机器翻译，ViT用于图像分类。', 'location': '问题第1行', 'source_file': None}]}, {'keyword': 'ViT', 'locations': [{'text': 'Transformer用于机器翻译，ViT用于图像分类。', 'location': '问题第1行', 'source_file': None}]}, {'keyword': '图像分类', 'locations': [{'text': 'Transformer用于机器翻译，ViT用于图像分类。', 'location': '问题第1行', 'source_file': None}]}], 'doc_id': None, 'source_file': None, 'input_truncated': False, 'model': 'qwen2.5:7b', 'usage': {'prompt_eval_count': 96, 'eval_count': 19}, 'elapsed_seconds': 1.0488046669997857}",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "keyword_extract",
+            "id": null,
+            "tool_call_id": "1036f895a80c4b3fb2890e34ac01623f",
+            "artifact": null,
+            "status": "success"
+          },
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "observation": "成功提取了关键词：Transformer、机器翻译、ViT、图像分类。",
+          "decision": "finish",
+          "task_complete": true,
+          "answer": "关键词为：Transformer、机器翻译、ViT、图像分类。",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1833,
+            "eval_count": 58
+          },
+          "elapsed_seconds": 7.576054500001192,
+          "iteration": 1
+        },
+        {
+          "type": "done",
+          "task_complete": true,
+          "stop_reason": "task_complete",
+          "full_response": "关键词为：Transformer、机器翻译、ViT、图像分类。",
+          "iterations": 1,
+          "context": {
+            "observations": [
+              {
+                "call_id": "1036f895a80c4b3fb2890e34ac01623f",
+                "name": "keyword_extract",
+                "args": {
+                  "text": "Transformer用于机器翻译，ViT用于图像分类。"
+                },
+                "status": "success",
+                "result": {
+                  "keywords": [
+                    "Transformer",
+                    "机器翻译",
+                    "ViT",
+                    "图像分类"
+                  ],
+                  "evidence": [
+                    {
+                      "keyword": "Transformer",
+                      "locations": [
+                        {
+                          "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                          "location": "问题第1行",
+                          "source_file": null
+                        }
+                      ]
+                    },
+                    {
+                      "keyword": "机器翻译",
+                      "locations": [
+                        {
+                          "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                          "location": "问题第1行",
+                          "source_file": null
+                        }
+                      ]
+                    },
+                    {
+                      "keyword": "ViT",
+                      "locations": [
+                        {
+                          "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                          "location": "问题第1行",
+                          "source_file": null
+                        }
+                      ]
+                    },
+                    {
+                      "keyword": "图像分类",
+                      "locations": [
+                        {
+                          "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                          "location": "问题第1行",
+                          "source_file": null
+                        }
+                      ]
+                    }
+                  ],
+                  "doc_id": null,
+                  "source_file": null,
+                  "input_truncated": false,
+                  "model": "qwen2.5:7b",
+                  "usage": {
+                    "prompt_eval_count": 96,
+                    "eval_count": 19
+                  },
+                  "elapsed_seconds": 1.0488046669997857
+                },
+                "error": "",
+                "elapsed_seconds": 1.050116499998694
+              }
+            ],
+            "last_observation": {
+              "observation": "成功提取了关键词：Transformer、机器翻译、ViT、图像分类。",
+              "decision": "finish",
+              "task_complete": true
+            }
+          }
+        }
+      ],
+      "passed": true
+    }
+  ],
+  "scope": "完整Attention/ViT PDF，真实上传/索引/检索/本地模型及默认Agent；只替换临时存储路径。",
+  "config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://localhost:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 8192,
+      "num_predict": 512,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 6000,
+      "max_prompt_chars": 12000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "online_search_enabled": false
+    },
+    "paths": {
+      "raw_documents": "/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-na37vfjv/raw",
+      "vector_index": "/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-na37vfjv/index",
+      "logs": "/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-compare-keywords-na37vfjv/logs"
+    }
+  },
+  "ingestion": [
+    {
+      "file": "attention.pdf",
+      "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+      "chunks": 94
+    },
+    {
+      "file": "vit.pdf",
+      "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+      "chunks": 167
+    }
+  ],
+  "finished_at": "2026-10-02T18:32:23.766305+08:00"
+}

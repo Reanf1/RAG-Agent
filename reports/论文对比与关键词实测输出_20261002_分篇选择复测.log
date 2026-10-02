@@ -1,0 +1,34 @@
+第 8 页三线表列边界不明确，保留原始正文与页码。
+Consider using the pymupdf_layout package for a greatly improved page layout analysis.
+入库 {'completed': 1, 'total': 2}
+入库 {'completed': 1, 'total': 2}
+入库 {'completed': 1, 'total': 2}
+入库 {'completed': 1, 'total': 2}
+入库 {'completed': 1, 'total': 2}
+入库 {'completed': 1, 'total': 2}
+入库 {'completed': 2, 'total': 2}
+comparison True ## 回答
+以下按三个维度并列展示两篇论文的原文证据，不改写实验数字或条件。
+| 维度 | 论文A | 论文B |
+| --- | --- | --- |
+| 方法 | 原文摘录：mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English- to-German translation task, improving over the existing best results, including [参考文档2：attention.pdf；第1页（物理页码）] | 原文摘录：\{adosovitskiy, neilhoulsby\}@google.com arXiv:2010.11929v2 \[cs.CV\] 3 Jun 2021 ABSTRACT While the Transformer architecture has become the de-facto standard for natural language processing tasks, its applications to computer vision remain limited. In vision, attention is either applied in conjunction with convolutional networks, or used to replace certain components of convolutional networks while keeping their overall structure in place. We show that this reliance on CNNs is not necessary [参考文档11：vit.pdf；第1页（物理页码）] |
+| 数据集 | 原文摘录：sentence pairs. Sentences were encoded using byte-pair encoding \[3\], which has a shared source- target vocabulary of about 37000 tokens. For English-French, we used the significantly larger WMT 2014 English-French dataset consisting of 36M sentences and split tokens into a 32000 word-piece vocabulary \[38\]. Sentence pairs were batched together by approximate sequence length. Each training batch contained a set of sentence pairs containing approximately 25000 source tokens and 25000 target tokens. 5.2 [参考文档4：attention.pdf；第7页（物理页码）] | 原文摘录：303M high-resolution images. We de-duplicate the pre-training datasets w.r.t. the test sets of the downstream tasks following Kolesnikov et al. \(2020\). We transfer the models trained on these dataset to several benchmark tasks: ImageNet on the original validation labels and the cleaned-up ReaL labels \(Beyer et al., 2020\), CIFAR-10/100 \(Krizhevsky, 2009\), Oxford-IIIT Pets \(Parkhi et al., 2012\), and Oxford Flowers-102 \(Nilsback & Zisserman, 2008\). For these datasets, pre-processing [参考文档7：vit.pdf；第4页（物理页码）] |
+| 实验结果 | 原文摘录：ensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.8 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the best models from the literature. We show that the Transformer generalizes well to other tasks by applying it successfully to English constituency parsing both with large and limited training data. [参考文档1：attention.pdf；第1页（物理页码）] | 原文摘录：99.45 99.68 Oxford-IIIT-Pets 95.80 93.40 97.11 95.83 97.56 Table 5: Top1 accuracy \(in %\) of Vision Transformer on various datasets when pre-trained on Im- ageNet, ImageNet-21k or JFT300M. These values correspond to Figure 3 in the main text. Models are ﬁne-tuned at 384 resolution. Note that the ImageNet results are computed without additional techniques \(Polyak averaging and 512 resolution images\) used to achieve results in Table 2. \[表格：原文第 15 页，数据见独立表格内容\] [参考文档8：vit.pdf；第15页（物理页码）] |
+
+不同任务、数据集和实验条件的指标不可直接比较优劣；证据选择的语义适用性仍需对照原文核验。
+
+## 参考来源
+- [参考文档2] attention.pdf；第1页（物理页码）
+- [参考文档11] vit.pdf；第1页（物理页码）
+- [参考文档4] attention.pdf；第7页（物理页码）
+- [参考文档7] vit.pdf；第4页（物理页码）
+- [参考文档1] attention.pdf；第1页（物理页码）
+- [参考文档8] vit.pdf；第15页（物理页码） 
+question_keywords True ['Transformer', 'ViT', '机器翻译', '图像分类', '数据集'] 
+第 8 页三线表列边界不明确，保留原始正文与页码。
+document_keywords True ['Transformer', 'attention mechanism', 'machine translation', 'sequence modeling', 'parallelization'] 
+Agent thought 
+Agent tool_call 
+Agent tool_result 
+Agent observation 
+Agent done task_complete
