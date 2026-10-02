@@ -1,0 +1,68 @@
+{
+  "checked_at": "2026-10-02T21:57:31.338603+08:00",
+  "python": "3.10.10",
+  "reference_commit": "6979d7173ed0f92910a8571dd4ca1b4a171a2c49",
+  "project_commit_before_check": "b57f72254dcb56e4d70d7a9bbd130fe35b05a6ed",
+  "versions": {
+    "langchain-core": "0.3.29",
+    "chromadb": "0.5.23",
+    "rank-bm25": "0.2.2",
+    "tokenizers": "0.20.3"
+  },
+  "automated": {
+    "passed": true,
+    "total": 499,
+    "seconds": 19.878,
+    "agent_total": 211,
+    "agent_classes": {
+      "TestAction": 14,
+      "TestAgentSystemPrompt": 5,
+      "TestComparisonAndKeywords": 23,
+      "TestConversationSummary": 18,
+      "TestErrorRecovery": 23,
+      "TestHistoryTokenWindow": 14,
+      "TestObservationAndLoop": 14,
+      "TestResearchTools": 21,
+      "TestRoutingAndParallel": 22,
+      "TestSessionIsolation": 22,
+      "TestSummaryTimeSearch": 23,
+      "TestThought": 12
+    },
+    "log": "reports/模块三完整性自动化复测_20261002.log"
+  },
+  "checks": {
+    "pip_check": "通过，无依赖冲突",
+    "compileall": "通过",
+    "diff_check": "通过"
+  },
+  "live": {
+    "checked": 15,
+    "passed": 15,
+    "validation_complete": true,
+    "all_checks_passed": true,
+    "report": "reports/模块三完整性联调复测_20261002.json"
+  },
+  "registered_local_tools": [
+    "knowledge_base_search",
+    "paper_metadata",
+    "paper_compare",
+    "keyword_extract",
+    "paper_summary",
+    "current_time"
+  ],
+  "missing_local_tools": [
+    "calculator",
+    "paper_list"
+  ],
+  "module_complete": false,
+  "acceptance": {
+    "M3-01": "通过",
+    "M3-02": "部分完成，正式本地工具6/8",
+    "M3-03": "已实现范围通过，计算器路由须工具补齐后实测",
+    "M3-04": "自动化通过；本轮注入超时重试通过，异常替代实测见历史QA",
+    "M3-05": "后端通过"
+  },
+  "optional_search": "保持默认禁用，只核验开关拒绝，不发出外网请求",
+  "verification_script_first_failure": "首轮错误读取进度failed字段；改为实际进度字典后重跑，首轮JSON/日志保留",
+  "scope": "仅测试、临时索引/会话联调与文档记录；未修改业务代码，未补齐缺失工具；不代表正式质量/性能评测"
+}
