@@ -70,7 +70,11 @@ agent:
   max_tool_retries: 1  # 只重试已结束的超时异常，不重试仍在运行的函数。
   max_repeated_calls: 2  # 同一请求中，相同工具和参数最多执行两轮。
   online_search_enabled: false
+memory:
+  max_history_tokens: 2000  # 仅限制送入Agent的历史窗口，SQLite原始记录保留。
+  tokenizer_path: data/models/qwen2.5-tokenizer/tokenizer.json
 paths:
   raw_documents: data/raw
   vector_index: data/index
   logs: logs
+  session_db: data/sessions/memory.sqlite3

@@ -1,9 +1,12 @@
 """模块三ReAct测试；HTTP隔离，工具函数实际执行。"""
 
+from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from io import BytesIO
 import json
+import sqlite3
+import subprocess
 from pathlib import Path
 import sys
 import tempfile
@@ -19,6 +22,7 @@ if __name__ == "__main__":
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
 from langchain_core.tools import tool
 
+from src.agent.memory import MemoryManager, count_history_tokens, run_session
 from src.agent.react_loop import act, build_agent_messages, build_thought_messages, observe, run_react, think
 from src.agent.tools import AVAILABLE_TOOLS, execute_tool, knowledge_base_search, paper_metadata, paper_compare, keyword_extract
 from src.agent.tools import current_time, get_available_tools, paper_summary, web_search
@@ -1976,6 +1980,406 @@ class TestErrorRecovery(unittest.TestCase):
                     self.assertFalse(events[-1]["task_complete"])
                     http.assert_not_called()
         self.assertEqual(self.invocations, [])
+
+
+class TestSessionIsolation(unittest.TestCase):
+    """真实临时SQLite隔离测试；模型HTTP按既有方式隔离，不替换存储和Agent循环。"""
+
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        self.path = Path(self.directory.name) / "sessions" / "memory.sqlite3"
+        self.memory = MemoryManager(self.path)
+        self.a1 = self.memory.create_session("alice")
+        self.a2 = self.memory.create_session("alice")
+        self.b1 = self.memory.create_session("bob")
+
+    def contents(self, user, session):
+        return [message.content for message in self.memory.get_messages(user, session)]
+
+    def packet(self, content):
+        return {"model": "qwen2.5:7b", "message": {"content": json.dumps(content, ensure_ascii=False)},
+                "done": True, "done_reason": "stop", "prompt_eval_count": 100, "eval_count": 20}
+
+    def packets(self, answer="回答", complete=True):
+        return [self.packet({"thought": "结合本会话已有历史回答。", "next_step": "answer", "tool_name": None}),
+                self.packet({"observation": "已有信息足够回答。", "decision": "finish",
+                             "task_complete": complete, "answer": answer})]
+
+    def run_turn(self, user, session, question="追问", answer="回答", complete=True):
+        with patch("src.agent.react_loop.urlopen", side_effect=[BytesIO(json.dumps(p).encode()) for p in self.packets(answer, complete)]) as http:
+            events = list(run_session(question, user, session, tools=[], memory=self.memory))
+        return events, http
+
+    def test_new_sessions_are_unique_empty_and_owned_lists_include_no_foreign_session(self):
+        self.assertEqual(len({self.a1, self.a2, self.b1}), 3)
+        self.assertEqual(self.contents("alice", self.a1), [])
+        self.assertEqual(self.memory.list_sessions("alice"), [self.a1, self.a2])
+        self.assertEqual(self.memory.list_sessions("bob"), [self.b1])
+        self.assertEqual(self.memory.list_sessions("new-user"), [])
+
+    def test_same_user_different_sessions_have_independent_history(self):
+        self.memory.append_turn("alice", self.a1, "A的问题", "A的回答")
+        self.memory.append_turn("alice", self.a2, "B的问题", "B的回答")
+        self.assertEqual(self.contents("alice", self.a1), ["A的问题", "A的回答"])
+        self.assertEqual(self.contents("alice", self.a2), ["B的问题", "B的回答"])
+
+    def test_different_users_keep_independent_history(self):
+        self.memory.append_turn("alice", self.a1, "Alice资料", "Alice回答")
+        self.memory.append_turn("bob", self.b1, "Bob资料", "Bob回答")
+        self.assertEqual(self.contents("alice", self.a1), ["Alice资料", "Alice回答"])
+        self.assertEqual(self.contents("bob", self.b1), ["Bob资料", "Bob回答"])
+
+    def test_foreign_session_read_append_and_clear_are_rejected_without_changes(self):
+        self.memory.append_turn("alice", self.a1, "私有问题", "私有回答")
+        for operation in (lambda: self.memory.get_messages("bob", self.a1),
+                          lambda: self.memory.append_turn("bob", self.a1, "覆盖", "覆盖"),
+                          lambda: self.memory.clear_session("bob", self.a1)):
+            with self.assertRaises(PermissionError):
+                operation()
+        self.assertEqual(self.contents("alice", self.a1), ["私有问题", "私有回答"])
+        self.assertEqual(self.contents("bob", self.b1), [])
+
+    def test_unknown_session_is_not_implicitly_created(self):
+        for operation in (lambda: self.memory.get_messages("alice", "missing"),
+                          lambda: self.memory.append_turn("alice", "missing", "问题", "回答"),
+                          lambda: self.memory.clear_session("alice", "missing")):
+            with self.assertRaises(LookupError):
+                operation()
+        self.assertEqual(self.memory.list_sessions("alice"), [self.a1, self.a2])
+
+    def test_messages_keep_role_order_unicode_formula_and_markdown(self):
+        for index in range(3):
+            self.memory.append_turn("alice", self.a1, f"问题{index}: α² **Transformer**", f"回答{index}: $x_1$ 中文")
+        messages = self.memory.get_messages("alice", self.a1)
+        self.assertEqual([message.type for message in messages], ["human", "ai"] * 3)
+        self.assertIsInstance(messages[0], HumanMessage)
+        self.assertIsInstance(messages[1], AIMessage)
+        self.assertEqual(messages[-2].content, "问题2: α² **Transformer**")
+        self.assertEqual(messages[-1].content, "回答2: $x_1$ 中文")
+
+    def test_returned_message_mutation_does_not_modify_store_or_other_session(self):
+        self.memory.append_turn("alice", self.a1, "原问题", "原回答")
+        messages = self.memory.get_messages("alice", self.a1)
+        messages[0].content = "更改返回对象"
+        messages.append(HumanMessage(content="不应写回"))
+        self.assertEqual(self.contents("alice", self.a1), ["原问题", "原回答"])
+        self.assertEqual(self.contents("alice", self.a2), [])
+
+    def test_reopening_manager_restores_both_users_without_shared_message_cache(self):
+        self.memory.append_turn("alice", self.a1, "持久问题A", "持久回答A")
+        self.memory.append_turn("bob", self.b1, "持久问题B", "持久回答B")
+        reopened = MemoryManager(self.path)
+        self.assertEqual(reopened.get_messages("alice", self.a1)[0].content, "持久问题A")
+        self.assertEqual(reopened.get_messages("bob", self.b1)[0].content, "持久问题B")
+        reopened.append_turn("alice", self.a1, "追加", "答复")
+        self.assertEqual(len(self.memory.get_messages("alice", self.a1)), 4)
+
+    def test_new_python_process_restores_persistent_history(self):
+        self.memory.append_turn("alice", self.a1, "独立进程恢复问题", "独立进程恢复回答")
+        script = ("import json,sys; from src.agent.memory import MemoryManager; "
+                  "print(json.dumps([m.content for m in MemoryManager(sys.argv[1]).get_messages(sys.argv[2],sys.argv[3])]))")
+        result = subprocess.run([sys.executable, "-c", script, str(self.path), "alice", self.a1],
+                                cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
+                                check=True, timeout=15)
+        self.assertEqual(json.loads(result.stdout), ["独立进程恢复问题", "独立进程恢复回答"])
+
+    def test_clear_only_current_owned_session_and_keep_identifier(self):
+        for user, session in (("alice", self.a1), ("alice", self.a2), ("bob", self.b1)):
+            self.memory.append_turn(user, session, session, "回答")
+        self.memory.clear_session("alice", self.a1)
+        self.assertEqual(self.contents("alice", self.a1), [])
+        self.assertEqual(len(self.contents("alice", self.a2)), 2)
+        self.assertEqual(len(self.contents("bob", self.b1)), 2)
+        self.assertIn(self.a1, self.memory.list_sessions("alice"))
+
+    def test_invalid_identity_or_message_does_not_save_half_turn(self):
+        for value in (None, "", "  ", 123):
+            with self.subTest(value=value):
+                for operation in (lambda: self.memory.create_session(value),
+                                  lambda: self.memory.list_sessions(value),
+                                  lambda: self.memory.get_messages(value, self.a1),
+                                  lambda: self.memory.get_messages("alice", value),
+                                  lambda: self.memory.append_turn("alice", self.a1, value, "回答"),
+                                  lambda: self.memory.append_turn("alice", self.a1, "问题", value)):
+                    with self.assertRaises(ValueError):
+                        operation()
+        self.assertEqual(self.contents("alice", self.a1), [])
+
+    def test_sql_metacharacters_are_literal_identity_values(self):
+        user = "alice' OR 1=1 --"
+        session = self.memory.create_session(user)
+        self.memory.append_turn(user, session, "自己的问题", "自己的回答")
+        self.assertEqual(self.memory.list_sessions(user), [session])
+        with self.assertRaises(PermissionError):
+            self.memory.get_messages(user, self.a1)
+        with self.assertRaises(LookupError):
+            self.memory.get_messages("alice", "' OR 1=1 --")
+
+    def test_second_insert_failure_rolls_back_entire_turn(self):
+        self.memory.append_turn("alice", self.a1, "已有问题", "已有回答")
+        with sqlite3.connect(self.path) as connection:
+            connection.executescript("""CREATE TRIGGER fail_answer BEFORE INSERT ON messages
+                WHEN NEW.content='FAIL' BEGIN SELECT RAISE(ABORT, '明确注入的写入失败'); END;""")
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.memory.append_turn("alice", self.a1, "不应残留的问题", "FAIL")
+        self.assertEqual(self.contents("alice", self.a1), ["已有问题", "已有回答"])
+
+    def test_threads_and_manager_instances_append_owned_sessions_without_cross_contamination(self):
+        sessions = [(f"user-{index % 2}", self.memory.create_session(f"user-{index % 2}")) for index in range(8)]
+        barrier = Barrier(4)
+        managers = [self.memory, MemoryManager(self.path)]
+        def write(index):
+            user, session = sessions[index]
+            barrier.wait(timeout=3)
+            for turn in range(4):
+                managers[index % 2].append_turn(user, session, f"session-{index}-q-{turn}", f"session-{index}-a-{turn}")
+            return [message.content for message in managers[index % 2].get_messages(user, session)]
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            histories = list(pool.map(write, range(8)))
+        for index, history in enumerate(histories):
+            self.assertEqual(history, [value for turn in range(4) for value in
+                                     (f"session-{index}-q-{turn}", f"session-{index}-a-{turn}")])
+
+    def test_same_session_concurrent_appends_do_not_overwrite_or_split_turns(self):
+        barrier = Barrier(4)
+        def write(index):
+            barrier.wait(timeout=3)
+            for turn in range(5):
+                self.memory.append_turn("alice", self.a1, f"{index}:{turn}", f"answer:{index}:{turn}")
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            list(pool.map(write, range(4)))
+        history = self.contents("alice", self.a1)
+        self.assertEqual(len(history), 40)
+        self.assertEqual(len(set(history[::2])), 20)
+        for question, answer in zip(history[::2], history[1::2]):
+            self.assertEqual(answer, "answer:" + question)
+
+    def test_default_manager_uses_configured_path(self):
+        config = deepcopy(load_config())
+        config["paths"]["session_db"] = str(Path(self.directory.name) / "configured" / "history.sqlite3")
+        with patch("src.agent.memory.load_config", return_value=config):
+            memory = MemoryManager()
+        self.assertTrue(memory.db_path.is_file())
+        self.assertEqual(memory.db_path, Path(config["paths"]["session_db"]))
+
+    def test_agent_requests_only_current_session_history_and_saves_finished_pair(self):
+        self.memory.append_turn("alice", self.a1, "我的研究代号是ALICE_A_ONLY。", "已记录ALICE_A_ONLY。")
+        self.memory.append_turn("alice", self.a2, "我的研究代号是ALICE_B_ONLY。", "已记录ALICE_B_ONLY。")
+        self.memory.append_turn("bob", self.b1, "我的研究代号是BOB_ONLY。", "已记录BOB_ONLY。")
+        events, http = self.run_turn("alice", self.a1, answer="你的代号是ALICE_A_ONLY。")
+        self.assertTrue(events[-1]["task_complete"])
+        for call in http.call_args_list:
+            body = call.args[0].data.decode()
+            self.assertIn("ALICE_A_ONLY", body)
+            self.assertNotIn("ALICE_B_ONLY", body)
+            self.assertNotIn("BOB_ONLY", body)
+        self.assertTrue(all(e["user_id"] == "alice" and e["session_id"] == self.a1 for e in events))
+        self.assertEqual(self.contents("alice", self.a1)[-2:], ["追问", "你的代号是ALICE_A_ONLY。"])
+        self.assertEqual(len(self.contents("alice", self.a2)), 2)
+        self.assertEqual(len(self.contents("bob", self.b1)), 2)
+
+    def test_agent_foreign_access_fails_before_any_model_or_tool_call(self):
+        with patch("src.agent.react_loop.run_react") as run_mock, self.assertRaises(PermissionError):
+            list(run_session("读取资料", "bob", self.a1, memory=self.memory))
+        run_mock.assert_not_called()
+        self.assertEqual(self.contents("alice", self.a1), [])
+
+    def test_agent_request_context_is_fresh_and_does_not_reuse_prior_tool_state(self):
+        self.memory.append_turn("alice", self.a1, "已有问题", "已有回答")
+        for _ in range(2):
+            _, http = self.run_turn("alice", self.a1)
+            body = json.loads(http.call_args_list[0].args[0].data)
+            context = json.loads(body["messages"][1]["content"])["context"]
+            self.assertEqual(context["observations"], [])
+            self.assertNotIn("recovery", context)
+            self.assertNotIn("last_observation", context)
+            self.assertTrue(context["history"])
+
+    def test_closing_agent_stream_saves_no_incomplete_turn(self):
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packets()[0]).encode())):
+            stream = run_session("问题", "alice", self.a1, tools=[], memory=self.memory)
+            self.assertEqual(next(stream)["type"], "thought")
+            stream.close()
+        self.assertEqual(self.contents("alice", self.a1), [])
+
+    def test_incomplete_answer_is_saved_as_real_response_without_claiming_success(self):
+        events, _ = self.run_turn("alice", self.a1, answer="资料不足，请提供原文。", complete=False)
+        self.assertFalse(events[-1]["task_complete"])
+        self.assertEqual(self.contents("alice", self.a1), ["追问", "资料不足，请提供原文。"])
+
+    def test_agent_persistence_failure_does_not_emit_successful_done_or_save_half_turn(self):
+        with sqlite3.connect(self.path) as connection:
+            connection.executescript("""CREATE TRIGGER fail_all_answers BEFORE INSERT ON messages
+                WHEN NEW.role='ai' BEGIN SELECT RAISE(ABORT, '明确注入的保存故障'); END;""")
+        with patch("src.agent.react_loop.urlopen", side_effect=[BytesIO(json.dumps(p).encode()) for p in self.packets()]):
+            stream = run_session("问题", "alice", self.a1, tools=[], memory=self.memory)
+            received = []
+            with self.assertRaises(sqlite3.IntegrityError):
+                for event in stream:
+                    received.append(event)
+        self.assertNotIn("done", [event["type"] for event in received])
+        self.assertEqual(self.contents("alice", self.a1), [])
+
+
+class TestHistoryTokenWindow(unittest.TestCase):
+    """真实Qwen词表与SQLite窗口验证；历史样例明确构造，模型HTTP隔离。"""
+
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        self.memory = MemoryManager(Path(self.directory.name) / "memory.sqlite3")
+        self.session = self.memory.create_session("alice")
+        self.config = deepcopy(load_config())
+        patcher = patch("src.agent.memory.load_config", return_value=self.config)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def add_turns(self, count=5):
+        for index in range(count):
+            self.memory.append_turn("alice", self.session, f"第{index}轮中文问题Transformer🙂", f"第{index}轮回答α² [1](论文第3页)")
+        return self.history()
+
+    def history(self):
+        return [{"role": m.type, "content": m.content} for m in self.memory.get_messages("alice", self.session)]
+
+    def test_token_count_matches_real_qwen_json_not_character_count(self):
+        history = [{"role": "human", "content": "中文Transformer α²🙂"}, {"role": "ai", "content": "$x_1$ 引用[1]"}]
+        self.assertEqual(count_history_tokens(history), 39)  # 固定官方词表的实际Token数量。
+        self.assertNotEqual(count_history_tokens(history), len(json.dumps(history, ensure_ascii=False)))
+        self.assertGreater(count_history_tokens(history), sum(len(item["content"]) for item in history))
+
+    def test_empty_history_uses_zero_budget_even_with_minimum_limit(self):
+        self.config["memory"]["max_history_tokens"] = 1
+        context = self.memory.get_context("alice", self.session)
+        self.assertEqual(context["history"], [])
+        self.assertEqual(context["history_window"]["tokens"], 0)
+        self.assertEqual(context["history_window"]["dropped_turns"], 0)
+
+    def test_under_budget_keeps_original_roles_content_order_and_archive(self):
+        history = self.add_turns(3)
+        context = self.memory.get_context("alice", self.session)
+        self.assertEqual(context["history"], history)
+        self.assertEqual(context["history_window"]["retained_turns"], 3)
+        self.assertEqual(context["history_window"]["dropped_turns"], 0)
+        self.assertEqual(context["history_window"]["tokens"], count_history_tokens(history))
+        self.assertEqual(self.history(), history)
+
+    def test_exact_limit_keeps_all_and_one_token_less_removes_complete_oldest_turn(self):
+        history = self.add_turns(3)
+        self.config["memory"]["max_history_tokens"] = count_history_tokens(history)
+        self.assertEqual(self.memory.get_context("alice", self.session)["history"], history)
+        self.config["memory"]["max_history_tokens"] -= 1
+        context = self.memory.get_context("alice", self.session)
+        self.assertEqual(context["history"], history[2:])
+        self.assertEqual(context["history_window"]["dropped_turns"], 1)
+
+    def test_over_limit_keeps_contiguous_recent_pairs_and_recounts_exact_suffix(self):
+        history = self.add_turns(12)
+        self.config["memory"]["max_history_tokens"] = count_history_tokens(history[-4:])
+        context = self.memory.get_context("alice", self.session)
+        self.assertEqual(context["history"], history[-4:])
+        self.assertEqual(context["history_window"]["dropped_turns"], 10)
+        self.assertEqual([m["role"] for m in context["history"]], ["human", "ai"] * 2)
+        self.assertLessEqual(context["history_window"]["tokens"], context["history_window"]["max_tokens"])
+        self.assertEqual(self.history(), history)
+
+    def test_one_oversized_latest_turn_leaves_empty_window_without_orphan_answer(self):
+        self.add_turns(1)
+        self.memory.append_turn("alice", self.session, "超长中文论文问题" * 500, "超长回答" * 500)
+        self.config["memory"]["max_history_tokens"] = 100
+        context = self.memory.get_context("alice", self.session)
+        self.assertEqual(context["history"], [])
+        self.assertEqual(context["history_window"]["dropped_turns"], 2)
+        self.assertEqual(context["history_window"]["tokens"], 0)
+        self.assertEqual(len(self.history()), 4)
+
+    def test_oversized_old_turn_is_removed_and_recent_formula_citation_unchanged(self):
+        self.memory.append_turn("alice", self.session, "旧论文" * 500, "旧回答" * 500)
+        self.memory.append_turn("alice", self.session, "What is α²🙂?", "答案 $x_1$，来源[1](paper.pdf第3页)。")
+        history = self.history()
+        self.config["memory"]["max_history_tokens"] = count_history_tokens(history[-2:])
+        self.assertEqual(self.memory.get_context("alice", self.session)["history"], history[-2:])
+
+    def test_reopened_manager_and_changed_budget_recompute_window_without_losing_archive(self):
+        history = self.add_turns(5)
+        self.config["memory"]["max_history_tokens"] = count_history_tokens(history[-2:])
+        self.assertEqual(self.memory.get_context("alice", self.session)["history"], history[-2:])
+        self.config["memory"]["max_history_tokens"] = count_history_tokens(history)
+        reopened = MemoryManager(self.memory.db_path)
+        self.assertEqual(reopened.get_context("alice", self.session)["history"], history)
+
+    def test_window_isolated_from_same_user_other_session_and_other_user(self):
+        other = self.memory.create_session("alice")
+        bob = self.memory.create_session("bob")
+        self.add_turns(8)
+        self.memory.append_turn("alice", other, "ALICE_OTHER", "ALICE_OTHER_ANSWER")
+        self.memory.append_turn("bob", bob, "BOB_PRIVATE", "BOB_PRIVATE_ANSWER")
+        self.config["memory"]["max_history_tokens"] = 100
+        self.assertNotIn("PRIVATE", json.dumps(self.memory.get_context("alice", self.session)))
+        self.assertEqual(self.memory.get_context("alice", other)["history_window"]["dropped_turns"], 0)
+        self.assertEqual(self.memory.get_context("bob", bob)["history_window"]["dropped_turns"], 0)
+        with patch("src.agent.memory.count_history_tokens") as counter, self.assertRaises(PermissionError):
+            self.memory.get_context("bob", self.session)
+        counter.assert_not_called()
+        self.assertEqual(len(self.memory.get_messages("bob", bob)), 2)
+
+    def test_invalid_limits_refused_before_model_or_archive_changes(self):
+        history = self.add_turns(1)
+        for limit in (0, -1, True, 1.5, "2000", None):
+            self.config["memory"]["max_history_tokens"] = limit
+            with self.subTest(limit=limit), patch("src.agent.react_loop.run_react") as run, self.assertRaises(ValueError):
+                list(run_session("问题", "alice", self.session, memory=self.memory))
+            run.assert_not_called()
+            self.assertEqual(self.history(), history)
+
+    def test_missing_tokenizer_refuses_model_without_network_or_character_fallback(self):
+        self.add_turns(1)
+        self.config["memory"]["tokenizer_path"] = str(Path(self.directory.name) / "missing.json")
+        with patch("src.agent.react_loop.run_react") as run, patch("socket.create_connection") as network, self.assertRaises(FileNotFoundError):
+            list(run_session("问题", "alice", self.session, memory=self.memory))
+        run.assert_not_called()
+        network.assert_not_called()
+        self.assertEqual(len(self.history()), 2)
+
+    def test_other_model_cannot_silently_use_qwen_tokenizer(self):
+        self.add_turns(1)
+        self.config["llm"]["model"] = "chatglm:latest"
+        with self.assertRaisesRegex(ValueError, "对应分词器"):
+            self.memory.get_context("alice", self.session)
+
+    def test_runtime_count_needs_no_network_or_llm(self):
+        history = self.add_turns(1)
+        from src.agent.memory import _load_tokenizer
+        _load_tokenizer.cache_clear()  # 强制从本地词表重新读取，验证并非仅缓存命中。
+        with patch("socket.create_connection", side_effect=AssertionError("不能联网")), patch("src.agent.react_loop.urlopen") as llm:
+            context = self.memory.get_context("alice", self.session)
+        llm.assert_not_called()
+        self.assertEqual(context["history_window"]["tokens"], count_history_tokens(history))
+
+    def test_agent_sends_only_window_in_every_actual_request_and_keeps_original_archive(self):
+        self.memory.append_turn("alice", self.session, "OUTSIDE_WINDOW_OLD " * 300, "不再送入模型的旧回答" * 300)
+        self.memory.append_turn("alice", self.session, "最新实验代号为EXP_RECENT。", "已记录EXP_RECENT。")
+        self.config["memory"]["max_history_tokens"] = 120
+        expected = self.memory.get_context("alice", self.session)
+        plan = {"thought": "根据可见最近历史回答。", "next_step": "answer", "tool_name": None}
+        answer = {"observation": "最近历史提供了代号。", "decision": "finish", "task_complete": True, "answer": "EXP_RECENT"}
+        def packet(content):
+            return BytesIO(json.dumps({"model": "qwen2.5:7b", "message": {"content": json.dumps(content)},
+                        "done": True, "done_reason": "stop", "prompt_eval_count": 300, "eval_count": 30}).encode())
+        with patch("src.agent.react_loop.urlopen", side_effect=[packet(plan), packet(answer)]) as http:
+            events = list(run_session("最近的代号是什么？", "alice", self.session, tools=[], memory=self.memory))
+        self.assertTrue(events[-1]["task_complete"])
+        self.assertEqual(events[-1]["context"]["history_window"], expected["history_window"])
+        self.assertEqual(http.call_count, 2)
+        for call in http.call_args_list:
+            body = call.args[0].data.decode()
+            self.assertNotIn("OUTSIDE_WINDOW_OLD", body)
+            self.assertIn("EXP_RECENT", body)
+            context = json.loads(json.loads(body)["messages"][1]["content"])["context"]
+            self.assertEqual(context["history"], expected["history"])
+            self.assertLessEqual(count_history_tokens(context["history"]), 120)
+        self.assertEqual(len(self.history()), 6)
 
 
 if __name__ == "__main__":
