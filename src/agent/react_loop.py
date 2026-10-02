@@ -15,6 +15,7 @@ from src.agent.tools import get_available_tools
 from src.agent.router import execute_calls, parallel_limit, recovery_limits, route_question
 from src.generation.rag_pipeline import generation_error, urlopen
 from src.utils.config import load_config
+from src.utils.messages import messages_to_ollama, normalize_context
 
 
 AGENT_ROLE_PROMPT = """【角色定义】
@@ -73,8 +74,7 @@ def build_agent_messages(question: str, tools: list[BaseTool], context: dict | N
     names = [tool.name for tool in tools]
     if len(names) != len(set(names)):
         raise ValueError("工具名称不能重复")
-    if context is not None and not isinstance(context, dict):
-        raise ValueError("Context 必须是字典")
+    context = normalize_context(context)
     prompts = {"thought": THOUGHT_SYSTEM_PROMPT, "action": ACTION_SYSTEM_PROMPT,
                "observation": OBSERVATION_SYSTEM_PROMPT}
     if stage not in prompts:
@@ -85,7 +85,7 @@ def build_agent_messages(question: str, tools: list[BaseTool], context: dict | N
     system += ("联网搜索当前可用；仅在外部信息任务中使用。\n" if "web_search" in names else
                "联网搜索当前不可用；需要最新外部事实而缺少证据时说明限制，task_complete=false。\n")
     system += "仅可使用以上工具；空列表表示当前没有可用工具。\n\n" + prompts[stage]
-    state = {"question": question, "context": context if context is not None else {}}
+    state = {"question": question, "context": context}
     if thought is not None:
         state["thought"] = thought
     return [SystemMessage(content=system),
@@ -107,18 +107,8 @@ def _model_request(messages: list, **fields) -> Request:
         raise ValueError("Agent 只允许本机 Ollama HTTP 服务")
     sampling = {key: config[key] for key in
                 ("temperature", "top_p", "top_k", "num_ctx", "num_predict", "repeat_penalty")}
-    native_messages = []
-    for message in messages:
-        item = {"role": {"human": "user", "ai": "assistant"}.get(message.type, message.type),
-                "content": message.content}
-        if isinstance(message, AIMessage) and message.tool_calls:
-            item["tool_calls"] = [{"function": {"name": call["name"], "arguments": call["args"]}}
-                                  for call in message.tool_calls]
-        if isinstance(message, ToolMessage):
-            item["tool_name"] = message.name
-        native_messages.append(item)
     payload = {"model": config["model"], "stream": False, "options": sampling, **fields,
-               "messages": native_messages}
+               "messages": messages_to_ollama(messages)}
     return Request(config["base_url"].rstrip("/") + "/api/chat",
                       data=json.dumps(payload, ensure_ascii=False, allow_nan=False).encode("utf-8"),
                       headers={"Content-Type": "application/json"})
@@ -406,7 +396,7 @@ def run_react(question: str, tools: list[BaseTool] | None = None, context: dict 
     try:
         tools = list(tools) if tools is not None else get_available_tools()
         build_thought_messages(question, tools, context)
-        state = deepcopy(context) if context is not None else {}
+        state = normalize_context(context)
         state.setdefault("observations", [])
         if not isinstance(state["observations"], list) or any(not isinstance(item, dict) for item in state["observations"]):
             raise ValueError("observations必须为工具结果字典列表")

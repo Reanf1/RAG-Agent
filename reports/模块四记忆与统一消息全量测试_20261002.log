@@ -1,0 +1,745 @@
+test_answer_plan_skips_model_and_tool_execution (test_agent.TestAction) ... ok
+test_closing_after_call_event_does_not_execute_tool (test_agent.TestAction) ... ok
+test_empty_multiple_wrong_name_and_non_dict_arguments_do_not_execute (test_agent.TestAction) ... ok
+test_execution_keeps_selected_tool_when_caller_changes_registry_after_call_event (test_agent.TestAction) ... ok
+test_executor_rejects_unknown_duplicate_and_non_dict_arguments (test_agent.TestAction) ... ok
+test_invalid_thought_and_duplicate_tools_do_not_call_model (test_agent.TestAction) ... ok
+test_native_call_executes_selected_tool_and_correlates_messages (test_agent.TestAction) ... ok
+test_network_failure_and_cloud_configuration_do_not_execute (test_agent.TestAction) ... ok
+test_no_argument_and_optional_default_tools_execute (test_agent.TestAction) ... ok
+test_only_selected_tool_is_exposed_even_when_other_tools_are_available (test_agent.TestAction) ... ok
+test_partial_response_service_errors_and_malformed_json_do_not_execute (test_agent.TestAction) ... ok
+test_required_type_and_extra_argument_errors_are_tool_results_without_side_effects (test_agent.TestAction) ... ok
+test_structured_results_and_mutating_tools_preserve_original_parameters (test_agent.TestAction) ... ok
+test_tool_exception_is_preserved_and_not_retried (test_agent.TestAction) ... ok
+test_all_stages_receive_same_history_summary_and_rag_references (test_agent.TestAgentMemoryContext) ... ok
+test_direct_message_history_is_usable_by_react_and_done_is_json_ready (test_agent.TestAgentMemoryContext) ... ok
+test_invalid_context_stops_before_model_and_tool_io (test_agent.TestAgentMemoryContext) ... ok
+test_invalid_history_roles_and_intermediate_calls_are_not_archived (test_agent.TestAgentMemoryContext) ... ok
+test_langchain_and_native_role_history_normalize_to_same_snapshot (test_agent.TestAgentMemoryContext) ... ok
+test_native_messages_keep_roles_tool_name_and_argument_copy (test_agent.TestAgentMemoryContext) ... ok
+test_plain_dict_and_multimodal_native_messages_are_rejected (test_agent.TestAgentMemoryContext) ... ok
+test_rag_and_agent_native_requests_use_identical_message_conversion (test_agent.TestAgentMemoryContext) ... ok
+test_reopened_memory_context_keeps_budget_and_other_users_out (test_agent.TestAgentMemoryContext) ... ok
+test_two_round_public_entry_uses_memory_for_calculator_action (test_agent.TestAgentMemoryContext) ... ok
+test_all_stages_preserve_actual_tool_description_and_parameter_constraints (test_agent.TestAgentSystemPrompt) ... ok
+test_empty_registry_constrains_model_plan_to_answer (test_agent.TestAgentSystemPrompt) ... ok
+test_empty_registry_is_explicit_and_does_not_add_planned_production_tools (test_agent.TestAgentSystemPrompt) ... ok
+test_unknown_stage_is_rejected_without_model_or_tool_execution (test_agent.TestAgentSystemPrompt) ... ok
+test_user_documents_observations_and_thought_cannot_replace_system_rules (test_agent.TestAgentSystemPrompt) ... ok
+test_agent_action_really_executes_both_registered_utility_tools (test_agent.TestCalculatorAndPaperList) ... ok
+test_calculator_decimal_accuracy_and_precedence (test_agent.TestCalculatorAndPaperList) ... ok
+test_calculator_empty_syntax_length_and_depth_limits (test_agent.TestCalculatorAndPaperList) ... ok
+test_calculator_negative_unary_chinese_and_symbols (test_agent.TestCalculatorAndPaperList) ... ok
+test_calculator_rejects_non_arithmetic_and_unsupported_operators (test_agent.TestCalculatorAndPaperList) ... ok
+test_calculator_zero_division_is_real_input_error (test_agent.TestCalculatorAndPaperList) ... ok
+test_duplicate_content_with_alias_names_is_one_canonical_paper (test_agent.TestCalculatorAndPaperList) ... /Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_empty_library_does_not_create_raw_directory_or_chroma (test_agent.TestCalculatorAndPaperList) ... ok
+test_index_deletion_updates_list_and_preserves_uploaded_source (test_agent.TestCalculatorAndPaperList) ... ok
+test_index_read_error_propagates_instead_of_reporting_empty_library (test_agent.TestCalculatorAndPaperList) ... ok
+test_missing_original_keeps_index_record_with_explicit_status (test_agent.TestCalculatorAndPaperList) ... ok
+test_partial_index_means_has_chunks_not_complete_import (test_agent.TestCalculatorAndPaperList) ... ok
+test_real_index_counts_chunks_without_loading_embedding_or_querying (test_agent.TestCalculatorAndPaperList) ... ok
+test_real_tools_route_correctly_and_paper_fact_queries_still_use_rag (test_agent.TestCalculatorAndPaperList) ... ok
+test_registry_has_eight_unique_local_tools_with_real_schemas (test_agent.TestCalculatorAndPaperList) ... ok
+test_same_name_different_content_keeps_distinct_paper_ids (test_agent.TestCalculatorAndPaperList) ... ok
+test_source_corruption_and_symlink_escape_are_not_fake_empty_lists (test_agent.TestCalculatorAndPaperList) ... ok
+test_unrelated_raw_files_are_not_uploaded_papers (test_agent.TestCalculatorAndPaperList) ... ok
+test_uploaded_not_indexed_paper_has_usable_id_and_name (test_agent.TestCalculatorAndPaperList) ... ok
+test_utility_tools_validate_arguments_without_model_or_network (test_agent.TestCalculatorAndPaperList) ... ok
+test_comparison_balances_budget_and_reports_truncated_evidence (test_agent.TestComparisonAndKeywords) ... ok
+test_comparison_deduplicates_chunks_without_mutating_source (test_agent.TestComparisonAndKeywords) ... ok
+test_comparison_dimension_low_score_is_reported_with_paper_level_threshold (test_agent.TestComparisonAndKeywords) ... ok
+test_comparison_filters_each_paper_and_covers_three_dimensions (test_agent.TestComparisonAndKeywords) ... ok
+test_comparison_low_relevance_cannot_generate_or_auto_confirm (test_agent.TestComparisonAndKeywords) ... ok
+test_comparison_missing_one_paper_citation_is_warned (test_agent.TestComparisonAndKeywords) ... ok
+test_comparison_missing_paper_takes_priority_over_other_paper_low_score (test_agent.TestComparisonAndKeywords) ... ok
+test_comparison_network_failure_is_a_real_error_without_retry (test_agent.TestComparisonAndKeywords) ... ok
+test_comparison_reads_and_scores_opening_chunks_with_real_reranker_contract (test_agent.TestComparisonAndKeywords) ... ok
+test_comparison_rejects_wrong_paper_ids_missing_fields_and_partial_model_choice (test_agent.TestComparisonAndKeywords) ... ok
+test_comparison_same_missing_or_invalid_id_fails_before_retrieval (test_agent.TestComparisonAndKeywords) ... ok
+test_comparison_unindexed_paper_has_no_model_fallback (test_agent.TestComparisonAndKeywords) ... ok
+test_insufficient_comparison_cannot_be_marked_complete (test_agent.TestComparisonAndKeywords) ... ok
+test_keyword_cross_line_phrase_has_real_line_evidence (test_agent.TestComparisonAndKeywords) ... ok
+test_keyword_deduplication_empty_result_and_unknown_usage (test_agent.TestComparisonAndKeywords) ... ok
+test_keyword_document_uses_uploaded_original_and_locations (test_agent.TestComparisonAndKeywords) ... ok
+test_keyword_invalid_expanded_or_embedded_terms_are_rejected (test_agent.TestComparisonAndKeywords) ... ok
+test_keyword_question_preserves_bilingual_terms_and_evidence (test_agent.TestComparisonAndKeywords) ... ok
+test_keyword_rejects_ambiguous_empty_and_invalid_input_before_model (test_agent.TestComparisonAndKeywords) ... ok
+test_keyword_truncation_does_not_accept_terms_outside_input (test_agent.TestComparisonAndKeywords) ... ok
+test_keyword_unfinished_malformed_and_network_response_fails (test_agent.TestComparisonAndKeywords) ... ok
+test_new_tools_have_real_registered_parameter_schemas (test_agent.TestComparisonAndKeywords) ... ok
+test_observation_schema_prevents_empty_finish_seen_in_real_keyword_call (test_agent.TestComparisonAndKeywords) ... ok
+test_agent_receives_summary_as_data_in_all_stages_not_old_original_history (test_agent.TestConversationSummary) ... ok
+test_below_threshold_no_summary_or_model_call (test_agent.TestConversationSummary) ... ok
+test_clear_during_generation_discards_stale_summary_and_returns_empty_context (test_agent.TestConversationSummary) ... ok
+test_incremental_compression_merges_previous_summary_only_with_new_old_pairs (test_agent.TestConversationSummary) ... ok
+test_invalid_and_partial_responses_keep_archive_and_do_not_commit (test_agent.TestConversationSummary) ... ok
+test_invalid_summary_settings_refused_before_model_call (test_agent.TestConversationSummary) ... ok
+test_large_archive_uses_bounded_complete_pairs_and_three_call_limit (test_agent.TestConversationSummary) ... ok
+test_model_timeout_preserves_previous_summary_and_retries_next_request (test_agent.TestConversationSummary) ... ok
+test_native_prompt_schema_local_endpoint_and_input_output_limits (test_agent.TestConversationSummary) ... ok
+test_oversized_single_source_is_not_silently_truncated_or_marked_compressed (test_agent.TestConversationSummary) ... ok
+test_owned_clear_removes_summary_and_history_but_other_session_stays (test_agent.TestConversationSummary) ... ok
+test_persistent_summary_reused_without_repeated_model_call (test_agent.TestConversationSummary) ... ok
+test_simultaneous_summaries_cannot_overwrite_same_boundary (test_agent.TestConversationSummary) ... ok
+test_smaller_budget_omits_whole_summary_without_destroying_saved_text (test_agent.TestConversationSummary) ... ok
+test_summary_and_recent_history_share_real_token_budget (test_agent.TestConversationSummary) ... ok
+test_summary_database_failure_rolls_back_without_losing_raw_history (test_agent.TestConversationSummary) ... ok
+test_summary_request_contains_no_other_user_or_same_user_other_session (test_agent.TestConversationSummary) ... ok
+test_threshold_replaces_only_old_pairs_and_keeps_full_archive (test_agent.TestConversationSummary) ... ok
+test_agent_deadline_stops_without_observation_model_or_next_round (test_agent.TestErrorRecovery) ... ok
+test_all_alternatives_fail_and_stop_without_reusing_failed_tools (test_agent.TestErrorRecovery) ... ok
+test_alternating_cycle_is_also_stopped (test_agent.TestErrorRecovery) ... ok
+test_closing_batch_does_not_wait_or_allow_late_retry (test_agent.TestErrorRecovery) ... ok
+test_completed_timeout_retries_once_and_preserves_both_attempts (test_agent.TestErrorRecovery) ... ok
+test_deadline_returns_before_worker_exits_and_ignores_late_result (test_agent.TestErrorRecovery) ... ok
+test_different_arguments_and_separate_requests_are_not_a_cycle (test_agent.TestErrorRecovery) ... ok
+test_execution_error_forces_alternative_planning_and_preserves_failed_result (test_agent.TestErrorRecovery) ... ok
+test_exhausted_timeout_can_use_alternative (test_agent.TestErrorRecovery) ... ok
+test_exhausted_timeout_returns_real_error_without_third_attempt (test_agent.TestErrorRecovery) ... ok
+test_failed_tool_cannot_be_reselected_in_recovery_round (test_agent.TestErrorRecovery) ... ok
+test_input_error_does_not_force_unrelated_alternative (test_agent.TestErrorRecovery) ... ok
+test_invalid_recovery_limits_stop_before_model_or_tools (test_agent.TestErrorRecovery) ... ok
+test_late_timeout_does_not_start_background_retry (test_agent.TestErrorRecovery) ... ok
+test_no_alternative_reports_failure_and_does_not_invent_tools (test_agent.TestErrorRecovery) ... ok
+test_no_suitable_alternative_finishes_incomplete_without_a_tool (test_agent.TestErrorRecovery) ... ok
+test_non_timeout_input_or_execution_error_is_not_retried (test_agent.TestErrorRecovery) ... ok
+test_parallel_timeout_preserves_success_and_shared_deadline (test_agent.TestErrorRecovery) ... ok
+test_recovery_cannot_exceed_last_iteration (test_agent.TestErrorRecovery) ... ok
+test_retry_can_be_disabled (test_agent.TestErrorRecovery) ... ok
+test_same_call_is_stopped_before_third_execution (test_agent.TestErrorRecovery) ... ok
+test_unrecovered_answer_cannot_claim_completion (test_agent.TestErrorRecovery) ... ok
+test_wrapped_timeout_is_classified_without_guessing_from_text (test_agent.TestErrorRecovery) ... ok
+test_agent_sends_only_window_in_every_actual_request_and_keeps_original_archive (test_agent.TestHistoryTokenWindow) ... ok
+test_empty_history_uses_zero_budget_even_with_minimum_limit (test_agent.TestHistoryTokenWindow) ... ok
+test_exact_limit_keeps_all_and_one_token_less_removes_complete_oldest_turn (test_agent.TestHistoryTokenWindow) ... ok
+test_invalid_limits_refused_before_model_or_archive_changes (test_agent.TestHistoryTokenWindow) ... ok
+test_missing_tokenizer_refuses_model_without_network_or_character_fallback (test_agent.TestHistoryTokenWindow) ... ok
+test_one_oversized_latest_turn_leaves_empty_window_without_orphan_answer (test_agent.TestHistoryTokenWindow) ... ok
+test_other_model_cannot_silently_use_qwen_tokenizer (test_agent.TestHistoryTokenWindow) ... ok
+test_over_limit_keeps_contiguous_recent_pairs_and_recounts_exact_suffix (test_agent.TestHistoryTokenWindow) ... ok
+test_oversized_old_turn_is_removed_and_recent_formula_citation_unchanged (test_agent.TestHistoryTokenWindow) ... ok
+test_reopened_manager_and_changed_budget_recompute_window_without_losing_archive (test_agent.TestHistoryTokenWindow) ... ok
+test_runtime_count_needs_no_network_or_llm (test_agent.TestHistoryTokenWindow) ... ok
+test_token_count_matches_real_qwen_json_not_character_count (test_agent.TestHistoryTokenWindow) ... ok
+test_under_budget_keeps_original_roles_content_order_and_archive (test_agent.TestHistoryTokenWindow) ... ok
+test_window_isolated_from_same_user_other_session_and_other_user (test_agent.TestHistoryTokenWindow) ... ok
+test_closing_loop_and_mutating_events_do_not_execute_or_change_state (test_agent.TestObservationAndLoop) ... ok
+test_continue_stops_at_limit_without_extra_model_or_tool_calls (test_agent.TestObservationAndLoop) ... ok
+test_direct_answer_finishes_without_tool_calling_request (test_agent.TestObservationAndLoop) ... ok
+test_failed_tool_cannot_be_marked_successful (test_agent.TestObservationAndLoop) ... ok
+test_invalid_limits_and_context_stop_before_model_calls (test_agent.TestObservationAndLoop) ... ok
+test_missing_information_can_finish_without_claiming_completion (test_agent.TestObservationAndLoop) ... ok
+test_model_errors_stop_in_each_stage_and_preserve_actual_results (test_agent.TestObservationAndLoop) ... ok
+test_observation_rejects_inconsistent_decisions (test_agent.TestObservationAndLoop) ... ok
+test_observation_rejects_partial_malformed_and_service_responses (test_agent.TestObservationAndLoop) ... ok
+test_observation_unknown_usage_and_boundary_description (test_agent.TestObservationAndLoop) ... ok
+test_observation_validates_state_before_call_and_never_uses_cloud (test_agent.TestObservationAndLoop) ... ok
+test_tool_error_can_continue_to_a_real_alternative (test_agent.TestObservationAndLoop) ... ok
+test_tool_failure_is_observed_and_stops_honestly (test_agent.TestObservationAndLoop) ... ok
+test_two_real_tools_feed_next_round_and_native_observation_messages (test_agent.TestObservationAndLoop) ... ok
+test_disabled_latest_request_finishes_incomplete_without_tools (test_agent.TestRAGSearchRouting) ... ok
+test_disabled_latest_request_with_history_still_skips_all_io (test_agent.TestRAGSearchRouting) ... ok
+test_disabled_search_never_routes_latest_query_to_local_rag (test_agent.TestRAGSearchRouting) ... ok
+test_disabled_search_policy_uses_actual_registry (test_agent.TestRAGSearchRouting) ... ok
+test_enabled_search_policy_reports_availability (test_agent.TestRAGSearchRouting) ... ok
+test_enabled_search_runs_real_parser_without_touching_rag (test_agent.TestRAGSearchRouting) ... ok
+test_existing_context_and_negation_are_not_overridden (test_agent.TestRAGSearchRouting) ... ok
+test_existing_local_and_general_concept_routes_still_work (test_agent.TestRAGSearchRouting) ... ok
+test_explicit_registered_tool_is_not_replaced_by_freshness (test_agent.TestRAGSearchRouting) ... ok
+test_external_search_phrases_route_when_enabled (test_agent.TestRAGSearchRouting) ... ok
+test_grounded_rag_without_valid_citations_is_not_completed (test_agent.TestRAGSearchRouting) ... ok
+test_latest_external_papers_route_to_enabled_search (test_agent.TestRAGSearchRouting) ... ok
+test_local_scope_beats_freshness_words (test_agent.TestRAGSearchRouting) ... ok
+test_missing_tools_do_not_create_fake_routes (test_agent.TestRAGSearchRouting) ... ok
+test_mixed_local_and_external_sources_need_model_planning (test_agent.TestRAGSearchRouting) ... ok
+test_rag_action_observation_keeps_actual_sources_and_calls_retrieval_once (test_agent.TestRAGSearchRouting) ... ok
+test_search_failure_cannot_recover_via_local_old_papers (test_agent.TestRAGSearchRouting) ... ok
+test_source_policy_is_present_in_all_stages (test_agent.TestRAGSearchRouting) ... ok
+test_default_agent_can_execute_registered_rag_and_preserve_citations (test_agent.TestResearchTools) ... ok
+test_generation_failure_is_real_tool_error_without_retry (test_agent.TestResearchTools) ... ok
+test_metadata_character_budget_preserves_contiguous_prefix (test_agent.TestResearchTools) ... ok
+test_metadata_hallucinated_author_year_or_doi_is_rejected (test_agent.TestResearchTools) ... ok
+test_metadata_missing_fields_are_null_not_guessed_from_filename (test_agent.TestResearchTools) ... ok
+test_metadata_rejects_invalid_types_ranges_and_extra_fields (test_agent.TestResearchTools) ... ok
+test_metadata_returns_original_fields_and_real_evidence (test_agent.TestResearchTools) ... ok
+test_metadata_reuses_pdf_and_word_loaders_with_real_locations (test_agent.TestResearchTools) ... ok
+test_metadata_unfinished_or_malformed_model_results_do_not_return_partial_fields (test_agent.TestResearchTools) ... ok
+test_metadata_unknown_usage_stays_unknown_and_cloud_is_rejected (test_agent.TestResearchTools) ... ok
+test_rag_empty_library_preserves_explicit_fallback_notice (test_agent.TestResearchTools) ... ok
+test_rag_filters_by_existing_uploaded_fingerprint (test_agent.TestResearchTools) ... ok
+test_rag_logging_failure_warns_without_discarding_actual_answer (test_agent.TestResearchTools) ... ok
+test_rag_low_relevance_returns_candidates_without_generation (test_agent.TestResearchTools) ... ok
+test_rag_tool_keeps_sources_without_repeating_large_pdf_layout (test_agent.TestResearchTools) ... ok
+test_rag_tool_logs_success_confirmation_and_model_error_with_real_usage (test_agent.TestResearchTools) ... ok
+test_rag_uses_hybrid_rerank_and_real_module_two_citations (test_agent.TestResearchTools) ... ok
+test_rag_validates_question_and_uploaded_document_before_retrieval (test_agent.TestResearchTools) ... ok
+test_registry_contains_real_tools_with_schemas (test_agent.TestResearchTools) ... ok
+test_unconfirmed_rag_candidates_cannot_be_marked_complete (test_agent.TestResearchTools) ... ok
+test_unknown_fingerprint_stale_file_and_outside_symlink_never_call_model (test_agent.TestResearchTools) ... ok
+test_ambiguous_dependent_negated_and_existing_state_fall_back (test_agent.TestRoutingAndParallel) ... ok
+test_answer_plan_finishes_or_reports_insufficient_information_without_empty_loop (test_agent.TestRoutingAndParallel) ... ok
+test_batch_cannot_omit_selected_tool_or_mismatch_primary_name (test_agent.TestRoutingAndParallel) ... ok
+test_batch_limit_duplicate_ids_and_invalid_config_are_rejected (test_agent.TestRoutingAndParallel) ... ok
+test_batch_supports_different_selected_tools_only (test_agent.TestRoutingAndParallel) ... ok
+test_calculator_rule_requires_actual_registered_tool (test_agent.TestRoutingAndParallel) ... ok
+test_clear_question_types_route_only_to_registered_tools_without_model (test_agent.TestRoutingAndParallel) ... ok
+test_closing_during_batch_call_events_starts_no_tools (test_agent.TestRoutingAndParallel) ... ok
+test_error_or_confirmation_anywhere_in_current_batch_cannot_complete (test_agent.TestRoutingAndParallel) ... ok
+test_explicit_tool_names_and_two_papers_use_same_tool_batch (test_agent.TestRoutingAndParallel) ... ok
+test_general_concept_routes_to_answer_but_paper_question_uses_knowledge (test_agent.TestRoutingAndParallel) ... ok
+test_individual_failure_preserves_other_independent_result (test_agent.TestRoutingAndParallel) ... ok
+test_invalid_batch_protocol_rejected_before_any_execution (test_agent.TestRoutingAndParallel) ... ok
+test_loop_observes_entire_batch_and_preserves_native_input_order (test_agent.TestRoutingAndParallel) ... ok
+test_missing_or_disabled_tools_fall_back_without_fake_registry (test_agent.TestRoutingAndParallel) ... ok
+test_native_batch_has_one_ai_message_two_linked_results_and_one_usage (test_agent.TestRoutingAndParallel) ... ok
+test_rule_only_applies_to_first_round (test_agent.TestRoutingAndParallel) ... ok
+test_rule_path_skips_thought_model_but_keeps_action_and_observation (test_agent.TestRoutingAndParallel) ... ok
+test_serial_path_and_single_call_keep_true_results_and_order (test_agent.TestRoutingAndParallel) ... ok
+test_thought_accepts_independent_names_list_and_schema_limit (test_agent.TestRoutingAndParallel) ... ok
+test_thought_rejects_empty_duplicate_unknown_or_excessive_batch (test_agent.TestRoutingAndParallel) ... ok
+test_two_threads_reach_barrier_and_return_stable_order (test_agent.TestRoutingAndParallel) ... ok
+test_agent_foreign_access_fails_before_any_model_or_tool_call (test_agent.TestSessionIsolation) ... ok
+test_agent_persistence_failure_does_not_emit_successful_done_or_save_half_turn (test_agent.TestSessionIsolation) ... ok
+test_agent_request_context_is_fresh_and_does_not_reuse_prior_tool_state (test_agent.TestSessionIsolation) ... ok
+test_agent_requests_only_current_session_history_and_saves_finished_pair (test_agent.TestSessionIsolation) ... ok
+test_clear_only_current_owned_session_and_keep_identifier (test_agent.TestSessionIsolation) ... ok
+test_closing_agent_stream_saves_no_incomplete_turn (test_agent.TestSessionIsolation) ... ok
+test_default_manager_uses_configured_path (test_agent.TestSessionIsolation) ... ok
+test_different_users_keep_independent_history (test_agent.TestSessionIsolation) ... ok
+test_foreign_session_read_append_and_clear_are_rejected_without_changes (test_agent.TestSessionIsolation) ... ok
+test_incomplete_answer_is_saved_as_real_response_without_claiming_success (test_agent.TestSessionIsolation) ... ok
+test_invalid_identity_or_message_does_not_save_half_turn (test_agent.TestSessionIsolation) ... ok
+test_messages_keep_role_order_unicode_formula_and_markdown (test_agent.TestSessionIsolation) ... ok
+test_new_python_process_restores_persistent_history (test_agent.TestSessionIsolation) ... ok
+test_new_sessions_are_unique_empty_and_owned_lists_include_no_foreign_session (test_agent.TestSessionIsolation) ... ok
+test_reopening_manager_restores_both_users_without_shared_message_cache (test_agent.TestSessionIsolation) ... ok
+test_returned_message_mutation_does_not_modify_store_or_other_session (test_agent.TestSessionIsolation) ... ok
+test_same_session_concurrent_appends_do_not_overwrite_or_split_turns (test_agent.TestSessionIsolation) ... ok
+test_same_user_different_sessions_have_independent_history (test_agent.TestSessionIsolation) ... ok
+test_second_insert_failure_rolls_back_entire_turn (test_agent.TestSessionIsolation) ... ok
+test_sql_metacharacters_are_literal_identity_values (test_agent.TestSessionIsolation) ... ok
+test_threads_and_manager_instances_append_owned_sessions_without_cross_contamination (test_agent.TestSessionIsolation) ... ok
+test_unknown_session_is_not_implicitly_created (test_agent.TestSessionIsolation) ... ok
+test_current_time_is_real_timezone_aware_and_uses_no_model (test_agent.TestSummaryTimeSearch) ... ok
+test_current_time_uses_system_timezone_without_hardcoding (test_agent.TestSummaryTimeSearch) ... ok
+test_default_agent_registers_enabled_search_and_explicit_empty_stays_empty (test_agent.TestSummaryTimeSearch) ... ok
+test_disabled_search_is_not_registered_and_cannot_call_http (test_agent.TestSummaryTimeSearch) ... ok
+test_missing_section_is_explicit_and_cannot_complete_task (test_agent.TestSummaryTimeSearch) ... ok
+test_search_challenge_or_unrecognized_page_is_error (test_agent.TestSummaryTimeSearch) ... ok
+test_search_distinguishes_legitimate_empty_results (test_agent.TestSummaryTimeSearch) ... ok
+test_search_empty_query_rejected_before_network (test_agent.TestSummaryTimeSearch) ... ok
+test_search_http_error_is_not_empty_result (test_agent.TestSummaryTimeSearch) ... ok
+test_search_parses_top_five_titles_snippets_and_unwraps_redirects (test_agent.TestSummaryTimeSearch) ... ok
+test_search_registration_reads_current_boolean_switch (test_agent.TestSummaryTimeSearch) ... ok
+test_search_skips_invalid_links_and_allows_missing_snippet (test_agent.TestSummaryTimeSearch) ... ok
+test_search_timeout_is_execution_error_without_retry (test_agent.TestSummaryTimeSearch) ... ok
+test_summary_api_failure_is_tool_error_without_retry (test_agent.TestSummaryTimeSearch) ... ok
+test_summary_generates_four_sections_with_true_sources_and_usage (test_agent.TestSummaryTimeSearch) ... ok
+test_summary_omits_author_only_chunks_before_abstract (test_agent.TestSummaryTimeSearch) ... ok
+test_summary_preserves_pdf_physical_page_and_word_paragraph (test_agent.TestSummaryTimeSearch) ... Consider using the pymupdf_layout package for a greatly improved page layout analysis.
+warning: The `fitz` API is deprecated and will be removed in future. Use `import pymupdf` instead.
+ok
+test_summary_prioritizes_conclusion_and_reports_truncation (test_agent.TestSummaryTimeSearch) ... ok
+test_summary_rejects_empty_loaded_content_before_model (test_agent.TestSummaryTimeSearch) ... ok
+test_summary_rejects_incomplete_or_invalid_model_packets (test_agent.TestSummaryTimeSearch) ... ok
+test_summary_rejects_malformed_sections_and_fabricated_references (test_agent.TestSummaryTimeSearch) ... ok
+test_summary_rejects_unknown_or_changed_uploaded_ids_before_model (test_agent.TestSummaryTimeSearch) ... ok
+test_summary_unknown_tokens_are_not_zero (test_agent.TestSummaryTimeSearch) ... ok
+test_cloud_and_invalid_addresses_are_rejected_before_network (test_agent.TestThought) ... ok
+test_direct_answer_plan_with_no_tools_does_not_generate_answer (test_agent.TestThought) ... ok
+test_dynamic_instructions_do_not_change_system_message (test_agent.TestThought) ... ok
+test_input_errors_do_not_call_model (test_agent.TestThought) ... ok
+test_invalid_json_and_content_shape_are_explicit_errors (test_agent.TestThought) ... ok
+test_invalid_plan_fields_and_tool_decisions_are_rejected (test_agent.TestThought) ... ok
+test_local_model_failure_is_not_retried (test_agent.TestThought) ... ok
+test_message_roles_tools_schema_and_current_state_are_preserved (test_agent.TestThought) ... ok
+test_no_tools_cannot_select_tool_and_boundary_length_is_valid (test_agent.TestThought) ... ok
+test_plan_only_selects_registered_tool_and_uses_llm_config (test_agent.TestThought) ... ok
+test_unfinished_length_stops_service_errors_and_bad_shapes_are_rejected (test_agent.TestThought) ... ok
+test_unknown_usage_is_not_estimated (test_agent.TestThought) ... ok
+test_blank_answer_is_rejected (test_generation.TestCitations) ... ok
+test_code_examples_and_escaped_markers_are_not_evidence (test_generation.TestCitations) ... ok
+test_context_is_not_modified_by_resolution_or_returned_evidence (test_generation.TestCitations) ... ok
+test_context_references_follow_sorting_and_budget (test_generation.TestCitations) ... ok
+test_cross_page_table_location_is_kept (test_generation.TestCitations) ... ok
+test_empty_context_cannot_resolve_a_document (test_generation.TestCitations) ... ok
+test_inline_pdf_location_and_authoritative_footer (test_generation.TestCitations) ... ok
+test_markdown_characters_in_filename_are_escaped (test_generation.TestCitations) ... ok
+test_missing_source_information_is_flagged (test_generation.TestCitations) ... ok
+test_model_supplied_link_is_not_a_source_link (test_generation.TestCitations) ... ok
+test_real_multi_format_loaders_and_chunks_keep_traceable_positions (test_generation.TestCitations) ... ok
+test_reference_metadata_is_an_independent_snapshot (test_generation.TestCitations) ... ok
+test_truncated_evidence_does_not_include_unseen_tail (test_generation.TestCitations) ... ok
+test_uncited_answer_does_not_add_retrieved_sources (test_generation.TestCitations) ... ok
+test_unknown_ids_are_marked_and_never_assigned_sources (test_generation.TestCitations) ... ok
+test_used_order_repeated_citations_and_unused_blocks (test_generation.TestCitations) ... ok
+test_word_and_text_do_not_get_invented_pdf_pages (test_generation.TestCitations) ... ok
+test_config_and_question_validation (test_generation.TestContextBuilding) ... ok
+test_empty_and_whitespace_results_use_existing_empty_prompt (test_generation.TestContextBuilding) ... ok
+test_exact_limit_keeps_full_block_and_drops_lower_rank (test_generation.TestContextBuilding) ... ok
+test_full_text_and_sources_are_preserved (test_generation.TestContextBuilding) ... ok
+test_inputs_remain_unchanged_after_sorting_and_truncation (test_generation.TestContextBuilding) ... ok
+test_missing_metadata_does_not_invent_source_or_page (test_generation.TestContextBuilding) ... ok
+test_nonfinite_scores_are_rejected (test_generation.TestContextBuilding) ... ok
+test_oversized_header_is_skipped_without_broken_reference_number (test_generation.TestContextBuilding) ... ok
+test_question_length_reduces_available_context (test_generation.TestContextBuilding) ... ok
+test_real_location_fields_for_each_format (test_generation.TestContextBuilding) ... ok
+test_score_order_ties_and_negative_scores (test_generation.TestContextBuilding) ... ok
+test_separator_and_all_headers_count_toward_limit (test_generation.TestContextBuilding) ... ok
+test_system_prompt_changes_are_included_in_budget (test_generation.TestContextBuilding) ... ok
+test_too_small_budget_does_not_report_false_empty_knowledge_base (test_generation.TestContextBuilding) ... ok
+test_truncation_prefers_late_sentence_or_paragraph_boundary (test_generation.TestContextBuilding) ... ok
+test_unbroken_unicode_text_is_cut_with_visible_marker (test_generation.TestContextBuilding) ... ok
+test_empty_and_blank_documents_use_pure_model_mode (test_generation.TestDegradationContext) ... ok
+test_invalid_scores_and_threshold_never_become_empty_results (test_generation.TestDegradationContext) ... ok
+test_local_api_bypasses_environment_proxy_in_both_modes (test_generation.TestDegradationContext) ... ok
+test_low_score_boundary_and_unsorted_top_score (test_generation.TestDegradationContext) ... ok
+test_relevance_uses_only_chunks_that_fit_context_budget (test_generation.TestDegradationContext) ... ok
+test_unconfirmed_low_context_cannot_call_either_model_interface (test_generation.TestDegradationContext) ... ok
+test_complete_answer_passes_and_footer_does_not_fill_facts (test_generation.TestGenerationEvaluation) ... ok
+test_english_source_footer_is_not_a_body_citation (test_generation.TestGenerationEvaluation) ... ok
+test_equal_weight_summary_with_two_seeds (test_generation.TestGenerationEvaluation) ... ok
+test_incomplete_output_is_not_a_pass (test_generation.TestGenerationEvaluation) ... ok
+test_missing_expected_and_invalid_citations_fail (test_generation.TestGenerationEvaluation) ... ok
+test_template_no_document_notice_counts_as_refusal (test_generation.TestGenerationEvaluation) ... ok
+test_blank_or_unfinished_response_is_rejected (test_generation.TestLocalGeneration) ... ok
+test_cloud_and_non_http_configuration_is_rejected (test_generation.TestLocalGeneration) ... ok
+test_config_reaches_native_ollama_and_citations (test_generation.TestLocalGeneration) ... ok
+test_empty_fallback_is_explicit_even_when_model_omits_notice (test_generation.TestLocalGeneration) ... ok
+test_empty_question_does_not_call_network (test_generation.TestLocalGeneration) ... ok
+test_experiment_options_do_not_mutate_config (test_generation.TestLocalGeneration) ... ok
+test_http_failure_has_specific_advice_and_original_cause (test_generation.TestLocalGeneration) ... ok
+test_invalid_sampling_is_rejected_before_network (test_generation.TestLocalGeneration) ... ok
+test_length_stop_is_preserved_for_evaluation (test_generation.TestLocalGeneration) ... ok
+test_network_failure_is_explicit_without_fallback (test_generation.TestLocalGeneration) ... ok
+test_corrupted_tail_is_preserved_and_next_record_remains_readable (test_generation.TestRAGLogging) ... ok
+test_daily_files_and_confirmation_snapshots_count_one_request (test_generation.TestRAGLogging) ... ok
+test_empty_failed_and_cache_requests_do_not_add_zero_score_samples (test_generation.TestRAGLogging) ... ok
+test_full_utf8_record_preserves_original_text_metadata_and_actual_usage (test_generation.TestRAGLogging) ... ok
+test_histogram_boundaries_and_model_revisions_are_separate (test_generation.TestRAGLogging) ... ok
+test_serialization_failure_does_not_damage_previous_records (test_generation.TestRAGLogging) ... ok
+test_threaded_appends_keep_complete_independent_lines (test_generation.TestRAGLogging) ... ok
+test_unavailable_tokens_remain_unknown_and_not_called_is_zero (test_generation.TestRAGLogging) ... ok
+test_blank_question_is_rejected (test_generation.TestRAGPrompt) ... ok
+test_braces_formula_and_markdown_are_not_reformatted (test_generation.TestRAGPrompt) ... ok
+test_calls_do_not_share_context_or_mutate_previous_messages (test_generation.TestRAGPrompt) ... ok
+test_dynamic_text_cannot_create_system_messages (test_generation.TestRAGPrompt) ... ok
+test_empty_context_has_explicit_notice (test_generation.TestRAGPrompt) ... ok
+test_four_parts_and_message_roles (test_generation.TestRAGPrompt) ... ok
+test_long_context_and_whitespace_are_preserved (test_generation.TestRAGPrompt) ... ok
+test_template_variables_match_retrieval_context_contract (test_generation.TestRAGPrompt) ... ok
+test_cache_input_and_returned_source_snapshots_are_independent (test_generation.TestSemanticCache) ... ok
+test_capacity_eviction_replacement_and_clear (test_generation.TestSemanticCache) ... ok
+test_changed_numbers_models_negation_and_language_never_reuse_identical_vectors (test_generation.TestSemanticCache) ... ok
+test_degraded_answer_is_not_cached_even_after_user_confirmation (test_generation.TestSemanticCache) ... ok
+test_empty_and_blank_requests_never_load_model (test_generation.TestSemanticCache) ... ok
+test_errors_length_missing_or_invalid_sources_and_empty_answers_are_not_stored (test_generation.TestSemanticCache) ... ok
+test_exact_hit_skips_embedding_preserves_answer_and_uses_zero_current_tokens (test_generation.TestSemanticCache) ... ok
+test_invalid_configuration_and_vectors_are_explicit (test_generation.TestSemanticCache) ... ok
+test_long_questions_are_exact_only_to_avoid_embedding_tail_truncation (test_generation.TestSemanticCache) ... ok
+test_scope_change_and_session_instances_are_isolated (test_generation.TestSemanticCache) ... ok
+test_scope_detects_add_delete_same_count_replacement_and_position_changes (test_generation.TestSemanticCache) ... ok
+test_scope_ignores_corpus_order_but_invalidates_prompt_and_model_parameters (test_generation.TestSemanticCache) ... ok
+test_semantic_matching_normalizes_vectors_and_selects_highest_score (test_generation.TestSemanticCache) ... ok
+test_threshold_includes_boundary_and_rejects_lower_score (test_generation.TestSemanticCache) ... ok
+test_bad_response_shape_and_service_error_keep_partial_answer (test_generation.TestStreaming) ... ok
+test_blank_done_is_error_and_done_packet_content_is_not_lost (test_generation.TestStreaming) ... ok
+test_closing_consumer_closes_http_connection_without_reading_rest (test_generation.TestStreaming) ... ok
+test_complete_footer_heading_does_not_warn_about_broken_tail (test_generation.TestStreaming) ... ok
+test_empty_context_and_context_snapshot_remain_explicit (test_generation.TestStreaming) ... ok
+test_empty_notice_is_visible_during_stream_and_in_final_answer (test_generation.TestStreaming) ... ok
+test_english_footer_is_not_counted_as_body_evidence (test_generation.TestStreaming) ... ok
+test_eof_without_done_keeps_partial_text_and_never_returns_done (test_generation.TestStreaming) ... ok
+test_error_categories_provide_retry_advice_without_retry_or_usage (test_generation.TestStreaming) ... ok
+test_every_citation_split_updates_exact_position_before_done (test_generation.TestStreaming) ... ok
+test_first_token_precedes_later_packets_and_uses_streaming_config (test_generation.TestStreaming) ... ok
+test_invalid_request_returns_error_before_network (test_generation.TestStreaming) ... ok
+test_malformed_ndjson_and_server_errors_preserve_prior_text (test_generation.TestStreaming) ... ok
+test_network_failure_is_not_retried_or_returned_as_answer (test_generation.TestStreaming) ... ok
+test_single_character_chunks_keep_code_escape_and_hide_fake_link (test_generation.TestStreaming) ... ok
+test_unfinished_tail_and_length_limit_both_warn (test_generation.TestStreaming) ... ok
+test_unknown_number_is_flagged_at_closing_bracket (test_generation.TestStreaming) ... ok
+test_cache_hit_logs_zero_current_tokens_and_no_new_retrieval_score (test_generation.TestStreamingFrontend) ... 2026-10-02 23:36:21.573 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_cache_write_failure_keeps_completed_answer_and_gives_notice (test_generation.TestStreamingFrontend) ... 2026-10-02 23:36:22.408 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_cancel_and_clear_remove_pending_request_without_generation (test_generation.TestStreamingFrontend) ... 2026-10-02 23:36:22.615 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_cancel_supersede_and_clear_keep_request_records (test_generation.TestStreamingFrontend) ... 2026-10-02 23:36:22.903 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_changed_generation_settings_do_not_reuse_old_answer (test_generation.TestStreamingFrontend) ... 2026-10-02 23:36:23.230 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_changed_knowledge_or_configuration_cannot_confirm_stale_context (test_generation.TestStreamingFrontend) ... 2026-10-02 23:36:23.475 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_empty_library_notice_and_retrieval_failure_never_hide_errors (test_generation.TestStreamingFrontend) ... 2026-10-02 23:36:23.767 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_empty_notice_and_error_advice_survive_history_rerun (test_generation.TestStreamingFrontend) ... 2026-10-02 23:36:23.969 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_history_rerun_does_not_generate_again_and_clear_removes_it (test_generation.TestStreamingFrontend) ... 2026-10-02 23:36:24.280 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_incomplete_stream_is_visible_error_with_partial_answer (test_generation.TestStreamingFrontend) ... 2026-10-02 23:36:24.538 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_interrupted_answer_is_not_cached_and_retry_calls_model (test_generation.TestStreamingFrontend) ... 2026-10-02 23:36:24.709 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_knowledge_change_and_clear_invalidate_cache (test_generation.TestStreamingFrontend) ... 2026-10-02 23:36:24.950 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_knowledge_changed_during_generation_does_not_store_stale_answer (test_generation.TestStreamingFrontend) ... 2026-10-02 23:36:25.238 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_logging_failure_warns_without_losing_completed_answer (test_generation.TestStreamingFrontend) ... 2026-10-02 23:36:25.411 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_low_relevance_waits_for_confirmation_then_generates_once (test_generation.TestStreamingFrontend) ... 2026-10-02 23:36:25.617 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_new_question_replaces_pending_low_relevance_question (test_generation.TestStreamingFrontend) ... 2026-10-02 23:36:25.937 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_page_start_is_lazy_and_chat_shows_sources_and_actual_usage (test_generation.TestStreamingFrontend) ... 2026-10-02 23:36:26.148 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_partial_failure_and_retrieval_failure_log_different_token_states (test_generation.TestStreamingFrontend) ... 2026-10-02 23:36:26.322 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_pending_confirmation_updates_one_log_and_one_score_sample (test_generation.TestStreamingFrontend) ... 2026-10-02 23:36:26.566 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_repeated_and_similar_questions_skip_retrieval_and_model_and_keep_sources (test_generation.TestStreamingFrontend) ... 2026-10-02 23:36:26.781 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_request_log_keeps_full_topk_separate_from_truncated_context (test_generation.TestStreamingFrontend) ... 2026-10-02 23:36:27.042 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_ambiguous_three_line_header_keeps_original_text (test_retrieval.TestAcademicPDF)
+父表头横跨两个子列时不输出错误结构，正文和原文位置仍保留。 ... ok
+test_chinese_continuation_and_unnumbered_tables (test_retrieval.TestAcademicPDF)
+中文续表无重复表头时可合并；无编号的独立表不凭同表头合并。 ... ok
+test_continuation_without_repeated_header (test_retrieval.TestAcademicPDF)
+明确同编号续表可无重复表头，下一页首行数据不可丢失。 ... ok
+test_cross_page_table_merges_rows_and_keeps_row_sources (test_retrieval.TestAcademicPDF)
+相邻页同一续表合并，重复表头去重，每行记录真实来源页。 ... ok
+test_dense_formula_rows_do_not_leak_into_neighbors (test_retrieval.TestAcademicPDF)
+上标边缘与邻行相交时，不能向表头或邻行复制残留字符。 ... ok
+test_different_numbered_tables_do_not_merge (test_retrieval.TestAcademicPDF)
+几何位置和表头相同也不能合并不同编号的独立表。 ... ok
+test_formula_symbols_and_scripts_are_preserved (test_retrieval.TestAcademicPDF)
+公式符号与上下标保持，不能把 x 的平方压成普通 x2。 ... ok
+test_fraction_layout_retains_original_positions (test_retrieval.TestAcademicPDF)
+不猜测二维分式的 LaTeX，保留分子/分母位置以回看原文。 ... ok
+test_full_width_separator_between_column_sections (test_retrieval.TestAcademicPDF)
+页中通栏内容将双栏分为上下区域，避免跨区域串读。 ... ok
+test_image_formula_is_locatable_after_batch_save (test_retrieval.TestAcademicPDF)
+混合文本页的公式图片保留原文定位，批量保存后仍可裁剪查看。 ... ok
+test_indented_single_column_is_not_reordered (test_retrieval.TestAcademicPDF)
+上下分离的缩进段落不能被误当作同时并排的两栏。 ... ok
+test_multiple_table_styles_on_same_page (test_retrieval.TestAcademicPDF)
+同页网格表与三线表分别保留，不把横线范围或单元格混在一起。 ... ok
+test_nonadjacent_or_incompatible_tables_do_not_merge (test_retrieval.TestAcademicPDF)
+页码断开、表头或列结构不同、非页边续接均分别保留。 ... ok
+test_three_line_formula_cells_and_header_words (test_retrieval.TestAcademicPDF)
+多词表头和公式中的间隔不拆成虚假的列。 ... ok
+test_three_line_table_and_empty_cells (test_retrieval.TestAcademicPDF)
+三线表在规则围出的区域内识别，空单元格不从相邻行填值。 ... ok
+test_three_page_table_keeps_first_caption_identity (test_retrieval.TestAcademicPDF)
+中间续页不重复标题时，仍保留整张表的编号和第三页数据。 ... ok
+test_two_columns_with_full_width_heading (test_retrieval.TestAcademicPDF)
+先通栏标题，再完整左栏、完整右栏，最后页脚。 ... ok
+test_chinese_and_source_preservation (test_retrieval.TestBM25Retriever)
+中文单字组合可检索，对应原文、位置和稳定 ID 全部保留。 ... /Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_default_k_override_and_document_filter (test_retrieval.TestBM25Retriever)
+继承存储配置 K；文档过滤先于截断，分数仍基于完整语料。 ... ok
+test_empty_and_punctuation_only_corpus (test_retrieval.TestBM25Retriever)
+空库和全无词语料不构造 BM25，混入标点块不影响有效块查询。 ... ok
+test_empty_and_unknown_queries_do_not_return_unrelated_documents (test_retrieval.TestBM25Retriever)
+无匹配时返回空列表，英文术语按词匹配而非子串匹配。 ... ok
+test_fullwidth_pdf_terms_match_without_changing_original_text (test_retrieval.TestBM25Retriever)
+全角英文/数字常见于论文 PDF，词项归一化后可查且原文不变。 ... ok
+test_invalid_k_and_database_errors_are_not_hidden (test_retrieval.TestBM25Retriever)
+参数错误与正文读取失败直接上报，不静默回退向量查询。 ... ok
+test_rebuild_after_add_delete_and_reopen (test_retrieval.TestBM25Retriever)
+新增/删除后从当前正文重建，重开自动恢复，不重新编码文档。 ... ok
+test_same_content_keeps_separate_document_sources (test_retrieval.TestBM25Retriever)
+不同来源的相同正文保留各自 ID，供后续按块融合使用。 ... ok
+test_scores_follow_term_frequency_and_length_normalization (test_retrieval.TestBM25Retriever)
+用已知词频、文档频次和长度独立计算 BM25 分数，核验排序。 ... ok
+test_tokenize_chinese_english_and_numbers (test_retrieval.TestBM25Retriever)
+沿用上游分词，保留完整英文术语，忽略标点，文档/问题统一小写。 ... ok
+test_zero_and_negative_scores_still_keep_keyword_matches (test_retrieval.TestBM25Retriever)
+复现上游 >0 过滤的漏检：单文档负分、两文档零分均应命中。 ... ok
+test_all_formats_saved_with_correct_sources (test_retrieval.TestBatchImport)
+四类文档均实际解析和保存，来源指向持久文件而非临时文件。 ... ok
+test_empty_batch_and_duplicate_inputs (test_retrieval.TestBatchImport)
+空批次不创建目录，相同文件名和内容的重复项合并。 ... ok
+test_existing_file_with_different_bytes_is_not_overwritten (test_retrieval.TestBatchImport)
+已有保存位置被外部修改时明确失败，保留其内容。 ... ok
+test_failure_does_not_stop_later_files_or_leave_failed_file (test_retrieval.TestBatchImport)
+中间文件损坏也继续导入后续文件，完成进度包含失败项。 ... ok
+test_interrupted_loading_task_can_resume (test_retrieval.TestBatchImport)
+页面中断后遗留的处理中任务可继续处理。 ... ok
+test_persistent_failure_is_bounded (test_retrieval.TestBatchImport)
+每次重试只处理一轮，永久错误不会产生无限循环。 ... ok
+test_repeated_run_skips_completed_tasks (test_retrieval.TestBatchImport)
+成功后再次调用不会重复加载或重复保存。 ... ok
+test_retry_failed_recovers_without_reloading_success (test_retrieval.TestBatchImport)
+模拟一次临时错误，手动重试仅失败项，成功项尝试次数不增加。 ... ok
+test_same_name_different_content_is_preserved (test_retrieval.TestBatchImport)
+不同内容的同名文献独立保存，不覆盖旧内容。 ... ok
+test_size_limit (test_retrieval.TestBatchImport)
+前端之外的调用也核验单份文档大小。 ... ok
+test_storage_failure_is_retryable (test_retrieval.TestBatchImport)
+保存位置暂时不可用时记录错误，恢复后可重试成功。 ... ok
+test_unsupported_format_and_unsafe_names (test_retrieval.TestBatchImport)
+路径名和不支持格式记录失败，不写到导入目录之外。 ... ok
+test_all_formats_complete_index_and_keep_sources (test_retrieval.TestBatchIndex)
+四类真实文件完成整个流程，只有写入索引后才标记成功。 ... ok
+test_empty_content_after_loading_is_not_index_success (test_retrieval.TestBatchIndex)
+加载后没有有效分块不能算索引成功；保留原文供用户核对。 ... ok
+test_index_error_keeps_loaded_file_and_retry_skips_loading (test_retrieval.TestBatchIndex)
+一个索引错误不阻断下一文档，重试保留加载结果并跳过成功任务。 ... ok
+test_loaded_documents_can_be_indexed_without_reload (test_retrieval.TestBatchIndex)
+原始加载接口的成功任务也可继续进入索引阶段。 ... ok
+test_loading_failures_and_empty_batch_do_not_initialize_model (test_retrieval.TestBatchIndex)
+空批次/解码失败无需模型，也不创建索引；加载错误仍可有界重试。 ... ok
+test_new_document_keeps_old_index_and_only_encodes_new (test_retrieval.TestBatchIndex)
+新增一篇文献保留旧块，重新构造客户端不重算旧向量。 ... ok
+test_partial_batch_failure_only_retries_missing_chunks (test_retrieval.TestBatchIndex)
+第 501 块故障后保留前 500 块，下一次只编码剩余块。 ... ok
+test_repeated_and_recreated_tasks_do_not_encode_old_chunks (test_retrieval.TestBatchIndex)
+页面重跑跳过完成任务，重新上传相同原文也不重新编码。 ... ok
+test_stage_progress_and_interrupted_index_resume (test_retrieval.TestBatchIndex)
+观察分块/索引阶段；进度中断后可恢复，不误标为成功。 ... ok
+test_config_defaults_and_overrides (test_retrieval.TestChunking)
+统一入口读取唯一配置，显式参数可覆盖实验值。 ... ok
+test_empty_documents (test_retrieval.TestChunking)
+空列表、空文本和仅空白文档不生成无效块。 ... ok
+test_fixed_course_sizes (test_retrieval.TestChunking)
+课程规定的 256/512/1024 都可切分，正文长度不超过设置。 ... ok
+test_fixed_exact_overlap (test_retrieval.TestChunking)
+固定窗口按字符数切分，相邻正文块精确重叠。 ... ok
+test_fixed_no_redundant_tail (test_retrieval.TestChunking)
+末尾已被覆盖时不再输出完全包含在上一块中的尾块。 ... ok
+test_invalid_parameters (test_retrieval.TestChunking)
+拒绝不合法大小和重叠，避免零步长或负数切片。 ... ok
+test_loaded_text_line_numbers (test_retrieval.TestChunking)
+真实 TXT 加载后细化 CRLF 行范围；块内原文和文件来源保持一致。 ... ok
+test_loaded_word_and_pdf (test_retrieval.TestChunking)
+真实 Word/PDF 加载结果可直接分块，来源位置与表格不丢失。 ... ok
+test_pdf_and_word_tables_remain_whole (test_retrieval.TestChunking)
+独立表格不拆，即使超长也保留跨页行信息和保护标记。 ... ok
+test_preserves_metadata_without_mutating_input (test_retrieval.TestChunking)
+保留 PDF 页码、版面和公式原位置，并复制元数据。 ... ok
+test_ranges_cover_original_content (test_retrieval.TestChunking)
+不同大小和重叠下，区间准确、向前推进，所有非空白字符均被覆盖。 ... ok
+test_recursive_character_fallback (test_retrieval.TestChunking)
+没有分隔符的长文本仍能限长并保留重叠。 ... ok
+test_recursive_paragraph_boundaries (test_retrieval.TestChunking)
+优先按段落分隔符切分，并保留分隔符原文。 ... ok
+test_semantic_chinese_sentences_and_quotes (test_retrieval.TestChunking)
+长段落拆句，结束引号与标点跟随原句。 ... ok
+test_semantic_complete_unit_overlap (test_retrieval.TestChunking)
+重叠复用完整句子；不足容纳整句时不截出半句。 ... ok
+test_semantic_english_decimal_and_doi (test_retrieval.TestChunking)
+英文句号可拆句，小数和 DOI 内部的点不误拆。 ... ok
+test_semantic_keeps_paragraphs (test_retrieval.TestChunking)
+短段落整体保留，空行跟随原段落。 ... ok
+test_semantic_long_sentence_fallback (test_retrieval.TestChunking)
+超长单句按字符兜底，最后短片段不丢失。 ... ok
+test_short_document (test_retrieval.TestChunking)
+短文档保持原文，包括缩进与尾部换行。 ... ok
+test_stable_distinct_chunk_ids (test_retrieval.TestChunking)
+重复执行 ID 不变，重复正文在不同页/段落及不同配置中不会混淆。 ... ok
+test_unknown_strategy (test_retrieval.TestChunking)
+未知策略明确报错，不悄悄回退。 ... ok
+test_blank_blocks_do_not_shift_positions (test_retrieval.TestDOCXLoader)
+空段落和空表格跳过，但后续段落/表格编号不偏移。 ... ok
+test_damaged_document (test_retrieval.TestDOCXLoader)
+损坏文件的解析错误向上传递。 ... ok
+test_document_id_is_stable_shared_and_changes (test_retrieval.TestDOCXLoader)
+同文件各块共用内容 ID，重复读取稳定，内容变化后更新。 ... ok
+test_empty_document (test_retrieval.TestDOCXLoader)
+仅有空段落和空表格时明确报错。 ... ok
+test_legacy_doc_extension (test_retrieval.TestDOCXLoader)
+旧版 .doc 格式需转换后导入。 ... ok
+test_missing_file (test_retrieval.TestDOCXLoader)
+缺失文件不会被当成空文档。 ... ok
+test_paragraph_table_order_and_metadata (test_retrieval.TestDOCXLoader)
+表格保留在正文原位置，中文段落与单元格内容均可读取。 ... ok
+test_table_empty_cells_and_multiple_paragraphs (test_retrieval.TestDOCXLoader)
+空单元格保留分隔符，单元格内的多个段落不丢失。 ... ok
+test_hit_recall_and_mrr_cutoffs (test_retrieval.TestEmbeddingEvaluation)
+排名六的相关项不算 Hit@5，排名十一的项不算 MRR@10。 ... ok
+test_language_groups_use_equal_weight_macro_average (test_retrieval.TestEmbeddingEvaluation)
+问题数不等时宏平均仍等权，并保留表现较差的语言组。 ... ok
+test_blank_query_and_empty_store_do_not_load_model (test_retrieval.TestHybridRetriever)
+空问题不调用两路，空库不会初始化 Embedding。 ... ok
+test_both_routes_take_candidates_before_final_top_k (test_retrieval.TestHybridRetriever)
+最终只取 1 个也先各召回 20 个候选，不提前把两路截为 Top-1。 ... ok
+test_default_k_large_k_and_yaml_smoothing (test_retrieval.TestHybridRetriever)
+默认 K 与存储一致；更大的 K 扩大召回，平滑常数从 YAML 读取。 ... ok
+test_document_filter_and_empty_bm25_route (test_retrieval.TestHybridRetriever)
+两路共同过滤文档，BM25 无匹配时保留向量路的排名贡献。 ... ok
+test_invalid_parameters_and_route_errors_do_not_silently_degrade (test_retrieval.TestHybridRetriever)
+参数错误直接拒绝，两路异常明确上报，不能以半成品冒充混合检索。 ... ok
+test_model_reranking_respects_filter_and_empty_results (test_retrieval.TestHybridRetriever)
+过滤先应用于两路，单条候选也精排；空结果和空问题不加载模型。 ... ok
+test_model_reranks_fused_candidates_before_final_top_k (test_retrieval.TestHybridRetriever)
+模型先看到融合 Top-20；候选末项也能经模型升到最终 Top-1。 ... ok
+test_plain_rrf_does_not_load_model_and_model_failure_is_reported (test_retrieval.TestHybridRetriever)
+不启用精排时不依赖重排权重；启用后失败不得返回未经重排的候选。 ... ok
+test_reused_retriever_reads_current_corpus_after_add_and_delete (test_retrieval.TestHybridRetriever)
+同一个混合检索实例也读取最新正文，新增和删除后无陈旧 BM25 块。 ... ok
+test_batch_upload_progress_state_and_rerun (test_retrieval.TestImportFrontend)
+实际操作上传/按钮，核验混合结果、完整进度和重跑不重复执行。 ... 2026-10-02 23:36:28.794 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-02 23:36:28.930 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_bm25_database_error_is_visible_and_retryable (test_retrieval.TestImportFrontend)
+语料读取异常明确提示，恢复后重新提交可查，不静默切换检索方式。 ... 2026-10-02 23:36:29.143 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_bm25_search_reflects_upload_and_delete (test_retrieval.TestImportFrontend)
+上传后每次查询读取当前语料，新文档立即可查，已删除文档不再出现。 ... 2026-10-02 23:36:29.408 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_bm25_search_without_model_and_with_document_filter (test_retrieval.TestImportFrontend)
+页面 BM25 不加载权重，单文献负分仍展示正文、位置与 ID。 ... 2026-10-02 23:36:29.845 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_failed_upload_recovers_and_disables_retry (test_retrieval.TestImportFrontend)
+页面通过失败按钮恢复成功，之后重试按钮禁用且文献存在。 ... 2026-10-02 23:36:30.116 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_model_error_keeps_file_and_retry_completes_index (test_retrieval.TestImportFrontend)
+缺失本地模型时不误报成功，恢复模型后仅重试索引。 ... 2026-10-02 23:36:30.389 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_model_reranking_displays_new_order_score_and_sources (test_retrieval.TestImportFrontend)
+页面使用模型分数重新排列，保留 Word 段落与 TXT 行范围。 ... 2026-10-02 23:36:30.666 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_model_reranking_empty_cases_and_error_recovery (test_retrieval.TestImportFrontend)
+空问题/空库无需模型，模型缺失或推理失败有错误提示，修复后可重新提交。 ... 2026-10-02 23:36:30.864 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_model_reranking_uploaded_document_filter_and_delete (test_retrieval.TestImportFrontend)
+新文献可精排，文档 ID 限定在模型评分前生效，删除后不加载重排模型。 ... 2026-10-02 23:36:31.239 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_new_upload_is_incremental_and_repeat_upload_skips_encoding (test_retrieval.TestImportFrontend)
+改变文件选择新增文献，重新选原文也不重算已有向量。 ... 2026-10-02 23:36:31.629 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_rrf_empty_input_empty_store_and_model_error (test_retrieval.TestImportFrontend)
+空问题/空库无需权重；有数据但模型失败不静默改为 BM25。 ... 2026-10-02 23:36:32.111 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_rrf_search_after_upload_and_database_recovery (test_retrieval.TestImportFrontend)
+新上传文档参加两路召回，数据库异常恢复后可查，删除过滤无陈旧块。 ... 2026-10-02 23:36:32.425 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_rrf_search_displays_fused_score_and_original_source (test_retrieval.TestImportFrontend)
+页面切换混合检索，共同命中的块排序提高，并保留 Word 位置。 ... 2026-10-02 23:36:32.886 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_vector_search_blank_input_and_empty_index (test_retrieval.TestImportFrontend)
+启动/空问题不初始化模型，空库明确提示且不计算查询向量。 ... 2026-10-02 23:36:33.088 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_vector_search_document_filter_and_non_pdf_locations (test_retrieval.TestImportFrontend)
+文档过滤生效，Word 显示段落/表格、TXT 显示行号，不伪造页码。 ... 2026-10-02 23:36:33.346 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_vector_search_errors_are_visible_and_retryable (test_retrieval.TestImportFrontend)
+模型/数据库失败明确报错，修复后重新提交可检索，不当作空库。 ... 2026-10-02 23:36:33.647 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_vector_search_uses_persisted_index_and_top_k (test_retrieval.TestImportFrontend)
+页面没有上传任务也能查旧库，展示排序、跨页来源与负相似度。 ... 2026-10-02 23:36:33.913 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_local_loading_and_normalization_arguments (test_retrieval.TestLocalEmbeddings)
+只从本地目录加载，关闭远程代码，文档编码开启归一化。 ... ok
+test_missing_model_does_not_initialize_remote_client (test_retrieval.TestLocalEmbeddings)
+缺少权重明确报错，不构造模型客户端或回退在线模式。 ... ok
+test_repeated_calls_reuse_model (test_retrieval.TestLocalEmbeddings)
+多次调用复用已加载模型，不在每次提问时加载权重。 ... ok
+test_failed_loading_is_not_cached_and_can_retry (test_retrieval.TestLocalReranker)
+损坏权重错误保留，修复后下次调用重新加载而不是缓存失败。 ... ok
+test_local_loading_and_reuse (test_retrieval.TestLocalReranker)
+配置/模型/Tokenizer 均只读本地文件，不执行远程代码，重复调用只加载一次。 ... ok
+test_missing_model_does_not_initialize_remote_client (test_retrieval.TestLocalReranker) ... ok
+test_blank_page_does_not_shift_page_numbers (test_retrieval.TestPDFLoader)
+跳过中间空白页仍保留原始物理页码，避免引用错页。 ... ok
+test_chinese_text_and_page_metadata (test_retrieval.TestPDFLoader)
+每页正文与来源完整，页码同时提供索引和展示值。 ... ok
+test_damaged_pdf (test_retrieval.TestPDFLoader)
+损坏文件的解析错误向上传递，不返回空列表掩盖失败。 ... ok
+test_document_id_changes_with_file_content (test_retrieval.TestPDFLoader)
+文件内容改变后标识也改变，避免误用旧索引。 ... ok
+test_document_id_is_stable_and_shared (test_retrieval.TestPDFLoader)
+重复导入与文件副本共用内容标识，各页不会随机生成不同 ID。 ... ok
+test_image_only_pdf_is_not_silently_accepted (test_retrieval.TestPDFLoader)
+将文字渲染为图片，验证没有文本层的扫描页不会伪装为导入成功。 ... ok
+test_missing_file (test_retrieval.TestPDFLoader)
+不存在的文件明确报错。 ... ok
+test_password_protected_pdf (test_retrieval.TestPDFLoader)
+需要打开密码的文件明确提示先解密。 ... ok
+test_position_sorting (test_retrieval.TestPDFLoader)
+内容流先写下方再写上方时，正文仍按页面位置排序。 ... ok
+test_relative_string_path (test_retrieval.TestPDFLoader)
+字符串相对路径也能加载，来源统一为绝对路径。 ... ok
+test_unsupported_extension (test_retrieval.TestPDFLoader)
+其他加载器的格式不能误入 PDF 解析流程。 ... ok
+test_duplicate_within_one_route_counts_only_once (test_retrieval.TestRRFFusion)
+单路重复不多次加分，保留首次出现的位置，两路贡献仍可叠加。 ... ok
+test_empty_routes_and_zero_smoothing (test_retrieval.TestRRFFusion)
+单路为空时只使用另一支，双空返回空；k=0 时分母从 1 开始。 ... ok
+test_equal_scores_have_stable_chunk_id_order (test_retrieval.TestRRFFusion)
+两路交换同分候选的输入顺序，仍按稳定块 ID 打破平分。 ... ok
+test_missing_ids_and_invalid_smoothing_are_rejected (test_retrieval.TestRRFFusion)
+身份缺失不能退回按正文合并；平滑常数的错误输入明确报错。 ... ok
+test_one_based_rank_formula_and_shared_chunk_bonus (test_retrieval.TestRRFFusion)
+两路共同命中的块分数累加，第一名贡献为 1/61。 ... ok
+test_raw_score_scale_does_not_affect_fusion (test_retrieval.TestRRFFusion)
+负分、零分与大数的原始值都不参与 RRF，排名相同则结果相同。 ... ok
+test_same_content_in_different_sources_is_not_merged (test_retrieval.TestRRFFusion)
+合并键是 chunk_id，正文相同也保留不同文件与页码。 ... ok
+test_empty_query_or_candidates_do_not_load_model (test_retrieval.TestReranker) ... ok
+test_inference_error_is_not_silently_replaced_by_rrf (test_retrieval.TestReranker) ... ok
+test_invalid_batch_and_token_length_are_rejected (test_retrieval.TestReranker) ... ok
+test_invalid_k_is_rejected_before_loading_model (test_retrieval.TestReranker) ... ok
+test_pairs_model_scores_order_and_sources (test_retrieval.TestReranker)
+只用模型分数精排，同分保持原候选顺序，正文和来源不修改。 ... ok
+test_score_count_and_nonfinite_values_are_rejected (test_retrieval.TestReranker) ... ok
+test_single_candidate_zero_score_and_large_k (test_retrieval.TestReranker)
+单候选结果仍为列表，零分保留，K 超出候选数不补齐或重复。 ... ok
+test_empty_annotations_and_duplicate_results_are_errors (test_retrieval.TestRetrievalEvaluation) ... ok
+test_multiple_relevant_short_and_empty_results (test_retrieval.TestRetrievalEvaluation) ... ok
+test_rank_five_counts_and_rank_six_does_not (test_retrieval.TestRetrievalEvaluation) ... ok
+test_sample_ids_and_annotation_membership_are_validated (test_retrieval.TestRetrievalEvaluation) ... ok
+test_unequal_groups_and_repeated_timing_are_not_duplicate_queries (test_retrieval.TestRetrievalEvaluation) ... ok
+test_document_id_is_stable_and_changes (test_retrieval.TestTextLoader)
+内容指纹由原始字节生成，重复读取稳定，文本变化后更新。 ... ok
+test_empty_or_whitespace_only_file (test_retrieval.TestTextLoader)
+空字节、仅 BOM 和纯空白都不视为有效内容。 ... ok
+test_invalid_utf8 (test_retrieval.TestTextLoader)
+不静默替换错误字符，也不猜测 GBK 等其他编码。 ... ok
+test_markdown_preserves_syntax_and_indentation (test_retrieval.TestTextLoader)
+Markdown 标题、链接、表格和代码块不被转换或清理。 ... ok
+test_missing_file (test_retrieval.TestTextLoader)
+缺失文件明确报错。 ... ok
+test_unsupported_extension (test_retrieval.TestTextLoader)
+二进制格式不能被当作纯文本导入。 ... ok
+test_utf8_bom_and_crlf (test_retrieval.TestTextLoader)
+移除 BOM，但保留 Windows 的 CRLF 换行。 ... ok
+test_utf8_text_and_line_metadata (test_retrieval.TestTextLoader)
+中文正文保留首尾空白与空行，来源和行号完整。 ... ok
+test_blank_query_does_not_read_database (test_retrieval.TestVectorStore)
+空问题直接结束，不依赖数据库连接或查询编码。 ... /Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_changed_model_or_index_parameters_are_rejected (test_retrieval.TestVectorStore) ... ok
+test_cosine_order_and_negative_score (test_retrieval.TestVectorStore) ... ok
+test_default_top_k_and_query_change_without_reembedding_documents (test_retrieval.TestVectorStore)
+默认 K 来自配置；新查询只编码问题，沿用持久化文档向量。 ... ok
+test_delete_document_and_repeat_delete (test_retrieval.TestVectorStore) ... ok
+test_document_filter_and_top_k (test_retrieval.TestVectorStore) ... ok
+test_duplicate_import_does_not_encode_again (test_retrieval.TestVectorStore) ... ok
+test_empty_store_and_empty_query (test_retrieval.TestVectorStore) ... ok
+test_incremental_import_only_encodes_new_chunks (test_retrieval.TestVectorStore) ... ok
+test_invalid_ids_are_rejected_before_any_write (test_retrieval.TestVectorStore) ... ok
+test_readonly_operations_do_not_load_model (test_retrieval.TestVectorStore)
+只读正文、重复块和无有效向量查询无需权重，真正查询才加载。 ... ok
+test_real_text_loading_and_batches_over_500 (test_retrieval.TestVectorStore) ... ok
+test_reopen_preserves_content_without_reembedding (test_retrieval.TestVectorStore) ... ok
+test_same_text_in_different_documents_keeps_both_sources (test_retrieval.TestVectorStore) ... ok
+test_text_and_source_roundtrip (test_retrieval.TestVectorStore) ... ok
+
+----------------------------------------------------------------------
+Ran 547 tests in 19.407s
+
+OK

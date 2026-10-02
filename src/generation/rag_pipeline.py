@@ -12,6 +12,7 @@ from langchain_core.documents import Document
 
 from src.generation.prompt_template import NO_CONTEXT_TEXT, build_rag_messages
 from src.utils.config import load_config
+from src.utils.messages import messages_to_ollama
 
 # 本机模型直接连接，避免系统 HTTP 代理改变故障类型或转发论文内容。
 urlopen = build_opener(ProxyHandler({})).open
@@ -105,8 +106,7 @@ def _build_generation_request(question: str, context: dict, options: dict | None
         raise ValueError("seed 必须为整数")
     messages = build_rag_messages(question, context["context"])
     payload = {"model": config["model"], "stream": stream, "options": sampling,
-               "messages": [{"role": "user" if message.type == "human" else message.type,
-                             "content": message.content} for message in messages]}
+               "messages": messages_to_ollama(messages)}
     request = Request(config["base_url"].rstrip("/") + "/api/chat",
                       data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
                       headers={"Content-Type": "application/json"}, method="POST")

@@ -12,6 +12,7 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from tokenizers import Tokenizer
 
 from src.utils.config import load_config
+from src.utils.messages import normalize_context
 
 
 def _nonempty(value: str, name: str):
@@ -273,7 +274,7 @@ class MemoryManager:
         if summarized_turns or attempts or metadata["warning"]:
             metadata["unsummarized_dropped_turns"] = original_turns - summarized_turns - len(history) // 2
             context["memory_summary"] = metadata
-        return context
+        return normalize_context(context)
 
     def clear_session(self, user_id: str, session_id: str):
         """只清空已归属会话的历史；保留会话标识，不触及其他会话。"""
