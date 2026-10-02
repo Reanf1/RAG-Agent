@@ -95,6 +95,12 @@ def main():
             raise RuntimeError("论文入库失败，已保存真实状态")
         ids = [task["documents"][0].metadata["doc_id"] for task in tasks]
         report["paper_ids"] = ids
+        tool_case("calculator", "calculator", {"expression": "3.14*2.56"},
+                  lambda result: result["result"] == "8.0384" and result["usage"]["eval_count"] == 0)
+        tool_case("paper_list", "paper_list", {}, lambda result: result["total"] == 2
+                  and {row["doc_id"] for row in result["papers"]} == set(ids)
+                  and sum(row["indexed_chunks"] for row in result["papers"]) == store.count()
+                  and all(row["source_available"] and row["index_status"] == "has_index" for row in result["papers"]))
         for index, title, year in ((0, "Attention Is All You Need", 2017), (1, "AN IMAGE IS WORTH", 2021)):
             tool_case("metadata_" + tasks[index]["name"], "paper_metadata", {"doc_id": ids[index]},
                       lambda result, title=title, year=year: title.lower() in (result.get("title") or "").lower()
@@ -126,6 +132,19 @@ def main():
         agent_case("session_rag_citations", run_session(question, "alice", session, memory=memory), rag_check)
         agent_case("session_followup", run_session("刚才给出的BLEU分数是多少？请只给数字。", "alice", session, tools=[], memory=memory),
                    lambda done, events: done["task_complete"] and "28.4" in done["full_response"])
+        agent_case("registered_calculator_route", run_react("3.14乘以2.56"), lambda done, events:
+                   done["task_complete"] and "8.0384" in done["full_response"] and events[0].get("route") == "rule"
+                   and any(event["type"] == "tool_result" and event["name"] == "calculator"
+                           and (event.get("result") or {}).get("result") == "8.0384" for event in events))
+        agent_case("registered_paper_list_route", run_react("请调用paper_list列出已上传论文，给出完整doc_id、文件名和索引块数。"),
+                   lambda done, events: done["task_complete"] and all(identifier in done["full_response"] for identifier in ids)
+                   and events[0].get("route") == "rule" and any(event["type"] == "tool_result" and event["name"] == "paper_list"
+                   and (event.get("result") or {}).get("total") == 2 for event in events))
+        agent_case("discover_id_then_metadata", run_react("先用paper_list取得文献列表，再用paper_metadata提取attention.pdf的标题和年份。"),
+                   lambda done, events: done["task_complete"] and "2017" in done["full_response"]
+                   and [event["name"] for event in events if event["type"] == "tool_result"] == ["paper_list", "paper_metadata"]
+                   and any(event["type"] == "tool_call" and event["name"] == "paper_metadata"
+                           and event["args"].get("doc_id") == ids[0] for event in events))
         agent_case("independent_parallel_tools", run_react("请同时完成两项独立任务：用current_time返回当前系统时间；"
                    "用keyword_extract提取文本关键词：Transformer用于机器翻译，ViT用于图像分类。"),
                    lambda done, events: done["task_complete"] and len([e for e in events if e["type"] == "tool_result"

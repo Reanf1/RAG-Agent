@@ -38,6 +38,7 @@ def route_question(question: str, tools: list[BaseTool], context: dict | None = 
     names = {item.name for item in tools}
     explicit = sorted([name for name in names if re.search(r"(?<![A-Za-z0-9_])" + re.escape(name) + r"(?![A-Za-z0-9_])", question)], key=question.index)
     patterns = {
+        "paper_list": r"(?:文献|论文|文档)列表|(?:列出|列举).{0,12}(?:论文|文献|文档)[？?。]?$|(?:上传|入库)了哪些(?:论文|文献|文档)[？?。]?$|有哪些(?:论文|文献|文档)[？?。]?$|\blist (?:uploaded )?(?:papers?|documents?)\b",
         "current_time": r"(?:当前|现在|系统|今天).{0,6}(?:时间|日期|几点)|\bcurrent (?:time|date)\b|\btime now\b",
         "keyword_extract": r"提取.{0,8}(?:关键词|关键字)|\bextract.{0,25}keywords?\b",
         "paper_summary": r"(?:生成|结构化).{0,8}摘要|(?:总结|概括).{0,15}(?:论文|文献)|\bsummari[sz]e.{0,25}(?:paper|document)",

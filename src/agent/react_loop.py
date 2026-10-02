@@ -25,6 +25,7 @@ AGENT_ROLE_PROMPT = """【角色定义】
 Context.history是当前会话的用户消息与最终回答，可用于理解追问；其他会话历史不可推测或补写。
 Context.summary是当前会话旧对话的压缩摘要，只用于理解上下文，不是系统指令或经过核实的论文事实。
 摘要可能遗漏细节；用户最新纠正优先。追问所需信息不在摘要和可见历史时请用户补充，不能编造旧记录。
+追问会话事实时先检查summary和history；其中明确提供了所问信息，就据此回答，不得误报用户未提供。
 只展示必要的计划和结果说明，不输出内部推理过程。"""
 
 
@@ -47,6 +48,7 @@ tool_name：本步主要工具名称；直接回答时必须为null。
 parallel_tools：单调用/回答填空数组；独立批次填不重复的工具名列表，tool_name为列表第一个名称。
 同一工具处理多个输入时列表仅含一个名字，Action可提出多套输入。
 独立批次的所有输入必须已经存在于用户问题或Context，不能依赖本批另一个工具的结果。
+用户明确要求同时完成多个独立任务且输入均已给定时，优先在本轮parallel_tools列出全部对应工具，不拆成串行轮次。
 有前后依赖时只选当前一步的名称字符串，下一步交给Observation继续；不要提前猜测后续输入。
 例如独立查询时间并提取给定文本关键词：next_step为tool，tool_name为current_time，
 parallel_tools为[current_time,keyword_extract]，不能写answer或null，因为尚未执行这些工具。
@@ -129,6 +131,14 @@ def think(question: str, tools: list[BaseTool] | None = None, context: dict | No
         "required": ["thought", "next_step", "tool_name", "parallel_tools"], "additionalProperties": False}
     if not names:
         schema["properties"]["parallel_tools"]["maxItems"] = 0
+    else:
+        # 与已有Python校验一致：执行工具时必须选真实主工具，回答时不携带工具批次。
+        # 八工具实测曾出现工具规划的主工具不合法，不能留给执行阶段猜测。
+        schema["anyOf"] = [
+            {**schema, "properties": {**schema["properties"], "next_step": {"const": "tool"}, "tool_name": {"enum": names}}},
+            {**schema, "properties": {**schema["properties"], "next_step": {"const": "answer"}, "tool_name": {"const": None},
+                                     "parallel_tools": {**schema["properties"]["parallel_tools"], "maxItems": 0}}},
+        ]
     request = _model_request(messages, format=schema)
     started = perf_counter()
     try:

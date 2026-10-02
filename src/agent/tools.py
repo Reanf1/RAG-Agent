@@ -1,7 +1,9 @@
-"""科研工具注册与执行；六个本地工具与默认关闭的可选联网搜索。"""
+"""科研工具注册与执行；八个本地工具与默认关闭的可选联网搜索。"""
 
+import ast
 from copy import deepcopy
 from datetime import datetime
+from decimal import Decimal, localcontext
 import hashlib
 import json
 from pathlib import Path
@@ -594,6 +596,95 @@ def paper_summary(doc_id: str) -> dict:
 
 
 @tool
+def calculator(expression: str) -> dict:
+    """计算纯四则表达式，支持小数、负数和括号，返回十进制结果字符串。
+
+    expression只填写算式，如3.14*2.56或(1+2)/3；也支持×、÷、乘以、除以、加、减。
+    使用Decimal的28位有效数字；不支持幂、函数、变量或科学计数法，不执行Python代码。
+    """
+    _expression = expression.strip()
+    for original, replacement in (("乘以", "*"), ("除以", "/"), ("加", "+"), ("减", "-"), ("×", "*"), ("÷", "/")):
+        _expression = _expression.replace(original, replacement)
+    if not _expression or len(_expression) > 256 or not re.fullmatch(r"[0-9.\s()+*/-]+", _expression):
+        raise ValueError("请输入256字符以内的纯四则算式，仅支持数字、+-*/和括号")
+    try:
+        tree = ast.parse(_expression, mode="eval")
+    except SyntaxError as error:
+        raise ValueError("算式语法错误，请检查数字、运算符和括号") from error
+    if sum(1 for _ in ast.walk(tree)) > 128:
+        raise ValueError("算式过于复杂，请拆成较短的四则表达式")
+
+    def calculate(node):
+        """仅解释白名单节点，不使用eval；从原数字文本构造Decimal避免浮点误差。"""
+        if isinstance(node, ast.Constant) and type(node.value) in (int, float):
+            return Decimal(ast.get_source_segment(_expression, node))
+        if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.UAdd, ast.USub)):
+            value = calculate(node.operand)
+            return value if isinstance(node.op, ast.UAdd) else -value
+        if isinstance(node, ast.BinOp) and isinstance(node.op, (ast.Add, ast.Sub, ast.Mult, ast.Div)):
+            left, right = calculate(node.left), calculate(node.right)
+            if isinstance(node.op, ast.Add):
+                return left + right
+            if isinstance(node.op, ast.Sub):
+                return left - right
+            if isinstance(node.op, ast.Mult):
+                return left * right
+            if right == 0:
+                raise ValueError("不能除以零，请修改分母")
+            return left / right
+        raise ValueError("算式只支持四则运算，不支持幂、函数、变量或其他语法")
+
+    with localcontext() as context:
+        context.prec = 28
+        value = calculate(tree.body)
+        value = +value if value else Decimal(0)  # 统一有效数字并去除负零。
+    result = format(value, "f")
+    if "." in result:
+        result = result.rstrip("0").rstrip(".")
+    return {"expression": _expression, "result": result, "usage": {"prompt_eval_count": 0, "eval_count": 0}}
+
+
+@tool
+def paper_list() -> dict:
+    """列出当前共享知识库的文献ID、文件名、原文可用性及实际索引块数，不调用模型。
+
+    按doc_id去重，兼顾已上传未索引与仅剩索引的文献。has_index仅表示至少有一块，
+    不代表全部预期块已入库；source_missing表示索引仍在但当前上传原文不可用。
+    """
+    from src.data_loader import LOADERS
+    from src.retrieval.vector_store import VectorStore
+
+    config = load_config()
+    root = Path(__file__).resolve().parents[2]
+    raw_dir, index_dir = [Path(config["paths"][key]).expanduser() for key in ("raw_documents", "vector_index")]
+    raw_dir = raw_dir if raw_dir.is_absolute() else root / raw_dir
+    index_dir = index_dir if index_dir.is_absolute() else root / index_dir
+    papers = {}
+    # 复用索引正文/元数据读取，不编码或检索；未建库时不为列表创建空数据库。
+    if (index_dir / "chroma.sqlite3").is_file():
+        for chunk in VectorStore().list_chunks():
+            identifier = chunk.metadata["doc_id"]
+            name = chunk.metadata.get("source_file") or "未知文档"
+            row = papers.setdefault(identifier, {"doc_id": identifier, "source_file": name,
+                "indexed_chunks": 0, "source_available": False, "index_status": "source_missing"})
+            row["indexed_chunks"] += 1
+            row["source_file"] = min(row["source_file"], name)
+    # 上游按扩展名列文件；本项目适配已有内容指纹目录并复用原文校验。
+    if raw_dir.exists():
+        for directory in sorted(raw_dir.iterdir()):
+            if not directory.is_dir() or not re.fullmatch(r"[0-9a-f]{64}", directory.name):
+                continue
+            if not any(path.is_file() and path.suffix.lower() in LOADERS for path in directory.iterdir()):
+                continue
+            path = _uploaded_paper(directory.name)
+            row = papers.setdefault(directory.name, {"doc_id": directory.name, "indexed_chunks": 0})
+            row.update(source_file=path.name, source_available=True,
+                       index_status="has_index" if row["indexed_chunks"] else "not_indexed")
+    rows = sorted(papers.values(), key=lambda row: (row["source_file"], row["doc_id"]))
+    return {"papers": rows, "total": len(rows), "usage": {"prompt_eval_count": 0, "eval_count": 0}}
+
+
+@tool
 def current_time() -> dict:
     """返回运行机器的当前系统时间（ISO 8601含UTC偏移）和本地时区，不调用模型或联网。"""
     now = datetime.now().astimezone()
@@ -648,8 +739,9 @@ def web_search(query: str) -> dict:
             "usage": {"prompt_eval_count": 0, "eval_count": 0}, "elapsed_seconds": perf_counter() - started}
 
 
-# 只将真实可调用的六个本地工具计入课程八工具；可选搜索另行注册。
-AVAILABLE_TOOLS = [knowledge_base_search, paper_metadata, paper_compare, keyword_extract, paper_summary, current_time]
+# 八个正式本地工具；可选搜索另行注册，不计入本地工具数量。
+AVAILABLE_TOOLS = [knowledge_base_search, paper_metadata, paper_compare, keyword_extract, paper_summary, current_time,
+                   calculator, paper_list]
 
 
 def get_available_tools() -> list[BaseTool]:

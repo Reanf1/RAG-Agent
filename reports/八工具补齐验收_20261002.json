@@ -1,0 +1,85 @@
+{
+  "recorded_at": "2026-10-02T22:25:53.696760+08:00",
+  "scope": "八个本地工具补齐与模块三后端功能验证；不包含模块四前端、模块五独立质量评测",
+  "registered_local_tools": [
+    "knowledge_base_search",
+    "paper_metadata",
+    "paper_compare",
+    "keyword_extract",
+    "paper_summary",
+    "current_time",
+    "calculator",
+    "paper_list"
+  ],
+  "missing_local_tools": [],
+  "automated": {
+    "retrieval": 165,
+    "generation": 123,
+    "agent": 231,
+    "total": 519,
+    "full_regression": {
+      "passed": true,
+      "seconds": 20.039,
+      "source": "八工具最终自动化测试_20261002.log"
+    },
+    "final_agent_after_prompt_and_schema_changes": {
+      "passed": true,
+      "tests": 231,
+      "seconds": 4.237,
+      "source": "八工具Schema最终Agent测试_20261002.log"
+    }
+  },
+  "initial_live_run": {
+    "source": "模块三八工具完整性联调_20261002.json",
+    "total": 20,
+    "passed": 18,
+    "failed": [
+      "independent_parallel_tools",
+      "long_memory_summary_followup"
+    ],
+    "all_passed": false
+  },
+  "targeted_rechecks": [
+    {
+      "case": "independent_parallel_tools",
+      "source": "八工具并行Schema复测_20261002.json",
+      "passed": true,
+      "scope": "默认八工具，真实模型，同轮两个parallel结果"
+    },
+    {
+      "case": "long_memory_summary_followup",
+      "source": "八工具摘要追问专项复测_20261002.json",
+      "passed": true,
+      "scope": "复用首次联调实际生成并保存的Context；验证摘要读取，不重复生成SQLite长历史"
+    }
+  ],
+  "new_tool_checks": [
+    {
+      "name": "calculator",
+      "passed": true
+    },
+    {
+      "name": "paper_list",
+      "passed": true
+    },
+    {
+      "name": "registered_calculator_route",
+      "passed": true
+    },
+    {
+      "name": "registered_paper_list_route",
+      "passed": true
+    },
+    {
+      "name": "discover_id_then_metadata",
+      "passed": true
+    }
+  ],
+  "backend_capabilities_verified": true,
+  "limitations": [
+    "结果来自一次完整联调和两项修正后专项复测，不是一次20/20完整联调通过",
+    "新增工具不调用模型；Agent的参数生成与Observation仍调用模型",
+    "构造长历史是功能样例，不是科研对话质量评测",
+    "可选联网搜索保持禁用，不计入八个本地工具"
+  ]
+}
