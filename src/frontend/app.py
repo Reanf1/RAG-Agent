@@ -15,13 +15,15 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 from src.data_loader import LOADERS, create_import_tasks
+from src.agent import MemoryManager, run_session
 from src.generation.cache import SemanticCache, cache_scope
 from src.generation.prompt_template import PROMPT_VERSION
 from src.generation.rag_pipeline import prepare_rag_context
 from src.generation.streaming import stream_answer
 from src.retrieval.bm25_retriever import BM25Retriever
 from src.retrieval.hybrid_retriever import HybridRetriever
-from src.utils.logger import record_rag_request, request_time, retrieval_score_distribution
+from src.utils.logger import (record_rag_request, request_time, retrieval_score_distribution,
+                              retrieval_request_metrics)
 from src.retrieval.vector_store import VectorStore, batch_build_index
 from src.utils.config import load_config
 
@@ -350,6 +352,142 @@ if "rag_pending" in st.session_state:
                 show_answer_details(message)
             st.session_state.rag_messages.append(message)
 
+st.subheader("RAG 运行指标")
+st.caption("候选命中率 = 非空检索次数 / 已完成检索次数；仅表示找到文档块，不代表回答正确或 Hit@5。缓存、未执行和检索失败不计入分母。统计包含直接 RAG 问答和 Agent 的知识库工具。")
+rag_metrics_panel = st.empty()
+
+
+def show_retrieval_metrics():
+    """模型和工具事件完成后刷新日志统计，不启动额外检索或模型请求。"""
+    with rag_metrics_panel.container():
+        try:
+            stats = retrieval_request_metrics()
+            columns = st.columns(3)
+            columns[0].metric("RAG 候选命中率", f"{stats['hit_rate']:.1%}" if stats["hit_rate"] is not None else "暂无样本")
+            columns[1].metric("平均检索延迟", f"{stats['retrieval_seconds']:.3f} 秒" if stats["retrieval_seconds"] is not None else "暂无样本")
+            columns[2].metric("平均 RAG 响应延迟", f"{stats['response_seconds']:.3f} 秒" if stats["response_seconds"] is not None else "暂无样本")
+            st.caption(f"实际检索 {stats['attempts']} 次 · 已完成 {stats['completed']} 次 · 非空 {stats['hits']} 次 · 失败 {stats['failed']} 次。延迟统计实际检索请求，含失败；响应延迟含检索和生成，不含用户确认等待。")
+            if stats["invalid_lines"]:
+                st.warning(f"统计跳过 {stats['invalid_lines']} 行损坏日志，原文件保留。")
+        except (OSError, ValueError) as error:
+            st.warning(f"无法读取 RAG 运行指标：{error}")
+
+
+show_retrieval_metrics()
+st.subheader("Agent 问答与实时指标")
+st.caption("本页独立会话接入历史记忆；每个阶段完成即刷新实际 Token、工具成功率/耗时和决策轨迹。Action负责选择工具，内部用量单列；并行批次共享的Action只统计一次。历史会话管理后续补充。")
+with st.form("agent_metrics_form"):
+    agent_question = st.text_input("向 Agent 提问", key="agent_question")
+    agent_submitted = st.form_submit_button("运行 Agent", key="run_agent")
+agent_metrics_panel = st.empty()
+agent_answer_panel = st.empty()
+
+
+def show_agent_metrics(event):
+    """保留最近一次请求的快照；页面重跑只重绘，不重新调用Agent。"""
+    metrics = event["metrics"]
+    tokens = metrics["tokens"]
+    with agent_metrics_panel.container():
+        columns = st.columns(2)
+        columns[0].metric("本次 Agent Token", str(tokens["total"]) if tokens["total"] is not None else "未知")
+        columns[1].metric("Agent 响应耗时", f"{metrics['response_seconds']:.3f} 秒")
+        st.caption(f"阶段：{event['type']} · 请求：{event['request_id']} · 已报告 Token：{tokens['known_total']} · 用量未完整报告：{tokens['unknown_calls']} 项")
+        if metrics["calls"]:
+            st.dataframe([{"阶段": c["phase"], "轮次": c["iteration"], "工具": c["tool"],
+                           "调用标识": ", ".join(c.get("tool_call_ids", [])) or c["id"], "输入 Token": str(c["input"]) if c["input"] is not None else "未知",
+                           "输出 Token": str(c["output"]) if c["output"] is not None else "未知",
+                           "用量完整": "否" if c["incomplete"] or c["input"] is None or c["output"] is None else "是"}
+                          for c in metrics["calls"]], hide_index=True, width="stretch")
+        for retrieval in metrics.get("retrievals", []):
+            seconds = retrieval["seconds"]
+            st.caption(f"本次 RAG 工具：{retrieval.get('status', '未报告')} · 返回块 {retrieval.get('returned_chunks', '未知')} · 检索耗时 "
+                       + (f"{seconds:.3f} 秒" if seconds is not None else "未知"))
+        tools = metrics.get("tools", {})
+        columns = st.columns(2)
+        rate, mean = tools.get("success_rate"), tools.get("mean_seconds")
+        columns[0].metric("本次工具调用成功率", f"{rate:.1%}" if rate is not None else "暂无已返回调用")
+        columns[1].metric("平均工具耗时", f"{mean:.3f} 秒" if mean is not None else "暂无耗时")
+        st.caption(f"已计划 {tools.get('started', 0)} · 已返回 {tools.get('completed', 0)} · "
+                   f"成功 {tools.get('successes', 0)} · 失败 {tools.get('failures', 0)} · 待返回 {tools.get('pending', 0)}。"
+                   "成功指工具执行成功，不能代替任务完成或答案正确；重试按最终调用状态计一次，并行耗时可重叠。")
+        if metrics.get("tool_calls"):
+            st.dataframe([{"工具": c["name"], "轮次": c["iteration"], "调用ID": c["call_id"],
+                           "状态": {"pending": "待返回", "success": "成功", "error": "失败"}[c["status"]],
+                           "耗时（秒）": c["seconds"], "尝试次数": c["attempts"],
+                           "执行方式": c["execution_mode"] or "未报告"}
+                          for c in metrics["tool_calls"]], hide_index=True, width="stretch")
+            st.dataframe([{"工具": c["name"], "已返回": c["completed"], "成功": c["successes"],
+                           "失败": c["failures"], "待返回": c["pending"],
+                           "成功率": f"{c['success_rate']:.1%}" if c["success_rate"] is not None else "暂无样本",
+                           "平均耗时（秒）": c["mean_seconds"]}
+                          for c in tools["by_tool"]], hide_index=True, width="stretch")
+        st.markdown("**Agent 决策轨迹**")
+        for iteration in dict.fromkeys(t["iteration"] for t in metrics.get("trace", [])):
+            with st.expander(f"第{iteration}轮 · Thought → Action → Observation" if iteration else "请求准备与终止",
+                             expanded=True):
+                for step in (t for t in metrics["trace"] if t["iteration"] == iteration):
+                    kind = step["type"]
+                    if kind == "thought":
+                        st.markdown("**Thought · 决策说明**")
+                        st.write(step.get("thought", "未报告决策说明"))
+                        planned = step.get("parallel_tools") or ([step["tool_name"]] if step.get("tool_name") else [])
+                        st.caption(f"下一步：{step.get('next_step', '未报告')} · 计划工具：{' + '.join(planned) or '无需工具'} · 路由：{step.get('route', 'model')}")
+                    elif kind == "tool_call":
+                        st.markdown(f"**Action · {step['name']}**")
+                        st.caption(f"调用ID：{step['call_id']}")
+                        st.json(step.get("args", {}), expanded=False)
+                    elif kind == "tool_result":
+                        st.markdown(f"**工具返回 · {step['name']} · {'成功' if step['status'] == 'success' else '失败'}**")
+                        seconds = step.get("elapsed_seconds")
+                        st.caption(f"调用ID：{step['call_id']} · 执行方式：{step.get('execution_mode', '未报告')} · 耗时："
+                                   + (f"{seconds:.3f} 秒" if type(seconds) in (int, float) else "未知"))
+                        if step.get("error"):
+                            st.warning(step["error"])
+                        if step.get("pending"):
+                            st.warning("等待已超时，后台工具可能仍在运行；迟到结果不会用于本次回答。")
+                        st.json(step.get("result"), expanded=False)
+                        if step.get("attempts"):
+                            st.json({"实际尝试记录": step["attempts"]}, expanded=False)
+                    elif kind == "observation":
+                        st.markdown("**Observation · 结果判断**")
+                        st.write(step.get("observation", "未报告观察说明"))
+                        st.caption(f"决策：{step.get('decision')} · 任务完成：{step.get('task_complete')}")
+                    elif kind in {"action_skipped", "recovery", "error"}:
+                        st.markdown({"action_skipped": "**Action · 已跳过**", "recovery": "**错误恢复**", "error": "**阶段错误**"}[kind])
+                        st.write(step.get("reason") or step.get("message", "未报告说明"))
+                        if kind == "recovery":
+                            st.json({"失败工具": step.get("failed_tools", []), "可选替代": step.get("available_alternatives", [])}, expanded=False)
+                    elif kind == "done":
+                        st.caption(f"终止原因：{step.get('stop_reason')} · 任务完成：{step.get('task_complete')}")
+        if event.get("log_error"):
+            st.warning(event["log_error"])
+    if event["type"] == "done":
+        with agent_answer_panel.container():
+            st.markdown(event["full_response"])
+            if not event["task_complete"]:
+                st.warning(f"任务未完成：{event['stop_reason']}")
+
+
+if agent_submitted:
+    if not agent_question.strip():
+        st.warning("请输入 Agent 问题。")
+    else:
+        st.session_state.pop("agent_last_event", None)
+        try:
+            if "agent_session_id" not in st.session_state:
+                st.session_state.agent_memory = MemoryManager()
+                st.session_state.agent_user_id = uuid4().hex
+                st.session_state.agent_session_id = st.session_state.agent_memory.create_session(st.session_state.agent_user_id)
+            for event in run_session(agent_question.strip(), st.session_state.agent_user_id,
+                                     st.session_state.agent_session_id, memory=st.session_state.agent_memory):
+                st.session_state.agent_last_event = event
+                show_agent_metrics(event)
+                show_retrieval_metrics()
+        except Exception as error:
+            st.error(f"Agent 运行失败：{type(error).__name__}: {error}。请检查本地服务后重试。")
+elif "agent_last_event" in st.session_state:
+    show_agent_metrics(st.session_state.agent_last_event)
+
 st.subheader("检索分数分布")
 st.caption("统计本地请求日志中的实际 RAG 检索：Top-1 为 BGE sigmoid 重排分数，不是命中率或正确概率。空库、检索失败和缓存跳过均单独计数。")
 try:
@@ -374,8 +512,8 @@ st.table(
     [
         {"模块": "一：文档处理与检索", "状态": "部分实现", "范围": "已实现批量导入、分块、增量索引、向量/BM25/RRF 与模型重排；三档质量已评测，分块召回对比待完成"},
         {"模块": "二：RAG 生成", "状态": "已实现", "范围": "已实现 Prompt、上下文/引用、本地生成、流式、缓存、降级、请求日志与分数分布，完成参数对照；独立答案质量评测待完成"},
-        {"模块": "三：Agent 决策", "状态": "未实现", "范围": "ReAct、工具、路由、恢复、记忆"},
-        {"模块": "四：系统集成与前端", "状态": "部分实现", "范围": "已有文档入库、检索与 RAG 流式问答；Agent、持久会话、文献管理与完整联调待开发"},
+        {"模块": "三：Agent 决策", "状态": "已实现", "范围": "有界ReAct、八个本地工具、路由/并行/恢复、会话隔离与窗口/摘要记忆"},
+        {"模块": "四：系统集成与前端", "状态": "部分实现", "范围": "已有文档入库、RAG/Agent问答、会话记忆、决策轨迹与Token/检索/工具指标；历史会话管理与健康检查待开发"},
         {"模块": "五：评测与交付", "状态": "部分实现", "范围": "已有三档检索实测、图表与 Excel；完整系统评测待完成"},
     ]
 )

@@ -1,0 +1,5402 @@
+{
+  "started_at": "2026-10-03T00:34:48.758849+08:00",
+  "rows": [
+    {
+      "name": "calculator_success",
+      "question": "调用calculator计算3.14*2.56。",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+          "next_step": "tool",
+          "tool_name": "calculator",
+          "parallel_tools": [],
+          "route": "rule",
+          "model": null,
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          },
+          "elapsed_seconds": 0.0005087910030852072,
+          "iteration": 1,
+          "request_id": "2f0c0d6a8a2a4277877dc48c62f9829e",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 0.0005087910030852072
+              }
+            ],
+            "trace": [
+              {
+                "type": "thought",
+                "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+                "next_step": "tool",
+                "tool_name": "calculator",
+                "parallel_tools": [],
+                "route": "rule",
+                "elapsed_seconds": 0.0005087910030852072,
+                "iteration": 1
+              }
+            ],
+            "tool_calls": [],
+            "tools": {
+              "started": 0,
+              "completed": 0,
+              "successes": 0,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": null,
+              "mean_seconds": null,
+              "by_tool": []
+            },
+            "tokens": {
+              "input": 0,
+              "output": 0,
+              "total": 0,
+              "known_total": 0,
+              "unknown_calls": 0
+            },
+            "response_seconds": 0.10827229099959368
+          },
+          "user_id": "trace-verifier",
+          "session_id": "a93d7324ea324b5894a73ca16aca48db"
+        },
+        {
+          "type": "tool_call",
+          "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+          "name": "calculator",
+          "args": {
+            "expression": "3.14*2.56"
+          },
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 10.588039458998537,
+          "usage": {
+            "prompt_eval_count": 1304,
+            "eval_count": 27
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "calculator",
+                "args": {
+                  "expression": "3.14*2.56"
+                },
+                "id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 1,
+          "request_id": "2f0c0d6a8a2a4277877dc48c62f9829e",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 0.0005087910030852072
+              },
+              {
+                "id": "action:1",
+                "iteration": 1,
+                "phase": "Action",
+                "tool": "calculator",
+                "tool_call_ids": [
+                  "54d793a7f5ce4b07b4ffb39a07ea3fdc"
+                ],
+                "input": 1304,
+                "output": 27,
+                "incomplete": false,
+                "seconds": 10.588039458998537
+              }
+            ],
+            "trace": [
+              {
+                "type": "thought",
+                "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+                "next_step": "tool",
+                "tool_name": "calculator",
+                "parallel_tools": [],
+                "route": "rule",
+                "elapsed_seconds": 0.0005087910030852072,
+                "iteration": 1
+              },
+              {
+                "type": "tool_call",
+                "name": "calculator",
+                "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+                "args": {
+                  "expression": "3.14*2.56"
+                },
+                "elapsed_seconds": 10.588039458998537,
+                "iteration": 1
+              }
+            ],
+            "tool_calls": [
+              {
+                "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+                "name": "calculator",
+                "iteration": 1,
+                "status": "pending",
+                "seconds": null,
+                "attempts": null,
+                "execution_mode": null
+              }
+            ],
+            "tools": {
+              "started": 1,
+              "completed": 0,
+              "successes": 0,
+              "failures": 0,
+              "pending": 1,
+              "success_rate": null,
+              "mean_seconds": null,
+              "by_tool": [
+                {
+                  "name": "calculator",
+                  "started": 1,
+                  "completed": 0,
+                  "successes": 0,
+                  "failures": 0,
+                  "pending": 1,
+                  "success_rate": null,
+                  "mean_seconds": null
+                }
+              ]
+            },
+            "tokens": {
+              "input": 1304,
+              "output": 27,
+              "total": 1331,
+              "known_total": 1331,
+              "unknown_calls": 0
+            },
+            "response_seconds": 10.698674707993632
+          },
+          "user_id": "trace-verifier",
+          "session_id": "a93d7324ea324b5894a73ca16aca48db"
+        },
+        {
+          "type": "tool_result",
+          "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+          "name": "calculator",
+          "args": {
+            "expression": "3.14*2.56"
+          },
+          "status": "success",
+          "result": {
+            "expression": "3.14*2.56",
+            "result": "8.0384",
+            "usage": {
+              "prompt_eval_count": 0,
+              "eval_count": 0
+            }
+          },
+          "error": "",
+          "error_kind": null,
+          "elapsed_seconds": 0.0032659580028848723,
+          "message": {
+            "content": "{'expression': '3.14*2.56', 'result': '8.0384', 'usage': {'prompt_eval_count': 0, 'eval_count': 0}}",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "calculator",
+            "id": null,
+            "tool_call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+            "artifact": null,
+            "status": "success"
+          },
+          "attempts": [
+            {
+              "attempt": 1,
+              "status": "success",
+              "error": "",
+              "error_kind": null,
+              "elapsed_seconds": 0.0032316670040017925
+            }
+          ],
+          "execution_mode": "serial",
+          "iteration": 1,
+          "request_id": "2f0c0d6a8a2a4277877dc48c62f9829e",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 0.0005087910030852072
+              },
+              {
+                "id": "action:1",
+                "iteration": 1,
+                "phase": "Action",
+                "tool": "calculator",
+                "tool_call_ids": [
+                  "54d793a7f5ce4b07b4ffb39a07ea3fdc"
+                ],
+                "input": 1304,
+                "output": 27,
+                "incomplete": false,
+                "seconds": 10.588039458998537
+              },
+              {
+                "id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+                "iteration": 1,
+                "phase": "工具内部",
+                "tool": "calculator",
+                "tool_call_ids": [
+                  "54d793a7f5ce4b07b4ffb39a07ea3fdc"
+                ],
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 0.0032659580028848723
+              }
+            ],
+            "trace": [
+              {
+                "type": "thought",
+                "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+                "next_step": "tool",
+                "tool_name": "calculator",
+                "parallel_tools": [],
+                "route": "rule",
+                "elapsed_seconds": 0.0005087910030852072,
+                "iteration": 1
+              },
+              {
+                "type": "tool_call",
+                "name": "calculator",
+                "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+                "args": {
+                  "expression": "3.14*2.56"
+                },
+                "elapsed_seconds": 10.588039458998537,
+                "iteration": 1
+              },
+              {
+                "type": "tool_result",
+                "name": "calculator",
+                "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+                "args": {
+                  "expression": "3.14*2.56"
+                },
+                "result": {
+                  "expression": "3.14*2.56",
+                  "result": "8.0384",
+                  "usage": {
+                    "prompt_eval_count": 0,
+                    "eval_count": 0
+                  }
+                },
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "success",
+                    "error": "",
+                    "error_kind": null,
+                    "elapsed_seconds": 0.0032316670040017925
+                  }
+                ],
+                "execution_mode": "serial",
+                "elapsed_seconds": 0.0032659580028848723,
+                "iteration": 1
+              }
+            ],
+            "tool_calls": [
+              {
+                "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+                "name": "calculator",
+                "iteration": 1,
+                "status": "success",
+                "seconds": 0.0032659580028848723,
+                "attempts": 1,
+                "execution_mode": "serial"
+              }
+            ],
+            "tools": {
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.0032659580028848723,
+              "by_tool": [
+                {
+                  "name": "calculator",
+                  "started": 1,
+                  "completed": 1,
+                  "successes": 1,
+                  "failures": 0,
+                  "pending": 0,
+                  "success_rate": 1.0,
+                  "mean_seconds": 0.0032659580028848723
+                }
+              ]
+            },
+            "tokens": {
+              "input": 1304,
+              "output": 27,
+              "total": 1331,
+              "known_total": 1331,
+              "unknown_calls": 0
+            },
+            "response_seconds": 10.70456849999755
+          },
+          "user_id": "trace-verifier",
+          "session_id": "a93d7324ea324b5894a73ca16aca48db"
+        },
+        {
+          "type": "observation",
+          "observation": "计算结果为8.0384。",
+          "decision": "finish",
+          "task_complete": true,
+          "answer": "8.0384",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1582,
+            "eval_count": 39
+          },
+          "elapsed_seconds": 5.997794707996945,
+          "iteration": 1,
+          "request_id": "2f0c0d6a8a2a4277877dc48c62f9829e",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 0.0005087910030852072
+              },
+              {
+                "id": "action:1",
+                "iteration": 1,
+                "phase": "Action",
+                "tool": "calculator",
+                "tool_call_ids": [
+                  "54d793a7f5ce4b07b4ffb39a07ea3fdc"
+                ],
+                "input": 1304,
+                "output": 27,
+                "incomplete": false,
+                "seconds": 10.588039458998537
+              },
+              {
+                "id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+                "iteration": 1,
+                "phase": "工具内部",
+                "tool": "calculator",
+                "tool_call_ids": [
+                  "54d793a7f5ce4b07b4ffb39a07ea3fdc"
+                ],
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 0.0032659580028848723
+              },
+              {
+                "id": "observation:1",
+                "iteration": 1,
+                "phase": "Observation",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 1582,
+                "output": 39,
+                "incomplete": false,
+                "seconds": 5.997794707996945
+              }
+            ],
+            "trace": [
+              {
+                "type": "thought",
+                "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+                "next_step": "tool",
+                "tool_name": "calculator",
+                "parallel_tools": [],
+                "route": "rule",
+                "elapsed_seconds": 0.0005087910030852072,
+                "iteration": 1
+              },
+              {
+                "type": "tool_call",
+                "name": "calculator",
+                "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+                "args": {
+                  "expression": "3.14*2.56"
+                },
+                "elapsed_seconds": 10.588039458998537,
+                "iteration": 1
+              },
+              {
+                "type": "tool_result",
+                "name": "calculator",
+                "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+                "args": {
+                  "expression": "3.14*2.56"
+                },
+                "result": {
+                  "expression": "3.14*2.56",
+                  "result": "8.0384",
+                  "usage": {
+                    "prompt_eval_count": 0,
+                    "eval_count": 0
+                  }
+                },
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "success",
+                    "error": "",
+                    "error_kind": null,
+                    "elapsed_seconds": 0.0032316670040017925
+                  }
+                ],
+                "execution_mode": "serial",
+                "elapsed_seconds": 0.0032659580028848723,
+                "iteration": 1
+              },
+              {
+                "type": "observation",
+                "elapsed_seconds": 5.997794707996945,
+                "observation": "计算结果为8.0384。",
+                "decision": "finish",
+                "task_complete": true,
+                "iteration": 1
+              }
+            ],
+            "tool_calls": [
+              {
+                "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+                "name": "calculator",
+                "iteration": 1,
+                "status": "success",
+                "seconds": 0.0032659580028848723,
+                "attempts": 1,
+                "execution_mode": "serial"
+              }
+            ],
+            "tools": {
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.0032659580028848723,
+              "by_tool": [
+                {
+                  "name": "calculator",
+                  "started": 1,
+                  "completed": 1,
+                  "successes": 1,
+                  "failures": 0,
+                  "pending": 0,
+                  "success_rate": 1.0,
+                  "mean_seconds": 0.0032659580028848723
+                }
+              ]
+            },
+            "tokens": {
+              "input": 2886,
+              "output": 66,
+              "total": 2952,
+              "known_total": 2952,
+              "unknown_calls": 0
+            },
+            "response_seconds": 16.704948124999646
+          },
+          "user_id": "trace-verifier",
+          "session_id": "a93d7324ea324b5894a73ca16aca48db"
+        },
+        {
+          "type": "done",
+          "task_complete": true,
+          "stop_reason": "task_complete",
+          "full_response": "8.0384",
+          "iterations": 1,
+          "context": {
+            "history": [],
+            "history_window": {
+              "tokens": 0,
+              "max_tokens": 2000,
+              "retained_turns": 0,
+              "dropped_turns": 0,
+              "tokenizer": "Qwen2.5"
+            },
+            "observations": [
+              {
+                "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+                "name": "calculator",
+                "args": {
+                  "expression": "3.14*2.56"
+                },
+                "status": "success",
+                "result": {
+                  "expression": "3.14*2.56",
+                  "result": "8.0384",
+                  "usage": {
+                    "prompt_eval_count": 0,
+                    "eval_count": 0
+                  }
+                },
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0032659580028848723,
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "success",
+                    "error": "",
+                    "error_kind": null,
+                    "elapsed_seconds": 0.0032316670040017925
+                  }
+                ],
+                "execution_mode": "serial"
+              }
+            ],
+            "last_observation": {
+              "observation": "计算结果为8.0384。",
+              "decision": "finish",
+              "task_complete": true
+            }
+          },
+          "request_id": "2f0c0d6a8a2a4277877dc48c62f9829e",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 0.0005087910030852072
+              },
+              {
+                "id": "action:1",
+                "iteration": 1,
+                "phase": "Action",
+                "tool": "calculator",
+                "tool_call_ids": [
+                  "54d793a7f5ce4b07b4ffb39a07ea3fdc"
+                ],
+                "input": 1304,
+                "output": 27,
+                "incomplete": false,
+                "seconds": 10.588039458998537
+              },
+              {
+                "id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+                "iteration": 1,
+                "phase": "工具内部",
+                "tool": "calculator",
+                "tool_call_ids": [
+                  "54d793a7f5ce4b07b4ffb39a07ea3fdc"
+                ],
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 0.0032659580028848723
+              },
+              {
+                "id": "observation:1",
+                "iteration": 1,
+                "phase": "Observation",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 1582,
+                "output": 39,
+                "incomplete": false,
+                "seconds": 5.997794707996945
+              }
+            ],
+            "trace": [
+              {
+                "type": "thought",
+                "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+                "next_step": "tool",
+                "tool_name": "calculator",
+                "parallel_tools": [],
+                "route": "rule",
+                "elapsed_seconds": 0.0005087910030852072,
+                "iteration": 1
+              },
+              {
+                "type": "tool_call",
+                "name": "calculator",
+                "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+                "args": {
+                  "expression": "3.14*2.56"
+                },
+                "elapsed_seconds": 10.588039458998537,
+                "iteration": 1
+              },
+              {
+                "type": "tool_result",
+                "name": "calculator",
+                "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+                "args": {
+                  "expression": "3.14*2.56"
+                },
+                "result": {
+                  "expression": "3.14*2.56",
+                  "result": "8.0384",
+                  "usage": {
+                    "prompt_eval_count": 0,
+                    "eval_count": 0
+                  }
+                },
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "success",
+                    "error": "",
+                    "error_kind": null,
+                    "elapsed_seconds": 0.0032316670040017925
+                  }
+                ],
+                "execution_mode": "serial",
+                "elapsed_seconds": 0.0032659580028848723,
+                "iteration": 1
+              },
+              {
+                "type": "observation",
+                "elapsed_seconds": 5.997794707996945,
+                "observation": "计算结果为8.0384。",
+                "decision": "finish",
+                "task_complete": true,
+                "iteration": 1
+              },
+              {
+                "type": "done",
+                "task_complete": true,
+                "stop_reason": "task_complete",
+                "full_response": "8.0384",
+                "iteration": 1
+              }
+            ],
+            "tool_calls": [
+              {
+                "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+                "name": "calculator",
+                "iteration": 1,
+                "status": "success",
+                "seconds": 0.0032659580028848723,
+                "attempts": 1,
+                "execution_mode": "serial"
+              }
+            ],
+            "tools": {
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.0032659580028848723,
+              "by_tool": [
+                {
+                  "name": "calculator",
+                  "started": 1,
+                  "completed": 1,
+                  "successes": 1,
+                  "failures": 0,
+                  "pending": 0,
+                  "success_rate": 1.0,
+                  "mean_seconds": 0.0032659580028848723
+                }
+              ]
+            },
+            "tokens": {
+              "input": 2886,
+              "output": 66,
+              "total": 2952,
+              "known_total": 2952,
+              "unknown_calls": 0
+            },
+            "response_seconds": 16.708007624998572
+          },
+          "user_id": "trace-verifier",
+          "session_id": "a93d7324ea324b5894a73ca16aca48db"
+        }
+      ],
+      "trace_check": true,
+      "stats_check": true,
+      "scenario_check": true,
+      "summary": {
+        "tools": {
+          "started": 1,
+          "completed": 1,
+          "successes": 1,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": 1.0,
+          "mean_seconds": 0.0032659580028848723,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.0032659580028848723
+            }
+          ]
+        },
+        "response_seconds": 16.708007624998572,
+        "stop_reason": "task_complete",
+        "task_complete": true
+      }
+    },
+    {
+      "name": "calculator_error",
+      "question": "调用calculator计算1/0，记录工具返回的错误。",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+          "next_step": "tool",
+          "tool_name": "calculator",
+          "parallel_tools": [],
+          "route": "rule",
+          "model": null,
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          },
+          "elapsed_seconds": 2.7542002499103546e-05,
+          "iteration": 1,
+          "request_id": "0927da5684cc413f9c4f1f051af5c4ab",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 2.7542002499103546e-05
+              }
+            ],
+            "trace": [
+              {
+                "type": "thought",
+                "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+                "next_step": "tool",
+                "tool_name": "calculator",
+                "parallel_tools": [],
+                "route": "rule",
+                "elapsed_seconds": 2.7542002499103546e-05,
+                "iteration": 1
+              }
+            ],
+            "tool_calls": [],
+            "tools": {
+              "started": 0,
+              "completed": 0,
+              "successes": 0,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": null,
+              "mean_seconds": null,
+              "by_tool": []
+            },
+            "tokens": {
+              "input": 0,
+              "output": 0,
+              "total": 0,
+              "known_total": 0,
+              "unknown_calls": 0
+            },
+            "response_seconds": 0.0017585829991730861
+          },
+          "user_id": "trace-verifier",
+          "session_id": "5016968014a24396b44861bfb4dd9f6f"
+        },
+        {
+          "type": "tool_call",
+          "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+          "name": "calculator",
+          "args": {
+            "expression": "1/0"
+          },
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 1.7955464170008781,
+          "usage": {
+            "prompt_eval_count": 1305,
+            "eval_count": 21
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "calculator",
+                "args": {
+                  "expression": "1/0"
+                },
+                "id": "0ad18977c7ef412d839e02a87d311a7d",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 1,
+          "request_id": "0927da5684cc413f9c4f1f051af5c4ab",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 2.7542002499103546e-05
+              },
+              {
+                "id": "action:1",
+                "iteration": 1,
+                "phase": "Action",
+                "tool": "calculator",
+                "tool_call_ids": [
+                  "0ad18977c7ef412d839e02a87d311a7d"
+                ],
+                "input": 1305,
+                "output": 21,
+                "incomplete": false,
+                "seconds": 1.7955464170008781
+              }
+            ],
+            "trace": [
+              {
+                "type": "thought",
+                "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+                "next_step": "tool",
+                "tool_name": "calculator",
+                "parallel_tools": [],
+                "route": "rule",
+                "elapsed_seconds": 2.7542002499103546e-05,
+                "iteration": 1
+              },
+              {
+                "type": "tool_call",
+                "name": "calculator",
+                "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+                "args": {
+                  "expression": "1/0"
+                },
+                "elapsed_seconds": 1.7955464170008781,
+                "iteration": 1
+              }
+            ],
+            "tool_calls": [
+              {
+                "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+                "name": "calculator",
+                "iteration": 1,
+                "status": "pending",
+                "seconds": null,
+                "attempts": null,
+                "execution_mode": null
+              }
+            ],
+            "tools": {
+              "started": 1,
+              "completed": 0,
+              "successes": 0,
+              "failures": 0,
+              "pending": 1,
+              "success_rate": null,
+              "mean_seconds": null,
+              "by_tool": [
+                {
+                  "name": "calculator",
+                  "started": 1,
+                  "completed": 0,
+                  "successes": 0,
+                  "failures": 0,
+                  "pending": 1,
+                  "success_rate": null,
+                  "mean_seconds": null
+                }
+              ]
+            },
+            "tokens": {
+              "input": 1305,
+              "output": 21,
+              "total": 1326,
+              "known_total": 1326,
+              "unknown_calls": 0
+            },
+            "response_seconds": 1.7997907919998397
+          },
+          "user_id": "trace-verifier",
+          "session_id": "5016968014a24396b44861bfb4dd9f6f"
+        },
+        {
+          "type": "tool_result",
+          "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+          "name": "calculator",
+          "args": {
+            "expression": "1/0"
+          },
+          "status": "error",
+          "result": null,
+          "error": "ValueError: 不能除以零，请修改分母",
+          "error_kind": "input",
+          "elapsed_seconds": 0.0008135419993777759,
+          "message": {
+            "content": "ValueError: 不能除以零，请修改分母",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "calculator",
+            "id": null,
+            "tool_call_id": "0ad18977c7ef412d839e02a87d311a7d",
+            "artifact": null,
+            "status": "error"
+          },
+          "attempts": [
+            {
+              "attempt": 1,
+              "status": "error",
+              "error": "ValueError: 不能除以零，请修改分母",
+              "error_kind": "input",
+              "elapsed_seconds": 0.0007947500052978285
+            }
+          ],
+          "execution_mode": "serial",
+          "iteration": 1,
+          "request_id": "0927da5684cc413f9c4f1f051af5c4ab",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 2.7542002499103546e-05
+              },
+              {
+                "id": "action:1",
+                "iteration": 1,
+                "phase": "Action",
+                "tool": "calculator",
+                "tool_call_ids": [
+                  "0ad18977c7ef412d839e02a87d311a7d"
+                ],
+                "input": 1305,
+                "output": 21,
+                "incomplete": false,
+                "seconds": 1.7955464170008781
+              },
+              {
+                "id": "0ad18977c7ef412d839e02a87d311a7d",
+                "iteration": 1,
+                "phase": "工具内部",
+                "tool": "calculator",
+                "tool_call_ids": [
+                  "0ad18977c7ef412d839e02a87d311a7d"
+                ],
+                "input": null,
+                "output": null,
+                "incomplete": true,
+                "seconds": 0.0008135419993777759
+              }
+            ],
+            "trace": [
+              {
+                "type": "thought",
+                "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+                "next_step": "tool",
+                "tool_name": "calculator",
+                "parallel_tools": [],
+                "route": "rule",
+                "elapsed_seconds": 2.7542002499103546e-05,
+                "iteration": 1
+              },
+              {
+                "type": "tool_call",
+                "name": "calculator",
+                "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+                "args": {
+                  "expression": "1/0"
+                },
+                "elapsed_seconds": 1.7955464170008781,
+                "iteration": 1
+              },
+              {
+                "type": "tool_result",
+                "name": "calculator",
+                "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+                "args": {
+                  "expression": "1/0"
+                },
+                "result": null,
+                "status": "error",
+                "error": "ValueError: 不能除以零，请修改分母",
+                "error_kind": "input",
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "error",
+                    "error": "ValueError: 不能除以零，请修改分母",
+                    "error_kind": "input",
+                    "elapsed_seconds": 0.0007947500052978285
+                  }
+                ],
+                "execution_mode": "serial",
+                "elapsed_seconds": 0.0008135419993777759,
+                "iteration": 1
+              }
+            ],
+            "tool_calls": [
+              {
+                "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+                "name": "calculator",
+                "iteration": 1,
+                "status": "error",
+                "seconds": 0.0008135419993777759,
+                "attempts": 1,
+                "execution_mode": "serial"
+              }
+            ],
+            "tools": {
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0008135419993777759,
+              "by_tool": [
+                {
+                  "name": "calculator",
+                  "started": 1,
+                  "completed": 1,
+                  "successes": 0,
+                  "failures": 1,
+                  "pending": 0,
+                  "success_rate": 0.0,
+                  "mean_seconds": 0.0008135419993777759
+                }
+              ]
+            },
+            "tokens": {
+              "input": null,
+              "output": null,
+              "total": null,
+              "known_total": 1326,
+              "unknown_calls": 1
+            },
+            "response_seconds": 1.8019097500000498
+          },
+          "user_id": "trace-verifier",
+          "session_id": "5016968014a24396b44861bfb4dd9f6f"
+        },
+        {
+          "type": "observation",
+          "observation": "calculator工具返回了错误：不能除以零，请修改分母。",
+          "decision": "finish",
+          "task_complete": false,
+          "answer": "计算1/0时，遇到了除以零的错误。请修改分母以进行有效计算。",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1532,
+            "eval_count": 65
+          },
+          "elapsed_seconds": 4.97339970900066,
+          "iteration": 1,
+          "request_id": "0927da5684cc413f9c4f1f051af5c4ab",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 2.7542002499103546e-05
+              },
+              {
+                "id": "action:1",
+                "iteration": 1,
+                "phase": "Action",
+                "tool": "calculator",
+                "tool_call_ids": [
+                  "0ad18977c7ef412d839e02a87d311a7d"
+                ],
+                "input": 1305,
+                "output": 21,
+                "incomplete": false,
+                "seconds": 1.7955464170008781
+              },
+              {
+                "id": "0ad18977c7ef412d839e02a87d311a7d",
+                "iteration": 1,
+                "phase": "工具内部",
+                "tool": "calculator",
+                "tool_call_ids": [
+                  "0ad18977c7ef412d839e02a87d311a7d"
+                ],
+                "input": null,
+                "output": null,
+                "incomplete": true,
+                "seconds": 0.0008135419993777759
+              },
+              {
+                "id": "observation:1",
+                "iteration": 1,
+                "phase": "Observation",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 1532,
+                "output": 65,
+                "incomplete": false,
+                "seconds": 4.97339970900066
+              }
+            ],
+            "trace": [
+              {
+                "type": "thought",
+                "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+                "next_step": "tool",
+                "tool_name": "calculator",
+                "parallel_tools": [],
+                "route": "rule",
+                "elapsed_seconds": 2.7542002499103546e-05,
+                "iteration": 1
+              },
+              {
+                "type": "tool_call",
+                "name": "calculator",
+                "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+                "args": {
+                  "expression": "1/0"
+                },
+                "elapsed_seconds": 1.7955464170008781,
+                "iteration": 1
+              },
+              {
+                "type": "tool_result",
+                "name": "calculator",
+                "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+                "args": {
+                  "expression": "1/0"
+                },
+                "result": null,
+                "status": "error",
+                "error": "ValueError: 不能除以零，请修改分母",
+                "error_kind": "input",
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "error",
+                    "error": "ValueError: 不能除以零，请修改分母",
+                    "error_kind": "input",
+                    "elapsed_seconds": 0.0007947500052978285
+                  }
+                ],
+                "execution_mode": "serial",
+                "elapsed_seconds": 0.0008135419993777759,
+                "iteration": 1
+              },
+              {
+                "type": "observation",
+                "elapsed_seconds": 4.97339970900066,
+                "observation": "calculator工具返回了错误：不能除以零，请修改分母。",
+                "decision": "finish",
+                "task_complete": false,
+                "iteration": 1
+              }
+            ],
+            "tool_calls": [
+              {
+                "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+                "name": "calculator",
+                "iteration": 1,
+                "status": "error",
+                "seconds": 0.0008135419993777759,
+                "attempts": 1,
+                "execution_mode": "serial"
+              }
+            ],
+            "tools": {
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0008135419993777759,
+              "by_tool": [
+                {
+                  "name": "calculator",
+                  "started": 1,
+                  "completed": 1,
+                  "successes": 0,
+                  "failures": 1,
+                  "pending": 0,
+                  "success_rate": 0.0,
+                  "mean_seconds": 0.0008135419993777759
+                }
+              ]
+            },
+            "tokens": {
+              "input": null,
+              "output": null,
+              "total": null,
+              "known_total": 2923,
+              "unknown_calls": 1
+            },
+            "response_seconds": 6.777413082993007
+          },
+          "user_id": "trace-verifier",
+          "session_id": "5016968014a24396b44861bfb4dd9f6f"
+        },
+        {
+          "type": "done",
+          "task_complete": false,
+          "stop_reason": "incomplete",
+          "full_response": "计算1/0时，遇到了除以零的错误。请修改分母以进行有效计算。",
+          "iterations": 1,
+          "context": {
+            "history": [],
+            "history_window": {
+              "tokens": 0,
+              "max_tokens": 2000,
+              "retained_turns": 0,
+              "dropped_turns": 0,
+              "tokenizer": "Qwen2.5"
+            },
+            "observations": [
+              {
+                "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+                "name": "calculator",
+                "args": {
+                  "expression": "1/0"
+                },
+                "status": "error",
+                "result": null,
+                "error": "ValueError: 不能除以零，请修改分母",
+                "error_kind": "input",
+                "elapsed_seconds": 0.0008135419993777759,
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "error",
+                    "error": "ValueError: 不能除以零，请修改分母",
+                    "error_kind": "input",
+                    "elapsed_seconds": 0.0007947500052978285
+                  }
+                ],
+                "execution_mode": "serial"
+              }
+            ],
+            "last_observation": {
+              "observation": "calculator工具返回了错误：不能除以零，请修改分母。",
+              "decision": "finish",
+              "task_complete": false
+            }
+          },
+          "request_id": "0927da5684cc413f9c4f1f051af5c4ab",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 2.7542002499103546e-05
+              },
+              {
+                "id": "action:1",
+                "iteration": 1,
+                "phase": "Action",
+                "tool": "calculator",
+                "tool_call_ids": [
+                  "0ad18977c7ef412d839e02a87d311a7d"
+                ],
+                "input": 1305,
+                "output": 21,
+                "incomplete": false,
+                "seconds": 1.7955464170008781
+              },
+              {
+                "id": "0ad18977c7ef412d839e02a87d311a7d",
+                "iteration": 1,
+                "phase": "工具内部",
+                "tool": "calculator",
+                "tool_call_ids": [
+                  "0ad18977c7ef412d839e02a87d311a7d"
+                ],
+                "input": null,
+                "output": null,
+                "incomplete": true,
+                "seconds": 0.0008135419993777759
+              },
+              {
+                "id": "observation:1",
+                "iteration": 1,
+                "phase": "Observation",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 1532,
+                "output": 65,
+                "incomplete": false,
+                "seconds": 4.97339970900066
+              }
+            ],
+            "trace": [
+              {
+                "type": "thought",
+                "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+                "next_step": "tool",
+                "tool_name": "calculator",
+                "parallel_tools": [],
+                "route": "rule",
+                "elapsed_seconds": 2.7542002499103546e-05,
+                "iteration": 1
+              },
+              {
+                "type": "tool_call",
+                "name": "calculator",
+                "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+                "args": {
+                  "expression": "1/0"
+                },
+                "elapsed_seconds": 1.7955464170008781,
+                "iteration": 1
+              },
+              {
+                "type": "tool_result",
+                "name": "calculator",
+                "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+                "args": {
+                  "expression": "1/0"
+                },
+                "result": null,
+                "status": "error",
+                "error": "ValueError: 不能除以零，请修改分母",
+                "error_kind": "input",
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "error",
+                    "error": "ValueError: 不能除以零，请修改分母",
+                    "error_kind": "input",
+                    "elapsed_seconds": 0.0007947500052978285
+                  }
+                ],
+                "execution_mode": "serial",
+                "elapsed_seconds": 0.0008135419993777759,
+                "iteration": 1
+              },
+              {
+                "type": "observation",
+                "elapsed_seconds": 4.97339970900066,
+                "observation": "calculator工具返回了错误：不能除以零，请修改分母。",
+                "decision": "finish",
+                "task_complete": false,
+                "iteration": 1
+              },
+              {
+                "type": "done",
+                "task_complete": false,
+                "stop_reason": "incomplete",
+                "full_response": "计算1/0时，遇到了除以零的错误。请修改分母以进行有效计算。",
+                "iteration": 1
+              }
+            ],
+            "tool_calls": [
+              {
+                "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+                "name": "calculator",
+                "iteration": 1,
+                "status": "error",
+                "seconds": 0.0008135419993777759,
+                "attempts": 1,
+                "execution_mode": "serial"
+              }
+            ],
+            "tools": {
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0008135419993777759,
+              "by_tool": [
+                {
+                  "name": "calculator",
+                  "started": 1,
+                  "completed": 1,
+                  "successes": 0,
+                  "failures": 1,
+                  "pending": 0,
+                  "success_rate": 0.0,
+                  "mean_seconds": 0.0008135419993777759
+                }
+              ]
+            },
+            "tokens": {
+              "input": null,
+              "output": null,
+              "total": null,
+              "known_total": 2923,
+              "unknown_calls": 1
+            },
+            "response_seconds": 6.779466707994288
+          },
+          "user_id": "trace-verifier",
+          "session_id": "5016968014a24396b44861bfb4dd9f6f"
+        }
+      ],
+      "trace_check": true,
+      "stats_check": true,
+      "scenario_check": true,
+      "summary": {
+        "tools": {
+          "started": 1,
+          "completed": 1,
+          "successes": 0,
+          "failures": 1,
+          "pending": 0,
+          "success_rate": 0.0,
+          "mean_seconds": 0.0008135419993777759,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0008135419993777759
+            }
+          ]
+        },
+        "response_seconds": 6.779466707994288,
+        "stop_reason": "incomplete",
+        "task_complete": false
+      }
+    },
+    {
+      "name": "independent_tools",
+      "question": "同时调用calculator计算2*3、调用current_time返回当前时间，这两个工具相互独立。",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "执行独立的calculator和current_time任务。",
+          "next_step": "tool",
+          "tool_name": "calculator",
+          "parallel_tools": [
+            "calculator",
+            "current_time"
+          ],
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1266,
+            "eval_count": 45
+          },
+          "elapsed_seconds": 4.719459707994247,
+          "iteration": 1,
+          "request_id": "402c12c83a9149a190bfddc18aacb065",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 1266,
+                "output": 45,
+                "incomplete": false,
+                "seconds": 4.719459707994247
+              }
+            ],
+            "trace": [
+              {
+                "type": "thought",
+                "thought": "执行独立的calculator和current_time任务。",
+                "next_step": "tool",
+                "tool_name": "calculator",
+                "parallel_tools": [
+                  "calculator",
+                  "current_time"
+                ],
+                "elapsed_seconds": 4.719459707994247,
+                "iteration": 1
+              }
+            ],
+            "tool_calls": [],
+            "tools": {
+              "started": 0,
+              "completed": 0,
+              "successes": 0,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": null,
+              "mean_seconds": null,
+              "by_tool": []
+            },
+            "tokens": {
+              "input": 1266,
+              "output": 45,
+              "total": 1311,
+              "known_total": 1311,
+              "unknown_calls": 0
+            },
+            "response_seconds": 4.721606458995666
+          },
+          "user_id": "trace-verifier",
+          "session_id": "3881693304334509aa314edfe92e0460"
+        },
+        {
+          "type": "tool_call",
+          "call_id": "c11991f727a54fa1926bfc136ab03307",
+          "name": "calculator",
+          "args": {
+            "expression": "2*3"
+          },
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 4.852540457999567,
+          "usage": {
+            "prompt_eval_count": 1426,
+            "eval_count": 37
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "calculator",
+                "args": {
+                  "expression": "2*3"
+                },
+                "id": "c11991f727a54fa1926bfc136ab03307",
+                "type": "tool_call"
+              },
+              {
+                "name": "current_time",
+                "args": {},
+                "id": "2f8ebadef77d42ffad5416b2893b3d93",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 1,
+          "request_id": "402c12c83a9149a190bfddc18aacb065",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 1266,
+                "output": 45,
+                "incomplete": false,
+                "seconds": 4.719459707994247
+              },
+              {
+                "id": "action:1",
+                "iteration": 1,
+                "phase": "Action（共享）",
+                "tool": "calculator + current_time",
+                "tool_call_ids": [
+                  "c11991f727a54fa1926bfc136ab03307",
+                  "2f8ebadef77d42ffad5416b2893b3d93"
+                ],
+                "input": 1426,
+                "output": 37,
+                "incomplete": false,
+                "seconds": 4.852540457999567
+              }
+            ],
+            "trace": [
+              {
+                "type": "thought",
+                "thought": "执行独立的calculator和current_time任务。",
+                "next_step": "tool",
+                "tool_name": "calculator",
+                "parallel_tools": [
+                  "calculator",
+                  "current_time"
+                ],
+                "elapsed_seconds": 4.719459707994247,
+                "iteration": 1
+              },
+              {
+                "type": "tool_call",
+                "name": "calculator",
+                "call_id": "c11991f727a54fa1926bfc136ab03307",
+                "args": {
+                  "expression": "2*3"
+                },
+                "elapsed_seconds": 4.852540457999567,
+                "iteration": 1
+              }
+            ],
+            "tool_calls": [
+              {
+                "call_id": "c11991f727a54fa1926bfc136ab03307",
+                "name": "calculator",
+                "iteration": 1,
+                "status": "pending",
+                "seconds": null,
+                "attempts": null,
+                "execution_mode": null
+              }
+            ],
+            "tools": {
+              "started": 1,
+              "completed": 0,
+              "successes": 0,
+              "failures": 0,
+              "pending": 1,
+              "success_rate": null,
+              "mean_seconds": null,
+              "by_tool": [
+                {
+                  "name": "calculator",
+                  "started": 1,
+                  "completed": 0,
+                  "successes": 0,
+                  "failures": 0,
+                  "pending": 1,
+                  "success_rate": null,
+                  "mean_seconds": null
+                }
+              ]
+            },
+            "tokens": {
+              "input": 2692,
+              "output": 82,
+              "total": 2774,
+              "known_total": 2774,
+              "unknown_calls": 0
+            },
+            "response_seconds": 9.578304791997653
+          },
+          "user_id": "trace-verifier",
+          "session_id": "3881693304334509aa314edfe92e0460"
+        },
+        {
+          "type": "tool_call",
+          "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+          "name": "current_time",
+          "args": {},
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 4.852540457999567,
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          },
+          "iteration": 1,
+          "request_id": "402c12c83a9149a190bfddc18aacb065",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 1266,
+                "output": 45,
+                "incomplete": false,
+                "seconds": 4.719459707994247
+              },
+              {
+                "id": "action:1",
+                "iteration": 1,
+                "phase": "Action（共享）",
+                "tool": "calculator + current_time",
+                "tool_call_ids": [
+                  "c11991f727a54fa1926bfc136ab03307",
+                  "2f8ebadef77d42ffad5416b2893b3d93"
+                ],
+                "input": 1426,
+                "output": 37,
+                "incomplete": false,
+                "seconds": 4.852540457999567
+              }
+            ],
+            "trace": [
+              {
+                "type": "thought",
+                "thought": "执行独立的calculator和current_time任务。",
+                "next_step": "tool",
+                "tool_name": "calculator",
+                "parallel_tools": [
+                  "calculator",
+                  "current_time"
+                ],
+                "elapsed_seconds": 4.719459707994247,
+                "iteration": 1
+              },
+              {
+                "type": "tool_call",
+                "name": "calculator",
+                "call_id": "c11991f727a54fa1926bfc136ab03307",
+                "args": {
+                  "expression": "2*3"
+                },
+                "elapsed_seconds": 4.852540457999567,
+                "iteration": 1
+              },
+              {
+                "type": "tool_call",
+                "name": "current_time",
+                "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+                "args": {},
+                "elapsed_seconds": 4.852540457999567,
+                "iteration": 1
+              }
+            ],
+            "tool_calls": [
+              {
+                "call_id": "c11991f727a54fa1926bfc136ab03307",
+                "name": "calculator",
+                "iteration": 1,
+                "status": "pending",
+                "seconds": null,
+                "attempts": null,
+                "execution_mode": null
+              },
+              {
+                "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+                "name": "current_time",
+                "iteration": 1,
+                "status": "pending",
+                "seconds": null,
+                "attempts": null,
+                "execution_mode": null
+              }
+            ],
+            "tools": {
+              "started": 2,
+              "completed": 0,
+              "successes": 0,
+              "failures": 0,
+              "pending": 2,
+              "success_rate": null,
+              "mean_seconds": null,
+              "by_tool": [
+                {
+                  "name": "calculator",
+                  "started": 1,
+                  "completed": 0,
+                  "successes": 0,
+                  "failures": 0,
+                  "pending": 1,
+                  "success_rate": null,
+                  "mean_seconds": null
+                },
+                {
+                  "name": "current_time",
+                  "started": 1,
+                  "completed": 0,
+                  "successes": 0,
+                  "failures": 0,
+                  "pending": 1,
+                  "success_rate": null,
+                  "mean_seconds": null
+                }
+              ]
+            },
+            "tokens": {
+              "input": 2692,
+              "output": 82,
+              "total": 2774,
+              "known_total": 2774,
+              "unknown_calls": 0
+            },
+            "response_seconds": 9.580359209001472
+          },
+          "user_id": "trace-verifier",
+          "session_id": "3881693304334509aa314edfe92e0460"
+        },
+        {
+          "type": "tool_result",
+          "call_id": "c11991f727a54fa1926bfc136ab03307",
+          "name": "calculator",
+          "args": {
+            "expression": "2*3"
+          },
+          "status": "success",
+          "result": {
+            "expression": "2*3",
+            "result": "6",
+            "usage": {
+              "prompt_eval_count": 0,
+              "eval_count": 0
+            }
+          },
+          "error": "",
+          "error_kind": null,
+          "elapsed_seconds": 0.000753332999011036,
+          "message": {
+            "content": "{'expression': '2*3', 'result': '6', 'usage': {'prompt_eval_count': 0, 'eval_count': 0}}",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "calculator",
+            "id": null,
+            "tool_call_id": "c11991f727a54fa1926bfc136ab03307",
+            "artifact": null,
+            "status": "success"
+          },
+          "attempts": [
+            {
+              "attempt": 1,
+              "status": "success",
+              "error": "",
+              "error_kind": null,
+              "elapsed_seconds": 0.0007297920019482262
+            }
+          ],
+          "execution_mode": "parallel",
+          "iteration": 1,
+          "request_id": "402c12c83a9149a190bfddc18aacb065",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 1266,
+                "output": 45,
+                "incomplete": false,
+                "seconds": 4.719459707994247
+              },
+              {
+                "id": "action:1",
+                "iteration": 1,
+                "phase": "Action（共享）",
+                "tool": "calculator + current_time",
+                "tool_call_ids": [
+                  "c11991f727a54fa1926bfc136ab03307",
+                  "2f8ebadef77d42ffad5416b2893b3d93"
+                ],
+                "input": 1426,
+                "output": 37,
+                "incomplete": false,
+                "seconds": 4.852540457999567
+              },
+              {
+                "id": "c11991f727a54fa1926bfc136ab03307",
+                "iteration": 1,
+                "phase": "工具内部",
+                "tool": "calculator",
+                "tool_call_ids": [
+                  "c11991f727a54fa1926bfc136ab03307"
+                ],
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 0.000753332999011036
+              }
+            ],
+            "trace": [
+              {
+                "type": "thought",
+                "thought": "执行独立的calculator和current_time任务。",
+                "next_step": "tool",
+                "tool_name": "calculator",
+                "parallel_tools": [
+                  "calculator",
+                  "current_time"
+                ],
+                "elapsed_seconds": 4.719459707994247,
+                "iteration": 1
+              },
+              {
+                "type": "tool_call",
+                "name": "calculator",
+                "call_id": "c11991f727a54fa1926bfc136ab03307",
+                "args": {
+                  "expression": "2*3"
+                },
+                "elapsed_seconds": 4.852540457999567,
+                "iteration": 1
+              },
+              {
+                "type": "tool_call",
+                "name": "current_time",
+                "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+                "args": {},
+                "elapsed_seconds": 4.852540457999567,
+                "iteration": 1
+              },
+              {
+                "type": "tool_result",
+                "name": "calculator",
+                "call_id": "c11991f727a54fa1926bfc136ab03307",
+                "args": {
+                  "expression": "2*3"
+                },
+                "result": {
+                  "expression": "2*3",
+                  "result": "6",
+                  "usage": {
+                    "prompt_eval_count": 0,
+                    "eval_count": 0
+                  }
+                },
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "success",
+                    "error": "",
+                    "error_kind": null,
+                    "elapsed_seconds": 0.0007297920019482262
+                  }
+                ],
+                "execution_mode": "parallel",
+                "elapsed_seconds": 0.000753332999011036,
+                "iteration": 1
+              }
+            ],
+            "tool_calls": [
+              {
+                "call_id": "c11991f727a54fa1926bfc136ab03307",
+                "name": "calculator",
+                "iteration": 1,
+                "status": "success",
+                "seconds": 0.000753332999011036,
+                "attempts": 1,
+                "execution_mode": "parallel"
+              },
+              {
+                "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+                "name": "current_time",
+                "iteration": 1,
+                "status": "pending",
+                "seconds": null,
+                "attempts": null,
+                "execution_mode": null
+              }
+            ],
+            "tools": {
+              "started": 2,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 1,
+              "success_rate": 1.0,
+              "mean_seconds": 0.000753332999011036,
+              "by_tool": [
+                {
+                  "name": "calculator",
+                  "started": 1,
+                  "completed": 1,
+                  "successes": 1,
+                  "failures": 0,
+                  "pending": 0,
+                  "success_rate": 1.0,
+                  "mean_seconds": 0.000753332999011036
+                },
+                {
+                  "name": "current_time",
+                  "started": 1,
+                  "completed": 0,
+                  "successes": 0,
+                  "failures": 0,
+                  "pending": 1,
+                  "success_rate": null,
+                  "mean_seconds": null
+                }
+              ]
+            },
+            "tokens": {
+              "input": 2692,
+              "output": 82,
+              "total": 2774,
+              "known_total": 2774,
+              "unknown_calls": 0
+            },
+            "response_seconds": 9.583674084002269
+          },
+          "user_id": "trace-verifier",
+          "session_id": "3881693304334509aa314edfe92e0460"
+        },
+        {
+          "type": "tool_result",
+          "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+          "name": "current_time",
+          "args": {},
+          "status": "success",
+          "result": {
+            "system_time": "2026-10-03T00:35:21+08:00",
+            "timezone": "CST",
+            "usage": {
+              "prompt_eval_count": 0,
+              "eval_count": 0
+            }
+          },
+          "error": "",
+          "error_kind": null,
+          "elapsed_seconds": 0.0014208749998942949,
+          "message": {
+            "content": "{'system_time': '2026-10-03T00:35:21+08:00', 'timezone': 'CST', 'usage': {'prompt_eval_count': 0, 'eval_count': 0}}",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "current_time",
+            "id": null,
+            "tool_call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+            "artifact": null,
+            "status": "success"
+          },
+          "attempts": [
+            {
+              "attempt": 1,
+              "status": "success",
+              "error": "",
+              "error_kind": null,
+              "elapsed_seconds": 0.0014012079991516657
+            }
+          ],
+          "execution_mode": "parallel",
+          "iteration": 1,
+          "request_id": "402c12c83a9149a190bfddc18aacb065",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 1266,
+                "output": 45,
+                "incomplete": false,
+                "seconds": 4.719459707994247
+              },
+              {
+                "id": "action:1",
+                "iteration": 1,
+                "phase": "Action（共享）",
+                "tool": "calculator + current_time",
+                "tool_call_ids": [
+                  "c11991f727a54fa1926bfc136ab03307",
+                  "2f8ebadef77d42ffad5416b2893b3d93"
+                ],
+                "input": 1426,
+                "output": 37,
+                "incomplete": false,
+                "seconds": 4.852540457999567
+              },
+              {
+                "id": "c11991f727a54fa1926bfc136ab03307",
+                "iteration": 1,
+                "phase": "工具内部",
+                "tool": "calculator",
+                "tool_call_ids": [
+                  "c11991f727a54fa1926bfc136ab03307"
+                ],
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 0.000753332999011036
+              },
+              {
+                "id": "2f8ebadef77d42ffad5416b2893b3d93",
+                "iteration": 1,
+                "phase": "工具内部",
+                "tool": "current_time",
+                "tool_call_ids": [
+                  "2f8ebadef77d42ffad5416b2893b3d93"
+                ],
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 0.0014208749998942949
+              }
+            ],
+            "trace": [
+              {
+                "type": "thought",
+                "thought": "执行独立的calculator和current_time任务。",
+                "next_step": "tool",
+                "tool_name": "calculator",
+                "parallel_tools": [
+                  "calculator",
+                  "current_time"
+                ],
+                "elapsed_seconds": 4.719459707994247,
+                "iteration": 1
+              },
+              {
+                "type": "tool_call",
+                "name": "calculator",
+                "call_id": "c11991f727a54fa1926bfc136ab03307",
+                "args": {
+                  "expression": "2*3"
+                },
+                "elapsed_seconds": 4.852540457999567,
+                "iteration": 1
+              },
+              {
+                "type": "tool_call",
+                "name": "current_time",
+                "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+                "args": {},
+                "elapsed_seconds": 4.852540457999567,
+                "iteration": 1
+              },
+              {
+                "type": "tool_result",
+                "name": "calculator",
+                "call_id": "c11991f727a54fa1926bfc136ab03307",
+                "args": {
+                  "expression": "2*3"
+                },
+                "result": {
+                  "expression": "2*3",
+                  "result": "6",
+                  "usage": {
+                    "prompt_eval_count": 0,
+                    "eval_count": 0
+                  }
+                },
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "success",
+                    "error": "",
+                    "error_kind": null,
+                    "elapsed_seconds": 0.0007297920019482262
+                  }
+                ],
+                "execution_mode": "parallel",
+                "elapsed_seconds": 0.000753332999011036,
+                "iteration": 1
+              },
+              {
+                "type": "tool_result",
+                "name": "current_time",
+                "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+                "args": {},
+                "result": {
+                  "system_time": "2026-10-03T00:35:21+08:00",
+                  "timezone": "CST",
+                  "usage": {
+                    "prompt_eval_count": 0,
+                    "eval_count": 0
+                  }
+                },
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "success",
+                    "error": "",
+                    "error_kind": null,
+                    "elapsed_seconds": 0.0014012079991516657
+                  }
+                ],
+                "execution_mode": "parallel",
+                "elapsed_seconds": 0.0014208749998942949,
+                "iteration": 1
+              }
+            ],
+            "tool_calls": [
+              {
+                "call_id": "c11991f727a54fa1926bfc136ab03307",
+                "name": "calculator",
+                "iteration": 1,
+                "status": "success",
+                "seconds": 0.000753332999011036,
+                "attempts": 1,
+                "execution_mode": "parallel"
+              },
+              {
+                "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+                "name": "current_time",
+                "iteration": 1,
+                "status": "success",
+                "seconds": 0.0014208749998942949,
+                "attempts": 1,
+                "execution_mode": "parallel"
+              }
+            ],
+            "tools": {
+              "started": 2,
+              "completed": 2,
+              "successes": 2,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.0010871039994526654,
+              "by_tool": [
+                {
+                  "name": "calculator",
+                  "started": 1,
+                  "completed": 1,
+                  "successes": 1,
+                  "failures": 0,
+                  "pending": 0,
+                  "success_rate": 1.0,
+                  "mean_seconds": 0.000753332999011036
+                },
+                {
+                  "name": "current_time",
+                  "started": 1,
+                  "completed": 1,
+                  "successes": 1,
+                  "failures": 0,
+                  "pending": 0,
+                  "success_rate": 1.0,
+                  "mean_seconds": 0.0014208749998942949
+                }
+              ]
+            },
+            "tokens": {
+              "input": 2692,
+              "output": 82,
+              "total": 2774,
+              "known_total": 2774,
+              "unknown_calls": 0
+            },
+            "response_seconds": 9.586376667000877
+          },
+          "user_id": "trace-verifier",
+          "session_id": "3881693304334509aa314edfe92e0460"
+        },
+        {
+          "type": "observation",
+          "observation": "calculator返回结果为6，current_time返回当前时间为2026-10-03T00:35:21+08:00。",
+          "decision": "finish",
+          "task_complete": true,
+          "answer": "2*3的结果是6，当前时间为2026-10-03 00:35:21（北京时间）。",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1847,
+            "eval_count": 96
+          },
+          "elapsed_seconds": 7.818048083994654,
+          "iteration": 1,
+          "request_id": "402c12c83a9149a190bfddc18aacb065",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 1266,
+                "output": 45,
+                "incomplete": false,
+                "seconds": 4.719459707994247
+              },
+              {
+                "id": "action:1",
+                "iteration": 1,
+                "phase": "Action（共享）",
+                "tool": "calculator + current_time",
+                "tool_call_ids": [
+                  "c11991f727a54fa1926bfc136ab03307",
+                  "2f8ebadef77d42ffad5416b2893b3d93"
+                ],
+                "input": 1426,
+                "output": 37,
+                "incomplete": false,
+                "seconds": 4.852540457999567
+              },
+              {
+                "id": "c11991f727a54fa1926bfc136ab03307",
+                "iteration": 1,
+                "phase": "工具内部",
+                "tool": "calculator",
+                "tool_call_ids": [
+                  "c11991f727a54fa1926bfc136ab03307"
+                ],
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 0.000753332999011036
+              },
+              {
+                "id": "2f8ebadef77d42ffad5416b2893b3d93",
+                "iteration": 1,
+                "phase": "工具内部",
+                "tool": "current_time",
+                "tool_call_ids": [
+                  "2f8ebadef77d42ffad5416b2893b3d93"
+                ],
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 0.0014208749998942949
+              },
+              {
+                "id": "observation:1",
+                "iteration": 1,
+                "phase": "Observation",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 1847,
+                "output": 96,
+                "incomplete": false,
+                "seconds": 7.818048083994654
+              }
+            ],
+            "trace": [
+              {
+                "type": "thought",
+                "thought": "执行独立的calculator和current_time任务。",
+                "next_step": "tool",
+                "tool_name": "calculator",
+                "parallel_tools": [
+                  "calculator",
+                  "current_time"
+                ],
+                "elapsed_seconds": 4.719459707994247,
+                "iteration": 1
+              },
+              {
+                "type": "tool_call",
+                "name": "calculator",
+                "call_id": "c11991f727a54fa1926bfc136ab03307",
+                "args": {
+                  "expression": "2*3"
+                },
+                "elapsed_seconds": 4.852540457999567,
+                "iteration": 1
+              },
+              {
+                "type": "tool_call",
+                "name": "current_time",
+                "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+                "args": {},
+                "elapsed_seconds": 4.852540457999567,
+                "iteration": 1
+              },
+              {
+                "type": "tool_result",
+                "name": "calculator",
+                "call_id": "c11991f727a54fa1926bfc136ab03307",
+                "args": {
+                  "expression": "2*3"
+                },
+                "result": {
+                  "expression": "2*3",
+                  "result": "6",
+                  "usage": {
+                    "prompt_eval_count": 0,
+                    "eval_count": 0
+                  }
+                },
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "success",
+                    "error": "",
+                    "error_kind": null,
+                    "elapsed_seconds": 0.0007297920019482262
+                  }
+                ],
+                "execution_mode": "parallel",
+                "elapsed_seconds": 0.000753332999011036,
+                "iteration": 1
+              },
+              {
+                "type": "tool_result",
+                "name": "current_time",
+                "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+                "args": {},
+                "result": {
+                  "system_time": "2026-10-03T00:35:21+08:00",
+                  "timezone": "CST",
+                  "usage": {
+                    "prompt_eval_count": 0,
+                    "eval_count": 0
+                  }
+                },
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "success",
+                    "error": "",
+                    "error_kind": null,
+                    "elapsed_seconds": 0.0014012079991516657
+                  }
+                ],
+                "execution_mode": "parallel",
+                "elapsed_seconds": 0.0014208749998942949,
+                "iteration": 1
+              },
+              {
+                "type": "observation",
+                "elapsed_seconds": 7.818048083994654,
+                "observation": "calculator返回结果为6，current_time返回当前时间为2026-10-03T00:35:21+08:00。",
+                "decision": "finish",
+                "task_complete": true,
+                "iteration": 1
+              }
+            ],
+            "tool_calls": [
+              {
+                "call_id": "c11991f727a54fa1926bfc136ab03307",
+                "name": "calculator",
+                "iteration": 1,
+                "status": "success",
+                "seconds": 0.000753332999011036,
+                "attempts": 1,
+                "execution_mode": "parallel"
+              },
+              {
+                "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+                "name": "current_time",
+                "iteration": 1,
+                "status": "success",
+                "seconds": 0.0014208749998942949,
+                "attempts": 1,
+                "execution_mode": "parallel"
+              }
+            ],
+            "tools": {
+              "started": 2,
+              "completed": 2,
+              "successes": 2,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.0010871039994526654,
+              "by_tool": [
+                {
+                  "name": "calculator",
+                  "started": 1,
+                  "completed": 1,
+                  "successes": 1,
+                  "failures": 0,
+                  "pending": 0,
+                  "success_rate": 1.0,
+                  "mean_seconds": 0.000753332999011036
+                },
+                {
+                  "name": "current_time",
+                  "started": 1,
+                  "completed": 1,
+                  "successes": 1,
+                  "failures": 0,
+                  "pending": 0,
+                  "success_rate": 1.0,
+                  "mean_seconds": 0.0014208749998942949
+                }
+              ]
+            },
+            "tokens": {
+              "input": 4539,
+              "output": 178,
+              "total": 4717,
+              "known_total": 4717,
+              "unknown_calls": 0
+            },
+            "response_seconds": 17.40760908399534
+          },
+          "user_id": "trace-verifier",
+          "session_id": "3881693304334509aa314edfe92e0460"
+        },
+        {
+          "type": "done",
+          "task_complete": true,
+          "stop_reason": "task_complete",
+          "full_response": "2*3的结果是6，当前时间为2026-10-03 00:35:21（北京时间）。",
+          "iterations": 1,
+          "context": {
+            "history": [],
+            "history_window": {
+              "tokens": 0,
+              "max_tokens": 2000,
+              "retained_turns": 0,
+              "dropped_turns": 0,
+              "tokenizer": "Qwen2.5"
+            },
+            "observations": [
+              {
+                "call_id": "c11991f727a54fa1926bfc136ab03307",
+                "name": "calculator",
+                "args": {
+                  "expression": "2*3"
+                },
+                "status": "success",
+                "result": {
+                  "expression": "2*3",
+                  "result": "6",
+                  "usage": {
+                    "prompt_eval_count": 0,
+                    "eval_count": 0
+                  }
+                },
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.000753332999011036,
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "success",
+                    "error": "",
+                    "error_kind": null,
+                    "elapsed_seconds": 0.0007297920019482262
+                  }
+                ],
+                "execution_mode": "parallel"
+              },
+              {
+                "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+                "name": "current_time",
+                "args": {},
+                "status": "success",
+                "result": {
+                  "system_time": "2026-10-03T00:35:21+08:00",
+                  "timezone": "CST",
+                  "usage": {
+                    "prompt_eval_count": 0,
+                    "eval_count": 0
+                  }
+                },
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0014208749998942949,
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "success",
+                    "error": "",
+                    "error_kind": null,
+                    "elapsed_seconds": 0.0014012079991516657
+                  }
+                ],
+                "execution_mode": "parallel"
+              }
+            ],
+            "last_observation": {
+              "observation": "calculator返回结果为6，current_time返回当前时间为2026-10-03T00:35:21+08:00。",
+              "decision": "finish",
+              "task_complete": true
+            }
+          },
+          "request_id": "402c12c83a9149a190bfddc18aacb065",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 1266,
+                "output": 45,
+                "incomplete": false,
+                "seconds": 4.719459707994247
+              },
+              {
+                "id": "action:1",
+                "iteration": 1,
+                "phase": "Action（共享）",
+                "tool": "calculator + current_time",
+                "tool_call_ids": [
+                  "c11991f727a54fa1926bfc136ab03307",
+                  "2f8ebadef77d42ffad5416b2893b3d93"
+                ],
+                "input": 1426,
+                "output": 37,
+                "incomplete": false,
+                "seconds": 4.852540457999567
+              },
+              {
+                "id": "c11991f727a54fa1926bfc136ab03307",
+                "iteration": 1,
+                "phase": "工具内部",
+                "tool": "calculator",
+                "tool_call_ids": [
+                  "c11991f727a54fa1926bfc136ab03307"
+                ],
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 0.000753332999011036
+              },
+              {
+                "id": "2f8ebadef77d42ffad5416b2893b3d93",
+                "iteration": 1,
+                "phase": "工具内部",
+                "tool": "current_time",
+                "tool_call_ids": [
+                  "2f8ebadef77d42ffad5416b2893b3d93"
+                ],
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 0.0014208749998942949
+              },
+              {
+                "id": "observation:1",
+                "iteration": 1,
+                "phase": "Observation",
+                "tool": "—",
+                "tool_call_ids": [],
+                "input": 1847,
+                "output": 96,
+                "incomplete": false,
+                "seconds": 7.818048083994654
+              }
+            ],
+            "trace": [
+              {
+                "type": "thought",
+                "thought": "执行独立的calculator和current_time任务。",
+                "next_step": "tool",
+                "tool_name": "calculator",
+                "parallel_tools": [
+                  "calculator",
+                  "current_time"
+                ],
+                "elapsed_seconds": 4.719459707994247,
+                "iteration": 1
+              },
+              {
+                "type": "tool_call",
+                "name": "calculator",
+                "call_id": "c11991f727a54fa1926bfc136ab03307",
+                "args": {
+                  "expression": "2*3"
+                },
+                "elapsed_seconds": 4.852540457999567,
+                "iteration": 1
+              },
+              {
+                "type": "tool_call",
+                "name": "current_time",
+                "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+                "args": {},
+                "elapsed_seconds": 4.852540457999567,
+                "iteration": 1
+              },
+              {
+                "type": "tool_result",
+                "name": "calculator",
+                "call_id": "c11991f727a54fa1926bfc136ab03307",
+                "args": {
+                  "expression": "2*3"
+                },
+                "result": {
+                  "expression": "2*3",
+                  "result": "6",
+                  "usage": {
+                    "prompt_eval_count": 0,
+                    "eval_count": 0
+                  }
+                },
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "success",
+                    "error": "",
+                    "error_kind": null,
+                    "elapsed_seconds": 0.0007297920019482262
+                  }
+                ],
+                "execution_mode": "parallel",
+                "elapsed_seconds": 0.000753332999011036,
+                "iteration": 1
+              },
+              {
+                "type": "tool_result",
+                "name": "current_time",
+                "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+                "args": {},
+                "result": {
+                  "system_time": "2026-10-03T00:35:21+08:00",
+                  "timezone": "CST",
+                  "usage": {
+                    "prompt_eval_count": 0,
+                    "eval_count": 0
+                  }
+                },
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "success",
+                    "error": "",
+                    "error_kind": null,
+                    "elapsed_seconds": 0.0014012079991516657
+                  }
+                ],
+                "execution_mode": "parallel",
+                "elapsed_seconds": 0.0014208749998942949,
+                "iteration": 1
+              },
+              {
+                "type": "observation",
+                "elapsed_seconds": 7.818048083994654,
+                "observation": "calculator返回结果为6，current_time返回当前时间为2026-10-03T00:35:21+08:00。",
+                "decision": "finish",
+                "task_complete": true,
+                "iteration": 1
+              },
+              {
+                "type": "done",
+                "task_complete": true,
+                "stop_reason": "task_complete",
+                "full_response": "2*3的结果是6，当前时间为2026-10-03 00:35:21（北京时间）。",
+                "iteration": 1
+              }
+            ],
+            "tool_calls": [
+              {
+                "call_id": "c11991f727a54fa1926bfc136ab03307",
+                "name": "calculator",
+                "iteration": 1,
+                "status": "success",
+                "seconds": 0.000753332999011036,
+                "attempts": 1,
+                "execution_mode": "parallel"
+              },
+              {
+                "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+                "name": "current_time",
+                "iteration": 1,
+                "status": "success",
+                "seconds": 0.0014208749998942949,
+                "attempts": 1,
+                "execution_mode": "parallel"
+              }
+            ],
+            "tools": {
+              "started": 2,
+              "completed": 2,
+              "successes": 2,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.0010871039994526654,
+              "by_tool": [
+                {
+                  "name": "calculator",
+                  "started": 1,
+                  "completed": 1,
+                  "successes": 1,
+                  "failures": 0,
+                  "pending": 0,
+                  "success_rate": 1.0,
+                  "mean_seconds": 0.000753332999011036
+                },
+                {
+                  "name": "current_time",
+                  "started": 1,
+                  "completed": 1,
+                  "successes": 1,
+                  "failures": 0,
+                  "pending": 0,
+                  "success_rate": 1.0,
+                  "mean_seconds": 0.0014208749998942949
+                }
+              ]
+            },
+            "tokens": {
+              "input": 4539,
+              "output": 178,
+              "total": 4717,
+              "known_total": 4717,
+              "unknown_calls": 0
+            },
+            "response_seconds": 17.41108004200214
+          },
+          "user_id": "trace-verifier",
+          "session_id": "3881693304334509aa314edfe92e0460"
+        }
+      ],
+      "trace_check": true,
+      "stats_check": true,
+      "scenario_check": true,
+      "parallel_observed": true,
+      "summary": {
+        "tools": {
+          "started": 2,
+          "completed": 2,
+          "successes": 2,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": 1.0,
+          "mean_seconds": 0.0010871039994526654,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.000753332999011036
+            },
+            {
+              "name": "current_time",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.0014208749998942949
+            }
+          ]
+        },
+        "response_seconds": 17.41108004200214,
+        "stop_reason": "task_complete",
+        "task_complete": true
+      }
+    }
+  ],
+  "scope": "真实Qwen/Ollama、计算器、当前时间和SQLite；功能核验，不代表论文答案质量。",
+  "records": [
+    {
+      "schema_version": 1,
+      "request_id": "2f0c0d6a8a2a4277877dc48c62f9829e",
+      "timestamp": "2026-10-03T00:34:48.873565+08:00",
+      "user_id": "trace-verifier",
+      "session_id": "a93d7324ea324b5894a73ca16aca48db",
+      "question": "调用calculator计算3.14*2.56。",
+      "event": "thought",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0005087910030852072
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0005087910030852072,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [],
+        "tools": {
+          "started": 0,
+          "completed": 0,
+          "successes": 0,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": null,
+          "mean_seconds": null,
+          "by_tool": []
+        },
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0,
+          "known_total": 0,
+          "unknown_calls": 0
+        },
+        "response_seconds": 0.10827229099959368
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "2f0c0d6a8a2a4277877dc48c62f9829e",
+      "timestamp": "2026-10-03T00:34:59.464181+08:00",
+      "user_id": "trace-verifier",
+      "session_id": "a93d7324ea324b5894a73ca16aca48db",
+      "question": "调用calculator计算3.14*2.56。",
+      "event": "tool_call",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0005087910030852072
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "54d793a7f5ce4b07b4ffb39a07ea3fdc"
+            ],
+            "input": 1304,
+            "output": 27,
+            "incomplete": false,
+            "seconds": 10.588039458998537
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0005087910030852072,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+            "args": {
+              "expression": "3.14*2.56"
+            },
+            "elapsed_seconds": 10.588039458998537,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "pending",
+            "seconds": null,
+            "attempts": null,
+            "execution_mode": null
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 0,
+          "successes": 0,
+          "failures": 0,
+          "pending": 1,
+          "success_rate": null,
+          "mean_seconds": null,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 1,
+              "completed": 0,
+              "successes": 0,
+              "failures": 0,
+              "pending": 1,
+              "success_rate": null,
+              "mean_seconds": null
+            }
+          ]
+        },
+        "tokens": {
+          "input": 1304,
+          "output": 27,
+          "total": 1331,
+          "known_total": 1331,
+          "unknown_calls": 0
+        },
+        "response_seconds": 10.698674707993632
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "2f0c0d6a8a2a4277877dc48c62f9829e",
+      "timestamp": "2026-10-03T00:34:59.469799+08:00",
+      "user_id": "trace-verifier",
+      "session_id": "a93d7324ea324b5894a73ca16aca48db",
+      "question": "调用calculator计算3.14*2.56。",
+      "event": "tool_result",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0005087910030852072
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "54d793a7f5ce4b07b4ffb39a07ea3fdc"
+            ],
+            "input": 1304,
+            "output": 27,
+            "incomplete": false,
+            "seconds": 10.588039458998537
+          },
+          {
+            "id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "54d793a7f5ce4b07b4ffb39a07ea3fdc"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0032659580028848723
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0005087910030852072,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+            "args": {
+              "expression": "3.14*2.56"
+            },
+            "elapsed_seconds": 10.588039458998537,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "calculator",
+            "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+            "args": {
+              "expression": "3.14*2.56"
+            },
+            "result": {
+              "expression": "3.14*2.56",
+              "result": "8.0384",
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0032316670040017925
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0032659580028848723,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 0.0032659580028848723,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 1,
+          "successes": 1,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": 1.0,
+          "mean_seconds": 0.0032659580028848723,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.0032659580028848723
+            }
+          ]
+        },
+        "tokens": {
+          "input": 1304,
+          "output": 27,
+          "total": 1331,
+          "known_total": 1331,
+          "unknown_calls": 0
+        },
+        "response_seconds": 10.70456849999755
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "2f0c0d6a8a2a4277877dc48c62f9829e",
+      "timestamp": "2026-10-03T00:35:05.470203+08:00",
+      "user_id": "trace-verifier",
+      "session_id": "a93d7324ea324b5894a73ca16aca48db",
+      "question": "调用calculator计算3.14*2.56。",
+      "event": "observation",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0005087910030852072
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "54d793a7f5ce4b07b4ffb39a07ea3fdc"
+            ],
+            "input": 1304,
+            "output": 27,
+            "incomplete": false,
+            "seconds": 10.588039458998537
+          },
+          {
+            "id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "54d793a7f5ce4b07b4ffb39a07ea3fdc"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0032659580028848723
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 1582,
+            "output": 39,
+            "incomplete": false,
+            "seconds": 5.997794707996945
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0005087910030852072,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+            "args": {
+              "expression": "3.14*2.56"
+            },
+            "elapsed_seconds": 10.588039458998537,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "calculator",
+            "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+            "args": {
+              "expression": "3.14*2.56"
+            },
+            "result": {
+              "expression": "3.14*2.56",
+              "result": "8.0384",
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0032316670040017925
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0032659580028848723,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 5.997794707996945,
+            "observation": "计算结果为8.0384。",
+            "decision": "finish",
+            "task_complete": true,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 0.0032659580028848723,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 1,
+          "successes": 1,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": 1.0,
+          "mean_seconds": 0.0032659580028848723,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.0032659580028848723
+            }
+          ]
+        },
+        "tokens": {
+          "input": 2886,
+          "output": 66,
+          "total": 2952,
+          "known_total": 2952,
+          "unknown_calls": 0
+        },
+        "response_seconds": 16.704948124999646
+      },
+      "stop_reason": null,
+      "task_complete": true
+    },
+    {
+      "schema_version": 1,
+      "request_id": "2f0c0d6a8a2a4277877dc48c62f9829e",
+      "timestamp": "2026-10-03T00:35:05.473258+08:00",
+      "user_id": "trace-verifier",
+      "session_id": "a93d7324ea324b5894a73ca16aca48db",
+      "question": "调用calculator计算3.14*2.56。",
+      "event": "done",
+      "iteration": null,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0005087910030852072
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "54d793a7f5ce4b07b4ffb39a07ea3fdc"
+            ],
+            "input": 1304,
+            "output": 27,
+            "incomplete": false,
+            "seconds": 10.588039458998537
+          },
+          {
+            "id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "54d793a7f5ce4b07b4ffb39a07ea3fdc"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0032659580028848723
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 1582,
+            "output": 39,
+            "incomplete": false,
+            "seconds": 5.997794707996945
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0005087910030852072,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+            "args": {
+              "expression": "3.14*2.56"
+            },
+            "elapsed_seconds": 10.588039458998537,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "calculator",
+            "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+            "args": {
+              "expression": "3.14*2.56"
+            },
+            "result": {
+              "expression": "3.14*2.56",
+              "result": "8.0384",
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0032316670040017925
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0032659580028848723,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 5.997794707996945,
+            "observation": "计算结果为8.0384。",
+            "decision": "finish",
+            "task_complete": true,
+            "iteration": 1
+          },
+          {
+            "type": "done",
+            "task_complete": true,
+            "stop_reason": "task_complete",
+            "full_response": "8.0384",
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "54d793a7f5ce4b07b4ffb39a07ea3fdc",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 0.0032659580028848723,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 1,
+          "successes": 1,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": 1.0,
+          "mean_seconds": 0.0032659580028848723,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.0032659580028848723
+            }
+          ]
+        },
+        "tokens": {
+          "input": 2886,
+          "output": 66,
+          "total": 2952,
+          "known_total": 2952,
+          "unknown_calls": 0
+        },
+        "response_seconds": 16.708007624998572
+      },
+      "stop_reason": "task_complete",
+      "task_complete": true
+    },
+    {
+      "schema_version": 1,
+      "request_id": "0927da5684cc413f9c4f1f051af5c4ab",
+      "timestamp": "2026-10-03T00:35:05.476716+08:00",
+      "user_id": "trace-verifier",
+      "session_id": "5016968014a24396b44861bfb4dd9f6f",
+      "question": "调用calculator计算1/0，记录工具返回的错误。",
+      "event": "thought",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 2.7542002499103546e-05
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 2.7542002499103546e-05,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [],
+        "tools": {
+          "started": 0,
+          "completed": 0,
+          "successes": 0,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": null,
+          "mean_seconds": null,
+          "by_tool": []
+        },
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0,
+          "known_total": 0,
+          "unknown_calls": 0
+        },
+        "response_seconds": 0.0017585829991730861
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "0927da5684cc413f9c4f1f051af5c4ab",
+      "timestamp": "2026-10-03T00:35:07.274755+08:00",
+      "user_id": "trace-verifier",
+      "session_id": "5016968014a24396b44861bfb4dd9f6f",
+      "question": "调用calculator计算1/0，记录工具返回的错误。",
+      "event": "tool_call",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 2.7542002499103546e-05
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "0ad18977c7ef412d839e02a87d311a7d"
+            ],
+            "input": 1305,
+            "output": 21,
+            "incomplete": false,
+            "seconds": 1.7955464170008781
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 2.7542002499103546e-05,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+            "args": {
+              "expression": "1/0"
+            },
+            "elapsed_seconds": 1.7955464170008781,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "pending",
+            "seconds": null,
+            "attempts": null,
+            "execution_mode": null
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 0,
+          "successes": 0,
+          "failures": 0,
+          "pending": 1,
+          "success_rate": null,
+          "mean_seconds": null,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 1,
+              "completed": 0,
+              "successes": 0,
+              "failures": 0,
+              "pending": 1,
+              "success_rate": null,
+              "mean_seconds": null
+            }
+          ]
+        },
+        "tokens": {
+          "input": 1305,
+          "output": 21,
+          "total": 1326,
+          "known_total": 1326,
+          "unknown_calls": 0
+        },
+        "response_seconds": 1.7997907919998397
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "0927da5684cc413f9c4f1f051af5c4ab",
+      "timestamp": "2026-10-03T00:35:07.276873+08:00",
+      "user_id": "trace-verifier",
+      "session_id": "5016968014a24396b44861bfb4dd9f6f",
+      "question": "调用calculator计算1/0，记录工具返回的错误。",
+      "event": "tool_result",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 2.7542002499103546e-05
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "0ad18977c7ef412d839e02a87d311a7d"
+            ],
+            "input": 1305,
+            "output": 21,
+            "incomplete": false,
+            "seconds": 1.7955464170008781
+          },
+          {
+            "id": "0ad18977c7ef412d839e02a87d311a7d",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "0ad18977c7ef412d839e02a87d311a7d"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0008135419993777759
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 2.7542002499103546e-05,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+            "args": {
+              "expression": "1/0"
+            },
+            "elapsed_seconds": 1.7955464170008781,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "calculator",
+            "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+            "args": {
+              "expression": "1/0"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: 不能除以零，请修改分母",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: 不能除以零，请修改分母",
+                "error_kind": "input",
+                "elapsed_seconds": 0.0007947500052978285
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0008135419993777759,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0008135419993777759,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 1,
+          "successes": 0,
+          "failures": 1,
+          "pending": 0,
+          "success_rate": 0.0,
+          "mean_seconds": 0.0008135419993777759,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0008135419993777759
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 1326,
+          "unknown_calls": 1
+        },
+        "response_seconds": 1.8019097500000498
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "0927da5684cc413f9c4f1f051af5c4ab",
+      "timestamp": "2026-10-03T00:35:12.252394+08:00",
+      "user_id": "trace-verifier",
+      "session_id": "5016968014a24396b44861bfb4dd9f6f",
+      "question": "调用calculator计算1/0，记录工具返回的错误。",
+      "event": "observation",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 2.7542002499103546e-05
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "0ad18977c7ef412d839e02a87d311a7d"
+            ],
+            "input": 1305,
+            "output": 21,
+            "incomplete": false,
+            "seconds": 1.7955464170008781
+          },
+          {
+            "id": "0ad18977c7ef412d839e02a87d311a7d",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "0ad18977c7ef412d839e02a87d311a7d"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0008135419993777759
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 1532,
+            "output": 65,
+            "incomplete": false,
+            "seconds": 4.97339970900066
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 2.7542002499103546e-05,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+            "args": {
+              "expression": "1/0"
+            },
+            "elapsed_seconds": 1.7955464170008781,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "calculator",
+            "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+            "args": {
+              "expression": "1/0"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: 不能除以零，请修改分母",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: 不能除以零，请修改分母",
+                "error_kind": "input",
+                "elapsed_seconds": 0.0007947500052978285
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0008135419993777759,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 4.97339970900066,
+            "observation": "calculator工具返回了错误：不能除以零，请修改分母。",
+            "decision": "finish",
+            "task_complete": false,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0008135419993777759,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 1,
+          "successes": 0,
+          "failures": 1,
+          "pending": 0,
+          "success_rate": 0.0,
+          "mean_seconds": 0.0008135419993777759,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0008135419993777759
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 2923,
+          "unknown_calls": 1
+        },
+        "response_seconds": 6.777413082993007
+      },
+      "stop_reason": null,
+      "task_complete": false
+    },
+    {
+      "schema_version": 1,
+      "request_id": "0927da5684cc413f9c4f1f051af5c4ab",
+      "timestamp": "2026-10-03T00:35:12.254447+08:00",
+      "user_id": "trace-verifier",
+      "session_id": "5016968014a24396b44861bfb4dd9f6f",
+      "question": "调用calculator计算1/0，记录工具返回的错误。",
+      "event": "done",
+      "iteration": null,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 2.7542002499103546e-05
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "0ad18977c7ef412d839e02a87d311a7d"
+            ],
+            "input": 1305,
+            "output": 21,
+            "incomplete": false,
+            "seconds": 1.7955464170008781
+          },
+          {
+            "id": "0ad18977c7ef412d839e02a87d311a7d",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "0ad18977c7ef412d839e02a87d311a7d"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0008135419993777759
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 1532,
+            "output": 65,
+            "incomplete": false,
+            "seconds": 4.97339970900066
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 2.7542002499103546e-05,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+            "args": {
+              "expression": "1/0"
+            },
+            "elapsed_seconds": 1.7955464170008781,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "calculator",
+            "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+            "args": {
+              "expression": "1/0"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: 不能除以零，请修改分母",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: 不能除以零，请修改分母",
+                "error_kind": "input",
+                "elapsed_seconds": 0.0007947500052978285
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0008135419993777759,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 4.97339970900066,
+            "observation": "calculator工具返回了错误：不能除以零，请修改分母。",
+            "decision": "finish",
+            "task_complete": false,
+            "iteration": 1
+          },
+          {
+            "type": "done",
+            "task_complete": false,
+            "stop_reason": "incomplete",
+            "full_response": "计算1/0时，遇到了除以零的错误。请修改分母以进行有效计算。",
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "0ad18977c7ef412d839e02a87d311a7d",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0008135419993777759,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 1,
+          "successes": 0,
+          "failures": 1,
+          "pending": 0,
+          "success_rate": 0.0,
+          "mean_seconds": 0.0008135419993777759,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0008135419993777759
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 2923,
+          "unknown_calls": 1
+        },
+        "response_seconds": 6.779466707994288
+      },
+      "stop_reason": "incomplete",
+      "task_complete": false
+    },
+    {
+      "schema_version": 1,
+      "request_id": "402c12c83a9149a190bfddc18aacb065",
+      "timestamp": "2026-10-03T00:35:16.978846+08:00",
+      "user_id": "trace-verifier",
+      "session_id": "3881693304334509aa314edfe92e0460",
+      "question": "同时调用calculator计算2*3、调用current_time返回当前时间，这两个工具相互独立。",
+      "event": "thought",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 1266,
+            "output": 45,
+            "incomplete": false,
+            "seconds": 4.719459707994247
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "执行独立的calculator和current_time任务。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [
+              "calculator",
+              "current_time"
+            ],
+            "elapsed_seconds": 4.719459707994247,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [],
+        "tools": {
+          "started": 0,
+          "completed": 0,
+          "successes": 0,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": null,
+          "mean_seconds": null,
+          "by_tool": []
+        },
+        "tokens": {
+          "input": 1266,
+          "output": 45,
+          "total": 1311,
+          "known_total": 1311,
+          "unknown_calls": 0
+        },
+        "response_seconds": 4.721606458995666
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "402c12c83a9149a190bfddc18aacb065",
+      "timestamp": "2026-10-03T00:35:21.835557+08:00",
+      "user_id": "trace-verifier",
+      "session_id": "3881693304334509aa314edfe92e0460",
+      "question": "同时调用calculator计算2*3、调用current_time返回当前时间，这两个工具相互独立。",
+      "event": "tool_call",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 1266,
+            "output": 45,
+            "incomplete": false,
+            "seconds": 4.719459707994247
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action（共享）",
+            "tool": "calculator + current_time",
+            "tool_call_ids": [
+              "c11991f727a54fa1926bfc136ab03307",
+              "2f8ebadef77d42ffad5416b2893b3d93"
+            ],
+            "input": 1426,
+            "output": 37,
+            "incomplete": false,
+            "seconds": 4.852540457999567
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "执行独立的calculator和current_time任务。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [
+              "calculator",
+              "current_time"
+            ],
+            "elapsed_seconds": 4.719459707994247,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "c11991f727a54fa1926bfc136ab03307",
+            "args": {
+              "expression": "2*3"
+            },
+            "elapsed_seconds": 4.852540457999567,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "c11991f727a54fa1926bfc136ab03307",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "pending",
+            "seconds": null,
+            "attempts": null,
+            "execution_mode": null
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 0,
+          "successes": 0,
+          "failures": 0,
+          "pending": 1,
+          "success_rate": null,
+          "mean_seconds": null,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 1,
+              "completed": 0,
+              "successes": 0,
+              "failures": 0,
+              "pending": 1,
+              "success_rate": null,
+              "mean_seconds": null
+            }
+          ]
+        },
+        "tokens": {
+          "input": 2692,
+          "output": 82,
+          "total": 2774,
+          "known_total": 2774,
+          "unknown_calls": 0
+        },
+        "response_seconds": 9.578304791997653
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "402c12c83a9149a190bfddc18aacb065",
+      "timestamp": "2026-10-03T00:35:21.837611+08:00",
+      "user_id": "trace-verifier",
+      "session_id": "3881693304334509aa314edfe92e0460",
+      "question": "同时调用calculator计算2*3、调用current_time返回当前时间，这两个工具相互独立。",
+      "event": "tool_call",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 1266,
+            "output": 45,
+            "incomplete": false,
+            "seconds": 4.719459707994247
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action（共享）",
+            "tool": "calculator + current_time",
+            "tool_call_ids": [
+              "c11991f727a54fa1926bfc136ab03307",
+              "2f8ebadef77d42ffad5416b2893b3d93"
+            ],
+            "input": 1426,
+            "output": 37,
+            "incomplete": false,
+            "seconds": 4.852540457999567
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "执行独立的calculator和current_time任务。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [
+              "calculator",
+              "current_time"
+            ],
+            "elapsed_seconds": 4.719459707994247,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "c11991f727a54fa1926bfc136ab03307",
+            "args": {
+              "expression": "2*3"
+            },
+            "elapsed_seconds": 4.852540457999567,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "current_time",
+            "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+            "args": {},
+            "elapsed_seconds": 4.852540457999567,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "c11991f727a54fa1926bfc136ab03307",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "pending",
+            "seconds": null,
+            "attempts": null,
+            "execution_mode": null
+          },
+          {
+            "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+            "name": "current_time",
+            "iteration": 1,
+            "status": "pending",
+            "seconds": null,
+            "attempts": null,
+            "execution_mode": null
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 0,
+          "successes": 0,
+          "failures": 0,
+          "pending": 2,
+          "success_rate": null,
+          "mean_seconds": null,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 1,
+              "completed": 0,
+              "successes": 0,
+              "failures": 0,
+              "pending": 1,
+              "success_rate": null,
+              "mean_seconds": null
+            },
+            {
+              "name": "current_time",
+              "started": 1,
+              "completed": 0,
+              "successes": 0,
+              "failures": 0,
+              "pending": 1,
+              "success_rate": null,
+              "mean_seconds": null
+            }
+          ]
+        },
+        "tokens": {
+          "input": 2692,
+          "output": 82,
+          "total": 2774,
+          "known_total": 2774,
+          "unknown_calls": 0
+        },
+        "response_seconds": 9.580359209001472
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "402c12c83a9149a190bfddc18aacb065",
+      "timestamp": "2026-10-03T00:35:21.840926+08:00",
+      "user_id": "trace-verifier",
+      "session_id": "3881693304334509aa314edfe92e0460",
+      "question": "同时调用calculator计算2*3、调用current_time返回当前时间，这两个工具相互独立。",
+      "event": "tool_result",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 1266,
+            "output": 45,
+            "incomplete": false,
+            "seconds": 4.719459707994247
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action（共享）",
+            "tool": "calculator + current_time",
+            "tool_call_ids": [
+              "c11991f727a54fa1926bfc136ab03307",
+              "2f8ebadef77d42ffad5416b2893b3d93"
+            ],
+            "input": 1426,
+            "output": 37,
+            "incomplete": false,
+            "seconds": 4.852540457999567
+          },
+          {
+            "id": "c11991f727a54fa1926bfc136ab03307",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "c11991f727a54fa1926bfc136ab03307"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.000753332999011036
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "执行独立的calculator和current_time任务。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [
+              "calculator",
+              "current_time"
+            ],
+            "elapsed_seconds": 4.719459707994247,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "c11991f727a54fa1926bfc136ab03307",
+            "args": {
+              "expression": "2*3"
+            },
+            "elapsed_seconds": 4.852540457999567,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "current_time",
+            "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+            "args": {},
+            "elapsed_seconds": 4.852540457999567,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "calculator",
+            "call_id": "c11991f727a54fa1926bfc136ab03307",
+            "args": {
+              "expression": "2*3"
+            },
+            "result": {
+              "expression": "2*3",
+              "result": "6",
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0007297920019482262
+              }
+            ],
+            "execution_mode": "parallel",
+            "elapsed_seconds": 0.000753332999011036,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "c11991f727a54fa1926bfc136ab03307",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 0.000753332999011036,
+            "attempts": 1,
+            "execution_mode": "parallel"
+          },
+          {
+            "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+            "name": "current_time",
+            "iteration": 1,
+            "status": "pending",
+            "seconds": null,
+            "attempts": null,
+            "execution_mode": null
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 1,
+          "successes": 1,
+          "failures": 0,
+          "pending": 1,
+          "success_rate": 1.0,
+          "mean_seconds": 0.000753332999011036,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.000753332999011036
+            },
+            {
+              "name": "current_time",
+              "started": 1,
+              "completed": 0,
+              "successes": 0,
+              "failures": 0,
+              "pending": 1,
+              "success_rate": null,
+              "mean_seconds": null
+            }
+          ]
+        },
+        "tokens": {
+          "input": 2692,
+          "output": 82,
+          "total": 2774,
+          "known_total": 2774,
+          "unknown_calls": 0
+        },
+        "response_seconds": 9.583674084002269
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "402c12c83a9149a190bfddc18aacb065",
+      "timestamp": "2026-10-03T00:35:21.843628+08:00",
+      "user_id": "trace-verifier",
+      "session_id": "3881693304334509aa314edfe92e0460",
+      "question": "同时调用calculator计算2*3、调用current_time返回当前时间，这两个工具相互独立。",
+      "event": "tool_result",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 1266,
+            "output": 45,
+            "incomplete": false,
+            "seconds": 4.719459707994247
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action（共享）",
+            "tool": "calculator + current_time",
+            "tool_call_ids": [
+              "c11991f727a54fa1926bfc136ab03307",
+              "2f8ebadef77d42ffad5416b2893b3d93"
+            ],
+            "input": 1426,
+            "output": 37,
+            "incomplete": false,
+            "seconds": 4.852540457999567
+          },
+          {
+            "id": "c11991f727a54fa1926bfc136ab03307",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "c11991f727a54fa1926bfc136ab03307"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.000753332999011036
+          },
+          {
+            "id": "2f8ebadef77d42ffad5416b2893b3d93",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "current_time",
+            "tool_call_ids": [
+              "2f8ebadef77d42ffad5416b2893b3d93"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0014208749998942949
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "执行独立的calculator和current_time任务。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [
+              "calculator",
+              "current_time"
+            ],
+            "elapsed_seconds": 4.719459707994247,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "c11991f727a54fa1926bfc136ab03307",
+            "args": {
+              "expression": "2*3"
+            },
+            "elapsed_seconds": 4.852540457999567,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "current_time",
+            "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+            "args": {},
+            "elapsed_seconds": 4.852540457999567,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "calculator",
+            "call_id": "c11991f727a54fa1926bfc136ab03307",
+            "args": {
+              "expression": "2*3"
+            },
+            "result": {
+              "expression": "2*3",
+              "result": "6",
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0007297920019482262
+              }
+            ],
+            "execution_mode": "parallel",
+            "elapsed_seconds": 0.000753332999011036,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "current_time",
+            "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+            "args": {},
+            "result": {
+              "system_time": "2026-10-03T00:35:21+08:00",
+              "timezone": "CST",
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0014012079991516657
+              }
+            ],
+            "execution_mode": "parallel",
+            "elapsed_seconds": 0.0014208749998942949,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "c11991f727a54fa1926bfc136ab03307",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 0.000753332999011036,
+            "attempts": 1,
+            "execution_mode": "parallel"
+          },
+          {
+            "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+            "name": "current_time",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 0.0014208749998942949,
+            "attempts": 1,
+            "execution_mode": "parallel"
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 2,
+          "successes": 2,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": 1.0,
+          "mean_seconds": 0.0010871039994526654,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.000753332999011036
+            },
+            {
+              "name": "current_time",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.0014208749998942949
+            }
+          ]
+        },
+        "tokens": {
+          "input": 2692,
+          "output": 82,
+          "total": 2774,
+          "known_total": 2774,
+          "unknown_calls": 0
+        },
+        "response_seconds": 9.586376667000877
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "402c12c83a9149a190bfddc18aacb065",
+      "timestamp": "2026-10-03T00:35:29.664887+08:00",
+      "user_id": "trace-verifier",
+      "session_id": "3881693304334509aa314edfe92e0460",
+      "question": "同时调用calculator计算2*3、调用current_time返回当前时间，这两个工具相互独立。",
+      "event": "observation",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 1266,
+            "output": 45,
+            "incomplete": false,
+            "seconds": 4.719459707994247
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action（共享）",
+            "tool": "calculator + current_time",
+            "tool_call_ids": [
+              "c11991f727a54fa1926bfc136ab03307",
+              "2f8ebadef77d42ffad5416b2893b3d93"
+            ],
+            "input": 1426,
+            "output": 37,
+            "incomplete": false,
+            "seconds": 4.852540457999567
+          },
+          {
+            "id": "c11991f727a54fa1926bfc136ab03307",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "c11991f727a54fa1926bfc136ab03307"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.000753332999011036
+          },
+          {
+            "id": "2f8ebadef77d42ffad5416b2893b3d93",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "current_time",
+            "tool_call_ids": [
+              "2f8ebadef77d42ffad5416b2893b3d93"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0014208749998942949
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 1847,
+            "output": 96,
+            "incomplete": false,
+            "seconds": 7.818048083994654
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "执行独立的calculator和current_time任务。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [
+              "calculator",
+              "current_time"
+            ],
+            "elapsed_seconds": 4.719459707994247,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "c11991f727a54fa1926bfc136ab03307",
+            "args": {
+              "expression": "2*3"
+            },
+            "elapsed_seconds": 4.852540457999567,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "current_time",
+            "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+            "args": {},
+            "elapsed_seconds": 4.852540457999567,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "calculator",
+            "call_id": "c11991f727a54fa1926bfc136ab03307",
+            "args": {
+              "expression": "2*3"
+            },
+            "result": {
+              "expression": "2*3",
+              "result": "6",
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0007297920019482262
+              }
+            ],
+            "execution_mode": "parallel",
+            "elapsed_seconds": 0.000753332999011036,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "current_time",
+            "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+            "args": {},
+            "result": {
+              "system_time": "2026-10-03T00:35:21+08:00",
+              "timezone": "CST",
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0014012079991516657
+              }
+            ],
+            "execution_mode": "parallel",
+            "elapsed_seconds": 0.0014208749998942949,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 7.818048083994654,
+            "observation": "calculator返回结果为6，current_time返回当前时间为2026-10-03T00:35:21+08:00。",
+            "decision": "finish",
+            "task_complete": true,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "c11991f727a54fa1926bfc136ab03307",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 0.000753332999011036,
+            "attempts": 1,
+            "execution_mode": "parallel"
+          },
+          {
+            "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+            "name": "current_time",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 0.0014208749998942949,
+            "attempts": 1,
+            "execution_mode": "parallel"
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 2,
+          "successes": 2,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": 1.0,
+          "mean_seconds": 0.0010871039994526654,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.000753332999011036
+            },
+            {
+              "name": "current_time",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.0014208749998942949
+            }
+          ]
+        },
+        "tokens": {
+          "input": 4539,
+          "output": 178,
+          "total": 4717,
+          "known_total": 4717,
+          "unknown_calls": 0
+        },
+        "response_seconds": 17.40760908399534
+      },
+      "stop_reason": null,
+      "task_complete": true
+    },
+    {
+      "schema_version": 1,
+      "request_id": "402c12c83a9149a190bfddc18aacb065",
+      "timestamp": "2026-10-03T00:35:29.668357+08:00",
+      "user_id": "trace-verifier",
+      "session_id": "3881693304334509aa314edfe92e0460",
+      "question": "同时调用calculator计算2*3、调用current_time返回当前时间，这两个工具相互独立。",
+      "event": "done",
+      "iteration": null,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 1266,
+            "output": 45,
+            "incomplete": false,
+            "seconds": 4.719459707994247
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action（共享）",
+            "tool": "calculator + current_time",
+            "tool_call_ids": [
+              "c11991f727a54fa1926bfc136ab03307",
+              "2f8ebadef77d42ffad5416b2893b3d93"
+            ],
+            "input": 1426,
+            "output": 37,
+            "incomplete": false,
+            "seconds": 4.852540457999567
+          },
+          {
+            "id": "c11991f727a54fa1926bfc136ab03307",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "c11991f727a54fa1926bfc136ab03307"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.000753332999011036
+          },
+          {
+            "id": "2f8ebadef77d42ffad5416b2893b3d93",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "current_time",
+            "tool_call_ids": [
+              "2f8ebadef77d42ffad5416b2893b3d93"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0014208749998942949
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 1847,
+            "output": 96,
+            "incomplete": false,
+            "seconds": 7.818048083994654
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "执行独立的calculator和current_time任务。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [
+              "calculator",
+              "current_time"
+            ],
+            "elapsed_seconds": 4.719459707994247,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "c11991f727a54fa1926bfc136ab03307",
+            "args": {
+              "expression": "2*3"
+            },
+            "elapsed_seconds": 4.852540457999567,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "current_time",
+            "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+            "args": {},
+            "elapsed_seconds": 4.852540457999567,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "calculator",
+            "call_id": "c11991f727a54fa1926bfc136ab03307",
+            "args": {
+              "expression": "2*3"
+            },
+            "result": {
+              "expression": "2*3",
+              "result": "6",
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0007297920019482262
+              }
+            ],
+            "execution_mode": "parallel",
+            "elapsed_seconds": 0.000753332999011036,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "current_time",
+            "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+            "args": {},
+            "result": {
+              "system_time": "2026-10-03T00:35:21+08:00",
+              "timezone": "CST",
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0014012079991516657
+              }
+            ],
+            "execution_mode": "parallel",
+            "elapsed_seconds": 0.0014208749998942949,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 7.818048083994654,
+            "observation": "calculator返回结果为6，current_time返回当前时间为2026-10-03T00:35:21+08:00。",
+            "decision": "finish",
+            "task_complete": true,
+            "iteration": 1
+          },
+          {
+            "type": "done",
+            "task_complete": true,
+            "stop_reason": "task_complete",
+            "full_response": "2*3的结果是6，当前时间为2026-10-03 00:35:21（北京时间）。",
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "c11991f727a54fa1926bfc136ab03307",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 0.000753332999011036,
+            "attempts": 1,
+            "execution_mode": "parallel"
+          },
+          {
+            "call_id": "2f8ebadef77d42ffad5416b2893b3d93",
+            "name": "current_time",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 0.0014208749998942949,
+            "attempts": 1,
+            "execution_mode": "parallel"
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 2,
+          "successes": 2,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": 1.0,
+          "mean_seconds": 0.0010871039994526654,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.000753332999011036
+            },
+            {
+              "name": "current_time",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.0014208749998942949
+            }
+          ]
+        },
+        "tokens": {
+          "input": 4539,
+          "output": 178,
+          "total": 4717,
+          "known_total": 4717,
+          "unknown_calls": 0
+        },
+        "response_seconds": 17.41108004200214
+      },
+      "stop_reason": "task_complete",
+      "task_complete": true
+    }
+  ],
+  "persisted_check": true,
+  "passed": true,
+  "finished_at": "2026-10-03T00:35:29.673710+08:00"
+}

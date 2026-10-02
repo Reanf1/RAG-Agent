@@ -1,0 +1,1175 @@
+{
+  "started_at": "2026-10-03T00:00:58.405289+08:00",
+  "rows": [
+    {
+      "name": "calculator_actual_usage",
+      "question": "请用计算器计算3.14乘以2.56。",
+      "events": [
+        {
+          "type": "error",
+          "message": "Thought 决策失败：本地模型服务暂时无法完成请求（HTTP 500）。等待当前任务结束，检查本地服务日志与可用内存，必要时重启 Ollama 后重新提交问题。",
+          "retry_advice": "检查本地模型服务日志与可用内存，必要时重启 Ollama 后重新提交问题。",
+          "error_detail": "RuntimeError: Thought 决策失败：本地模型服务暂时无法完成请求（HTTP 500）。等待当前任务结束，检查本地服务日志与可用内存，必要时重启 Ollama 后重新提交问题。",
+          "iteration": 1,
+          "request_id": "ecfb88db94e6455fa9622173529f9676",
+          "metrics": {
+            "calls": [
+              {
+                "id": "error:1",
+                "iteration": 1,
+                "phase": "失败阶段（用量未完整报告）",
+                "tool": "—",
+                "input": null,
+                "output": null,
+                "incomplete": true,
+                "seconds": null
+              }
+            ],
+            "tokens": {
+              "input": null,
+              "output": null,
+              "total": null,
+              "known_total": 0,
+              "unknown_calls": 1
+            },
+            "response_seconds": 0.6358653340066667
+          },
+          "user_id": "metrics-verifier",
+          "session_id": "0859c8daeedc4a4e9f108daadf3cba55"
+        },
+        {
+          "type": "done",
+          "task_complete": false,
+          "stop_reason": "error",
+          "full_response": "Thought 决策失败：本地模型服务暂时无法完成请求（HTTP 500）。等待当前任务结束，检查本地服务日志与可用内存，必要时重启 Ollama 后重新提交问题。。检查本地模型服务日志与可用内存，必要时重启 Ollama 后重新提交问题。",
+          "iterations": 1,
+          "context": {
+            "history": [],
+            "history_window": {
+              "tokens": 0,
+              "max_tokens": 2000,
+              "retained_turns": 0,
+              "dropped_turns": 0,
+              "tokenizer": "Qwen2.5"
+            },
+            "observations": []
+          },
+          "request_id": "ecfb88db94e6455fa9622173529f9676",
+          "metrics": {
+            "calls": [
+              {
+                "id": "error:1",
+                "iteration": 1,
+                "phase": "失败阶段（用量未完整报告）",
+                "tool": "—",
+                "input": null,
+                "output": null,
+                "incomplete": true,
+                "seconds": null
+              }
+            ],
+            "tokens": {
+              "input": null,
+              "output": null,
+              "total": null,
+              "known_total": 0,
+              "unknown_calls": 1
+            },
+            "response_seconds": 0.6403428340054234
+          },
+          "user_id": "metrics-verifier",
+          "session_id": "0859c8daeedc4a4e9f108daadf3cba55"
+        }
+      ],
+      "model_responses": [],
+      "actual_response_tokens": 0,
+      "token_check": false,
+      "live_snapshot_check": false,
+      "rag_statistics": {
+        "attempts": 0,
+        "completed": 0,
+        "hits": 0,
+        "hit_rate": null,
+        "failed": 0,
+        "invalid_lines": 0,
+        "retrieval_seconds": null,
+        "response_seconds": null
+      }
+    },
+    {
+      "name": "rag_actual_usage",
+      "question": "知识库中Transformer在WMT2014英德翻译任务上的BLEU是多少？请引用参考文档编号。",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "论文资料问题优先查询实际知识库。",
+          "next_step": "tool",
+          "tool_name": "knowledge_base_search",
+          "parallel_tools": [],
+          "route": "rule",
+          "model": null,
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          },
+          "elapsed_seconds": 6.637499609496444e-05,
+          "iteration": 1,
+          "request_id": "bb2d31a5cdee45f1bcf13efda2d93221",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 6.637499609496444e-05
+              }
+            ],
+            "tokens": {
+              "input": 0,
+              "output": 0,
+              "total": 0,
+              "known_total": 0,
+              "unknown_calls": 0
+            },
+            "response_seconds": 0.006063874992833007
+          },
+          "user_id": "metrics-verifier",
+          "session_id": "9f9ed39ae4204cadb6426b56844d2210"
+        },
+        {
+          "type": "error",
+          "message": "本地模型服务暂时无法完成请求（HTTP 500）",
+          "retry_advice": "等待当前任务结束，检查本地服务日志与可用内存，必要时重启 Ollama 后重新提交问题。",
+          "error_detail": "HTTPError: HTTP Error 500: Internal Server Error {\"error\":\"llama-server process has terminated: exit status 1: error: failed to create command queue\\nerror: failed to allocate context\\nllama_init_from_model: failed to initialize the context: failed to initialize  backend\\nerror: failed to allocate buffer, size =     0.02 MiB\\nggml_backend_metal_buffer_type_alloc_buffer: failed to allocate Metal buffer of 14336 bytes (out of memory)\\nalloc_tensor_range: failed to allocate MTL0_Private buffer of size 14336\\nerror loading model: unable to allocate MTL0_Private buffer\"}",
+          "iteration": 1,
+          "request_id": "bb2d31a5cdee45f1bcf13efda2d93221",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 6.637499609496444e-05
+              },
+              {
+                "id": "error:1",
+                "iteration": 1,
+                "phase": "失败阶段（用量未完整报告）",
+                "tool": "—",
+                "input": null,
+                "output": null,
+                "incomplete": true,
+                "seconds": null
+              }
+            ],
+            "tokens": {
+              "input": null,
+              "output": null,
+              "total": null,
+              "known_total": 0,
+              "unknown_calls": 1
+            },
+            "response_seconds": 0.5269626249937573
+          },
+          "user_id": "metrics-verifier",
+          "session_id": "9f9ed39ae4204cadb6426b56844d2210"
+        },
+        {
+          "type": "done",
+          "task_complete": false,
+          "stop_reason": "error",
+          "full_response": "本地模型服务暂时无法完成请求（HTTP 500）。等待当前任务结束，检查本地服务日志与可用内存，必要时重启 Ollama 后重新提交问题。",
+          "iterations": 1,
+          "context": {
+            "history": [],
+            "history_window": {
+              "tokens": 0,
+              "max_tokens": 2000,
+              "retained_turns": 0,
+              "dropped_turns": 0,
+              "tokenizer": "Qwen2.5"
+            },
+            "observations": []
+          },
+          "request_id": "bb2d31a5cdee45f1bcf13efda2d93221",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 6.637499609496444e-05
+              },
+              {
+                "id": "error:1",
+                "iteration": 1,
+                "phase": "失败阶段（用量未完整报告）",
+                "tool": "—",
+                "input": null,
+                "output": null,
+                "incomplete": true,
+                "seconds": null
+              }
+            ],
+            "tokens": {
+              "input": null,
+              "output": null,
+              "total": null,
+              "known_total": 0,
+              "unknown_calls": 1
+            },
+            "response_seconds": 0.5292881249988568
+          },
+          "user_id": "metrics-verifier",
+          "session_id": "9f9ed39ae4204cadb6426b56844d2210"
+        }
+      ],
+      "model_responses": [],
+      "actual_response_tokens": 0,
+      "token_check": false,
+      "live_snapshot_check": false,
+      "rag_statistics": {
+        "attempts": 0,
+        "completed": 0,
+        "hits": 0,
+        "hit_rate": null,
+        "failed": 0,
+        "invalid_lines": 0,
+        "retrieval_seconds": null,
+        "response_seconds": null
+      },
+      "rag_check": false
+    },
+    {
+      "name": "low_relevance_no_generation_tokens",
+      "question": "知识库中的Transformer实验结果是什么？",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "论文资料问题优先查询实际知识库。",
+          "next_step": "tool",
+          "tool_name": "knowledge_base_search",
+          "parallel_tools": [],
+          "route": "rule",
+          "model": null,
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          },
+          "elapsed_seconds": 4.408299719216302e-05,
+          "iteration": 1,
+          "request_id": "08cdd8ab97ea44aaba372019975dff16",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 4.408299719216302e-05
+              }
+            ],
+            "tokens": {
+              "input": 0,
+              "output": 0,
+              "total": 0,
+              "known_total": 0,
+              "unknown_calls": 0
+            },
+            "response_seconds": 0.004847958000027575
+          },
+          "user_id": "metrics-verifier",
+          "session_id": "a9b2fc357bfc41e997765935eede79be"
+        },
+        {
+          "type": "error",
+          "message": "本地模型服务暂时无法完成请求（HTTP 500）",
+          "retry_advice": "等待当前任务结束，检查本地服务日志与可用内存，必要时重启 Ollama 后重新提交问题。",
+          "error_detail": "HTTPError: HTTP Error 500: Internal Server Error {\"error\":\"llama-server process has terminated: exit status 1: error: failed to create command queue\\nerror: failed to allocate context\\nllama_init_from_model: failed to initialize the context: failed to initialize  backend\\nerror: failed to allocate buffer, size =     0.02 MiB\\nggml_backend_metal_buffer_type_alloc_buffer: failed to allocate Metal buffer of 14336 bytes (out of memory)\\nalloc_tensor_range: failed to allocate MTL0_Private buffer of size 14336\\nerror loading model: unable to allocate MTL0_Private buffer\"}",
+          "iteration": 1,
+          "request_id": "08cdd8ab97ea44aaba372019975dff16",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 4.408299719216302e-05
+              },
+              {
+                "id": "error:1",
+                "iteration": 1,
+                "phase": "失败阶段（用量未完整报告）",
+                "tool": "—",
+                "input": null,
+                "output": null,
+                "incomplete": true,
+                "seconds": null
+              }
+            ],
+            "tokens": {
+              "input": null,
+              "output": null,
+              "total": null,
+              "known_total": 0,
+              "unknown_calls": 1
+            },
+            "response_seconds": 0.5253120420020423
+          },
+          "user_id": "metrics-verifier",
+          "session_id": "a9b2fc357bfc41e997765935eede79be"
+        },
+        {
+          "type": "done",
+          "task_complete": false,
+          "stop_reason": "error",
+          "full_response": "本地模型服务暂时无法完成请求（HTTP 500）。等待当前任务结束，检查本地服务日志与可用内存，必要时重启 Ollama 后重新提交问题。",
+          "iterations": 1,
+          "context": {
+            "history": [],
+            "history_window": {
+              "tokens": 0,
+              "max_tokens": 2000,
+              "retained_turns": 0,
+              "dropped_turns": 0,
+              "tokenizer": "Qwen2.5"
+            },
+            "observations": []
+          },
+          "request_id": "08cdd8ab97ea44aaba372019975dff16",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 4.408299719216302e-05
+              },
+              {
+                "id": "error:1",
+                "iteration": 1,
+                "phase": "失败阶段（用量未完整报告）",
+                "tool": "—",
+                "input": null,
+                "output": null,
+                "incomplete": true,
+                "seconds": null
+              }
+            ],
+            "tokens": {
+              "input": null,
+              "output": null,
+              "total": null,
+              "known_total": 0,
+              "unknown_calls": 1
+            },
+            "response_seconds": 0.5265744579955935
+          },
+          "user_id": "metrics-verifier",
+          "session_id": "a9b2fc357bfc41e997765935eede79be"
+        }
+      ],
+      "model_responses": [],
+      "actual_response_tokens": 0,
+      "token_check": false,
+      "live_snapshot_check": false,
+      "rag_statistics": {
+        "attempts": 0,
+        "completed": 0,
+        "hits": 0,
+        "hit_rate": null,
+        "failed": 0,
+        "invalid_lines": 0,
+        "retrieval_seconds": null,
+        "response_seconds": null
+      },
+      "rag_check": false
+    },
+    {
+      "name": "empty_retrieval",
+      "question": "知识库中的论文使用什么实验数据集？",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "论文资料问题优先查询实际知识库。",
+          "next_step": "tool",
+          "tool_name": "knowledge_base_search",
+          "parallel_tools": [],
+          "route": "rule",
+          "model": null,
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          },
+          "elapsed_seconds": 3.05419962387532e-05,
+          "iteration": 1,
+          "request_id": "9eec55e6a7944c6284d61d567931c9c0",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 3.05419962387532e-05
+              }
+            ],
+            "tokens": {
+              "input": 0,
+              "output": 0,
+              "total": 0,
+              "known_total": 0,
+              "unknown_calls": 0
+            },
+            "response_seconds": 0.0044951670060982
+          },
+          "user_id": "metrics-verifier",
+          "session_id": "402a6ad058ad4cd2bd93d212ea1c9fa8"
+        },
+        {
+          "type": "error",
+          "message": "本地模型服务暂时无法完成请求（HTTP 500）",
+          "retry_advice": "等待当前任务结束，检查本地服务日志与可用内存，必要时重启 Ollama 后重新提交问题。",
+          "error_detail": "HTTPError: HTTP Error 500: Internal Server Error {\"error\":\"llama-server process has terminated: exit status 1: error: failed to create command queue\\nerror: failed to allocate context\\nllama_init_from_model: failed to initialize the context: failed to initialize  backend\\nerror: failed to allocate buffer, size =     0.02 MiB\\nggml_backend_metal_buffer_type_alloc_buffer: failed to allocate Metal buffer of 14336 bytes (out of memory)\\nalloc_tensor_range: failed to allocate MTL0_Private buffer of size 14336\\nerror loading model: unable to allocate MTL0_Private buffer\"}",
+          "iteration": 1,
+          "request_id": "9eec55e6a7944c6284d61d567931c9c0",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 3.05419962387532e-05
+              },
+              {
+                "id": "error:1",
+                "iteration": 1,
+                "phase": "失败阶段（用量未完整报告）",
+                "tool": "—",
+                "input": null,
+                "output": null,
+                "incomplete": true,
+                "seconds": null
+              }
+            ],
+            "tokens": {
+              "input": null,
+              "output": null,
+              "total": null,
+              "known_total": 0,
+              "unknown_calls": 1
+            },
+            "response_seconds": 0.5253637500063633
+          },
+          "user_id": "metrics-verifier",
+          "session_id": "402a6ad058ad4cd2bd93d212ea1c9fa8"
+        },
+        {
+          "type": "done",
+          "task_complete": false,
+          "stop_reason": "error",
+          "full_response": "本地模型服务暂时无法完成请求（HTTP 500）。等待当前任务结束，检查本地服务日志与可用内存，必要时重启 Ollama 后重新提交问题。",
+          "iterations": 1,
+          "context": {
+            "history": [],
+            "history_window": {
+              "tokens": 0,
+              "max_tokens": 2000,
+              "retained_turns": 0,
+              "dropped_turns": 0,
+              "tokenizer": "Qwen2.5"
+            },
+            "observations": []
+          },
+          "request_id": "9eec55e6a7944c6284d61d567931c9c0",
+          "metrics": {
+            "calls": [
+              {
+                "id": "thought:1",
+                "iteration": 1,
+                "phase": "Thought",
+                "tool": "—",
+                "input": 0,
+                "output": 0,
+                "incomplete": false,
+                "seconds": 3.05419962387532e-05
+              },
+              {
+                "id": "error:1",
+                "iteration": 1,
+                "phase": "失败阶段（用量未完整报告）",
+                "tool": "—",
+                "input": null,
+                "output": null,
+                "incomplete": true,
+                "seconds": null
+              }
+            ],
+            "tokens": {
+              "input": null,
+              "output": null,
+              "total": null,
+              "known_total": 0,
+              "unknown_calls": 1
+            },
+            "response_seconds": 0.5289621250049095
+          },
+          "user_id": "metrics-verifier",
+          "session_id": "402a6ad058ad4cd2bd93d212ea1c9fa8"
+        }
+      ],
+      "model_responses": [],
+      "actual_response_tokens": 0,
+      "token_check": false,
+      "live_snapshot_check": false,
+      "rag_statistics": {
+        "attempts": 0,
+        "completed": 0,
+        "hits": 0,
+        "hit_rate": null,
+        "failed": 0,
+        "invalid_lines": 0,
+        "retrieval_seconds": null,
+        "response_seconds": null
+      },
+      "rag_check": false
+    },
+    {
+      "name": "model_unavailable_unknown_usage",
+      "question": "请用计算器计算3.14乘以2.56。",
+      "events": [
+        {
+          "type": "error",
+          "message": "Thought 决策失败：无法连接或读取本地 Ollama 服务。启动本地 Ollama 服务并检查 config.yaml 中的地址和端口，恢复后重新提交问题。",
+          "retry_advice": "检查本地模型服务日志与可用内存，必要时重启 Ollama 后重新提交问题。",
+          "error_detail": "RuntimeError: Thought 决策失败：无法连接或读取本地 Ollama 服务。启动本地 Ollama 服务并检查 config.yaml 中的地址和端口，恢复后重新提交问题。",
+          "iteration": 1,
+          "request_id": "8e7683b299194bb19a2a2f35dafecba6",
+          "metrics": {
+            "calls": [
+              {
+                "id": "error:1",
+                "iteration": 1,
+                "phase": "失败阶段（用量未完整报告）",
+                "tool": "—",
+                "input": null,
+                "output": null,
+                "incomplete": true,
+                "seconds": null
+              }
+            ],
+            "tokens": {
+              "input": null,
+              "output": null,
+              "total": null,
+              "known_total": 0,
+              "unknown_calls": 1
+            },
+            "response_seconds": 0.011477667001599912
+          },
+          "user_id": "metrics-verifier",
+          "session_id": "c68feca7f1f34064ad113de052844892"
+        },
+        {
+          "type": "done",
+          "task_complete": false,
+          "stop_reason": "error",
+          "full_response": "Thought 决策失败：无法连接或读取本地 Ollama 服务。启动本地 Ollama 服务并检查 config.yaml 中的地址和端口，恢复后重新提交问题。。检查本地模型服务日志与可用内存，必要时重启 Ollama 后重新提交问题。",
+          "iterations": 1,
+          "context": {
+            "history": [],
+            "history_window": {
+              "tokens": 0,
+              "max_tokens": 2000,
+              "retained_turns": 0,
+              "dropped_turns": 0,
+              "tokenizer": "Qwen2.5"
+            },
+            "observations": []
+          },
+          "request_id": "8e7683b299194bb19a2a2f35dafecba6",
+          "metrics": {
+            "calls": [
+              {
+                "id": "error:1",
+                "iteration": 1,
+                "phase": "失败阶段（用量未完整报告）",
+                "tool": "—",
+                "input": null,
+                "output": null,
+                "incomplete": true,
+                "seconds": null
+              }
+            ],
+            "tokens": {
+              "input": null,
+              "output": null,
+              "total": null,
+              "known_total": 0,
+              "unknown_calls": 1
+            },
+            "response_seconds": 0.012864625001384411
+          },
+          "user_id": "metrics-verifier",
+          "session_id": "c68feca7f1f34064ad113de052844892"
+        }
+      ],
+      "model_responses": [],
+      "actual_response_tokens": 0,
+      "token_check": true,
+      "live_snapshot_check": true,
+      "rag_statistics": {
+        "attempts": 0,
+        "completed": 0,
+        "hits": 0,
+        "hit_rate": null,
+        "failed": 0,
+        "invalid_lines": 0,
+        "retrieval_seconds": null,
+        "response_seconds": null
+      }
+    }
+  ],
+  "scope": "真实Ollama/M3E/BGE/Chroma，单篇公开论文的指标功能核验，候选命中率不是Hit@5。",
+  "ingestion": {
+    "file": "attention.pdf",
+    "chunks": 94
+  },
+  "rag_records": [],
+  "agent_records": [
+    {
+      "schema_version": 1,
+      "request_id": "ecfb88db94e6455fa9622173529f9676",
+      "timestamp": "2026-10-03T00:00:59.050719+08:00",
+      "user_id": "metrics-verifier",
+      "session_id": "0859c8daeedc4a4e9f108daadf3cba55",
+      "question": "请用计算器计算3.14乘以2.56。",
+      "event": "error",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "error:1",
+            "iteration": 1,
+            "phase": "失败阶段（用量未完整报告）",
+            "tool": "—",
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": null
+          }
+        ],
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 0,
+          "unknown_calls": 1
+        },
+        "response_seconds": 0.6358653340066667
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "ecfb88db94e6455fa9622173529f9676",
+      "timestamp": "2026-10-03T00:00:59.054623+08:00",
+      "user_id": "metrics-verifier",
+      "session_id": "0859c8daeedc4a4e9f108daadf3cba55",
+      "question": "请用计算器计算3.14乘以2.56。",
+      "event": "done",
+      "iteration": null,
+      "metrics": {
+        "calls": [
+          {
+            "id": "error:1",
+            "iteration": 1,
+            "phase": "失败阶段（用量未完整报告）",
+            "tool": "—",
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": null
+          }
+        ],
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 0,
+          "unknown_calls": 1
+        },
+        "response_seconds": 0.6403428340054234
+      },
+      "stop_reason": "error",
+      "task_complete": false
+    },
+    {
+      "schema_version": 1,
+      "request_id": "bb2d31a5cdee45f1bcf13efda2d93221",
+      "timestamp": "2026-10-03T00:01:07.459294+08:00",
+      "user_id": "metrics-verifier",
+      "session_id": "9f9ed39ae4204cadb6426b56844d2210",
+      "question": "知识库中Transformer在WMT2014英德翻译任务上的BLEU是多少？请引用参考文档编号。",
+      "event": "thought",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 6.637499609496444e-05
+          }
+        ],
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0,
+          "known_total": 0,
+          "unknown_calls": 0
+        },
+        "response_seconds": 0.006063874992833007
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "bb2d31a5cdee45f1bcf13efda2d93221",
+      "timestamp": "2026-10-03T00:01:07.980206+08:00",
+      "user_id": "metrics-verifier",
+      "session_id": "9f9ed39ae4204cadb6426b56844d2210",
+      "question": "知识库中Transformer在WMT2014英德翻译任务上的BLEU是多少？请引用参考文档编号。",
+      "event": "error",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 6.637499609496444e-05
+          },
+          {
+            "id": "error:1",
+            "iteration": 1,
+            "phase": "失败阶段（用量未完整报告）",
+            "tool": "—",
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": null
+          }
+        ],
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 0,
+          "unknown_calls": 1
+        },
+        "response_seconds": 0.5269626249937573
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "bb2d31a5cdee45f1bcf13efda2d93221",
+      "timestamp": "2026-10-03T00:01:07.982519+08:00",
+      "user_id": "metrics-verifier",
+      "session_id": "9f9ed39ae4204cadb6426b56844d2210",
+      "question": "知识库中Transformer在WMT2014英德翻译任务上的BLEU是多少？请引用参考文档编号。",
+      "event": "done",
+      "iteration": null,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 6.637499609496444e-05
+          },
+          {
+            "id": "error:1",
+            "iteration": 1,
+            "phase": "失败阶段（用量未完整报告）",
+            "tool": "—",
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": null
+          }
+        ],
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 0,
+          "unknown_calls": 1
+        },
+        "response_seconds": 0.5292881249988568
+      },
+      "stop_reason": "error",
+      "task_complete": false
+    },
+    {
+      "schema_version": 1,
+      "request_id": "08cdd8ab97ea44aaba372019975dff16",
+      "timestamp": "2026-10-03T00:01:07.989106+08:00",
+      "user_id": "metrics-verifier",
+      "session_id": "a9b2fc357bfc41e997765935eede79be",
+      "question": "知识库中的Transformer实验结果是什么？",
+      "event": "thought",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 4.408299719216302e-05
+          }
+        ],
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0,
+          "known_total": 0,
+          "unknown_calls": 0
+        },
+        "response_seconds": 0.004847958000027575
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "08cdd8ab97ea44aaba372019975dff16",
+      "timestamp": "2026-10-03T00:01:08.509574+08:00",
+      "user_id": "metrics-verifier",
+      "session_id": "a9b2fc357bfc41e997765935eede79be",
+      "question": "知识库中的Transformer实验结果是什么？",
+      "event": "error",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 4.408299719216302e-05
+          },
+          {
+            "id": "error:1",
+            "iteration": 1,
+            "phase": "失败阶段（用量未完整报告）",
+            "tool": "—",
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": null
+          }
+        ],
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 0,
+          "unknown_calls": 1
+        },
+        "response_seconds": 0.5253120420020423
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "08cdd8ab97ea44aaba372019975dff16",
+      "timestamp": "2026-10-03T00:01:08.510836+08:00",
+      "user_id": "metrics-verifier",
+      "session_id": "a9b2fc357bfc41e997765935eede79be",
+      "question": "知识库中的Transformer实验结果是什么？",
+      "event": "done",
+      "iteration": null,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 4.408299719216302e-05
+          },
+          {
+            "id": "error:1",
+            "iteration": 1,
+            "phase": "失败阶段（用量未完整报告）",
+            "tool": "—",
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": null
+          }
+        ],
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 0,
+          "unknown_calls": 1
+        },
+        "response_seconds": 0.5265744579955935
+      },
+      "stop_reason": "error",
+      "task_complete": false
+    },
+    {
+      "schema_version": 1,
+      "request_id": "9eec55e6a7944c6284d61d567931c9c0",
+      "timestamp": "2026-10-03T00:01:08.517461+08:00",
+      "user_id": "metrics-verifier",
+      "session_id": "402a6ad058ad4cd2bd93d212ea1c9fa8",
+      "question": "知识库中的论文使用什么实验数据集？",
+      "event": "thought",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 3.05419962387532e-05
+          }
+        ],
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0,
+          "known_total": 0,
+          "unknown_calls": 0
+        },
+        "response_seconds": 0.0044951670060982
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "9eec55e6a7944c6284d61d567931c9c0",
+      "timestamp": "2026-10-03T00:01:09.038339+08:00",
+      "user_id": "metrics-verifier",
+      "session_id": "402a6ad058ad4cd2bd93d212ea1c9fa8",
+      "question": "知识库中的论文使用什么实验数据集？",
+      "event": "error",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 3.05419962387532e-05
+          },
+          {
+            "id": "error:1",
+            "iteration": 1,
+            "phase": "失败阶段（用量未完整报告）",
+            "tool": "—",
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": null
+          }
+        ],
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 0,
+          "unknown_calls": 1
+        },
+        "response_seconds": 0.5253637500063633
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "9eec55e6a7944c6284d61d567931c9c0",
+      "timestamp": "2026-10-03T00:01:09.041937+08:00",
+      "user_id": "metrics-verifier",
+      "session_id": "402a6ad058ad4cd2bd93d212ea1c9fa8",
+      "question": "知识库中的论文使用什么实验数据集？",
+      "event": "done",
+      "iteration": null,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 3.05419962387532e-05
+          },
+          {
+            "id": "error:1",
+            "iteration": 1,
+            "phase": "失败阶段（用量未完整报告）",
+            "tool": "—",
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": null
+          }
+        ],
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 0,
+          "unknown_calls": 1
+        },
+        "response_seconds": 0.5289621250049095
+      },
+      "stop_reason": "error",
+      "task_complete": false
+    },
+    {
+      "schema_version": 1,
+      "request_id": "8e7683b299194bb19a2a2f35dafecba6",
+      "timestamp": "2026-10-03T00:01:09.056878+08:00",
+      "user_id": "metrics-verifier",
+      "session_id": "c68feca7f1f34064ad113de052844892",
+      "question": "请用计算器计算3.14乘以2.56。",
+      "event": "error",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "error:1",
+            "iteration": 1,
+            "phase": "失败阶段（用量未完整报告）",
+            "tool": "—",
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": null
+          }
+        ],
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 0,
+          "unknown_calls": 1
+        },
+        "response_seconds": 0.011477667001599912
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "8e7683b299194bb19a2a2f35dafecba6",
+      "timestamp": "2026-10-03T00:01:09.058264+08:00",
+      "user_id": "metrics-verifier",
+      "session_id": "c68feca7f1f34064ad113de052844892",
+      "question": "请用计算器计算3.14乘以2.56。",
+      "event": "done",
+      "iteration": null,
+      "metrics": {
+        "calls": [
+          {
+            "id": "error:1",
+            "iteration": 1,
+            "phase": "失败阶段（用量未完整报告）",
+            "tool": "—",
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": null
+          }
+        ],
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 0,
+          "unknown_calls": 1
+        },
+        "response_seconds": 0.012864625001384411
+      },
+      "stop_reason": "error",
+      "task_complete": false
+    }
+  ],
+  "passed": false,
+  "finished_at": "2026-10-03T00:01:09.060487+08:00"
+}

@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/reports/verify_agent_metrics.py", line 111, in <module>
+    main()
+  File "/Users/rean/github/RAG+Agent/reports/verify_agent_metrics.py", line 80, in main
+    check_case("calculator_actual_usage", "请用计算器计算3.14乘以2.56。")
+  File "/Users/rean/github/RAG+Agent/reports/verify_agent_metrics.py", line 62, in check_case
+    with patch.object(react_loop, "urlopen", side_effect=capture), \
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1447, in __enter__
+    original, local = self.get_original()
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1420, in get_original
+    raise AttributeError(
+AttributeError: <module 'src.agent.tools' from '/Users/rean/github/RAG+Agent/src/agent/tools.py'> does not have the attribute 'urlopen'

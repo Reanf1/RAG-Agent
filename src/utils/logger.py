@@ -1,6 +1,7 @@
 """本地 RAG 请求快照日志与 Top-1 重排分数分布，不依赖额外服务。"""
 
 from datetime import datetime
+from copy import deepcopy
 import json
 import math
 from pathlib import Path
@@ -98,6 +99,134 @@ def read_rag_requests() -> tuple[list[dict], int]:
                     except (ValueError, UnicodeDecodeError):
                         invalid += 1
     return list(latest.values()), invalid
+
+
+def retrieval_request_metrics() -> dict:
+    """候选命中率只描述非空返回，不能代替标注评测集的Hit@5。
+
+    缓存、未执行和失败不进入命中率分母；同一请求的多份快照只计一次。
+    """
+    records, invalid = read_rag_requests()
+    attempted = [r for r in records if not r.get("cache", {}).get("hit")
+                 and r["retrieval"]["status"] in {"success", "empty", "error"}]
+    completed = [r for r in attempted if r["retrieval"]["status"] != "error"]
+    hits = sum(bool(r["retrieval"].get("documents")) for r in completed)
+    def average(key):
+        rows = [r for r in attempted if r.get("status") not in {"started", "retrieved"}] if key == "response_seconds" else attempted
+        values = [r.get("timing", {}).get(key) for r in rows]
+        values = [v for v in values if type(v) in (int, float) and math.isfinite(v) and v >= 0]
+        return sum(values) / len(values) if values else None
+    return {"attempts": len(attempted), "completed": len(completed), "hits": hits,
+            "hit_rate": hits / len(completed) if completed else None,
+            "failed": len(attempted) - len(completed), "invalid_lines": invalid,
+            "retrieval_seconds": average("retrieval_seconds"), "response_seconds": average("response_seconds")}
+
+
+def update_agent_metrics(metrics: dict, event: dict) -> dict:
+    """按阶段快照汇总公开轨迹、工具执行指标和实际模型用量。
+
+    工具返回的usage是内部模型用量，不与Action混淆。重试前的失败尝试
+    未报告usage时，保留已知部分并把完整总量标为未知。
+    """
+    result = deepcopy(metrics)
+    calls = result.setdefault("calls", [])
+    kind, iteration = event["type"], event.get("iteration", 0)
+    # 只记录公开决策说明与工具事实，不复制原生Message、整个Context或模型私有推理字段。
+    if kind != "memory_summary":
+        keys = ("type", "thought", "next_step", "tool_name", "parallel_tools", "route", "name", "call_id",
+                "args", "result", "status", "error", "error_kind", "pending", "attempts", "execution_mode",
+                "elapsed_seconds", "observation", "decision", "task_complete", "reason", "stop_reason",
+                "full_response", "failed_tools", "available_alternatives", "retry_advice")
+        trace = {key: deepcopy(event[key]) for key in keys if key in event}
+        trace["iteration"] = event.get("iteration", event.get("iterations", 0))
+        if isinstance(event.get("message"), str):
+            trace["message"] = event["message"]  # 错误/恢复的公开说明；不保存AIMessage和ToolMessage。
+        result.setdefault("trace", []).append(trace)
+    tools = result.setdefault("tool_calls", [])
+    if kind in {"tool_call", "tool_result"}:
+        current = next((c for c in tools if c["call_id"] == event["call_id"]), None)
+        if current is None:
+            current = {"call_id": event["call_id"], "name": event["name"], "iteration": iteration,
+                       "status": "pending", "seconds": None, "attempts": None, "execution_mode": None}
+            tools.append(current)
+        if kind == "tool_result":
+            seconds = event.get("elapsed_seconds")
+            current.update(status=event["status"],
+                           seconds=seconds if type(seconds) in (int, float) and math.isfinite(seconds) and seconds >= 0 else None,
+                           attempts=len(event["attempts"]) if isinstance(event.get("attempts"), list) else None,
+                           execution_mode=event.get("execution_mode"))
+    # 每个逻辑调用只计一次；未返回不进成功率分母，重试不会伪造为多个独立调用。
+    def summarize(rows):
+        finished = [c for c in rows if c["status"] in {"success", "error"}]
+        successes = sum(c["status"] == "success" for c in finished)
+        durations = [c["seconds"] for c in finished if c["seconds"] is not None]
+        return {"started": len(rows), "completed": len(finished), "successes": successes,
+                "failures": len(finished) - successes, "pending": len(rows) - len(finished),
+                "success_rate": successes / len(finished) if finished else None,
+                "mean_seconds": sum(durations) / len(durations) if durations else None}
+    result["tools"] = {**summarize(tools), "by_tool": [
+        {"name": name, **summarize([c for c in tools if c["name"] == name])}
+        for name in dict.fromkeys(c["name"] for c in tools)]}
+    phase, tool, usage, identifier, uncertain = None, "—", event.get("usage"), "", False
+    tool_call_ids = []
+    if kind in {"thought", "observation", "memory_summary"}:
+        phase = {"thought": "Thought", "observation": "Observation", "memory_summary": "记忆摘要"}[kind]
+        identifier = f"{kind}:{iteration}"
+    elif kind == "tool_call":
+        identifier = f"action:{iteration}"
+        if any(c["id"] == identifier for c in calls):
+            return result  # 同一批次后续工具事件的usage为0，不再归属第二次模型调用。
+        batch = getattr(event.get("message"), "tool_calls", [])
+        tool = " + ".join(c["name"] for c in batch) or event["name"]
+        tool_call_ids = [c["id"] for c in batch] or [event["call_id"]]
+        phase = "Action（共享）" if len(batch) > 1 else "Action"
+    elif kind == "tool_result":
+        phase, tool, identifier = "工具内部", event["name"], event["call_id"]
+        tool_call_ids = [identifier]
+        payload = event.get("result")
+        usage = payload.get("usage") if isinstance(payload, dict) else None
+        uncertain = event.get("status") != "success" or len(event.get("attempts", [])) > 1
+        if tool == "knowledge_base_search":
+            retrieval = (payload or {}).get("retrieval", {}) if isinstance(payload, dict) else {}
+            result.setdefault("retrievals", []).append({"call_id": identifier, **retrieval,
+                "seconds": payload.get("retrieval_seconds") if isinstance(payload, dict) else None})
+    elif kind == "error":
+        phase, identifier, uncertain = "失败阶段（用量未完整报告）", f"error:{iteration}", True
+    if phase:
+        usage = usage if isinstance(usage, dict) else {}
+        tokens = [usage.get(key) for key in ("prompt_eval_count", "eval_count")]
+        tokens = [n if type(n) is int and n >= 0 else None for n in tokens]
+        calls.append({"id": identifier, "iteration": iteration, "phase": phase, "tool": tool,
+                      "tool_call_ids": tool_call_ids,
+                      "input": tokens[0], "output": tokens[1], "incomplete": uncertain,
+                      "seconds": event.get("elapsed_seconds")})
+    known_input = sum(c["input"] or 0 for c in calls)
+    known_output = sum(c["output"] or 0 for c in calls)
+    unknown = sum(c["incomplete"] or c["input"] is None or c["output"] is None for c in calls)
+    result["tokens"] = {"input": None if unknown else known_input, "output": None if unknown else known_output,
+                        "total": None if unknown else known_input + known_output,
+                        "known_total": known_input + known_output, "unknown_calls": unknown}
+    return result
+
+
+def record_agent_request(question: str, event: dict) -> None:
+    """会话入口按阶段追加指标快照；页面重跑不再次执行或重复记账。"""
+    timestamp = request_time()
+    record = {"schema_version": 1, "request_id": event["request_id"], "timestamp": timestamp,
+              "user_id": event["user_id"], "session_id": event["session_id"], "question": question,
+              "event": event["type"], "iteration": event.get("iteration"), "metrics": event["metrics"],
+              "stop_reason": event.get("stop_reason"), "task_complete": event.get("task_complete")}
+    line = json.dumps(record, ensure_ascii=False, allow_nan=False).encode("utf-8") + b"\n"
+    with _LOG_LOCK:
+        directory = _log_directory()
+        directory.mkdir(parents=True, exist_ok=True)
+        with (directory / f"agent_{timestamp[:10]}.jsonl").open("ab+") as output:
+            output.seek(0, 2)
+            if output.tell():
+                output.seek(-1, 2)
+                if output.read(1) != b"\n":
+                    output.write(b"\n")
+            output.write(line)
 
 
 def retrieval_score_distribution() -> dict:

@@ -1,0 +1,28 @@
+test_failure_and_timeout_cannot_report_zero_tokens (tests.test_agent.TestAgentMetrics) ... ok
+test_invalid_usage_is_not_zero_or_negative_consumption (tests.test_agent.TestAgentMetrics) ... ok
+test_memory_summary_only_counts_current_calls_and_request_ids_change (tests.test_agent.TestAgentMetrics) ... ok
+test_missing_usage_preserves_known_part_and_unknown_total (tests.test_agent.TestAgentMetrics) ... ok
+test_no_retrieval_samples_do_not_show_zero_percent (tests.test_agent.TestAgentMetrics) ... ok
+test_parallel_action_only_once_and_tool_usage_separate (tests.test_agent.TestAgentMetrics) ... ok
+test_pending_generation_is_not_a_finished_response_latency (tests.test_agent.TestAgentMetrics) ... ok
+test_rag_result_records_returned_count_and_real_retrieval_time (tests.test_agent.TestAgentMetrics) ... ok
+test_retrieval_hit_rate_excludes_cache_not_called_and_failure (tests.test_agent.TestAgentMetrics) ... ok
+test_retry_does_not_claim_only_final_usage_as_total (tests.test_agent.TestAgentMetrics) ... ok
+test_rule_and_non_model_tool_can_report_true_zero (tests.test_agent.TestAgentMetrics) ... ok
+test_snapshot_does_not_mutate_previous_event_or_input (tests.test_agent.TestAgentMetrics) ... ok
+test_close_after_first_event_logs_partial_request_without_half_turn (tests.test_agent.TestAgentMetricsEntryAndPage) ... ok
+test_failed_summary_is_not_hidden_from_request_usage (tests.test_agent.TestAgentMetricsEntryAndPage) ... ok
+test_log_failure_does_not_destroy_successful_answer (tests.test_agent.TestAgentMetricsEntryAndPage) ... ok
+test_page_is_lazy_and_shows_tool_tokens_without_reexecuting_on_rerun (tests.test_agent.TestAgentMetricsEntryAndPage) ... 2026-10-03 00:10:48.647 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+ok
+test_page_unknown_usage_and_incomplete_answer_are_both_visible (tests.test_agent.TestAgentMetricsEntryAndPage) ... 2026-10-03 00:10:49.882 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_session_persists_incremental_metrics_identity_and_answer (tests.test_agent.TestAgentMetricsEntryAndPage) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 1.738s
+
+OK

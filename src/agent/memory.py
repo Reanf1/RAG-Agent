@@ -240,7 +240,14 @@ class MemoryManager:
                     if not batch:
                         raise ValueError("旧对话单轮超过摘要输入预算，保留原文并回退历史窗口")
                     source = [{"role": role, "content": text} for _, role, text in batch]
-                    result = _summarize(summary, source, maximum, input_budget)
+                    summary_started = perf_counter()
+                    try:
+                        result = _summarize(summary, source, maximum, input_budget)
+                    except (OSError, ValueError, RuntimeError):
+                        # 失败模型调用可能已消耗Token；不能因回退窗口而把本次用量当作零。
+                        attempts.append({"usage": {"prompt_eval_count": None, "eval_count": None},
+                                         "elapsed_seconds": perf_counter() - summary_started, "saved": False})
+                        raise
                     attempts.append({key: value for key, value in result.items() if key != "summary"})
                     attempts[-1]["saved"] = False
                     self._save_summary(user_id, session_id, through_id, batch[-1][0], result["summary"])
@@ -292,11 +299,20 @@ def run_session(question: str, user_id: str, session_id: str, tools=None, *, mem
     最终错误提示也属于对话历史，但不把中间工具轨迹或禁用集合带到下一问题。
     """
     from src.agent.react_loop import run_react
+    from src.utils.logger import record_agent_request
 
+    started = perf_counter()
     _nonempty(question, "question")
     memory = memory if memory is not None else MemoryManager()
     context = memory.get_context(user_id, session_id)
     for event in run_react(question, tools, context):
         if event["type"] == "done":
             memory.append_turn(user_id, session_id, question, event["full_response"])
-        yield {**event, "user_id": user_id, "session_id": session_id}
+        event = {**event, "user_id": user_id, "session_id": session_id}
+        if "metrics" in event:
+            event["metrics"]["response_seconds"] = perf_counter() - started  # 包括记忆准备和最终保存。
+            try:
+                record_agent_request(question, event)
+            except (OSError, ValueError, TypeError) as error:
+                event["log_error"] = f"Agent指标日志未保存：{type(error).__name__}: {error}"
+        yield event

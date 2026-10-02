@@ -106,7 +106,9 @@ def knowledge_base_search(question: str, doc_id: str | None = None) -> dict:
             if context["generation_mode"] == "grounded" and not result["citations"]:
                 result["status"] = "insufficient_evidence"  # 有检索候选却没有有效引用，不能冒充已溯源回答。
             status = "incomplete" if result["status"] == "insufficient_evidence" else "completed"
-        result.update(retrieval_seconds=message["retrieval_seconds"], elapsed_seconds=perf_counter() - started)
+        result.update(retrieval_seconds=message["retrieval_seconds"], elapsed_seconds=perf_counter() - started,
+                      retrieval={"request_id": request_id, "status": message["retrieval_status"],
+                                 "returned_chunks": len(results)})
         message.update(result)
         return result
     except Exception as error:

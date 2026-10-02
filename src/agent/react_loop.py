@@ -16,6 +16,7 @@ from src.agent.router import execute_calls, parallel_limit, recovery_limits, rou
 from src.generation.rag_pipeline import generation_error, urlopen
 from src.utils.config import load_config
 from src.utils.messages import messages_to_ollama, normalize_context
+from src.utils.logger import update_agent_metrics
 
 
 AGENT_ROLE_PROMPT = """【角色定义】
@@ -382,7 +383,7 @@ def observe(question: str, tools: list[BaseTool] | None = None, context: dict | 
         raise RuntimeError(f"Observation失败：{failure['message']}。{failure['retry_advice']}") from error
 
 
-def run_react(question: str, tools: list[BaseTool] | None = None, context: dict | None = None):
+def _run_react(question: str, tools: list[BaseTool] | None = None, context: dict | None = None):
     """逐轮发送事件；任务完成、无法继续、上限或模型错误都会明确结束。
 
     一轮包含三个阶段。Context保存结构化工具结果，当前轮的关联消息供Observation读取；
@@ -409,7 +410,7 @@ def run_react(question: str, tools: list[BaseTool] | None = None, context: dict 
             available = [item for item in tools if item.name not in blocked and (not external_only or item.name == "web_search")]
             routed = route_question(question, available, state) if iteration == 1 else None
             thought = routed if routed is not None else think(question, available, state)
-            yield {**deepcopy(thought), "iteration": iteration}
+            yield {"type": "thought", **deepcopy(thought), "iteration": iteration}
             if thought.get("unavailable_tool") == "web_search":
                 # 无可用联网工具时不再让模型猜测最新事实，也不启动本地检索。
                 reason, answer = "incomplete", thought["thought"]
@@ -481,3 +482,17 @@ def run_react(question: str, tools: list[BaseTool] | None = None, context: dict 
         answer = f"{failure['message']}。{failure['retry_advice']}"
     yield {"type": "done", "task_complete": complete, "stop_reason": reason,
            "full_response": answer, "iterations": iteration, "context": deepcopy(state)}
+
+
+def run_react(question: str, tools: list[BaseTool] | None = None, context: dict | None = None):
+    """每个事件附带本请求的指标快照，不把指标或旧工具账目传进模型Context。"""
+    started, request_id, metrics = perf_counter(), uuid4().hex, {}
+    summary = context.get("memory_summary", {}) if isinstance(context, dict) else {}
+    calls = summary.get("calls", []) if isinstance(summary, dict) else []
+    for index, call in enumerate(calls if isinstance(calls, list) else []):
+        if isinstance(call, dict):
+            metrics = update_agent_metrics(metrics, {"type": "memory_summary", "iteration": index, **call})
+    for event in _run_react(question, tools, context):
+        metrics = update_agent_metrics(metrics, event)
+        metrics["response_seconds"] = perf_counter() - started
+        yield {**event, "request_id": request_id, "metrics": deepcopy(metrics)}
