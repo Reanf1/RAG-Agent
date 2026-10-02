@@ -1,0 +1,707 @@
+{
+  "started_at": "2026-10-02T11:58:03.791804+08:00",
+  "config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://localhost:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 8192,
+      "num_predict": 512,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 6000,
+      "max_prompt_chars": 12000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "online_search_enabled": false
+    },
+    "paths": {
+      "raw_documents": "data/raw",
+      "vector_index": "data/index",
+      "logs": "logs"
+    }
+  },
+  "server": {
+    "version": "0.34.0"
+  },
+  "scope": "真实Qwen与三个本地开发工具验证核心循环，不计为八个生产工具或系统质量评测。仅每例agent.max_iterations通过局部配置替换指定，模型HTTP和工具均真实执行。",
+  "validation_complete": true,
+  "rows": [
+    {
+      "name": "two_steps",
+      "question": "请按两步执行：先用multiply计算3乘4，然后用add把得到的乘积加5，最后报告结果。每一步都必须使用对应工具。",
+      "max_iterations": 8,
+      "expected_stop_reason": "task_complete",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "首先执行multiply工具计算3乘4。",
+          "next_step": "tool",
+          "tool_name": "multiply",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 621,
+            "eval_count": 33
+          },
+          "elapsed_seconds": 1.9250512090002303,
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "call_id": "9c81e6352a8242ffa3808543afe1c498",
+          "name": "multiply",
+          "args": {
+            "a": 3,
+            "b": 4
+          },
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 1.3657639590001054,
+          "usage": {
+            "prompt_eval_count": 655,
+            "eval_count": 25
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "multiply",
+                "args": {
+                  "a": 3,
+                  "b": 4
+                },
+                "id": "9c81e6352a8242ffa3808543afe1c498",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "call_id": "9c81e6352a8242ffa3808543afe1c498",
+          "name": "multiply",
+          "args": {
+            "a": 3,
+            "b": 4
+          },
+          "status": "success",
+          "result": 12.0,
+          "error": "",
+          "elapsed_seconds": 0.0008118750001813169,
+          "message": {
+            "content": "12.0",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "multiply",
+            "id": null,
+            "tool_call_id": "9c81e6352a8242ffa3808543afe1c498",
+            "artifact": null,
+            "status": "success"
+          },
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "observation": "已计算3乘4得到12.",
+          "decision": "continue",
+          "task_complete": false,
+          "answer": "",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 768,
+            "eval_count": 31
+          },
+          "elapsed_seconds": 2.1391564590003327,
+          "iteration": 1
+        },
+        {
+          "type": "thought",
+          "thought": "使用add工具将乘积12加5。",
+          "next_step": "tool",
+          "tool_name": "add",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 750,
+            "eval_count": 35
+          },
+          "elapsed_seconds": 2.315447250000034,
+          "iteration": 2
+        },
+        {
+          "type": "tool_call",
+          "call_id": "d5c078d1f95c42cdb3a3cb520f56353c",
+          "name": "add",
+          "args": {
+            "a": 12,
+            "b": 5
+          },
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 2.3264432920004765,
+          "usage": {
+            "prompt_eval_count": 783,
+            "eval_count": 26
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "add",
+                "args": {
+                  "a": 12,
+                  "b": 5
+                },
+                "id": "d5c078d1f95c42cdb3a3cb520f56353c",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 2
+        },
+        {
+          "type": "tool_result",
+          "call_id": "d5c078d1f95c42cdb3a3cb520f56353c",
+          "name": "add",
+          "args": {
+            "a": 12,
+            "b": 5
+          },
+          "status": "success",
+          "result": 17.0,
+          "error": "",
+          "elapsed_seconds": 0.000562750000426604,
+          "message": {
+            "content": "17.0",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "add",
+            "id": null,
+            "tool_call_id": "d5c078d1f95c42cdb3a3cb520f56353c",
+            "artifact": null,
+            "status": "success"
+          },
+          "iteration": 2
+        },
+        {
+          "type": "observation",
+          "observation": "已计算12加5得到17.",
+          "decision": "finish",
+          "task_complete": true,
+          "answer": "最终结果是17.",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 900,
+            "eval_count": 38
+          },
+          "elapsed_seconds": 2.607094875000257,
+          "iteration": 2
+        },
+        {
+          "type": "done",
+          "task_complete": true,
+          "stop_reason": "task_complete",
+          "full_response": "最终结果是17.",
+          "iterations": 2,
+          "context": {
+            "observations": [
+              {
+                "call_id": "9c81e6352a8242ffa3808543afe1c498",
+                "name": "multiply",
+                "args": {
+                  "a": 3,
+                  "b": 4
+                },
+                "status": "success",
+                "result": 12.0,
+                "error": "",
+                "elapsed_seconds": 0.0008118750001813169
+              },
+              {
+                "call_id": "d5c078d1f95c42cdb3a3cb520f56353c",
+                "name": "add",
+                "args": {
+                  "a": 12,
+                  "b": 5
+                },
+                "status": "success",
+                "result": 17.0,
+                "error": "",
+                "elapsed_seconds": 0.000562750000426604
+              }
+            ],
+            "last_observation": {
+              "observation": "已计算12加5得到17.",
+              "decision": "finish",
+              "task_complete": true
+            }
+          }
+        }
+      ],
+      "executions": [
+        {
+          "name": "multiply",
+          "args": {
+            "a": 3.0,
+            "b": 4.0
+          }
+        },
+        {
+          "name": "add",
+          "args": {
+            "a": 12.0,
+            "b": 5.0
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "concept",
+      "question": "什么是过拟合？",
+      "max_iterations": 8,
+      "expected_stop_reason": "task_complete",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "直接回答过拟合的概念。",
+          "next_step": "answer",
+          "tool_name": null,
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 408,
+            "eval_count": 30
+          },
+          "elapsed_seconds": 1.54545891700036,
+          "iteration": 1
+        },
+        {
+          "type": "action_skipped",
+          "reason": "Thought规划直接回答，无需执行工具。",
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "observation": "过拟合是指机器学习模型在训练数据上表现得过于复杂，以至于它对训练数据的噪声或细节进行了学习，从而导致在新数据上的预测性能下降。",
+          "decision": "finish",
+          "task_complete": true,
+          "answer": "过拟合是指机器学习模型在训练数据上表现得过于复杂，以至于它对训练数据的噪声或细节进行了学习，从而导致在新数据上的预测性能下降。",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 411,
+            "eval_count": 104
+          },
+          "elapsed_seconds": 5.052731082999344,
+          "iteration": 1
+        },
+        {
+          "type": "done",
+          "task_complete": true,
+          "stop_reason": "task_complete",
+          "full_response": "过拟合是指机器学习模型在训练数据上表现得过于复杂，以至于它对训练数据的噪声或细节进行了学习，从而导致在新数据上的预测性能下降。",
+          "iterations": 1,
+          "context": {
+            "observations": [],
+            "last_observation": {
+              "observation": "过拟合是指机器学习模型在训练数据上表现得过于复杂，以至于它对训练数据的噪声或细节进行了学习，从而导致在新数据上的预测性能下降。",
+              "decision": "finish",
+              "task_complete": true
+            }
+          }
+        }
+      ],
+      "executions": [],
+      "passed": true
+    },
+    {
+      "name": "missing_paper",
+      "question": "请告诉我未上传的论文A在ImageNet上的准确率，并引用该论文页码。",
+      "max_iterations": 8,
+      "expected_stop_reason": "incomplete",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "需要查询论文A在ImageNet上的准确率及引用页码。",
+          "next_step": "answer",
+          "tool_name": null,
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 423,
+            "eval_count": 38
+          },
+          "elapsed_seconds": 2.140979041999344,
+          "iteration": 1
+        },
+        {
+          "type": "action_skipped",
+          "reason": "Thought规划直接回答，无需执行工具。",
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "observation": "当前没有可用工具来获取论文A在ImageNet上的准确率和引用页码。",
+          "decision": "finish",
+          "task_complete": false,
+          "answer": "缺少论文A的具体内容或相关资料，无法获取其在ImageNet上的准确率及引用页码。",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 426,
+            "eval_count": 65
+          },
+          "elapsed_seconds": 3.346900959000777,
+          "iteration": 1
+        },
+        {
+          "type": "done",
+          "task_complete": false,
+          "stop_reason": "incomplete",
+          "full_response": "缺少论文A的具体内容或相关资料，无法获取其在ImageNet上的准确率及引用页码。",
+          "iterations": 1,
+          "context": {
+            "observations": [],
+            "last_observation": {
+              "observation": "当前没有可用工具来获取论文A在ImageNet上的准确率和引用页码。",
+              "decision": "finish",
+              "task_complete": false
+            }
+          }
+        }
+      ],
+      "executions": [],
+      "passed": true
+    },
+    {
+      "name": "tool_error",
+      "question": "请调用divide工具实际计算1除以0，依据真实结果报告。",
+      "max_iterations": 8,
+      "expected_stop_reason": "incomplete",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "使用divide工具计算1除以0。",
+          "next_step": "tool",
+          "tool_name": "divide",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 601,
+            "eval_count": 33
+          },
+          "elapsed_seconds": 1.6830184579994238,
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "call_id": "3f5550e978bb486e9a1367e810c15a65",
+          "name": "divide",
+          "args": {
+            "a": 1,
+            "b": 0
+          },
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 1.3069808330001251,
+          "usage": {
+            "prompt_eval_count": 648,
+            "eval_count": 25
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "divide",
+                "args": {
+                  "a": 1,
+                  "b": 0
+                },
+                "id": "3f5550e978bb486e9a1367e810c15a65",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "call_id": "3f5550e978bb486e9a1367e810c15a65",
+          "name": "divide",
+          "args": {
+            "a": 1,
+            "b": 0
+          },
+          "status": "error",
+          "result": null,
+          "error": "ZeroDivisionError: float division by zero",
+          "elapsed_seconds": 0.0018925839995063143,
+          "message": {
+            "content": "ZeroDivisionError: float division by zero",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "divide",
+            "id": null,
+            "tool_call_id": "3f5550e978bb486e9a1367e810c15a65",
+            "artifact": null,
+            "status": "error"
+          },
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "observation": "尝试计算1除以0导致浮点数除零错误。",
+          "decision": "finish",
+          "task_complete": false,
+          "answer": "除数不能为零，因此1除以0无法计算。",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 760,
+            "eval_count": 51
+          },
+          "elapsed_seconds": 3.2067120829997293,
+          "iteration": 1
+        },
+        {
+          "type": "done",
+          "task_complete": false,
+          "stop_reason": "incomplete",
+          "full_response": "除数不能为零，因此1除以0无法计算。",
+          "iterations": 1,
+          "context": {
+            "observations": [
+              {
+                "call_id": "3f5550e978bb486e9a1367e810c15a65",
+                "name": "divide",
+                "args": {
+                  "a": 1,
+                  "b": 0
+                },
+                "status": "error",
+                "result": null,
+                "error": "ZeroDivisionError: float division by zero",
+                "elapsed_seconds": 0.0018925839995063143
+              }
+            ],
+            "last_observation": {
+              "observation": "尝试计算1除以0导致浮点数除零错误。",
+              "decision": "finish",
+              "task_complete": false
+            }
+          }
+        }
+      ],
+      "executions": [
+        {
+          "name": "divide",
+          "args": {
+            "a": 1.0,
+            "b": 0.0
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "iteration_limit",
+      "question": "请按两步执行：先用multiply计算3乘4，然后用add把得到的乘积加5，最后报告结果。每一步都必须使用对应工具。",
+      "max_iterations": 1,
+      "expected_stop_reason": "max_iterations",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "首先执行multiply工具计算3乘4。",
+          "next_step": "tool",
+          "tool_name": "multiply",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 621,
+            "eval_count": 33
+          },
+          "elapsed_seconds": 1.8129095839994989,
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "call_id": "05564a403b4c434ba9f5fad09c2c5c43",
+          "name": "multiply",
+          "args": {
+            "a": 3,
+            "b": 4
+          },
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 1.2796591249998528,
+          "usage": {
+            "prompt_eval_count": 655,
+            "eval_count": 25
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "multiply",
+                "args": {
+                  "a": 3,
+                  "b": 4
+                },
+                "id": "05564a403b4c434ba9f5fad09c2c5c43",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "call_id": "05564a403b4c434ba9f5fad09c2c5c43",
+          "name": "multiply",
+          "args": {
+            "a": 3,
+            "b": 4
+          },
+          "status": "success",
+          "result": 12.0,
+          "error": "",
+          "elapsed_seconds": 0.0006971669999984442,
+          "message": {
+            "content": "12.0",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "multiply",
+            "id": null,
+            "tool_call_id": "05564a403b4c434ba9f5fad09c2c5c43",
+            "artifact": null,
+            "status": "success"
+          },
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "observation": "已计算3乘4得到12.",
+          "decision": "continue",
+          "task_complete": false,
+          "answer": "",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 769,
+            "eval_count": 31
+          },
+          "elapsed_seconds": 2.3586996660005752,
+          "iteration": 1
+        },
+        {
+          "type": "done",
+          "task_complete": false,
+          "stop_reason": "max_iterations",
+          "full_response": "已达到最大迭代次数（1轮），任务尚未完成，请缩小问题范围后重试。",
+          "iterations": 1,
+          "context": {
+            "observations": [
+              {
+                "call_id": "05564a403b4c434ba9f5fad09c2c5c43",
+                "name": "multiply",
+                "args": {
+                  "a": 3,
+                  "b": 4
+                },
+                "status": "success",
+                "result": 12.0,
+                "error": "",
+                "elapsed_seconds": 0.0006971669999984442
+              }
+            ],
+            "last_observation": {
+              "observation": "已计算3乘4得到12.",
+              "decision": "continue",
+              "task_complete": false
+            }
+          }
+        }
+      ],
+      "executions": [
+        {
+          "name": "multiply",
+          "args": {
+            "a": 3.0,
+            "b": 4.0
+          }
+        }
+      ],
+      "passed": true
+    }
+  ],
+  "finished_at": "2026-10-02T11:58:40.273652+08:00"
+}

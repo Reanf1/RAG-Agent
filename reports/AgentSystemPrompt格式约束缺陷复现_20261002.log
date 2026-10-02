@@ -1,0 +1,25 @@
+test_empty_registry_constrains_model_plan_to_answer (tests.test_agent.TestAgentSystemPrompt) ... FAIL
+
+======================================================================
+FAIL: test_empty_registry_constrains_model_plan_to_answer (tests.test_agent.TestAgentSystemPrompt)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 642, in test_empty_registry_constrains_model_plan_to_answer
+    self.assertEqual(schema["properties"]["next_step"]["enum"], ["answer"])
+AssertionError: Lists differ: ['tool', 'answer'] != ['answer']
+
+First differing element 0:
+'tool'
+'answer'
+
+First list contains 1 additional elements.
+First extra element 1:
+'answer'
+
+- ['tool', 'answer']
++ ['answer']
+
+----------------------------------------------------------------------
+Ran 1 test in 0.005s
+
+FAILED (failures=1)

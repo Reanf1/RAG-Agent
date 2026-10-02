@@ -55,7 +55,7 @@ AppTest 等待上限为 10 秒，兼顾新环境首次加载界面依赖的耗�
 
 新增的 Word 测试需要 `python-docx`。依赖已安装到项目 `.venv`；若使用其他 Python 解释器，应先为该解释器安装 `requirements.txt`，仅更换启动路径不会共享虚拟环境的依赖。
 
-`test_agent.py`有40项测试：12项Thought、14项Action、14项Observation与循环；当前全项目328项通过。新增覆盖真实工具跨轮结果、原生消息反馈、成功/未完成/上限/错误、最后一轮完成、状态副本和关闭后停止。模型HTTP隔离，工具实际执行；真实Qwen验证见[Thought QA](../docs/QA/5.3.1%20Thought单轮规划.md)、[Action QA](../docs/QA/5.3.1%20Action工具选择与执行.md)与[Observation QA](../docs/QA/5.3.1%20Observation与循环终止.md)。生产科研工具集、并行/恢复和记忆等待实现，不为占位代码编写无意义的测试。
+`test_agent.py`有45项测试：12项Thought、14项Action、14项Observation与循环、5项System Prompt；当前全项目333项通过。新增覆盖真实工具跨轮结果、原生消息反馈、成功/未完成/上限/错误、最后一轮完成、状态副本和关闭后停止。模型HTTP隔离，工具实际执行；真实Qwen验证见[Thought QA](../docs/QA/5.3.1%20Thought单轮规划.md)、[Action QA](../docs/QA/5.3.1%20Action工具选择与执行.md)、[Observation QA](../docs/QA/5.3.1%20Observation与循环终止.md)及[System Prompt QA](../docs/QA/5.3.1%20Agent的System%20Prompt结构.md)。新增Prompt用例验证实际工具元数据、资料与规则隔离及空工具请求格式；首次实测的空工具规划缺陷先复现再修复，保留前后记录。生产科研工具集、并行/恢复和记忆等待实现，不为占位代码编写无意义的测试。
 
 2026-09-30模块一、二复测记录见[测试QA](../docs/QA/模块一与模块二测试.md)。`reports/verify_modules_one_two.py`用两篇完整PDF、临时索引及真实模型核验模块连接；真实引用/答案质量和缓存实测失败单独记录，不算入288项自动化通过结果。验证脚本使用`--output`指定不存在的新路径，保留历史记录。
 
