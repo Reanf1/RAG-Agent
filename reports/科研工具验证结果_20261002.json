@@ -1,0 +1,425 @@
+{
+  "started_at": "2026-10-02T17:57:44.632086+08:00",
+  "validation_complete": true,
+  "scope": "完整Attention/ViT公开PDF及明确标注的中文功能样例；真实本地模型/上传/索引/工具/Agent，只替换临时存储目录，不模拟返回，不计为系统答案质量或元信息准确率评测。",
+  "rows": [
+    {
+      "name": "metadata",
+      "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+      "event": {
+        "type": "tool_result",
+        "call_id": "56b2e29345364137a5ac6157f8c52677",
+        "name": "paper_metadata",
+        "args": {
+          "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"
+        },
+        "status": "error",
+        "result": null,
+        "error": "ValueError: 元信息不在所选原文中，不能接受模型补写的字段",
+        "elapsed_seconds": 40.87277445899963,
+        "message": {
+          "content": "ValueError: 元信息不在所选原文中，不能接受模型补写的字段",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "tool",
+          "name": "paper_metadata",
+          "id": null,
+          "tool_call_id": "56b2e29345364137a5ac6157f8c52677",
+          "artifact": null,
+          "status": "error"
+        }
+      },
+      "passed": false
+    },
+    {
+      "name": "metadata",
+      "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+      "event": {
+        "type": "tool_result",
+        "call_id": "dda5a76a0d214baf96f3029a9e3648e7",
+        "name": "paper_metadata",
+        "args": {
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6"
+        },
+        "status": "error",
+        "result": null,
+        "error": "ValueError: DOI格式错误",
+        "elapsed_seconds": 24.870031375001417,
+        "message": {
+          "content": "ValueError: DOI格式错误",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "tool",
+          "name": "paper_metadata",
+          "id": null,
+          "tool_call_id": "dda5a76a0d214baf96f3029a9e3648e7",
+          "artifact": null,
+          "status": "error"
+        }
+      },
+      "passed": false
+    },
+    {
+      "name": "metadata",
+      "doc_id": "cfe9fe148c4041261d628b1895a8cfc0af6b7a4895263e97297f5a7eab2073a3",
+      "event": {
+        "type": "tool_result",
+        "call_id": "1a7f8fc5479c40b197fdc32be3baa848",
+        "name": "paper_metadata",
+        "args": {
+          "doc_id": "cfe9fe148c4041261d628b1895a8cfc0af6b7a4895263e97297f5a7eab2073a3"
+        },
+        "status": "success",
+        "result": {
+          "doc_id": "cfe9fe148c4041261d628b1895a8cfc0af6b7a4895263e97297f5a7eab2073a3",
+          "source_file": "中文功能样例.md",
+          "title": null,
+          "authors": [
+            "张三、李四"
+          ],
+          "year": 2024,
+          "abstract": "摘要\n本文比较人工智能模型的准确率与推理速度。",
+          "doi": "10.1234/demo.2024",
+          "evidence": {
+            "title": [],
+            "authors": [
+              {
+                "id": 2,
+                "text": "张三、李四",
+                "source_file": "中文功能样例.md",
+                "location": "行2"
+              }
+            ],
+            "year": [
+              {
+                "id": 3,
+                "text": "2024",
+                "source_file": "中文功能样例.md",
+                "location": "行3"
+              }
+            ],
+            "abstract": [
+              {
+                "id": 4,
+                "text": "摘要",
+                "source_file": "中文功能样例.md",
+                "location": "行4"
+              },
+              {
+                "id": 5,
+                "text": "本文比较人工智能模型的准确率与推理速度。",
+                "source_file": "中文功能样例.md",
+                "location": "行5"
+              }
+            ],
+            "doi": [
+              {
+                "id": 8,
+                "text": "10.1234/demo.2024",
+                "source_file": "中文功能样例.md",
+                "location": "行8"
+              }
+            ]
+          },
+          "missing_fields": [
+            "title"
+          ],
+          "input_truncated": false,
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 419,
+            "eval_count": 103
+          }
+        },
+        "error": "",
+        "elapsed_seconds": 5.424026500000764,
+        "message": {
+          "content": "{'doc_id': 'cfe9fe148c4041261d628b1895a8cfc0af6b7a4895263e97297f5a7eab2073a3', 'source_file': '中文功能样例.md', 'title': None, 'authors': ['张三、李四'], 'year': 2024, 'abstract': '摘要\\n本文比较人工智能模型的准确率与推理速度。', 'doi': '10.1234/demo.2024', 'evidence': {'title': [], 'authors': [{'id': 2, 'text': '张三、李四', 'source_file': '中文功能样例.md', 'location': '行2'}], 'year': [{'id': 3, 'text': '2024', 'source_file': '中文功能样例.md', 'location': '行3'}], 'abstract': [{'id': 4, 'text': '摘要', 'source_file': '中文功能样例.md', 'location': '行4'}, {'id': 5, 'text': '本文比较人工智能模型的准确率与推理速度。', 'source_file': '中文功能样例.md', 'location': '行5'}], 'doi': [{'id': 8, 'text': '10.1234/demo.2024', 'source_file': '中文功能样例.md', 'location': '行8'}]}, 'missing_fields': ['title'], 'input_truncated': False, 'model': 'qwen2.5:7b', 'usage': {'prompt_eval_count': 419, 'eval_count': 103}}",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "tool",
+          "name": "paper_metadata",
+          "id": null,
+          "tool_call_id": "1a7f8fc5479c40b197fdc32be3baa848",
+          "artifact": null,
+          "status": "success"
+        }
+      },
+      "passed": false
+    },
+    {
+      "name": "rag",
+      "event": {
+        "type": "tool_result",
+        "call_id": "a8b9b9c5c6ce497984fac7e7497229f1",
+        "name": "knowledge_base_search",
+        "args": {
+          "question": "Attention论文中Transformer在WMT 2014英德翻译任务的BLEU分数是多少？",
+          "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"
+        },
+        "status": "success",
+        "result": {
+          "answer": "## 回答\n根据参考文档4，Transformer在WMT 2014英德翻译任务上的BLEU分数为28.4。\n\n## 参考来源\n无可引用来源",
+          "citations": [],
+          "invalid_citation_ids": [],
+          "missing_citations": true,
+          "warnings": [
+            "回答未提供有效文献引用，不能作为已溯源答案。"
+          ],
+          "generation_mode": "grounded",
+          "notice": "",
+          "raw_answer": "## 回答\n根据参考文档4，Transformer在WMT 2014英德翻译任务上的BLEU分数为28.4。\n\n## 参考来源\n[参考文档2, 参考文档4]",
+          "model": "qwen2.5:7b",
+          "options": {
+            "temperature": 0.1,
+            "top_p": 0.9,
+            "top_k": 40,
+            "num_ctx": 8192,
+            "num_predict": 512,
+            "repeat_penalty": 1.0
+          },
+          "done_reason": "stop",
+          "usage": {
+            "prompt_eval_count": 1269,
+            "eval_count": 51,
+            "total_duration": 8097436625,
+            "load_duration": 3046875,
+            "prompt_eval_duration": 5660003000,
+            "eval_duration": 2415121000
+          },
+          "status": "answered",
+          "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+          "sources": [
+            "attention.pdf"
+          ],
+          "top_score": 0.9994595646858215,
+          "retrieval_seconds": 3.395564333000948,
+          "elapsed_seconds": 11.498521875000733
+        },
+        "error": "",
+        "elapsed_seconds": 11.502283042002091,
+        "message": {
+          "content": "{'answer': '## 回答\\n根据参考文档4，Transformer在WMT 2014英德翻译任务上的BLEU分数为28.4。\\n\\n## 参考来源\\n无可引用来源', 'citations': [], 'invalid_citation_ids': [], 'missing_citations': True, 'warnings': ['回答未提供有效文献引用，不能作为已溯源答案。'], 'generation_mode': 'grounded', 'notice': '', 'raw_answer': '## 回答\\n根据参考文档4，Transformer在WMT 2014英德翻译任务上的BLEU分数为28.4。\\n\\n## 参考来源\\n[参考文档2, 参考文档4]', 'model': 'qwen2.5:7b', 'options': {'temperature': 0.1, 'top_p': 0.9, 'top_k': 40, 'num_ctx': 8192, 'num_predict': 512, 'repeat_penalty': 1.0}, 'done_reason': 'stop', 'usage': {'prompt_eval_count': 1269, 'eval_count': 51, 'total_duration': 8097436625, 'load_duration': 3046875, 'prompt_eval_duration': 5660003000, 'eval_duration': 2415121000}, 'status': 'answered', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'sources': ['attention.pdf'], 'top_score': 0.9994595646858215, 'retrieval_seconds': 3.395564333000948, 'elapsed_seconds': 11.498521875000733}",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "tool",
+          "name": "knowledge_base_search",
+          "id": null,
+          "tool_call_id": "a8b9b9c5c6ce497984fac7e7497229f1",
+          "artifact": null,
+          "status": "success"
+        }
+      },
+      "passed": false
+    },
+    {
+      "name": "agent_metadata",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "根据提供的doc_id提取attention.pdf的标题、作者和年份。",
+          "next_step": "tool",
+          "tool_name": "paper_metadata",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 837,
+            "eval_count": 36
+          },
+          "elapsed_seconds": 5.7972489159983525,
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "call_id": "95a09f3674084bb5ba0a583b3d7ea8bc",
+          "name": "paper_metadata",
+          "args": {
+            "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"
+          },
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 7.706292124999891,
+          "usage": {
+            "prompt_eval_count": 916,
+            "eval_count": 75
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "paper_metadata",
+                "args": {
+                  "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"
+                },
+                "id": "95a09f3674084bb5ba0a583b3d7ea8bc",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "call_id": "95a09f3674084bb5ba0a583b3d7ea8bc",
+          "name": "paper_metadata",
+          "args": {
+            "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"
+          },
+          "status": "error",
+          "result": null,
+          "error": "ValueError: 元信息模型未正常完成，不能使用部分或错误提取结果",
+          "elapsed_seconds": 27.449666000000434,
+          "message": {
+            "content": "ValueError: 元信息模型未正常完成，不能使用部分或错误提取结果",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "paper_metadata",
+            "id": null,
+            "tool_call_id": "95a09f3674084bb5ba0a583b3d7ea8bc",
+            "artifact": null,
+            "status": "error"
+          },
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "observation": "提取attention.pdf的元信息时发生错误，模型未正常完成。",
+          "decision": "finish",
+          "task_complete": false,
+          "answer": "由于元信息模型未正常完成，无法提取attention.pdf的标题、作者和年份。",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1135,
+            "eval_count": 58
+          },
+          "elapsed_seconds": 5.7322047500019835,
+          "iteration": 1
+        },
+        {
+          "type": "done",
+          "task_complete": false,
+          "stop_reason": "incomplete",
+          "full_response": "由于元信息模型未正常完成，无法提取attention.pdf的标题、作者和年份。",
+          "iterations": 1,
+          "context": {
+            "papers": [
+              {
+                "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                "source_file": "attention.pdf"
+              }
+            ],
+            "observations": [
+              {
+                "call_id": "95a09f3674084bb5ba0a583b3d7ea8bc",
+                "name": "paper_metadata",
+                "args": {
+                  "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"
+                },
+                "status": "error",
+                "result": null,
+                "error": "ValueError: 元信息模型未正常完成，不能使用部分或错误提取结果",
+                "elapsed_seconds": 27.449666000000434
+              }
+            ],
+            "last_observation": {
+              "observation": "提取attention.pdf的元信息时发生错误，模型未正常完成。",
+              "decision": "finish",
+              "task_complete": false
+            }
+          }
+        }
+      ],
+      "passed": false
+    }
+  ],
+  "config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://localhost:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 8192,
+      "num_predict": 512,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 6000,
+      "max_prompt_chars": 12000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "online_search_enabled": false
+    },
+    "paths": {
+      "raw_documents": "/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-research-tools-risrmjuk/raw",
+      "vector_index": "/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-research-tools-risrmjuk/index",
+      "logs": "logs"
+    }
+  },
+  "ingestion": [
+    {
+      "file": "attention.pdf",
+      "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+      "chunks": 94
+    },
+    {
+      "file": "vit.pdf",
+      "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+      "chunks": 167
+    },
+    {
+      "file": "中文功能样例.md",
+      "doc_id": "cfe9fe148c4041261d628b1895a8cfc0af6b7a4895263e97297f5a7eab2073a3",
+      "chunks": 1
+    }
+  ],
+  "finished_at": "2026-10-02T18:00:16.420645+08:00"
+}

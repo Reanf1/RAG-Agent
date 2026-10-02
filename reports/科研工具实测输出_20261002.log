@@ -1,0 +1,36 @@
+Consider using the pymupdf_layout package for a greatly improved page layout analysis.
+第 8 页三线表列边界不明确，保留原始正文与页码。
+入库 {'completed': 1, 'total': 3}
+入库 {'completed': 1, 'total': 3}
+入库 {'completed': 1, 'total': 3}
+入库 {'completed': 1, 'total': 3}
+入库 {'completed': 1, 'total': 3}
+入库 {'completed': 1, 'total': 3}
+入库 {'completed': 2, 'total': 3}
+入库 {'completed': 2, 'total': 3}
+入库 {'completed': 2, 'total': 3}
+入库 {'completed': 2, 'total': 3}
+入库 {'completed': 2, 'total': 3}
+入库 {'completed': 2, 'total': 3}
+入库 {'completed': 3, 'total': 3}
+第 8 页三线表列边界不明确，保留原始正文与页码。
+元信息 False None None ValueError: 元信息不在所选原文中，不能接受模型补写的字段
+元信息 False None None ValueError: DOI格式错误
+元信息 False None 2024 
+RAG False ## 回答
+根据参考文档4，Transformer在WMT 2014英德翻译任务上的BLEU分数为28.4。
+
+## 参考来源
+无可引用来源 
+Agent thought 
+Agent tool_call 
+第 8 页三线表列边界不明确，保留原始正文与页码。
+Agent tool_result 
+Agent observation 
+Agent done incomplete
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/reports/verify_research_tools.py", line 108, in <module>
+    main()
+  File "/Users/rean/github/RAG+Agent/reports/verify_research_tools.py", line 104, in main
+    assert all(row["passed"] for row in report["rows"]), "存在实测失败，保留原始结果供分析"
+AssertionError: 存在实测失败，保留原始结果供分析

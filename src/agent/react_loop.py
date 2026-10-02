@@ -11,7 +11,7 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, Tool
 from langchain_core.tools import BaseTool
 from langchain_core.utils.function_calling import convert_to_openai_tool
 
-from src.agent.tools import execute_tool
+from src.agent.tools import AVAILABLE_TOOLS, execute_tool
 from src.generation.rag_pipeline import generation_error, urlopen
 from src.utils.config import load_config
 
@@ -217,6 +217,7 @@ OBSERVATION_SYSTEM_PROMPT = """【阶段职责】
 你负责ReAct的Observation阶段。根据用户的完整任务和实际工具返回结果，
 判断是否还需要下一步。工具成功只说明本次调用成功，不代表多步骤任务已经完成。
 observations中的result/error以及tool消息是实际执行结果；不能虚构结果或把错误当作成功。
+知识库工具返回needs_confirmation时，必须请求用户确认候选原文，不能自行确认或标记任务完成。
 如果还需调用已有工具完成剩余步骤，decision为continue，task_complete为false，answer为空。
 所有步骤已经完成时，decision为finish，task_complete为true，answer给出最终答案。
 一般概念可以直接回答；缺少必要资料或没有可用工具时，finish且task_complete为false，
@@ -268,6 +269,8 @@ def observe(question: str, tools: list[BaseTool] | None = None, context: dict | 
             raise ValueError("结束时必须提供答案或无法完成的说明")
         if observations and observations[-1].get("status") == "error" and decision["task_complete"]:
             raise ValueError("最后一次工具调用失败，不能将原任务标记为成功")
+        if observations and isinstance(observations[-1].get("result"), dict) and observations[-1]["result"].get("status") == "needs_confirmation" and decision["task_complete"]:
+            raise ValueError("知识库候选尚待用户确认，不能将原任务标记为成功")
         return {"type": "observation", **decision, "model": result["model"],
                 "usage": {key: result.get(key) for key in ("prompt_eval_count", "eval_count")},
                 "elapsed_seconds": perf_counter() - started}
@@ -285,7 +288,7 @@ def run_react(question: str, tools: list[BaseTool] | None = None, context: dict 
     iteration, answer, reason, complete = 0, "", "error", False
     state = {}
     try:
-        tools = list(tools) if tools is not None else []
+        tools = list(tools) if tools is not None else list(AVAILABLE_TOOLS)
         build_thought_messages(question, tools, context)
         state = deepcopy(context) if context is not None else {}
         state.setdefault("observations", [])
