@@ -1,0 +1,1258 @@
+{
+  "started_at": "2026-10-02T18:58:50.603846+08:00",
+  "config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://localhost:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 8192,
+      "num_predict": 512,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 6000,
+      "max_prompt_chars": 12000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "online_search_enabled": true
+    },
+    "paths": {
+      "raw_documents": "/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw",
+      "vector_index": "data/index",
+      "logs": "/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/logs"
+    }
+  },
+  "scope": "两篇完整公开AI论文与一个中文DOCX功能样例，不是独立质量准确率实验",
+  "rows": [
+    {
+      "name": "attention.pdf",
+      "event": {
+        "type": "tool_result",
+        "call_id": "aee4d1bd4138460eba4fa126f442ed59",
+        "name": "paper_summary",
+        "args": {
+          "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"
+        },
+        "status": "success",
+        "result": {
+          "answer": "### 背景\n\n传统的序列模型如循环神经网络（RNN）和卷积神经网络（CNN）在语言建模和机器翻译等任务中表现良好，但存在难以并行训练的问题。 [参考文档10：attention.pdf；第2页（物理页码）][参考文档11：attention.pdf；第2页（物理页码）]\n\n### 方法\n\n提出了一种基于注意力机制的新型网络架构——Transformer，完全摒弃了循环和卷积。 [参考文档2：attention.pdf；第1页（物理页码）]\n\n### 结果\n\n在两个机器翻译任务上，Transformer模型表现出更高的质量，训练速度更快，所需时间更短。 [参考文档2：attention.pdf；第1页（物理页码）][参考文档3：attention.pdf；第1页（物理页码）]\n\n### 结论\n\nTransformer模型是第一个完全基于注意力机制的序列转换模型，展示了在其他任务上的良好泛化能力。 [参考文档6：attention.pdf；第10页（物理页码）][参考文档7：attention.pdf；第10页（物理页码）]\n\n## 参考来源\n- [参考文档10] attention.pdf；第2页（物理页码）\n- [参考文档11] attention.pdf；第2页（物理页码）\n- [参考文档2] attention.pdf；第1页（物理页码）\n- [参考文档3] attention.pdf；第1页（物理页码）\n- [参考文档6] attention.pdf；第10页（物理页码）\n- [参考文档7] attention.pdf；第10页（物理页码）",
+          "citations": [
+            {
+              "id": 10,
+              "source_file": "attention.pdf",
+              "location": "第2页（物理页码）",
+              "text": "1\nIntroduction\nRecurrent neural networks, long short-term memory [13] and gated recurrent [7] neural networks\nin particular, have been firmly established as state of the art approaches in sequence modeling and\ntransduction problems such as language modeling and machine translation [35, 2, 5]. Numerous\nefforts have since continued to push the boundaries of recurrent language models and encoder-decoder\narchitectures [38, 24, 15].",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                "source_file": "attention.pdf",
+                "file_type": ".pdf",
+                "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                "page": 1,
+                "page_number": 2,
+                "chunk_id": "70d16deffdf11ee83a5cdad0363a91456cc9393b0c7d4868ccaccc3914e610f5"
+              },
+              "truncated": false
+            },
+            {
+              "id": 11,
+              "source_file": "attention.pdf",
+              "location": "第2页（物理页码）",
+              "text": "\narchitectures [38, 24, 15].\nRecurrent models typically factor computation along the symbol positions of the input and output\nsequences. Aligning the positions to steps in computation time, they generate a sequence of hidden\nstates ht, as a function of the previous hidden state ht−1 and the input for position t. This inherently\nsequential nature precludes parallelization within training examples, which becomes critical at longer",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                "source_file": "attention.pdf",
+                "file_type": ".pdf",
+                "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                "page": 1,
+                "page_number": 2,
+                "chunk_id": "6adea15018d2a3a7e7c8240149c6ead77b54b1a225893fd50e44eb860dfc0337"
+              },
+              "truncated": false
+            },
+            {
+              "id": 2,
+              "source_file": "attention.pdf",
+              "location": "第1页（物理页码）",
+              "text": "\nmechanism. We propose a new simple network architecture, the Transformer,\nbased solely on attention mechanisms, dispensing with recurrence and convolutions\nentirely. Experiments on two machine translation tasks show these models to\nbe superior in quality while being more parallelizable and requiring significantly\nless time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-\nto-German translation task, improving over the existing best results, including",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                "source_file": "attention.pdf",
+                "file_type": ".pdf",
+                "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                "page": 0,
+                "page_number": 1,
+                "chunk_id": "d71ae1e6ef8671942a5e3125b0913339b6e51106b3726acb06780f6798b818da"
+              },
+              "truncated": false
+            },
+            {
+              "id": 3,
+              "source_file": "attention.pdf",
+              "location": "第1页（物理页码）",
+              "text": "\nensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,\nour model establishes a new single-model state-of-the-art BLEU score of 41.8 after\ntraining for 3.5 days on eight GPUs, a small fraction of the training costs of the\nbest models from the literature. We show that the Transformer generalizes well to\nother tasks by applying it successfully to English constituency parsing both with\nlarge and limited training data.",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                "source_file": "attention.pdf",
+                "file_type": ".pdf",
+                "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                "page": 0,
+                "page_number": 1,
+                "chunk_id": "e667ca60ae655d4ffedf5a4ac644738e4e8ded90e894a4544181fdb9cef0a492"
+              },
+              "truncated": false
+            },
+            {
+              "id": 6,
+              "source_file": "attention.pdf",
+              "location": "第10页（物理页码）",
+              "text": "\nRecurrent Neural Network Grammar [8].\nIn contrast to RNN sequence-to-sequence models [37], the Transformer outperforms the Berkeley-\nParser [29] even when training only on the WSJ training set of 40K sentences.\n7\nConclusion\nIn this work, we presented the Transformer, the first sequence transduction model based entirely on\nattention, replacing the recurrent layers most commonly used in encoder-decoder architectures with\nmulti-headed self-attention.",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                "source_file": "attention.pdf",
+                "file_type": ".pdf",
+                "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                "page": 9,
+                "page_number": 10,
+                "chunk_id": "76c144c18e9aa8d4fa486eba9682dc531359bb1d0b0025b5926bc586d2566869"
+              },
+              "truncated": false
+            },
+            {
+              "id": 7,
+              "source_file": "attention.pdf",
+              "location": "第10页（物理页码）",
+              "text": "\nmulti-headed self-attention.\nFor translation tasks, the Transformer can be trained significantly faster than architectures based\non recurrent or convolutional layers. On both WMT 2014 English-to-German and WMT 2014\nEnglish-to-French translation tasks, we achieve a new state of the art. In the former task our best\nmodel outperforms even all previously reported ensembles.\nWe are excited about the future of attention-based models and plan to apply them to other tasks. We",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                "source_file": "attention.pdf",
+                "file_type": ".pdf",
+                "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                "page": 9,
+                "page_number": 10,
+                "chunk_id": "2a551a2cc25914e96478e9862f9cf327825bc768e730822791b0788480c8b203"
+              },
+              "truncated": false
+            }
+          ],
+          "invalid_citation_ids": [],
+          "missing_citations": false,
+          "warnings": [
+            "原文已按预算选取并截断；摘要仅依据返回的可见原文，并非全文精读。"
+          ],
+          "status": "answered",
+          "sections": {
+            "background": {
+              "text": "传统的序列模型如循环神经网络（RNN）和卷积神经网络（CNN）在语言建模和机器翻译等任务中表现良好，但存在难以并行训练的问题。",
+              "reference_ids": [
+                10,
+                11
+              ]
+            },
+            "method": {
+              "text": "提出了一种基于注意力机制的新型网络架构——Transformer，完全摒弃了循环和卷积。",
+              "reference_ids": [
+                2
+              ]
+            },
+            "results": {
+              "text": "在两个机器翻译任务上，Transformer模型表现出更高的质量，训练速度更快，所需时间更短。",
+              "reference_ids": [
+                2,
+                3
+              ]
+            },
+            "conclusion": {
+              "text": "Transformer模型是第一个完全基于注意力机制的序列转换模型，展示了在其他任务上的良好泛化能力。",
+              "reference_ids": [
+                6,
+                7
+              ]
+            }
+          },
+          "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+          "source_file": "attention.pdf",
+          "missing_fields": [],
+          "references": [
+            {
+              "id": 1,
+              "source_file": "attention.pdf",
+              "location": "第1页（物理页码）",
+              "text": "\nAidan N. Gomez^{∗†}\nŁukasz Kaiser^{∗}\nGoogle Research\nUniversity of Toronto\nGoogle Brain\nlukaszkaiser@google.com\nllion@google.com\naidan@cs.toronto.edu\nIllia Polosukhin^{∗‡}\nillia.polosukhin@gmail.com\nAbstract\nThe dominant sequence transduction models are based on complex recurrent or\nconvolutional neural networks that include an encoder and a decoder. The best\nperforming models also connect the encoder and decoder through an attention",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                "source_file": "attention.pdf",
+                "file_type": ".pdf",
+                "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                "page": 0,
+                "page_number": 1,
+                "chunk_id": "6d4649fec72c6bd3c6e0193cf04411309d67b07cafafea7a27b1cf03cab0a1c8"
+              },
+              "truncated": false
+            },
+            {
+              "id": 2,
+              "source_file": "attention.pdf",
+              "location": "第1页（物理页码）",
+              "text": "\nmechanism. We propose a new simple network architecture, the Transformer,\nbased solely on attention mechanisms, dispensing with recurrence and convolutions\nentirely. Experiments on two machine translation tasks show these models to\nbe superior in quality while being more parallelizable and requiring significantly\nless time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-\nto-German translation task, improving over the existing best results, including",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                "source_file": "attention.pdf",
+                "file_type": ".pdf",
+                "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                "page": 0,
+                "page_number": 1,
+                "chunk_id": "d71ae1e6ef8671942a5e3125b0913339b6e51106b3726acb06780f6798b818da"
+              },
+              "truncated": false
+            },
+            {
+              "id": 3,
+              "source_file": "attention.pdf",
+              "location": "第1页（物理页码）",
+              "text": "\nensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,\nour model establishes a new single-model state-of-the-art BLEU score of 41.8 after\ntraining for 3.5 days on eight GPUs, a small fraction of the training costs of the\nbest models from the literature. We show that the Transformer generalizes well to\nother tasks by applying it successfully to English constituency parsing both with\nlarge and limited training data.",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                "source_file": "attention.pdf",
+                "file_type": ".pdf",
+                "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                "page": 0,
+                "page_number": 1,
+                "chunk_id": "e667ca60ae655d4ffedf5a4ac644738e4e8ded90e894a4544181fdb9cef0a492"
+              },
+              "truncated": false
+            },
+            {
+              "id": 4,
+              "source_file": "attention.pdf",
+              "location": "第1页（物理页码）",
+              "text": "\nlarge and limited training data.\n^{∗}Equal contribution. Listing order is random. Jakob proposed replacing RNNs with self-attention and started\nthe effort to evaluate this idea. Ashish, with Illia, designed and implemented the first Transformer models and\nhas been crucially involved in every aspect of this work. Noam proposed scaled dot-product attention, multi-head\nattention and the parameter-free position representation and became the other person involved in nearly every",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                "source_file": "attention.pdf",
+                "file_type": ".pdf",
+                "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                "page": 0,
+                "page_number": 1,
+                "chunk_id": "c73aea4168720bb45256a720a9fb785e9026f408ee112022acab85c9e8de25ba"
+              },
+              "truncated": false
+            },
+            {
+              "id": 5,
+              "source_file": "attention.pdf",
+              "location": "第1页（物理页码）",
+              "text": "\ndetail. Niki designed, implemented, tuned and evaluated countless model variants in our original codebase and\ntensor2tensor. Llion also experimented with novel model variants, was responsible for our initial codebase, and\nefficient inference and visualizations. Lukasz and Aidan spent countless long days designing various parts of and\nimplementing tensor2tensor, replacing our earlier codebase, greatly improving results and massively accelerating\nour research.\n^{†}Work performed while at Google Brain.",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                "source_file": "attention.pdf",
+                "file_type": ".pdf",
+                "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                "page": 0,
+                "page_number": 1,
+                "chunk_id": "6621493e5272cbfa81369806cd56e94ac1f049340ae80740ff79c148809e827b"
+              },
+              "truncated": false
+            },
+            {
+              "id": 6,
+              "source_file": "attention.pdf",
+              "location": "第10页（物理页码）",
+              "text": "\nRecurrent Neural Network Grammar [8].\nIn contrast to RNN sequence-to-sequence models [37], the Transformer outperforms the Berkeley-\nParser [29] even when training only on the WSJ training set of 40K sentences.\n7\nConclusion\nIn this work, we presented the Transformer, the first sequence transduction model based entirely on\nattention, replacing the recurrent layers most commonly used in encoder-decoder architectures with\nmulti-headed self-attention.",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                "source_file": "attention.pdf",
+                "file_type": ".pdf",
+                "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                "page": 9,
+                "page_number": 10,
+                "chunk_id": "76c144c18e9aa8d4fa486eba9682dc531359bb1d0b0025b5926bc586d2566869"
+              },
+              "truncated": false
+            },
+            {
+              "id": 7,
+              "source_file": "attention.pdf",
+              "location": "第10页（物理页码）",
+              "text": "\nmulti-headed self-attention.\nFor translation tasks, the Transformer can be trained significantly faster than architectures based\non recurrent or convolutional layers. On both WMT 2014 English-to-German and WMT 2014\nEnglish-to-French translation tasks, we achieve a new state of the art. In the former task our best\nmodel outperforms even all previously reported ensembles.\nWe are excited about the future of attention-based models and plan to apply them to other tasks. We",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                "source_file": "attention.pdf",
+                "file_type": ".pdf",
+                "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                "page": 9,
+                "page_number": 10,
+                "chunk_id": "2a551a2cc25914e96478e9862f9cf327825bc768e730822791b0788480c8b203"
+              },
+              "truncated": false
+            },
+            {
+              "id": 8,
+              "source_file": "attention.pdf",
+              "location": "第10页（物理页码）",
+              "text": "\nplan to extend the Transformer to problems involving input and output modalities other than text and\nto investigate local, restricted attention mechanisms to efficiently handle large inputs and outputs\nsuch as images, audio and video. Making generation less sequential is another research goals of ours.\nThe code we used to train and evaluate our models is available at https://github.com/\ntensorflow/tensor2tensor.\nAcknowledgements\nWe are grateful to Nal Kalchbrenner and Stephan Gouws for their fruitful",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                "source_file": "attention.pdf",
+                "file_type": ".pdf",
+                "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                "page": 9,
+                "page_number": 10,
+                "chunk_id": "df22d1023b8974e4bc2addc8b03067b462d62a70c6d6465755e1b13af9038095"
+              },
+              "truncated": false
+            },
+            {
+              "id": 9,
+              "source_file": "attention.pdf",
+              "location": "第1页（物理页码）",
+              "text": "\nour research.\n^{†}Work performed while at Google Brain.\n^{‡}Work performed while at Google Research.\n31st Conference on Neural Information Processing Systems (NIPS 2017), Long Beach, CA, USA.",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                "source_file": "attention.pdf",
+                "file_type": ".pdf",
+                "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                "page": 0,
+                "page_number": 1,
+                "chunk_id": "811bd0d53904a89e6656f34e0204138207be01ba75155538108775f51ce2021f"
+              },
+              "truncated": false
+            },
+            {
+              "id": 10,
+              "source_file": "attention.pdf",
+              "location": "第2页（物理页码）",
+              "text": "1\nIntroduction\nRecurrent neural networks, long short-term memory [13] and gated recurrent [7] neural networks\nin particular, have been firmly established as state of the art approaches in sequence modeling and\ntransduction problems such as language modeling and machine translation [35, 2, 5]. Numerous\nefforts have since continued to push the boundaries of recurrent language models and encoder-decoder\narchitectures [38, 24, 15].",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                "source_file": "attention.pdf",
+                "file_type": ".pdf",
+                "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                "page": 1,
+                "page_number": 2,
+                "chunk_id": "70d16deffdf11ee83a5cdad0363a91456cc9393b0c7d4868ccaccc3914e610f5"
+              },
+              "truncated": false
+            },
+            {
+              "id": 11,
+              "source_file": "attention.pdf",
+              "location": "第2页（物理页码）",
+              "text": "\narchitectures [38, 24, 15].\nRecurrent models typically factor computation along the symbol positions of the input and output\nsequences. Aligning the positions to steps in computation time, they generate a sequence of hidden\nstates ht, as a function of the previous hidden state ht−1 and the input for position t. This inherently\nsequential nature precludes parallelization within training examples, which becomes critical at longer",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                "source_file": "attention.pdf",
+                "file_type": ".pdf",
+                "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                "page": 1,
+                "page_number": 2,
+                "chunk_id": "6adea15018d2a3a7e7c8240149c6ead77b54b1a225893fd50e44eb860dfc0337"
+              },
+              "truncated": false
+            },
+            {
+              "id": 12,
+              "source_file": "attention.pdf",
+              "location": "第2页（物理页码）",
+              "text": "\nsequence lengths, as memory constraints limit batching across examples. Recent work has achieved\nsignificant improvements in computational efficiency through factorization tricks [21] and conditional\ncomputation [32], while also improving model performance in case of the latter. The fundamental\nconstraint of sequential computation, however, remains.\nAttention mechanisms have become an integral part of compelling sequence modeling and transduc-",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                "source_file": "attention.pdf",
+                "file_type": ".pdf",
+                "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                "page": 1,
+                "page_number": 2,
+                "chunk_id": "f0ee92251d85968f64b30edd188a7c82b24f464c99bea24111a210f811706e19"
+              },
+              "truncated": false
+            },
+            {
+              "id": 13,
+              "source_file": "attention.pdf",
+              "location": "第2页（物理页码）",
+              "text": "\ntion models in various tasks, allowing modeling",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                "source_file": "attention.pdf",
+                "file_type": ".pdf",
+                "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                "page": 1,
+                "page_number": 2,
+                "chunk_id": "c0f7198e6e1d99c345d7d2bb9f496ce27a49013850df30d9cc5a385bd7ca617d"
+              },
+              "truncated": true
+            }
+          ],
+          "input_truncated": true,
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1628,
+            "eval_count": 202
+          },
+          "elapsed_seconds": 17.703298959000676
+        },
+        "error": "",
+        "elapsed_seconds": 17.704362208998646,
+        "message": {
+          "content": "{'answer': '### 背景\\n\\n传统的序列模型如循环神经网络（RNN）和卷积神经网络（CNN）在语言建模和机器翻译等任务中表现良好，但存在难以并行训练的问题。 [参考文档10：attention.pdf；第2页（物理页码）][参考文档11：attention.pdf；第2页（物理页码）]\\n\\n### 方法\\n\\n提出了一种基于注意力机制的新型网络架构——Transformer，完全摒弃了循环和卷积。 [参考文档2：attention.pdf；第1页（物理页码）]\\n\\n### 结果\\n\\n在两个机器翻译任务上，Transformer模型表现出更高的质量，训练速度更快，所需时间更短。 [参考文档2：attention.pdf；第1页（物理页码）][参考文档3：attention.pdf；第1页（物理页码）]\\n\\n### 结论\\n\\nTransformer模型是第一个完全基于注意力机制的序列转换模型，展示了在其他任务上的良好泛化能力。 [参考文档6：attention.pdf；第10页（物理页码）][参考文档7：attention.pdf；第10页（物理页码）]\\n\\n## 参考来源\\n- [参考文档10] attention.pdf；第2页（物理页码）\\n- [参考文档11] attention.pdf；第2页（物理页码）\\n- [参考文档2] attention.pdf；第1页（物理页码）\\n- [参考文档3] attention.pdf；第1页（物理页码）\\n- [参考文档6] attention.pdf；第10页（物理页码）\\n- [参考文档7] attention.pdf；第10页（物理页码）', 'citations': [{'id': 10, 'source_file': 'attention.pdf', 'location': '第2页（物理页码）', 'text': '1\\nIntroduction\\nRecurrent neural networks, long short-term memory [13] and gated recurrent [7] neural networks\\nin particular, have been firmly established as state of the art approaches in sequence modeling and\\ntransduction problems such as language modeling and machine translation [35, 2, 5]. Numerous\\nefforts have since continued to push the boundaries of recurrent language models and encoder-decoder\\narchitectures [38, 24, 15].', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf', 'file_type': '.pdf', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'page': 1, 'page_number': 2, 'chunk_id': '70d16deffdf11ee83a5cdad0363a91456cc9393b0c7d4868ccaccc3914e610f5'}, 'truncated': False}, {'id': 11, 'source_file': 'attention.pdf', 'location': '第2页（物理页码）', 'text': '\\narchitectures [38, 24, 15].\\nRecurrent models typically factor computation along the symbol positions of the input and output\\nsequences. Aligning the positions to steps in computation time, they generate a sequence of hidden\\nstates ht, as a function of the previous hidden state ht−1 and the input for position t. This inherently\\nsequential nature precludes parallelization within training examples, which becomes critical at longer', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf', 'file_type': '.pdf', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'page': 1, 'page_number': 2, 'chunk_id': '6adea15018d2a3a7e7c8240149c6ead77b54b1a225893fd50e44eb860dfc0337'}, 'truncated': False}, {'id': 2, 'source_file': 'attention.pdf', 'location': '第1页（物理页码）', 'text': '\\nmechanism. We propose a new simple network architecture, the Transformer,\\nbased solely on attention mechanisms, dispensing with recurrence and convolutions\\nentirely. Experiments on two machine translation tasks show these models to\\nbe superior in quality while being more parallelizable and requiring significantly\\nless time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-\\nto-German translation task, improving over the existing best results, including', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf', 'file_type': '.pdf', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'page': 0, 'page_number': 1, 'chunk_id': 'd71ae1e6ef8671942a5e3125b0913339b6e51106b3726acb06780f6798b818da'}, 'truncated': False}, {'id': 3, 'source_file': 'attention.pdf', 'location': '第1页（物理页码）', 'text': '\\nensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,\\nour model establishes a new single-model state-of-the-art BLEU score of 41.8 after\\ntraining for 3.5 days on eight GPUs, a small fraction of the training costs of the\\nbest models from the literature. We show that the Transformer generalizes well to\\nother tasks by applying it successfully to English constituency parsing both with\\nlarge and limited training data.', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf', 'file_type': '.pdf', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'page': 0, 'page_number': 1, 'chunk_id': 'e667ca60ae655d4ffedf5a4ac644738e4e8ded90e894a4544181fdb9cef0a492'}, 'truncated': False}, {'id': 6, 'source_file': 'attention.pdf', 'location': '第10页（物理页码）', 'text': '\\nRecurrent Neural Network Grammar [8].\\nIn contrast to RNN sequence-to-sequence models [37], the Transformer outperforms the Berkeley-\\nParser [29] even when training only on the WSJ training set of 40K sentences.\\n7\\nConclusion\\nIn this work, we presented the Transformer, the first sequence transduction model based entirely on\\nattention, replacing the recurrent layers most commonly used in encoder-decoder architectures with\\nmulti-headed self-attention.', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf', 'file_type': '.pdf', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'page': 9, 'page_number': 10, 'chunk_id': '76c144c18e9aa8d4fa486eba9682dc531359bb1d0b0025b5926bc586d2566869'}, 'truncated': False}, {'id': 7, 'source_file': 'attention.pdf', 'location': '第10页（物理页码）', 'text': '\\nmulti-headed self-attention.\\nFor translation tasks, the Transformer can be trained significantly faster than architectures based\\non recurrent or convolutional layers. On both WMT 2014 English-to-German and WMT 2014\\nEnglish-to-French translation tasks, we achieve a new state of the art. In the former task our best\\nmodel outperforms even all previously reported ensembles.\\nWe are excited about the future of attention-based models and plan to apply them to other tasks. We', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf', 'file_type': '.pdf', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'page': 9, 'page_number': 10, 'chunk_id': '2a551a2cc25914e96478e9862f9cf327825bc768e730822791b0788480c8b203'}, 'truncated': False}], 'invalid_citation_ids': [], 'missing_citations': False, 'warnings': ['原文已按预算选取并截断；摘要仅依据返回的可见原文，并非全文精读。'], 'status': 'answered', 'sections': {'background': {'text': '传统的序列模型如循环神经网络（RNN）和卷积神经网络（CNN）在语言建模和机器翻译等任务中表现良好，但存在难以并行训练的问题。', 'reference_ids': [10, 11]}, 'method': {'text': '提出了一种基于注意力机制的新型网络架构——Transformer，完全摒弃了循环和卷积。', 'reference_ids': [2]}, 'results': {'text': '在两个机器翻译任务上，Transformer模型表现出更高的质量，训练速度更快，所需时间更短。', 'reference_ids': [2, 3]}, 'conclusion': {'text': 'Transformer模型是第一个完全基于注意力机制的序列转换模型，展示了在其他任务上的良好泛化能力。', 'reference_ids': [6, 7]}}, 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'source_file': 'attention.pdf', 'missing_fields': [], 'references': [{'id': 1, 'source_file': 'attention.pdf', 'location': '第1页（物理页码）', 'text': '\\nAidan N. Gomez^{∗†}\\nŁukasz Kaiser^{∗}\\nGoogle Research\\nUniversity of Toronto\\nGoogle Brain\\nlukaszkaiser@google.com\\nllion@google.com\\naidan@cs.toronto.edu\\nIllia Polosukhin^{∗‡}\\nillia.polosukhin@gmail.com\\nAbstract\\nThe dominant sequence transduction models are based on complex recurrent or\\nconvolutional neural networks that include an encoder and a decoder. The best\\nperforming models also connect the encoder and decoder through an attention', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf', 'file_type': '.pdf', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'page': 0, 'page_number': 1, 'chunk_id': '6d4649fec72c6bd3c6e0193cf04411309d67b07cafafea7a27b1cf03cab0a1c8'}, 'truncated': False}, {'id': 2, 'source_file': 'attention.pdf', 'location': '第1页（物理页码）', 'text': '\\nmechanism. We propose a new simple network architecture, the Transformer,\\nbased solely on attention mechanisms, dispensing with recurrence and convolutions\\nentirely. Experiments on two machine translation tasks show these models to\\nbe superior in quality while being more parallelizable and requiring significantly\\nless time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-\\nto-German translation task, improving over the existing best results, including', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf', 'file_type': '.pdf', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'page': 0, 'page_number': 1, 'chunk_id': 'd71ae1e6ef8671942a5e3125b0913339b6e51106b3726acb06780f6798b818da'}, 'truncated': False}, {'id': 3, 'source_file': 'attention.pdf', 'location': '第1页（物理页码）', 'text': '\\nensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,\\nour model establishes a new single-model state-of-the-art BLEU score of 41.8 after\\ntraining for 3.5 days on eight GPUs, a small fraction of the training costs of the\\nbest models from the literature. We show that the Transformer generalizes well to\\nother tasks by applying it successfully to English constituency parsing both with\\nlarge and limited training data.', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf', 'file_type': '.pdf', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'page': 0, 'page_number': 1, 'chunk_id': 'e667ca60ae655d4ffedf5a4ac644738e4e8ded90e894a4544181fdb9cef0a492'}, 'truncated': False}, {'id': 4, 'source_file': 'attention.pdf', 'location': '第1页（物理页码）', 'text': '\\nlarge and limited training data.\\n^{∗}Equal contribution. Listing order is random. Jakob proposed replacing RNNs with self-attention and started\\nthe effort to evaluate this idea. Ashish, with Illia, designed and implemented the first Transformer models and\\nhas been crucially involved in every aspect of this work. Noam proposed scaled dot-product attention, multi-head\\nattention and the parameter-free position representation and became the other person involved in nearly every', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf', 'file_type': '.pdf', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'page': 0, 'page_number': 1, 'chunk_id': 'c73aea4168720bb45256a720a9fb785e9026f408ee112022acab85c9e8de25ba'}, 'truncated': False}, {'id': 5, 'source_file': 'attention.pdf', 'location': '第1页（物理页码）', 'text': '\\ndetail. Niki designed, implemented, tuned and evaluated countless model variants in our original codebase and\\ntensor2tensor. Llion also experimented with novel model variants, was responsible for our initial codebase, and\\nefficient inference and visualizations. Lukasz and Aidan spent countless long days designing various parts of and\\nimplementing tensor2tensor, replacing our earlier codebase, greatly improving results and massively accelerating\\nour research.\\n^{†}Work performed while at Google Brain.', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf', 'file_type': '.pdf', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'page': 0, 'page_number': 1, 'chunk_id': '6621493e5272cbfa81369806cd56e94ac1f049340ae80740ff79c148809e827b'}, 'truncated': False}, {'id': 6, 'source_file': 'attention.pdf', 'location': '第10页（物理页码）', 'text': '\\nRecurrent Neural Network Grammar [8].\\nIn contrast to RNN sequence-to-sequence models [37], the Transformer outperforms the Berkeley-\\nParser [29] even when training only on the WSJ training set of 40K sentences.\\n7\\nConclusion\\nIn this work, we presented the Transformer, the first sequence transduction model based entirely on\\nattention, replacing the recurrent layers most commonly used in encoder-decoder architectures with\\nmulti-headed self-attention.', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf', 'file_type': '.pdf', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'page': 9, 'page_number': 10, 'chunk_id': '76c144c18e9aa8d4fa486eba9682dc531359bb1d0b0025b5926bc586d2566869'}, 'truncated': False}, {'id': 7, 'source_file': 'attention.pdf', 'location': '第10页（物理页码）', 'text': '\\nmulti-headed self-attention.\\nFor translation tasks, the Transformer can be trained significantly faster than architectures based\\non recurrent or convolutional layers. On both WMT 2014 English-to-German and WMT 2014\\nEnglish-to-French translation tasks, we achieve a new state of the art. In the former task our best\\nmodel outperforms even all previously reported ensembles.\\nWe are excited about the future of attention-based models and plan to apply them to other tasks. We', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf', 'file_type': '.pdf', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'page': 9, 'page_number': 10, 'chunk_id': '2a551a2cc25914e96478e9862f9cf327825bc768e730822791b0788480c8b203'}, 'truncated': False}, {'id': 8, 'source_file': 'attention.pdf', 'location': '第10页（物理页码）', 'text': '\\nplan to extend the Transformer to problems involving input and output modalities other than text and\\nto investigate local, restricted attention mechanisms to efficiently handle large inputs and outputs\\nsuch as images, audio and video. Making generation less sequential is another research goals of ours.\\nThe code we used to train and evaluate our models is available at https://github.com/\\ntensorflow/tensor2tensor.\\nAcknowledgements\\nWe are grateful to Nal Kalchbrenner and Stephan Gouws for their fruitful', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf', 'file_type': '.pdf', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'page': 9, 'page_number': 10, 'chunk_id': 'df22d1023b8974e4bc2addc8b03067b462d62a70c6d6465755e1b13af9038095'}, 'truncated': False}, {'id': 9, 'source_file': 'attention.pdf', 'location': '第1页（物理页码）', 'text': '\\nour research.\\n^{†}Work performed while at Google Brain.\\n^{‡}Work performed while at Google Research.\\n31st Conference on Neural Information Processing Systems (NIPS 2017), Long Beach, CA, USA.', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf', 'file_type': '.pdf', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'page': 0, 'page_number': 1, 'chunk_id': '811bd0d53904a89e6656f34e0204138207be01ba75155538108775f51ce2021f'}, 'truncated': False}, {'id': 10, 'source_file': 'attention.pdf', 'location': '第2页（物理页码）', 'text': '1\\nIntroduction\\nRecurrent neural networks, long short-term memory [13] and gated recurrent [7] neural networks\\nin particular, have been firmly established as state of the art approaches in sequence modeling and\\ntransduction problems such as language modeling and machine translation [35, 2, 5]. Numerous\\nefforts have since continued to push the boundaries of recurrent language models and encoder-decoder\\narchitectures [38, 24, 15].', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf', 'file_type': '.pdf', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'page': 1, 'page_number': 2, 'chunk_id': '70d16deffdf11ee83a5cdad0363a91456cc9393b0c7d4868ccaccc3914e610f5'}, 'truncated': False}, {'id': 11, 'source_file': 'attention.pdf', 'location': '第2页（物理页码）', 'text': '\\narchitectures [38, 24, 15].\\nRecurrent models typically factor computation along the symbol positions of the input and output\\nsequences. Aligning the positions to steps in computation time, they generate a sequence of hidden\\nstates ht, as a function of the previous hidden state ht−1 and the input for position t. This inherently\\nsequential nature precludes parallelization within training examples, which becomes critical at longer', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf', 'file_type': '.pdf', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'page': 1, 'page_number': 2, 'chunk_id': '6adea15018d2a3a7e7c8240149c6ead77b54b1a225893fd50e44eb860dfc0337'}, 'truncated': False}, {'id': 12, 'source_file': 'attention.pdf', 'location': '第2页（物理页码）', 'text': '\\nsequence lengths, as memory constraints limit batching across examples. Recent work has achieved\\nsignificant improvements in computational efficiency through factorization tricks [21] and conditional\\ncomputation [32], while also improving model performance in case of the latter. The fundamental\\nconstraint of sequential computation, however, remains.\\nAttention mechanisms have become an integral part of compelling sequence modeling and transduc-', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf', 'file_type': '.pdf', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'page': 1, 'page_number': 2, 'chunk_id': 'f0ee92251d85968f64b30edd188a7c82b24f464c99bea24111a210f811706e19'}, 'truncated': False}, {'id': 13, 'source_file': 'attention.pdf', 'location': '第2页（物理页码）', 'text': '\\ntion models in various tasks, allowing modeling', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf', 'file_type': '.pdf', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'page': 1, 'page_number': 2, 'chunk_id': 'c0f7198e6e1d99c345d7d2bb9f496ce27a49013850df30d9cc5a385bd7ca617d'}, 'truncated': True}], 'input_truncated': True, 'model': 'qwen2.5:7b', 'usage': {'prompt_eval_count': 1628, 'eval_count': 202}, 'elapsed_seconds': 17.703298959000676}",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "tool",
+          "name": "paper_summary",
+          "id": null,
+          "tool_call_id": "aee4d1bd4138460eba4fa126f442ed59",
+          "artifact": null,
+          "status": "success"
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "vit.pdf",
+      "event": {
+        "type": "tool_result",
+        "call_id": "350ff748c0834d868d4f1c65d19862a1",
+        "name": "paper_summary",
+        "args": {
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6"
+        },
+        "status": "success",
+        "result": {
+          "answer": "### 背景\n\n传统的卷积神经网络（CNN）在计算机视觉中占主导地位，而基于自注意力的Transformer架构在自然语言处理中取得了成功。 [参考文档1：vit.pdf；第1页（物理页码）][参考文档3：vit.pdf；第1页（物理页码）]\n\n### 方法\n\n研究者将图像分割成块，将这些块的线性嵌入序列输入标准的Transformer编码器，以直接应用于图像识别任务。 [参考文档9：vit.pdf；第1页（物理页码）][参考文档10：vit.pdf；第1页（物理页码）]\n\n### 结果\n\nVision Transformer（ViT）在大规模预训练后，在多个图像分类基准测试中达到了与最先进的卷积网络相当或更好的性能，同时训练所需的计算资源较少。 [参考文档2：vit.pdf；第1页（物理页码）][参考文档7：vit.pdf；第9页（物理页码）]\n\n### 结论\n\n尽管ViT在小型数据集上的表现不如ResNet，但大规模预训练可以弥补这一不足，ViT在多个图像识别基准测试中表现出色。 [参考文档11：vit.pdf；第2页（物理页码）]\n\n## 参考来源\n- [参考文档1] vit.pdf；第1页（物理页码）\n- [参考文档3] vit.pdf；第1页（物理页码）\n- [参考文档9] vit.pdf；第1页（物理页码）\n- [参考文档10] vit.pdf；第1页（物理页码）\n- [参考文档2] vit.pdf；第1页（物理页码）\n- [参考文档7] vit.pdf；第9页（物理页码）\n- [参考文档11] vit.pdf；第2页（物理页码）",
+          "citations": [
+            {
+              "id": 1,
+              "source_file": "vit.pdf",
+              "location": "第1页（物理页码）",
+              "text": "\n{adosovitskiy, neilhoulsby}@google.com\narXiv:2010.11929v2  [cs.CV]  3 Jun 2021\nABSTRACT\nWhile the Transformer architecture has become the de-facto standard for natural\nlanguage processing tasks, its applications to computer vision remain limited. In\nvision, attention is either applied in conjunction with convolutional networks, or\nused to replace certain components of convolutional networks while keeping their\noverall structure in place. We show that this reliance on CNNs is not necessary",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                "source_file": "vit.pdf",
+                "file_type": ".pdf",
+                "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                "page": 0,
+                "page_number": 1,
+                "chunk_id": "430cc231bdbc69326431224296bc2322c98c08f799fbc035245353f3ea158d1c"
+              },
+              "truncated": false
+            },
+            {
+              "id": 3,
+              "source_file": "vit.pdf",
+              "location": "第1页（物理页码）",
+              "text": "\n1\nINTRODUCTION\nSelf-attention-based architectures, in particular Transformers (Vaswani et al., 2017), have become\nthe model of choice in natural language processing (NLP). The dominant approach is to pre-train on\na large text corpus and then ﬁne-tune on a smaller task-speciﬁc dataset (Devlin et al., 2019). Thanks\nto Transformers’ computational efﬁciency and scalability, it has become possible to train models of",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                "source_file": "vit.pdf",
+                "file_type": ".pdf",
+                "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                "page": 0,
+                "page_number": 1,
+                "chunk_id": "ac7ba3fd75f9d49f078479e0471530bf615e21b4b7568b6be99400031dcc058d"
+              },
+              "truncated": false
+            },
+            {
+              "id": 9,
+              "source_file": "vit.pdf",
+              "location": "第1页（物理页码）",
+              "text": "\nTransformer directly to images, with the fewest possible modiﬁcations. To do so, we split an image\ninto patches and provide the sequence of linear embeddings of these patches as an input to a Trans-\nformer. Image patches are treated the same way as tokens (words) in an NLP application. We train\nthe model on image classiﬁcation in supervised fashion.\nWhen trained on mid-sized datasets such as ImageNet without strong regularization, these mod-",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                "source_file": "vit.pdf",
+                "file_type": ".pdf",
+                "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                "page": 0,
+                "page_number": 1,
+                "chunk_id": "24f092f31d91ecf039431f64844afbb8b4d0866ec62f095ccae1a5852eb9b467"
+              },
+              "truncated": false
+            },
+            {
+              "id": 10,
+              "source_file": "vit.pdf",
+              "location": "第1页（物理页码）",
+              "text": "\nels yield modest accuracies of a few percentage points below ResNets of comparable size. This\nseemingly discouraging outcome may be expected: Transformers lack some of the inductive biases\n^{1}Fine-tuning\nhttps://github.com/\ncode\nand\npre-trained\nmodels\nare\navailable\nat\ngoogle-research/vision_transformer\n1",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                "source_file": "vit.pdf",
+                "file_type": ".pdf",
+                "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                "page": 0,
+                "page_number": 1,
+                "chunk_id": "29c261975c10b37f071fc26e384462d4496b38785c106f577cdeffaeef63bd9f"
+              },
+              "truncated": false
+            },
+            {
+              "id": 2,
+              "source_file": "vit.pdf",
+              "location": "第1页（物理页码）",
+              "text": "\nand a pure transformer applied directly to sequences of image patches can perform\nvery well on image classiﬁcation tasks. When pre-trained on large amounts of\ndata and transferred to multiple mid-sized or small image recognition benchmarks\n(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent\nresults compared to state-of-the-art convolutional networks while requiring sub-\nstantially fewer computational resources to train.^{1}\n1\nINTRODUCTION",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                "source_file": "vit.pdf",
+                "file_type": ".pdf",
+                "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                "page": 0,
+                "page_number": 1,
+                "chunk_id": "8ae84e98efc77b081095c132ff5b25129ef02ad76f29b56b3fb1f0d252607ed9"
+              },
+              "truncated": false
+            },
+            {
+              "id": 7,
+              "source_file": "vit.pdf",
+              "location": "第9页（物理页码）",
+              "text": "\nsequence of patches and process it by a standard Transformer encoder as used in NLP. This simple,\nyet scalable, strategy works surprisingly well when coupled with pre-training on large datasets.\nThus, Vision Transformer matches or exceeds the state of the art on many image classiﬁcation\ndatasets, whilst being relatively cheap to pre-train.\nWhile these initial results are encouraging, many challenges remain. One is to apply ViT to other",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                "source_file": "vit.pdf",
+                "file_type": ".pdf",
+                "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                "page": 8,
+                "page_number": 9,
+                "chunk_id": "5b94a7819e50464ef67e4e46765090f2478fe83e24c8ac830e227b2e3f8db334"
+              },
+              "truncated": false
+            },
+            {
+              "id": 11,
+              "source_file": "vit.pdf",
+              "location": "第2页（物理页码）",
+              "text": "Published as a conference paper at ICLR 2021\ninherent to CNNs, such as translation equivariance and locality, and therefore do not generalize well\nwhen trained on insufﬁcient amounts of data.\nHowever, the picture changes if the models are trained on larger datasets (14M-300M images). We\nﬁnd that large scale training trumps inductive bias. Our Vision Transformer (ViT) attains excellent\nresults when pre-trained at sufﬁcient scale and transferred to tasks with fewer datapoints. When",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                "source_file": "vit.pdf",
+                "file_type": ".pdf",
+                "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                "page": 1,
+                "page_number": 2,
+                "chunk_id": "b2c5ca4a2c2da946904f823def4d3088f4efceca71e298d0027a09bddff4df1b"
+              },
+              "truncated": false
+            }
+          ],
+          "invalid_citation_ids": [],
+          "missing_citations": false,
+          "warnings": [
+            "原文已按预算选取并截断；摘要仅依据返回的可见原文，并非全文精读。"
+          ],
+          "status": "answered",
+          "sections": {
+            "background": {
+              "text": "传统的卷积神经网络（CNN）在计算机视觉中占主导地位，而基于自注意力的Transformer架构在自然语言处理中取得了成功。",
+              "reference_ids": [
+                1,
+                3
+              ]
+            },
+            "method": {
+              "text": "研究者将图像分割成块，将这些块的线性嵌入序列输入标准的Transformer编码器，以直接应用于图像识别任务。",
+              "reference_ids": [
+                9,
+                10
+              ]
+            },
+            "results": {
+              "text": "Vision Transformer（ViT）在大规模预训练后，在多个图像分类基准测试中达到了与最先进的卷积网络相当或更好的性能，同时训练所需的计算资源较少。",
+              "reference_ids": [
+                2,
+                7
+              ]
+            },
+            "conclusion": {
+              "text": "尽管ViT在小型数据集上的表现不如ResNet，但大规模预训练可以弥补这一不足，ViT在多个图像识别基准测试中表现出色。",
+              "reference_ids": [
+                11
+              ]
+            }
+          },
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "source_file": "vit.pdf",
+          "missing_fields": [],
+          "references": [
+            {
+              "id": 1,
+              "source_file": "vit.pdf",
+              "location": "第1页（物理页码）",
+              "text": "\n{adosovitskiy, neilhoulsby}@google.com\narXiv:2010.11929v2  [cs.CV]  3 Jun 2021\nABSTRACT\nWhile the Transformer architecture has become the de-facto standard for natural\nlanguage processing tasks, its applications to computer vision remain limited. In\nvision, attention is either applied in conjunction with convolutional networks, or\nused to replace certain components of convolutional networks while keeping their\noverall structure in place. We show that this reliance on CNNs is not necessary",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                "source_file": "vit.pdf",
+                "file_type": ".pdf",
+                "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                "page": 0,
+                "page_number": 1,
+                "chunk_id": "430cc231bdbc69326431224296bc2322c98c08f799fbc035245353f3ea158d1c"
+              },
+              "truncated": false
+            },
+            {
+              "id": 2,
+              "source_file": "vit.pdf",
+              "location": "第1页（物理页码）",
+              "text": "\nand a pure transformer applied directly to sequences of image patches can perform\nvery well on image classiﬁcation tasks. When pre-trained on large amounts of\ndata and transferred to multiple mid-sized or small image recognition benchmarks\n(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent\nresults compared to state-of-the-art convolutional networks while requiring sub-\nstantially fewer computational resources to train.^{1}\n1\nINTRODUCTION",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                "source_file": "vit.pdf",
+                "file_type": ".pdf",
+                "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                "page": 0,
+                "page_number": 1,
+                "chunk_id": "8ae84e98efc77b081095c132ff5b25129ef02ad76f29b56b3fb1f0d252607ed9"
+              },
+              "truncated": false
+            },
+            {
+              "id": 3,
+              "source_file": "vit.pdf",
+              "location": "第1页（物理页码）",
+              "text": "\n1\nINTRODUCTION\nSelf-attention-based architectures, in particular Transformers (Vaswani et al., 2017), have become\nthe model of choice in natural language processing (NLP). The dominant approach is to pre-train on\na large text corpus and then ﬁne-tune on a smaller task-speciﬁc dataset (Devlin et al., 2019). Thanks\nto Transformers’ computational efﬁciency and scalability, it has become possible to train models of",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                "source_file": "vit.pdf",
+                "file_type": ".pdf",
+                "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                "page": 0,
+                "page_number": 1,
+                "chunk_id": "ac7ba3fd75f9d49f078479e0471530bf615e21b4b7568b6be99400031dcc058d"
+              },
+              "truncated": false
+            },
+            {
+              "id": 4,
+              "source_file": "vit.pdf",
+              "location": "第1页（物理页码）",
+              "text": "\nunprecedented size, with over 100B parameters (Brown et al., 2020; Lepikhin et al., 2020). With the\nmodels and datasets growing, there is still no sign of saturating performance.\nIn computer vision, however, convolutional architectures remain dominant (LeCun et al., 1989;\nKrizhevsky et al., 2012; He et al., 2016). Inspired by NLP successes, multiple works try combining\nCNN-like architectures with self-attention (Wang et al., 2018; Carion et al., 2020), some replacing",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                "source_file": "vit.pdf",
+                "file_type": ".pdf",
+                "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                "page": 0,
+                "page_number": 1,
+                "chunk_id": "3fa2b491543f906078cf9b9d8a3e76dc0ec3bf6f0b4435106a32fcd1c9cda123"
+              },
+              "truncated": false
+            },
+            {
+              "id": 5,
+              "source_file": "vit.pdf",
+              "location": "第1页（物理页码）",
+              "text": "\nthe convolutions entirely (Ramachandran et al., 2019; Wang et al., 2020a). The latter models, while\ntheoretically efﬁcient, have not yet been scaled effectively on modern hardware accelerators due to\nthe use of specialized attention patterns. Therefore, in large-scale image recognition, classic ResNet-\nlike architectures are still state of the art (Mahajan et al., 2018; Xie et al., 2020; Kolesnikov et al.,\n2020).\nInspired by the Transformer scaling successes in NLP, we experiment with applying a standard",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                "source_file": "vit.pdf",
+                "file_type": ".pdf",
+                "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                "page": 0,
+                "page_number": 1,
+                "chunk_id": "7624524ee966dcc7a0ea60c2ccb6a14e050e3a022d3339b778789ecd1b8309ad"
+              },
+              "truncated": false
+            },
+            {
+              "id": 6,
+              "source_file": "vit.pdf",
+              "location": "第9页（物理页码）",
+              "text": "\nAppendix B.1.2 contains further details. We leave exploration of contrastive pre-training (Chen\net al., 2020b; He et al., 2020; Bachman et al., 2019; H´enaff et al., 2020) to future work.\n5\nCONCLUSION\nWe have explored the direct application of Transformers to image recognition. Unlike prior works\nusing self-attention in computer vision, we do not introduce image-speciﬁc inductive biases into\nthe architecture apart from the initial patch extraction step. Instead, we interpret an image as a",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                "source_file": "vit.pdf",
+                "file_type": ".pdf",
+                "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                "page": 8,
+                "page_number": 9,
+                "chunk_id": "e5543bb8269a2712678abf48c80b896a240d038ecdbc4ee5b6e1e426b5cf5ad7"
+              },
+              "truncated": false
+            },
+            {
+              "id": 7,
+              "source_file": "vit.pdf",
+              "location": "第9页（物理页码）",
+              "text": "\nsequence of patches and process it by a standard Transformer encoder as used in NLP. This simple,\nyet scalable, strategy works surprisingly well when coupled with pre-training on large datasets.\nThus, Vision Transformer matches or exceeds the state of the art on many image classiﬁcation\ndatasets, whilst being relatively cheap to pre-train.\nWhile these initial results are encouraging, many challenges remain. One is to apply ViT to other",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                "source_file": "vit.pdf",
+                "file_type": ".pdf",
+                "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                "page": 8,
+                "page_number": 9,
+                "chunk_id": "5b94a7819e50464ef67e4e46765090f2478fe83e24c8ac830e227b2e3f8db334"
+              },
+              "truncated": false
+            },
+            {
+              "id": 8,
+              "source_file": "vit.pdf",
+              "location": "第9页（物理页码）",
+              "text": "\ncomputer vision tasks, such as detection and segmentation. Our results, coupled with those in Carion\net al. (2020), indicate the promise of this approach. Another challenge is to continue exploring self-\nsupervised pre-training methods. Our initial experiments show improvement from self-supervised\npre-training, but there is still large gap between self-supervised and large-scale supervised pre-\ntraining. Finally, further scaling of ViT would likely lead to improved performance.\nACKNOWLEDGEMENTS",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                "source_file": "vit.pdf",
+                "file_type": ".pdf",
+                "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                "page": 8,
+                "page_number": 9,
+                "chunk_id": "89290903d7fe3a527e802f4a66abf3e5e54cf5d73a713155c9ccac54031efa15"
+              },
+              "truncated": false
+            },
+            {
+              "id": 9,
+              "source_file": "vit.pdf",
+              "location": "第1页（物理页码）",
+              "text": "\nTransformer directly to images, with the fewest possible modiﬁcations. To do so, we split an image\ninto patches and provide the sequence of linear embeddings of these patches as an input to a Trans-\nformer. Image patches are treated the same way as tokens (words) in an NLP application. We train\nthe model on image classiﬁcation in supervised fashion.\nWhen trained on mid-sized datasets such as ImageNet without strong regularization, these mod-",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                "source_file": "vit.pdf",
+                "file_type": ".pdf",
+                "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                "page": 0,
+                "page_number": 1,
+                "chunk_id": "24f092f31d91ecf039431f64844afbb8b4d0866ec62f095ccae1a5852eb9b467"
+              },
+              "truncated": false
+            },
+            {
+              "id": 10,
+              "source_file": "vit.pdf",
+              "location": "第1页（物理页码）",
+              "text": "\nels yield modest accuracies of a few percentage points below ResNets of comparable size. This\nseemingly discouraging outcome may be expected: Transformers lack some of the inductive biases\n^{1}Fine-tuning\nhttps://github.com/\ncode\nand\npre-trained\nmodels\nare\navailable\nat\ngoogle-research/vision_transformer\n1",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                "source_file": "vit.pdf",
+                "file_type": ".pdf",
+                "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                "page": 0,
+                "page_number": 1,
+                "chunk_id": "29c261975c10b37f071fc26e384462d4496b38785c106f577cdeffaeef63bd9f"
+              },
+              "truncated": false
+            },
+            {
+              "id": 11,
+              "source_file": "vit.pdf",
+              "location": "第2页（物理页码）",
+              "text": "Published as a conference paper at ICLR 2021\ninherent to CNNs, such as translation equivariance and locality, and therefore do not generalize well\nwhen trained on insufﬁcient amounts of data.\nHowever, the picture changes if the models are trained on larger datasets (14M-300M images). We\nﬁnd that large scale training trumps inductive bias. Our Vision Transformer (ViT) attains excellent\nresults when pre-trained at sufﬁcient scale and transferred to tasks with fewer datapoints. When",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                "source_file": "vit.pdf",
+                "file_type": ".pdf",
+                "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                "page": 1,
+                "page_number": 2,
+                "chunk_id": "b2c5ca4a2c2da946904f823def4d3088f4efceca71e298d0027a09bddff4df1b"
+              },
+              "truncated": false
+            },
+            {
+              "id": 12,
+              "source_file": "vit.pdf",
+              "location": "第2页（物理页码）",
+              "text": "\npre-trained on the public ImageNet-21k dataset or the in-house JFT-300M dataset, ViT approaches\nor beats state of the art on multiple image recognition benchmarks. In particular, the best model\nreaches the accuracy of 88.55% on ImageNet, 90.72% on ImageNet-ReaL, 94.55% on CIFAR-100,\nand 77.63% on the VTAB suite of 19 tasks.\n2\nRELATED WORK\nTransformers were proposed by Vaswani et al.",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf",
+                "source_file": "vit.pdf",
+                "file_type": ".pdf",
+                "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                "page": 1,
+                "page_number": 2,
+                "chunk_id": "9b043bf909596310b3e93dd842ed1b2f1e77ab141d8616dee3c9f177be0dcea4"
+              },
+              "truncated": true
+            }
+          ],
+          "input_truncated": true,
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1815,
+            "eval_count": 227
+          },
+          "elapsed_seconds": 20.127272249999805
+        },
+        "error": "",
+        "elapsed_seconds": 20.128169584000716,
+        "message": {
+          "content": "{'answer': '### 背景\\n\\n传统的卷积神经网络（CNN）在计算机视觉中占主导地位，而基于自注意力的Transformer架构在自然语言处理中取得了成功。 [参考文档1：vit.pdf；第1页（物理页码）][参考文档3：vit.pdf；第1页（物理页码）]\\n\\n### 方法\\n\\n研究者将图像分割成块，将这些块的线性嵌入序列输入标准的Transformer编码器，以直接应用于图像识别任务。 [参考文档9：vit.pdf；第1页（物理页码）][参考文档10：vit.pdf；第1页（物理页码）]\\n\\n### 结果\\n\\nVision Transformer（ViT）在大规模预训练后，在多个图像分类基准测试中达到了与最先进的卷积网络相当或更好的性能，同时训练所需的计算资源较少。 [参考文档2：vit.pdf；第1页（物理页码）][参考文档7：vit.pdf；第9页（物理页码）]\\n\\n### 结论\\n\\n尽管ViT在小型数据集上的表现不如ResNet，但大规模预训练可以弥补这一不足，ViT在多个图像识别基准测试中表现出色。 [参考文档11：vit.pdf；第2页（物理页码）]\\n\\n## 参考来源\\n- [参考文档1] vit.pdf；第1页（物理页码）\\n- [参考文档3] vit.pdf；第1页（物理页码）\\n- [参考文档9] vit.pdf；第1页（物理页码）\\n- [参考文档10] vit.pdf；第1页（物理页码）\\n- [参考文档2] vit.pdf；第1页（物理页码）\\n- [参考文档7] vit.pdf；第9页（物理页码）\\n- [参考文档11] vit.pdf；第2页（物理页码）', 'citations': [{'id': 1, 'source_file': 'vit.pdf', 'location': '第1页（物理页码）', 'text': '\\n{adosovitskiy, neilhoulsby}@google.com\\narXiv:2010.11929v2  [cs.CV]  3 Jun 2021\\nABSTRACT\\nWhile the Transformer architecture has become the de-facto standard for natural\\nlanguage processing tasks, its applications to computer vision remain limited. In\\nvision, attention is either applied in conjunction with convolutional networks, or\\nused to replace certain components of convolutional networks while keeping their\\noverall structure in place. We show that this reliance on CNNs is not necessary', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf', 'file_type': '.pdf', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'page': 0, 'page_number': 1, 'chunk_id': '430cc231bdbc69326431224296bc2322c98c08f799fbc035245353f3ea158d1c'}, 'truncated': False}, {'id': 3, 'source_file': 'vit.pdf', 'location': '第1页（物理页码）', 'text': '\\n1\\nINTRODUCTION\\nSelf-attention-based architectures, in particular Transformers (Vaswani et al., 2017), have become\\nthe model of choice in natural language processing (NLP). The dominant approach is to pre-train on\\na large text corpus and then ﬁne-tune on a smaller task-speciﬁc dataset (Devlin et al., 2019). Thanks\\nto Transformers’ computational efﬁciency and scalability, it has become possible to train models of', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf', 'file_type': '.pdf', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'page': 0, 'page_number': 1, 'chunk_id': 'ac7ba3fd75f9d49f078479e0471530bf615e21b4b7568b6be99400031dcc058d'}, 'truncated': False}, {'id': 9, 'source_file': 'vit.pdf', 'location': '第1页（物理页码）', 'text': '\\nTransformer directly to images, with the fewest possible modiﬁcations. To do so, we split an image\\ninto patches and provide the sequence of linear embeddings of these patches as an input to a Trans-\\nformer. Image patches are treated the same way as tokens (words) in an NLP application. We train\\nthe model on image classiﬁcation in supervised fashion.\\nWhen trained on mid-sized datasets such as ImageNet without strong regularization, these mod-', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf', 'file_type': '.pdf', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'page': 0, 'page_number': 1, 'chunk_id': '24f092f31d91ecf039431f64844afbb8b4d0866ec62f095ccae1a5852eb9b467'}, 'truncated': False}, {'id': 10, 'source_file': 'vit.pdf', 'location': '第1页（物理页码）', 'text': '\\nels yield modest accuracies of a few percentage points below ResNets of comparable size. This\\nseemingly discouraging outcome may be expected: Transformers lack some of the inductive biases\\n^{1}Fine-tuning\\nhttps://github.com/\\ncode\\nand\\npre-trained\\nmodels\\nare\\navailable\\nat\\ngoogle-research/vision_transformer\\n1', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf', 'file_type': '.pdf', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'page': 0, 'page_number': 1, 'chunk_id': '29c261975c10b37f071fc26e384462d4496b38785c106f577cdeffaeef63bd9f'}, 'truncated': False}, {'id': 2, 'source_file': 'vit.pdf', 'location': '第1页（物理页码）', 'text': '\\nand a pure transformer applied directly to sequences of image patches can perform\\nvery well on image classiﬁcation tasks. When pre-trained on large amounts of\\ndata and transferred to multiple mid-sized or small image recognition benchmarks\\n(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent\\nresults compared to state-of-the-art convolutional networks while requiring sub-\\nstantially fewer computational resources to train.^{1}\\n1\\nINTRODUCTION', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf', 'file_type': '.pdf', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'page': 0, 'page_number': 1, 'chunk_id': '8ae84e98efc77b081095c132ff5b25129ef02ad76f29b56b3fb1f0d252607ed9'}, 'truncated': False}, {'id': 7, 'source_file': 'vit.pdf', 'location': '第9页（物理页码）', 'text': '\\nsequence of patches and process it by a standard Transformer encoder as used in NLP. This simple,\\nyet scalable, strategy works surprisingly well when coupled with pre-training on large datasets.\\nThus, Vision Transformer matches or exceeds the state of the art on many image classiﬁcation\\ndatasets, whilst being relatively cheap to pre-train.\\nWhile these initial results are encouraging, many challenges remain. One is to apply ViT to other', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf', 'file_type': '.pdf', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'page': 8, 'page_number': 9, 'chunk_id': '5b94a7819e50464ef67e4e46765090f2478fe83e24c8ac830e227b2e3f8db334'}, 'truncated': False}, {'id': 11, 'source_file': 'vit.pdf', 'location': '第2页（物理页码）', 'text': 'Published as a conference paper at ICLR 2021\\ninherent to CNNs, such as translation equivariance and locality, and therefore do not generalize well\\nwhen trained on insufﬁcient amounts of data.\\nHowever, the picture changes if the models are trained on larger datasets (14M-300M images). We\\nﬁnd that large scale training trumps inductive bias. Our Vision Transformer (ViT) attains excellent\\nresults when pre-trained at sufﬁcient scale and transferred to tasks with fewer datapoints. When', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf', 'file_type': '.pdf', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'page': 1, 'page_number': 2, 'chunk_id': 'b2c5ca4a2c2da946904f823def4d3088f4efceca71e298d0027a09bddff4df1b'}, 'truncated': False}], 'invalid_citation_ids': [], 'missing_citations': False, 'warnings': ['原文已按预算选取并截断；摘要仅依据返回的可见原文，并非全文精读。'], 'status': 'answered', 'sections': {'background': {'text': '传统的卷积神经网络（CNN）在计算机视觉中占主导地位，而基于自注意力的Transformer架构在自然语言处理中取得了成功。', 'reference_ids': [1, 3]}, 'method': {'text': '研究者将图像分割成块，将这些块的线性嵌入序列输入标准的Transformer编码器，以直接应用于图像识别任务。', 'reference_ids': [9, 10]}, 'results': {'text': 'Vision Transformer（ViT）在大规模预训练后，在多个图像分类基准测试中达到了与最先进的卷积网络相当或更好的性能，同时训练所需的计算资源较少。', 'reference_ids': [2, 7]}, 'conclusion': {'text': '尽管ViT在小型数据集上的表现不如ResNet，但大规模预训练可以弥补这一不足，ViT在多个图像识别基准测试中表现出色。', 'reference_ids': [11]}}, 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'source_file': 'vit.pdf', 'missing_fields': [], 'references': [{'id': 1, 'source_file': 'vit.pdf', 'location': '第1页（物理页码）', 'text': '\\n{adosovitskiy, neilhoulsby}@google.com\\narXiv:2010.11929v2  [cs.CV]  3 Jun 2021\\nABSTRACT\\nWhile the Transformer architecture has become the de-facto standard for natural\\nlanguage processing tasks, its applications to computer vision remain limited. In\\nvision, attention is either applied in conjunction with convolutional networks, or\\nused to replace certain components of convolutional networks while keeping their\\noverall structure in place. We show that this reliance on CNNs is not necessary', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf', 'file_type': '.pdf', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'page': 0, 'page_number': 1, 'chunk_id': '430cc231bdbc69326431224296bc2322c98c08f799fbc035245353f3ea158d1c'}, 'truncated': False}, {'id': 2, 'source_file': 'vit.pdf', 'location': '第1页（物理页码）', 'text': '\\nand a pure transformer applied directly to sequences of image patches can perform\\nvery well on image classiﬁcation tasks. When pre-trained on large amounts of\\ndata and transferred to multiple mid-sized or small image recognition benchmarks\\n(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent\\nresults compared to state-of-the-art convolutional networks while requiring sub-\\nstantially fewer computational resources to train.^{1}\\n1\\nINTRODUCTION', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf', 'file_type': '.pdf', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'page': 0, 'page_number': 1, 'chunk_id': '8ae84e98efc77b081095c132ff5b25129ef02ad76f29b56b3fb1f0d252607ed9'}, 'truncated': False}, {'id': 3, 'source_file': 'vit.pdf', 'location': '第1页（物理页码）', 'text': '\\n1\\nINTRODUCTION\\nSelf-attention-based architectures, in particular Transformers (Vaswani et al., 2017), have become\\nthe model of choice in natural language processing (NLP). The dominant approach is to pre-train on\\na large text corpus and then ﬁne-tune on a smaller task-speciﬁc dataset (Devlin et al., 2019). Thanks\\nto Transformers’ computational efﬁciency and scalability, it has become possible to train models of', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf', 'file_type': '.pdf', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'page': 0, 'page_number': 1, 'chunk_id': 'ac7ba3fd75f9d49f078479e0471530bf615e21b4b7568b6be99400031dcc058d'}, 'truncated': False}, {'id': 4, 'source_file': 'vit.pdf', 'location': '第1页（物理页码）', 'text': '\\nunprecedented size, with over 100B parameters (Brown et al., 2020; Lepikhin et al., 2020). With the\\nmodels and datasets growing, there is still no sign of saturating performance.\\nIn computer vision, however, convolutional architectures remain dominant (LeCun et al., 1989;\\nKrizhevsky et al., 2012; He et al., 2016). Inspired by NLP successes, multiple works try combining\\nCNN-like architectures with self-attention (Wang et al., 2018; Carion et al., 2020), some replacing', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf', 'file_type': '.pdf', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'page': 0, 'page_number': 1, 'chunk_id': '3fa2b491543f906078cf9b9d8a3e76dc0ec3bf6f0b4435106a32fcd1c9cda123'}, 'truncated': False}, {'id': 5, 'source_file': 'vit.pdf', 'location': '第1页（物理页码）', 'text': '\\nthe convolutions entirely (Ramachandran et al., 2019; Wang et al., 2020a). The latter models, while\\ntheoretically efﬁcient, have not yet been scaled effectively on modern hardware accelerators due to\\nthe use of specialized attention patterns. Therefore, in large-scale image recognition, classic ResNet-\\nlike architectures are still state of the art (Mahajan et al., 2018; Xie et al., 2020; Kolesnikov et al.,\\n2020).\\nInspired by the Transformer scaling successes in NLP, we experiment with applying a standard', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf', 'file_type': '.pdf', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'page': 0, 'page_number': 1, 'chunk_id': '7624524ee966dcc7a0ea60c2ccb6a14e050e3a022d3339b778789ecd1b8309ad'}, 'truncated': False}, {'id': 6, 'source_file': 'vit.pdf', 'location': '第9页（物理页码）', 'text': '\\nAppendix B.1.2 contains further details. We leave exploration of contrastive pre-training (Chen\\net al., 2020b; He et al., 2020; Bachman et al., 2019; H´enaff et al., 2020) to future work.\\n5\\nCONCLUSION\\nWe have explored the direct application of Transformers to image recognition. Unlike prior works\\nusing self-attention in computer vision, we do not introduce image-speciﬁc inductive biases into\\nthe architecture apart from the initial patch extraction step. Instead, we interpret an image as a', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf', 'file_type': '.pdf', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'page': 8, 'page_number': 9, 'chunk_id': 'e5543bb8269a2712678abf48c80b896a240d038ecdbc4ee5b6e1e426b5cf5ad7'}, 'truncated': False}, {'id': 7, 'source_file': 'vit.pdf', 'location': '第9页（物理页码）', 'text': '\\nsequence of patches and process it by a standard Transformer encoder as used in NLP. This simple,\\nyet scalable, strategy works surprisingly well when coupled with pre-training on large datasets.\\nThus, Vision Transformer matches or exceeds the state of the art on many image classiﬁcation\\ndatasets, whilst being relatively cheap to pre-train.\\nWhile these initial results are encouraging, many challenges remain. One is to apply ViT to other', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf', 'file_type': '.pdf', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'page': 8, 'page_number': 9, 'chunk_id': '5b94a7819e50464ef67e4e46765090f2478fe83e24c8ac830e227b2e3f8db334'}, 'truncated': False}, {'id': 8, 'source_file': 'vit.pdf', 'location': '第9页（物理页码）', 'text': '\\ncomputer vision tasks, such as detection and segmentation. Our results, coupled with those in Carion\\net al. (2020), indicate the promise of this approach. Another challenge is to continue exploring self-\\nsupervised pre-training methods. Our initial experiments show improvement from self-supervised\\npre-training, but there is still large gap between self-supervised and large-scale supervised pre-\\ntraining. Finally, further scaling of ViT would likely lead to improved performance.\\nACKNOWLEDGEMENTS', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf', 'file_type': '.pdf', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'page': 8, 'page_number': 9, 'chunk_id': '89290903d7fe3a527e802f4a66abf3e5e54cf5d73a713155c9ccac54031efa15'}, 'truncated': False}, {'id': 9, 'source_file': 'vit.pdf', 'location': '第1页（物理页码）', 'text': '\\nTransformer directly to images, with the fewest possible modiﬁcations. To do so, we split an image\\ninto patches and provide the sequence of linear embeddings of these patches as an input to a Trans-\\nformer. Image patches are treated the same way as tokens (words) in an NLP application. We train\\nthe model on image classiﬁcation in supervised fashion.\\nWhen trained on mid-sized datasets such as ImageNet without strong regularization, these mod-', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf', 'file_type': '.pdf', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'page': 0, 'page_number': 1, 'chunk_id': '24f092f31d91ecf039431f64844afbb8b4d0866ec62f095ccae1a5852eb9b467'}, 'truncated': False}, {'id': 10, 'source_file': 'vit.pdf', 'location': '第1页（物理页码）', 'text': '\\nels yield modest accuracies of a few percentage points below ResNets of comparable size. This\\nseemingly discouraging outcome may be expected: Transformers lack some of the inductive biases\\n^{1}Fine-tuning\\nhttps://github.com/\\ncode\\nand\\npre-trained\\nmodels\\nare\\navailable\\nat\\ngoogle-research/vision_transformer\\n1', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf', 'file_type': '.pdf', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'page': 0, 'page_number': 1, 'chunk_id': '29c261975c10b37f071fc26e384462d4496b38785c106f577cdeffaeef63bd9f'}, 'truncated': False}, {'id': 11, 'source_file': 'vit.pdf', 'location': '第2页（物理页码）', 'text': 'Published as a conference paper at ICLR 2021\\ninherent to CNNs, such as translation equivariance and locality, and therefore do not generalize well\\nwhen trained on insufﬁcient amounts of data.\\nHowever, the picture changes if the models are trained on larger datasets (14M-300M images). We\\nﬁnd that large scale training trumps inductive bias. Our Vision Transformer (ViT) attains excellent\\nresults when pre-trained at sufﬁcient scale and transferred to tasks with fewer datapoints. When', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf', 'file_type': '.pdf', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'page': 1, 'page_number': 2, 'chunk_id': 'b2c5ca4a2c2da946904f823def4d3088f4efceca71e298d0027a09bddff4df1b'}, 'truncated': False}, {'id': 12, 'source_file': 'vit.pdf', 'location': '第2页（物理页码）', 'text': '\\npre-trained on the public ImageNet-21k dataset or the in-house JFT-300M dataset, ViT approaches\\nor beats state of the art on multiple image recognition benchmarks. In particular, the best model\\nreaches the accuracy of 88.55% on ImageNet, 90.72% on ImageNet-ReaL, 94.55% on CIFAR-100,\\nand 77.63% on the VTAB suite of 19 tasks.\\n2\\nRELATED WORK\\nTransformers were proposed by Vaswani et al.', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6/vit.pdf', 'source_file': 'vit.pdf', 'file_type': '.pdf', 'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'page': 1, 'page_number': 2, 'chunk_id': '9b043bf909596310b3e93dd842ed1b2f1e77ab141d8616dee3c9f177be0dcea4'}, 'truncated': True}], 'input_truncated': True, 'model': 'qwen2.5:7b', 'usage': {'prompt_eval_count': 1815, 'eval_count': 227}, 'elapsed_seconds': 20.127272249999805}",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "tool",
+          "name": "paper_summary",
+          "id": null,
+          "tool_call_id": "350ff748c0834d868d4f1c65d19862a1",
+          "artifact": null,
+          "status": "success"
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "中文功能样例.docx",
+      "event": {
+        "type": "tool_result",
+        "call_id": "5825aaacd22e4d99b63aaa03d5f741a4",
+        "name": "paper_summary",
+        "args": {
+          "doc_id": "9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40"
+        },
+        "status": "success",
+        "result": {
+          "answer": "### 背景\n\n通用语言模型在处理农业课程问题时容易出错，因为缺乏相关专业资料。 [参考文档2：中文功能样例.docx；段落2]\n\n### 方法\n\n研究采用本地模型，将文档分割成512字符块，结合向量和BM25检索技术进行重排序。 [参考文档3：中文功能样例.docx；段落3]\n\n### 结果\n\n在50道课程题中，43道被正确回答，正确率为86%。 [参考文档4：中文功能样例.docx；段落4]\n\n### 结论\n\n课程资料检索在本研究范围内有效，但需谨慎使用并进一步验证其在更广泛农业问题上的适用性。 [参考文档5：中文功能样例.docx；段落5]\n\n## 参考来源\n- [参考文档2] 中文功能样例.docx；段落2\n- [参考文档3] 中文功能样例.docx；段落3\n- [参考文档4] 中文功能样例.docx；段落4\n- [参考文档5] 中文功能样例.docx；段落5",
+          "citations": [
+            {
+              "id": 2,
+              "source_file": "中文功能样例.docx",
+              "location": "段落2",
+              "text": "背景：通用语言模型缺少农业课程专业资料，回答容易出错。",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40/中文功能样例.docx",
+                "source_file": "中文功能样例.docx",
+                "file_type": ".docx",
+                "doc_id": "9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40",
+                "paragraph_index": 2,
+                "chunk_id": "6754c0ffeb33302be3795f346a9372c68f8502e6bb5add1fc4d2a6c5638c6dd3"
+              },
+              "truncated": false
+            },
+            {
+              "id": 3,
+              "source_file": "中文功能样例.docx",
+              "location": "段落3",
+              "text": "方法：使用本地模型，将文档切成512字符块，融合向量和BM25检索，再进行重排序。",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40/中文功能样例.docx",
+                "source_file": "中文功能样例.docx",
+                "file_type": ".docx",
+                "doc_id": "9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40",
+                "paragraph_index": 3,
+                "chunk_id": "42596329b18e46836a64a3b2fb2417032072dc7438da015af3e3c0ac715e0f73"
+              },
+              "truncated": false
+            },
+            {
+              "id": 4,
+              "source_file": "中文功能样例.docx",
+              "location": "段落4",
+              "text": "结果：本样例设定50道课程题，其中43道回答正确，正确率86%；这是构造数据，不是项目实测。",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40/中文功能样例.docx",
+                "source_file": "中文功能样例.docx",
+                "file_type": ".docx",
+                "doc_id": "9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40",
+                "paragraph_index": 4,
+                "chunk_id": "41f23cdfd510140d60a0d279f632439cf5b65c06c8be66d7e46d35ed5aacd78b"
+              },
+              "truncated": false
+            },
+            {
+              "id": 5,
+              "source_file": "中文功能样例.docx",
+              "location": "段落5",
+              "text": "结论：在本样例范围内，课程资料检索能够辅助回答；仍需核对来源，不能推广为所有农业问题的效果。",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40/中文功能样例.docx",
+                "source_file": "中文功能样例.docx",
+                "file_type": ".docx",
+                "doc_id": "9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40",
+                "paragraph_index": 5,
+                "chunk_id": "847845e12560455735116b0689f89a06e72fba23f84765c0b4948799de92543c"
+              },
+              "truncated": false
+            }
+          ],
+          "invalid_citation_ids": [],
+          "missing_citations": false,
+          "warnings": [],
+          "status": "answered",
+          "sections": {
+            "background": {
+              "text": "通用语言模型在处理农业课程问题时容易出错，因为缺乏相关专业资料。",
+              "reference_ids": [
+                2
+              ]
+            },
+            "method": {
+              "text": "研究采用本地模型，将文档分割成512字符块，结合向量和BM25检索技术进行重排序。",
+              "reference_ids": [
+                3
+              ]
+            },
+            "results": {
+              "text": "在50道课程题中，43道被正确回答，正确率为86%。",
+              "reference_ids": [
+                4
+              ]
+            },
+            "conclusion": {
+              "text": "课程资料检索在本研究范围内有效，但需谨慎使用并进一步验证其在更广泛农业问题上的适用性。",
+              "reference_ids": [
+                5
+              ]
+            }
+          },
+          "doc_id": "9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40",
+          "source_file": "中文功能样例.docx",
+          "missing_fields": [],
+          "references": [
+            {
+              "id": 1,
+              "source_file": "中文功能样例.docx",
+              "location": "段落1",
+              "text": "农业课程问答的检索增强研究（人工构造的中文功能样例，并非真实发表论文）",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40/中文功能样例.docx",
+                "source_file": "中文功能样例.docx",
+                "file_type": ".docx",
+                "doc_id": "9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40",
+                "paragraph_index": 1,
+                "chunk_id": "ac277e0e4e0bda5b9ebc1307ea643a86359cbd7e07895b951ce830a0b28802f0"
+              },
+              "truncated": false
+            },
+            {
+              "id": 2,
+              "source_file": "中文功能样例.docx",
+              "location": "段落2",
+              "text": "背景：通用语言模型缺少农业课程专业资料，回答容易出错。",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40/中文功能样例.docx",
+                "source_file": "中文功能样例.docx",
+                "file_type": ".docx",
+                "doc_id": "9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40",
+                "paragraph_index": 2,
+                "chunk_id": "6754c0ffeb33302be3795f346a9372c68f8502e6bb5add1fc4d2a6c5638c6dd3"
+              },
+              "truncated": false
+            },
+            {
+              "id": 3,
+              "source_file": "中文功能样例.docx",
+              "location": "段落3",
+              "text": "方法：使用本地模型，将文档切成512字符块，融合向量和BM25检索，再进行重排序。",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40/中文功能样例.docx",
+                "source_file": "中文功能样例.docx",
+                "file_type": ".docx",
+                "doc_id": "9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40",
+                "paragraph_index": 3,
+                "chunk_id": "42596329b18e46836a64a3b2fb2417032072dc7438da015af3e3c0ac715e0f73"
+              },
+              "truncated": false
+            },
+            {
+              "id": 4,
+              "source_file": "中文功能样例.docx",
+              "location": "段落4",
+              "text": "结果：本样例设定50道课程题，其中43道回答正确，正确率86%；这是构造数据，不是项目实测。",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40/中文功能样例.docx",
+                "source_file": "中文功能样例.docx",
+                "file_type": ".docx",
+                "doc_id": "9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40",
+                "paragraph_index": 4,
+                "chunk_id": "41f23cdfd510140d60a0d279f632439cf5b65c06c8be66d7e46d35ed5aacd78b"
+              },
+              "truncated": false
+            },
+            {
+              "id": 5,
+              "source_file": "中文功能样例.docx",
+              "location": "段落5",
+              "text": "结论：在本样例范围内，课程资料检索能够辅助回答；仍需核对来源，不能推广为所有农业问题的效果。",
+              "metadata": {
+                "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40/中文功能样例.docx",
+                "source_file": "中文功能样例.docx",
+                "file_type": ".docx",
+                "doc_id": "9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40",
+                "paragraph_index": 5,
+                "chunk_id": "847845e12560455735116b0689f89a06e72fba23f84765c0b4948799de92543c"
+              },
+              "truncated": false
+            }
+          ],
+          "input_truncated": false,
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 415,
+            "eval_count": 194
+          },
+          "elapsed_seconds": 10.567579209000542
+        },
+        "error": "",
+        "elapsed_seconds": 10.568498000000545,
+        "message": {
+          "content": "{'answer': '### 背景\\n\\n通用语言模型在处理农业课程问题时容易出错，因为缺乏相关专业资料。 [参考文档2：中文功能样例.docx；段落2]\\n\\n### 方法\\n\\n研究采用本地模型，将文档分割成512字符块，结合向量和BM25检索技术进行重排序。 [参考文档3：中文功能样例.docx；段落3]\\n\\n### 结果\\n\\n在50道课程题中，43道被正确回答，正确率为86%。 [参考文档4：中文功能样例.docx；段落4]\\n\\n### 结论\\n\\n课程资料检索在本研究范围内有效，但需谨慎使用并进一步验证其在更广泛农业问题上的适用性。 [参考文档5：中文功能样例.docx；段落5]\\n\\n## 参考来源\\n- [参考文档2] 中文功能样例.docx；段落2\\n- [参考文档3] 中文功能样例.docx；段落3\\n- [参考文档4] 中文功能样例.docx；段落4\\n- [参考文档5] 中文功能样例.docx；段落5', 'citations': [{'id': 2, 'source_file': '中文功能样例.docx', 'location': '段落2', 'text': '背景：通用语言模型缺少农业课程专业资料，回答容易出错。', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40/中文功能样例.docx', 'source_file': '中文功能样例.docx', 'file_type': '.docx', 'doc_id': '9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40', 'paragraph_index': 2, 'chunk_id': '6754c0ffeb33302be3795f346a9372c68f8502e6bb5add1fc4d2a6c5638c6dd3'}, 'truncated': False}, {'id': 3, 'source_file': '中文功能样例.docx', 'location': '段落3', 'text': '方法：使用本地模型，将文档切成512字符块，融合向量和BM25检索，再进行重排序。', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40/中文功能样例.docx', 'source_file': '中文功能样例.docx', 'file_type': '.docx', 'doc_id': '9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40', 'paragraph_index': 3, 'chunk_id': '42596329b18e46836a64a3b2fb2417032072dc7438da015af3e3c0ac715e0f73'}, 'truncated': False}, {'id': 4, 'source_file': '中文功能样例.docx', 'location': '段落4', 'text': '结果：本样例设定50道课程题，其中43道回答正确，正确率86%；这是构造数据，不是项目实测。', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40/中文功能样例.docx', 'source_file': '中文功能样例.docx', 'file_type': '.docx', 'doc_id': '9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40', 'paragraph_index': 4, 'chunk_id': '41f23cdfd510140d60a0d279f632439cf5b65c06c8be66d7e46d35ed5aacd78b'}, 'truncated': False}, {'id': 5, 'source_file': '中文功能样例.docx', 'location': '段落5', 'text': '结论：在本样例范围内，课程资料检索能够辅助回答；仍需核对来源，不能推广为所有农业问题的效果。', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40/中文功能样例.docx', 'source_file': '中文功能样例.docx', 'file_type': '.docx', 'doc_id': '9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40', 'paragraph_index': 5, 'chunk_id': '847845e12560455735116b0689f89a06e72fba23f84765c0b4948799de92543c'}, 'truncated': False}], 'invalid_citation_ids': [], 'missing_citations': False, 'warnings': [], 'status': 'answered', 'sections': {'background': {'text': '通用语言模型在处理农业课程问题时容易出错，因为缺乏相关专业资料。', 'reference_ids': [2]}, 'method': {'text': '研究采用本地模型，将文档分割成512字符块，结合向量和BM25检索技术进行重排序。', 'reference_ids': [3]}, 'results': {'text': '在50道课程题中，43道被正确回答，正确率为86%。', 'reference_ids': [4]}, 'conclusion': {'text': '课程资料检索在本研究范围内有效，但需谨慎使用并进一步验证其在更广泛农业问题上的适用性。', 'reference_ids': [5]}}, 'doc_id': '9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40', 'source_file': '中文功能样例.docx', 'missing_fields': [], 'references': [{'id': 1, 'source_file': '中文功能样例.docx', 'location': '段落1', 'text': '农业课程问答的检索增强研究（人工构造的中文功能样例，并非真实发表论文）', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40/中文功能样例.docx', 'source_file': '中文功能样例.docx', 'file_type': '.docx', 'doc_id': '9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40', 'paragraph_index': 1, 'chunk_id': 'ac277e0e4e0bda5b9ebc1307ea643a86359cbd7e07895b951ce830a0b28802f0'}, 'truncated': False}, {'id': 2, 'source_file': '中文功能样例.docx', 'location': '段落2', 'text': '背景：通用语言模型缺少农业课程专业资料，回答容易出错。', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40/中文功能样例.docx', 'source_file': '中文功能样例.docx', 'file_type': '.docx', 'doc_id': '9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40', 'paragraph_index': 2, 'chunk_id': '6754c0ffeb33302be3795f346a9372c68f8502e6bb5add1fc4d2a6c5638c6dd3'}, 'truncated': False}, {'id': 3, 'source_file': '中文功能样例.docx', 'location': '段落3', 'text': '方法：使用本地模型，将文档切成512字符块，融合向量和BM25检索，再进行重排序。', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40/中文功能样例.docx', 'source_file': '中文功能样例.docx', 'file_type': '.docx', 'doc_id': '9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40', 'paragraph_index': 3, 'chunk_id': '42596329b18e46836a64a3b2fb2417032072dc7438da015af3e3c0ac715e0f73'}, 'truncated': False}, {'id': 4, 'source_file': '中文功能样例.docx', 'location': '段落4', 'text': '结果：本样例设定50道课程题，其中43道回答正确，正确率86%；这是构造数据，不是项目实测。', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40/中文功能样例.docx', 'source_file': '中文功能样例.docx', 'file_type': '.docx', 'doc_id': '9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40', 'paragraph_index': 4, 'chunk_id': '41f23cdfd510140d60a0d279f632439cf5b65c06c8be66d7e46d35ed5aacd78b'}, 'truncated': False}, {'id': 5, 'source_file': '中文功能样例.docx', 'location': '段落5', 'text': '结论：在本样例范围内，课程资料检索能够辅助回答；仍需核对来源，不能推广为所有农业问题的效果。', 'metadata': {'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpyborcbks/raw/9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40/中文功能样例.docx', 'source_file': '中文功能样例.docx', 'file_type': '.docx', 'doc_id': '9e92aa5acd9ddd99449a8bc62d231217f31f9c6c31352019a42710fd61c8cf40', 'paragraph_index': 5, 'chunk_id': '847845e12560455735116b0689f89a06e72fba23f84765c0b4948799de92543c'}, 'truncated': False}], 'input_truncated': False, 'model': 'qwen2.5:7b', 'usage': {'prompt_eval_count': 415, 'eval_count': 194}, 'elapsed_seconds': 10.567579209000542}",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "tool",
+          "name": "paper_summary",
+          "id": null,
+          "tool_call_id": "5825aaacd22e4d99b63aaa03d5f741a4",
+          "artifact": null,
+          "status": "success"
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "current_time",
+      "event": {
+        "type": "tool_result",
+        "call_id": "075f30f3c2194481b071353256236d6e",
+        "name": "current_time",
+        "args": {},
+        "status": "success",
+        "result": {
+          "system_time": "2026-10-02T18:59:41+08:00",
+          "timezone": "CST",
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          }
+        },
+        "error": "",
+        "elapsed_seconds": 0.0012427500005287584,
+        "message": {
+          "content": "{'system_time': '2026-10-02T18:59:41+08:00', 'timezone': 'CST', 'usage': {'prompt_eval_count': 0, 'eval_count': 0}}",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "tool",
+          "name": "current_time",
+          "id": null,
+          "tool_call_id": "075f30f3c2194481b071353256236d6e",
+          "artifact": null,
+          "status": "success"
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "disabled_search",
+      "event": {
+        "type": "tool_result",
+        "call_id": "6619984e67c945cd90563baf4cbf3e08",
+        "name": "web_search",
+        "args": {
+          "query": "Attention Is All You Need paper"
+        },
+        "status": "error",
+        "result": null,
+        "error": "ValueError: 联网搜索未启用；请在config.yaml中将agent.online_search_enabled设为true",
+        "elapsed_seconds": 0.0005244999993010424,
+        "message": {
+          "content": "ValueError: 联网搜索未启用；请在config.yaml中将agent.online_search_enabled设为true",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "tool",
+          "name": "web_search",
+          "id": null,
+          "tool_call_id": "6619984e67c945cd90563baf4cbf3e08",
+          "artifact": null,
+          "status": "error"
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "agent_time",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "调用current_time获取当前系统时间和时区。",
+          "next_step": "tool",
+          "tool_name": "current_time",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1295,
+            "eval_count": 36
+          },
+          "elapsed_seconds": 2.9548252080021484,
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "call_id": "080bd0ecf5b54489b63a73f1cff38131",
+          "name": "current_time",
+          "args": {},
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 0.8833547089998319,
+          "usage": {
+            "prompt_eval_count": 644,
+            "eval_count": 16
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "current_time",
+                "args": {},
+                "id": "080bd0ecf5b54489b63a73f1cff38131",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "call_id": "080bd0ecf5b54489b63a73f1cff38131",
+          "name": "current_time",
+          "args": {},
+          "status": "success",
+          "result": {
+            "system_time": "2026-10-02T18:59:45+08:00",
+            "timezone": "CST",
+            "usage": {
+              "prompt_eval_count": 0,
+              "eval_count": 0
+            }
+          },
+          "error": "",
+          "elapsed_seconds": 0.0009357499984616879,
+          "message": {
+            "content": "{'system_time': '2026-10-02T18:59:45+08:00', 'timezone': 'CST', 'usage': {'prompt_eval_count': 0, 'eval_count': 0}}",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "current_time",
+            "id": null,
+            "tool_call_id": "080bd0ecf5b54489b63a73f1cff38131",
+            "artifact": null,
+            "status": "success"
+          },
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "observation": "当前系统时间是2026-10-02 18:59:45，时区为CST。",
+          "decision": "finish",
+          "task_complete": true,
+          "answer": "当前系统时间是2026-10-02 18:59:45，时区为CST。",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1574,
+            "eval_count": 88
+          },
+          "elapsed_seconds": 6.732096042000194,
+          "iteration": 1
+        },
+        {
+          "type": "done",
+          "task_complete": true,
+          "stop_reason": "task_complete",
+          "full_response": "当前系统时间是2026-10-02 18:59:45，时区为CST。",
+          "iterations": 1,
+          "context": {
+            "observations": [
+              {
+                "call_id": "080bd0ecf5b54489b63a73f1cff38131",
+                "name": "current_time",
+                "args": {},
+                "status": "success",
+                "result": {
+                  "system_time": "2026-10-02T18:59:45+08:00",
+                  "timezone": "CST",
+                  "usage": {
+                    "prompt_eval_count": 0,
+                    "eval_count": 0
+                  }
+                },
+                "error": "",
+                "elapsed_seconds": 0.0009357499984616879
+              }
+            ],
+            "last_observation": {
+              "observation": "当前系统时间是2026-10-02 18:59:45，时区为CST。",
+              "decision": "finish",
+              "task_complete": true
+            }
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "live_search",
+      "event": {
+        "type": "tool_result",
+        "call_id": "98fc13189dea4484a6c4f381e606c00b",
+        "name": "web_search",
+        "args": {
+          "query": "Attention Is All You Need paper"
+        },
+        "status": "error",
+        "result": null,
+        "error": "RuntimeError: 联网搜索失败：搜索站点要求验证或暂未返回结果页，请稍后重试；请检查网络或稍后重试",
+        "elapsed_seconds": 1.2524412080019829,
+        "message": {
+          "content": "RuntimeError: 联网搜索失败：搜索站点要求验证或暂未返回结果页，请稍后重试；请检查网络或稍后重试",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "tool",
+          "name": "web_search",
+          "id": null,
+          "tool_call_id": "98fc13189dea4484a6c4f381e606c00b",
+          "artifact": null,
+          "status": "error"
+        }
+      },
+      "optional_network": true,
+      "passed": false
+    }
+  ],
+  "validation_complete": true,
+  "finished_at": "2026-10-02T18:59:53.545401+08:00"
+}

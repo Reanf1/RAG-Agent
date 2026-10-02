@@ -11,7 +11,7 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, Tool
 from langchain_core.tools import BaseTool
 from langchain_core.utils.function_calling import convert_to_openai_tool
 
-from src.agent.tools import AVAILABLE_TOOLS, execute_tool
+from src.agent.tools import execute_tool, get_available_tools
 from src.generation.rag_pipeline import generation_error, urlopen
 from src.utils.config import load_config
 
@@ -294,7 +294,7 @@ def run_react(question: str, tools: list[BaseTool] | None = None, context: dict 
     iteration, answer, reason, complete = 0, "", "error", False
     state = {}
     try:
-        tools = list(tools) if tools is not None else list(AVAILABLE_TOOLS)
+        tools = list(tools) if tools is not None else get_available_tools()
         build_thought_messages(question, tools, context)
         state = deepcopy(context) if context is not None else {}
         state.setdefault("observations", [])
