@@ -31,8 +31,7 @@ def route_question(question: str, tools: list[BaseTool], context: dict | None = 
     started = perf_counter()
     if not question.strip():
         raise ValueError("问题不能为空")
-    if context and any(context.get(key) for key in ("observations", "last_observation", "context", "history", "messages", "summary")):
-        return None
+    has_state = context and any(context.get(key) for key in ("observations", "last_observation", "context", "history", "messages", "summary"))
     if re.search(r"先.*(?:再|然后)|根据.*结果|用.*结果|不要|无需|不能|别调用|\b(?:then|after|don't|do not)\b", question, re.I):
         return None
     names = {item.name for item in tools}
@@ -44,9 +43,27 @@ def route_question(question: str, tools: list[BaseTool], context: dict | None = 
         "paper_summary": r"(?:生成|结构化).{0,8}摘要|(?:总结|概括).{0,15}(?:论文|文献)|\bsummari[sz]e.{0,25}(?:paper|document)",
         "paper_metadata": r"元信息|元数据|论文.{0,8}(?:标题|作者|年份|DOI)|\bpaper metadata\b",
         "paper_compare": r"(?:对比|比较).{0,20}(?:论文|文献)|两篇论文.{0,12}(?:区别|差异)|\bcompare.{0,25}papers?\b",
-        "web_search": r"(?:联网|网上|网络).{0,8}(?:搜索|查询)|\bsearch (?:the )?web\b",
+        "web_search": r"(?:联网|上网|网上|网络).{0,8}(?:搜索|查询|查找|检索)|\bsearch (?:the )?(?:web|internet)\b|\bsearch online\b",
     }
+    # “本文最新实验”属于本地证据；“最新论文”属于需要外部核验的信息。
+    local = bool(re.search(r"知识库|本地|已上传|已入库|上传的|这篇|本篇|本文|该论文|指定论文|\b[0-9a-f]{64}\b|\b(?:this|uploaded) (?:paper|document)s?\b", question, re.I))
+    fresh = bool(re.search(r"最新|最近|近期|实时|今年|\b(?:latest|recent|current advances)\b", question, re.I))
+    web = bool(re.search(patterns["web_search"], question, re.I))
+    if has_state and not web and re.search(r"代号|会话|对话|历史|\b(?:conversation|history)\b", question, re.I):
+        return None  # “最近的代号”是历史追问，不是需要联网核验的近期资讯。
+    if local and (web or fresh) and re.search(r"同时|以及|另外|并(?:且|联网)|\b(?:and|also)\b", question, re.I):
+        return None  # 本地证据与外部进展的组合任务交给ReAct，不跳过其中一种来源。
     hits = explicit or [name for name, pattern in patterns.items() if re.search(pattern, question, re.I)]
+    if fresh and not local and not explicit and not any(name in hits for name in ("current_time", "keyword_extract", "paper_list")):
+        hits = ["web_search"]
+    if hits == ["web_search"] and "web_search" not in names:
+        # 真实模型曾把禁用联网的最新论文问题改走RAG，明确结束比继续猜测可靠。
+        return {"type": "thought", "thought": "联网搜索当前不可用，无法核验最新外部信息。请在config.yaml中启用agent.online_search_enabled后重试。",
+                "next_step": "answer", "tool_name": None, "parallel_tools": [], "unavailable_tool": "web_search",
+                "route": "unavailable", "model": None, "usage": {"prompt_eval_count": 0, "eval_count": 0},
+                "elapsed_seconds": perf_counter() - started}
+    if has_state:
+        return None
     if len(hits) > 1:
         return None  # 多种意图交给模型判断是否独立，不能只做其中一项。
     selected, batch, reason = None, [], ""
@@ -59,7 +76,7 @@ def route_question(question: str, tools: list[BaseTool], context: dict | None = 
             if selected not in {"paper_metadata", "paper_summary", "knowledge_base_search", "keyword_extract"} or parallel_limit() < 2:
                 return None
             batch, reason = [selected], "分别处理两份已给定论文，Action可提出同一工具的独立调用。"
-    elif re.search(r"知识库|文献|论文|本文|\bpaper\b", question, re.I):
+    elif local or re.search(r"文献|论文|\bpapers?\b", question, re.I):
         if "knowledge_base_search" not in names:
             return None
         selected, reason = "knowledge_base_search", "论文资料问题优先查询实际知识库。"

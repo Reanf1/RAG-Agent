@@ -1,0 +1,743 @@
+{
+  "started_at": "2026-10-02T23:17:05.623663+08:00",
+  "rows": [
+    {
+      "name": "local_rag_citations",
+      "question": "知识库中Transformer在WMT2014英德翻译任务上的BLEU是多少？请在答案中标注提供的参考文档编号。",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "论文资料问题优先查询实际知识库。",
+          "next_step": "tool",
+          "tool_name": "knowledge_base_search",
+          "parallel_tools": [],
+          "route": "rule",
+          "model": null,
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          },
+          "elapsed_seconds": 0.0016490830021211877,
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "call_id": "c1ad7641e60748c59d8b25e910872b8f",
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "知识库中Transformer在WMT2014英德翻译任务上的BLEU是多少？请在答案中标注提供的参考文档编号。",
+            "doc_id": null
+          },
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 3.7510582499962766,
+          "usage": {
+            "prompt_eval_count": 1408,
+            "eval_count": 56
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "knowledge_base_search",
+                "args": {
+                  "question": "知识库中Transformer在WMT2014英德翻译任务上的BLEU是多少？请在答案中标注提供的参考文档编号。",
+                  "doc_id": null
+                },
+                "id": "c1ad7641e60748c59d8b25e910872b8f",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "call_id": "c1ad7641e60748c59d8b25e910872b8f",
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "知识库中Transformer在WMT2014英德翻译任务上的BLEU是多少？请在答案中标注提供的参考文档编号。",
+            "doc_id": null
+          },
+          "status": "success",
+          "result": {
+            "answer": "## 回答\n知识库中提到，Transformer在WMT 2014英德翻译任务上的BLEU得分为28.4。[参考文档1：attention.pdf；第1页（物理页码）]\n\n## 参考来源\n- [参考文档1] attention.pdf；第1页（物理页码）",
+            "citations": [
+              {
+                "id": 1,
+                "source_file": "attention.pdf",
+                "location": "第1页（物理页码）",
+                "text": "\nmechanism. We propose a new simple network architecture, the Transformer,\nbased solely on attention mechanisms, dispensing with recurrence and convolutions\nentirely. Experiments on two machine translation tasks show these models to\nbe superior in quality while being more parallelizable and requiring significantly\nless time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-\nto-German translation task, improving over the existing best results, including",
+                "metadata": {
+                  "chunk_id": "d71ae1e6ef8671942a5e3125b0913339b6e51106b3726acb06780f6798b818da",
+                  "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                  "file_type": ".pdf",
+                  "page": 0,
+                  "page_number": 1,
+                  "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-search-routing-oq6lw7ex/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                  "source_file": "attention.pdf"
+                },
+                "truncated": false,
+                "score": 0.9850342869758606
+              }
+            ],
+            "invalid_citation_ids": [],
+            "missing_citations": false,
+            "warnings": [],
+            "generation_mode": "grounded",
+            "notice": "",
+            "raw_answer": "## 回答\n知识库中提到，Transformer在WMT 2014英德翻译任务上的BLEU得分为28.4。[参考文档1]\n\n## 参考来源\n[参考文档1]",
+            "model": "qwen2.5:7b",
+            "options": {
+              "temperature": 0.1,
+              "top_p": 0.9,
+              "top_k": 40,
+              "num_ctx": 8192,
+              "num_predict": 512,
+              "repeat_penalty": 1.0
+            },
+            "done_reason": "stop",
+            "usage": {
+              "prompt_eval_count": 1556,
+              "eval_count": 50,
+              "total_duration": 7865326959,
+              "load_duration": 883792,
+              "prompt_eval_duration": 5411460000,
+              "eval_duration": 2433585000
+            },
+            "status": "answered",
+            "doc_id": null,
+            "sources": [
+              "attention.pdf"
+            ],
+            "top_score": 0.9850342869758606,
+            "retrieval_seconds": 2.719295584000065,
+            "elapsed_seconds": 10.587177374996827
+          },
+          "error": "",
+          "error_kind": null,
+          "elapsed_seconds": 10.591043500004162,
+          "message": {
+            "content": "{'answer': '## 回答\\n知识库中提到，Transformer在WMT 2014英德翻译任务上的BLEU得分为28.4。[参考文档1：attention.pdf；第1页（物理页码）]\\n\\n## 参考来源\\n- [参考文档1] attention.pdf；第1页（物理页码）', 'citations': [{'id': 1, 'source_file': 'attention.pdf', 'location': '第1页（物理页码）', 'text': '\\nmechanism. We propose a new simple network architecture, the Transformer,\\nbased solely on attention mechanisms, dispensing with recurrence and convolutions\\nentirely. Experiments on two machine translation tasks show these models to\\nbe superior in quality while being more parallelizable and requiring significantly\\nless time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-\\nto-German translation task, improving over the existing best results, including', 'metadata': {'chunk_id': 'd71ae1e6ef8671942a5e3125b0913339b6e51106b3726acb06780f6798b818da', 'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'file_type': '.pdf', 'page': 0, 'page_number': 1, 'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-search-routing-oq6lw7ex/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf', 'source_file': 'attention.pdf'}, 'truncated': False, 'score': 0.9850342869758606}], 'invalid_citation_ids': [], 'missing_citations': False, 'warnings': [], 'generation_mode': 'grounded', 'notice': '', 'raw_answer': '## 回答\\n知识库中提到，Transformer在WMT 2014英德翻译任务上的BLEU得分为28.4。[参考文档1]\\n\\n## 参考来源\\n[参考文档1]', 'model': 'qwen2.5:7b', 'options': {'temperature': 0.1, 'top_p': 0.9, 'top_k': 40, 'num_ctx': 8192, 'num_predict': 512, 'repeat_penalty': 1.0}, 'done_reason': 'stop', 'usage': {'prompt_eval_count': 1556, 'eval_count': 50, 'total_duration': 7865326959, 'load_duration': 883792, 'prompt_eval_duration': 5411460000, 'eval_duration': 2433585000}, 'status': 'answered', 'doc_id': None, 'sources': ['attention.pdf'], 'top_score': 0.9850342869758606, 'retrieval_seconds': 2.719295584000065, 'elapsed_seconds': 10.587177374996827}",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "knowledge_base_search",
+            "id": null,
+            "tool_call_id": "c1ad7641e60748c59d8b25e910872b8f",
+            "artifact": null,
+            "status": "success"
+          },
+          "attempts": [
+            {
+              "attempt": 1,
+              "status": "success",
+              "error": "",
+              "error_kind": null,
+              "elapsed_seconds": 10.590884249999363
+            }
+          ],
+          "execution_mode": "serial",
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "observation": "已找到Transformer在WMT2014英德翻译任务上的BLEU得分为28.4，参考文档为attention.pdf，位于第1页。",
+          "decision": "finish",
+          "task_complete": true,
+          "answer": "知识库中提到，Transformer在WMT 2014英德翻译任务上的BLEU得分为28.4。[参考文档1：attention.pdf；第1页（物理页码）]",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 4162,
+            "eval_count": 107
+          },
+          "elapsed_seconds": 16.32967958300287,
+          "iteration": 1
+        },
+        {
+          "type": "done",
+          "task_complete": true,
+          "stop_reason": "task_complete",
+          "full_response": "知识库中提到，Transformer在WMT 2014英德翻译任务上的BLEU得分为28.4。[参考文档1：attention.pdf；第1页（物理页码）]",
+          "iterations": 1,
+          "context": {
+            "observations": [
+              {
+                "call_id": "c1ad7641e60748c59d8b25e910872b8f",
+                "name": "knowledge_base_search",
+                "args": {
+                  "question": "知识库中Transformer在WMT2014英德翻译任务上的BLEU是多少？请在答案中标注提供的参考文档编号。",
+                  "doc_id": null
+                },
+                "status": "success",
+                "result": {
+                  "answer": "## 回答\n知识库中提到，Transformer在WMT 2014英德翻译任务上的BLEU得分为28.4。[参考文档1：attention.pdf；第1页（物理页码）]\n\n## 参考来源\n- [参考文档1] attention.pdf；第1页（物理页码）",
+                  "citations": [
+                    {
+                      "id": 1,
+                      "source_file": "attention.pdf",
+                      "location": "第1页（物理页码）",
+                      "text": "\nmechanism. We propose a new simple network architecture, the Transformer,\nbased solely on attention mechanisms, dispensing with recurrence and convolutions\nentirely. Experiments on two machine translation tasks show these models to\nbe superior in quality while being more parallelizable and requiring significantly\nless time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-\nto-German translation task, improving over the existing best results, including",
+                      "metadata": {
+                        "chunk_id": "d71ae1e6ef8671942a5e3125b0913339b6e51106b3726acb06780f6798b818da",
+                        "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                        "file_type": ".pdf",
+                        "page": 0,
+                        "page_number": 1,
+                        "source": "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-search-routing-oq6lw7ex/raw/bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697/attention.pdf",
+                        "source_file": "attention.pdf"
+                      },
+                      "truncated": false,
+                      "score": 0.9850342869758606
+                    }
+                  ],
+                  "invalid_citation_ids": [],
+                  "missing_citations": false,
+                  "warnings": [],
+                  "generation_mode": "grounded",
+                  "notice": "",
+                  "raw_answer": "## 回答\n知识库中提到，Transformer在WMT 2014英德翻译任务上的BLEU得分为28.4。[参考文档1]\n\n## 参考来源\n[参考文档1]",
+                  "model": "qwen2.5:7b",
+                  "options": {
+                    "temperature": 0.1,
+                    "top_p": 0.9,
+                    "top_k": 40,
+                    "num_ctx": 8192,
+                    "num_predict": 512,
+                    "repeat_penalty": 1.0
+                  },
+                  "done_reason": "stop",
+                  "usage": {
+                    "prompt_eval_count": 1556,
+                    "eval_count": 50,
+                    "total_duration": 7865326959,
+                    "load_duration": 883792,
+                    "prompt_eval_duration": 5411460000,
+                    "eval_duration": 2433585000
+                  },
+                  "status": "answered",
+                  "doc_id": null,
+                  "sources": [
+                    "attention.pdf"
+                  ],
+                  "top_score": 0.9850342869758606,
+                  "retrieval_seconds": 2.719295584000065,
+                  "elapsed_seconds": 10.587177374996827
+                },
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 10.591043500004162,
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "success",
+                    "error": "",
+                    "error_kind": null,
+                    "elapsed_seconds": 10.590884249999363
+                  }
+                ],
+                "execution_mode": "serial"
+              }
+            ],
+            "last_observation": {
+              "observation": "已找到Transformer在WMT2014英德翻译任务上的BLEU得分为28.4，参考文档为attention.pdf，位于第1页。",
+              "decision": "finish",
+              "task_complete": true
+            }
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "offline_latest_unavailable",
+      "question": "最新Transformer论文有哪些？",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "联网搜索当前不可用，无法核验最新外部信息。请在config.yaml中启用agent.online_search_enabled后重试。",
+          "next_step": "answer",
+          "tool_name": null,
+          "parallel_tools": [],
+          "unavailable_tool": "web_search",
+          "route": "unavailable",
+          "model": null,
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          },
+          "elapsed_seconds": 0.0001065420001395978,
+          "iteration": 1
+        },
+        {
+          "type": "action_skipped",
+          "reason": "所需联网工具不可用。",
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "observation": "联网搜索当前不可用，无法核验最新外部信息。请在config.yaml中启用agent.online_search_enabled后重试。",
+          "decision": "finish",
+          "task_complete": false,
+          "answer": "联网搜索当前不可用，无法核验最新外部信息。请在config.yaml中启用agent.online_search_enabled后重试。",
+          "model": null,
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          },
+          "iteration": 1
+        },
+        {
+          "type": "done",
+          "task_complete": false,
+          "stop_reason": "incomplete",
+          "full_response": "联网搜索当前不可用，无法核验最新外部信息。请在config.yaml中启用agent.online_search_enabled后重试。",
+          "iterations": 1,
+          "context": {
+            "observations": [],
+            "last_observation": {
+              "observation": "联网搜索当前不可用，无法核验最新外部信息。请在config.yaml中启用agent.online_search_enabled后重试。",
+              "decision": "finish",
+              "task_complete": false
+            }
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "model_local_scope_with_history",
+      "question": "这篇已上传论文报告的最新BLEU结果是多少？文献ID：bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+      "context": {
+        "history": [
+          {
+            "role": "human",
+            "content": "本轮只核对已上传论文原文。"
+          }
+        ]
+      },
+      "kind": "real_model_planning",
+      "thought": {
+        "type": "thought",
+        "thought": "查询已上传论文的最新BLEU结果。",
+        "next_step": "tool",
+        "tool_name": "knowledge_base_search",
+        "parallel_tools": [
+          "knowledge_base_search"
+        ],
+        "model": "qwen2.5:7b",
+        "usage": {
+          "prompt_eval_count": 2403,
+          "eval_count": 41
+        },
+        "elapsed_seconds": 4.606866916001309
+      },
+      "passed": true
+    },
+    {
+      "name": "model_external_freshness",
+      "question": "最近发布的Transformer研究论文有哪些？",
+      "context": null,
+      "kind": "real_model_planning",
+      "thought": {
+        "type": "thought",
+        "thought": "需要查询外部最新发布的信息",
+        "next_step": "tool",
+        "tool_name": "web_search",
+        "parallel_tools": [
+          "web_search"
+        ],
+        "model": "qwen2.5:7b",
+        "usage": {
+          "prompt_eval_count": 2317,
+          "eval_count": 41
+        },
+        "elapsed_seconds": 2.104605916996661
+      },
+      "passed": true
+    },
+    {
+      "name": "live_external_search",
+      "question": "联网搜索最新Transformer论文",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+          "next_step": "tool",
+          "tool_name": "web_search",
+          "parallel_tools": [],
+          "route": "rule",
+          "model": null,
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          },
+          "elapsed_seconds": 0.00032420799834653735,
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "call_id": "d080879261e44a34a39eb4e94de304f9",
+          "name": "web_search",
+          "args": {
+            "query": "最新Transformer论文"
+          },
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 1.211489540997718,
+          "usage": {
+            "prompt_eval_count": 1298,
+            "eval_count": 22
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "web_search",
+                "args": {
+                  "query": "最新Transformer论文"
+                },
+                "id": "d080879261e44a34a39eb4e94de304f9",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "call_id": "d080879261e44a34a39eb4e94de304f9",
+          "name": "web_search",
+          "args": {
+            "query": "最新Transformer论文"
+          },
+          "status": "error",
+          "result": null,
+          "error": "RuntimeError: 联网搜索失败：搜索站点要求验证或暂未返回结果页，请稍后重试；请检查网络或稍后重试",
+          "error_kind": "execution",
+          "elapsed_seconds": 1.4650288339980762,
+          "message": {
+            "content": "RuntimeError: 联网搜索失败：搜索站点要求验证或暂未返回结果页，请稍后重试；请检查网络或稍后重试",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "web_search",
+            "id": null,
+            "tool_call_id": "d080879261e44a34a39eb4e94de304f9",
+            "artifact": null,
+            "status": "error"
+          },
+          "attempts": [
+            {
+              "attempt": 1,
+              "status": "error",
+              "error": "RuntimeError: 联网搜索失败：搜索站点要求验证或暂未返回结果页，请稍后重试；请检查网络或稍后重试",
+              "error_kind": "execution",
+              "elapsed_seconds": 1.4649537079967558
+            }
+          ],
+          "execution_mode": "serial",
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "observation": "联网搜索失败，请稍后重试。",
+          "decision": "finish",
+          "task_complete": false,
+          "answer": "当前无法联网搜索最新Transformer论文，请稍后重试。",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 2678,
+            "eval_count": 45
+          },
+          "elapsed_seconds": 6.594442458997946,
+          "iteration": 1
+        },
+        {
+          "type": "done",
+          "task_complete": false,
+          "stop_reason": "incomplete",
+          "full_response": "当前无法联网搜索最新Transformer论文，请稍后重试。",
+          "iterations": 1,
+          "context": {
+            "observations": [
+              {
+                "call_id": "d080879261e44a34a39eb4e94de304f9",
+                "name": "web_search",
+                "args": {
+                  "query": "最新Transformer论文"
+                },
+                "status": "error",
+                "result": null,
+                "error": "RuntimeError: 联网搜索失败：搜索站点要求验证或暂未返回结果页，请稍后重试；请检查网络或稍后重试",
+                "error_kind": "execution",
+                "elapsed_seconds": 1.4650288339980762,
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "error",
+                    "error": "RuntimeError: 联网搜索失败：搜索站点要求验证或暂未返回结果页，请稍后重试；请检查网络或稍后重试",
+                    "error_kind": "execution",
+                    "elapsed_seconds": 1.4649537079967558
+                  }
+                ],
+                "execution_mode": "serial"
+              }
+            ],
+            "recovery": {
+              "failed_tools": [
+                "web_search"
+              ],
+              "available_alternatives": [],
+              "pending": true
+            },
+            "last_observation": {
+              "observation": "联网搜索失败，请稍后重试。",
+              "decision": "finish",
+              "task_complete": false
+            }
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "empty_local_no_auto_web",
+      "question": "知识库中关于这篇论文的实验数据集是什么？",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "论文资料问题优先查询实际知识库。",
+          "next_step": "tool",
+          "tool_name": "knowledge_base_search",
+          "parallel_tools": [],
+          "route": "rule",
+          "model": null,
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          },
+          "elapsed_seconds": 6.387499888660386e-05,
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "call_id": "3e568a5683214efc8da9c6e3f0a0c665",
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "知识库中关于这篇论文的实验数据集是什么？",
+            "doc_id": null
+          },
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 2.430691207999189,
+          "usage": {
+            "prompt_eval_count": 1390,
+            "eval_count": 38
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "knowledge_base_search",
+                "args": {
+                  "question": "知识库中关于这篇论文的实验数据集是什么？",
+                  "doc_id": null
+                },
+                "id": "3e568a5683214efc8da9c6e3f0a0c665",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "call_id": "3e568a5683214efc8da9c6e3f0a0c665",
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "知识库中关于这篇论文的实验数据集是什么？",
+            "doc_id": null
+          },
+          "status": "success",
+          "result": {
+            "answer": "当前知识库中未找到相关文档。以下为纯模型回答，没有知识库文献依据。\n\n当前知识库中未找到相关文档。因此无法提供关于这篇论文的实验数据集的信息。基于模型自身知识回答，这需要具体论文的详细信息才能确定。\n\n这是纯模型回答，没有知识库文献依据。\n\n## 参考来源\n无可引用来源",
+            "citations": [],
+            "invalid_citation_ids": [],
+            "missing_citations": false,
+            "warnings": [],
+            "generation_mode": "empty",
+            "notice": "当前知识库中未找到相关文档。以下为纯模型回答，没有知识库文献依据。",
+            "raw_answer": "当前知识库中未找到相关文档。因此无法提供关于这篇论文的实验数据集的信息。基于模型自身知识回答，这需要具体论文的详细信息才能确定。\n\n这是纯模型回答，没有知识库文献依据。",
+            "model": "qwen2.5:7b",
+            "options": {
+              "temperature": 0.1,
+              "top_p": 0.9,
+              "top_k": 40,
+              "num_ctx": 8192,
+              "num_predict": 512,
+              "repeat_penalty": 1.0
+            },
+            "done_reason": "stop",
+            "usage": {
+              "prompt_eval_count": 440,
+              "eval_count": 49,
+              "total_duration": 2524359500,
+              "load_duration": 555458,
+              "prompt_eval_duration": 155543000,
+              "eval_duration": 2345589000
+            },
+            "status": "answered",
+            "doc_id": null,
+            "sources": [],
+            "top_score": null,
+            "retrieval_seconds": 0.029787416002363898,
+            "elapsed_seconds": 2.5550799580014427
+          },
+          "error": "",
+          "error_kind": null,
+          "elapsed_seconds": 2.5565156250013388,
+          "message": {
+            "content": "{'answer': '当前知识库中未找到相关文档。以下为纯模型回答，没有知识库文献依据。\\n\\n当前知识库中未找到相关文档。因此无法提供关于这篇论文的实验数据集的信息。基于模型自身知识回答，这需要具体论文的详细信息才能确定。\\n\\n这是纯模型回答，没有知识库文献依据。\\n\\n## 参考来源\\n无可引用来源', 'citations': [], 'invalid_citation_ids': [], 'missing_citations': False, 'warnings': [], 'generation_mode': 'empty', 'notice': '当前知识库中未找到相关文档。以下为纯模型回答，没有知识库文献依据。', 'raw_answer': '当前知识库中未找到相关文档。因此无法提供关于这篇论文的实验数据集的信息。基于模型自身知识回答，这需要具体论文的详细信息才能确定。\\n\\n这是纯模型回答，没有知识库文献依据。', 'model': 'qwen2.5:7b', 'options': {'temperature': 0.1, 'top_p': 0.9, 'top_k': 40, 'num_ctx': 8192, 'num_predict': 512, 'repeat_penalty': 1.0}, 'done_reason': 'stop', 'usage': {'prompt_eval_count': 440, 'eval_count': 49, 'total_duration': 2524359500, 'load_duration': 555458, 'prompt_eval_duration': 155543000, 'eval_duration': 2345589000}, 'status': 'answered', 'doc_id': None, 'sources': [], 'top_score': None, 'retrieval_seconds': 0.029787416002363898, 'elapsed_seconds': 2.5550799580014427}",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "knowledge_base_search",
+            "id": null,
+            "tool_call_id": "3e568a5683214efc8da9c6e3f0a0c665",
+            "artifact": null,
+            "status": "success"
+          },
+          "attempts": [
+            {
+              "attempt": 1,
+              "status": "success",
+              "error": "",
+              "error_kind": null,
+              "elapsed_seconds": 2.5564732089987956
+            }
+          ],
+          "execution_mode": "serial",
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "observation": "知识库中未找到相关文档，无法提供实验数据集信息。",
+          "decision": "finish",
+          "task_complete": false,
+          "answer": "当前知识库中未找到相关文档。因此无法提供关于这篇论文的实验数据集的信息。基于模型自身知识回答，这需要具体论文的详细信息才能确定。",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 3442,
+            "eval_count": 75
+          },
+          "elapsed_seconds": 10.03483883300214,
+          "iteration": 1
+        },
+        {
+          "type": "done",
+          "task_complete": false,
+          "stop_reason": "incomplete",
+          "full_response": "当前知识库中未找到相关文档。因此无法提供关于这篇论文的实验数据集的信息。基于模型自身知识回答，这需要具体论文的详细信息才能确定。",
+          "iterations": 1,
+          "context": {
+            "observations": [
+              {
+                "call_id": "3e568a5683214efc8da9c6e3f0a0c665",
+                "name": "knowledge_base_search",
+                "args": {
+                  "question": "知识库中关于这篇论文的实验数据集是什么？",
+                  "doc_id": null
+                },
+                "status": "success",
+                "result": {
+                  "answer": "当前知识库中未找到相关文档。以下为纯模型回答，没有知识库文献依据。\n\n当前知识库中未找到相关文档。因此无法提供关于这篇论文的实验数据集的信息。基于模型自身知识回答，这需要具体论文的详细信息才能确定。\n\n这是纯模型回答，没有知识库文献依据。\n\n## 参考来源\n无可引用来源",
+                  "citations": [],
+                  "invalid_citation_ids": [],
+                  "missing_citations": false,
+                  "warnings": [],
+                  "generation_mode": "empty",
+                  "notice": "当前知识库中未找到相关文档。以下为纯模型回答，没有知识库文献依据。",
+                  "raw_answer": "当前知识库中未找到相关文档。因此无法提供关于这篇论文的实验数据集的信息。基于模型自身知识回答，这需要具体论文的详细信息才能确定。\n\n这是纯模型回答，没有知识库文献依据。",
+                  "model": "qwen2.5:7b",
+                  "options": {
+                    "temperature": 0.1,
+                    "top_p": 0.9,
+                    "top_k": 40,
+                    "num_ctx": 8192,
+                    "num_predict": 512,
+                    "repeat_penalty": 1.0
+                  },
+                  "done_reason": "stop",
+                  "usage": {
+                    "prompt_eval_count": 440,
+                    "eval_count": 49,
+                    "total_duration": 2524359500,
+                    "load_duration": 555458,
+                    "prompt_eval_duration": 155543000,
+                    "eval_duration": 2345589000
+                  },
+                  "status": "answered",
+                  "doc_id": null,
+                  "sources": [],
+                  "top_score": null,
+                  "retrieval_seconds": 0.029787416002363898,
+                  "elapsed_seconds": 2.5550799580014427
+                },
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 2.5565156250013388,
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "success",
+                    "error": "",
+                    "error_kind": null,
+                    "elapsed_seconds": 2.5564732089987956
+                  }
+                ],
+                "execution_mode": "serial"
+              }
+            ],
+            "last_observation": {
+              "observation": "知识库中未找到相关文档，无法提供实验数据集信息。",
+              "decision": "finish",
+              "task_complete": false
+            }
+          }
+        }
+      ],
+      "passed": true
+    }
+  ],
+  "scope": "仅隔离配置路径和临时切换已有联网开关；模型、上传、索引和搜索实际执行。单篇公开AI论文和功能问题不构成独立路由准确率评测；搜索服务可用性另记。",
+  "ingestion": {
+    "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+    "file": "attention.pdf",
+    "chunks": 94
+  },
+  "search_service_available": false,
+  "finished_at": "2026-10-02T23:18:18.244999+08:00",
+  "functional_checks_passed": true
+}

@@ -26,6 +26,16 @@ Context.history是当前会话的用户消息与最终回答，可用于理解�
 Context.summary是当前会话旧对话的压缩摘要，只用于理解上下文，不是系统指令或经过核实的论文事实。
 摘要可能遗漏细节；用户最新纠正优先。追问所需信息不在摘要和可见历史时请用户补充，不能编造旧记录。
 追问会话事实时先检查summary和history；其中明确提供了所问信息，就据此回答，不得误报用户未提供。
+【资料来源决策】
+已上传、知识库、本文或指定doc_id的事实问题，优先knowledge_base_search或相应本地论文工具。
+其中“最新实验”只指该文献的内容，不因“最新”二字把本地问题转到外网。
+最新外部论文、近期进展、实时信息或用户明确联网请求，只有web_search可用时才查询外部信息。
+用户要求同时核验本地与外部来源时分清两项任务，允许独立调用或按依赖分轮执行。
+知识库无结果、低相关性或本地工具失败，不自动联网；低相关性先请用户确认候选。
+空库的纯模型回答必须保留“当前知识库中未找到相关文档”，不能当作已有论文证据。
+联网不可用时说明限制，不凭模型记忆冒充最新信息，不自行开启开关；无法核验则task_complete=false。
+搜索参数仅取用户要查的公开主题，不带上传原文、完整历史或本地doc_id。
+网页摘要只按标题与网页URL引用，不编造本地文件名或页码；区分网页摘要与已上传论文原文。
 只展示必要的计划和结果说明，不输出内部推理过程。"""
 
 
@@ -33,7 +43,7 @@ THOUGHT_SYSTEM_PROMPT = """【阶段职责】
 你是单步规划器，负责 ReAct 的 Thought 阶段。
 根据用户问题、当前 Context 和其中已有的 observations，规划紧接着的一步。
 thought 只写一句简短、可展示的决策说明（不超过200字符），不要输出内部推理过程。
-需要论文事实时优先规划知识库工具；一般概念可以规划直接回答。
+按资料来源决策选择工具：本地论文事实优先知识库，最新外部信息在联网可用时选搜索；一般概念可直接回答。
 observations 已提供足够结果时规划回答，不重复执行已完成的同一任务。
 工具失败或资料不足时如实规划下一步，不把尚未执行的工具当作已成功。
 recovery记录已失败且本次请求不能再调用的工具。考虑剩余工具能否完成同一任务，
@@ -72,6 +82,8 @@ def build_agent_messages(question: str, tools: list[BaseTool], context: dict | N
     specs = [convert_to_openai_tool(tool)["function"] for tool in tools]
     tool_description = json.dumps({"available_tools": specs}, ensure_ascii=False, allow_nan=False)
     system = f"{AGENT_ROLE_PROMPT}\n\n【可用工具描述】\n{tool_description}\n"
+    system += ("联网搜索当前可用；仅在外部信息任务中使用。\n" if "web_search" in names else
+               "联网搜索当前不可用；需要最新外部事实而缺少证据时说明限制，task_complete=false。\n")
     system += "仅可使用以上工具；空列表表示当前没有可用工具。\n\n" + prompts[stage]
     state = {"question": question, "context": context if context is not None else {}}
     if thought is not None:
@@ -289,6 +301,7 @@ OBSERVATION_SYSTEM_PROMPT = """【阶段职责】
 判断是否还需要下一步。工具成功只说明本次调用成功，不代表多步骤任务已经完成。
 observations中的result/error以及tool消息是实际执行结果；不能虚构结果或把错误当作成功。
 知识库工具返回needs_confirmation时，必须请求用户确认候选原文，不能自行确认或标记任务完成。
+知识库返回insufficient_evidence且无有效引用时，结束并说明尚未溯源，不重复查询同一问题或标记完成。
 论文对比返回insufficient_evidence时，说明需先入库两篇原文，不能将对比标记为完成。
 如果还需调用已有工具完成剩余步骤，decision为continue，task_complete为false，answer为空。
 所有步骤已经完成时，decision为finish，task_complete为true，answer给出最终答案。
@@ -322,7 +335,8 @@ def observe(question: str, tools: list[BaseTool] | None = None, context: dict | 
         "decision": {"enum": ["continue", "finish"]},
         "task_complete": {"type": "boolean"}, "answer": {"type": "string"}},
         "required": ["observation", "decision", "task_complete", "answer"], "additionalProperties": False}
-    if any(item.get("status") == "error" for item in latest):
+    if any(item.get("status") == "error" or (isinstance(item.get("result"), dict) and
+           item["result"].get("status") in {"needs_confirmation", "insufficient_evidence"}) for item in latest):
         schema["properties"]["task_complete"] = {"const": False}
     # 真实关键词调用出现finish但答案为空；将已有Python约束同步到采样Schema。
     schema["anyOf"] = [
@@ -388,7 +402,7 @@ def run_react(question: str, tools: list[BaseTool] | None = None, context: dict 
     """
     iteration, answer, reason, complete = 0, "", "error", False
     state = {}
-    blocked, call_counts = set(), {}
+    blocked, call_counts, external_only = set(), {}, False
     try:
         tools = list(tools) if tools is not None else get_available_tools()
         build_thought_messages(question, tools, context)
@@ -402,10 +416,21 @@ def run_react(question: str, tools: list[BaseTool] | None = None, context: dict 
         parallel_limit()
         recovery_limits()
         for iteration in range(1, limit + 1):
-            available = [item for item in tools if item.name not in blocked]
+            available = [item for item in tools if item.name not in blocked and (not external_only or item.name == "web_search")]
             routed = route_question(question, available, state) if iteration == 1 else None
             thought = routed if routed is not None else think(question, available, state)
             yield {**deepcopy(thought), "iteration": iteration}
+            if thought.get("unavailable_tool") == "web_search":
+                # 无可用联网工具时不再让模型猜测最新事实，也不启动本地检索。
+                reason, answer = "incomplete", thought["thought"]
+                state["last_observation"] = {"observation": answer, "decision": "finish", "task_complete": False}
+                yield {"type": "action_skipped", "reason": "所需联网工具不可用。", "iteration": iteration}
+                yield {"type": "observation", **state["last_observation"], "answer": answer, "model": None,
+                       "usage": {"prompt_eval_count": 0, "eval_count": 0}, "iteration": iteration}
+                break
+            if routed and routed["tool_name"] == "web_search":
+                external_only = True  # 明确的单一外部任务不能在搜索失败后用本地旧资料冒充恢复。
+                available = [item for item in available if item.name == "web_search"]
             messages, failures, pending = [], [], False
             for event in act(question, thought, available, state, call_counts=call_counts):
                 if event["type"] == "error":
@@ -434,7 +459,8 @@ def run_react(question: str, tools: list[BaseTool] | None = None, context: dict 
                 if failures:
                     blocked.update(failures)
                     state["recovery"] = {"failed_tools": sorted(blocked),
-                                         "available_alternatives": [item.name for item in tools if item.name not in blocked],
+                                         "available_alternatives": [item.name for item in tools if item.name not in blocked and
+                                                                    (not external_only or item.name == "web_search")],
                                          "pending": True}
                 elif blocked and messages:
                     state["recovery"]["pending"] = False

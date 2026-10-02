@@ -1,0 +1,28 @@
+test_disabled_latest_request_finishes_incomplete_without_tools (tests.test_agent.TestRAGSearchRouting) ... ok
+test_disabled_search_never_routes_latest_query_to_local_rag (tests.test_agent.TestRAGSearchRouting) ... ok
+test_disabled_search_policy_uses_actual_registry (tests.test_agent.TestRAGSearchRouting) ... ok
+test_enabled_search_policy_reports_availability (tests.test_agent.TestRAGSearchRouting) ... ok
+test_enabled_search_runs_real_parser_without_touching_rag (tests.test_agent.TestRAGSearchRouting) ... ERROR
+test_existing_context_and_negation_are_not_overridden (tests.test_agent.TestRAGSearchRouting) ... ok
+test_existing_local_and_general_concept_routes_still_work (tests.test_agent.TestRAGSearchRouting) ... ok
+test_explicit_registered_tool_is_not_replaced_by_freshness (tests.test_agent.TestRAGSearchRouting) ... ok
+test_external_search_phrases_route_when_enabled (tests.test_agent.TestRAGSearchRouting) ... ok
+test_latest_external_papers_route_to_enabled_search (tests.test_agent.TestRAGSearchRouting) ... ok
+test_local_scope_beats_freshness_words (tests.test_agent.TestRAGSearchRouting) ... ok
+test_missing_tools_do_not_create_fake_routes (tests.test_agent.TestRAGSearchRouting) ... ok
+test_mixed_local_and_external_sources_need_model_planning (tests.test_agent.TestRAGSearchRouting) ... ok
+test_rag_action_observation_keeps_actual_sources_and_calls_retrieval_once (tests.test_agent.TestRAGSearchRouting) ... ok
+test_source_policy_is_present_in_all_stages (tests.test_agent.TestRAGSearchRouting) ... ok
+
+======================================================================
+ERROR: test_enabled_search_runs_real_parser_without_touching_rag (tests.test_agent.TestRAGSearchRouting)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 2966, in test_enabled_search_runs_real_parser_without_touching_rag
+    response = MagicMock(status_code=200, text='<div class="result"><a class="result__a" href="https://example.org/paper">测试网页</a><a class="result__snippet">明确构造的网页摘要</a></div>')
+NameError: name 'MagicMock' is not defined
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.376s
+
+FAILED (errors=1)

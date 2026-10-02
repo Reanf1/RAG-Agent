@@ -57,6 +57,7 @@ def _tool_references(references: list[dict]) -> list[dict]:
 def knowledge_base_search(question: str, doc_id: str | None = None) -> dict:
     """查询已入库论文并通过本地RAG回答，返回真实文档/页码引用、检索分数与模型用量。
 
+    用于已上传/知识库/指定论文的内容与事实；“本文最新结果”仍查本地，不查询外部最新论文。
     question为论文问题；doc_id可选，为已上传论文的64位SHA-256指纹，用于限定一篇论文。
     使用向量+BM25+RRF+模型重排和模块二生成引擎。低相关性返回待确认候选，不生成答案；
     空知识库返回带明确提示的纯模型回答，不是论文证据。不能用于联网查询。
@@ -102,7 +103,9 @@ def knowledge_base_search(question: str, doc_id: str | None = None) -> dict:
                 message["generation_seconds"] = perf_counter() - generation_started
             result["citations"] = _tool_references(result["citations"])
             result.update(status="answered", doc_id=doc_id, sources=context["sources"], top_score=context["top_score"])
-            status = "completed"
+            if context["generation_mode"] == "grounded" and not result["citations"]:
+                result["status"] = "insufficient_evidence"  # 有检索候选却没有有效引用，不能冒充已溯源回答。
+            status = "incomplete" if result["status"] == "insufficient_evidence" else "completed"
         result.update(retrieval_seconds=message["retrieval_seconds"], elapsed_seconds=perf_counter() - started)
         message.update(result)
         return result
@@ -697,6 +700,8 @@ def web_search(query: str) -> dict:
     """联网查询DuckDuckGo，返回最多5条标题、摘要和网页URL，不读取链接全文。
 
     仅agent.online_search_enabled为true时可调用；查询词会发送到外部搜索站点。
+    用于最新外部论文、近期进展或明确联网请求；本地论文资料不足不自动改用此工具。
+    query仅含公开搜索主题，不传上传原文、完整会话或本地文献ID。
     网页摘要不是本地论文证据，没有本地文件页码；失败明确报错，不自动重试。
     """
     if load_config()["agent"]["online_search_enabled"] is not True:

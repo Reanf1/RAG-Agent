@@ -1,0 +1,36 @@
+第 8 页三线表列边界不明确，保留原始正文与页码。
+Consider using the pymupdf_layout package for a greatly improved page layout analysis.
+入库 success 94
+local_rag_citations thought 
+local_rag_citations tool_call knowledge_base_search
+local_rag_citations tool_result knowledge_base_search
+local_rag_citations observation 
+local_rag_citations done 
+offline_latest_unavailable thought 
+offline_latest_unavailable tool_call knowledge_base_search
+offline_latest_unavailable tool_result knowledge_base_search
+offline_latest_unavailable observation 
+offline_latest_unavailable done 
+model_local_scope_with_history True
+model_external_freshness True
+live_external_search thought 
+live_external_search tool_call web_search
+live_external_search tool_result web_search
+live_external_search observation 
+live_external_search recovery 
+live_external_search thought 
+live_external_search tool_call knowledge_base_search
+live_external_search tool_result knowledge_base_search
+live_external_search observation 
+live_external_search done 
+empty_local_no_auto_web thought 
+empty_local_no_auto_web tool_call knowledge_base_search
+empty_local_no_auto_web tool_result knowledge_base_search
+empty_local_no_auto_web observation 
+empty_local_no_auto_web done 
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/reports/verify_rag_search_routing.py", line 111, in <module>
+    main()
+  File "/Users/rean/github/RAG+Agent/reports/verify_rag_search_routing.py", line 107, in main
+    raise RuntimeError("存在未通过的功能检查，真实轨迹已保留")
+RuntimeError: 存在未通过的功能检查，真实轨迹已保留
