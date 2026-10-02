@@ -55,7 +55,7 @@ AppTest 等待上限为 10 秒，兼顾新环境首次加载界面依赖的耗�
 
 新增的 Word 测试需要 `python-docx`。依赖已安装到项目 `.venv`；若使用其他 Python 解释器，应先为该解释器安装 `requirements.txt`，仅更换启动路径不会共享虚拟环境的依赖。
 
-`test_agent.py`新增12项Thought单轮规划测试；当前全项目合计300项通过。覆盖状态/工具描述传入、只规划不执行、下一步计划校验和本机模型错误边界，真实Qwen验证另见[Thought QA](../docs/QA/5.3.1%20Thought单轮规划.md)。Action/Observation、有界循环及其余Agent业务待实现，不为占位代码编写无意义的测试。
+`test_agent.py`有26项测试：12项Thought、14项Action；当前全项目314项通过。覆盖状态/工具描述、计划与原生调用校验、实际工具执行/消息关联、参数与异常边界、直接回答跳过、关闭及注册表变化。真实Qwen验证见[Thought QA](../docs/QA/5.3.1%20Thought单轮规划.md)与[Action QA](../docs/QA/5.3.1%20Action工具选择与执行.md)。Observation反馈、有界循环和生产科研工具集等待实现，不为占位代码编写无意义的测试。
 
 2026-09-30模块一、二复测记录见[测试QA](../docs/QA/模块一与模块二测试.md)。`reports/verify_modules_one_two.py`用两篇完整PDF、临时索引及真实模型核验模块连接；真实引用/答案质量和缓存实测失败单独记录，不算入288项自动化通过结果。验证脚本使用`--output`指定不存在的新路径，保留历史记录。
 
