@@ -71,8 +71,11 @@ agent:
   max_repeated_calls: 2  # 同一请求中，相同工具和参数最多执行两轮。
   online_search_enabled: false
 memory:
-  max_history_tokens: 2000  # 仅限制送入Agent的历史窗口，SQLite原始记录保留。
+  max_history_tokens: 2000  # 限制送入Agent的摘要+历史窗口，SQLite原始记录保留。
   tokenizer_path: data/models/qwen2.5-tokenizer/tokenizer.json
+  summary_trigger_turns: 10  # 未压缩历史累计达到此轮数时，阶段性更新摘要。
+  summary_keep_recent_turns: 4  # 保留最近完整问答；总Token预算仍优先。
+  summary_max_tokens: 400  # 摘要JSON字段的Token上限，超限拒绝入库。
 paths:
   raw_documents: data/raw
   vector_index: data/index
