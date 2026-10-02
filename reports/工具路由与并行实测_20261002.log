@@ -1,0 +1,79 @@
+第 8 页三线表列边界不明确，保留原始正文与页码。
+Consider using the pymupdf_layout package for a greatly improved page layout analysis.
+plain_react_time thought  current_time
+plain_react_time tool_call current_time 
+plain_react_time tool_result current_time 
+plain_react_time observation  
+plain_react_time done  
+plain_react_time True {'prompt_eval_count': 3668, 'eval_count': 148} 18.10476687499613 当前系统时间为2026-10-02T20:17:00+08:00，时区为CST。
+routed_time thought  current_time
+routed_time tool_call current_time 
+routed_time tool_result current_time 
+routed_time observation  
+routed_time done  
+routed_time True {'prompt_eval_count': 2313, 'eval_count': 114} 6.94940933300677 当前系统时间为2026-10-02T20:17:08+08:00，时区为CST。
+general_concept thought  None
+general_concept action_skipped  
+general_concept observation  
+general_concept done  
+general_concept True {'prompt_eval_count': 1333, 'eval_count': 61} 3.0357574580048095 深度学习是机器学习的一种，通过多层神经网络模拟人脑处理信息的方式。
+independent_different_tools thought  None
+independent_different_tools action_skipped  
+independent_different_tools observation  
+independent_different_tools thought  None
+independent_different_tools action_skipped  
+independent_different_tools observation  
+independent_different_tools thought  None
+independent_different_tools action_skipped  
+independent_different_tools observation  
+independent_different_tools thought  None
+independent_different_tools action_skipped  
+independent_different_tools observation  
+independent_different_tools thought  ['current_time', 'keyword_extract']
+independent_different_tools tool_call current_time 
+independent_different_tools tool_call keyword_extract 
+independent_different_tools tool_result current_time 
+independent_different_tools tool_result keyword_extract 
+independent_different_tools observation  
+independent_different_tools done  
+independent_different_tools False {'prompt_eval_count': 16061, 'eval_count': 419} 45.52801033399737 当前系统时间为2026年10月2日20时17分52秒（CST）。关键词为：Transformer、机器翻译、ViT、图像分类。
+independent_papers thought  ['paper_metadata']
+independent_papers tool_call paper_metadata 
+independent_papers tool_call paper_metadata 
+第 8 页三线表列边界不明确，保留原始正文与页码。
+independent_papers tool_result paper_metadata 
+independent_papers tool_result paper_metadata 
+independent_papers observation  
+independent_papers thought  None
+independent_papers action_skipped  
+independent_papers observation  
+independent_papers thought  None
+independent_papers action_skipped  
+independent_papers observation  
+independent_papers thought  None
+independent_papers action_skipped  
+independent_papers observation  
+independent_papers thought  None
+independent_papers action_skipped  
+independent_papers observation  
+independent_papers thought  None
+independent_papers action_skipped  
+independent_papers observation  
+independent_papers thought  None
+independent_papers action_skipped  
+independent_papers observation  
+independent_papers thought  None
+independent_papers action_skipped  
+independent_papers observation  
+independent_papers done  
+independent_papers False {'prompt_eval_count': 83373, 'eval_count': 916} 124.85190958400199 已达到最大迭代次数（8轮），任务尚未完成，请缩小问题范围后重试。
+第 8 页三线表列边界不明确，保留原始正文与页码。
+paper_metadata_serial True 15.01763833300356 1 {'prompt_eval_count': 3499, 'eval_count': 255}
+第 8 页三线表列边界不明确，保留原始正文与页码。
+paper_metadata_parallel True 13.994799915999465 2 {'prompt_eval_count': 3499, 'eval_count': 255}
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/reports/verify_routing_parallel.py", line 145, in <module>
+    main()
+  File "/Users/rean/github/RAG+Agent/reports/verify_routing_parallel.py", line 141, in main
+    assert all(row["passed"] for row in report["rows"]), "存在实测失败，已保留原始轨迹"
+AssertionError: 存在实测失败，已保留原始轨迹

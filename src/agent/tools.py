@@ -10,6 +10,9 @@ import unicodedata
 from time import perf_counter
 from uuid import uuid4
 from urllib.parse import parse_qs, urlparse
+from urllib.error import URLError
+
+from httpx import TimeoutException
 
 from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
 from langchain_core.tools import BaseTool, tool
@@ -654,6 +657,17 @@ def get_available_tools() -> list[BaseTool]:
     return [*AVAILABLE_TOOLS, web_search] if load_config()["agent"]["online_search_enabled"] is True else list(AVAILABLE_TOOLS)
 
 
+def _error_kind(exception: Exception) -> str:
+    """识别包装后的真实超时；输入错误不靠换工具掩盖，其他执行故障可重新规划。"""
+    current, seen = exception, set()
+    while isinstance(current, BaseException) and id(current) not in seen:
+        seen.add(id(current))
+        if isinstance(current, (TimeoutError, TimeoutException)):
+            return "timeout"
+        current = current.__cause__ or (current.reason if isinstance(current, URLError) else None)
+    return "input" if isinstance(exception, (ValueError, TypeError, FileNotFoundError, ArithmeticError)) else "execution"
+
+
 def execute_tool(name: str, args: dict, tools: list[BaseTool], call_id: str | None = None) -> dict:
     """参考上游注册表查找与invoke，保留真实结果、错误、耗时和关联消息。
 
@@ -662,7 +676,7 @@ def execute_tool(name: str, args: dict, tools: list[BaseTool], call_id: str | No
     """
     call_id = call_id or uuid4().hex
     started = perf_counter()
-    result, error, status = None, "", "success"
+    result, error, status, kind = None, "", "success", None
     try:
         registry = {item.name: item for item in tools}
         if len(registry) != len(tools):
@@ -678,8 +692,9 @@ def execute_tool(name: str, args: dict, tools: list[BaseTool], call_id: str | No
         result = selected.invoke(deepcopy(args))
     except Exception as exception:
         status, error = "error", f"{type(exception).__name__}: {exception}"
+        kind = _error_kind(exception)
     return {"type": "tool_result", "call_id": call_id, "name": name, "args": deepcopy(args),
-            "status": status, "result": result, "error": error,
+            "status": status, "result": result, "error": error, "error_kind": kind,
             "elapsed_seconds": perf_counter() - started,
             "message": ToolMessage(content=error if error else str(result), tool_call_id=call_id,
                                    name=name, status=status)}

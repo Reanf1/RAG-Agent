@@ -1,0 +1,19 @@
+..................<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+................................................................................................Consider using the pymupdf_layout package for a greatly improved page layout analysis.
+warning: The `fitz` API is deprecated and will be removed in future. Use `import pymupdf` instead.
+...................
+======================================================================
+ERROR: test_required_type_and_extra_argument_errors_are_tool_results_without_side_effects (test_agent.TestAction) (args={'a': nan, 'b': 2})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 260, in test_required_type_and_extra_argument_errors_are_tool_results_without_side_effects
+    self.assertEqual(events[-1]["status"], "error")
+KeyError: 'status'
+
+----------------------------------------------------------------------
+Ran 134 tests in 1.850s
+
+FAILED (errors=1)
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

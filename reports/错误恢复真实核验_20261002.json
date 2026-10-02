@@ -1,0 +1,834 @@
+{
+  "started_at": "2026-10-02T20:56:03.610264+08:00",
+  "config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://localhost:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 8192,
+      "num_predict": 512,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 6000,
+      "max_prompt_chars": 12000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "max_parallel_calls": 2,
+      "tool_timeout_seconds": 300,
+      "max_tool_retries": 1,
+      "max_repeated_calls": 2,
+      "online_search_enabled": false
+    },
+    "paths": {
+      "raw_documents": "data/raw",
+      "vector_index": "data/index",
+      "logs": "logs"
+    }
+  },
+  "faults_injected": true,
+  "rows": [
+    {
+      "name": "execution_failure",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "使用primary_clock读取系统当前时间。",
+          "next_step": "tool",
+          "tool_name": "primary_clock",
+          "parallel_tools": [
+            "primary_clock"
+          ],
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 707,
+            "eval_count": 43
+          },
+          "elapsed_seconds": 9.028575666998222,
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "call_id": "8e8179f293b0429391cb8e6f37d05708",
+          "name": "primary_clock",
+          "args": {},
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 3.2313592089994927,
+          "usage": {
+            "prompt_eval_count": 728,
+            "eval_count": 16
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "primary_clock",
+                "args": {},
+                "id": "8e8179f293b0429391cb8e6f37d05708",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "call_id": "8e8179f293b0429391cb8e6f37d05708",
+          "name": "primary_clock",
+          "args": {},
+          "status": "error",
+          "result": null,
+          "error": "RuntimeError: 验证主动注入的主时钟故障，必须从备用时钟获取真实时间",
+          "error_kind": "execution",
+          "elapsed_seconds": 0.0024120829984894954,
+          "message": {
+            "content": "RuntimeError: 验证主动注入的主时钟故障，必须从备用时钟获取真实时间",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "primary_clock",
+            "id": null,
+            "tool_call_id": "8e8179f293b0429391cb8e6f37d05708",
+            "artifact": null,
+            "status": "error"
+          },
+          "attempts": [
+            {
+              "attempt": 1,
+              "status": "error",
+              "error": "RuntimeError: 验证主动注入的主时钟故障，必须从备用时钟获取真实时间",
+              "error_kind": "execution",
+              "elapsed_seconds": 0.0023827080003684387
+            }
+          ],
+          "execution_mode": "serial",
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "observation": "primary_clock执行失败，转而使用backup_clock。",
+          "decision": "continue",
+          "task_complete": false,
+          "answer": "",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1043,
+            "eval_count": 34
+          },
+          "elapsed_seconds": 5.070017374993768,
+          "iteration": 1
+        },
+        {
+          "type": "recovery",
+          "failed_tools": [
+            "primary_clock"
+          ],
+          "available_alternatives": [
+            "backup_clock"
+          ],
+          "pending": true,
+          "message": "工具执行异常已记录；下一轮从剩余注册工具中选择适用替代，无法替代则说明未完成。",
+          "iteration": 1
+        },
+        {
+          "type": "thought",
+          "thought": "使用备用时钟读取系统当前时间。",
+          "next_step": "tool",
+          "tool_name": "backup_clock",
+          "parallel_tools": [
+            "backup_clock"
+          ],
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 934,
+            "eval_count": 44
+          },
+          "elapsed_seconds": 5.636902250000276,
+          "iteration": 2
+        },
+        {
+          "type": "tool_call",
+          "call_id": "edf96e32f74e43a89bf0aa6723c65062",
+          "name": "backup_clock",
+          "args": {},
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 4.3229006249966915,
+          "usage": {
+            "prompt_eval_count": 1005,
+            "eval_count": 16
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "backup_clock",
+                "args": {},
+                "id": "edf96e32f74e43a89bf0aa6723c65062",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 2
+        },
+        {
+          "type": "tool_result",
+          "call_id": "edf96e32f74e43a89bf0aa6723c65062",
+          "name": "backup_clock",
+          "args": {},
+          "status": "success",
+          "result": {
+            "iso_time": "2026-10-02T20:56:30.955921+08:00"
+          },
+          "error": "",
+          "error_kind": null,
+          "elapsed_seconds": 0.001083417002519127,
+          "message": {
+            "content": "{'iso_time': '2026-10-02T20:56:30.955921+08:00'}",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "backup_clock",
+            "id": null,
+            "tool_call_id": "edf96e32f74e43a89bf0aa6723c65062",
+            "artifact": null,
+            "status": "success"
+          },
+          "attempts": [
+            {
+              "attempt": 1,
+              "status": "success",
+              "error": "",
+              "error_kind": null,
+              "elapsed_seconds": 0.001062416995409876
+            }
+          ],
+          "execution_mode": "serial",
+          "iteration": 2
+        },
+        {
+          "type": "observation",
+          "observation": "系统当前时间为2026-10-02T20:56:30.955921+08:00。",
+          "decision": "finish",
+          "task_complete": true,
+          "answer": "系统当前时间为2026-10-02T20:56:30.955921+08:00。",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1293,
+            "eval_count": 95
+          },
+          "elapsed_seconds": 6.490649457999098,
+          "iteration": 2
+        },
+        {
+          "type": "done",
+          "task_complete": true,
+          "stop_reason": "task_complete",
+          "full_response": "系统当前时间为2026-10-02T20:56:30.955921+08:00。",
+          "iterations": 2,
+          "context": {
+            "observations": [
+              {
+                "call_id": "8e8179f293b0429391cb8e6f37d05708",
+                "name": "primary_clock",
+                "args": {},
+                "status": "error",
+                "result": null,
+                "error": "RuntimeError: 验证主动注入的主时钟故障，必须从备用时钟获取真实时间",
+                "error_kind": "execution",
+                "elapsed_seconds": 0.0024120829984894954,
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "error",
+                    "error": "RuntimeError: 验证主动注入的主时钟故障，必须从备用时钟获取真实时间",
+                    "error_kind": "execution",
+                    "elapsed_seconds": 0.0023827080003684387
+                  }
+                ],
+                "execution_mode": "serial"
+              },
+              {
+                "call_id": "edf96e32f74e43a89bf0aa6723c65062",
+                "name": "backup_clock",
+                "args": {},
+                "status": "success",
+                "result": {
+                  "iso_time": "2026-10-02T20:56:30.955921+08:00"
+                },
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.001083417002519127,
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "success",
+                    "error": "",
+                    "error_kind": null,
+                    "elapsed_seconds": 0.001062416995409876
+                  }
+                ],
+                "execution_mode": "serial"
+              }
+            ],
+            "recovery": {
+              "failed_tools": [
+                "primary_clock"
+              ],
+              "available_alternatives": [
+                "backup_clock"
+              ],
+              "pending": false
+            },
+            "last_observation": {
+              "observation": "系统当前时间为2026-10-02T20:56:30.955921+08:00。",
+              "decision": "finish",
+              "task_complete": true
+            }
+          }
+        }
+      ],
+      "actual_calls": [
+        {
+          "name": "primary_clock",
+          "at": "2026-10-02T20:56:15.905267+08:00"
+        },
+        {
+          "name": "backup_clock",
+          "at": "2026-10-02T20:56:30.955560+08:00"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "timeout_once",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "使用primary_clock读取系统当前时间。",
+          "next_step": "tool",
+          "tool_name": "primary_clock",
+          "parallel_tools": [
+            "primary_clock"
+          ],
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 707,
+            "eval_count": 43
+          },
+          "elapsed_seconds": 4.069342666996818,
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "call_id": "329fc361af874d898b92e093839a2024",
+          "name": "primary_clock",
+          "args": {},
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 0.8731818340020254,
+          "usage": {
+            "prompt_eval_count": 728,
+            "eval_count": 16
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "primary_clock",
+                "args": {},
+                "id": "329fc361af874d898b92e093839a2024",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "call_id": "329fc361af874d898b92e093839a2024",
+          "name": "primary_clock",
+          "args": {},
+          "status": "success",
+          "result": {
+            "iso_time": "2026-10-02T20:56:42.423359+08:00"
+          },
+          "error": "",
+          "error_kind": null,
+          "elapsed_seconds": 0.0015707919956184924,
+          "message": {
+            "content": "{'iso_time': '2026-10-02T20:56:42.423359+08:00'}",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "primary_clock",
+            "id": null,
+            "tool_call_id": "329fc361af874d898b92e093839a2024",
+            "artifact": null,
+            "status": "success"
+          },
+          "attempts": [
+            {
+              "attempt": 1,
+              "status": "error",
+              "error": "TimeoutError: 验证主动注入的已结束超时；函数本次执行已经退出",
+              "error_kind": "timeout",
+              "elapsed_seconds": 0.0007360840027104132
+            },
+            {
+              "attempt": 2,
+              "status": "success",
+              "error": "",
+              "error_kind": null,
+              "elapsed_seconds": 0.0008046250004554167
+            }
+          ],
+          "execution_mode": "serial",
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "observation": "当前时间为2026-10-02T20:56:42.423359+08:00。",
+          "decision": "finish",
+          "task_complete": true,
+          "answer": "当前时间为2026-10-02T20:56:42.423359+08:00。",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1089,
+            "eval_count": 93
+          },
+          "elapsed_seconds": 6.350893791000999,
+          "iteration": 1
+        },
+        {
+          "type": "done",
+          "task_complete": true,
+          "stop_reason": "task_complete",
+          "full_response": "当前时间为2026-10-02T20:56:42.423359+08:00。",
+          "iterations": 1,
+          "context": {
+            "observations": [
+              {
+                "call_id": "329fc361af874d898b92e093839a2024",
+                "name": "primary_clock",
+                "args": {},
+                "status": "success",
+                "result": {
+                  "iso_time": "2026-10-02T20:56:42.423359+08:00"
+                },
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0015707919956184924,
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "error",
+                    "error": "TimeoutError: 验证主动注入的已结束超时；函数本次执行已经退出",
+                    "error_kind": "timeout",
+                    "elapsed_seconds": 0.0007360840027104132
+                  },
+                  {
+                    "attempt": 2,
+                    "status": "success",
+                    "error": "",
+                    "error_kind": null,
+                    "elapsed_seconds": 0.0008046250004554167
+                  }
+                ],
+                "execution_mode": "serial"
+              }
+            ],
+            "last_observation": {
+              "observation": "当前时间为2026-10-02T20:56:42.423359+08:00。",
+              "decision": "finish",
+              "task_complete": true
+            }
+          }
+        }
+      ],
+      "actual_calls": [
+        {
+          "name": "primary_clock",
+          "at": "2026-10-02T20:56:42.422468+08:00"
+        },
+        {
+          "name": "primary_clock",
+          "at": "2026-10-02T20:56:42.423065+08:00"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "timeout_exhausted",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "使用primary_clock读取系统当前时间。",
+          "next_step": "tool",
+          "tool_name": "primary_clock",
+          "parallel_tools": [
+            "primary_clock"
+          ],
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 707,
+            "eval_count": 43
+          },
+          "elapsed_seconds": 2.0550996250021853,
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "call_id": "9c0bc81a29f640afaa5b3ee09dd4dd7b",
+          "name": "primary_clock",
+          "args": {},
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 0.8779212500012363,
+          "usage": {
+            "prompt_eval_count": 729,
+            "eval_count": 16
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "primary_clock",
+                "args": {},
+                "id": "9c0bc81a29f640afaa5b3ee09dd4dd7b",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "call_id": "9c0bc81a29f640afaa5b3ee09dd4dd7b",
+          "name": "primary_clock",
+          "args": {},
+          "status": "error",
+          "result": null,
+          "error": "TimeoutError: 验证主动注入的已结束超时；函数本次执行已经退出",
+          "error_kind": "timeout",
+          "elapsed_seconds": 0.0013219579996075481,
+          "message": {
+            "content": "TimeoutError: 验证主动注入的已结束超时；函数本次执行已经退出",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "primary_clock",
+            "id": null,
+            "tool_call_id": "9c0bc81a29f640afaa5b3ee09dd4dd7b",
+            "artifact": null,
+            "status": "error"
+          },
+          "attempts": [
+            {
+              "attempt": 1,
+              "status": "error",
+              "error": "TimeoutError: 验证主动注入的已结束超时；函数本次执行已经退出",
+              "error_kind": "timeout",
+              "elapsed_seconds": 0.0007494590026908554
+            },
+            {
+              "attempt": 2,
+              "status": "error",
+              "error": "TimeoutError: 验证主动注入的已结束超时；函数本次执行已经退出",
+              "error_kind": "timeout",
+              "elapsed_seconds": 0.0005404590046964586
+            }
+          ],
+          "execution_mode": "serial",
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "observation": "primary_clock调用失败，尝试使用backup_clock。",
+          "decision": "continue",
+          "task_complete": false,
+          "answer": "",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1100,
+            "eval_count": 34
+          },
+          "elapsed_seconds": 3.561642082997423,
+          "iteration": 1
+        },
+        {
+          "type": "recovery",
+          "failed_tools": [
+            "primary_clock"
+          ],
+          "available_alternatives": [
+            "backup_clock"
+          ],
+          "pending": true,
+          "message": "工具执行异常已记录；下一轮从剩余注册工具中选择适用替代，无法替代则说明未完成。",
+          "iteration": 1
+        },
+        {
+          "type": "thought",
+          "thought": "使用备用时钟读取系统当前时间。",
+          "next_step": "tool",
+          "tool_name": "backup_clock",
+          "parallel_tools": [
+            "backup_clock"
+          ],
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 993,
+            "eval_count": 44
+          },
+          "elapsed_seconds": 3.5955694999938714,
+          "iteration": 2
+        },
+        {
+          "type": "tool_call",
+          "call_id": "9466035cba5745e592f56bfaf70e011e",
+          "name": "backup_clock",
+          "args": {},
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 2.693762292001338,
+          "usage": {
+            "prompt_eval_count": 1065,
+            "eval_count": 16
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "backup_clock",
+                "args": {},
+                "id": "9466035cba5745e592f56bfaf70e011e",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 2
+        },
+        {
+          "type": "tool_result",
+          "call_id": "9466035cba5745e592f56bfaf70e011e",
+          "name": "backup_clock",
+          "args": {},
+          "status": "success",
+          "result": {
+            "iso_time": "2026-10-02T20:57:01.612695+08:00"
+          },
+          "error": "",
+          "error_kind": null,
+          "elapsed_seconds": 0.0010697500038077123,
+          "message": {
+            "content": "{'iso_time': '2026-10-02T20:57:01.612695+08:00'}",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "backup_clock",
+            "id": null,
+            "tool_call_id": "9466035cba5745e592f56bfaf70e011e",
+            "artifact": null,
+            "status": "success"
+          },
+          "attempts": [
+            {
+              "attempt": 1,
+              "status": "success",
+              "error": "",
+              "error_kind": null,
+              "elapsed_seconds": 0.0010502910008653998
+            }
+          ],
+          "execution_mode": "serial",
+          "iteration": 2
+        },
+        {
+          "type": "observation",
+          "observation": "使用备用时钟读取到当前时间为2026-10-02T20:57:01.612695+08:00。",
+          "decision": "finish",
+          "task_complete": true,
+          "answer": "当前时间为2026-10-02T20:57:01.612695+08:00。",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1354,
+            "eval_count": 100
+          },
+          "elapsed_seconds": 6.7417735409981105,
+          "iteration": 2
+        },
+        {
+          "type": "done",
+          "task_complete": true,
+          "stop_reason": "task_complete",
+          "full_response": "当前时间为2026-10-02T20:57:01.612695+08:00。",
+          "iterations": 2,
+          "context": {
+            "observations": [
+              {
+                "call_id": "9c0bc81a29f640afaa5b3ee09dd4dd7b",
+                "name": "primary_clock",
+                "args": {},
+                "status": "error",
+                "result": null,
+                "error": "TimeoutError: 验证主动注入的已结束超时；函数本次执行已经退出",
+                "error_kind": "timeout",
+                "elapsed_seconds": 0.0013219579996075481,
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "error",
+                    "error": "TimeoutError: 验证主动注入的已结束超时；函数本次执行已经退出",
+                    "error_kind": "timeout",
+                    "elapsed_seconds": 0.0007494590026908554
+                  },
+                  {
+                    "attempt": 2,
+                    "status": "error",
+                    "error": "TimeoutError: 验证主动注入的已结束超时；函数本次执行已经退出",
+                    "error_kind": "timeout",
+                    "elapsed_seconds": 0.0005404590046964586
+                  }
+                ],
+                "execution_mode": "serial"
+              },
+              {
+                "call_id": "9466035cba5745e592f56bfaf70e011e",
+                "name": "backup_clock",
+                "args": {},
+                "status": "success",
+                "result": {
+                  "iso_time": "2026-10-02T20:57:01.612695+08:00"
+                },
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0010697500038077123,
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "status": "success",
+                    "error": "",
+                    "error_kind": null,
+                    "elapsed_seconds": 0.0010502910008653998
+                  }
+                ],
+                "execution_mode": "serial"
+              }
+            ],
+            "recovery": {
+              "failed_tools": [
+                "primary_clock"
+              ],
+              "available_alternatives": [
+                "backup_clock"
+              ],
+              "pending": false
+            },
+            "last_observation": {
+              "observation": "使用备用时钟读取到当前时间为2026-10-02T20:57:01.612695+08:00。",
+              "decision": "finish",
+              "task_complete": true
+            }
+          }
+        }
+      ],
+      "actual_calls": [
+        {
+          "name": "primary_clock",
+          "at": "2026-10-02T20:56:51.738928+08:00"
+        },
+        {
+          "name": "primary_clock",
+          "at": "2026-10-02T20:56:51.739547+08:00"
+        },
+        {
+          "name": "backup_clock",
+          "at": "2026-10-02T20:57:01.612334+08:00"
+        }
+      ],
+      "passed": true
+    }
+  ],
+  "validation_complete": true,
+  "finished_at": "2026-10-02T20:57:08.360343+08:00"
+}

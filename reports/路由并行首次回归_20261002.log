@@ -1,0 +1,123 @@
+test_answer_plan_skips_model_and_tool_execution (tests.test_agent.TestAction) ... ok
+test_closing_after_call_event_does_not_execute_tool (tests.test_agent.TestAction) ... ok
+test_empty_multiple_wrong_name_and_non_dict_arguments_do_not_execute (tests.test_agent.TestAction) ... ok
+test_execution_keeps_selected_tool_when_caller_changes_registry_after_call_event (tests.test_agent.TestAction) ... ok
+test_executor_rejects_unknown_duplicate_and_non_dict_arguments (tests.test_agent.TestAction) ... ok
+test_invalid_thought_and_duplicate_tools_do_not_call_model (tests.test_agent.TestAction) ... ok
+test_native_call_executes_selected_tool_and_correlates_messages (tests.test_agent.TestAction) ... ok
+test_network_failure_and_cloud_configuration_do_not_execute (tests.test_agent.TestAction) ... ok
+test_no_argument_and_optional_default_tools_execute (tests.test_agent.TestAction) ... ok
+test_only_selected_tool_is_exposed_even_when_other_tools_are_available (tests.test_agent.TestAction) ... ok
+test_partial_response_service_errors_and_malformed_json_do_not_execute (tests.test_agent.TestAction) ... ok
+test_required_type_and_extra_argument_errors_are_tool_results_without_side_effects (tests.test_agent.TestAction) ... ok
+test_structured_results_and_mutating_tools_preserve_original_parameters (tests.test_agent.TestAction) ... ok
+test_tool_exception_is_preserved_and_not_retried (tests.test_agent.TestAction) ... ok
+test_all_stages_preserve_actual_tool_description_and_parameter_constraints (tests.test_agent.TestAgentSystemPrompt) ... ok
+test_empty_registry_constrains_model_plan_to_answer (tests.test_agent.TestAgentSystemPrompt) ... ok
+test_empty_registry_is_explicit_and_does_not_add_planned_production_tools (tests.test_agent.TestAgentSystemPrompt) ... ok
+test_unknown_stage_is_rejected_without_model_or_tool_execution (tests.test_agent.TestAgentSystemPrompt) ... ok
+test_user_documents_observations_and_thought_cannot_replace_system_rules (tests.test_agent.TestAgentSystemPrompt) ... ok
+test_comparison_balances_budget_and_reports_truncated_evidence (tests.test_agent.TestComparisonAndKeywords) ... <frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+ok
+test_comparison_deduplicates_chunks_without_mutating_source (tests.test_agent.TestComparisonAndKeywords) ... ok
+test_comparison_dimension_low_score_is_reported_with_paper_level_threshold (tests.test_agent.TestComparisonAndKeywords) ... ok
+test_comparison_filters_each_paper_and_covers_three_dimensions (tests.test_agent.TestComparisonAndKeywords) ... ok
+test_comparison_low_relevance_cannot_generate_or_auto_confirm (tests.test_agent.TestComparisonAndKeywords) ... ok
+test_comparison_missing_one_paper_citation_is_warned (tests.test_agent.TestComparisonAndKeywords) ... ok
+test_comparison_missing_paper_takes_priority_over_other_paper_low_score (tests.test_agent.TestComparisonAndKeywords) ... ok
+test_comparison_network_failure_is_a_real_error_without_retry (tests.test_agent.TestComparisonAndKeywords) ... ok
+test_comparison_reads_and_scores_opening_chunks_with_real_reranker_contract (tests.test_agent.TestComparisonAndKeywords) ... ok
+test_comparison_rejects_wrong_paper_ids_missing_fields_and_partial_model_choice (tests.test_agent.TestComparisonAndKeywords) ... ok
+test_comparison_same_missing_or_invalid_id_fails_before_retrieval (tests.test_agent.TestComparisonAndKeywords) ... ok
+test_comparison_unindexed_paper_has_no_model_fallback (tests.test_agent.TestComparisonAndKeywords) ... ok
+test_insufficient_comparison_cannot_be_marked_complete (tests.test_agent.TestComparisonAndKeywords) ... ok
+test_keyword_cross_line_phrase_has_real_line_evidence (tests.test_agent.TestComparisonAndKeywords) ... ok
+test_keyword_deduplication_empty_result_and_unknown_usage (tests.test_agent.TestComparisonAndKeywords) ... ok
+test_keyword_document_uses_uploaded_original_and_locations (tests.test_agent.TestComparisonAndKeywords) ... ok
+test_keyword_invalid_expanded_or_embedded_terms_are_rejected (tests.test_agent.TestComparisonAndKeywords) ... ok
+test_keyword_question_preserves_bilingual_terms_and_evidence (tests.test_agent.TestComparisonAndKeywords) ... ok
+test_keyword_rejects_ambiguous_empty_and_invalid_input_before_model (tests.test_agent.TestComparisonAndKeywords) ... ok
+test_keyword_truncation_does_not_accept_terms_outside_input (tests.test_agent.TestComparisonAndKeywords) ... ok
+test_keyword_unfinished_malformed_and_network_response_fails (tests.test_agent.TestComparisonAndKeywords) ... ok
+test_new_tools_have_real_registered_parameter_schemas (tests.test_agent.TestComparisonAndKeywords) ... ok
+test_observation_schema_prevents_empty_finish_seen_in_real_keyword_call (tests.test_agent.TestComparisonAndKeywords) ... ok
+test_closing_loop_and_mutating_events_do_not_execute_or_change_state (tests.test_agent.TestObservationAndLoop) ... ok
+test_continue_stops_at_limit_without_extra_model_or_tool_calls (tests.test_agent.TestObservationAndLoop) ... ok
+test_direct_answer_finishes_without_tool_calling_request (tests.test_agent.TestObservationAndLoop) ... ok
+test_failed_tool_cannot_be_marked_successful (tests.test_agent.TestObservationAndLoop) ... ok
+test_invalid_limits_and_context_stop_before_model_calls (tests.test_agent.TestObservationAndLoop) ... ok
+test_missing_information_can_finish_without_claiming_completion (tests.test_agent.TestObservationAndLoop) ... ok
+test_model_errors_stop_in_each_stage_and_preserve_actual_results (tests.test_agent.TestObservationAndLoop) ... ok
+test_observation_rejects_inconsistent_decisions (tests.test_agent.TestObservationAndLoop) ... ok
+test_observation_rejects_partial_malformed_and_service_responses (tests.test_agent.TestObservationAndLoop) ... ok
+test_observation_unknown_usage_and_boundary_description (tests.test_agent.TestObservationAndLoop) ... ok
+test_observation_validates_state_before_call_and_never_uses_cloud (tests.test_agent.TestObservationAndLoop) ... ok
+test_tool_error_can_continue_to_a_real_alternative (tests.test_agent.TestObservationAndLoop) ... ok
+test_tool_failure_is_observed_and_stops_honestly (tests.test_agent.TestObservationAndLoop) ... ok
+test_two_real_tools_feed_next_round_and_native_observation_messages (tests.test_agent.TestObservationAndLoop) ... ok
+test_default_agent_can_execute_registered_rag_and_preserve_citations (tests.test_agent.TestResearchTools) ... ok
+test_generation_failure_is_real_tool_error_without_retry (tests.test_agent.TestResearchTools) ... ok
+test_metadata_character_budget_preserves_contiguous_prefix (tests.test_agent.TestResearchTools) ... ok
+test_metadata_hallucinated_author_year_or_doi_is_rejected (tests.test_agent.TestResearchTools) ... ok
+test_metadata_missing_fields_are_null_not_guessed_from_filename (tests.test_agent.TestResearchTools) ... ok
+test_metadata_rejects_invalid_types_ranges_and_extra_fields (tests.test_agent.TestResearchTools) ... ok
+test_metadata_returns_original_fields_and_real_evidence (tests.test_agent.TestResearchTools) ... ok
+test_metadata_reuses_pdf_and_word_loaders_with_real_locations (tests.test_agent.TestResearchTools) ... ok
+test_metadata_unfinished_or_malformed_model_results_do_not_return_partial_fields (tests.test_agent.TestResearchTools) ... ok
+test_metadata_unknown_usage_stays_unknown_and_cloud_is_rejected (tests.test_agent.TestResearchTools) ... ok
+test_rag_empty_library_preserves_explicit_fallback_notice (tests.test_agent.TestResearchTools) ... ok
+test_rag_filters_by_existing_uploaded_fingerprint (tests.test_agent.TestResearchTools) ... ok
+test_rag_logging_failure_warns_without_discarding_actual_answer (tests.test_agent.TestResearchTools) ... ok
+test_rag_low_relevance_returns_candidates_without_generation (tests.test_agent.TestResearchTools) ... ok
+test_rag_tool_keeps_sources_without_repeating_large_pdf_layout (tests.test_agent.TestResearchTools) ... ok
+test_rag_tool_logs_success_confirmation_and_model_error_with_real_usage (tests.test_agent.TestResearchTools) ... ok
+test_rag_uses_hybrid_rerank_and_real_module_two_citations (tests.test_agent.TestResearchTools) ... ok
+test_rag_validates_question_and_uploaded_document_before_retrieval (tests.test_agent.TestResearchTools) ... ok
+test_registry_contains_real_tools_with_schemas (tests.test_agent.TestResearchTools) ... ok
+test_unconfirmed_rag_candidates_cannot_be_marked_complete (tests.test_agent.TestResearchTools) ... ok
+test_unknown_fingerprint_stale_file_and_outside_symlink_never_call_model (tests.test_agent.TestResearchTools) ... ok
+test_current_time_is_real_timezone_aware_and_uses_no_model (tests.test_agent.TestSummaryTimeSearch) ... ok
+test_current_time_uses_system_timezone_without_hardcoding (tests.test_agent.TestSummaryTimeSearch) ... ok
+test_default_agent_registers_enabled_search_and_explicit_empty_stays_empty (tests.test_agent.TestSummaryTimeSearch) ... ok
+test_disabled_search_is_not_registered_and_cannot_call_http (tests.test_agent.TestSummaryTimeSearch) ... ok
+test_missing_section_is_explicit_and_cannot_complete_task (tests.test_agent.TestSummaryTimeSearch) ... ok
+test_search_challenge_or_unrecognized_page_is_error (tests.test_agent.TestSummaryTimeSearch) ... ok
+test_search_distinguishes_legitimate_empty_results (tests.test_agent.TestSummaryTimeSearch) ... ok
+test_search_empty_query_rejected_before_network (tests.test_agent.TestSummaryTimeSearch) ... ok
+test_search_http_error_is_not_empty_result (tests.test_agent.TestSummaryTimeSearch) ... ok
+test_search_parses_top_five_titles_snippets_and_unwraps_redirects (tests.test_agent.TestSummaryTimeSearch) ... ok
+test_search_registration_reads_current_boolean_switch (tests.test_agent.TestSummaryTimeSearch) ... ok
+test_search_skips_invalid_links_and_allows_missing_snippet (tests.test_agent.TestSummaryTimeSearch) ... ok
+test_search_timeout_is_execution_error_without_retry (tests.test_agent.TestSummaryTimeSearch) ... ok
+test_summary_api_failure_is_tool_error_without_retry (tests.test_agent.TestSummaryTimeSearch) ... ok
+test_summary_generates_four_sections_with_true_sources_and_usage (tests.test_agent.TestSummaryTimeSearch) ... ok
+test_summary_omits_author_only_chunks_before_abstract (tests.test_agent.TestSummaryTimeSearch) ... ok
+test_summary_preserves_pdf_physical_page_and_word_paragraph (tests.test_agent.TestSummaryTimeSearch) ... Consider using the pymupdf_layout package for a greatly improved page layout analysis.
+warning: The `fitz` API is deprecated and will be removed in future. Use `import pymupdf` instead.
+ok
+test_summary_prioritizes_conclusion_and_reports_truncation (tests.test_agent.TestSummaryTimeSearch) ... ok
+test_summary_rejects_empty_loaded_content_before_model (tests.test_agent.TestSummaryTimeSearch) ... ok
+test_summary_rejects_incomplete_or_invalid_model_packets (tests.test_agent.TestSummaryTimeSearch) ... ok
+test_summary_rejects_malformed_sections_and_fabricated_references (tests.test_agent.TestSummaryTimeSearch) ... ok
+test_summary_rejects_unknown_or_changed_uploaded_ids_before_model (tests.test_agent.TestSummaryTimeSearch) ... ok
+test_summary_unknown_tokens_are_not_zero (tests.test_agent.TestSummaryTimeSearch) ... ok
+test_cloud_and_invalid_addresses_are_rejected_before_network (tests.test_agent.TestThought) ... ok
+test_direct_answer_plan_with_no_tools_does_not_generate_answer (tests.test_agent.TestThought) ... ok
+test_dynamic_instructions_do_not_change_system_message (tests.test_agent.TestThought) ... ok
+test_input_errors_do_not_call_model (tests.test_agent.TestThought) ... ok
+test_invalid_json_and_content_shape_are_explicit_errors (tests.test_agent.TestThought) ... ok
+test_invalid_plan_fields_and_tool_decisions_are_rejected (tests.test_agent.TestThought) ... ok
+test_local_model_failure_is_not_retried (tests.test_agent.TestThought) ... ok
+test_message_roles_tools_schema_and_current_state_are_preserved (tests.test_agent.TestThought) ... ok
+test_no_tools_cannot_select_tool_and_boundary_length_is_valid (tests.test_agent.TestThought) ... ok
+test_plan_only_selects_registered_tool_and_uses_llm_config (tests.test_agent.TestThought) ... ok
+test_unfinished_length_stops_service_errors_and_bad_shapes_are_rejected (tests.test_agent.TestThought) ... ok
+test_unknown_usage_is_not_estimated (tests.test_agent.TestThought) ... ok
+
+----------------------------------------------------------------------
+Ran 112 tests in 1.507s
+
+OK
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

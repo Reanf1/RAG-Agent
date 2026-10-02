@@ -1,0 +1,2855 @@
+{
+  "started_at": "2026-10-02T20:20:57.346464+08:00",
+  "config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://localhost:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 8192,
+      "num_predict": 512,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 6000,
+      "max_prompt_chars": 12000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "max_parallel_calls": 2,
+      "online_search_enabled": false
+    },
+    "paths": {
+      "raw_documents": "data/raw",
+      "vector_index": "data/index",
+      "logs": "logs"
+    }
+  },
+  "ollama_num_parallel": 1,
+  "rows": [
+    {
+      "name": "plain_react_time",
+      "question": "请返回当前系统时间和时区，只调用current_time一次。",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "调用current_time获取当前系统时间。",
+          "next_step": "tool",
+          "tool_name": "current_time",
+          "parallel_tools": [
+            "current_time"
+          ],
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1426,
+            "eval_count": 43
+          },
+          "elapsed_seconds": 8.313037334002729,
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "call_id": "c5219fe9300a4da692c3aaa561e0c538",
+          "name": "current_time",
+          "args": {},
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 2.9715143749999697,
+          "usage": {
+            "prompt_eval_count": 732,
+            "eval_count": 16
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "current_time",
+                "args": {},
+                "id": "c5219fe9300a4da692c3aaa561e0c538",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "call_id": "c5219fe9300a4da692c3aaa561e0c538",
+          "name": "current_time",
+          "args": {},
+          "status": "success",
+          "result": {
+            "system_time": "2026-10-02T20:21:11+08:00",
+            "timezone": "CST",
+            "usage": {
+              "prompt_eval_count": 0,
+              "eval_count": 0
+            }
+          },
+          "error": "",
+          "elapsed_seconds": 0.0009970000028260984,
+          "message": {
+            "content": "{'system_time': '2026-10-02T20:21:11+08:00', 'timezone': 'CST', 'usage': {'prompt_eval_count': 0, 'eval_count': 0}}",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "current_time",
+            "id": null,
+            "tool_call_id": "c5219fe9300a4da692c3aaa561e0c538",
+            "artifact": null,
+            "status": "success"
+          },
+          "execution_mode": "serial",
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "observation": "当前系统时间为2026-10-02T20:21:11+08:00，时区为CST。",
+          "decision": "finish",
+          "task_complete": true,
+          "answer": "当前系统时间为2026-10-02T20:21:11+08:00，时区为CST。",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1637,
+            "eval_count": 98
+          },
+          "elapsed_seconds": 7.635068417002913,
+          "iteration": 1
+        },
+        {
+          "type": "done",
+          "task_complete": true,
+          "stop_reason": "task_complete",
+          "full_response": "当前系统时间为2026-10-02T20:21:11+08:00，时区为CST。",
+          "iterations": 1,
+          "context": {
+            "observations": [
+              {
+                "call_id": "c5219fe9300a4da692c3aaa561e0c538",
+                "name": "current_time",
+                "args": {},
+                "status": "success",
+                "result": {
+                  "system_time": "2026-10-02T20:21:11+08:00",
+                  "timezone": "CST",
+                  "usage": {
+                    "prompt_eval_count": 0,
+                    "eval_count": 0
+                  }
+                },
+                "error": "",
+                "elapsed_seconds": 0.0009970000028260984,
+                "execution_mode": "serial"
+              }
+            ],
+            "last_observation": {
+              "observation": "当前系统时间为2026-10-02T20:21:11+08:00，时区为CST。",
+              "decision": "finish",
+              "task_complete": true
+            }
+          }
+        }
+      ],
+      "wall_seconds": 18.93644745900383,
+      "usage": {
+        "prompt_eval_count": 3795,
+        "eval_count": 157
+      },
+      "agent_model_calls": 3,
+      "passed": true
+    },
+    {
+      "name": "routed_time",
+      "question": "请返回当前系统时间和时区，只调用current_time一次。",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+          "next_step": "tool",
+          "tool_name": "current_time",
+          "parallel_tools": [],
+          "route": "rule",
+          "model": null,
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          },
+          "elapsed_seconds": 0.0004024170048069209,
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "call_id": "e98fac65e0ea418895e0bda736a701f2",
+          "name": "current_time",
+          "args": {},
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 1.9678658339980757,
+          "usage": {
+            "prompt_eval_count": 733,
+            "eval_count": 16
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "current_time",
+                "args": {},
+                "id": "e98fac65e0ea418895e0bda736a701f2",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "call_id": "e98fac65e0ea418895e0bda736a701f2",
+          "name": "current_time",
+          "args": {},
+          "status": "success",
+          "result": {
+            "system_time": "2026-10-02T20:21:21+08:00",
+            "timezone": "CST",
+            "usage": {
+              "prompt_eval_count": 0,
+              "eval_count": 0
+            }
+          },
+          "error": "",
+          "elapsed_seconds": 0.0008355830068467185,
+          "message": {
+            "content": "{'system_time': '2026-10-02T20:21:21+08:00', 'timezone': 'CST', 'usage': {'prompt_eval_count': 0, 'eval_count': 0}}",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "current_time",
+            "id": null,
+            "tool_call_id": "e98fac65e0ea418895e0bda736a701f2",
+            "artifact": null,
+            "status": "success"
+          },
+          "execution_mode": "serial",
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "observation": "当前系统时间为2026-10-02T20:21:21+08:00，时区为CST。",
+          "decision": "finish",
+          "task_complete": true,
+          "answer": "当前系统时间为2026-10-02T20:21:21+08:00，时区为CST。",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1637,
+            "eval_count": 98
+          },
+          "elapsed_seconds": 5.768843500001822,
+          "iteration": 1
+        },
+        {
+          "type": "done",
+          "task_complete": true,
+          "stop_reason": "task_complete",
+          "full_response": "当前系统时间为2026-10-02T20:21:21+08:00，时区为CST。",
+          "iterations": 1,
+          "context": {
+            "observations": [
+              {
+                "call_id": "e98fac65e0ea418895e0bda736a701f2",
+                "name": "current_time",
+                "args": {},
+                "status": "success",
+                "result": {
+                  "system_time": "2026-10-02T20:21:21+08:00",
+                  "timezone": "CST",
+                  "usage": {
+                    "prompt_eval_count": 0,
+                    "eval_count": 0
+                  }
+                },
+                "error": "",
+                "elapsed_seconds": 0.0008355830068467185,
+                "execution_mode": "serial"
+              }
+            ],
+            "last_observation": {
+              "observation": "当前系统时间为2026-10-02T20:21:21+08:00，时区为CST。",
+              "decision": "finish",
+              "task_complete": true
+            }
+          }
+        }
+      ],
+      "wall_seconds": 7.7630055410045316,
+      "usage": {
+        "prompt_eval_count": 2370,
+        "eval_count": 114
+      },
+      "agent_model_calls": 2,
+      "passed": true
+    },
+    {
+      "name": "general_concept",
+      "question": "什么是深度学习？",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "独立的一般概念问题，直接进入Observation回答。",
+          "next_step": "answer",
+          "tool_name": null,
+          "parallel_tools": [],
+          "route": "rule",
+          "model": null,
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          },
+          "elapsed_seconds": 0.0007097919951775111,
+          "iteration": 1
+        },
+        {
+          "type": "action_skipped",
+          "reason": "Thought规划直接回答，无需执行工具。",
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "observation": "深度学习是机器学习的一个分支，通过多层神经网络模拟人脑处理信息的方式。",
+          "decision": "finish",
+          "task_complete": true,
+          "answer": "深度学习是机器学习的一个分支，通过多层神经网络模拟人脑处理信息的方式。",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1389,
+            "eval_count": 63
+          },
+          "elapsed_seconds": 3.11224816700269,
+          "iteration": 1
+        },
+        {
+          "type": "done",
+          "task_complete": true,
+          "stop_reason": "task_complete",
+          "full_response": "深度学习是机器学习的一个分支，通过多层神经网络模拟人脑处理信息的方式。",
+          "iterations": 1,
+          "context": {
+            "observations": [],
+            "last_observation": {
+              "observation": "深度学习是机器学习的一个分支，通过多层神经网络模拟人脑处理信息的方式。",
+              "decision": "finish",
+              "task_complete": true
+            }
+          }
+        }
+      ],
+      "wall_seconds": 3.1229016249999404,
+      "usage": {
+        "prompt_eval_count": 1389,
+        "eval_count": 63
+      },
+      "agent_model_calls": 1,
+      "passed": true
+    },
+    {
+      "name": "independent_different_tools",
+      "question": "请同时完成两项独立任务：用current_time返回系统时间；用keyword_extract提取这句话的关键词：Transformer用于机器翻译，ViT用于图像分类。",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "执行current_time获取系统时间。",
+          "next_step": "tool",
+          "tool_name": "current_time",
+          "parallel_tools": [
+            "current_time",
+            "keyword_extract"
+          ],
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 1444,
+            "eval_count": 45
+          },
+          "elapsed_seconds": 4.086769957997603,
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "call_id": "1cc98c0fb8f44f2586dbe43c4f1c1fea",
+          "name": "current_time",
+          "args": {},
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 5.138711624997086,
+          "usage": {
+            "prompt_eval_count": 1070,
+            "eval_count": 46
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "current_time",
+                "args": {},
+                "id": "1cc98c0fb8f44f2586dbe43c4f1c1fea",
+                "type": "tool_call"
+              },
+              {
+                "name": "keyword_extract",
+                "args": {
+                  "text": "Transformer用于机器翻译，ViT用于图像分类。"
+                },
+                "id": "98a307d4cdc9462ea15d665bce543219",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "call_id": "98a307d4cdc9462ea15d665bce543219",
+          "name": "keyword_extract",
+          "args": {
+            "text": "Transformer用于机器翻译，ViT用于图像分类。"
+          },
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 5.138711624997086,
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          },
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "call_id": "1cc98c0fb8f44f2586dbe43c4f1c1fea",
+          "name": "current_time",
+          "args": {},
+          "status": "success",
+          "result": {
+            "system_time": "2026-10-02T20:21:39+08:00",
+            "timezone": "CST",
+            "usage": {
+              "prompt_eval_count": 0,
+              "eval_count": 0
+            }
+          },
+          "error": "",
+          "elapsed_seconds": 0.0013628330052597448,
+          "message": {
+            "content": "{'system_time': '2026-10-02T20:21:39+08:00', 'timezone': 'CST', 'usage': {'prompt_eval_count': 0, 'eval_count': 0}}",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "current_time",
+            "id": null,
+            "tool_call_id": "1cc98c0fb8f44f2586dbe43c4f1c1fea",
+            "artifact": null,
+            "status": "success"
+          },
+          "execution_mode": "parallel",
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "call_id": "98a307d4cdc9462ea15d665bce543219",
+          "name": "keyword_extract",
+          "args": {
+            "text": "Transformer用于机器翻译，ViT用于图像分类。"
+          },
+          "status": "success",
+          "result": {
+            "keywords": [
+              "Transformer",
+              "机器翻译",
+              "ViT",
+              "图像分类"
+            ],
+            "evidence": [
+              {
+                "keyword": "Transformer",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "机器翻译",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "ViT",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "图像分类",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              }
+            ],
+            "doc_id": null,
+            "source_file": null,
+            "input_truncated": false,
+            "model": "qwen2.5:7b",
+            "usage": {
+              "prompt_eval_count": 96,
+              "eval_count": 19
+            },
+            "elapsed_seconds": 0.8964102909958456
+          },
+          "error": "",
+          "elapsed_seconds": 0.8978759590027039,
+          "message": {
+            "content": "{'keywords': ['Transformer', '机器翻译', 'ViT', '图像分类'], 'evidence': [{'keyword': 'Transformer', 'locations': [{'text': 'Transformer用于机器翻译，ViT用于图像分类。', 'location': '问题第1行', 'source_file': None}]}, {'keyword': '机器翻译', 'locations': [{'text': 'Transformer用于机器翻译，ViT用于图像分类。', 'location': '问题第1行', 'source_file': None}]}, {'keyword': 'ViT', 'locations': [{'text': 'Transformer用于机器翻译，ViT用于图像分类。', 'location': '问题第1行', 'source_file': None}]}, {'keyword': '图像分类', 'locations': [{'text': 'Transformer用于机器翻译，ViT用于图像分类。', 'location': '问题第1行', 'source_file': None}]}], 'doc_id': None, 'source_file': None, 'input_truncated': False, 'model': 'qwen2.5:7b', 'usage': {'prompt_eval_count': 96, 'eval_count': 19}, 'elapsed_seconds': 0.8964102909958456}",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "keyword_extract",
+            "id": null,
+            "tool_call_id": "98a307d4cdc9462ea15d665bce543219",
+            "artifact": null,
+            "status": "success"
+          },
+          "execution_mode": "parallel",
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "observation": "当前系统时间为2026-10-02T20:21:39+08:00，时区为CST。提取到的关键词为Transformer、机器翻译、ViT和图像分类。",
+          "decision": "finish",
+          "task_complete": true,
+          "answer": "当前系统时间为2026-10-02T20:21:39+08:00，时区为CST。提取到的关键词为Transformer、机器翻译、ViT和图像分类。",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 2327,
+            "eval_count": 130
+          },
+          "elapsed_seconds": 12.32046375000209,
+          "iteration": 1
+        },
+        {
+          "type": "done",
+          "task_complete": true,
+          "stop_reason": "task_complete",
+          "full_response": "当前系统时间为2026-10-02T20:21:39+08:00，时区为CST。提取到的关键词为Transformer、机器翻译、ViT和图像分类。",
+          "iterations": 1,
+          "context": {
+            "observations": [
+              {
+                "call_id": "1cc98c0fb8f44f2586dbe43c4f1c1fea",
+                "name": "current_time",
+                "args": {},
+                "status": "success",
+                "result": {
+                  "system_time": "2026-10-02T20:21:39+08:00",
+                  "timezone": "CST",
+                  "usage": {
+                    "prompt_eval_count": 0,
+                    "eval_count": 0
+                  }
+                },
+                "error": "",
+                "elapsed_seconds": 0.0013628330052597448,
+                "execution_mode": "parallel"
+              },
+              {
+                "call_id": "98a307d4cdc9462ea15d665bce543219",
+                "name": "keyword_extract",
+                "args": {
+                  "text": "Transformer用于机器翻译，ViT用于图像分类。"
+                },
+                "status": "success",
+                "result": {
+                  "keywords": [
+                    "Transformer",
+                    "机器翻译",
+                    "ViT",
+                    "图像分类"
+                  ],
+                  "evidence": [
+                    {
+                      "keyword": "Transformer",
+                      "locations": [
+                        {
+                          "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                          "location": "问题第1行",
+                          "source_file": null
+                        }
+                      ]
+                    },
+                    {
+                      "keyword": "机器翻译",
+                      "locations": [
+                        {
+                          "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                          "location": "问题第1行",
+                          "source_file": null
+                        }
+                      ]
+                    },
+                    {
+                      "keyword": "ViT",
+                      "locations": [
+                        {
+                          "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                          "location": "问题第1行",
+                          "source_file": null
+                        }
+                      ]
+                    },
+                    {
+                      "keyword": "图像分类",
+                      "locations": [
+                        {
+                          "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                          "location": "问题第1行",
+                          "source_file": null
+                        }
+                      ]
+                    }
+                  ],
+                  "doc_id": null,
+                  "source_file": null,
+                  "input_truncated": false,
+                  "model": "qwen2.5:7b",
+                  "usage": {
+                    "prompt_eval_count": 96,
+                    "eval_count": 19
+                  },
+                  "elapsed_seconds": 0.8964102909958456
+                },
+                "error": "",
+                "elapsed_seconds": 0.8978759590027039,
+                "execution_mode": "parallel"
+              }
+            ],
+            "last_observation": {
+              "observation": "当前系统时间为2026-10-02T20:21:39+08:00，时区为CST。提取到的关键词为Transformer、机器翻译、ViT和图像分类。",
+              "decision": "finish",
+              "task_complete": true
+            }
+          }
+        }
+      ],
+      "wall_seconds": 22.46162945800461,
+      "usage": {
+        "prompt_eval_count": 4937,
+        "eval_count": 240
+      },
+      "agent_model_calls": 3,
+      "passed": true
+    },
+    {
+      "name": "independent_papers",
+      "question": "请同时用paper_metadata分别读取两篇论文的标题和作者，ID为bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697和8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6。",
+      "events": [
+        {
+          "type": "thought",
+          "thought": "分别处理两份已给定论文，Action可提出同一工具的独立调用。",
+          "next_step": "tool",
+          "tool_name": "paper_metadata",
+          "parallel_tools": [
+            "paper_metadata"
+          ],
+          "route": "rule",
+          "model": null,
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          },
+          "elapsed_seconds": 0.00011683400225592777,
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "call_id": "95651aa566d741148e239e53628cc9c1",
+          "name": "paper_metadata",
+          "args": {
+            "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"
+          },
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 10.485389250003209,
+          "usage": {
+            "prompt_eval_count": 1064,
+            "eval_count": 153
+          },
+          "message": {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [
+              {
+                "name": "paper_metadata",
+                "args": {
+                  "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"
+                },
+                "id": "95651aa566d741148e239e53628cc9c1",
+                "type": "tool_call"
+              },
+              {
+                "name": "paper_metadata",
+                "args": {
+                  "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6"
+                },
+                "id": "aecd4ce81c9f4d359087cbe4fff91e53",
+                "type": "tool_call"
+              }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+          },
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "call_id": "aecd4ce81c9f4d359087cbe4fff91e53",
+          "name": "paper_metadata",
+          "args": {
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6"
+          },
+          "model": "qwen2.5:7b",
+          "elapsed_seconds": 10.485389250003209,
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          },
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "call_id": "95651aa566d741148e239e53628cc9c1",
+          "name": "paper_metadata",
+          "args": {
+            "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"
+          },
+          "status": "success",
+          "result": {
+            "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+            "source_file": "attention.pdf",
+            "title": "Attention Is All You Need",
+            "authors": [
+              "Ashish Vaswani",
+              "Noam Shazeer",
+              "Niki Parmar",
+              "Jakob Uszkoreit",
+              "Llion Jones",
+              "Aidan N. Gomez",
+              "Łukasz Kaiser",
+              "Illia Polosukhin"
+            ],
+            "year": 2017,
+            "abstract": "The dominant sequence transduction models are based on complex recurrent or\nconvolutional neural networks that include an encoder and a decoder. The best\nperforming models also connect the encoder and decoder through an attention\nmechanism. We propose a new simple network architecture, the Transformer,\nbased solely on attention mechanisms, dispensing with recurrence and convolutions\nentirely. Experiments on two machine translation tasks show these models to\nbe superior in quality while being more parallelizable and requiring significantly\nless time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-\nto-German translation task, improving over the existing best results, including\nensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,\nour model establishes a new single-model state-of-the-art BLEU score of 41.8 after\ntraining for 3.5 days on eight GPUs, a small fraction of the training costs of the\nbest models from the literature. We show that the Transformer generalizes well to\nother tasks by applying it successfully to English constituency parsing both with\nlarge and limited training data.",
+            "doi": null,
+            "evidence": {
+              "title": [
+                {
+                  "id": 4,
+                  "text": "Attention Is All You Need",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "authors": [
+                {
+                  "id": 6,
+                  "text": "Ashish Vaswani^{∗}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 7,
+                  "text": "Noam Shazeer^{∗}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 8,
+                  "text": "Niki Parmar^{∗}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 9,
+                  "text": "Jakob Uszkoreit^{∗}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 18,
+                  "text": "Llion Jones^{∗}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 19,
+                  "text": "Aidan N. Gomez^{∗†}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 20,
+                  "text": "Łukasz Kaiser^{∗}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 27,
+                  "text": "Illia Polosukhin^{∗‡}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "year": [
+                {
+                  "id": 56,
+                  "text": "31st Conference on Neural Information Processing Systems (NIPS 2017), Long Beach, CA, USA.",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "abstract": [
+                {
+                  "id": 30,
+                  "text": "The dominant sequence transduction models are based on complex recurrent or",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 31,
+                  "text": "convolutional neural networks that include an encoder and a decoder. The best",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 32,
+                  "text": "performing models also connect the encoder and decoder through an attention",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 33,
+                  "text": "mechanism. We propose a new simple network architecture, the Transformer,",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 34,
+                  "text": "based solely on attention mechanisms, dispensing with recurrence and convolutions",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 35,
+                  "text": "entirely. Experiments on two machine translation tasks show these models to",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 36,
+                  "text": "be superior in quality while being more parallelizable and requiring significantly",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 37,
+                  "text": "less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 38,
+                  "text": "to-German translation task, improving over the existing best results, including",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 39,
+                  "text": "ensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 40,
+                  "text": "our model establishes a new single-model state-of-the-art BLEU score of 41.8 after",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 41,
+                  "text": "training for 3.5 days on eight GPUs, a small fraction of the training costs of the",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 42,
+                  "text": "best models from the literature. We show that the Transformer generalizes well to",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 43,
+                  "text": "other tasks by applying it successfully to English constituency parsing both with",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 44,
+                  "text": "large and limited training data.",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "doi": []
+            },
+            "missing_fields": [
+              "doi"
+            ],
+            "input_truncated": true,
+            "warnings": [],
+            "model": "qwen2.5:7b",
+            "usage": {
+              "prompt_eval_count": 1607,
+              "eval_count": 99
+            }
+          },
+          "error": "",
+          "elapsed_seconds": 6.461204999999609,
+          "message": {
+            "content": "{'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'source_file': 'attention.pdf', 'title': 'Attention Is All You Need', 'authors': ['Ashish Vaswani', 'Noam Shazeer', 'Niki Parmar', 'Jakob Uszkoreit', 'Llion Jones', 'Aidan N. Gomez', 'Łukasz Kaiser', 'Illia Polosukhin'], 'year': 2017, 'abstract': 'The dominant sequence transduction models are based on complex recurrent or\\nconvolutional neural networks that include an encoder and a decoder. The best\\nperforming models also connect the encoder and decoder through an attention\\nmechanism. We propose a new simple network architecture, the Transformer,\\nbased solely on attention mechanisms, dispensing with recurrence and convolutions\\nentirely. Experiments on two machine translation tasks show these models to\\nbe superior in quality while being more parallelizable and requiring significantly\\nless time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-\\nto-German translation task, improving over the existing best results, including\\nensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,\\nour model establishes a new single-model state-of-the-art BLEU score of 41.8 after\\ntraining for 3.5 days on eight GPUs, a small fraction of the training costs of the\\nbest models from the literature. We show that the Transformer generalizes well to\\nother tasks by applying it successfully to English constituency parsing both with\\nlarge and limited training data.', 'doi': None, 'evidence': {'title': [{'id': 4, 'text': 'Attention Is All You Need', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}], 'authors': [{'id': 6, 'text': 'Ashish Vaswani^{∗}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 7, 'text': 'Noam Shazeer^{∗}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 8, 'text': 'Niki Parmar^{∗}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 9, 'text': 'Jakob Uszkoreit^{∗}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 18, 'text': 'Llion Jones^{∗}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 19, 'text': 'Aidan N. Gomez^{∗†}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 20, 'text': 'Łukasz Kaiser^{∗}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 27, 'text': 'Illia Polosukhin^{∗‡}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}], 'year': [{'id': 56, 'text': '31st Conference on Neural Information Processing Systems (NIPS 2017), Long Beach, CA, USA.', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}], 'abstract': [{'id': 30, 'text': 'The dominant sequence transduction models are based on complex recurrent or', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 31, 'text': 'convolutional neural networks that include an encoder and a decoder. The best', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 32, 'text': 'performing models also connect the encoder and decoder through an attention', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 33, 'text': 'mechanism. We propose a new simple network architecture, the Transformer,', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 34, 'text': 'based solely on attention mechanisms, dispensing with recurrence and convolutions', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 35, 'text': 'entirely. Experiments on two machine translation tasks show these models to', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 36, 'text': 'be superior in quality while being more parallelizable and requiring significantly', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 37, 'text': 'less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 38, 'text': 'to-German translation task, improving over the existing best results, including', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 39, 'text': 'ensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 40, 'text': 'our model establishes a new single-model state-of-the-art BLEU score of 41.8 after', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 41, 'text': 'training for 3.5 days on eight GPUs, a small fraction of the training costs of the', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 42, 'text': 'best models from the literature. We show that the Transformer generalizes well to', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 43, 'text': 'other tasks by applying it successfully to English constituency parsing both with', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 44, 'text': 'large and limited training data.', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}], 'doi': []}, 'missing_fields': ['doi'], 'input_truncated': True, 'warnings': [], 'model': 'qwen2.5:7b', 'usage': {'prompt_eval_count': 1607, 'eval_count': 99}}",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "paper_metadata",
+            "id": null,
+            "tool_call_id": "95651aa566d741148e239e53628cc9c1",
+            "artifact": null,
+            "status": "success"
+          },
+          "execution_mode": "parallel",
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "call_id": "aecd4ce81c9f4d359087cbe4fff91e53",
+          "name": "paper_metadata",
+          "args": {
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6"
+          },
+          "status": "success",
+          "result": {
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "source_file": "vit.pdf",
+            "title": "AN IMAGE IS WORTH 16X16 WORDS: TRANSFORMERS FOR IMAGE RECOGNITION AT SCALE",
+            "authors": [
+              "Alexey Dosovitskiy",
+              "Lucas Beyer",
+              "Alexander Kolesnikov",
+              "Dirk Weissenborn",
+              "Xiaohua Zhai",
+              "Thomas Unterthiner",
+              "Mostafa Dehghani",
+              "Matthias Minderer",
+              "Georg Heigold",
+              "Sylvain Gelly",
+              "Jakob Uszkoreit",
+              "Neil Houlsby"
+            ],
+            "year": 2021,
+            "abstract": "While the Transformer architecture has become the de-facto standard for natural\nlanguage processing tasks, its applications to computer vision remain limited. In\nvision, attention is either applied in conjunction with convolutional networks, or\nused to replace certain components of convolutional networks while keeping their\noverall structure in place. We show that this reliance on CNNs is not necessary\nand a pure transformer applied directly to sequences of image patches can perform\nvery well on image classiﬁcation tasks. When pre-trained on large amounts of\ndata and transferred to multiple mid-sized or small image recognition benchmarks\n(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent\nresults compared to state-of-the-art convolutional networks while requiring sub-\nstantially fewer computational resources to train.",
+            "doi": null,
+            "evidence": {
+              "title": [
+                {
+                  "id": 2,
+                  "text": "AN IMAGE IS WORTH 16X16 WORDS:",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 3,
+                  "text": "TRANSFORMERS FOR IMAGE RECOGNITION AT SCALE",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "authors": [
+                {
+                  "id": 4,
+                  "text": "Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 4,
+                  "text": "Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 4,
+                  "text": "Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 4,
+                  "text": "Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 5,
+                  "text": "Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 5,
+                  "text": "Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 5,
+                  "text": "Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 5,
+                  "text": "Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 6,
+                  "text": "Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 6,
+                  "text": "Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 6,
+                  "text": "Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 6,
+                  "text": "Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "year": [
+                {
+                  "id": 1,
+                  "text": "Published as a conference paper at ICLR 2021",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "abstract": [
+                {
+                  "id": 12,
+                  "text": "While the Transformer architecture has become the de-facto standard for natural",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 13,
+                  "text": "language processing tasks, its applications to computer vision remain limited. In",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 14,
+                  "text": "vision, attention is either applied in conjunction with convolutional networks, or",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 15,
+                  "text": "used to replace certain components of convolutional networks while keeping their",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 16,
+                  "text": "overall structure in place. We show that this reliance on CNNs is not necessary",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 17,
+                  "text": "and a pure transformer applied directly to sequences of image patches can perform",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 18,
+                  "text": "very well on image classiﬁcation tasks. When pre-trained on large amounts of",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 19,
+                  "text": "data and transferred to multiple mid-sized or small image recognition benchmarks",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 20,
+                  "text": "(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 21,
+                  "text": "results compared to state-of-the-art convolutional networks while requiring sub-",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 22,
+                  "text": "stantially fewer computational resources to train.^{1}",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "doi": []
+            },
+            "missing_fields": [
+              "doi"
+            ],
+            "input_truncated": true,
+            "warnings": [],
+            "model": "qwen2.5:7b",
+            "usage": {
+              "prompt_eval_count": 1892,
+              "eval_count": 156
+            }
+          },
+          "error": "",
+          "elapsed_seconds": 13.945304750006471,
+          "message": {
+            "content": "{'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'source_file': 'vit.pdf', 'title': 'AN IMAGE IS WORTH 16X16 WORDS: TRANSFORMERS FOR IMAGE RECOGNITION AT SCALE', 'authors': ['Alexey Dosovitskiy', 'Lucas Beyer', 'Alexander Kolesnikov', 'Dirk Weissenborn', 'Xiaohua Zhai', 'Thomas Unterthiner', 'Mostafa Dehghani', 'Matthias Minderer', 'Georg Heigold', 'Sylvain Gelly', 'Jakob Uszkoreit', 'Neil Houlsby'], 'year': 2021, 'abstract': 'While the Transformer architecture has become the de-facto standard for natural\\nlanguage processing tasks, its applications to computer vision remain limited. In\\nvision, attention is either applied in conjunction with convolutional networks, or\\nused to replace certain components of convolutional networks while keeping their\\noverall structure in place. We show that this reliance on CNNs is not necessary\\nand a pure transformer applied directly to sequences of image patches can perform\\nvery well on image classiﬁcation tasks. When pre-trained on large amounts of\\ndata and transferred to multiple mid-sized or small image recognition benchmarks\\n(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent\\nresults compared to state-of-the-art convolutional networks while requiring sub-\\nstantially fewer computational resources to train.', 'doi': None, 'evidence': {'title': [{'id': 2, 'text': 'AN IMAGE IS WORTH 16X16 WORDS:', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 3, 'text': 'TRANSFORMERS FOR IMAGE RECOGNITION AT SCALE', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}], 'authors': [{'id': 4, 'text': 'Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 4, 'text': 'Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 4, 'text': 'Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 4, 'text': 'Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 5, 'text': 'Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 5, 'text': 'Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 5, 'text': 'Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 5, 'text': 'Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 6, 'text': 'Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 6, 'text': 'Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 6, 'text': 'Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 6, 'text': 'Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}], 'year': [{'id': 1, 'text': 'Published as a conference paper at ICLR 2021', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}], 'abstract': [{'id': 12, 'text': 'While the Transformer architecture has become the de-facto standard for natural', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 13, 'text': 'language processing tasks, its applications to computer vision remain limited. In', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 14, 'text': 'vision, attention is either applied in conjunction with convolutional networks, or', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 15, 'text': 'used to replace certain components of convolutional networks while keeping their', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 16, 'text': 'overall structure in place. We show that this reliance on CNNs is not necessary', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 17, 'text': 'and a pure transformer applied directly to sequences of image patches can perform', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 18, 'text': 'very well on image classiﬁcation tasks. When pre-trained on large amounts of', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 19, 'text': 'data and transferred to multiple mid-sized or small image recognition benchmarks', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 20, 'text': '(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 21, 'text': 'results compared to state-of-the-art convolutional networks while requiring sub-', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 22, 'text': 'stantially fewer computational resources to train.^{1}', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}], 'doi': []}, 'missing_fields': ['doi'], 'input_truncated': True, 'warnings': [], 'model': 'qwen2.5:7b', 'usage': {'prompt_eval_count': 1892, 'eval_count': 156}}",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "paper_metadata",
+            "id": null,
+            "tool_call_id": "aecd4ce81c9f4d359087cbe4fff91e53",
+            "artifact": null,
+            "status": "success"
+          },
+          "execution_mode": "parallel",
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "observation": "已获取两篇论文的元数据。",
+          "decision": "continue",
+          "task_complete": false,
+          "answer": "",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 5023,
+            "eval_count": 36
+          },
+          "elapsed_seconds": 20.12319445799949,
+          "iteration": 1
+        },
+        {
+          "type": "thought",
+          "thought": "已获取两篇论文的元数据，下一步直接回答。",
+          "next_step": "answer",
+          "tool_name": null,
+          "parallel_tools": [],
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 5353,
+            "eval_count": 42
+          },
+          "elapsed_seconds": 23.805644916996243,
+          "iteration": 2
+        },
+        {
+          "type": "action_skipped",
+          "reason": "Thought规划直接回答，无需执行工具。",
+          "iteration": 2
+        },
+        {
+          "type": "observation",
+          "observation": "已获取两篇论文的元数据。",
+          "decision": "continue",
+          "task_complete": false,
+          "answer": "",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 5327,
+            "eval_count": 32
+          },
+          "elapsed_seconds": 21.60011816699989,
+          "iteration": 2
+        },
+        {
+          "type": "thought",
+          "thought": "已获取两篇论文的元数据，下一步直接回答。",
+          "next_step": "answer",
+          "tool_name": null,
+          "parallel_tools": [],
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 5353,
+            "eval_count": 42
+          },
+          "elapsed_seconds": 2.1780987919992185,
+          "iteration": 3
+        },
+        {
+          "type": "action_skipped",
+          "reason": "Thought规划直接回答，无需执行工具。",
+          "iteration": 3
+        },
+        {
+          "type": "observation",
+          "observation": "已获取两篇论文的元数据。",
+          "decision": "continue",
+          "task_complete": false,
+          "answer": "",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 5327,
+            "eval_count": 32
+          },
+          "elapsed_seconds": 1.6316877079952974,
+          "iteration": 3
+        },
+        {
+          "type": "thought",
+          "thought": "已获取两篇论文的元数据，下一步直接回答。",
+          "next_step": "answer",
+          "tool_name": null,
+          "parallel_tools": [],
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 5353,
+            "eval_count": 42
+          },
+          "elapsed_seconds": 2.1221724589995574,
+          "iteration": 4
+        },
+        {
+          "type": "action_skipped",
+          "reason": "Thought规划直接回答，无需执行工具。",
+          "iteration": 4
+        },
+        {
+          "type": "observation",
+          "observation": "已获取两篇论文的元数据。",
+          "decision": "continue",
+          "task_complete": false,
+          "answer": "",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 5327,
+            "eval_count": 32
+          },
+          "elapsed_seconds": 1.6283047500037355,
+          "iteration": 4
+        },
+        {
+          "type": "thought",
+          "thought": "已获取两篇论文的元数据，下一步直接回答。",
+          "next_step": "answer",
+          "tool_name": null,
+          "parallel_tools": [],
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 5353,
+            "eval_count": 42
+          },
+          "elapsed_seconds": 2.1449713749971124,
+          "iteration": 5
+        },
+        {
+          "type": "action_skipped",
+          "reason": "Thought规划直接回答，无需执行工具。",
+          "iteration": 5
+        },
+        {
+          "type": "observation",
+          "observation": "已获取两篇论文的元数据。",
+          "decision": "continue",
+          "task_complete": false,
+          "answer": "",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 5327,
+            "eval_count": 32
+          },
+          "elapsed_seconds": 1.6356795000028796,
+          "iteration": 5
+        },
+        {
+          "type": "thought",
+          "thought": "已获取两篇论文的元数据，下一步直接回答。",
+          "next_step": "answer",
+          "tool_name": null,
+          "parallel_tools": [],
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 5353,
+            "eval_count": 42
+          },
+          "elapsed_seconds": 2.12287600000127,
+          "iteration": 6
+        },
+        {
+          "type": "action_skipped",
+          "reason": "Thought规划直接回答，无需执行工具。",
+          "iteration": 6
+        },
+        {
+          "type": "observation",
+          "observation": "已获取两篇论文的元数据。",
+          "decision": "continue",
+          "task_complete": false,
+          "answer": "",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 5327,
+            "eval_count": 32
+          },
+          "elapsed_seconds": 1.6857147909977357,
+          "iteration": 6
+        },
+        {
+          "type": "thought",
+          "thought": "已获取两篇论文的元数据，下一步直接回答。",
+          "next_step": "answer",
+          "tool_name": null,
+          "parallel_tools": [],
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 5353,
+            "eval_count": 42
+          },
+          "elapsed_seconds": 2.153900582998176,
+          "iteration": 7
+        },
+        {
+          "type": "action_skipped",
+          "reason": "Thought规划直接回答，无需执行工具。",
+          "iteration": 7
+        },
+        {
+          "type": "observation",
+          "observation": "已获取两篇论文的元数据。",
+          "decision": "continue",
+          "task_complete": false,
+          "answer": "",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 5327,
+            "eval_count": 32
+          },
+          "elapsed_seconds": 1.7019115840012091,
+          "iteration": 7
+        },
+        {
+          "type": "thought",
+          "thought": "已获取两篇论文的元数据，下一步直接回答。",
+          "next_step": "answer",
+          "tool_name": null,
+          "parallel_tools": [],
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 5353,
+            "eval_count": 42
+          },
+          "elapsed_seconds": 2.1573439160056296,
+          "iteration": 8
+        },
+        {
+          "type": "action_skipped",
+          "reason": "Thought规划直接回答，无需执行工具。",
+          "iteration": 8
+        },
+        {
+          "type": "observation",
+          "observation": "已获取两篇论文的元数据。",
+          "decision": "continue",
+          "task_complete": false,
+          "answer": "",
+          "model": "qwen2.5:7b",
+          "usage": {
+            "prompt_eval_count": 5327,
+            "eval_count": 32
+          },
+          "elapsed_seconds": 5.520348917001684,
+          "iteration": 8
+        },
+        {
+          "type": "done",
+          "task_complete": false,
+          "stop_reason": "max_iterations",
+          "full_response": "已达到最大迭代次数（8轮），任务尚未完成，请缩小问题范围后重试。",
+          "iterations": 8,
+          "context": {
+            "observations": [
+              {
+                "call_id": "95651aa566d741148e239e53628cc9c1",
+                "name": "paper_metadata",
+                "args": {
+                  "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"
+                },
+                "status": "success",
+                "result": {
+                  "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                  "source_file": "attention.pdf",
+                  "title": "Attention Is All You Need",
+                  "authors": [
+                    "Ashish Vaswani",
+                    "Noam Shazeer",
+                    "Niki Parmar",
+                    "Jakob Uszkoreit",
+                    "Llion Jones",
+                    "Aidan N. Gomez",
+                    "Łukasz Kaiser",
+                    "Illia Polosukhin"
+                  ],
+                  "year": 2017,
+                  "abstract": "The dominant sequence transduction models are based on complex recurrent or\nconvolutional neural networks that include an encoder and a decoder. The best\nperforming models also connect the encoder and decoder through an attention\nmechanism. We propose a new simple network architecture, the Transformer,\nbased solely on attention mechanisms, dispensing with recurrence and convolutions\nentirely. Experiments on two machine translation tasks show these models to\nbe superior in quality while being more parallelizable and requiring significantly\nless time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-\nto-German translation task, improving over the existing best results, including\nensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,\nour model establishes a new single-model state-of-the-art BLEU score of 41.8 after\ntraining for 3.5 days on eight GPUs, a small fraction of the training costs of the\nbest models from the literature. We show that the Transformer generalizes well to\nother tasks by applying it successfully to English constituency parsing both with\nlarge and limited training data.",
+                  "doi": null,
+                  "evidence": {
+                    "title": [
+                      {
+                        "id": 4,
+                        "text": "Attention Is All You Need",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      }
+                    ],
+                    "authors": [
+                      {
+                        "id": 6,
+                        "text": "Ashish Vaswani^{∗}",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 7,
+                        "text": "Noam Shazeer^{∗}",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 8,
+                        "text": "Niki Parmar^{∗}",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 9,
+                        "text": "Jakob Uszkoreit^{∗}",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 18,
+                        "text": "Llion Jones^{∗}",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 19,
+                        "text": "Aidan N. Gomez^{∗†}",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 20,
+                        "text": "Łukasz Kaiser^{∗}",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 27,
+                        "text": "Illia Polosukhin^{∗‡}",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      }
+                    ],
+                    "year": [
+                      {
+                        "id": 56,
+                        "text": "31st Conference on Neural Information Processing Systems (NIPS 2017), Long Beach, CA, USA.",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      }
+                    ],
+                    "abstract": [
+                      {
+                        "id": 30,
+                        "text": "The dominant sequence transduction models are based on complex recurrent or",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 31,
+                        "text": "convolutional neural networks that include an encoder and a decoder. The best",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 32,
+                        "text": "performing models also connect the encoder and decoder through an attention",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 33,
+                        "text": "mechanism. We propose a new simple network architecture, the Transformer,",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 34,
+                        "text": "based solely on attention mechanisms, dispensing with recurrence and convolutions",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 35,
+                        "text": "entirely. Experiments on two machine translation tasks show these models to",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 36,
+                        "text": "be superior in quality while being more parallelizable and requiring significantly",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 37,
+                        "text": "less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 38,
+                        "text": "to-German translation task, improving over the existing best results, including",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 39,
+                        "text": "ensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 40,
+                        "text": "our model establishes a new single-model state-of-the-art BLEU score of 41.8 after",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 41,
+                        "text": "training for 3.5 days on eight GPUs, a small fraction of the training costs of the",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 42,
+                        "text": "best models from the literature. We show that the Transformer generalizes well to",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 43,
+                        "text": "other tasks by applying it successfully to English constituency parsing both with",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 44,
+                        "text": "large and limited training data.",
+                        "source_file": "attention.pdf",
+                        "location": "第1页（物理页码）"
+                      }
+                    ],
+                    "doi": []
+                  },
+                  "missing_fields": [
+                    "doi"
+                  ],
+                  "input_truncated": true,
+                  "warnings": [],
+                  "model": "qwen2.5:7b",
+                  "usage": {
+                    "prompt_eval_count": 1607,
+                    "eval_count": 99
+                  }
+                },
+                "error": "",
+                "elapsed_seconds": 6.461204999999609,
+                "execution_mode": "parallel"
+              },
+              {
+                "call_id": "aecd4ce81c9f4d359087cbe4fff91e53",
+                "name": "paper_metadata",
+                "args": {
+                  "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6"
+                },
+                "status": "success",
+                "result": {
+                  "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                  "source_file": "vit.pdf",
+                  "title": "AN IMAGE IS WORTH 16X16 WORDS: TRANSFORMERS FOR IMAGE RECOGNITION AT SCALE",
+                  "authors": [
+                    "Alexey Dosovitskiy",
+                    "Lucas Beyer",
+                    "Alexander Kolesnikov",
+                    "Dirk Weissenborn",
+                    "Xiaohua Zhai",
+                    "Thomas Unterthiner",
+                    "Mostafa Dehghani",
+                    "Matthias Minderer",
+                    "Georg Heigold",
+                    "Sylvain Gelly",
+                    "Jakob Uszkoreit",
+                    "Neil Houlsby"
+                  ],
+                  "year": 2021,
+                  "abstract": "While the Transformer architecture has become the de-facto standard for natural\nlanguage processing tasks, its applications to computer vision remain limited. In\nvision, attention is either applied in conjunction with convolutional networks, or\nused to replace certain components of convolutional networks while keeping their\noverall structure in place. We show that this reliance on CNNs is not necessary\nand a pure transformer applied directly to sequences of image patches can perform\nvery well on image classiﬁcation tasks. When pre-trained on large amounts of\ndata and transferred to multiple mid-sized or small image recognition benchmarks\n(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent\nresults compared to state-of-the-art convolutional networks while requiring sub-\nstantially fewer computational resources to train.",
+                  "doi": null,
+                  "evidence": {
+                    "title": [
+                      {
+                        "id": 2,
+                        "text": "AN IMAGE IS WORTH 16X16 WORDS:",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 3,
+                        "text": "TRANSFORMERS FOR IMAGE RECOGNITION AT SCALE",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      }
+                    ],
+                    "authors": [
+                      {
+                        "id": 4,
+                        "text": "Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 4,
+                        "text": "Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 4,
+                        "text": "Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 4,
+                        "text": "Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 5,
+                        "text": "Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 5,
+                        "text": "Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 5,
+                        "text": "Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 5,
+                        "text": "Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 6,
+                        "text": "Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 6,
+                        "text": "Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 6,
+                        "text": "Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 6,
+                        "text": "Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      }
+                    ],
+                    "year": [
+                      {
+                        "id": 1,
+                        "text": "Published as a conference paper at ICLR 2021",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      }
+                    ],
+                    "abstract": [
+                      {
+                        "id": 12,
+                        "text": "While the Transformer architecture has become the de-facto standard for natural",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 13,
+                        "text": "language processing tasks, its applications to computer vision remain limited. In",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 14,
+                        "text": "vision, attention is either applied in conjunction with convolutional networks, or",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 15,
+                        "text": "used to replace certain components of convolutional networks while keeping their",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 16,
+                        "text": "overall structure in place. We show that this reliance on CNNs is not necessary",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 17,
+                        "text": "and a pure transformer applied directly to sequences of image patches can perform",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 18,
+                        "text": "very well on image classiﬁcation tasks. When pre-trained on large amounts of",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 19,
+                        "text": "data and transferred to multiple mid-sized or small image recognition benchmarks",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 20,
+                        "text": "(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 21,
+                        "text": "results compared to state-of-the-art convolutional networks while requiring sub-",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      },
+                      {
+                        "id": 22,
+                        "text": "stantially fewer computational resources to train.^{1}",
+                        "source_file": "vit.pdf",
+                        "location": "第1页（物理页码）"
+                      }
+                    ],
+                    "doi": []
+                  },
+                  "missing_fields": [
+                    "doi"
+                  ],
+                  "input_truncated": true,
+                  "warnings": [],
+                  "model": "qwen2.5:7b",
+                  "usage": {
+                    "prompt_eval_count": 1892,
+                    "eval_count": 156
+                  }
+                },
+                "error": "",
+                "elapsed_seconds": 13.945304750006471,
+                "execution_mode": "parallel"
+              }
+            ],
+            "last_observation": {
+              "observation": "已获取两篇论文的元数据。",
+              "decision": "continue",
+              "task_complete": false
+            }
+          }
+        }
+      ],
+      "wall_seconds": 116.74960804200236,
+      "usage": {
+        "prompt_eval_count": 84346,
+        "eval_count": 962
+      },
+      "agent_model_calls": 16,
+      "passed": false
+    },
+    {
+      "name": "paper_metadata_serial",
+      "intervals": [
+        {
+          "call_id": "paper-0",
+          "start_seconds": 0.0005033329944126308,
+          "end_seconds": 10.561707875000138
+        },
+        {
+          "call_id": "paper-1",
+          "start_seconds": 10.563658499995654,
+          "end_seconds": 33.3190601249953
+        }
+      ],
+      "events": [
+        {
+          "type": "tool_result",
+          "call_id": "paper-0",
+          "name": "paper_metadata",
+          "args": {
+            "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"
+          },
+          "status": "success",
+          "result": {
+            "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+            "source_file": "attention.pdf",
+            "title": "Attention Is All You Need",
+            "authors": [
+              "Ashish Vaswani",
+              "Noam Shazeer",
+              "Niki Parmar",
+              "Jakob Uszkoreit",
+              "Llion Jones",
+              "Aidan N. Gomez",
+              "Łukasz Kaiser",
+              "Illia Polosukhin"
+            ],
+            "year": 2017,
+            "abstract": "The dominant sequence transduction models are based on complex recurrent or\nconvolutional neural networks that include an encoder and a decoder. The best\nperforming models also connect the encoder and decoder through an attention\nmechanism. We propose a new simple network architecture, the Transformer,\nbased solely on attention mechanisms, dispensing with recurrence and convolutions\nentirely. Experiments on two machine translation tasks show these models to\nbe superior in quality while being more parallelizable and requiring significantly\nless time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-\nto-German translation task, improving over the existing best results, including\nensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,\nour model establishes a new single-model state-of-the-art BLEU score of 41.8 after\ntraining for 3.5 days on eight GPUs, a small fraction of the training costs of the\nbest models from the literature. We show that the Transformer generalizes well to\nother tasks by applying it successfully to English constituency parsing both with\nlarge and limited training data.",
+            "doi": null,
+            "evidence": {
+              "title": [
+                {
+                  "id": 4,
+                  "text": "Attention Is All You Need",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "authors": [
+                {
+                  "id": 6,
+                  "text": "Ashish Vaswani^{∗}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 7,
+                  "text": "Noam Shazeer^{∗}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 8,
+                  "text": "Niki Parmar^{∗}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 9,
+                  "text": "Jakob Uszkoreit^{∗}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 18,
+                  "text": "Llion Jones^{∗}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 19,
+                  "text": "Aidan N. Gomez^{∗†}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 20,
+                  "text": "Łukasz Kaiser^{∗}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 27,
+                  "text": "Illia Polosukhin^{∗‡}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "year": [
+                {
+                  "id": 56,
+                  "text": "31st Conference on Neural Information Processing Systems (NIPS 2017), Long Beach, CA, USA.",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "abstract": [
+                {
+                  "id": 30,
+                  "text": "The dominant sequence transduction models are based on complex recurrent or",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 31,
+                  "text": "convolutional neural networks that include an encoder and a decoder. The best",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 32,
+                  "text": "performing models also connect the encoder and decoder through an attention",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 33,
+                  "text": "mechanism. We propose a new simple network architecture, the Transformer,",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 34,
+                  "text": "based solely on attention mechanisms, dispensing with recurrence and convolutions",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 35,
+                  "text": "entirely. Experiments on two machine translation tasks show these models to",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 36,
+                  "text": "be superior in quality while being more parallelizable and requiring significantly",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 37,
+                  "text": "less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 38,
+                  "text": "to-German translation task, improving over the existing best results, including",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 39,
+                  "text": "ensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 40,
+                  "text": "our model establishes a new single-model state-of-the-art BLEU score of 41.8 after",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 41,
+                  "text": "training for 3.5 days on eight GPUs, a small fraction of the training costs of the",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 42,
+                  "text": "best models from the literature. We show that the Transformer generalizes well to",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 43,
+                  "text": "other tasks by applying it successfully to English constituency parsing both with",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 44,
+                  "text": "large and limited training data.",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "doi": []
+            },
+            "missing_fields": [
+              "doi"
+            ],
+            "input_truncated": true,
+            "warnings": [],
+            "model": "qwen2.5:7b",
+            "usage": {
+              "prompt_eval_count": 1607,
+              "eval_count": 99
+            }
+          },
+          "error": "",
+          "elapsed_seconds": 10.56112579099863,
+          "message": {
+            "content": "{'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'source_file': 'attention.pdf', 'title': 'Attention Is All You Need', 'authors': ['Ashish Vaswani', 'Noam Shazeer', 'Niki Parmar', 'Jakob Uszkoreit', 'Llion Jones', 'Aidan N. Gomez', 'Łukasz Kaiser', 'Illia Polosukhin'], 'year': 2017, 'abstract': 'The dominant sequence transduction models are based on complex recurrent or\\nconvolutional neural networks that include an encoder and a decoder. The best\\nperforming models also connect the encoder and decoder through an attention\\nmechanism. We propose a new simple network architecture, the Transformer,\\nbased solely on attention mechanisms, dispensing with recurrence and convolutions\\nentirely. Experiments on two machine translation tasks show these models to\\nbe superior in quality while being more parallelizable and requiring significantly\\nless time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-\\nto-German translation task, improving over the existing best results, including\\nensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,\\nour model establishes a new single-model state-of-the-art BLEU score of 41.8 after\\ntraining for 3.5 days on eight GPUs, a small fraction of the training costs of the\\nbest models from the literature. We show that the Transformer generalizes well to\\nother tasks by applying it successfully to English constituency parsing both with\\nlarge and limited training data.', 'doi': None, 'evidence': {'title': [{'id': 4, 'text': 'Attention Is All You Need', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}], 'authors': [{'id': 6, 'text': 'Ashish Vaswani^{∗}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 7, 'text': 'Noam Shazeer^{∗}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 8, 'text': 'Niki Parmar^{∗}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 9, 'text': 'Jakob Uszkoreit^{∗}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 18, 'text': 'Llion Jones^{∗}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 19, 'text': 'Aidan N. Gomez^{∗†}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 20, 'text': 'Łukasz Kaiser^{∗}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 27, 'text': 'Illia Polosukhin^{∗‡}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}], 'year': [{'id': 56, 'text': '31st Conference on Neural Information Processing Systems (NIPS 2017), Long Beach, CA, USA.', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}], 'abstract': [{'id': 30, 'text': 'The dominant sequence transduction models are based on complex recurrent or', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 31, 'text': 'convolutional neural networks that include an encoder and a decoder. The best', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 32, 'text': 'performing models also connect the encoder and decoder through an attention', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 33, 'text': 'mechanism. We propose a new simple network architecture, the Transformer,', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 34, 'text': 'based solely on attention mechanisms, dispensing with recurrence and convolutions', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 35, 'text': 'entirely. Experiments on two machine translation tasks show these models to', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 36, 'text': 'be superior in quality while being more parallelizable and requiring significantly', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 37, 'text': 'less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 38, 'text': 'to-German translation task, improving over the existing best results, including', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 39, 'text': 'ensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 40, 'text': 'our model establishes a new single-model state-of-the-art BLEU score of 41.8 after', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 41, 'text': 'training for 3.5 days on eight GPUs, a small fraction of the training costs of the', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 42, 'text': 'best models from the literature. We show that the Transformer generalizes well to', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 43, 'text': 'other tasks by applying it successfully to English constituency parsing both with', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 44, 'text': 'large and limited training data.', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}], 'doi': []}, 'missing_fields': ['doi'], 'input_truncated': True, 'warnings': [], 'model': 'qwen2.5:7b', 'usage': {'prompt_eval_count': 1607, 'eval_count': 99}}",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "paper_metadata",
+            "id": null,
+            "tool_call_id": "paper-0",
+            "artifact": null,
+            "status": "success"
+          },
+          "execution_mode": "serial"
+        },
+        {
+          "type": "tool_result",
+          "call_id": "paper-1",
+          "name": "paper_metadata",
+          "args": {
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6"
+          },
+          "status": "success",
+          "result": {
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "source_file": "vit.pdf",
+            "title": "AN IMAGE IS WORTH 16X16 WORDS: TRANSFORMERS FOR IMAGE RECOGNITION AT SCALE",
+            "authors": [
+              "Alexey Dosovitskiy",
+              "Lucas Beyer",
+              "Alexander Kolesnikov",
+              "Dirk Weissenborn",
+              "Xiaohua Zhai",
+              "Thomas Unterthiner",
+              "Mostafa Dehghani",
+              "Matthias Minderer",
+              "Georg Heigold",
+              "Sylvain Gelly",
+              "Jakob Uszkoreit",
+              "Neil Houlsby"
+            ],
+            "year": 2021,
+            "abstract": "While the Transformer architecture has become the de-facto standard for natural\nlanguage processing tasks, its applications to computer vision remain limited. In\nvision, attention is either applied in conjunction with convolutional networks, or\nused to replace certain components of convolutional networks while keeping their\noverall structure in place. We show that this reliance on CNNs is not necessary\nand a pure transformer applied directly to sequences of image patches can perform\nvery well on image classiﬁcation tasks. When pre-trained on large amounts of\ndata and transferred to multiple mid-sized or small image recognition benchmarks\n(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent\nresults compared to state-of-the-art convolutional networks while requiring sub-\nstantially fewer computational resources to train.",
+            "doi": null,
+            "evidence": {
+              "title": [
+                {
+                  "id": 2,
+                  "text": "AN IMAGE IS WORTH 16X16 WORDS:",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 3,
+                  "text": "TRANSFORMERS FOR IMAGE RECOGNITION AT SCALE",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "authors": [
+                {
+                  "id": 4,
+                  "text": "Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 4,
+                  "text": "Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 4,
+                  "text": "Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 4,
+                  "text": "Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 5,
+                  "text": "Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 5,
+                  "text": "Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 5,
+                  "text": "Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 5,
+                  "text": "Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 6,
+                  "text": "Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 6,
+                  "text": "Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 6,
+                  "text": "Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 6,
+                  "text": "Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "year": [
+                {
+                  "id": 1,
+                  "text": "Published as a conference paper at ICLR 2021",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "abstract": [
+                {
+                  "id": 12,
+                  "text": "While the Transformer architecture has become the de-facto standard for natural",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 13,
+                  "text": "language processing tasks, its applications to computer vision remain limited. In",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 14,
+                  "text": "vision, attention is either applied in conjunction with convolutional networks, or",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 15,
+                  "text": "used to replace certain components of convolutional networks while keeping their",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 16,
+                  "text": "overall structure in place. We show that this reliance on CNNs is not necessary",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 17,
+                  "text": "and a pure transformer applied directly to sequences of image patches can perform",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 18,
+                  "text": "very well on image classiﬁcation tasks. When pre-trained on large amounts of",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 19,
+                  "text": "data and transferred to multiple mid-sized or small image recognition benchmarks",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 20,
+                  "text": "(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 21,
+                  "text": "results compared to state-of-the-art convolutional networks while requiring sub-",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 22,
+                  "text": "stantially fewer computational resources to train.^{1}",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "doi": []
+            },
+            "missing_fields": [
+              "doi"
+            ],
+            "input_truncated": true,
+            "warnings": [],
+            "model": "qwen2.5:7b",
+            "usage": {
+              "prompt_eval_count": 1892,
+              "eval_count": 156
+            }
+          },
+          "error": "",
+          "elapsed_seconds": 22.755311209002684,
+          "message": {
+            "content": "{'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'source_file': 'vit.pdf', 'title': 'AN IMAGE IS WORTH 16X16 WORDS: TRANSFORMERS FOR IMAGE RECOGNITION AT SCALE', 'authors': ['Alexey Dosovitskiy', 'Lucas Beyer', 'Alexander Kolesnikov', 'Dirk Weissenborn', 'Xiaohua Zhai', 'Thomas Unterthiner', 'Mostafa Dehghani', 'Matthias Minderer', 'Georg Heigold', 'Sylvain Gelly', 'Jakob Uszkoreit', 'Neil Houlsby'], 'year': 2021, 'abstract': 'While the Transformer architecture has become the de-facto standard for natural\\nlanguage processing tasks, its applications to computer vision remain limited. In\\nvision, attention is either applied in conjunction with convolutional networks, or\\nused to replace certain components of convolutional networks while keeping their\\noverall structure in place. We show that this reliance on CNNs is not necessary\\nand a pure transformer applied directly to sequences of image patches can perform\\nvery well on image classiﬁcation tasks. When pre-trained on large amounts of\\ndata and transferred to multiple mid-sized or small image recognition benchmarks\\n(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent\\nresults compared to state-of-the-art convolutional networks while requiring sub-\\nstantially fewer computational resources to train.', 'doi': None, 'evidence': {'title': [{'id': 2, 'text': 'AN IMAGE IS WORTH 16X16 WORDS:', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 3, 'text': 'TRANSFORMERS FOR IMAGE RECOGNITION AT SCALE', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}], 'authors': [{'id': 4, 'text': 'Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 4, 'text': 'Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 4, 'text': 'Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 4, 'text': 'Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 5, 'text': 'Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 5, 'text': 'Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 5, 'text': 'Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 5, 'text': 'Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 6, 'text': 'Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 6, 'text': 'Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 6, 'text': 'Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 6, 'text': 'Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}], 'year': [{'id': 1, 'text': 'Published as a conference paper at ICLR 2021', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}], 'abstract': [{'id': 12, 'text': 'While the Transformer architecture has become the de-facto standard for natural', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 13, 'text': 'language processing tasks, its applications to computer vision remain limited. In', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 14, 'text': 'vision, attention is either applied in conjunction with convolutional networks, or', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 15, 'text': 'used to replace certain components of convolutional networks while keeping their', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 16, 'text': 'overall structure in place. We show that this reliance on CNNs is not necessary', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 17, 'text': 'and a pure transformer applied directly to sequences of image patches can perform', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 18, 'text': 'very well on image classiﬁcation tasks. When pre-trained on large amounts of', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 19, 'text': 'data and transferred to multiple mid-sized or small image recognition benchmarks', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 20, 'text': '(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 21, 'text': 'results compared to state-of-the-art convolutional networks while requiring sub-', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 22, 'text': 'stantially fewer computational resources to train.^{1}', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}], 'doi': []}, 'missing_fields': ['doi'], 'input_truncated': True, 'warnings': [], 'model': 'qwen2.5:7b', 'usage': {'prompt_eval_count': 1892, 'eval_count': 156}}",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "paper_metadata",
+            "id": null,
+            "tool_call_id": "paper-1",
+            "artifact": null,
+            "status": "success"
+          },
+          "execution_mode": "serial"
+        }
+      ],
+      "wall_seconds": 33.32110095799726,
+      "max_overlap": 1,
+      "usage": {
+        "prompt_eval_count": 3499,
+        "eval_count": 255
+      },
+      "passed": true
+    },
+    {
+      "name": "paper_metadata_parallel",
+      "intervals": [
+        {
+          "call_id": "paper-0",
+          "start_seconds": 0.0003349580001668073,
+          "end_seconds": 6.556028958002571
+        },
+        {
+          "call_id": "paper-1",
+          "start_seconds": 0.0007090420040185563,
+          "end_seconds": 13.997307333003846
+        }
+      ],
+      "events": [
+        {
+          "type": "tool_result",
+          "call_id": "paper-0",
+          "name": "paper_metadata",
+          "args": {
+            "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"
+          },
+          "status": "success",
+          "result": {
+            "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+            "source_file": "attention.pdf",
+            "title": "Attention Is All You Need",
+            "authors": [
+              "Ashish Vaswani",
+              "Noam Shazeer",
+              "Niki Parmar",
+              "Jakob Uszkoreit",
+              "Llion Jones",
+              "Aidan N. Gomez",
+              "Łukasz Kaiser",
+              "Illia Polosukhin"
+            ],
+            "year": 2017,
+            "abstract": "The dominant sequence transduction models are based on complex recurrent or\nconvolutional neural networks that include an encoder and a decoder. The best\nperforming models also connect the encoder and decoder through an attention\nmechanism. We propose a new simple network architecture, the Transformer,\nbased solely on attention mechanisms, dispensing with recurrence and convolutions\nentirely. Experiments on two machine translation tasks show these models to\nbe superior in quality while being more parallelizable and requiring significantly\nless time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-\nto-German translation task, improving over the existing best results, including\nensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,\nour model establishes a new single-model state-of-the-art BLEU score of 41.8 after\ntraining for 3.5 days on eight GPUs, a small fraction of the training costs of the\nbest models from the literature. We show that the Transformer generalizes well to\nother tasks by applying it successfully to English constituency parsing both with\nlarge and limited training data.",
+            "doi": null,
+            "evidence": {
+              "title": [
+                {
+                  "id": 4,
+                  "text": "Attention Is All You Need",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "authors": [
+                {
+                  "id": 6,
+                  "text": "Ashish Vaswani^{∗}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 7,
+                  "text": "Noam Shazeer^{∗}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 8,
+                  "text": "Niki Parmar^{∗}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 9,
+                  "text": "Jakob Uszkoreit^{∗}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 18,
+                  "text": "Llion Jones^{∗}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 19,
+                  "text": "Aidan N. Gomez^{∗†}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 20,
+                  "text": "Łukasz Kaiser^{∗}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 27,
+                  "text": "Illia Polosukhin^{∗‡}",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "year": [
+                {
+                  "id": 56,
+                  "text": "31st Conference on Neural Information Processing Systems (NIPS 2017), Long Beach, CA, USA.",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "abstract": [
+                {
+                  "id": 30,
+                  "text": "The dominant sequence transduction models are based on complex recurrent or",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 31,
+                  "text": "convolutional neural networks that include an encoder and a decoder. The best",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 32,
+                  "text": "performing models also connect the encoder and decoder through an attention",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 33,
+                  "text": "mechanism. We propose a new simple network architecture, the Transformer,",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 34,
+                  "text": "based solely on attention mechanisms, dispensing with recurrence and convolutions",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 35,
+                  "text": "entirely. Experiments on two machine translation tasks show these models to",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 36,
+                  "text": "be superior in quality while being more parallelizable and requiring significantly",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 37,
+                  "text": "less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 38,
+                  "text": "to-German translation task, improving over the existing best results, including",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 39,
+                  "text": "ensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 40,
+                  "text": "our model establishes a new single-model state-of-the-art BLEU score of 41.8 after",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 41,
+                  "text": "training for 3.5 days on eight GPUs, a small fraction of the training costs of the",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 42,
+                  "text": "best models from the literature. We show that the Transformer generalizes well to",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 43,
+                  "text": "other tasks by applying it successfully to English constituency parsing both with",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 44,
+                  "text": "large and limited training data.",
+                  "source_file": "attention.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "doi": []
+            },
+            "missing_fields": [
+              "doi"
+            ],
+            "input_truncated": true,
+            "warnings": [],
+            "model": "qwen2.5:7b",
+            "usage": {
+              "prompt_eval_count": 1607,
+              "eval_count": 99
+            }
+          },
+          "error": "",
+          "elapsed_seconds": 6.555638541998633,
+          "message": {
+            "content": "{'doc_id': 'bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697', 'source_file': 'attention.pdf', 'title': 'Attention Is All You Need', 'authors': ['Ashish Vaswani', 'Noam Shazeer', 'Niki Parmar', 'Jakob Uszkoreit', 'Llion Jones', 'Aidan N. Gomez', 'Łukasz Kaiser', 'Illia Polosukhin'], 'year': 2017, 'abstract': 'The dominant sequence transduction models are based on complex recurrent or\\nconvolutional neural networks that include an encoder and a decoder. The best\\nperforming models also connect the encoder and decoder through an attention\\nmechanism. We propose a new simple network architecture, the Transformer,\\nbased solely on attention mechanisms, dispensing with recurrence and convolutions\\nentirely. Experiments on two machine translation tasks show these models to\\nbe superior in quality while being more parallelizable and requiring significantly\\nless time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-\\nto-German translation task, improving over the existing best results, including\\nensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,\\nour model establishes a new single-model state-of-the-art BLEU score of 41.8 after\\ntraining for 3.5 days on eight GPUs, a small fraction of the training costs of the\\nbest models from the literature. We show that the Transformer generalizes well to\\nother tasks by applying it successfully to English constituency parsing both with\\nlarge and limited training data.', 'doi': None, 'evidence': {'title': [{'id': 4, 'text': 'Attention Is All You Need', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}], 'authors': [{'id': 6, 'text': 'Ashish Vaswani^{∗}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 7, 'text': 'Noam Shazeer^{∗}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 8, 'text': 'Niki Parmar^{∗}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 9, 'text': 'Jakob Uszkoreit^{∗}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 18, 'text': 'Llion Jones^{∗}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 19, 'text': 'Aidan N. Gomez^{∗†}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 20, 'text': 'Łukasz Kaiser^{∗}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 27, 'text': 'Illia Polosukhin^{∗‡}', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}], 'year': [{'id': 56, 'text': '31st Conference on Neural Information Processing Systems (NIPS 2017), Long Beach, CA, USA.', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}], 'abstract': [{'id': 30, 'text': 'The dominant sequence transduction models are based on complex recurrent or', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 31, 'text': 'convolutional neural networks that include an encoder and a decoder. The best', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 32, 'text': 'performing models also connect the encoder and decoder through an attention', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 33, 'text': 'mechanism. We propose a new simple network architecture, the Transformer,', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 34, 'text': 'based solely on attention mechanisms, dispensing with recurrence and convolutions', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 35, 'text': 'entirely. Experiments on two machine translation tasks show these models to', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 36, 'text': 'be superior in quality while being more parallelizable and requiring significantly', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 37, 'text': 'less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 38, 'text': 'to-German translation task, improving over the existing best results, including', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 39, 'text': 'ensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 40, 'text': 'our model establishes a new single-model state-of-the-art BLEU score of 41.8 after', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 41, 'text': 'training for 3.5 days on eight GPUs, a small fraction of the training costs of the', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 42, 'text': 'best models from the literature. We show that the Transformer generalizes well to', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 43, 'text': 'other tasks by applying it successfully to English constituency parsing both with', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}, {'id': 44, 'text': 'large and limited training data.', 'source_file': 'attention.pdf', 'location': '第1页（物理页码）'}], 'doi': []}, 'missing_fields': ['doi'], 'input_truncated': True, 'warnings': [], 'model': 'qwen2.5:7b', 'usage': {'prompt_eval_count': 1607, 'eval_count': 99}}",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "paper_metadata",
+            "id": null,
+            "tool_call_id": "paper-0",
+            "artifact": null,
+            "status": "success"
+          },
+          "execution_mode": "parallel"
+        },
+        {
+          "type": "tool_result",
+          "call_id": "paper-1",
+          "name": "paper_metadata",
+          "args": {
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6"
+          },
+          "status": "success",
+          "result": {
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "source_file": "vit.pdf",
+            "title": "AN IMAGE IS WORTH 16X16 WORDS: TRANSFORMERS FOR IMAGE RECOGNITION AT SCALE",
+            "authors": [
+              "Alexey Dosovitskiy",
+              "Lucas Beyer",
+              "Alexander Kolesnikov",
+              "Dirk Weissenborn",
+              "Xiaohua Zhai",
+              "Thomas Unterthiner",
+              "Mostafa Dehghani",
+              "Matthias Minderer",
+              "Georg Heigold",
+              "Sylvain Gelly",
+              "Jakob Uszkoreit",
+              "Neil Houlsby"
+            ],
+            "year": 2021,
+            "abstract": "While the Transformer architecture has become the de-facto standard for natural\nlanguage processing tasks, its applications to computer vision remain limited. In\nvision, attention is either applied in conjunction with convolutional networks, or\nused to replace certain components of convolutional networks while keeping their\noverall structure in place. We show that this reliance on CNNs is not necessary\nand a pure transformer applied directly to sequences of image patches can perform\nvery well on image classiﬁcation tasks. When pre-trained on large amounts of\ndata and transferred to multiple mid-sized or small image recognition benchmarks\n(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent\nresults compared to state-of-the-art convolutional networks while requiring sub-\nstantially fewer computational resources to train.",
+            "doi": null,
+            "evidence": {
+              "title": [
+                {
+                  "id": 2,
+                  "text": "AN IMAGE IS WORTH 16X16 WORDS:",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 3,
+                  "text": "TRANSFORMERS FOR IMAGE RECOGNITION AT SCALE",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "authors": [
+                {
+                  "id": 4,
+                  "text": "Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 4,
+                  "text": "Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 4,
+                  "text": "Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 4,
+                  "text": "Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 5,
+                  "text": "Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 5,
+                  "text": "Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 5,
+                  "text": "Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 5,
+                  "text": "Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 6,
+                  "text": "Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 6,
+                  "text": "Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 6,
+                  "text": "Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 6,
+                  "text": "Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "year": [
+                {
+                  "id": 1,
+                  "text": "Published as a conference paper at ICLR 2021",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "abstract": [
+                {
+                  "id": 12,
+                  "text": "While the Transformer architecture has become the de-facto standard for natural",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 13,
+                  "text": "language processing tasks, its applications to computer vision remain limited. In",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 14,
+                  "text": "vision, attention is either applied in conjunction with convolutional networks, or",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 15,
+                  "text": "used to replace certain components of convolutional networks while keeping their",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 16,
+                  "text": "overall structure in place. We show that this reliance on CNNs is not necessary",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 17,
+                  "text": "and a pure transformer applied directly to sequences of image patches can perform",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 18,
+                  "text": "very well on image classiﬁcation tasks. When pre-trained on large amounts of",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 19,
+                  "text": "data and transferred to multiple mid-sized or small image recognition benchmarks",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 20,
+                  "text": "(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 21,
+                  "text": "results compared to state-of-the-art convolutional networks while requiring sub-",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                },
+                {
+                  "id": 22,
+                  "text": "stantially fewer computational resources to train.^{1}",
+                  "source_file": "vit.pdf",
+                  "location": "第1页（物理页码）"
+                }
+              ],
+              "doi": []
+            },
+            "missing_fields": [
+              "doi"
+            ],
+            "input_truncated": true,
+            "warnings": [],
+            "model": "qwen2.5:7b",
+            "usage": {
+              "prompt_eval_count": 1892,
+              "eval_count": 156
+            }
+          },
+          "error": "",
+          "elapsed_seconds": 13.996546750000562,
+          "message": {
+            "content": "{'doc_id': '8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6', 'source_file': 'vit.pdf', 'title': 'AN IMAGE IS WORTH 16X16 WORDS: TRANSFORMERS FOR IMAGE RECOGNITION AT SCALE', 'authors': ['Alexey Dosovitskiy', 'Lucas Beyer', 'Alexander Kolesnikov', 'Dirk Weissenborn', 'Xiaohua Zhai', 'Thomas Unterthiner', 'Mostafa Dehghani', 'Matthias Minderer', 'Georg Heigold', 'Sylvain Gelly', 'Jakob Uszkoreit', 'Neil Houlsby'], 'year': 2021, 'abstract': 'While the Transformer architecture has become the de-facto standard for natural\\nlanguage processing tasks, its applications to computer vision remain limited. In\\nvision, attention is either applied in conjunction with convolutional networks, or\\nused to replace certain components of convolutional networks while keeping their\\noverall structure in place. We show that this reliance on CNNs is not necessary\\nand a pure transformer applied directly to sequences of image patches can perform\\nvery well on image classiﬁcation tasks. When pre-trained on large amounts of\\ndata and transferred to multiple mid-sized or small image recognition benchmarks\\n(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent\\nresults compared to state-of-the-art convolutional networks while requiring sub-\\nstantially fewer computational resources to train.', 'doi': None, 'evidence': {'title': [{'id': 2, 'text': 'AN IMAGE IS WORTH 16X16 WORDS:', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 3, 'text': 'TRANSFORMERS FOR IMAGE RECOGNITION AT SCALE', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}], 'authors': [{'id': 4, 'text': 'Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 4, 'text': 'Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 4, 'text': 'Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 4, 'text': 'Alexey Dosovitskiy^{∗}^{,}^{†}, Lucas Beyer^{∗}, Alexander Kolesnikov^{∗}, Dirk Weissenborn^{∗},', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 5, 'text': 'Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 5, 'text': 'Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 5, 'text': 'Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 5, 'text': 'Xiaohua Zhai^{∗}, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 6, 'text': 'Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 6, 'text': 'Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 6, 'text': 'Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 6, 'text': 'Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby^{∗}^{,}^{†}', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}], 'year': [{'id': 1, 'text': 'Published as a conference paper at ICLR 2021', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}], 'abstract': [{'id': 12, 'text': 'While the Transformer architecture has become the de-facto standard for natural', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 13, 'text': 'language processing tasks, its applications to computer vision remain limited. In', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 14, 'text': 'vision, attention is either applied in conjunction with convolutional networks, or', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 15, 'text': 'used to replace certain components of convolutional networks while keeping their', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 16, 'text': 'overall structure in place. We show that this reliance on CNNs is not necessary', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 17, 'text': 'and a pure transformer applied directly to sequences of image patches can perform', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 18, 'text': 'very well on image classiﬁcation tasks. When pre-trained on large amounts of', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 19, 'text': 'data and transferred to multiple mid-sized or small image recognition benchmarks', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 20, 'text': '(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 21, 'text': 'results compared to state-of-the-art convolutional networks while requiring sub-', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}, {'id': 22, 'text': 'stantially fewer computational resources to train.^{1}', 'source_file': 'vit.pdf', 'location': '第1页（物理页码）'}], 'doi': []}, 'missing_fields': ['doi'], 'input_truncated': True, 'warnings': [], 'model': 'qwen2.5:7b', 'usage': {'prompt_eval_count': 1892, 'eval_count': 156}}",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "paper_metadata",
+            "id": null,
+            "tool_call_id": "paper-1",
+            "artifact": null,
+            "status": "success"
+          },
+          "execution_mode": "parallel"
+        }
+      ],
+      "wall_seconds": 13.99974574999942,
+      "max_overlap": 2,
+      "usage": {
+        "prompt_eval_count": 3499,
+        "eval_count": 255
+      },
+      "passed": true
+    }
+  ],
+  "validation_complete": true,
+  "warmup": {
+    "model": "qwen2.5:7b",
+    "created_at": "2026-10-02T12:21:00.296732Z",
+    "message": {
+      "role": "assistant",
+      "content": "OK"
+    },
+    "done": true,
+    "done_reason": "stop",
+    "total_duration": 119277875,
+    "load_duration": 840084,
+    "prompt_eval_count": 33,
+    "prompt_eval_cached_count": 32,
+    "prompt_eval_duration": 55592000,
+    "eval_count": 2,
+    "eval_duration": 49405000
+  },
+  "finished_at": "2026-10-02T20:24:36.660061+08:00"
+}

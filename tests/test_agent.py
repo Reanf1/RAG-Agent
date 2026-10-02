@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 import sys
 import tempfile
+from threading import Barrier, Event, Lock
 from typing import Literal
 import unittest
 from unittest.mock import patch
@@ -21,6 +22,7 @@ from langchain_core.tools import tool
 from src.agent.react_loop import act, build_agent_messages, build_thought_messages, observe, run_react, think
 from src.agent.tools import AVAILABLE_TOOLS, execute_tool, knowledge_base_search, paper_metadata, paper_compare, keyword_extract
 from src.agent.tools import current_time, get_available_tools, paper_summary, web_search
+from src.agent.router import execute_calls, parallel_limit, route_question
 from src.utils.config import load_config
 
 
@@ -1346,7 +1348,8 @@ class TestSummaryTimeSearch(unittest.TestCase):
 
     def test_default_agent_registers_enabled_search_and_explicit_empty_stays_empty(self):
         self.config["agent"]["online_search_enabled"] = True
-        with patch("src.agent.react_loop.think", side_effect=ValueError("测试终止")) as think_mock:
+        with patch("src.agent.react_loop.route_question", return_value=None), \
+                patch("src.agent.react_loop.think", side_effect=ValueError("测试终止")) as think_mock:
             list(run_react("搜索论文"))
             self.assertIn(web_search, think_mock.call_args.args[1])
             list(run_react("搜索论文", tools=[]))
@@ -1399,6 +1402,580 @@ class TestSummaryTimeSearch(unittest.TestCase):
         with patch("httpx.Client") as client, self.assertRaisesRegex(ValueError, "不能为空"):
             web_search.invoke({"query": " "})
         client.assert_not_called()
+
+
+class TestRoutingAndParallel(unittest.TestCase):
+    """路由不调用模型；并发以真实线程与同步屏障证明，HTTP仅隔离模型协议。"""
+
+    def setUp(self):
+        self.config = deepcopy(load_config())
+        self.addCleanup(patch.stopall)
+        for module in ("src.agent.router", "src.agent.react_loop"):
+            patch(module + ".load_config", return_value=self.config).start()
+        self.invocations = []
+
+        @tool
+        def read_number(value: int) -> int:
+            """读取已给定整数并返回两倍；用于可核验的独立工具调用。"""
+            self.invocations.append(value)
+            if value < 0:
+                raise ValueError("输入不能为负数")
+            return value * 2
+
+        self.tools = [read_number]
+        self.plan = {"thought": "两个给定输入互不依赖，可同时读取。", "next_step": "tool", "tool_name": "read_number", "parallel_tools": ["read_number"]}
+        self.calls = [{"call_id": "call-a", "name": "read_number", "args": {"value": 3}},
+                      {"call_id": "call-b", "name": "read_number", "args": {"value": 5}}]
+        self.response = {"model": "qwen2.5:7b", "done": True, "done_reason": "stop", "prompt_eval_count": 300, "eval_count": 60,
+                         "message": {"tool_calls": [{"function": {"name": call["name"], "arguments": call["args"]}} for call in self.calls]}}
+        self.finished = {"observation": "两个结果均已返回。", "decision": "finish", "task_complete": True, "answer": "结果为6和10。"}
+
+    def packet(self, content):
+        return {**self.response, "message": {"content": json.dumps(content)}}
+
+    def action(self, response=None, plan=None, tools=None):
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(response or self.response).encode())) as http:
+            events = list(act("独立读取3和5。", plan or self.plan, tools or self.tools))
+        return events, http
+
+    def test_clear_question_types_route_only_to_registered_tools_without_model(self):
+        cases = [("现在几点，返回当前时间", "current_time"), ("current time please", "current_time"),
+                 ("提取问题的关键词", "keyword_extract"), ("生成论文的结构化摘要", "paper_summary"),
+                 ("查询论文元信息", "paper_metadata"), ("对比两篇论文", "paper_compare"),
+                 ("这篇论文使用了什么数据集？", "knowledge_base_search"), ("论文A的实验数据集是什么？", "knowledge_base_search")]
+        with patch("src.agent.react_loop.urlopen") as http:
+            for question, name in cases:
+                with self.subTest(question=question):
+                    plan = route_question(question, AVAILABLE_TOOLS)
+                    self.assertEqual(plan["tool_name"], name)
+                    self.assertEqual(plan["usage"], {"prompt_eval_count": 0, "eval_count": 0})
+                    self.assertIsNone(plan["model"])
+        http.assert_not_called()
+
+    def test_general_concept_routes_to_answer_but_paper_question_uses_knowledge(self):
+        self.assertEqual(route_question("什么是深度学习？", AVAILABLE_TOOLS)["next_step"], "answer")
+        self.assertEqual(route_question("这篇论文中的深度学习是什么？", AVAILABLE_TOOLS)["tool_name"], "knowledge_base_search")
+
+    def test_ambiguous_dependent_negated_and_existing_state_fall_back(self):
+        for question in ("当前时间并提取关键词", "先提取关键词，再用关键词查询知识库", "不要调用current_time", "帮我处理一下", "最新的大模型是什么？"):
+            with self.subTest(question=question):
+                self.assertIsNone(route_question(question, AVAILABLE_TOOLS))
+        for context in ({"observations": [{"status": "success"}]}, {"history": ["旧问题"]}, {"context": "论文资料"}):
+            self.assertIsNone(route_question("什么是深度学习？", AVAILABLE_TOOLS, context))
+
+    def test_missing_or_disabled_tools_fall_back_without_fake_registry(self):
+        self.assertIsNone(route_question("联网搜索论文", AVAILABLE_TOOLS))
+        self.assertIsNone(route_question("返回当前时间", []))
+        self.assertIsNone(route_question("3.14乘以2.56", AVAILABLE_TOOLS))
+        self.assertEqual(route_question("联网搜索论文", [web_search])["tool_name"], "web_search")
+
+    def test_explicit_tool_names_and_two_papers_use_same_tool_batch(self):
+        plan = route_question("请调用paper_metadata，分别读取两篇论文：" + "a" * 64 + "和" + "b" * 64, AVAILABLE_TOOLS)
+        self.assertEqual(plan["tool_name"], "paper_metadata")
+        self.assertEqual(plan["parallel_tools"], ["paper_metadata"])
+        self.assertEqual(route_question("请调用keyword_extract提取问题主题", AVAILABLE_TOOLS)["tool_name"], "keyword_extract")
+        self.assertIsNone(route_question("请调用paper_metadata和paper_summary", AVAILABLE_TOOLS))
+
+    def test_calculator_rule_requires_actual_registered_tool(self):
+        @tool("calculator")
+        def multiply(a: float, b: float) -> float:
+            """开发测试用的实际乘法工具，不计入生产八工具。"""
+            return a * b
+        self.assertEqual(route_question("3.14乘以2.56", [multiply])["tool_name"], "calculator")
+        self.assertIsNone(route_question("3.14乘以2.56", []))
+
+    def test_rule_path_skips_thought_model_but_keeps_action_and_observation(self):
+        response = {**self.response, "message": {"tool_calls": [{"function": {"name": "current_time", "arguments": {}}}]}}
+        with patch("src.agent.react_loop.think") as think_mock, patch("src.agent.react_loop.urlopen", side_effect=[
+                BytesIO(json.dumps(response).encode()), BytesIO(json.dumps(self.packet(self.finished)).encode())]) as http:
+            events = list(run_react("返回当前时间", [current_time]))
+        think_mock.assert_not_called()
+        self.assertEqual(http.call_count, 2)
+        self.assertEqual(events[0]["route"], "rule")
+        self.assertEqual(events[1]["name"], "current_time")
+        self.assertTrue(events[-1]["task_complete"])
+
+    def test_rule_only_applies_to_first_round(self):
+        pending = {**self.finished, "decision": "continue", "task_complete": False, "answer": ""}
+        response = {**self.response, "message": {"tool_calls": [{"function": {"name": "current_time", "arguments": {}}}]}}
+        with patch("src.agent.react_loop.think", return_value={"thought": "已有时间，可回答。", "next_step": "answer", "tool_name": None}) as think_mock, \
+                patch("src.agent.react_loop.urlopen", side_effect=[BytesIO(json.dumps(x).encode()) for x in
+                    (response, self.packet(pending), self.packet(self.finished))]):
+            events = list(run_react("返回当前时间", [current_time]))
+        self.assertEqual(think_mock.call_count, 1)
+        self.assertEqual(len(events[-1]["context"]["observations"]), 1)
+
+    def test_thought_accepts_independent_names_list_and_schema_limit(self):
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(self.plan)).encode())) as http:
+            result = think("独立读取3和5", self.tools)
+        self.assertEqual(result["parallel_tools"], ["read_number"])
+        choice = json.loads(http.call_args.args[0].data)["format"]["properties"]["parallel_tools"]
+        self.assertEqual(choice["maxItems"], 2)
+        self.assertTrue(choice["uniqueItems"])
+
+    def test_thought_rejects_empty_duplicate_unknown_or_excessive_batch(self):
+        for names in (None, "read_number", ["read_number", "read_number"], ["unknown"], [1], ["read_number", "unknown", "other"]):
+            with self.subTest(names=names), patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(
+                    self.packet({**self.plan, "parallel_tools": names})).encode())), self.assertRaises(RuntimeError):
+                think("独立读取", self.tools)
+
+    def test_two_threads_reach_barrier_and_return_stable_order(self):
+        barrier, lock, active, maximum = Barrier(2), Lock(), [0], [0]
+        @tool("read_number")
+        def read_number(value: int) -> int:
+            """屏障要求两个真实调用同时到达，顺序执行会超时并失败。"""
+            with lock:
+                active[0] += 1
+                maximum[0] = max(maximum[0], active[0])
+            try:
+                barrier.wait(timeout=3)
+                return value * 2
+            finally:
+                with lock:
+                    active[0] -= 1
+        results = list(execute_calls(self.calls, [read_number], parallel=True))
+        self.assertEqual(maximum[0], 2)
+        self.assertEqual([item["result"] for item in results], [6, 10])
+        self.assertEqual([item["call_id"] for item in results], ["call-a", "call-b"])
+        self.assertTrue(all(item["execution_mode"] == "parallel" and item["status"] == "success" for item in results))
+
+    def test_serial_path_and_single_call_keep_true_results_and_order(self):
+        results = list(execute_calls(self.calls, self.tools))
+        self.assertEqual(self.invocations, [3, 5])
+        self.assertEqual([item["result"] for item in results], [6, 10])
+        self.assertTrue(all(item["execution_mode"] == "serial" for item in results))
+        self.assertEqual(list(execute_calls(self.calls[:1], self.tools, parallel=True))[0]["execution_mode"], "serial")
+
+    def test_individual_failure_preserves_other_independent_result(self):
+        calls = deepcopy(self.calls)
+        calls[0]["args"]["value"] = -1
+        results = list(execute_calls(calls, self.tools, parallel=True))
+        self.assertEqual([item["status"] for item in results], ["error", "success"])
+        self.assertIn("输入不能为负数", results[0]["error"])
+        self.assertEqual(results[1]["result"], 10)
+        self.assertCountEqual(self.invocations, [-1, 5])
+
+    def test_batch_limit_duplicate_ids_and_invalid_config_are_rejected(self):
+        for calls in ([], [*self.calls, {**self.calls[0], "call_id": "call-c"}], [self.calls[0]] * 2):
+            with self.subTest(calls=calls), self.assertRaises(ValueError):
+                list(execute_calls(calls, self.tools, parallel=True))
+        for value in (0, -1, True, "2"):
+            self.config["agent"]["max_parallel_calls"] = value
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                parallel_limit()
+        self.assertEqual(self.invocations, [])
+
+    def test_native_batch_has_one_ai_message_two_linked_results_and_one_usage(self):
+        events, http = self.action()
+        self.assertEqual([e["type"] for e in events], ["tool_call", "tool_call", "tool_result", "tool_result"])
+        self.assertEqual([e["result"] for e in events[2:]], [6, 10])
+        self.assertEqual(len(events[0]["message"].tool_calls), 2)
+        self.assertNotIn("message", events[1])
+        self.assertEqual(sum(e.get("usage", {}).get("eval_count", 0) for e in events), 60)
+        self.assertEqual(http.call_count, 1)
+        for call, result in zip(events[:2], events[2:]):
+            self.assertEqual(call["call_id"], result["message"].tool_call_id)
+            self.assertEqual(call["args"], result["args"])
+
+    def test_batch_supports_different_selected_tools_only(self):
+        @tool
+        def other(value: int) -> int:
+            """另一个独立输入工具。"""
+            return value + 1
+        response = deepcopy(self.response)
+        response["message"]["tool_calls"][1]["function"]["name"] = "other"
+        events, http = self.action(response, {**self.plan, "parallel_tools": ["read_number", "other"]}, [*self.tools, other, current_time])
+        self.assertEqual([e["result"] for e in events[2:]], [6, 6])
+        self.assertEqual([spec["function"]["name"] for spec in json.loads(http.call_args.args[0].data)["tools"]], ["read_number", "other"])
+
+    def test_invalid_batch_protocol_rejected_before_any_execution(self):
+        for mode in ("unknown", "duplicate", "excessive", "unfinished"):
+            response = deepcopy(self.response)
+            if mode == "unknown":
+                response["message"]["tool_calls"][1]["function"]["name"] = "other"
+            elif mode == "duplicate":
+                response["message"]["tool_calls"][1] = deepcopy(response["message"]["tool_calls"][0])
+            elif mode == "excessive":
+                response["message"]["tool_calls"].append(deepcopy(response["message"]["tool_calls"][0]))
+            else:
+                response["done_reason"] = "length"
+            events, _ = self.action(response)
+            with self.subTest(mode=mode):
+                self.assertEqual([e["type"] for e in events], ["error"])
+        self.assertEqual(self.invocations, [])
+
+    def test_batch_cannot_omit_selected_tool_or_mismatch_primary_name(self):
+        plan = {**self.plan, "parallel_tools": ["read_number", "current_time"]}
+        packet = deepcopy(self.response)
+        packet["message"]["tool_calls"] = packet["message"]["tool_calls"][:1]
+        events, _ = self.action(packet, plan, [*self.tools, current_time])
+        self.assertEqual([event["type"] for event in events], ["error"])
+        self.assertIn("完整", events[0]["message"])
+        for bad in ({**self.plan, "tool_name": "current_time"}, {**self.plan, "next_step": "answer", "tool_name": None}):
+            with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(bad)).encode())), \
+                    self.subTest(plan=bad), self.assertRaises(RuntimeError):
+                think("读取独立输入", [*self.tools, current_time])
+        self.assertEqual(self.invocations, [])
+
+    def test_closing_during_batch_call_events_starts_no_tools(self):
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.response).encode())):
+            stream = act("独立输入", self.plan, self.tools)
+            next(stream)
+            next(stream)
+            stream.close()
+        self.assertEqual(self.invocations, [])
+
+    def test_error_or_confirmation_anywhere_in_current_batch_cannot_complete(self):
+        for result in ({"status": "error", "result": None}, {"status": "success", "result": {"status": "needs_confirmation"}},
+                       {"status": "success", "result": {"status": "insufficient_evidence"}}):
+            context = {"observations": [result, {"status": "success", "result": "最后一个成功"}]}
+            messages = [ToolMessage(content="第一条", tool_call_id="a"), ToolMessage(content="第二条", tool_call_id="b")]
+            with self.subTest(result=result), patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(self.finished)).encode())), \
+                    self.assertRaises(RuntimeError):
+                observe("完成两件事", self.tools, context, messages)
+
+    def test_loop_observes_entire_batch_and_preserves_native_input_order(self):
+        with patch("src.agent.react_loop.urlopen", side_effect=[BytesIO(json.dumps(x).encode()) for x in
+                (self.packet(self.plan), self.response, self.packet(self.finished))]) as http:
+            events = list(run_react("处理独立输入3和5。", self.tools))
+        self.assertEqual([item["result"] for item in events[-1]["context"]["observations"]], [6, 10])
+        self.assertTrue(events[-1]["task_complete"])
+        native = json.loads(http.call_args_list[-1].args[0].data)["messages"]
+        self.assertEqual([m["role"] for m in native], ["system", "user", "assistant", "tool", "tool"])
+        self.assertEqual(len(native[2]["tool_calls"]), 2)
+        self.assertEqual([m["content"] for m in native[-2:]], ["6", "10"])
+
+    def test_answer_plan_finishes_or_reports_insufficient_information_without_empty_loop(self):
+        plan = {"thought": "已有结果可给出答复。", "next_step": "answer", "tool_name": None}
+        pending = {**self.finished, "decision": "continue", "task_complete": False, "answer": ""}
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(pending)).encode())) as http, \
+                self.assertRaisesRegex(RuntimeError, "不能继续空转"):
+            observe("处理任务", self.tools, thought=plan)
+        schema = json.loads(http.call_args.args[0].data)["format"]
+        self.assertEqual(schema["properties"]["decision"], {"const": "finish"})
+        incomplete = {**self.finished, "task_complete": False, "answer": "缺少论文，无法完成。"}
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(incomplete)).encode())):
+            result = observe("处理任务", self.tools, thought=plan)
+        self.assertFalse(result["task_complete"])
+
+
+class TestErrorRecovery(unittest.TestCase):
+    """故障显式注入，工具和线程实际执行；只隔离模型HTTP，不冒充论文质量评测。"""
+
+    def setUp(self):
+        self.config = deepcopy(load_config())
+        self.config["agent"].update(tool_timeout_seconds=1, max_tool_retries=1,
+                                    max_repeated_calls=2, max_iterations=6)
+        for target in ("src.agent.router.load_config", "src.agent.react_loop.load_config"):
+            patcher = patch(target, return_value=self.config)
+            patcher.start()
+            self.addCleanup(patcher.stop)
+        self.invocations, self.mode = [], "ok"
+        @tool
+        def primary_lookup(key: str) -> dict:
+            """查询给定词条；测试注入一次超时、持续超时、执行异常或输入错误。"""
+            self.invocations.append(("primary_lookup", key))
+            if self.mode == "timeout" or self.mode == "once" and len(self.invocations) == 1:
+                raise TimeoutError("明确注入的已结束超时")
+            if self.mode == "execution":
+                raise RuntimeError("明确注入的主查询故障")
+            if self.mode == "input":
+                raise ValueError("请提供正确词条")
+            return {"key": key}
+        @tool
+        def backup_lookup(key: str) -> dict:
+            """用备用查询获取同一给定词条，用于验证替代真实执行和参数关联。"""
+            self.invocations.append(("backup_lookup", key))
+            return {"key": key}
+        self.tools = [primary_lookup, backup_lookup]
+        self.call = {"name": "primary_lookup", "args": {"key": "Transformer"}, "call_id": "primary-id"}
+        self.pending = {"observation": "还需获取词条。", "decision": "continue", "task_complete": False, "answer": ""}
+        self.failed = {"observation": "查询失败。", "decision": "finish", "task_complete": False, "answer": "查询失败，请重试。"}
+        self.finished = {"observation": "词条已获取。", "decision": "finish", "task_complete": True, "answer": "词条为Transformer。"}
+
+    def packet(self, content=None, name=None, args=None):
+        message = {"content": json.dumps(content, ensure_ascii=False)}
+        if name:
+            message = {"content": "", "tool_calls": [{"function": {"name": name, "arguments": args or self.call["args"]}}]}
+        return {"model": "qwen2.5:7b", "message": message, "done": True,
+                "done_reason": "stop", "prompt_eval_count": 100, "eval_count": 20}
+
+    def plan(self, name=None):
+        return self.packet({"thought": "获取同一词条。" if name else "说明结果或失败。",
+                            "next_step": "tool" if name else "answer", "tool_name": name})
+
+    def loop(self, packets, tools=None, context=None):
+        with patch("src.agent.react_loop.route_question", return_value=None), \
+                patch("src.agent.react_loop.urlopen", side_effect=[BytesIO(json.dumps(item).encode()) for item in packets]) as http:
+            events = list(run_react("查询Transformer词条。", self.tools if tools is None else tools, context))
+        return events, http
+
+    def test_completed_timeout_retries_once_and_preserves_both_attempts(self):
+        self.mode = "once"
+        result = list(execute_calls([self.call], self.tools))[0]
+        self.assertEqual(result["status"], "success")
+        self.assertEqual(len(self.invocations), 2)
+        self.assertEqual([item["status"] for item in result["attempts"]], ["error", "success"])
+        self.assertEqual(result["attempts"][0]["error_kind"], "timeout")
+        self.assertIn("已结束超时", result["attempts"][0]["error"])
+        self.assertEqual(result["message"].tool_call_id, "primary-id")
+        self.assertEqual(result["message"].status, "success")
+
+    def test_exhausted_timeout_returns_real_error_without_third_attempt(self):
+        self.mode = "timeout"
+        result = list(execute_calls([self.call], self.tools))[0]
+        self.assertEqual(result["error_kind"], "timeout")
+        self.assertEqual(len(result["attempts"]), 2)
+        self.assertEqual(len(self.invocations), 2)
+        self.assertEqual(result["message"].status, "error")
+
+    def test_retry_can_be_disabled(self):
+        self.mode = "timeout"
+        self.config["agent"]["max_tool_retries"] = 0
+        self.assertEqual(len(list(execute_calls([self.call], self.tools))[0]["attempts"]), 1)
+        self.assertEqual(len(self.invocations), 1)
+
+    def test_non_timeout_input_or_execution_error_is_not_retried(self):
+        for mode, kind in (("input", "input"), ("execution", "execution")):
+            self.mode, self.invocations = mode, []
+            result = list(execute_calls([self.call], self.tools))[0]
+            self.assertEqual(result["error_kind"], kind)
+            self.assertEqual(len(self.invocations), 1)
+
+    def test_wrapped_timeout_is_classified_without_guessing_from_text(self):
+        @tool
+        def wrapped_timeout() -> None:
+            """模拟已有模型请求将真实超时包装为RuntimeError。"""
+            try:
+                raise URLError(TimeoutError("底层超时"))
+            except URLError as error:
+                raise RuntimeError("请求失败") from error
+        result = list(execute_calls([{"name": "wrapped_timeout", "args": {}, "call_id": "wrapped"}], [wrapped_timeout]))[0]
+        self.assertEqual(result["error_kind"], "timeout")
+        self.assertEqual(len(result["attempts"]), 2)
+        @tool
+        def timeout_text() -> None:
+            """字符串中包含timeout，不代表真实超时。"""
+            raise RuntimeError("timeout只是日志文字")
+        result = list(execute_calls([{"name": "timeout_text", "args": {}, "call_id": "text"}], [timeout_text]))[0]
+        self.assertEqual(result["error_kind"], "execution")
+        self.assertEqual(len(result["attempts"]), 1)
+
+    def blocked_tool(self, timeout_after_release=False):
+        started, released, finished = Event(), Event(), Event()
+        self.addCleanup(released.set)
+        @tool
+        def blocked_lookup(key: str) -> str:
+            """真实等待释放事件；让外部等待预算先到期，不把sleep计时误当作取消成功。"""
+            self.invocations.append(("blocked_lookup", key))
+            started.set()
+            try:
+                released.wait(timeout=3)
+                if timeout_after_release:
+                    raise TimeoutError("超期之后才返回的错误")
+                return "迟到结果"
+            finally:
+                finished.set()
+        return blocked_lookup, started, released, finished
+
+    def test_deadline_returns_before_worker_exits_and_ignores_late_result(self):
+        self.config["agent"]["tool_timeout_seconds"] = .05
+        blocking, started, released, finished = self.blocked_tool()
+        call = {**self.call, "name": blocking.name}
+        try:
+            result = list(execute_calls([call], [blocking]))[0]
+            self.assertTrue(started.is_set())
+            self.assertFalse(finished.is_set())
+            self.assertTrue(result["pending"])
+            self.assertEqual(result["error_kind"], "deadline")
+            self.assertIsNone(result["result"])
+            snapshot = deepcopy(result)
+        finally:
+            released.set()
+            self.assertTrue(finished.wait(timeout=3))
+        self.assertEqual(result, snapshot)
+        self.assertEqual(len(self.invocations), 1)
+
+    def test_late_timeout_does_not_start_background_retry(self):
+        self.config["agent"]["tool_timeout_seconds"] = .05
+        blocking, _, released, finished = self.blocked_tool(timeout_after_release=True)
+        try:
+            results = list(execute_calls([{**self.call, "name": blocking.name}], [blocking]))
+            self.assertTrue(results[0]["pending"])
+        finally:
+            released.set()
+            self.assertTrue(finished.wait(timeout=3))
+        self.assertEqual(len(self.invocations), 1)
+
+    def test_parallel_timeout_preserves_success_and_shared_deadline(self):
+        self.config["agent"]["tool_timeout_seconds"] = .05
+        blocking, _, released, finished = self.blocked_tool()
+        calls = [{**self.call, "name": blocking.name}, {**self.call, "name": "backup_lookup", "call_id": "backup-id"}]
+        try:
+            results = list(execute_calls(calls, [blocking, self.tools[1]], parallel=True))
+            self.assertEqual([r["status"] for r in results], ["error", "success"])
+            self.assertEqual(results[1]["result"], {"key": "Transformer"})
+            self.assertEqual(results[1]["message"].tool_call_id, "backup-id")
+        finally:
+            released.set()
+            self.assertTrue(finished.wait(timeout=3))
+
+    def test_closing_batch_does_not_wait_or_allow_late_retry(self):
+        blocking, started, released, finished = self.blocked_tool(timeout_after_release=True)
+        calls = [self.call, {**self.call, "name": blocking.name, "call_id": "blocked-id"}]
+        stream = execute_calls(calls, [self.tools[0], blocking], parallel=True)
+        try:
+            self.assertEqual(next(stream)["status"], "success")
+            self.assertTrue(started.wait(timeout=1))
+            stream.close()
+            self.assertFalse(finished.is_set())
+        finally:
+            released.set()
+            self.assertTrue(finished.wait(timeout=3))
+            stream.close()
+        self.assertEqual(len(self.invocations), 2)
+
+    def test_agent_deadline_stops_without_observation_model_or_next_round(self):
+        self.config["agent"]["tool_timeout_seconds"] = .05
+        blocking, _, released, finished = self.blocked_tool()
+        try:
+            events, http = self.loop([self.plan(blocking.name), self.packet(name=blocking.name)], [blocking, self.tools[1]])
+            self.assertEqual(http.call_count, 2)
+            self.assertEqual(events[-1]["stop_reason"], "tool_timeout")
+            self.assertFalse(events[-1]["task_complete"])
+            self.assertIn("后台函数", events[-1]["full_response"])
+            self.assertTrue(events[-1]["context"]["observations"][0]["pending"])
+        finally:
+            released.set()
+            self.assertTrue(finished.wait(timeout=3))
+
+    def test_execution_error_forces_alternative_planning_and_preserves_failed_result(self):
+        self.mode = "execution"
+        context = {"observations": []}
+        original = deepcopy(context)
+        events, http = self.loop([self.plan("primary_lookup"), self.packet(name="primary_lookup"), self.packet(self.failed),
+                                  self.plan("backup_lookup"), self.packet(name="backup_lookup"), self.packet(self.finished)], context=context)
+        self.assertTrue(events[-1]["task_complete"])
+        self.assertEqual([item[0] for item in self.invocations], ["primary_lookup", "backup_lookup"])
+        self.assertEqual([item["status"] for item in events[-1]["context"]["observations"]], ["error", "success"])
+        self.assertEqual(len([e for e in events if e["type"] == "recovery"]), 1)
+        specs = json.loads(json.loads(http.call_args_list[3].args[0].data)["messages"][0]["content"].split("【可用工具描述】\n")[1].splitlines()[0])
+        self.assertEqual([item["name"] for item in specs["available_tools"]], ["backup_lookup"])
+        results = [e for e in events if e["type"] == "tool_result"]
+        self.assertNotEqual(results[0]["call_id"], results[1]["call_id"])
+        self.assertEqual(context, original)
+
+    def test_exhausted_timeout_can_use_alternative(self):
+        self.mode = "timeout"
+        events, _ = self.loop([self.plan("primary_lookup"), self.packet(name="primary_lookup"), self.packet(self.failed),
+                              self.plan("backup_lookup"), self.packet(name="backup_lookup"), self.packet(self.finished)])
+        self.assertTrue(events[-1]["task_complete"])
+        self.assertEqual(len(self.invocations), 3)
+        self.assertEqual(len(events[-1]["context"]["observations"][0]["attempts"]), 2)
+
+    def test_no_alternative_reports_failure_and_does_not_invent_tools(self):
+        self.mode = "execution"
+        events, http = self.loop([self.plan("primary_lookup"), self.packet(name="primary_lookup"), self.packet(self.failed)], self.tools[:1])
+        self.assertFalse(events[-1]["task_complete"])
+        self.assertEqual(events[-1]["stop_reason"], "incomplete")
+        self.assertEqual(http.call_count, 3)
+        self.assertFalse(any(e["type"] == "recovery" for e in events))
+
+    def test_all_alternatives_fail_and_stop_without_reusing_failed_tools(self):
+        self.mode = "execution"
+        @tool("backup_lookup")
+        def unavailable_backup(key: str) -> dict:
+            """备用也真实抛错，验证恢复次数受注册工具和迭代上限约束。"""
+            self.invocations.append(("backup_lookup", key))
+            raise RuntimeError("备用查询也不可用")
+        events, _ = self.loop([self.plan("primary_lookup"), self.packet(name="primary_lookup"), self.packet(self.failed),
+                              self.plan("backup_lookup"), self.packet(name="backup_lookup"), self.packet(self.failed)],
+                             [self.tools[0], unavailable_backup])
+        self.assertEqual(events[-1]["stop_reason"], "incomplete")
+        self.assertEqual(len(self.invocations), 2)
+        self.assertEqual(events[-1]["context"]["recovery"]["available_alternatives"], [])
+        self.assertEqual([r["status"] for r in events[-1]["context"]["observations"]], ["error", "error"])
+
+    def test_recovery_cannot_exceed_last_iteration(self):
+        self.mode = "execution"
+        self.config["agent"]["max_iterations"] = 1
+        events, http = self.loop([self.plan("primary_lookup"), self.packet(name="primary_lookup"), self.packet(self.pending)])
+        self.assertEqual(events[-1]["stop_reason"], "max_iterations")
+        self.assertEqual(http.call_count, 3)
+        self.assertEqual(len(self.invocations), 1)
+
+    def test_input_error_does_not_force_unrelated_alternative(self):
+        self.mode = "input"
+        events, http = self.loop([self.plan("primary_lookup"), self.packet(name="primary_lookup"), self.packet(self.failed)])
+        self.assertEqual(events[-1]["stop_reason"], "incomplete")
+        self.assertEqual(http.call_count, 3)
+        self.assertEqual(len(self.invocations), 1)
+
+    def test_failed_tool_cannot_be_reselected_in_recovery_round(self):
+        self.mode = "execution"
+        events, http = self.loop([self.plan("primary_lookup"), self.packet(name="primary_lookup"), self.packet(self.failed),
+                                  self.plan("primary_lookup")])
+        self.assertEqual(events[-1]["stop_reason"], "error")
+        self.assertEqual(http.call_count, 4)
+        self.assertEqual(len(self.invocations), 1)
+
+    def test_no_suitable_alternative_finishes_incomplete_without_a_tool(self):
+        self.mode = "execution"
+        events, _ = self.loop([self.plan("primary_lookup"), self.packet(name="primary_lookup"), self.packet(self.failed),
+                              self.plan(), self.packet(self.failed)])
+        self.assertEqual(events[-1]["stop_reason"], "incomplete")
+        self.assertEqual(len(self.invocations), 1)
+        self.assertTrue(events[-1]["context"]["recovery"]["pending"])
+
+    def test_unrecovered_answer_cannot_claim_completion(self):
+        self.mode = "execution"
+        events, _ = self.loop([self.plan("primary_lookup"), self.packet(name="primary_lookup"), self.packet(self.failed),
+                              self.plan(), self.packet(self.finished)])
+        self.assertFalse(events[-1]["task_complete"])
+        self.assertEqual(events[-1]["stop_reason"], "error")
+
+    def test_same_call_is_stopped_before_third_execution(self):
+        round_packets = [self.plan("primary_lookup"), self.packet(name="primary_lookup"), self.packet(self.pending)]
+        events, http = self.loop([*round_packets, *round_packets, self.plan("primary_lookup"), self.packet(name="primary_lookup")])
+        self.assertEqual(events[-1]["stop_reason"], "repeated_calls")
+        self.assertIn("死循环", events[-1]["full_response"])
+        self.assertEqual(len(self.invocations), 2)
+        self.assertEqual(http.call_count, 8)
+
+    def test_alternating_cycle_is_also_stopped(self):
+        packets = []
+        for name in ("primary_lookup", "backup_lookup", "primary_lookup", "backup_lookup"):
+            packets.extend([self.plan(name), self.packet(name=name), self.packet(self.pending)])
+        events, _ = self.loop([*packets, self.plan("primary_lookup"), self.packet(name="primary_lookup")])
+        self.assertEqual(events[-1]["stop_reason"], "repeated_calls")
+        self.assertEqual(len(self.invocations), 4)
+        self.assertEqual(events[-1]["iterations"], 5)
+
+    def test_different_arguments_and_separate_requests_are_not_a_cycle(self):
+        packets = []
+        for key in ("A", "B", "C"):
+            packets.extend([self.plan("primary_lookup"), self.packet(name="primary_lookup", args={"key": key}),
+                            self.packet(self.finished if key == "C" else self.pending)])
+        self.assertTrue(self.loop(packets)[0][-1]["task_complete"])
+        self.invocations = []
+        packets = [self.plan("primary_lookup"), self.packet(name="primary_lookup"), self.packet(self.finished)]
+        for _ in range(3):
+            self.assertTrue(self.loop(packets)[0][-1]["task_complete"])
+        self.assertEqual(len(self.invocations), 3)
+
+    def test_invalid_recovery_limits_stop_before_model_or_tools(self):
+        cases = {"tool_timeout_seconds": (0, -1, True, "1", float("nan"), float("inf")),
+                 "max_tool_retries": (-1, True, 1.5, "1"), "max_repeated_calls": (0, -1, True, 1.5)}
+        original = deepcopy(self.config["agent"])
+        for key, values in cases.items():
+            for value in values:
+                self.config["agent"] = {**original, key: value}
+                with self.subTest(key=key, value=value):
+                    events, http = self.loop([])
+                    self.assertEqual(events[-1]["iterations"], 0)
+                    self.assertFalse(events[-1]["task_complete"])
+                    http.assert_not_called()
+        self.assertEqual(self.invocations, [])
 
 
 if __name__ == "__main__":
