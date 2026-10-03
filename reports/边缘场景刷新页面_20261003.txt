@@ -1,0 +1,367 @@
+Browser tab: 7, Title: "智能科研助理", URL: "http://localhost:8522/?visitor=9bea8b8760704d9f94ea82a544e1dc18&conversation=c76c39308fe544e5af291a4b2a1f617d".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 60-68
+~					58 tab (selectable, settable, boolean) Agent 科研助理, ID: react-aria6527407457-:rb:-tab-0, Value: 0
+Agent 科研助理
+~					59 tab (selected, settable, boolean) RAG 流式问答, Value: 1, ID: react-aria6527407457-:rb:-tab-1
++						166 text RAG 流式问答
++				167 container Description: RAG 流式问答, ID: react-aria6527407457-:rb:-tabpanel-1
++					168 heading RAG 流式问答, Value: 3, ID: rag
++						169 text RAG 流式问答
++						170 link Description: Link to heading, Value: localhost:8522/?visitor=9bea8b8760704d9f94ea82a544e1dc18&conversation=c76c39308fe544e5af291a4b2a1f617d#rag
++					171 text 每个问题先匹配当前会话答案缓存；未命中再独立检索并由本地 Ollama 生成。历史和引用保存在当前会话，只用于展示，不作为RAG多轮推理上下文。引用对应实际文件和位置，原文证据可展开查看。
++					172 text 清空会删除当前会话的RAG历史和答案缓存，Agent历史、知识库和请求日志保留。
++					173 button 清空当前对话
++						174 text 清空当前对话
++					175 text face
++					176 container Chat message from user
++						177 text 什么是 Transformer？请简短说明，没有文献时不要编造引用。
++					178 text smart_toy
++					179 container Chat message from assistant
++						180 container
++							181 text 当前知识库中未找到相关文档。以下为纯模型回答，没有知识库文献依据。
++							182 heading 回答, Value: 2, ID: 3a622f65
++								183 text 回答
++								184 link Description: Link to heading, Value: localhost:8522/?visitor=9bea8b8760704d9f94ea82a544e1dc18&conversation=c76c39308fe544e5af291a4b2a1f617d#3a622f65
++							185 text Transformer 是一种用于序列建模的神经网络架构，最初由 Vaswani 等人在 2017 年提出，主要用于自然语言处理任务，如机器翻译。它基于自注意力机制（self-attention mechanism），能够直接处理序列中的任意一对元素之间的依赖关系，而不需要像循环神经网络（RNN）那样依赖于顺序处理。这种机制使得 Transformer 在处理长序列时表现出色，并且能够并行化计算，提高了训练效率。
++							186 heading 参考来源, Value: 2, ID: 4f4c5596
++								187 text 参考来源
++								188 link Description: Link to heading, Value: localhost:8522/?visitor=9bea8b8760704d9f94ea82a544e1dc18&conversation=c76c39308fe544e5af291a4b2a1f617d#4f4c5596
++							189 text 无可引用来源
++						190 text 服务已结束 · 检索 0.00 秒 · 总耗时 5.95 秒 · 输入 Token 444 · 输出 Token 117
++						191 text 当前知识库中未找到相关文档；以下回答没有文献依据，为纯模型回答。
++					192 container
++						193 text entry area (settable) 询问已上传论文（支持中英文）
++						194 button (disabled) Send message
+The focused UI element is 59 tab (selected, settable, boolean) RAG 流式问答, Value: 1, ID: react-aria6527407457-:rb:-tab-1
+
+Browser tab: 8, Title: "智能科研助理", URL: "http://localhost:8522/?visitor=ea5151d30d7245d0b72ad3b5174eea96&conversation=bab4a4e9bd60461b972a5898d802ec2c".
+1 AXWebArea 智能科研助理, URL: localhost:8522/?visitor=ea5151d30d7245d0b72ad3b5174eea96&conversation=bab4a4e9bd60461b972a5898d802ec2c
+	2 container
+		3 container
+			4 container
+				5 heading 文档上传与管理, Value: 2
+					6 text 文档上传与管理
+				7 container 选择多份文档
+					8 button file upload
+					9 button upload Upload
+						10 text upload
+						11 text Upload
+					12 text 20MB per file
+					13 text  • PDF, DOCX, TXT, MD, MARKDOWN
+				14 text 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+				15 button (disabled) 开始导入
+					16 text 开始导入
+				17 button (disabled) 重试失败项
+					18 text 重试失败项
+				19 heading 本批导入状态, Value: 3
+					20 text 本批导入状态
+				21 text 已处理 0/0 份
+				22 progress indicator Description: progress, Value: 0, ID: react-aria8993367718-:r5:
+				23 text 在左侧选择文档后，点击“开始导入”。
+				24 heading 知识库文档, Value: 3
+					25 text 知识库文档
+				26 text 文档列表来自本地原文与索引；块数表示当前库中数量，不代表全部预期块均已导入。
+				27 button 刷新知识库状态
+					28 text 刷新知识库状态
+				29 text 知识库暂无文档。
+				30 heading 对话历史管理, Value: 3
+					31 text 对话历史管理
+				32 text 新建与切换同时作用于两个问答标签。保留当前地址可在刷新后找回历史；访客标识不是登录认证。
+				33 button 新建会话
+					34 text 新建会话
+				35 container
+					36 combo box (collapsed, settable) Description: 历史会话, Value: 请记住本会话的实验代号是UI_LONG_2112 · bab4a4e9, ID: react-aria8993367718-:r10:, Secondary Actions: Expand
+					37 pop up button (collapsed) Description: Open, ID: react-aria8993367718-:rs:, Secondary Actions: Expand
+				38 text 当前会话：bab4a4e9bd60461b972a5898d802ec2c
+				39 button 删除当前会话
+					40 text 删除当前会话
+				41 heading 课程资料, Value: 2
+					42 text 课程资料
+				43 text 南京农业大学生产实习课程实践
+				44 text 技术设计与验收：docs/技术设计文档.md
+			45 container
+				46 button Deploy
+				47 pop up button (collapsed) Description: Main menu, Secondary Actions: Expand
+			48 container
+				49 heading 智能科研助理, Value: 1, ID: 2d7dc4e4
+					50 text 智能科研助理
+					51 link Description: Link to heading, Value: localhost:8522/?visitor=ea5151d30d7245d0b72ad3b5174eea96&conversation=bab4a4e9bd60461b972a5898d802ec2c#2d7dc4e4
+				52 text 基于 RAG + Agent 的论文知识库问答系统
+				53 text 上传文档后增量写入本地知识库；下方 RAG 问答使用混合检索与模型重排，本地模型逐步输出答案并补全文献引用。
+				54 heading 科研对话, Value: 3, ID: 952dd83b
+					55 text 科研对话
+					56 link Description: Link to heading, Value: localhost:8522/?visitor=ea5151d30d7245d0b72ad3b5174eea96&conversation=bab4a4e9bd60461b972a5898d802ec2c#952dd83b
+				57 tab group react-aria8993367718-:rb:
+					58 tab (selected, settable, boolean) Agent 科研助理, ID: react-aria8993367718-:rb:-tab-0, Value: 1
+Agent 科研助理
+					59 tab (selectable, settable, boolean) RAG 流式问答, ID: react-aria8993367718-:rb:-tab-1, Value: 0
+RAG 流式问答
+				60 container Description: Agent 科研助理, ID: react-aria8993367718-:rb:-tabpanel-0
+					61 heading Agent 科研助理, Value: 3, ID: agent
+						62 text Agent 科研助理
+						63 link Description: Link to heading, Value: localhost:8522/?visitor=ea5151d30d7245d0b72ad3b5174eea96&conversation=bab4a4e9bd60461b972a5898d802ec2c#agent
+					64 text 本页独立会话接入历史记忆；每个阶段完成即刷新实际 Token、工具成功率/耗时和决策轨迹。Action负责选择工具，内部用量单列；并行批次共享的Action只统计一次。左侧可新建、切换、删除或恢复历史会话。
+					65 text face
+					66 container Chat message from user
+						67 text 请记住本会话的实验代号是UI_LONG_21126C17D6，不要改动。
+					68 text smart_toy
+					69 container Chat message from assistant
+						70 text 已记录此代号。
+					71 text face
+					72 container Chat message from user
+						73 text 第1轮：这是构造的长历史测试。保留中文回答。第1轮：这是构造的长历史测试。保留中文回答。第1轮：这是构造的长历史测试。保留中文回答。第1轮：这是构造的长历史测试。保留中文回答。第1轮：这是构造的长历史测试。保留中文回答。
+					74 text smart_toy
+					75 container Chat message from assistant
+						76 text 已记录此轮要求。已记录此轮要求。已记录此轮要求。已记录此轮要求。已记录此轮要求。
+					77 text face
+					78 container Chat message from user
+						79 text 第2轮：这是构造的长历史测试。保留中文回答。第2轮：这是构造的长历史测试。保留中文回答。第2轮：这是构造的长历史测试。保留中文回答。第2轮：这是构造的长历史测试。保留中文回答。第2轮：这是构造的长历史测试。保留中文回答。
+					80 text smart_toy
+					81 container Chat message from assistant
+						82 text 已记录此轮要求。已记录此轮要求。已记录此轮要求。已记录此轮要求。已记录此轮要求。
+					83 text face
+					84 container Chat message from user
+						85 text 第3轮：这是构造的长历史测试。保留中文回答。第3轮：这是构造的长历史测试。保留中文回答。第3轮：这是构造的长历史测试。保留中文回答。第3轮：这是构造的长历史测试。保留中文回答。第3轮：这是构造的长历史测试。保留中文回答。
+					86 text smart_toy
+					87 container Chat message from assistant
+						88 text 已记录此轮要求。已记录此轮要求。已记录此轮要求。已记录此轮要求。已记录此轮要求。
+					89 text face
+					90 container Chat message from user
+						91 text 第4轮：这是构造的长历史测试。保留中文回答。第4轮：这是构造的长历史测试。保留中文回答。第4轮：这是构造的长历史测试。保留中文回答。第4轮：这是构造的长历史测试。保留中文回答。第4轮：这是构造的长历史测试。保留中文回答。
+					92 text smart_toy
+					93 container Chat message from assistant
+						94 text 已记录此轮要求。已记录此轮要求。已记录此轮要求。已记录此轮要求。已记录此轮要求。
+					95 text face
+					96 container Chat message from user
+						97 text 第5轮：这是构造的长历史测试。保留中文回答。第5轮：这是构造的长历史测试。保留中文回答。第5轮：这是构造的长历史测试。保留中文回答。第5轮：这是构造的长历史测试。保留中文回答。第5轮：这是构造的长历史测试。保留中文回答。
+					98 text smart_toy
+					99 container Chat message from assistant
+						100 text 已记录此轮要求。已记录此轮要求。已记录此轮要求。已记录此轮要求。已记录此轮要求。
+					101 text face
+					102 container Chat message from user
+						103 text 第6轮：这是构造的长历史测试。保留中文回答。第6轮：这是构造的长历史测试。保留中文回答。第6轮：这是构造的长历史测试。保留中文回答。第6轮：这是构造的长历史测试。保留中文回答。第6轮：这是构造的长历史测试。保留中文回答。
+					104 text smart_toy
+					105 container Chat message from assistant
+						106 text 已记录此轮要求。已记录此轮要求。已记录此轮要求。已记录此轮要求。已记录此轮要求。
+					107 text face
+					108 container Chat message from user
+						109 text 第7轮：这是构造的长历史测试。保留中文回答。第7轮：这是构造的长历史测试。保留中文回答。第7轮：这是构造的长历史测试。保留中文回答。第7轮：这是构造的长历史测试。保留中文回答。第7轮：这是构造的长历史测试。保留中文回答。
+					110 text smart_toy
+					111 container Chat message from assistant
+						112 text 已记录此轮要求。已记录此轮要求。已记录此轮要求。已记录此轮要求。已记录此轮要求。
+					113 text face
+					114 container Chat message from user
+						115 text 第8轮：这是构造的长历史测试。保留中文回答。第8轮：这是构造的长历史测试。保留中文回答。第8轮：这是构造的长历史测试。保留中文回答。第8轮：这是构造的长历史测试。保留中文回答。第8轮：这是构造的长历史测试。保留中文回答。
+					116 text smart_toy
+					117 container Chat message from assistant
+						118 text 已记录此轮要求。已记录此轮要求。已记录此轮要求。已记录此轮要求。已记录此轮要求。
+					119 text face
+					120 container Chat message from user
+						121 text 第9轮：这是构造的长历史测试。保留中文回答。第9轮：这是构造的长历史测试。保留中文回答。第9轮：这是构造的长历史测试。保留中文回答。第9轮：这是构造的长历史测试。保留中文回答。第9轮：这是构造的长历史测试。保留中文回答。
+					122 text smart_toy
+					123 container Chat message from assistant
+						124 text 已记录此轮要求。已记录此轮要求。已记录此轮要求。已记录此轮要求。已记录此轮要求。
+					125 text face
+					126 container Chat message from user
+						127 text 第10轮：这是构造的长历史测试。保留中文回答。第10轮：这是构造的长历史测试。保留中文回答。第10轮：这是构造的长历史测试。保留中文回答。第10轮：这是构造的长历史测试。保留中文回答。第10轮：这是构造的长历史测试。保留中文回答。
+					128 text smart_toy
+					129 container Chat message from assistant
+						130 text 已记录此轮要求。已记录此轮要求。已记录此轮要求。已记录此轮要求。已记录此轮要求。
+					131 text face
+					132 container Chat message from user
+						133 text 第11轮：这是构造的长历史测试。保留中文回答。第11轮：这是构造的长历史测试。保留中文回答。第11轮：这是构造的长历史测试。保留中文回答。第11轮：这是构造的长历史测试。保留中文回答。第11轮：这是构造的长历史测试。保留中文回答。
+					134 text smart_toy
+					135 container Chat message from assistant
+						136 text 已记录此轮要求。已记录此轮要求。已记录此轮要求。已记录此轮要求。已记录此轮要求。
+					137 text face
+					138 container Chat message from user
+						139 text 最早告诉你的本会话实验代号是什么？请只回答代号。
+					140 text smart_toy
+					141 container Chat message from assistant
+						142 text UI_LONG_21126C17D6
+					143 container
+						144 text field (settable) Description: 向 Agent 提问, ID: :r1n:
+					145 button 运行 Agent
+						146 text 运行 Agent
+				147 heading Agent 决策轨迹与运行指标, Value: 3, ID: agent
+					148 text Agent 决策轨迹与运行指标
+					149 link Description: Link to heading, Value: localhost:8522/?visitor=ea5151d30d7245d0b72ad3b5174eea96&conversation=bab4a4e9bd60461b972a5898d802ec2c#agent
+				150 text 历史请求快照：加载保存时的公开轨迹与指标，未重新执行Agent。
+				151 text 本次 Agent Token
+				152 text 7194
+				153 text Agent 响应耗时
+				154 text 22.981 秒
+				155 text 阶段：done · 请求：1f2ba6aed1ab40b8ad8c9e88dd7325c6 · 已报告 Token：7194 · 用量未完整报告：0 项
+				156 container
+					157 button Show/hide columns
+					158 button Download as CSV
+					159 button Search
+					160 button Fullscreen
+					161 image
+						162 table
+							163 row 阶段 轮次 工具 调用标识 输入 Token 输出 Token 用量完整
+								164 cell (selectable) 阶段
+								165 cell (selectable) 轮次
+								166 cell (selectable) 工具
+								167 cell (selectable) 调用标识
+								168 cell (selectable) 输入 Token
+								169 cell (selectable) 输出 Token
+								170 cell (selectable) 用量完整
+							171 container
+								172 row (selectable) 记忆摘要 0 — memory_summary:0 1093 47 是
+									173 cell (selectable) Value: 记忆摘要, ID: glide-cell-0-0
+									174 cell (selectable) Value: 0, ID: glide-cell-1-0
+									175 cell (selectable) Value: —, ID: glide-cell-2-0
+									176 cell (selectable) Value: memory_summary:0, ID: glide-cell-3-0
+									177 cell (selectable) Value: 1093, ID: glide-cell-4-0
+									178 cell (selectable) Value: 47, ID: glide-cell-5-0
+									179 cell (selectable) Value: 是, ID: glide-cell-6-0
+								180 row (selectable) Thought 1 — thought:1 2965 37 是
+									181 cell (selectable) Value: Thought, ID: glide-cell-0-1
+									182 cell (selectable) Value: 1, ID: glide-cell-1-1
+									183 cell (selectable) Value: —, ID: glide-cell-2-1
+									184 cell (selectable) Value: thought:1, ID: glide-cell-3-1
+									185 cell (selectable) Value: 2965, ID: glide-cell-4-1
+									186 cell (selectable) Value: 37, ID: glide-cell-5-1
+									187 cell (selectable) Value: 是, ID: glide-cell-6-1
+								188 row (selectable) Observation 1 — observation:1 2993 59 是
+									189 cell (selectable) Value: Observation, ID: glide-cell-0-2
+									190 cell (selectable) Value: 1, ID: glide-cell-1-2
+									191 cell (selectable) Value: —, ID: glide-cell-2-2
+									192 cell (selectable) Value: observation:1, ID: glide-cell-3-2
+									193 cell (selectable) Value: 2993, ID: glide-cell-4-2
+									194 cell (selectable) Value: 59, ID: glide-cell-5-2
+									195 cell (selectable) Value: 是, ID: glide-cell-6-2
+				196 text 本次工具调用成功率
+				197 text 暂无已返回调用
+				198 text 平均工具耗时
+				199 text 暂无耗时
+				200 text 已计划 0 · 已返回 0 · 成功 0 · 失败 0 · 待返回 0。成功指工具执行成功，不能代替任务完成或答案正确；重试按最终调用状态计一次，并行耗时可重叠。
+				201 text Agent 决策轨迹
+				202 text 展示公开决策说明与真实工具事件；分支表示同轮调用，执行方式以工具记录为准。
+				203 container
+					204 button Fullscreen
+					205 image
+						206 container Description: agent, ID: graph0
+							207 container Description: n0, ID: node1
+								208 text Thought · 决策
+							209 container Description: n1, ID: node2
+								210 text 跳过调用
+							211 container Description: n0->n1, ID: edge1
+							212 container Description: n2, ID: node3
+								213 text Observation · 判断
+								214 text finish
+							215 container Description: n1->n2, ID: edge2
+							216 container Description: n3, ID: node4
+								217 text 结束
+								218 text task_complete
+							219 container Description: n2->n3, ID: edge3
+				220 button (expanded) keyboard_arrow_down 第1轮 · Thought → Action → Observation, Secondary Actions: Collapse
+					221 text keyboard_arrow_down
+					222 text 第1轮 · Thought → Action → Observation
+				223 text Thought · 决策说明
+				224 text 从摘要中提取实验代号
+				225 text 下一步：answer · 计划工具：无需工具 · 路由：model
+				226 text Action · 已跳过
+				227 text Thought规划直接回答，无需执行工具。
+				228 text Observation · 结果判断
+				229 text 从摘要中提取的实验代号为UI_LONG_21126C17D6。
+				230 text 决策：finish · 任务完成：True
+				231 text 终止原因：task_complete · 任务完成：True
+				232 heading RAG 运行指标, Value: 3, ID: rag
+					233 text RAG 运行指标
+					234 link Description: Link to heading, Value: localhost:8522/?visitor=ea5151d30d7245d0b72ad3b5174eea96&conversation=bab4a4e9bd60461b972a5898d802ec2c#rag
+				235 text 候选命中率 = 非空检索次数 / 已完成检索次数；仅表示找到文档块，不代表回答正确或 Hit@5。缓存、未执行和检索失败不计入分母。统计包含直接 RAG 问答和 Agent 的知识库工具。
+				236 text RAG 候选命中率
+				237 text 0.0%
+				238 text 平均检索延迟
+				239 text 0.002 秒
+				240 text 平均 RAG 响应延迟
+				241 text 5.949 秒
+				242 text 实际检索 1 次 · 已完成 1 次 · 非空 0 次 · 失败 0 次。延迟统计实际检索请求，含失败；响应延迟含检索和生成，不含用户确认等待。
+				243 button (collapsed) keyboard_arrow_right 知识库管理面板, Secondary Actions: Expand
+					244 text keyboard_arrow_right
+					245 text 知识库管理面板
+				246 heading 检索实验与服务维护, Value: 3, ID: f4ddf962
+					247 text 检索实验与服务维护
+					248 link Description: Link to heading, Value: localhost:8522/?visitor=ea5151d30d7245d0b72ad3b5174eea96&conversation=bab4a4e9bd60461b972a5898d802ec2c#f4ddf962
+				249 heading 文档 Top-K 检索, Value: 3, ID: top-k
+					250 text 文档 Top-K 检索
+					251 link Description: Link to heading, Value: localhost:8522/?visitor=ea5151d30d7245d0b72ad3b5174eea96&conversation=bab4a4e9bd60461b972a5898d802ec2c#top-k
+				252 text 此处只检索文档块；可选向量、BM25、RRF 或 RRF + 模型重排。各类分数不可直接比较，也不是命中概率。生成答案请使用下方 RAG 问答。
+				253 container
+					254 combo box (collapsed, settable) Description: 检索方式, Value: 向量相似度, ID: react-aria8993367718-:r1e:, Secondary Actions: Expand
+					255 pop up button (collapsed) Description: Open, ID: react-aria8993367718-:r1a:, Secondary Actions: Expand
+				256 container
+					257 text field (settable) Description: 查询内容（支持中英文）, ID: :r29:
+				258 stepper (settable, integer) Description: 返回数量 Top-K, Value: 5, ID: :r2f:
+				259 button Decrement
+				260 button Increment
+				261 container
+					262 text field (settable) Description: 限定文档 ID（可选，留空检索全部文档）, ID: :r2l:
+				263 button 检索
+					264 text 检索
+				265 text 系统健康检查
+				266 text 按需检查本地LLM服务和现有Chroma索引，不生成回答或写入文档。状态为上次检查快照，不代表推理或检索质量。
+				267 button 检查服务状态
+					268 text 检查服务状态
+				269 text 尚未检查；点击按钮获取当前状态。
+				270 heading 检索分数分布, Value: 3, ID: cf661d5
+					271 text 检索分数分布
+					272 link Description: Link to heading, Value: localhost:8522/?visitor=ea5151d30d7245d0b72ad3b5174eea96&conversation=bab4a4e9bd60461b972a5898d802ec2c#cf661d5
+				273 text 统计本地请求日志中的实际 RAG 检索：Top-1 为 BGE sigmoid 重排分数，不是命中率或正确概率。空库、检索失败和缓存跳过均单独计数。
+				274 text 请求 1 · 缓存命中 0 · 空结果 1 · 检索失败 0
+				275 text 尚无可统计的有结果 RAG 检索。提交问题并完成实际检索后显示分布。
+				276 heading 模块开发状态, Value: 3, ID: 8cdbaa23
+					277 text 模块开发状态
+					278 link Description: Link to heading, Value: localhost:8522/?visitor=ea5151d30d7245d0b72ad3b5174eea96&conversation=bab4a4e9bd60461b972a5898d802ec2c#8cdbaa23
+				279 table
+					280 row
+						281 cell
+							282 text 模块
+						283 cell
+							284 text 状态
+						285 cell
+							286 text 范围
+					287 row
+						288 cell
+							289 text 一：文档处理与检索
+						290 cell
+							291 text 部分实现
+						292 cell
+							293 text 已实现批量导入、分块、增量索引、向量/BM25/RRF 与模型重排；三档质量已评测，分块召回对比待完成
+					294 row
+						295 cell
+							296 text 二：RAG 生成
+						297 cell
+							298 text 已实现
+						299 cell
+							300 text 已实现 Prompt、上下文/引用、本地生成、流式、缓存、降级、请求日志与分数分布，完成参数对照；独立答案质量评测待完成
+					301 row
+						302 cell
+							303 text 三：Agent 决策
+						304 cell
+							305 text 已实现
+						306 cell
+							307 text 有界ReAct、八个本地工具、路由/并行/恢复、会话隔离与窗口/摘要记忆
+					308 row
+						309 cell
+							310 text 四：系统集成与前端
+						311 cell
+							312 text 部分实现
+						313 cell
+							314 text 已有文档入库、RAG/Agent问答、会话记忆、决策轨迹、实时指标与健康检查；已支持文档列表、回收删除和恢复；已支持历史会话新建/切换/回收删除与恢复
+					315 row
+						316 cell
+							317 text 五：评测与交付
+						318 cell
+							319 text 部分实现
+						320 cell
+							321 text 已有三档检索实测、图表与 Excel；完整系统评测待完成
+				322 heading 下一步, Value: 3, ID: d8a5aab6
+					323 text 下一步
+					324 link Description: Link to heading, Value: localhost:8522/?visitor=ea5151d30d7245d0b72ad3b5174eea96&conversation=bab4a4e9bd60461b972a5898d802ec2c#d8a5aab6
+				325 text 后续继续分块召回对比和 Agent 等课程要求；独立答案质量评测仍保留。
+
+The focused UI element is 1 AXWebArea 智能科研助理, URL: localhost:8522/?visitor=ea5151d30d7245d0b72ad3b5174eea96&conversation=bab4a4e9bd60461b972a5898d802ec2c

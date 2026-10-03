@@ -490,6 +490,55 @@ class TestAction(unittest.TestCase):
         http.assert_not_called()
         self.assertEqual(self.invocations, [])
 
+    def knowledge_action(self, args, question="已上传attention.pdf的编码器有多少层？", context=None, route=None):
+        """模拟模型返回参数，真实执行小工具核验Action契约，不作为RAG质量证据。"""
+        @tool
+        def knowledge_base_search(question: str, doc_id: str | None = None) -> str:
+            """记录知识库工具实际收到的问题和可选论文指纹。"""
+            self.invocations.append((question, doc_id))
+            return "已执行"
+
+        response = deepcopy(self.response)
+        response["message"]["tool_calls"] = [{"function": {"name": "knowledge_base_search", "arguments": args}}]
+        thought = {**self.thought, "tool_name": "knowledge_base_search", "route": route}
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(response).encode())) as http:
+            events = list(act(question, thought, [knowledge_base_search], context))
+        if http.call_args is None:
+            self.assertEqual(route, "rule")
+            http.assert_not_called()
+            return events, None
+        payload = json.loads(http.call_args.args[0].data)
+        described = json.loads(payload["messages"][0]["content"].split("【可用工具描述】\n")[1].splitlines()[0])
+        self.assertEqual(described["available_tools"], [spec["function"] for spec in payload["tools"]])
+        return events, payload["tools"][0]["function"]["parameters"]
+
+    def test_filename_only_rule_search_passes_question_without_model_or_invented_id(self):
+        question = "已上传attention.pdf的编码器有多少层？"
+        events, _ = self.knowledge_action({"question": question}, question,
+                                         {"session_id": "a" * 32}, route="rule")
+        self.assertEqual(self.invocations, [(question, None)])
+        self.assertEqual(events[-1]["status"], "success")
+        self.assertEqual(events[0]["usage"], {"prompt_eval_count": 0, "eval_count": 0})
+        self.assertIsNone(events[0]["model"])
+
+    def test_provided_fingerprint_in_question_or_tool_context_keeps_document_filter(self):
+        identifier = "b" * 64
+        for question, context, route in (("查询这篇论文" + identifier, None, "rule"),
+                                         ("查询attention.pdf", {"observations": [{"result": {"papers": [{"doc_id": identifier}]}}]}, None)):
+            with self.subTest(context=context):
+                events, parameters = self.knowledge_action({"question": question, "doc_id": identifier}, question, context, route)
+                self.assertIn("doc_id", parameters["properties"])
+                self.assertEqual(events[-1]["status"], "success")
+                self.assertEqual(self.invocations[-1], (question, identifier))
+
+    def test_unprovided_or_invalid_fingerprint_never_executes_tool(self):
+        for identifier in ("a" * 32, "b" * 64, ["b" * 64]):
+            with self.subTest(identifier=identifier):
+                events, _ = self.knowledge_action({"question": "查询论文", "doc_id": identifier})
+                self.assertEqual([event["type"] for event in events], ["error"])
+                self.assertIn("不能编造论文指纹", events[0]["message"])
+        self.assertEqual(self.invocations, [])
+
     def test_only_selected_tool_is_exposed_even_when_other_tools_are_available(self):
         @tool
         def other() -> str:
@@ -2548,6 +2597,50 @@ class TestSessionIsolation(unittest.TestCase):
         run_mock.assert_not_called()
         self.assertEqual(self.contents("alice", self.a1), [])
 
+    def test_concurrent_agent_requests_keep_model_context_history_and_logs_owned(self):
+        """真实Agent/SQLite/日志并发；仅模型HTTP构造，屏障要求两请求同时到达。"""
+        identities = [("alice", self.a1, "ALICE_CONCURRENT_ONLY"),
+                      ("bob", self.b1, "BOB_CONCURRENT_ONLY")]
+        for user, session, code in identities:
+            self.memory.append_turn(user, session, f"我的代号是{code}。", "已记录。")
+        config = deepcopy(load_config())
+        log_dir = Path(self.directory.name) / "logs"
+        config["paths"]["logs"] = str(log_dir)
+        barrier, requests, lock = Barrier(2), [], Lock()
+        def reply(request, **kwargs):
+            body = json.loads(request.data)
+            text = json.dumps(body, ensure_ascii=False)
+            codes = [code for _, _, code in identities if code in text]
+            self.assertEqual(len(codes), 1)
+            with lock:
+                requests.append(codes[0])
+            # 每个用户的Thought及Observation都等待另一用户，不能用串行执行冒充并发。
+            barrier.wait(timeout=5)
+            planning = "thought" in body["format"]["properties"]
+            content = {"thought": "依据本会话历史回答。", "next_step": "answer", "tool_name": None} if planning else {
+                "observation": "本会话记录包含代号。", "decision": "finish", "task_complete": True, "answer": codes[0]}
+            return BytesIO(json.dumps(self.packet(content), ensure_ascii=False).encode())
+        with patch("src.utils.logger.load_config", return_value=config), \
+                patch("src.agent.react_loop.urlopen", side_effect=reply), ThreadPoolExecutor(max_workers=2) as pool:
+            streams = list(pool.map(lambda identity: list(run_session("我的代号是什么？", identity[0], identity[1],
+                                                                  tools=[], memory=self.memory)), identities))
+        request_ids = set()
+        for (user, session, code), events in zip(identities, streams):
+            self.assertTrue(events[-1]["task_complete"])
+            self.assertEqual(events[-1]["full_response"], code)
+            request_ids.add(events[-1]["request_id"])
+            self.assertTrue(all(e["user_id"] == user and e["session_id"] == session and not e.get("log_error") for e in events))
+            self.assertEqual(self.contents(user, session), [f"我的代号是{code}。", "已记录。", "我的代号是什么？", code])
+        self.assertEqual(len(request_ids), 2)
+        self.assertEqual(sorted(requests), sorted([code for _, _, code in identities] * 2))
+        logs = [json.loads(line) for path in log_dir.glob("agent_*.jsonl") for line in path.read_text().splitlines()]
+        self.assertEqual(len(logs), sum(len(events) for events in streams))
+        for (user, session, _), events in zip(identities, streams):
+            owned = [row for row in logs if row["request_id"] == events[-1]["request_id"]]
+            self.assertEqual([row["event"] for row in owned], [event["type"] for event in events])
+            self.assertTrue(all(row["user_id"] == user and row["session_id"] == session for row in owned))
+            self.assertEqual(owned[-1]["metrics"]["tokens"]["total"], events[-1]["metrics"]["tokens"]["total"])
+
     def test_agent_request_context_is_fresh_and_does_not_reuse_prior_tool_state(self):
         self.memory.append_turn("alice", self.a1, "已有问题", "已有回答")
         for _ in range(2):
@@ -3053,18 +3146,16 @@ class TestRAGSearchRouting(unittest.TestCase):
 
         document = Document(page_content="Transformer在WMT14上取得28.4 BLEU。", metadata={"doc_id": "a" * 64,
             "chunk_id": "chunk-1", "source_file": "论文.pdf", "page_number": 3, "file_type": ".pdf"})
-        calls = [{"function": {"name": "knowledge_base_search", "arguments": {"question": "这篇论文的实验结果？"}}}]
         generation = {**self.packet(), "message": {"content": "实验结果为28.4 BLEU[参考文档1]。"}}
         finish = {"observation": "已返回论文证据。", "decision": "finish", "task_complete": True, "answer": "28.4 BLEU（论文.pdf，第3页）。"}
         with patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
                 patch("src.generation.rag_pipeline.urlopen", return_value=BytesIO(json.dumps(generation).encode())), \
-                patch("src.agent.react_loop.urlopen", side_effect=[BytesIO(json.dumps(self.packet(calls=calls)).encode()),
-                    BytesIO(json.dumps(self.packet(finish)).encode())]) as model, \
+                patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(finish)).encode())) as model, \
                 patch("httpx.Client") as network:
             retriever.return_value.search.return_value = [(document, 0.95)]
             events = list(run_react("这篇论文的实验结果？"))
         retriever.return_value.search.assert_called_once_with("这篇论文的实验结果？", doc_id=None, rerank=True)
-        self.assertEqual(model.call_count, 2)  # 规则跳过Thought，只调用Action和Observation。
+        self.assertEqual(model.call_count, 1)  # 明确RAG意图直接传原问题，仅Observation调用Agent模型。
         result = next(event["result"] for event in events if event["type"] == "tool_result")
         self.assertEqual(result["citations"][0]["location"], "第3页（物理页码）")
         self.assertEqual(events[-1]["context"]["observations"][0]["result"]["citations"], result["citations"])

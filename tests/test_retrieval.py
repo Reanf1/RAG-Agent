@@ -1763,6 +1763,32 @@ class TestBatchIndex(unittest.TestCase):
         """复用实际入库流程与真实临时数据库。"""
         return list(batch_build_index(tasks, self.raw_dir, vector_store=self.store, **kwargs))
 
+    def test_size_boundary_rejects_before_parse_and_keeps_next_valid_document(self):
+        """真实PDF刚好1MiB可入库；超1字节先拒绝，重试不污染已有向量。"""
+        limit = 1024 * 1024
+        with pymupdf.open() as pdf:
+            pdf.new_page().insert_text((72, 72), "Size boundary fixture")
+            raw = pdf.tobytes()
+        exact = raw + b" " * (limit - len(raw))
+        tasks = create_import_tasks([("too_large.pdf", exact + b" "), ("accepted.pdf", exact)])
+        with patch("src.data_loader.load_document", wraps=load_document) as loader:
+            progress = self.run_batch(tasks, max_file_size_mb=1)
+        self.assertEqual([call.args[0].name for call in loader.call_args_list], ["accepted.pdf"])
+        self.assertEqual(progress[-1], {"completed": 2, "total": 2})
+        self.assertEqual([task["status"] for task in tasks], ["failed", "success"])
+        self.assertEqual(tasks[0]["path"], "")
+        self.assertEqual(tasks[0]["documents"], [])
+        self.assertFalse(tasks[0]["indexed"])
+        self.assertEqual(Path(tasks[1]["path"]).stat().st_size, limit)
+        before = self.store.list_chunks()
+        calls = deepcopy(self.embeddings.document_calls)
+        with patch("src.data_loader.load_document", side_effect=AssertionError("超限文件不应进入解析")):
+            self.run_batch(tasks, max_file_size_mb=1, retry_failed=True)
+        self.assertEqual(tasks[0]["attempts"], 2)
+        self.assertIn("文件过大", tasks[0]["error"])
+        self.assertEqual(self.store.list_chunks(), before)
+        self.assertEqual(self.embeddings.document_calls, calls)
+
     def test_all_formats_complete_index_and_keep_sources(self):
         """四类真实文件完成整个流程，只有写入索引后才标记成功。"""
         word = WordDocument()
@@ -1972,6 +1998,28 @@ class TestImportFrontend(unittest.TestCase):
         self.assertEqual([t["attempts"] for t in app.session_state["import_tasks"]], [1, 2])
         app.run()
         self.assertEqual([t["attempts"] for t in app.session_state["import_tasks"]], [1, 2])
+
+    def test_oversized_upload_shows_failure_and_valid_file_still_indexes(self):
+        """AppTest绕过浏览器大小限制，验证20MiB后端保护与页面失败/重试状态。"""
+        app = self.app
+        app.file_uploader[0].set_value([("oversized.pdf", b"x" * (20 * 1024 * 1024 + 1), "application/pdf"),
+                                       ("valid.txt", b"Neural network", "text/plain")]).run()
+        with patch("src.data_loader.load_document", wraps=load_document) as loader:
+            app.button(key="start_import").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual([call.args[0].name for call in loader.call_args_list], ["valid.txt"])
+        tasks = app.session_state["import_tasks"]
+        self.assertEqual([task["status"] for task in tasks], ["failed", "success"])
+        self.assertIn("文件过大", tasks[0]["error"])
+        self.assertEqual(tasks[0]["path"], "")
+        self.assertFalse(tasks[0]["indexed"])
+        self.assertTrue(tasks[1]["indexed"])
+        self.assertEqual(list(app.sidebar.dataframe[0].value["状态"]), ["失败", "成功"])
+        self.assertFalse(app.button(key="retry_import").disabled)
+        app.button(key="retry_import").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual([task["attempts"] for task in app.session_state["import_tasks"]], [2, 1])
+        self.assertEqual(self.embeddings.document_calls, [["Neural network"]])
 
     def test_failed_upload_recovers_and_disables_retry(self):
         """页面通过失败按钮恢复成功，之后重试按钮禁用且文献存在。"""

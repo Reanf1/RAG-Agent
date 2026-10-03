@@ -1,0 +1,5673 @@
+{
+  "checked_at": "2026-10-03T15:42:44.986813+08:00",
+  "root": "/private/tmp/rag-e2e-ui-20261003",
+  "config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://localhost:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 8192,
+      "num_predict": 512,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 6000,
+      "max_prompt_chars": 12000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "max_parallel_calls": 2,
+      "tool_timeout_seconds": 300,
+      "max_tool_retries": 1,
+      "max_repeated_calls": 2,
+      "online_search_enabled": false
+    },
+    "memory": {
+      "max_history_tokens": 2000,
+      "tokenizer_path": "data/models/qwen2.5-tokenizer/tokenizer.json",
+      "summary_trigger_turns": 10,
+      "summary_keep_recent_turns": 4,
+      "summary_max_tokens": 400
+    },
+    "paths": {
+      "raw_documents": "/private/tmp/rag-e2e-ui-20261003/raw",
+      "vector_index": "/private/tmp/rag-e2e-ui-20261003/index",
+      "logs": "/private/tmp/rag-e2e-ui-20261003/logs",
+      "session_db": "/private/tmp/rag-e2e-ui-20261003/memory.sqlite3"
+    }
+  },
+  "scope": "真实页面测试后的磁盘核验；事实规则不代替原文语义审阅或正式质量评测。",
+  "checks": {
+    "上传原文与完整论文哈希一致": true,
+    "所有预期分块均持久化且正文元数据一致": true,
+    "最新请求正常完成": false,
+    "决策调用观察终止顺序完整": false,
+    "实际调用知识库核心工具成功": false,
+    "引用对应入库正文与页码": false,
+    "实际五块混合重排与本地生成日志完成": false,
+    "问答及同请求展示快照保存到SQLite": true,
+    "最终回答含6层512维及第3页来源": false
+  },
+  "passed": false,
+  "ingestion": {
+    "file": "attention.pdf",
+    "sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+    "bytes": 2215244,
+    "expected_chunks": 94,
+    "stored_chunks": 94,
+    "chunk_ids": [
+      "02e9f1fd3e3b534812114fde81d61932c2293b157f8d35fa673435a3a5747a11",
+      "059f45fe1dd9fdd88091eae68d5a087ca5830041b07febdee4b5923aec6da0c0",
+      "061049af47295e9fe92e4a5518e3200c16528b5a1c413f0350ec592879e738fc",
+      "0687e5649013aa42b857a072116483a746ad4c45852d75e5f8f2943acab496e9",
+      "076b3f1b7521f84b2245ddb1d3bb092480474af54448f55a871422f58195e826",
+      "10a3baf8d4913daddfadec7e6f7c58e47f32525653280013aba85a78547e44bd",
+      "114e314dda4a80d4d202a8f882a4523fb662a7b87232ec6520e346bb71a19dc7",
+      "12b90829f29b21490b5ec622295ed4b00e2f25a4662752699c8a0450d9a00969",
+      "13c82fbbc8a5f42070574a30f35e4bd4afb854e8a2630a91a9639c3714d059f4",
+      "18622ae0815c67fb7f0d372597015fbac6e3365dbe225d57a57321486001ce1b",
+      "1bb5be124c460f28cd2c99380bb7e6e488a376490c7c2c3390476c070a185370",
+      "1df6314dfbbb6d4e04069dd91582dabb39cc460b2d0227a172d17c233f433e44",
+      "211e7b5ec1092b5b2dda6cff64fd9207f136622bb968481ae4057f2508d4f19c",
+      "24be9fd29302ea14250272ebaf769b0ceb38ca69134eba0d9339da52d2d36894",
+      "2a551a2cc25914e96478e9862f9cf327825bc768e730822791b0788480c8b203",
+      "2c13b9df6937f0541f20d0da230490deafc0affc321654d02eb325d918249336",
+      "2eca80c08a795117adbdf67de440d3a2fe940d68ad27b17dfc3ef5d3b8f9c7bb",
+      "3754cb9c4e07a37eb9c080e2dcfe3cbcbed704c9536a376787bf5b29fe8fcde3",
+      "37c1b833b7e6bbda8ea258b73073097923572d83ec9e53009f9233fc32c94a94",
+      "3886ea477e1a0017784da198b3f729729854bd3f57d233ec1ca8c9a9df9429e1",
+      "3c0d73d072170abbe3931b6ce7754587900527529950eeb159786692e28785c7",
+      "3fd9989f1094cdc70dd200d2647c6d9fe46d9f285b28976ac5d2616738451baa",
+      "45f023e01607ac7c96d0a42b4c57934b1053a820cde69a6f6d933b2c77a1fe61",
+      "4cb7090e355322d1783abbf85719dae3afc7e8c36837e19ae783a43879c86f7a",
+      "4e864784392bb57f10b3b12921ab05520f463c2354157adf3ca2ed999b68f907",
+      "502ea64066af483c12efd10b7bb72fbafdbfa04c630daa518434a89b1c0d02e4",
+      "51a5a062907acb9f6ec6924cf9561d6833e786fdeb127c420531f423a0114a5b",
+      "5495fb82af899d6f56e6129da41d36477466c2a7f7fcd5b79e3efea1d8dfb4c0",
+      "59c17d4c9b041f54f7cd5ef4475a8909c9940ce946684ca148c76ec928a009fe",
+      "5c3387930c38036843912016a5882e75dc6ccb4505b422bc434c46cdd6bb4d6f",
+      "5e7402060a2d041220d1c917ddcc16cede18446d04e6e2c67d8e47a24b9cb992",
+      "650848ccec2cb25cfea0a2a937179142d674bcc0cf8fa49dbf5ee4a795cf6cf0",
+      "6621493e5272cbfa81369806cd56e94ac1f049340ae80740ff79c148809e827b",
+      "66ba1ff8b27f1c1d8a75aacc22377ec30bd14bd6c58399080c584d5662105db6",
+      "6959c9f08476afc9212e3b034092b545d4b16430819385922489fac6ca1eff2d",
+      "6adea15018d2a3a7e7c8240149c6ead77b54b1a225893fd50e44eb860dfc0337",
+      "6b9eb1be935570c7abfdb5a7aa5445d0f9cc57acaccbd4c3dd332abde7fee634",
+      "6bf22889f3529dc02a90d47e81b007a34e244123a7af9110784c29b4d9f71c6c",
+      "6c195a9ba259186be82dde132858e6873502abeec551647145fc418adb52771d",
+      "6c5c514c515ede4016b91025a3f7161f418a20646a9b5a3dc072e0d0b623697e",
+      "6d4649fec72c6bd3c6e0193cf04411309d67b07cafafea7a27b1cf03cab0a1c8",
+      "6f706b0549216b7688eaceff91baaa88ef07c4e91b2953971b8f5bee555b5dc1",
+      "6fa0d8afc8beec62fe8094a18dd3ad21ef4c129d4b505e59e3dc654b903c2541",
+      "70d16deffdf11ee83a5cdad0363a91456cc9393b0c7d4868ccaccc3914e610f5",
+      "76c144c18e9aa8d4fa486eba9682dc531359bb1d0b0025b5926bc586d2566869",
+      "79aec83b29bc847de25f0f8dd7b5c1e6037229f2f8f847ff9313685cc947d040",
+      "7a41f9367af30035188ec5e30d7d8c201076e36a87a2d7dd41db66837ef7e77a",
+      "7ae52080397dbb9057812a4a75e07c5acad4f6c840d273176bd86d5138fb3b92",
+      "7e4aa9e05737f464439c5753ce5b74fae6334cfb11deb1db47fa3fe88407b250",
+      "811bd0d53904a89e6656f34e0204138207be01ba75155538108775f51ce2021f",
+      "81d21be78a3e6e977895e6f253847e913c81f07b041780f89ee4d2836e4dfdaa",
+      "841049c803e5ddacd92e91756855b7146a657b8165cb12450acb838b0b92d930",
+      "85d885459a5f48bf579afba6a25a7b29d77480539b94daa913230c48d3cdf109",
+      "872d70445424916deec826968225549dee57a0cf70d799391856fd6294318499",
+      "8fc271594dc54d548bcd2329a5bb1b0c4bb7d9fbdd925a125943d361af33038c",
+      "9047ed5ba1da7ac7c9a6b4dc44db2bfd3e0c46a34cfb7e30a6583de41fc2de82",
+      "91c50ae1ad159e042976dbd8f2e259accc57eaa5679d03639ebb647b4dbd8cee",
+      "9236abd98e0be38121b96c4da462460ace988f2214769a165cb5e39d87ad63b8",
+      "92f8ad03bc04d4226530a55ec8ac4aff0e5285e51375e4c4b9ce4644505637f2",
+      "97a4644f336f6b4c58e3ae2079ce57ace4a26cc61dcb5b9e7a616bae714d4b9a",
+      "9a42ec0d16c8856c3469f9362a1cbf16f3191e8e4186c3e07440dc0e8651651d",
+      "9b08c0343adeeedabd4a472c8c03279ff7eb78776f2fc0790db17da90a853f65",
+      "9d7aacec547653a3b46b93725fad2f4af2367e9e9b5ee8bd8ccaa3e057e590fc",
+      "9e6c9400a815079fed225e880da06646d0e45934f4b4e324f6c3060793c00863",
+      "9ec493fbbe347d66e8be7820ffcf4b0ab7ff687a91ce0bff728b936df814764d",
+      "9f60425b6e942d58e6a6830e19884c08fab94531293b297c837ac75a051e8f84",
+      "9f74d1fabaaf42a5ca44185b0f0d563111de521786c08b5bc28cc8d9f01c502e",
+      "a276d34647433fb181dd483f99599e31c3b0ba7385e65f5f548231d9068a98aa",
+      "a3f543d621e6f4b2e5ee228b1e85adb68e0856f82fc36f8ac11d08bb1842b1a4",
+      "a5773a3ec779bcb9f543a78a15fb521966b2f4daa624b774f504af62f307e3cd",
+      "a7fd9c35104b29683c72a22bfd34e71f302b743d5d4c79ba69bcb0768d6d0bd7",
+      "a8c7dd23c353bbda42700d2dabe3e2571542dd6542e36ed79ac6ca2fe5f2525e",
+      "ae6243042c190f5fe315a376217bbdf59cfc5baa6f9a8ad0178278996451f133",
+      "b1be54a299af4561dfd73462407dfd823f73a744f9542f1601ddb75f1086a1ee",
+      "b6c83d9657d06a326ed5fd5c932a8ba024fd03d0f8203072389017deb05e924c",
+      "bb2d3aca24e3561127b9e5a6636fa6910deca6bb919d8514d33d5a6fb7d90013",
+      "bc413fa54206c2eba85be3eb624fdf2b5f838fb192d9bb63452d92ab10fb2e31",
+      "c0f7198e6e1d99c345d7d2bb9f496ce27a49013850df30d9cc5a385bd7ca617d",
+      "c2d856b5bd28ea1c4cc640aee34d6c0357a2f667909c34a346d9aed9508a898d",
+      "c73aea4168720bb45256a720a9fb785e9026f408ee112022acab85c9e8de25ba",
+      "c968c508bd93417437c2a39f06f1c5768612d37674af02c75469c34d22c4277b",
+      "d0396c60a0a10ad74a98be665115b121a9c7379856bfb4cb8e1b7a99bfd74df9",
+      "d3fc82a0a82cb4bab1ebe2669db6b5c35bc465409e946c2745d5e40eb844f7a5",
+      "d56a59c4e1bc197b7a2cffb339fdfb10d7dc3d4a9382f7f6548c47bb56cc4685",
+      "d60fcd987e925e7168c61fac3d275bb0c69f5f702ce6443540b7332ab95219a5",
+      "d71ae1e6ef8671942a5e3125b0913339b6e51106b3726acb06780f6798b818da",
+      "d8649a4ae9064d1be5a1ea1d8bb967ec3915b5adfcc378b210a27e840898f28a",
+      "df22d1023b8974e4bc2addc8b03067b462d62a70c6d6465755e1b13af9038095",
+      "e667ca60ae655d4ffedf5a4ac644738e4e8ded90e894a4544181fdb9cef0a492",
+      "e6d8d47c018314fed71e5e33431dc30c9b03dcb7b97e3f7ca48652aeb5e99fa2",
+      "f0ee92251d85968f64b30edd188a7c82b24f464c99bea24111a210f811706e19",
+      "f2de17903a06d0b378a724e3849330c2e2e85da30c72688d4cbd590b2b5310bc",
+      "fd1289600827ffb0913b28e7a2c6d261f75babe48a02d2445bf429601c9ee4ff",
+      "ff8a9a87230c0abe15d98cae532419f596cefdae2af0f9a04fefabccec7f72e8"
+    ]
+  },
+  "agent_records": [
+    {
+      "schema_version": 1,
+      "request_id": "dac7c5bc802e498aa630127732e9d2a8",
+      "timestamp": "2026-10-03T15:38:49.831079+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "a715cebc4df34fbcbc9233ee303d3496",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "thought",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0025159589858958498
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0025159589858958498,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [],
+        "tools": {
+          "started": 0,
+          "completed": 0,
+          "successes": 0,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": null,
+          "mean_seconds": null,
+          "by_tool": []
+        },
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0,
+          "known_total": 0,
+          "unknown_calls": 0
+        },
+        "response_seconds": 0.15433512500021607
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "dac7c5bc802e498aa630127732e9d2a8",
+      "timestamp": "2026-10-03T15:39:04.899156+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "a715cebc4df34fbcbc9233ee303d3496",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "tool_call",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0025159589858958498
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "fefbb633e64c4b84824af54d304cca76"
+            ],
+            "input": 1464,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 15.05691308301175
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0025159589858958498,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "elapsed_seconds": 15.05691308301175,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "pending",
+            "seconds": null,
+            "attempts": null,
+            "execution_mode": null
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 0,
+          "successes": 0,
+          "failures": 0,
+          "pending": 1,
+          "success_rate": null,
+          "mean_seconds": null,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 0,
+              "successes": 0,
+              "failures": 0,
+              "pending": 1,
+              "success_rate": null,
+              "mean_seconds": null
+            }
+          ]
+        },
+        "tokens": {
+          "input": 1464,
+          "output": 92,
+          "total": 1556,
+          "known_total": 1556,
+          "unknown_calls": 0
+        },
+        "response_seconds": 15.22237058301107
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "dac7c5bc802e498aa630127732e9d2a8",
+      "timestamp": "2026-10-03T15:39:04.948559+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "a715cebc4df34fbcbc9233ee303d3496",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "tool_result",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0025159589858958498
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "fefbb633e64c4b84824af54d304cca76"
+            ],
+            "input": 1464,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 15.05691308301175
+          },
+          {
+            "id": "fefbb633e64c4b84824af54d304cca76",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "fefbb633e64c4b84824af54d304cca76"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0049477499997010455
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0025159589858958498,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "elapsed_seconds": 15.05691308301175,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.004910042000119574
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0049477499997010455,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0049477499997010455,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 1,
+          "successes": 0,
+          "failures": 1,
+          "pending": 0,
+          "success_rate": 0.0,
+          "mean_seconds": 0.0049477499997010455,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0049477499997010455
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 1556,
+          "unknown_calls": 1
+        },
+        "response_seconds": 15.271932500007097,
+        "retrievals": [
+          {
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "seconds": null
+          }
+        ]
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "dac7c5bc802e498aa630127732e9d2a8",
+      "timestamp": "2026-10-03T15:39:15.818443+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "a715cebc4df34fbcbc9233ee303d3496",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "observation",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0025159589858958498
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "fefbb633e64c4b84824af54d304cca76"
+            ],
+            "input": 1464,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 15.05691308301175
+          },
+          {
+            "id": "fefbb633e64c4b84824af54d304cca76",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "fefbb633e64c4b84824af54d304cca76"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0049477499997010455
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2668,
+            "output": 33,
+            "incomplete": false,
+            "seconds": 10.855596209003124
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0025159589858958498,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "elapsed_seconds": 15.05691308301175,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.004910042000119574
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0049477499997010455,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 10.855596209003124,
+            "observation": "知识库搜索失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0049477499997010455,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 1,
+          "successes": 0,
+          "failures": 1,
+          "pending": 0,
+          "success_rate": 0.0,
+          "mean_seconds": 0.0049477499997010455,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0049477499997010455
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 4257,
+          "unknown_calls": 1
+        },
+        "response_seconds": 26.141757958001108,
+        "retrievals": [
+          {
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "seconds": null
+          }
+        ]
+      },
+      "stop_reason": null,
+      "task_complete": false
+    },
+    {
+      "schema_version": 1,
+      "request_id": "dac7c5bc802e498aa630127732e9d2a8",
+      "timestamp": "2026-10-03T15:39:22.260450+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "a715cebc4df34fbcbc9233ee303d3496",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "thought",
+      "iteration": 2,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0025159589858958498
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "fefbb633e64c4b84824af54d304cca76"
+            ],
+            "input": 1464,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 15.05691308301175
+          },
+          {
+            "id": "fefbb633e64c4b84824af54d304cca76",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "fefbb633e64c4b84824af54d304cca76"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0049477499997010455
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2668,
+            "output": 33,
+            "incomplete": false,
+            "seconds": 10.855596209003124
+          },
+          {
+            "id": "thought:2",
+            "iteration": 2,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2542,
+            "output": 45,
+            "incomplete": false,
+            "seconds": 6.426950791996205
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0025159589858958498,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "elapsed_seconds": 15.05691308301175,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.004910042000119574
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0049477499997010455,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 10.855596209003124,
+            "observation": "知识库搜索失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 1
+          },
+          {
+            "type": "thought",
+            "thought": "使用paper_metadata提取文档信息，再查找相关信息。",
+            "next_step": "tool",
+            "tool_name": "paper_metadata",
+            "parallel_tools": [
+              "paper_metadata"
+            ],
+            "elapsed_seconds": 6.426950791996205,
+            "iteration": 2
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0049477499997010455,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 1,
+          "successes": 0,
+          "failures": 1,
+          "pending": 0,
+          "success_rate": 0.0,
+          "mean_seconds": 0.0049477499997010455,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0049477499997010455
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 6844,
+          "unknown_calls": 1
+        },
+        "response_seconds": 32.58372816600604,
+        "retrievals": [
+          {
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "seconds": null
+          }
+        ]
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "dac7c5bc802e498aa630127732e9d2a8",
+      "timestamp": "2026-10-03T15:39:30.333705+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "a715cebc4df34fbcbc9233ee303d3496",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "tool_call",
+      "iteration": 2,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0025159589858958498
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "fefbb633e64c4b84824af54d304cca76"
+            ],
+            "input": 1464,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 15.05691308301175
+          },
+          {
+            "id": "fefbb633e64c4b84824af54d304cca76",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "fefbb633e64c4b84824af54d304cca76"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0049477499997010455
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2668,
+            "output": 33,
+            "incomplete": false,
+            "seconds": 10.855596209003124
+          },
+          {
+            "id": "thought:2",
+            "iteration": 2,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2542,
+            "output": 45,
+            "incomplete": false,
+            "seconds": 6.426950791996205
+          },
+          {
+            "id": "action:2",
+            "iteration": 2,
+            "phase": "Action",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "471d873a11c9406a9c9cc06906c4f0da"
+            ],
+            "input": 1683,
+            "output": 52,
+            "incomplete": false,
+            "seconds": 8.025293874990894
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0025159589858958498,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "elapsed_seconds": 15.05691308301175,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.004910042000119574
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0049477499997010455,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 10.855596209003124,
+            "observation": "知识库搜索失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 1
+          },
+          {
+            "type": "thought",
+            "thought": "使用paper_metadata提取文档信息，再查找相关信息。",
+            "next_step": "tool",
+            "tool_name": "paper_metadata",
+            "parallel_tools": [
+              "paper_metadata"
+            ],
+            "elapsed_seconds": 6.426950791996205,
+            "iteration": 2
+          },
+          {
+            "type": "tool_call",
+            "name": "paper_metadata",
+            "call_id": "471d873a11c9406a9c9cc06906c4f0da",
+            "args": {
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "elapsed_seconds": 8.025293874990894,
+            "iteration": 2
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0049477499997010455,
+            "attempts": 1,
+            "execution_mode": "serial"
+          },
+          {
+            "call_id": "471d873a11c9406a9c9cc06906c4f0da",
+            "name": "paper_metadata",
+            "iteration": 2,
+            "status": "pending",
+            "seconds": null,
+            "attempts": null,
+            "execution_mode": null
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 1,
+          "successes": 0,
+          "failures": 1,
+          "pending": 1,
+          "success_rate": 0.0,
+          "mean_seconds": 0.0049477499997010455,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0049477499997010455
+            },
+            {
+              "name": "paper_metadata",
+              "started": 1,
+              "completed": 0,
+              "successes": 0,
+              "failures": 0,
+              "pending": 1,
+              "success_rate": null,
+              "mean_seconds": null
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 8579,
+          "unknown_calls": 1
+        },
+        "response_seconds": 40.65695362500264,
+        "retrievals": [
+          {
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "seconds": null
+          }
+        ]
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "dac7c5bc802e498aa630127732e9d2a8",
+      "timestamp": "2026-10-03T15:39:30.345610+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "a715cebc4df34fbcbc9233ee303d3496",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "tool_result",
+      "iteration": 2,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0025159589858958498
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "fefbb633e64c4b84824af54d304cca76"
+            ],
+            "input": 1464,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 15.05691308301175
+          },
+          {
+            "id": "fefbb633e64c4b84824af54d304cca76",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "fefbb633e64c4b84824af54d304cca76"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0049477499997010455
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2668,
+            "output": 33,
+            "incomplete": false,
+            "seconds": 10.855596209003124
+          },
+          {
+            "id": "thought:2",
+            "iteration": 2,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2542,
+            "output": 45,
+            "incomplete": false,
+            "seconds": 6.426950791996205
+          },
+          {
+            "id": "action:2",
+            "iteration": 2,
+            "phase": "Action",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "471d873a11c9406a9c9cc06906c4f0da"
+            ],
+            "input": 1683,
+            "output": 52,
+            "incomplete": false,
+            "seconds": 8.025293874990894
+          },
+          {
+            "id": "471d873a11c9406a9c9cc06906c4f0da",
+            "iteration": 2,
+            "phase": "工具内部",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "471d873a11c9406a9c9cc06906c4f0da"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0035721250023925677
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0025159589858958498,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "elapsed_seconds": 15.05691308301175,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.004910042000119574
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0049477499997010455,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 10.855596209003124,
+            "observation": "知识库搜索失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 1
+          },
+          {
+            "type": "thought",
+            "thought": "使用paper_metadata提取文档信息，再查找相关信息。",
+            "next_step": "tool",
+            "tool_name": "paper_metadata",
+            "parallel_tools": [
+              "paper_metadata"
+            ],
+            "elapsed_seconds": 6.426950791996205,
+            "iteration": 2
+          },
+          {
+            "type": "tool_call",
+            "name": "paper_metadata",
+            "call_id": "471d873a11c9406a9c9cc06906c4f0da",
+            "args": {
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "elapsed_seconds": 8.025293874990894,
+            "iteration": 2
+          },
+          {
+            "type": "tool_result",
+            "name": "paper_metadata",
+            "call_id": "471d873a11c9406a9c9cc06906c4f0da",
+            "args": {
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.003500042002997361
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0035721250023925677,
+            "iteration": 2
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0049477499997010455,
+            "attempts": 1,
+            "execution_mode": "serial"
+          },
+          {
+            "call_id": "471d873a11c9406a9c9cc06906c4f0da",
+            "name": "paper_metadata",
+            "iteration": 2,
+            "status": "error",
+            "seconds": 0.0035721250023925677,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 2,
+          "successes": 0,
+          "failures": 2,
+          "pending": 0,
+          "success_rate": 0.0,
+          "mean_seconds": 0.004259937501046807,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0049477499997010455
+            },
+            {
+              "name": "paper_metadata",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0035721250023925677
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 8579,
+          "unknown_calls": 2
+        },
+        "response_seconds": 40.66885783300677,
+        "retrievals": [
+          {
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "seconds": null
+          }
+        ]
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "dac7c5bc802e498aa630127732e9d2a8",
+      "timestamp": "2026-10-03T15:39:38.124935+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "a715cebc4df34fbcbc9233ee303d3496",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "observation",
+      "iteration": 2,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0025159589858958498
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "fefbb633e64c4b84824af54d304cca76"
+            ],
+            "input": 1464,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 15.05691308301175
+          },
+          {
+            "id": "fefbb633e64c4b84824af54d304cca76",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "fefbb633e64c4b84824af54d304cca76"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0049477499997010455
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2668,
+            "output": 33,
+            "incomplete": false,
+            "seconds": 10.855596209003124
+          },
+          {
+            "id": "thought:2",
+            "iteration": 2,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2542,
+            "output": 45,
+            "incomplete": false,
+            "seconds": 6.426950791996205
+          },
+          {
+            "id": "action:2",
+            "iteration": 2,
+            "phase": "Action",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "471d873a11c9406a9c9cc06906c4f0da"
+            ],
+            "input": 1683,
+            "output": 52,
+            "incomplete": false,
+            "seconds": 8.025293874990894
+          },
+          {
+            "id": "471d873a11c9406a9c9cc06906c4f0da",
+            "iteration": 2,
+            "phase": "工具内部",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "471d873a11c9406a9c9cc06906c4f0da"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0035721250023925677
+          },
+          {
+            "id": "observation:2",
+            "iteration": 2,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2903,
+            "output": 34,
+            "incomplete": false,
+            "seconds": 7.7487435410002945
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0025159589858958498,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "elapsed_seconds": 15.05691308301175,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.004910042000119574
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0049477499997010455,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 10.855596209003124,
+            "observation": "知识库搜索失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 1
+          },
+          {
+            "type": "thought",
+            "thought": "使用paper_metadata提取文档信息，再查找相关信息。",
+            "next_step": "tool",
+            "tool_name": "paper_metadata",
+            "parallel_tools": [
+              "paper_metadata"
+            ],
+            "elapsed_seconds": 6.426950791996205,
+            "iteration": 2
+          },
+          {
+            "type": "tool_call",
+            "name": "paper_metadata",
+            "call_id": "471d873a11c9406a9c9cc06906c4f0da",
+            "args": {
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "elapsed_seconds": 8.025293874990894,
+            "iteration": 2
+          },
+          {
+            "type": "tool_result",
+            "name": "paper_metadata",
+            "call_id": "471d873a11c9406a9c9cc06906c4f0da",
+            "args": {
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.003500042002997361
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0035721250023925677,
+            "iteration": 2
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 7.7487435410002945,
+            "observation": "文档元数据提取失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 2
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0049477499997010455,
+            "attempts": 1,
+            "execution_mode": "serial"
+          },
+          {
+            "call_id": "471d873a11c9406a9c9cc06906c4f0da",
+            "name": "paper_metadata",
+            "iteration": 2,
+            "status": "error",
+            "seconds": 0.0035721250023925677,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 2,
+          "successes": 0,
+          "failures": 2,
+          "pending": 0,
+          "success_rate": 0.0,
+          "mean_seconds": 0.004259937501046807,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0049477499997010455
+            },
+            {
+              "name": "paper_metadata",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0035721250023925677
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 11516,
+          "unknown_calls": 2
+        },
+        "response_seconds": 48.4481382080121,
+        "retrievals": [
+          {
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "seconds": null
+          }
+        ]
+      },
+      "stop_reason": null,
+      "task_complete": false
+    },
+    {
+      "schema_version": 1,
+      "request_id": "dac7c5bc802e498aa630127732e9d2a8",
+      "timestamp": "2026-10-03T15:39:45.673864+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "a715cebc4df34fbcbc9233ee303d3496",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "thought",
+      "iteration": 3,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0025159589858958498
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "fefbb633e64c4b84824af54d304cca76"
+            ],
+            "input": 1464,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 15.05691308301175
+          },
+          {
+            "id": "fefbb633e64c4b84824af54d304cca76",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "fefbb633e64c4b84824af54d304cca76"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0049477499997010455
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2668,
+            "output": 33,
+            "incomplete": false,
+            "seconds": 10.855596209003124
+          },
+          {
+            "id": "thought:2",
+            "iteration": 2,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2542,
+            "output": 45,
+            "incomplete": false,
+            "seconds": 6.426950791996205
+          },
+          {
+            "id": "action:2",
+            "iteration": 2,
+            "phase": "Action",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "471d873a11c9406a9c9cc06906c4f0da"
+            ],
+            "input": 1683,
+            "output": 52,
+            "incomplete": false,
+            "seconds": 8.025293874990894
+          },
+          {
+            "id": "471d873a11c9406a9c9cc06906c4f0da",
+            "iteration": 2,
+            "phase": "工具内部",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "471d873a11c9406a9c9cc06906c4f0da"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0035721250023925677
+          },
+          {
+            "id": "observation:2",
+            "iteration": 2,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2903,
+            "output": 34,
+            "incomplete": false,
+            "seconds": 7.7487435410002945
+          },
+          {
+            "id": "thought:3",
+            "iteration": 3,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2778,
+            "output": 42,
+            "incomplete": false,
+            "seconds": 7.526338250012486
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0025159589858958498,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "elapsed_seconds": 15.05691308301175,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.004910042000119574
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0049477499997010455,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 10.855596209003124,
+            "observation": "知识库搜索失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 1
+          },
+          {
+            "type": "thought",
+            "thought": "使用paper_metadata提取文档信息，再查找相关信息。",
+            "next_step": "tool",
+            "tool_name": "paper_metadata",
+            "parallel_tools": [
+              "paper_metadata"
+            ],
+            "elapsed_seconds": 6.426950791996205,
+            "iteration": 2
+          },
+          {
+            "type": "tool_call",
+            "name": "paper_metadata",
+            "call_id": "471d873a11c9406a9c9cc06906c4f0da",
+            "args": {
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "elapsed_seconds": 8.025293874990894,
+            "iteration": 2
+          },
+          {
+            "type": "tool_result",
+            "name": "paper_metadata",
+            "call_id": "471d873a11c9406a9c9cc06906c4f0da",
+            "args": {
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.003500042002997361
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0035721250023925677,
+            "iteration": 2
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 7.7487435410002945,
+            "observation": "文档元数据提取失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 2
+          },
+          {
+            "type": "thought",
+            "thought": "文档元数据提取失败，需重新提供正确的doc_id。",
+            "next_step": "answer",
+            "tool_name": null,
+            "parallel_tools": [],
+            "elapsed_seconds": 7.526338250012486,
+            "iteration": 3
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0049477499997010455,
+            "attempts": 1,
+            "execution_mode": "serial"
+          },
+          {
+            "call_id": "471d873a11c9406a9c9cc06906c4f0da",
+            "name": "paper_metadata",
+            "iteration": 2,
+            "status": "error",
+            "seconds": 0.0035721250023925677,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 2,
+          "successes": 0,
+          "failures": 2,
+          "pending": 0,
+          "success_rate": 0.0,
+          "mean_seconds": 0.004259937501046807,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0049477499997010455
+            },
+            {
+              "name": "paper_metadata",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0035721250023925677
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 14336,
+          "unknown_calls": 2
+        },
+        "response_seconds": 55.99703458300792,
+        "retrievals": [
+          {
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "seconds": null
+          }
+        ]
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "dac7c5bc802e498aa630127732e9d2a8",
+      "timestamp": "2026-10-03T15:39:45.694258+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "a715cebc4df34fbcbc9233ee303d3496",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "action_skipped",
+      "iteration": 3,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0025159589858958498
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "fefbb633e64c4b84824af54d304cca76"
+            ],
+            "input": 1464,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 15.05691308301175
+          },
+          {
+            "id": "fefbb633e64c4b84824af54d304cca76",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "fefbb633e64c4b84824af54d304cca76"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0049477499997010455
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2668,
+            "output": 33,
+            "incomplete": false,
+            "seconds": 10.855596209003124
+          },
+          {
+            "id": "thought:2",
+            "iteration": 2,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2542,
+            "output": 45,
+            "incomplete": false,
+            "seconds": 6.426950791996205
+          },
+          {
+            "id": "action:2",
+            "iteration": 2,
+            "phase": "Action",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "471d873a11c9406a9c9cc06906c4f0da"
+            ],
+            "input": 1683,
+            "output": 52,
+            "incomplete": false,
+            "seconds": 8.025293874990894
+          },
+          {
+            "id": "471d873a11c9406a9c9cc06906c4f0da",
+            "iteration": 2,
+            "phase": "工具内部",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "471d873a11c9406a9c9cc06906c4f0da"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0035721250023925677
+          },
+          {
+            "id": "observation:2",
+            "iteration": 2,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2903,
+            "output": 34,
+            "incomplete": false,
+            "seconds": 7.7487435410002945
+          },
+          {
+            "id": "thought:3",
+            "iteration": 3,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2778,
+            "output": 42,
+            "incomplete": false,
+            "seconds": 7.526338250012486
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0025159589858958498,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "elapsed_seconds": 15.05691308301175,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.004910042000119574
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0049477499997010455,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 10.855596209003124,
+            "observation": "知识库搜索失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 1
+          },
+          {
+            "type": "thought",
+            "thought": "使用paper_metadata提取文档信息，再查找相关信息。",
+            "next_step": "tool",
+            "tool_name": "paper_metadata",
+            "parallel_tools": [
+              "paper_metadata"
+            ],
+            "elapsed_seconds": 6.426950791996205,
+            "iteration": 2
+          },
+          {
+            "type": "tool_call",
+            "name": "paper_metadata",
+            "call_id": "471d873a11c9406a9c9cc06906c4f0da",
+            "args": {
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "elapsed_seconds": 8.025293874990894,
+            "iteration": 2
+          },
+          {
+            "type": "tool_result",
+            "name": "paper_metadata",
+            "call_id": "471d873a11c9406a9c9cc06906c4f0da",
+            "args": {
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.003500042002997361
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0035721250023925677,
+            "iteration": 2
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 7.7487435410002945,
+            "observation": "文档元数据提取失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 2
+          },
+          {
+            "type": "thought",
+            "thought": "文档元数据提取失败，需重新提供正确的doc_id。",
+            "next_step": "answer",
+            "tool_name": null,
+            "parallel_tools": [],
+            "elapsed_seconds": 7.526338250012486,
+            "iteration": 3
+          },
+          {
+            "type": "action_skipped",
+            "reason": "Thought规划直接回答，无需执行工具。",
+            "iteration": 3
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0049477499997010455,
+            "attempts": 1,
+            "execution_mode": "serial"
+          },
+          {
+            "call_id": "471d873a11c9406a9c9cc06906c4f0da",
+            "name": "paper_metadata",
+            "iteration": 2,
+            "status": "error",
+            "seconds": 0.0035721250023925677,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 2,
+          "successes": 0,
+          "failures": 2,
+          "pending": 0,
+          "success_rate": 0.0,
+          "mean_seconds": 0.004259937501046807,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0049477499997010455
+            },
+            {
+              "name": "paper_metadata",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0035721250023925677
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 14336,
+          "unknown_calls": 2
+        },
+        "response_seconds": 56.017432041000575,
+        "retrievals": [
+          {
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "seconds": null
+          }
+        ]
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "dac7c5bc802e498aa630127732e9d2a8",
+      "timestamp": "2026-10-03T15:39:54.075835+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "a715cebc4df34fbcbc9233ee303d3496",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "observation",
+      "iteration": 3,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0025159589858958498
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "fefbb633e64c4b84824af54d304cca76"
+            ],
+            "input": 1464,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 15.05691308301175
+          },
+          {
+            "id": "fefbb633e64c4b84824af54d304cca76",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "fefbb633e64c4b84824af54d304cca76"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0049477499997010455
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2668,
+            "output": 33,
+            "incomplete": false,
+            "seconds": 10.855596209003124
+          },
+          {
+            "id": "thought:2",
+            "iteration": 2,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2542,
+            "output": 45,
+            "incomplete": false,
+            "seconds": 6.426950791996205
+          },
+          {
+            "id": "action:2",
+            "iteration": 2,
+            "phase": "Action",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "471d873a11c9406a9c9cc06906c4f0da"
+            ],
+            "input": 1683,
+            "output": 52,
+            "incomplete": false,
+            "seconds": 8.025293874990894
+          },
+          {
+            "id": "471d873a11c9406a9c9cc06906c4f0da",
+            "iteration": 2,
+            "phase": "工具内部",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "471d873a11c9406a9c9cc06906c4f0da"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0035721250023925677
+          },
+          {
+            "id": "observation:2",
+            "iteration": 2,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2903,
+            "output": 34,
+            "incomplete": false,
+            "seconds": 7.7487435410002945
+          },
+          {
+            "id": "thought:3",
+            "iteration": 3,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2778,
+            "output": 42,
+            "incomplete": false,
+            "seconds": 7.526338250012486
+          },
+          {
+            "id": "observation:3",
+            "iteration": 3,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2812,
+            "output": 53,
+            "incomplete": false,
+            "seconds": 8.36123341700295
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0025159589858958498,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "elapsed_seconds": 15.05691308301175,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.004910042000119574
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0049477499997010455,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 10.855596209003124,
+            "observation": "知识库搜索失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 1
+          },
+          {
+            "type": "thought",
+            "thought": "使用paper_metadata提取文档信息，再查找相关信息。",
+            "next_step": "tool",
+            "tool_name": "paper_metadata",
+            "parallel_tools": [
+              "paper_metadata"
+            ],
+            "elapsed_seconds": 6.426950791996205,
+            "iteration": 2
+          },
+          {
+            "type": "tool_call",
+            "name": "paper_metadata",
+            "call_id": "471d873a11c9406a9c9cc06906c4f0da",
+            "args": {
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "elapsed_seconds": 8.025293874990894,
+            "iteration": 2
+          },
+          {
+            "type": "tool_result",
+            "name": "paper_metadata",
+            "call_id": "471d873a11c9406a9c9cc06906c4f0da",
+            "args": {
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.003500042002997361
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0035721250023925677,
+            "iteration": 2
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 7.7487435410002945,
+            "observation": "文档元数据提取失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 2
+          },
+          {
+            "type": "thought",
+            "thought": "文档元数据提取失败，需重新提供正确的doc_id。",
+            "next_step": "answer",
+            "tool_name": null,
+            "parallel_tools": [],
+            "elapsed_seconds": 7.526338250012486,
+            "iteration": 3
+          },
+          {
+            "type": "action_skipped",
+            "reason": "Thought规划直接回答，无需执行工具。",
+            "iteration": 3
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 8.36123341700295,
+            "observation": "文档元数据提取失败，需重新提供正确的doc_id。",
+            "decision": "finish",
+            "task_complete": false,
+            "iteration": 3
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0049477499997010455,
+            "attempts": 1,
+            "execution_mode": "serial"
+          },
+          {
+            "call_id": "471d873a11c9406a9c9cc06906c4f0da",
+            "name": "paper_metadata",
+            "iteration": 2,
+            "status": "error",
+            "seconds": 0.0035721250023925677,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 2,
+          "successes": 0,
+          "failures": 2,
+          "pending": 0,
+          "success_rate": 0.0,
+          "mean_seconds": 0.004259937501046807,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0049477499997010455
+            },
+            {
+              "name": "paper_metadata",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0035721250023925677
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 17201,
+          "unknown_calls": 2
+        },
+        "response_seconds": 64.39897604100406,
+        "retrievals": [
+          {
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "seconds": null
+          }
+        ]
+      },
+      "stop_reason": null,
+      "task_complete": false
+    },
+    {
+      "schema_version": 1,
+      "request_id": "dac7c5bc802e498aa630127732e9d2a8",
+      "timestamp": "2026-10-03T15:39:54.085706+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "a715cebc4df34fbcbc9233ee303d3496",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "done",
+      "iteration": null,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0025159589858958498
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "fefbb633e64c4b84824af54d304cca76"
+            ],
+            "input": 1464,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 15.05691308301175
+          },
+          {
+            "id": "fefbb633e64c4b84824af54d304cca76",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "fefbb633e64c4b84824af54d304cca76"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0049477499997010455
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2668,
+            "output": 33,
+            "incomplete": false,
+            "seconds": 10.855596209003124
+          },
+          {
+            "id": "thought:2",
+            "iteration": 2,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2542,
+            "output": 45,
+            "incomplete": false,
+            "seconds": 6.426950791996205
+          },
+          {
+            "id": "action:2",
+            "iteration": 2,
+            "phase": "Action",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "471d873a11c9406a9c9cc06906c4f0da"
+            ],
+            "input": 1683,
+            "output": 52,
+            "incomplete": false,
+            "seconds": 8.025293874990894
+          },
+          {
+            "id": "471d873a11c9406a9c9cc06906c4f0da",
+            "iteration": 2,
+            "phase": "工具内部",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "471d873a11c9406a9c9cc06906c4f0da"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0035721250023925677
+          },
+          {
+            "id": "observation:2",
+            "iteration": 2,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2903,
+            "output": 34,
+            "incomplete": false,
+            "seconds": 7.7487435410002945
+          },
+          {
+            "id": "thought:3",
+            "iteration": 3,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2778,
+            "output": 42,
+            "incomplete": false,
+            "seconds": 7.526338250012486
+          },
+          {
+            "id": "observation:3",
+            "iteration": 3,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2812,
+            "output": 53,
+            "incomplete": false,
+            "seconds": 8.36123341700295
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0025159589858958498,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "elapsed_seconds": 15.05691308301175,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.004910042000119574
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0049477499997010455,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 10.855596209003124,
+            "observation": "知识库搜索失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 1
+          },
+          {
+            "type": "thought",
+            "thought": "使用paper_metadata提取文档信息，再查找相关信息。",
+            "next_step": "tool",
+            "tool_name": "paper_metadata",
+            "parallel_tools": [
+              "paper_metadata"
+            ],
+            "elapsed_seconds": 6.426950791996205,
+            "iteration": 2
+          },
+          {
+            "type": "tool_call",
+            "name": "paper_metadata",
+            "call_id": "471d873a11c9406a9c9cc06906c4f0da",
+            "args": {
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "elapsed_seconds": 8.025293874990894,
+            "iteration": 2
+          },
+          {
+            "type": "tool_result",
+            "name": "paper_metadata",
+            "call_id": "471d873a11c9406a9c9cc06906c4f0da",
+            "args": {
+              "doc_id": "0816c92220d942e2810a4e9250d90001"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.003500042002997361
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0035721250023925677,
+            "iteration": 2
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 7.7487435410002945,
+            "observation": "文档元数据提取失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 2
+          },
+          {
+            "type": "thought",
+            "thought": "文档元数据提取失败，需重新提供正确的doc_id。",
+            "next_step": "answer",
+            "tool_name": null,
+            "parallel_tools": [],
+            "elapsed_seconds": 7.526338250012486,
+            "iteration": 3
+          },
+          {
+            "type": "action_skipped",
+            "reason": "Thought规划直接回答，无需执行工具。",
+            "iteration": 3
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 8.36123341700295,
+            "observation": "文档元数据提取失败，需重新提供正确的doc_id。",
+            "decision": "finish",
+            "task_complete": false,
+            "iteration": 3
+          },
+          {
+            "type": "done",
+            "task_complete": false,
+            "stop_reason": "incomplete",
+            "full_response": "当前知识库中未找到相关文档。请检查提供的doc_id是否正确。",
+            "iteration": 3
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0049477499997010455,
+            "attempts": 1,
+            "execution_mode": "serial"
+          },
+          {
+            "call_id": "471d873a11c9406a9c9cc06906c4f0da",
+            "name": "paper_metadata",
+            "iteration": 2,
+            "status": "error",
+            "seconds": 0.0035721250023925677,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 2,
+          "successes": 0,
+          "failures": 2,
+          "pending": 0,
+          "success_rate": 0.0,
+          "mean_seconds": 0.004259937501046807,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0049477499997010455
+            },
+            {
+              "name": "paper_metadata",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0035721250023925677
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 17201,
+          "unknown_calls": 2
+        },
+        "response_seconds": 64.40884391601139,
+        "retrievals": [
+          {
+            "call_id": "fefbb633e64c4b84824af54d304cca76",
+            "seconds": null
+          }
+        ]
+      },
+      "stop_reason": "incomplete",
+      "task_complete": false
+    },
+    {
+      "schema_version": 1,
+      "request_id": "00457f92af964ce1a61359379f7defa3",
+      "timestamp": "2026-10-03T15:41:29.011899+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "20ebcbbf72af4631a5d6f340aba3e5bb",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "thought",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0016182090039364994
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0016182090039364994,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [],
+        "tools": {
+          "started": 0,
+          "completed": 0,
+          "successes": 0,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": null,
+          "mean_seconds": null,
+          "by_tool": []
+        },
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0,
+          "known_total": 0,
+          "unknown_calls": 0
+        },
+        "response_seconds": 0.17174520900880452
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "00457f92af964ce1a61359379f7defa3",
+      "timestamp": "2026-10-03T15:41:39.209878+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "20ebcbbf72af4631a5d6f340aba3e5bb",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "tool_call",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0016182090039364994
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "f0d37553f03f4156908a2ef20642d295"
+            ],
+            "input": 1572,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 10.183583833000739
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0016182090039364994,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "elapsed_seconds": 10.183583833000739,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "pending",
+            "seconds": null,
+            "attempts": null,
+            "execution_mode": null
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 0,
+          "successes": 0,
+          "failures": 0,
+          "pending": 1,
+          "success_rate": null,
+          "mean_seconds": null,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 0,
+              "successes": 0,
+              "failures": 0,
+              "pending": 1,
+              "success_rate": null,
+              "mean_seconds": null
+            }
+          ]
+        },
+        "tokens": {
+          "input": 1572,
+          "output": 92,
+          "total": 1664,
+          "known_total": 1664,
+          "unknown_calls": 0
+        },
+        "response_seconds": 10.370084374997532
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "00457f92af964ce1a61359379f7defa3",
+      "timestamp": "2026-10-03T15:41:39.218176+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "20ebcbbf72af4631a5d6f340aba3e5bb",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "tool_result",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0016182090039364994
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "f0d37553f03f4156908a2ef20642d295"
+            ],
+            "input": 1572,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 10.183583833000739
+          },
+          {
+            "id": "f0d37553f03f4156908a2ef20642d295",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "f0d37553f03f4156908a2ef20642d295"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0017654590046731755
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0016182090039364994,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "elapsed_seconds": 10.183583833000739,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.0017337080062134191
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0017654590046731755,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0017654590046731755,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 1,
+          "successes": 0,
+          "failures": 1,
+          "pending": 0,
+          "success_rate": 0.0,
+          "mean_seconds": 0.0017654590046731755,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0017654590046731755
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 1664,
+          "unknown_calls": 1
+        },
+        "response_seconds": 10.378385500007425,
+        "retrievals": [
+          {
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "seconds": null
+          }
+        ]
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "00457f92af964ce1a61359379f7defa3",
+      "timestamp": "2026-10-03T15:41:49.455322+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "20ebcbbf72af4631a5d6f340aba3e5bb",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "observation",
+      "iteration": 1,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0016182090039364994
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "f0d37553f03f4156908a2ef20642d295"
+            ],
+            "input": 1572,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 10.183583833000739
+          },
+          {
+            "id": "f0d37553f03f4156908a2ef20642d295",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "f0d37553f03f4156908a2ef20642d295"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0017654590046731755
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2756,
+            "output": 33,
+            "incomplete": false,
+            "seconds": 10.228642125002807
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0016182090039364994,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "elapsed_seconds": 10.183583833000739,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.0017337080062134191
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0017654590046731755,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 10.228642125002807,
+            "observation": "知识库搜索失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0017654590046731755,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 1,
+          "successes": 0,
+          "failures": 1,
+          "pending": 0,
+          "success_rate": 0.0,
+          "mean_seconds": 0.0017654590046731755,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0017654590046731755
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 4453,
+          "unknown_calls": 1
+        },
+        "response_seconds": 20.61548429200775,
+        "retrievals": [
+          {
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "seconds": null
+          }
+        ]
+      },
+      "stop_reason": null,
+      "task_complete": false
+    },
+    {
+      "schema_version": 1,
+      "request_id": "00457f92af964ce1a61359379f7defa3",
+      "timestamp": "2026-10-03T15:41:55.309853+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "20ebcbbf72af4631a5d6f340aba3e5bb",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "thought",
+      "iteration": 2,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0016182090039364994
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "f0d37553f03f4156908a2ef20642d295"
+            ],
+            "input": 1572,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 10.183583833000739
+          },
+          {
+            "id": "f0d37553f03f4156908a2ef20642d295",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "f0d37553f03f4156908a2ef20642d295"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0017654590046731755
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2756,
+            "output": 33,
+            "incomplete": false,
+            "seconds": 10.228642125002807
+          },
+          {
+            "id": "thought:2",
+            "iteration": 2,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2630,
+            "output": 40,
+            "incomplete": false,
+            "seconds": 5.843724999998813
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0016182090039364994,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "elapsed_seconds": 10.183583833000739,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.0017337080062134191
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0017654590046731755,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 10.228642125002807,
+            "observation": "知识库搜索失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 1
+          },
+          {
+            "type": "thought",
+            "thought": "使用paper_metadata提取文档信息，再查找相关信息。",
+            "next_step": "tool",
+            "tool_name": "paper_metadata",
+            "parallel_tools": [
+              "paper_metadata"
+            ],
+            "elapsed_seconds": 5.843724999998813,
+            "iteration": 2
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0017654590046731755,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 1,
+          "successes": 0,
+          "failures": 1,
+          "pending": 0,
+          "success_rate": 0.0,
+          "mean_seconds": 0.0017654590046731755,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0017654590046731755
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 7123,
+          "unknown_calls": 1
+        },
+        "response_seconds": 26.4699894170044,
+        "retrievals": [
+          {
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "seconds": null
+          }
+        ]
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "00457f92af964ce1a61359379f7defa3",
+      "timestamp": "2026-10-03T15:42:03.093842+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "20ebcbbf72af4631a5d6f340aba3e5bb",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "tool_call",
+      "iteration": 2,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0016182090039364994
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "f0d37553f03f4156908a2ef20642d295"
+            ],
+            "input": 1572,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 10.183583833000739
+          },
+          {
+            "id": "f0d37553f03f4156908a2ef20642d295",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "f0d37553f03f4156908a2ef20642d295"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0017654590046731755
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2756,
+            "output": 33,
+            "incomplete": false,
+            "seconds": 10.228642125002807
+          },
+          {
+            "id": "thought:2",
+            "iteration": 2,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2630,
+            "output": 40,
+            "incomplete": false,
+            "seconds": 5.843724999998813
+          },
+          {
+            "id": "action:2",
+            "iteration": 2,
+            "phase": "Action",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "eab1aae303cc431fa91e40cde23ff162"
+            ],
+            "input": 1797,
+            "output": 52,
+            "incomplete": false,
+            "seconds": 7.772570624991204
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0016182090039364994,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "elapsed_seconds": 10.183583833000739,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.0017337080062134191
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0017654590046731755,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 10.228642125002807,
+            "observation": "知识库搜索失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 1
+          },
+          {
+            "type": "thought",
+            "thought": "使用paper_metadata提取文档信息，再查找相关信息。",
+            "next_step": "tool",
+            "tool_name": "paper_metadata",
+            "parallel_tools": [
+              "paper_metadata"
+            ],
+            "elapsed_seconds": 5.843724999998813,
+            "iteration": 2
+          },
+          {
+            "type": "tool_call",
+            "name": "paper_metadata",
+            "call_id": "eab1aae303cc431fa91e40cde23ff162",
+            "args": {
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "elapsed_seconds": 7.772570624991204,
+            "iteration": 2
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0017654590046731755,
+            "attempts": 1,
+            "execution_mode": "serial"
+          },
+          {
+            "call_id": "eab1aae303cc431fa91e40cde23ff162",
+            "name": "paper_metadata",
+            "iteration": 2,
+            "status": "pending",
+            "seconds": null,
+            "attempts": null,
+            "execution_mode": null
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 1,
+          "successes": 0,
+          "failures": 1,
+          "pending": 1,
+          "success_rate": 0.0,
+          "mean_seconds": 0.0017654590046731755,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0017654590046731755
+            },
+            {
+              "name": "paper_metadata",
+              "started": 1,
+              "completed": 0,
+              "successes": 0,
+              "failures": 0,
+              "pending": 1,
+              "success_rate": null,
+              "mean_seconds": null
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 8972,
+          "unknown_calls": 1
+        },
+        "response_seconds": 34.25394187500933,
+        "retrievals": [
+          {
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "seconds": null
+          }
+        ]
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "00457f92af964ce1a61359379f7defa3",
+      "timestamp": "2026-10-03T15:42:03.101952+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "20ebcbbf72af4631a5d6f340aba3e5bb",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "tool_result",
+      "iteration": 2,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0016182090039364994
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "f0d37553f03f4156908a2ef20642d295"
+            ],
+            "input": 1572,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 10.183583833000739
+          },
+          {
+            "id": "f0d37553f03f4156908a2ef20642d295",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "f0d37553f03f4156908a2ef20642d295"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0017654590046731755
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2756,
+            "output": 33,
+            "incomplete": false,
+            "seconds": 10.228642125002807
+          },
+          {
+            "id": "thought:2",
+            "iteration": 2,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2630,
+            "output": 40,
+            "incomplete": false,
+            "seconds": 5.843724999998813
+          },
+          {
+            "id": "action:2",
+            "iteration": 2,
+            "phase": "Action",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "eab1aae303cc431fa91e40cde23ff162"
+            ],
+            "input": 1797,
+            "output": 52,
+            "incomplete": false,
+            "seconds": 7.772570624991204
+          },
+          {
+            "id": "eab1aae303cc431fa91e40cde23ff162",
+            "iteration": 2,
+            "phase": "工具内部",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "eab1aae303cc431fa91e40cde23ff162"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0012552910047816113
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0016182090039364994,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "elapsed_seconds": 10.183583833000739,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.0017337080062134191
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0017654590046731755,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 10.228642125002807,
+            "observation": "知识库搜索失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 1
+          },
+          {
+            "type": "thought",
+            "thought": "使用paper_metadata提取文档信息，再查找相关信息。",
+            "next_step": "tool",
+            "tool_name": "paper_metadata",
+            "parallel_tools": [
+              "paper_metadata"
+            ],
+            "elapsed_seconds": 5.843724999998813,
+            "iteration": 2
+          },
+          {
+            "type": "tool_call",
+            "name": "paper_metadata",
+            "call_id": "eab1aae303cc431fa91e40cde23ff162",
+            "args": {
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "elapsed_seconds": 7.772570624991204,
+            "iteration": 2
+          },
+          {
+            "type": "tool_result",
+            "name": "paper_metadata",
+            "call_id": "eab1aae303cc431fa91e40cde23ff162",
+            "args": {
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.0012310419988352805
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0012552910047816113,
+            "iteration": 2
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0017654590046731755,
+            "attempts": 1,
+            "execution_mode": "serial"
+          },
+          {
+            "call_id": "eab1aae303cc431fa91e40cde23ff162",
+            "name": "paper_metadata",
+            "iteration": 2,
+            "status": "error",
+            "seconds": 0.0012552910047816113,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 2,
+          "successes": 0,
+          "failures": 2,
+          "pending": 0,
+          "success_rate": 0.0,
+          "mean_seconds": 0.0015103750047273934,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0017654590046731755
+            },
+            {
+              "name": "paper_metadata",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0012552910047816113
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 8972,
+          "unknown_calls": 2
+        },
+        "response_seconds": 34.26205329199729,
+        "retrievals": [
+          {
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "seconds": null
+          }
+        ]
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "00457f92af964ce1a61359379f7defa3",
+      "timestamp": "2026-10-03T15:42:10.448571+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "20ebcbbf72af4631a5d6f340aba3e5bb",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "observation",
+      "iteration": 2,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0016182090039364994
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "f0d37553f03f4156908a2ef20642d295"
+            ],
+            "input": 1572,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 10.183583833000739
+          },
+          {
+            "id": "f0d37553f03f4156908a2ef20642d295",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "f0d37553f03f4156908a2ef20642d295"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0017654590046731755
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2756,
+            "output": 33,
+            "incomplete": false,
+            "seconds": 10.228642125002807
+          },
+          {
+            "id": "thought:2",
+            "iteration": 2,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2630,
+            "output": 40,
+            "incomplete": false,
+            "seconds": 5.843724999998813
+          },
+          {
+            "id": "action:2",
+            "iteration": 2,
+            "phase": "Action",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "eab1aae303cc431fa91e40cde23ff162"
+            ],
+            "input": 1797,
+            "output": 52,
+            "incomplete": false,
+            "seconds": 7.772570624991204
+          },
+          {
+            "id": "eab1aae303cc431fa91e40cde23ff162",
+            "iteration": 2,
+            "phase": "工具内部",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "eab1aae303cc431fa91e40cde23ff162"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0012552910047816113
+          },
+          {
+            "id": "observation:2",
+            "iteration": 2,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2988,
+            "output": 35,
+            "incomplete": false,
+            "seconds": 7.3366477499948815
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0016182090039364994,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "elapsed_seconds": 10.183583833000739,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.0017337080062134191
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0017654590046731755,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 10.228642125002807,
+            "observation": "知识库搜索失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 1
+          },
+          {
+            "type": "thought",
+            "thought": "使用paper_metadata提取文档信息，再查找相关信息。",
+            "next_step": "tool",
+            "tool_name": "paper_metadata",
+            "parallel_tools": [
+              "paper_metadata"
+            ],
+            "elapsed_seconds": 5.843724999998813,
+            "iteration": 2
+          },
+          {
+            "type": "tool_call",
+            "name": "paper_metadata",
+            "call_id": "eab1aae303cc431fa91e40cde23ff162",
+            "args": {
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "elapsed_seconds": 7.772570624991204,
+            "iteration": 2
+          },
+          {
+            "type": "tool_result",
+            "name": "paper_metadata",
+            "call_id": "eab1aae303cc431fa91e40cde23ff162",
+            "args": {
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.0012310419988352805
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0012552910047816113,
+            "iteration": 2
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 7.3366477499948815,
+            "observation": "paper_metadata工具也因doc_id格式错误而失败。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 2
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0017654590046731755,
+            "attempts": 1,
+            "execution_mode": "serial"
+          },
+          {
+            "call_id": "eab1aae303cc431fa91e40cde23ff162",
+            "name": "paper_metadata",
+            "iteration": 2,
+            "status": "error",
+            "seconds": 0.0012552910047816113,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 2,
+          "successes": 0,
+          "failures": 2,
+          "pending": 0,
+          "success_rate": 0.0,
+          "mean_seconds": 0.0015103750047273934,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0017654590046731755
+            },
+            {
+              "name": "paper_metadata",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0012552910047816113
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 11995,
+          "unknown_calls": 2
+        },
+        "response_seconds": 41.60863858400262,
+        "retrievals": [
+          {
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "seconds": null
+          }
+        ]
+      },
+      "stop_reason": null,
+      "task_complete": false
+    },
+    {
+      "schema_version": 1,
+      "request_id": "00457f92af964ce1a61359379f7defa3",
+      "timestamp": "2026-10-03T15:42:17.529768+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "20ebcbbf72af4631a5d6f340aba3e5bb",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "thought",
+      "iteration": 3,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0016182090039364994
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "f0d37553f03f4156908a2ef20642d295"
+            ],
+            "input": 1572,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 10.183583833000739
+          },
+          {
+            "id": "f0d37553f03f4156908a2ef20642d295",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "f0d37553f03f4156908a2ef20642d295"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0017654590046731755
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2756,
+            "output": 33,
+            "incomplete": false,
+            "seconds": 10.228642125002807
+          },
+          {
+            "id": "thought:2",
+            "iteration": 2,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2630,
+            "output": 40,
+            "incomplete": false,
+            "seconds": 5.843724999998813
+          },
+          {
+            "id": "action:2",
+            "iteration": 2,
+            "phase": "Action",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "eab1aae303cc431fa91e40cde23ff162"
+            ],
+            "input": 1797,
+            "output": 52,
+            "incomplete": false,
+            "seconds": 7.772570624991204
+          },
+          {
+            "id": "eab1aae303cc431fa91e40cde23ff162",
+            "iteration": 2,
+            "phase": "工具内部",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "eab1aae303cc431fa91e40cde23ff162"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0012552910047816113
+          },
+          {
+            "id": "observation:2",
+            "iteration": 2,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2988,
+            "output": 35,
+            "incomplete": false,
+            "seconds": 7.3366477499948815
+          },
+          {
+            "id": "thought:3",
+            "iteration": 3,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2864,
+            "output": 41,
+            "incomplete": false,
+            "seconds": 7.069690667005489
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0016182090039364994,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "elapsed_seconds": 10.183583833000739,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.0017337080062134191
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0017654590046731755,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 10.228642125002807,
+            "observation": "知识库搜索失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 1
+          },
+          {
+            "type": "thought",
+            "thought": "使用paper_metadata提取文档信息，再查找相关信息。",
+            "next_step": "tool",
+            "tool_name": "paper_metadata",
+            "parallel_tools": [
+              "paper_metadata"
+            ],
+            "elapsed_seconds": 5.843724999998813,
+            "iteration": 2
+          },
+          {
+            "type": "tool_call",
+            "name": "paper_metadata",
+            "call_id": "eab1aae303cc431fa91e40cde23ff162",
+            "args": {
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "elapsed_seconds": 7.772570624991204,
+            "iteration": 2
+          },
+          {
+            "type": "tool_result",
+            "name": "paper_metadata",
+            "call_id": "eab1aae303cc431fa91e40cde23ff162",
+            "args": {
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.0012310419988352805
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0012552910047816113,
+            "iteration": 2
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 7.3366477499948815,
+            "observation": "paper_metadata工具也因doc_id格式错误而失败。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 2
+          },
+          {
+            "type": "thought",
+            "thought": "doc_id格式错误，需重新提供正确的文档指纹。",
+            "next_step": "answer",
+            "tool_name": null,
+            "parallel_tools": [],
+            "elapsed_seconds": 7.069690667005489,
+            "iteration": 3
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0017654590046731755,
+            "attempts": 1,
+            "execution_mode": "serial"
+          },
+          {
+            "call_id": "eab1aae303cc431fa91e40cde23ff162",
+            "name": "paper_metadata",
+            "iteration": 2,
+            "status": "error",
+            "seconds": 0.0012552910047816113,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 2,
+          "successes": 0,
+          "failures": 2,
+          "pending": 0,
+          "success_rate": 0.0,
+          "mean_seconds": 0.0015103750047273934,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0017654590046731755
+            },
+            {
+              "name": "paper_metadata",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0012552910047816113
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 14900,
+          "unknown_calls": 2
+        },
+        "response_seconds": 48.689802959008375,
+        "retrievals": [
+          {
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "seconds": null
+          }
+        ]
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "00457f92af964ce1a61359379f7defa3",
+      "timestamp": "2026-10-03T15:42:17.540015+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "20ebcbbf72af4631a5d6f340aba3e5bb",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "action_skipped",
+      "iteration": 3,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0016182090039364994
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "f0d37553f03f4156908a2ef20642d295"
+            ],
+            "input": 1572,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 10.183583833000739
+          },
+          {
+            "id": "f0d37553f03f4156908a2ef20642d295",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "f0d37553f03f4156908a2ef20642d295"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0017654590046731755
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2756,
+            "output": 33,
+            "incomplete": false,
+            "seconds": 10.228642125002807
+          },
+          {
+            "id": "thought:2",
+            "iteration": 2,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2630,
+            "output": 40,
+            "incomplete": false,
+            "seconds": 5.843724999998813
+          },
+          {
+            "id": "action:2",
+            "iteration": 2,
+            "phase": "Action",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "eab1aae303cc431fa91e40cde23ff162"
+            ],
+            "input": 1797,
+            "output": 52,
+            "incomplete": false,
+            "seconds": 7.772570624991204
+          },
+          {
+            "id": "eab1aae303cc431fa91e40cde23ff162",
+            "iteration": 2,
+            "phase": "工具内部",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "eab1aae303cc431fa91e40cde23ff162"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0012552910047816113
+          },
+          {
+            "id": "observation:2",
+            "iteration": 2,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2988,
+            "output": 35,
+            "incomplete": false,
+            "seconds": 7.3366477499948815
+          },
+          {
+            "id": "thought:3",
+            "iteration": 3,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2864,
+            "output": 41,
+            "incomplete": false,
+            "seconds": 7.069690667005489
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0016182090039364994,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "elapsed_seconds": 10.183583833000739,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.0017337080062134191
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0017654590046731755,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 10.228642125002807,
+            "observation": "知识库搜索失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 1
+          },
+          {
+            "type": "thought",
+            "thought": "使用paper_metadata提取文档信息，再查找相关信息。",
+            "next_step": "tool",
+            "tool_name": "paper_metadata",
+            "parallel_tools": [
+              "paper_metadata"
+            ],
+            "elapsed_seconds": 5.843724999998813,
+            "iteration": 2
+          },
+          {
+            "type": "tool_call",
+            "name": "paper_metadata",
+            "call_id": "eab1aae303cc431fa91e40cde23ff162",
+            "args": {
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "elapsed_seconds": 7.772570624991204,
+            "iteration": 2
+          },
+          {
+            "type": "tool_result",
+            "name": "paper_metadata",
+            "call_id": "eab1aae303cc431fa91e40cde23ff162",
+            "args": {
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.0012310419988352805
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0012552910047816113,
+            "iteration": 2
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 7.3366477499948815,
+            "observation": "paper_metadata工具也因doc_id格式错误而失败。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 2
+          },
+          {
+            "type": "thought",
+            "thought": "doc_id格式错误，需重新提供正确的文档指纹。",
+            "next_step": "answer",
+            "tool_name": null,
+            "parallel_tools": [],
+            "elapsed_seconds": 7.069690667005489,
+            "iteration": 3
+          },
+          {
+            "type": "action_skipped",
+            "reason": "Thought规划直接回答，无需执行工具。",
+            "iteration": 3
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0017654590046731755,
+            "attempts": 1,
+            "execution_mode": "serial"
+          },
+          {
+            "call_id": "eab1aae303cc431fa91e40cde23ff162",
+            "name": "paper_metadata",
+            "iteration": 2,
+            "status": "error",
+            "seconds": 0.0012552910047816113,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 2,
+          "successes": 0,
+          "failures": 2,
+          "pending": 0,
+          "success_rate": 0.0,
+          "mean_seconds": 0.0015103750047273934,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0017654590046731755
+            },
+            {
+              "name": "paper_metadata",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0012552910047816113
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 14900,
+          "unknown_calls": 2
+        },
+        "response_seconds": 48.700051042003906,
+        "retrievals": [
+          {
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "seconds": null
+          }
+        ]
+      },
+      "stop_reason": null,
+      "task_complete": null
+    },
+    {
+      "schema_version": 1,
+      "request_id": "00457f92af964ce1a61359379f7defa3",
+      "timestamp": "2026-10-03T15:42:25.366163+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "20ebcbbf72af4631a5d6f340aba3e5bb",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "observation",
+      "iteration": 3,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0016182090039364994
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "f0d37553f03f4156908a2ef20642d295"
+            ],
+            "input": 1572,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 10.183583833000739
+          },
+          {
+            "id": "f0d37553f03f4156908a2ef20642d295",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "f0d37553f03f4156908a2ef20642d295"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0017654590046731755
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2756,
+            "output": 33,
+            "incomplete": false,
+            "seconds": 10.228642125002807
+          },
+          {
+            "id": "thought:2",
+            "iteration": 2,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2630,
+            "output": 40,
+            "incomplete": false,
+            "seconds": 5.843724999998813
+          },
+          {
+            "id": "action:2",
+            "iteration": 2,
+            "phase": "Action",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "eab1aae303cc431fa91e40cde23ff162"
+            ],
+            "input": 1797,
+            "output": 52,
+            "incomplete": false,
+            "seconds": 7.772570624991204
+          },
+          {
+            "id": "eab1aae303cc431fa91e40cde23ff162",
+            "iteration": 2,
+            "phase": "工具内部",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "eab1aae303cc431fa91e40cde23ff162"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0012552910047816113
+          },
+          {
+            "id": "observation:2",
+            "iteration": 2,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2988,
+            "output": 35,
+            "incomplete": false,
+            "seconds": 7.3366477499948815
+          },
+          {
+            "id": "thought:3",
+            "iteration": 3,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2864,
+            "output": 41,
+            "incomplete": false,
+            "seconds": 7.069690667005489
+          },
+          {
+            "id": "observation:3",
+            "iteration": 3,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2897,
+            "output": 52,
+            "incomplete": false,
+            "seconds": 7.815758249998908
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0016182090039364994,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "elapsed_seconds": 10.183583833000739,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.0017337080062134191
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0017654590046731755,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 10.228642125002807,
+            "observation": "知识库搜索失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 1
+          },
+          {
+            "type": "thought",
+            "thought": "使用paper_metadata提取文档信息，再查找相关信息。",
+            "next_step": "tool",
+            "tool_name": "paper_metadata",
+            "parallel_tools": [
+              "paper_metadata"
+            ],
+            "elapsed_seconds": 5.843724999998813,
+            "iteration": 2
+          },
+          {
+            "type": "tool_call",
+            "name": "paper_metadata",
+            "call_id": "eab1aae303cc431fa91e40cde23ff162",
+            "args": {
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "elapsed_seconds": 7.772570624991204,
+            "iteration": 2
+          },
+          {
+            "type": "tool_result",
+            "name": "paper_metadata",
+            "call_id": "eab1aae303cc431fa91e40cde23ff162",
+            "args": {
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.0012310419988352805
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0012552910047816113,
+            "iteration": 2
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 7.3366477499948815,
+            "observation": "paper_metadata工具也因doc_id格式错误而失败。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 2
+          },
+          {
+            "type": "thought",
+            "thought": "doc_id格式错误，需重新提供正确的文档指纹。",
+            "next_step": "answer",
+            "tool_name": null,
+            "parallel_tools": [],
+            "elapsed_seconds": 7.069690667005489,
+            "iteration": 3
+          },
+          {
+            "type": "action_skipped",
+            "reason": "Thought规划直接回答，无需执行工具。",
+            "iteration": 3
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 7.815758249998908,
+            "observation": "doc_id格式错误，需重新提供正确的文档指纹。",
+            "decision": "finish",
+            "task_complete": false,
+            "iteration": 3
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0017654590046731755,
+            "attempts": 1,
+            "execution_mode": "serial"
+          },
+          {
+            "call_id": "eab1aae303cc431fa91e40cde23ff162",
+            "name": "paper_metadata",
+            "iteration": 2,
+            "status": "error",
+            "seconds": 0.0012552910047816113,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 2,
+          "successes": 0,
+          "failures": 2,
+          "pending": 0,
+          "success_rate": 0.0,
+          "mean_seconds": 0.0015103750047273934,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0017654590046731755
+            },
+            {
+              "name": "paper_metadata",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0012552910047816113
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 17849,
+          "unknown_calls": 2
+        },
+        "response_seconds": 56.52616191700508,
+        "retrievals": [
+          {
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "seconds": null
+          }
+        ]
+      },
+      "stop_reason": null,
+      "task_complete": false
+    },
+    {
+      "schema_version": 1,
+      "request_id": "00457f92af964ce1a61359379f7defa3",
+      "timestamp": "2026-10-03T15:42:25.374763+08:00",
+      "user_id": "093bee79bbbd44f298f740cdc34fbc47",
+      "session_id": "20ebcbbf72af4631a5d6f340aba3e5bb",
+      "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+      "event": "done",
+      "iteration": null,
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0016182090039364994
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "f0d37553f03f4156908a2ef20642d295"
+            ],
+            "input": 1572,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 10.183583833000739
+          },
+          {
+            "id": "f0d37553f03f4156908a2ef20642d295",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "f0d37553f03f4156908a2ef20642d295"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0017654590046731755
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2756,
+            "output": 33,
+            "incomplete": false,
+            "seconds": 10.228642125002807
+          },
+          {
+            "id": "thought:2",
+            "iteration": 2,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2630,
+            "output": 40,
+            "incomplete": false,
+            "seconds": 5.843724999998813
+          },
+          {
+            "id": "action:2",
+            "iteration": 2,
+            "phase": "Action",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "eab1aae303cc431fa91e40cde23ff162"
+            ],
+            "input": 1797,
+            "output": 52,
+            "incomplete": false,
+            "seconds": 7.772570624991204
+          },
+          {
+            "id": "eab1aae303cc431fa91e40cde23ff162",
+            "iteration": 2,
+            "phase": "工具内部",
+            "tool": "paper_metadata",
+            "tool_call_ids": [
+              "eab1aae303cc431fa91e40cde23ff162"
+            ],
+            "input": null,
+            "output": null,
+            "incomplete": true,
+            "seconds": 0.0012552910047816113
+          },
+          {
+            "id": "observation:2",
+            "iteration": 2,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2988,
+            "output": 35,
+            "incomplete": false,
+            "seconds": 7.3366477499948815
+          },
+          {
+            "id": "thought:3",
+            "iteration": 3,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2864,
+            "output": 41,
+            "incomplete": false,
+            "seconds": 7.069690667005489
+          },
+          {
+            "id": "observation:3",
+            "iteration": 3,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2897,
+            "output": 52,
+            "incomplete": false,
+            "seconds": 7.815758249998908
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0016182090039364994,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "elapsed_seconds": 10.183583833000739,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "args": {
+              "question": "请根据已上传论文 attention.pdf 的原文，说明 Transformer 的编码器有多少层、输出维度 d_model 是多少。请给出文档名和页码引用。",
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.0017337080062134191
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0017654590046731755,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 10.228642125002807,
+            "observation": "知识库搜索失败，doc_id格式错误。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 1
+          },
+          {
+            "type": "thought",
+            "thought": "使用paper_metadata提取文档信息，再查找相关信息。",
+            "next_step": "tool",
+            "tool_name": "paper_metadata",
+            "parallel_tools": [
+              "paper_metadata"
+            ],
+            "elapsed_seconds": 5.843724999998813,
+            "iteration": 2
+          },
+          {
+            "type": "tool_call",
+            "name": "paper_metadata",
+            "call_id": "eab1aae303cc431fa91e40cde23ff162",
+            "args": {
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "elapsed_seconds": 7.772570624991204,
+            "iteration": 2
+          },
+          {
+            "type": "tool_result",
+            "name": "paper_metadata",
+            "call_id": "eab1aae303cc431fa91e40cde23ff162",
+            "args": {
+              "doc_id": "0816e9e9404042d09722542260054002"
+            },
+            "result": null,
+            "status": "error",
+            "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+            "error_kind": "input",
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "error",
+                "error": "ValueError: doc_id必须是上传文档的64位SHA-256内容指纹",
+                "error_kind": "input",
+                "elapsed_seconds": 0.0012310419988352805
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.0012552910047816113,
+            "iteration": 2
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 7.3366477499948815,
+            "observation": "paper_metadata工具也因doc_id格式错误而失败。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 2
+          },
+          {
+            "type": "thought",
+            "thought": "doc_id格式错误，需重新提供正确的文档指纹。",
+            "next_step": "answer",
+            "tool_name": null,
+            "parallel_tools": [],
+            "elapsed_seconds": 7.069690667005489,
+            "iteration": 3
+          },
+          {
+            "type": "action_skipped",
+            "reason": "Thought规划直接回答，无需执行工具。",
+            "iteration": 3
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 7.815758249998908,
+            "observation": "doc_id格式错误，需重新提供正确的文档指纹。",
+            "decision": "finish",
+            "task_complete": false,
+            "iteration": 3
+          },
+          {
+            "type": "done",
+            "task_complete": false,
+            "stop_reason": "incomplete",
+            "full_response": "当前知识库中未找到相关文档。请检查并提供正确的文档指纹。",
+            "iteration": 3
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "error",
+            "seconds": 0.0017654590046731755,
+            "attempts": 1,
+            "execution_mode": "serial"
+          },
+          {
+            "call_id": "eab1aae303cc431fa91e40cde23ff162",
+            "name": "paper_metadata",
+            "iteration": 2,
+            "status": "error",
+            "seconds": 0.0012552910047816113,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 2,
+          "successes": 0,
+          "failures": 2,
+          "pending": 0,
+          "success_rate": 0.0,
+          "mean_seconds": 0.0015103750047273934,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0017654590046731755
+            },
+            {
+              "name": "paper_metadata",
+              "started": 1,
+              "completed": 1,
+              "successes": 0,
+              "failures": 1,
+              "pending": 0,
+              "success_rate": 0.0,
+              "mean_seconds": 0.0012552910047816113
+            }
+          ]
+        },
+        "tokens": {
+          "input": null,
+          "output": null,
+          "total": null,
+          "known_total": 17849,
+          "unknown_calls": 2
+        },
+        "response_seconds": 56.53476229200896,
+        "retrievals": [
+          {
+            "call_id": "f0d37553f03f4156908a2ef20642d295",
+            "seconds": null
+          }
+        ]
+      },
+      "stop_reason": "incomplete",
+      "task_complete": false
+    }
+  ],
+  "rag_records": [],
+  "request_outcomes": [
+    {
+      "request_id": "dac7c5bc802e498aa630127732e9d2a8",
+      "event": "done",
+      "task_complete": false,
+      "stop_reason": "incomplete"
+    },
+    {
+      "request_id": "00457f92af964ce1a61359379f7defa3",
+      "event": "done",
+      "task_complete": false,
+      "stop_reason": "incomplete"
+    }
+  ],
+  "answer": "当前知识库中未找到相关文档。请检查并提供正确的文档指纹。"
+}

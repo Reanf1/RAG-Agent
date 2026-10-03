@@ -1,0 +1,121 @@
+.....F..........
+======================================================================
+FAIL: test_filename_only_search_omits_optional_id_and_executes_without_inventing_one (__main__.TestAction)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 513, in test_filename_only_search_omits_optional_id_and_executes_without_inventing_one
+    events, parameters = self.knowledge_action({"question": question}, question,
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 508, in knowledge_action
+    self.assertEqual(described["available_tools"], [spec["function"] for spec in payload["tools"]])
+AssertionError: Lists differ: [{'na[126 chars]ing'}, 'doc_id': {'anyOf': [{'type': 'string'}[80 chars]t'}}] != [{'na[126 chars]ing'}}, 'required': ['question'], 'type': 'obj[33 chars]se}}]
+
+First differing element 0:
+{'nam[125 chars]ing'}, 'doc_id': {'anyOf': [{'type': 'string'}[79 chars]ct'}}
+{'nam[125 chars]ing'}}, 'required': ['question'], 'type': 'obj[32 chars]lse}}
+
+  [{'description': '记录知识库工具实际收到的问题和可选论文指纹。',
+    'name': 'knowledge_base_search',
++   'parameters': {'additionalProperties': False,
+-   'parameters': {'properties': {'doc_id': {'anyOf': [{'type': 'string'},
+-                                                      {'type': 'null'}],
+-                                            'default': None},
+-                                 'question': {'type': 'string'}},
+?                  ^^^^^^^^^^^^^^^
+
++                  'properties': {'question': {'type': 'string'}},
+?                  ^^^^^^^^^^^^^^^
+
+                   'required': ['question'],
+                   'type': 'object'}}]
+
+======================================================================
+FAIL: test_unprovided_or_invalid_fingerprint_never_executes_tool (__main__.TestAction) (identifier='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 534, in test_unprovided_or_invalid_fingerprint_never_executes_tool
+    events, _ = self.knowledge_action({"question": "查询论文", "doc_id": identifier})
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 508, in knowledge_action
+    self.assertEqual(described["available_tools"], [spec["function"] for spec in payload["tools"]])
+AssertionError: Lists differ: [{'na[126 chars]ing'}, 'doc_id': {'anyOf': [{'type': 'string'}[80 chars]t'}}] != [{'na[126 chars]ing'}}, 'required': ['question'], 'type': 'obj[33 chars]se}}]
+
+First differing element 0:
+{'nam[125 chars]ing'}, 'doc_id': {'anyOf': [{'type': 'string'}[79 chars]ct'}}
+{'nam[125 chars]ing'}}, 'required': ['question'], 'type': 'obj[32 chars]lse}}
+
+  [{'description': '记录知识库工具实际收到的问题和可选论文指纹。',
+    'name': 'knowledge_base_search',
++   'parameters': {'additionalProperties': False,
+-   'parameters': {'properties': {'doc_id': {'anyOf': [{'type': 'string'},
+-                                                      {'type': 'null'}],
+-                                            'default': None},
+-                                 'question': {'type': 'string'}},
+?                  ^^^^^^^^^^^^^^^
+
++                  'properties': {'question': {'type': 'string'}},
+?                  ^^^^^^^^^^^^^^^
+
+                   'required': ['question'],
+                   'type': 'object'}}]
+
+======================================================================
+FAIL: test_unprovided_or_invalid_fingerprint_never_executes_tool (__main__.TestAction) (identifier='bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 534, in test_unprovided_or_invalid_fingerprint_never_executes_tool
+    events, _ = self.knowledge_action({"question": "查询论文", "doc_id": identifier})
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 508, in knowledge_action
+    self.assertEqual(described["available_tools"], [spec["function"] for spec in payload["tools"]])
+AssertionError: Lists differ: [{'na[126 chars]ing'}, 'doc_id': {'anyOf': [{'type': 'string'}[80 chars]t'}}] != [{'na[126 chars]ing'}}, 'required': ['question'], 'type': 'obj[33 chars]se}}]
+
+First differing element 0:
+{'nam[125 chars]ing'}, 'doc_id': {'anyOf': [{'type': 'string'}[79 chars]ct'}}
+{'nam[125 chars]ing'}}, 'required': ['question'], 'type': 'obj[32 chars]lse}}
+
+  [{'description': '记录知识库工具实际收到的问题和可选论文指纹。',
+    'name': 'knowledge_base_search',
++   'parameters': {'additionalProperties': False,
+-   'parameters': {'properties': {'doc_id': {'anyOf': [{'type': 'string'},
+-                                                      {'type': 'null'}],
+-                                            'default': None},
+-                                 'question': {'type': 'string'}},
+?                  ^^^^^^^^^^^^^^^
+
++                  'properties': {'question': {'type': 'string'}},
+?                  ^^^^^^^^^^^^^^^
+
+                   'required': ['question'],
+                   'type': 'object'}}]
+
+======================================================================
+FAIL: test_unprovided_or_invalid_fingerprint_never_executes_tool (__main__.TestAction) (identifier=['bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 534, in test_unprovided_or_invalid_fingerprint_never_executes_tool
+    events, _ = self.knowledge_action({"question": "查询论文", "doc_id": identifier})
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 508, in knowledge_action
+    self.assertEqual(described["available_tools"], [spec["function"] for spec in payload["tools"]])
+AssertionError: Lists differ: [{'na[126 chars]ing'}, 'doc_id': {'anyOf': [{'type': 'string'}[80 chars]t'}}] != [{'na[126 chars]ing'}}, 'required': ['question'], 'type': 'obj[33 chars]se}}]
+
+First differing element 0:
+{'nam[125 chars]ing'}, 'doc_id': {'anyOf': [{'type': 'string'}[79 chars]ct'}}
+{'nam[125 chars]ing'}}, 'required': ['question'], 'type': 'obj[32 chars]lse}}
+
+  [{'description': '记录知识库工具实际收到的问题和可选论文指纹。',
+    'name': 'knowledge_base_search',
++   'parameters': {'additionalProperties': False,
+-   'parameters': {'properties': {'doc_id': {'anyOf': [{'type': 'string'},
+-                                                      {'type': 'null'}],
+-                                            'default': None},
+-                                 'question': {'type': 'string'}},
+?                  ^^^^^^^^^^^^^^^
+
++                  'properties': {'question': {'type': 'string'}},
+?                  ^^^^^^^^^^^^^^^
+
+                   'required': ['question'],
+                   'type': 'object'}}]
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.220s
+
+FAILED (failures=4)
