@@ -118,9 +118,12 @@ with st.sidebar:
     else:
         st.caption("在左侧选择文档后，点击“开始导入”。")
 
+library = None  # 读取失败保持未知，不能显示为正常空库。
+library_error = ""
 with st.sidebar:
     st.subheader("知识库文档")
     st.caption("文档列表来自本地原文与索引；块数表示当前库中数量，不代表全部预期块均已导入。")
+    st.button("刷新知识库状态", key="refresh_knowledge")  # 点击触发页面重跑，重新读磁盘，不重新入库。
     if "document_notice" in st.session_state:
         st.info(st.session_state.pop("document_notice"))
     try:
@@ -130,6 +133,7 @@ with st.sidebar:
         for document in library:
             st.markdown(f"**{document['name']}**")
             st.caption(f"{document['doc_id'][:12]}… · {document['chunks']} 块 · "
+                       + ("已向量化 · " if document["chunks"] else "未向量化 · ")
                        + ("原文已保存" if document["source_available"] else "原文缺失"))
         if library:
             documents_by_id = {document["doc_id"]: document for document in library}
@@ -173,7 +177,8 @@ with st.sidebar:
                 st.session_state.document_notice = "原文已恢复，请查看本批导入状态；失败项可重试。"
                 st.rerun()
     except Exception as error:
-        st.error(f"文档管理失败：{type(error).__name__}: {error}。原文保留，请修正后重试。")
+        library_error = f"文档管理失败：{type(error).__name__}: {error}。原文保留，请修正后重试。"
+        st.error(library_error)
 
 def save_request(message, status):
     """日志故障明确提示，不能把已完成回答改成生成失败。"""
@@ -542,6 +547,38 @@ elif "agent_last_event" in st.session_state:
     show_agent_metrics(st.session_state.agent_last_event, show_answer=False)
 
 st.divider()
+with st.expander("知识库管理面板"):
+    st.caption("共享知识库按文档内容指纹汇总，回收文档不计入活动列表。已向量化仅表示当前有索引块，"
+               "不保证完整入库；导入结果/预期块数/错误仅来自当前页面批次，刷新后未知时显示“—”。")
+    if library is None:
+        st.error(library_error or "知识库状态读取失败，请修正后刷新。")
+    else:
+        summary = st.columns(3)
+        summary[0].metric("知识库文档数", len(library))
+        summary[1].metric("已向量化文档数", sum(document["chunks"] > 0 for document in library))
+        summary[2].metric("知识库索引块数", sum(document["chunks"] for document in library))
+        if not library:
+            st.info("知识库暂无文档，请在左侧上传并开始导入。")
+        else:
+            # 磁盘/Chroma为当前状态；本页批次仅补充最近处理结果，二者不能互相冒充。
+            batches = {}
+            for task in st.session_state.import_tasks:
+                batches.setdefault(sha256(task["data"]).hexdigest(), []).append(task)
+            rows = []
+            for document in library:
+                batch = batches.get(document["doc_id"], [])
+                # 同内容不同文件名只算一份文献，合并批次结果，不能隐藏其中一次失败。
+                states = ["待索引" if task["status"] == "success" and not task.get("indexed", False)
+                          else status_labels[task["status"]] for task in batch]
+                rows.append({"文件名": document["name"], "文档 ID": document["doc_id"],
+                             "原文状态": "已保存" if document["source_available"] else "缺失",
+                             "向量化状态": "已向量化" if document["chunks"] else "未向量化",
+                             "索引块数": document["chunks"], "导入结果（本页）": " / ".join(dict.fromkeys(states)) or "—",
+                             "本次预期块数": " / ".join(dict.fromkeys(str(task["chunk_count"]) for task in batch
+                                                                     if task.get("chunk_count"))) or "—",
+                             "错误（本页）": " / ".join(dict.fromkeys(task["error"] for task in batch if task["error"])) or "—"})
+            st.dataframe(rows, hide_index=True, width="stretch")
+
 st.subheader("检索实验与服务维护")
 st.subheader("文档 Top-K 检索")
 st.caption("此处只检索文档块；可选向量、BM25、RRF 或 RRF + 模型重排。各类分数不可直接比较，也不是命中概率。生成答案请使用下方 RAG 问答。")

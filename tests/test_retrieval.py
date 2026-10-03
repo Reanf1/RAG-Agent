@@ -1953,7 +1953,7 @@ class TestImportFrontend(unittest.TestCase):
         list(batch_import(loaded, Path(self.directory.name) / "raw"))
         app.session_state["import_tasks"] = loaded
         app.file_uploader[0].set_value([("good.txt", "中文正文".encode("utf-8"), "text/plain")]).run()
-        self.assertEqual(list(app.dataframe[0].value["状态"]), ["待索引"])
+        self.assertEqual(list(app.sidebar.dataframe[0].value["状态"]), ["待索引"])
         self.assertFalse(app.button(key="start_import").disabled)
         app.file_uploader[0].set_value([
             ("good.txt", "中文正文".encode("utf-8"), "text/plain"),
@@ -1961,8 +1961,8 @@ class TestImportFrontend(unittest.TestCase):
         ]).run()
         app.button(key="start_import").click().run()
         self.assertFalse(app.exception)
-        self.assertEqual(list(app.dataframe[0].value["状态"]), ["成功", "失败"])
-        self.assertEqual(list(app.dataframe[0].value["本次新增块"]), [1, 0])
+        self.assertEqual(list(app.sidebar.dataframe[0].value["状态"]), ["成功", "失败"])
+        self.assertEqual(list(app.sidebar.dataframe[0].value["本次新增块"]), [1, 0])
         self.assertTrue(app.session_state["import_tasks"][0]["indexed"])
         self.assertEqual(app.session_state["import_progress"], {"completed": 2, "total": 2})
         self.assertEqual(app.get("progress")[0].proto.value, 100)
@@ -2037,12 +2037,13 @@ class TestImportFrontend(unittest.TestCase):
         app.button(key="vector_search").click().run()
         self.assertFalse(app.exception)
         self.assertEqual([element.value for element in app.text], ["神经网络实验", "农业实验"])
-        self.assertIn("1. 论文A.pdf · 余弦相似度 1.0000", app.expander[0].label)
+        self.assertTrue(any("1. 论文A.pdf · 余弦相似度 1.0000" in panel.label for panel in app.expander))
         self.assertIn("来源：论文A.pdf；物理页码：2–3", [element.value for element in app.caption])
         app.number_input(key="vector_top_k").set_value(10)
         app.button(key="vector_search").click().run()
         self.assertEqual(len(app.text), 3)
-        self.assertIn("余弦相似度 -1.0000", app.expander[2].label)
+        self.assertTrue(any(panel.label.startswith("3. ") and "余弦相似度 -1.0000" in panel.label
+                            for panel in app.expander))
         self.assertEqual(self.embeddings.query_calls, ["神经网络", "神经网络"])
         self.assertEqual(self.embeddings.document_calls, [[chunk.page_content for chunk in chunks]])
 
@@ -2124,7 +2125,7 @@ class TestImportFrontend(unittest.TestCase):
             model.assert_not_called()
         self.assertFalse(app.exception)
         self.assertEqual([element.value for element in app.text], ["BatchNormalization"])
-        self.assertIn("BM25 分数 -", app.expander[0].label)
+        self.assertTrue(any("BM25 分数 -" in panel.label for panel in app.expander))
         self.assertIn("来源：论文.pdf；物理页码：2", [element.value for element in app.caption])
         self.assertEqual(self.embeddings.query_calls, [])
         app.text_input(key="vector_query").set_value("Normalization")
@@ -2190,7 +2191,7 @@ class TestImportFrontend(unittest.TestCase):
         app.button(key="vector_search").click().run()
         self.assertFalse(app.exception)
         self.assertEqual([element.value for element in app.text], ["BatchNormalization"])
-        self.assertIn("1. 论文B.docx · RRF 分数", app.expander[0].label)
+        self.assertTrue(any("1. 论文B.docx · RRF 分数" in panel.label for panel in app.expander))
         self.assertIn("来源：论文B.docx；段落：3", [element.value for element in app.caption])
         self.assertEqual(self.embeddings.query_calls, ["BatchNormalization"])
 
@@ -2263,7 +2264,7 @@ class TestImportFrontend(unittest.TestCase):
             self.assertEqual(len(model.return_value.predict.call_args.args[0]), 3)
         self.assertFalse(app.exception)
         self.assertEqual([element.value for element in app.text], ["农业 BatchNormalization", "BatchNormalization"])
-        self.assertIn("论文C.txt · 模型相关性分数 0.9000", app.expander[0].label)
+        self.assertTrue(any("论文C.txt · 模型相关性分数 0.9000" in panel.label for panel in app.expander))
         self.assertIn("来源：论文C.txt；行范围：2–3", [element.value for element in app.caption])
         self.assertIn("来源：论文B.docx；段落：3", [element.value for element in app.caption])
 
@@ -2402,6 +2403,138 @@ class TestImportFrontend(unittest.TestCase):
         app.button(key="retry_import").click().run()
         self.assertFalse(app.exception)
         self.assertEqual(VectorStore().count(), 1)
+
+
+    def knowledge_rows(self, app=None):
+        """按字段找到只读表格，避免依赖新增面板后的全局元素顺序。"""
+        return next(table.value for table in (app or self.app).dataframe if "向量化状态" in table.value.columns)
+
+    def test_knowledge_panel_empty_is_read_only(self):
+        """空库显示真实零值，刷新不会建向量库、编码或改变当前会话。"""
+        app = self.app
+        self.assertEqual({m.label: m.value for m in app.metric if m.label.startswith("知识库")
+                          or m.label == "已向量化文档数"},
+                         {"知识库文档数": "0", "已向量化文档数": "0", "知识库索引块数": "0"})
+        session = app.session_state["agent_session_id"]
+        app.button(key="refresh_knowledge").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(app.session_state["agent_session_id"], session)
+        self.assertFalse((Path(self.directory.name) / "index").exists())
+        self.assertEqual(self.embeddings.document_calls, [])
+
+    def test_knowledge_panel_tracks_failed_unindexed_and_refresh(self):
+        """成功与写入失败并存，刷新后磁盘状态仍准确但不补造本页批次结果。"""
+        from streamlit.testing.v1 import AppTest
+        app = self.app
+        app.file_uploader[0].set_value([("ok.txt", b"Adam", "text/plain"),
+                                       ("failed.txt", b"Failure", "text/plain")]).run()
+        original = VectorStore.add_chunks
+        def write_or_fail(store, chunks):
+            if chunks[0].metadata["source_file"] == "failed.txt":
+                raise OSError("测试索引写入失败")
+            return original(store, chunks)
+        with patch.object(VectorStore, "add_chunks", autospec=True, side_effect=write_or_fail):
+            app.button(key="start_import").click().run()
+        rows = self.knowledge_rows(app).set_index("文件名")
+        self.assertEqual(rows.loc["ok.txt", "向量化状态"], "已向量化")
+        self.assertEqual(rows.loc["failed.txt", "向量化状态"], "未向量化")
+        self.assertEqual(rows.loc["failed.txt", "导入结果（本页）"], "失败")
+        self.assertIn("索引写入失败", rows.loc["failed.txt", "错误（本页）"])
+        self.assertEqual({m.label: m.value for m in app.metric if m.label.startswith("知识库")
+                          or m.label == "已向量化文档数"},
+                         {"知识库文档数": "2", "已向量化文档数": "1", "知识库索引块数": "1"})
+        calls = len(self.embeddings.document_calls)
+        restored = AppTest.from_file(str(Path(__file__).resolve().parents[1] / "src/frontend/app.py"),
+                                     default_timeout=10).run()
+        rows = self.knowledge_rows(restored)
+        self.assertEqual(set(rows["导入结果（本页）"]), {"—"})
+        self.assertEqual(set(rows["向量化状态"]), {"已向量化", "未向量化"})
+        self.assertEqual(len(self.embeddings.document_calls), calls)
+        app.button(key="retry_import").click().run()
+        rows = self.knowledge_rows(app)
+        self.assertEqual(set(rows["向量化状态"]), {"已向量化"})
+        self.assertEqual(set(rows["导入结果（本页）"]), {"成功"})
+
+    def test_knowledge_panel_partial_index_does_not_claim_import_success(self):
+        """第二批失败时500块仍存在，面板同时保留失败/预期501块，重试补全。"""
+        import hashlib
+        app = self.app
+        data = b"Paper blocks"
+        doc_id = hashlib.sha256(data).hexdigest()
+        chunks = [Document(page_content=f"block {i}", metadata={"doc_id": doc_id,
+                  "chunk_id": f"block-{i}", "source_file": "partial.txt"}) for i in range(501)]
+        app.file_uploader[0].set_value([("partial.txt", data, "text/plain")]).run()
+        original = VectorStore.add_chunks
+        def fail_last_batch(store, batch):
+            if len(batch) == 1:
+                raise TimeoutError("第二批失败")
+            return original(store, batch)
+        with patch("src.chunking.split_documents", return_value=chunks), \
+                patch.object(VectorStore, "add_chunks", autospec=True, side_effect=fail_last_batch):
+            app.button(key="start_import").click().run()
+        row = self.knowledge_rows(app).iloc[0]
+        self.assertEqual(row["索引块数"], 500)
+        self.assertEqual(row["导入结果（本页）"], "失败")
+        self.assertEqual(row["本次预期块数"], "501")
+        self.assertTrue(any("不保证完整入库" in c.value for c in app.caption))
+        with patch("src.chunking.split_documents", return_value=chunks):
+            app.button(key="retry_import").click().run()
+        self.assertEqual(self.knowledge_rows(app).iloc[0]["索引块数"], 501)
+        self.assertEqual(len(self.embeddings.document_calls[-1]), 1)
+
+    def test_knowledge_panel_missing_source_and_external_index_change(self):
+        """只剩索引时明确原文缺失；外部移除块后刷新显示未向量化，不沿用旧批次成功。"""
+        app = self.app
+        app.file_uploader[0].set_value([("paper.txt", b"BERT", "text/plain")]).run()
+        app.button(key="start_import").click().run()
+        task = app.session_state["import_tasks"][0]
+        source = Path(task["path"])
+        source.unlink()
+        app.button(key="refresh_knowledge").click().run()
+        row = self.knowledge_rows(app).iloc[0]
+        self.assertEqual(row["原文状态"], "缺失")
+        self.assertEqual(row["向量化状态"], "已向量化")
+        self.assertTrue(app.button(key="delete_document").disabled)
+        source.write_bytes(b"BERT")
+        VectorStore().delete_document(row["文档 ID"])
+        app.button(key="refresh_knowledge").click().run()
+        row = self.knowledge_rows(app).iloc[0]
+        self.assertEqual(row["向量化状态"], "未向量化")
+        self.assertEqual(row["索引块数"], 0)
+        self.assertEqual(row["导入结果（本页）"], "成功")  # 原批次事实不能冒充当前索引状态。
+
+    def test_knowledge_panel_content_alias_keeps_both_batch_results(self):
+        """同内容异名按指纹合并，仍保留一个成功和另一个失败的实际结果。"""
+        app = self.app
+        app.file_uploader[0].set_value([("a.txt", b"BERT", "text/plain"),
+                                       ("b.txt", b"BERT", "text/plain")]).run()
+        original = VectorStore.add_chunks
+        def fail_alias(store, chunks):
+            if chunks[0].metadata["source_file"] == "b.txt":
+                raise OSError("第二个别名失败")
+            return original(store, chunks)
+        with patch.object(VectorStore, "add_chunks", autospec=True, side_effect=fail_alias):
+            app.button(key="start_import").click().run()
+        rows = self.knowledge_rows(app)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows.iloc[0]["文件名"], "a.txt / b.txt")
+        self.assertEqual(rows.iloc[0]["索引块数"], 1)
+        self.assertEqual(rows.iloc[0]["导入结果（本页）"], "成功 / 失败")
+        self.assertIn("第二个别名失败", rows.iloc[0]["错误（本页）"])
+
+    def test_knowledge_panel_index_error_is_unknown_not_zero(self):
+        """索引不可读不显示正常空库或捏造零统计，修复后刷新重新读取。"""
+        app = self.app
+        app.file_uploader[0].set_value([("paper.txt", b"BERT", "text/plain")]).run()
+        app.button(key="start_import").click().run()
+        with patch("src.frontend.components.documents.VectorStore.list_chunks", side_effect=RuntimeError("索引不可读")):
+            app.button(key="refresh_knowledge").click().run()
+        self.assertFalse(app.exception)
+        self.assertTrue(any("索引不可读" in e.value for e in app.error))
+        self.assertFalse([m for m in app.metric if m.label.startswith("知识库")])
+        self.assertFalse([d for d in app.dataframe if "向量化状态" in d.value.columns])
+        app.button(key="refresh_knowledge").click().run()
+        self.assertEqual(self.knowledge_rows(app).iloc[0]["索引块数"], 1)
 
 
 class TestDocumentManagement(unittest.TestCase):
