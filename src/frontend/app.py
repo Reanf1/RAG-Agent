@@ -25,7 +25,7 @@ from src.retrieval.hybrid_retriever import HybridRetriever
 from src.utils.logger import (record_rag_request, request_time, retrieval_score_distribution,
                               retrieval_request_metrics)
 from src.retrieval.vector_store import VectorStore, batch_build_index
-from src.utils.config import load_config
+from src.utils.config import check_health, load_config
 
 config = load_config()
 app_config = config["app"]
@@ -36,6 +36,30 @@ st.set_page_config(page_title=app_config["name"], layout="wide")
 st.title(app_config["name"])
 st.caption(app_config["description"])
 st.info("上传文档后增量写入本地知识库；下方 RAG 问答使用混合检索与模型重排，本地模型逐步输出答案并补全文献引用。")
+
+with st.container(border=True):
+    st.markdown("**系统健康检查**")
+    st.caption("按需检查本地LLM服务和现有Chroma索引，不生成回答或写入文档。状态为上次检查快照，不代表推理或检索质量。")
+    if st.button("检查服务状态", key="check_health"):
+        with st.spinner("正在检查本地服务与索引…"):
+            st.session_state.health_result = check_health()
+    if "health_result" in st.session_state:
+        health = st.session_state.health_result
+        st.caption(f"检查时间：{health['checked_at']} · {'两项检查正常' if health['status'] == 'ok' else '存在未就绪或异常组件'}")
+        for name, key in (("LLM服务", "llm"), ("向量数据库", "vector_database")):
+            component = health[key]
+            text = f"{name}：{component['detail']}（检查耗时{component['seconds']:.3f}秒）"
+            if component["status"] == "ok":
+                st.success(text)
+            elif component["status"] in {"not_initialized", "model_missing"}:
+                st.warning(text)
+            else:
+                st.error(text)
+        st.caption(f"配置模型：{health['llm'].get('model', '未报告')}")
+        if health["vector_database"]["chunks"] is not None:
+            st.caption(f"集合：{health['vector_database']['collection']} · 文档块数：{health['vector_database']['chunks']}")
+    else:
+        st.info("尚未检查；点击按钮获取当前状态。")
 
 # 导入状态仅存于当前页面会话，原始文件成功加载后保存到本地。
 if "import_tasks" not in st.session_state:
@@ -513,7 +537,7 @@ st.table(
         {"模块": "一：文档处理与检索", "状态": "部分实现", "范围": "已实现批量导入、分块、增量索引、向量/BM25/RRF 与模型重排；三档质量已评测，分块召回对比待完成"},
         {"模块": "二：RAG 生成", "状态": "已实现", "范围": "已实现 Prompt、上下文/引用、本地生成、流式、缓存、降级、请求日志与分数分布，完成参数对照；独立答案质量评测待完成"},
         {"模块": "三：Agent 决策", "状态": "已实现", "范围": "有界ReAct、八个本地工具、路由/并行/恢复、会话隔离与窗口/摘要记忆"},
-        {"模块": "四：系统集成与前端", "状态": "部分实现", "范围": "已有文档入库、RAG/Agent问答、会话记忆、决策轨迹与Token/检索/工具指标；历史会话管理与健康检查待开发"},
+        {"模块": "四：系统集成与前端", "状态": "部分实现", "范围": "已有文档入库、RAG/Agent问答、会话记忆、决策轨迹、实时指标与健康检查；历史会话及全知识库管理待开发"},
         {"模块": "五：评测与交付", "状态": "部分实现", "范围": "已有三档检索实测、图表与 Excel；完整系统评测待完成"},
     ]
 )

@@ -1,0 +1,147 @@
+{
+  "scope": "真实本地Ollama模型列表、现有Chroma读操作；未执行生成、Embedding或向量查询。异常路径使用临时目录。",
+  "rows": [
+    {
+      "name": "configured_service_and_index",
+      "result": {
+        "status": "ok",
+        "checked_at": "2026-10-03T00:48:49.132435+08:00",
+        "llm": {
+          "status": "ok",
+          "service_reachable": true,
+          "model_available": true,
+          "model": "qwen2.5:7b",
+          "detail": "本地服务可访问，配置模型已安装；未执行推理。",
+          "seconds": 0.056079667003359646
+        },
+        "vector_database": {
+          "status": "ok",
+          "chunks": 0,
+          "collection": "paper_chunks",
+          "detail": "Chroma心跳、集合配置及块数读取正常；未执行向量检索。",
+          "seconds": 0.0014658750005764887
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "model_missing",
+      "result": {
+        "status": "degraded",
+        "checked_at": "2026-10-03T00:48:49.137457+08:00",
+        "llm": {
+          "status": "model_missing",
+          "service_reachable": true,
+          "model_available": false,
+          "model": "health-check-not-installed:latest",
+          "detail": "本地服务可访问，但配置模型未安装；请先准备对应模型。",
+          "seconds": 0.0034365839965175837
+        },
+        "vector_database": {
+          "status": "ok",
+          "chunks": 0,
+          "collection": "paper_chunks",
+          "detail": "Chroma心跳、集合配置及块数读取正常；未执行向量检索。",
+          "seconds": 0.0013862920022802427
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "service_unavailable",
+      "result": {
+        "status": "degraded",
+        "checked_at": "2026-10-03T00:48:49.141989+08:00",
+        "llm": {
+          "status": "error",
+          "service_reachable": false,
+          "model_available": null,
+          "model": "qwen2.5:7b",
+          "detail": "ConnectError: [Errno 61] Connection refused。请检查Ollama启动状态、模型配置和服务地址后重试。",
+          "seconds": 0.002960125006211456
+        },
+        "vector_database": {
+          "status": "ok",
+          "chunks": 0,
+          "collection": "paper_chunks",
+          "detail": "Chroma心跳、集合配置及块数读取正常；未执行向量检索。",
+          "seconds": 0.0014331250058603473
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "index_not_initialized",
+      "result": {
+        "status": "degraded",
+        "checked_at": "2026-10-03T00:48:49.145852+08:00",
+        "llm": {
+          "status": "ok",
+          "service_reachable": true,
+          "model_available": true,
+          "model": "qwen2.5:7b",
+          "detail": "本地服务可访问，配置模型已安装；未执行推理。",
+          "seconds": 0.003331332998641301
+        },
+        "vector_database": {
+          "status": "not_initialized",
+          "chunks": null,
+          "collection": "paper_chunks",
+          "detail": "尚未建立Chroma索引，请先导入文档；本次检查未自动建库。",
+          "seconds": 7.5459000072442e-05
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "existing_empty_index",
+      "result": {
+        "status": "ok",
+        "checked_at": "2026-10-03T00:48:49.169605+08:00",
+        "llm": {
+          "status": "ok",
+          "service_reachable": true,
+          "model_available": true,
+          "model": "qwen2.5:7b",
+          "detail": "本地服务可访问，配置模型已安装；未执行推理。",
+          "seconds": 0.0035170000046491623
+        },
+        "vector_database": {
+          "status": "ok",
+          "chunks": 0,
+          "collection": "paper_chunks",
+          "detail": "Chroma心跳、集合配置及块数读取正常；未执行向量检索。",
+          "seconds": 0.0017279579988098703
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "corrupt_index",
+      "result": {
+        "status": "degraded",
+        "checked_at": "2026-10-03T00:48:49.174065+08:00",
+        "llm": {
+          "status": "ok",
+          "service_reachable": true,
+          "model_available": true,
+          "model": "qwen2.5:7b",
+          "detail": "本地服务可访问，配置模型已安装；未执行推理。",
+          "seconds": 0.0032694589972379617
+        },
+        "vector_database": {
+          "status": "error",
+          "chunks": null,
+          "collection": "paper_chunks",
+          "detail": "DatabaseError: file is not a database。请检查索引目录、权限和集合配置后重试。",
+          "seconds": 0.0007583329934277572
+        }
+      },
+      "passed": true
+    }
+  ],
+  "missing_directory_preserved": true,
+  "index_unchanged": true,
+  "existing_chunks": 0,
+  "passed": true
+}
