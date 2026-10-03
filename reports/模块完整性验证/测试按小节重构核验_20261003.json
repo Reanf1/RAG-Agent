@@ -1,0 +1,434 @@
+{
+  "date": "2026-10-03",
+  "passed": true,
+  "before_tests": 633,
+  "after_tests": 633,
+  "test_file_count": 42,
+  "section_count": 16,
+  "class_methods_compared": 726,
+  "class_methods_unchanged": true,
+  "allowed_class_source_changes": [
+    "项目根目录 parents[1] → parents[2]",
+    "SmallEmbeddings 导入 tests.test_retrieval → tests.helpers"
+  ],
+  "shared_fixture_behavior_unchanged": {
+    "SmallEmbeddings": true,
+    "StreamingResponse": true
+  },
+  "files": {
+    "tests/5_1_1 文档加载与批量导入/test_pdf_loader.py": {
+      "classes": [
+        "TestPDFLoader"
+      ],
+      "tests": 11
+    },
+    "tests/5_1_1 文档加载与批量导入/test_docx_loader.py": {
+      "classes": [
+        "TestDOCXLoader"
+      ],
+      "tests": 8
+    },
+    "tests/5_1_1 文档加载与批量导入/test_text_loader.py": {
+      "classes": [
+        "TestTextLoader"
+      ],
+      "tests": 8
+    },
+    "tests/5_1_1 文档加载与批量导入/test_batch_import.py": {
+      "classes": [
+        "TestBatchImport"
+      ],
+      "tests": 12
+    },
+    "tests/5_1_2 文本分块策略/test_chunking.py": {
+      "classes": [
+        "TestChunking"
+      ],
+      "tests": 21
+    },
+    "tests/5_1_2 文本分块策略/test_academic_pdf.py": {
+      "classes": [
+        "TestAcademicPDF"
+      ],
+      "tests": 17
+    },
+    "tests/5_1_3 向量化与存储/test_vector_store.py": {
+      "classes": [
+        "TestVectorStore"
+      ],
+      "tests": 15
+    },
+    "tests/5_1_3 向量化与存储/test_embeddings.py": {
+      "classes": [
+        "TestLocalEmbeddings",
+        "TestEmbeddingEvaluation"
+      ],
+      "tests": 5
+    },
+    "tests/5_1_3 向量化与存储/test_batch_index.py": {
+      "classes": [
+        "TestBatchIndex"
+      ],
+      "tests": 10
+    },
+    "tests/5_1_4 混合检索与重排序/test_bm25.py": {
+      "classes": [
+        "TestBM25Retriever"
+      ],
+      "tests": 11
+    },
+    "tests/5_1_4 混合检索与重排序/test_hybrid_retriever.py": {
+      "classes": [
+        "TestRRFFusion",
+        "TestHybridRetriever"
+      ],
+      "tests": 16
+    },
+    "tests/5_1_4 混合检索与重排序/test_reranker.py": {
+      "classes": [
+        "TestReranker",
+        "TestLocalReranker"
+      ],
+      "tests": 10
+    },
+    "tests/5_1_4 混合检索与重排序/test_retrieval_evaluation.py": {
+      "classes": [
+        "TestRetrievalEvaluation"
+      ],
+      "tests": 5
+    },
+    "tests/5_2_1 Prompt工程与生成策略/test_prompt.py": {
+      "classes": [
+        "TestRAGPrompt"
+      ],
+      "tests": 8
+    },
+    "tests/5_2_1 Prompt工程与生成策略/test_context.py": {
+      "classes": [
+        "TestContextBuilding"
+      ],
+      "tests": 16
+    },
+    "tests/5_2_1 Prompt工程与生成策略/test_citations.py": {
+      "classes": [
+        "TestCitations"
+      ],
+      "tests": 17
+    },
+    "tests/5_2_1 Prompt工程与生成策略/test_generation.py": {
+      "classes": [
+        "TestLocalGeneration",
+        "TestGenerationEvaluation"
+      ],
+      "tests": 16
+    },
+    "tests/5_2_2 流式输出与引用/test_streaming.py": {
+      "classes": [
+        "TestStreaming"
+      ],
+      "tests": 17
+    },
+    "tests/5_2_3 缓存与降级策略/test_degradation.py": {
+      "classes": [
+        "TestDegradationContext"
+      ],
+      "tests": 6
+    },
+    "tests/5_2_3 缓存与降级策略/test_cache.py": {
+      "classes": [
+        "TestSemanticCache"
+      ],
+      "tests": 14
+    },
+    "tests/5_2_4 日志与可观测性/test_rag_logging.py": {
+      "classes": [
+        "TestRAGLogging"
+      ],
+      "tests": 8
+    },
+    "tests/5_3_1 Agent核心循环/test_thought.py": {
+      "classes": [
+        "TestThought"
+      ],
+      "tests": 12
+    },
+    "tests/5_3_1 Agent核心循环/test_action.py": {
+      "classes": [
+        "TestAction"
+      ],
+      "tests": 17
+    },
+    "tests/5_3_1 Agent核心循环/test_observation.py": {
+      "classes": [
+        "TestObservationAndLoop"
+      ],
+      "tests": 14
+    },
+    "tests/5_3_1 Agent核心循环/test_system_prompt.py": {
+      "classes": [
+        "TestAgentSystemPrompt"
+      ],
+      "tests": 5
+    },
+    "tests/5_3_2 工具集开发/test_research_tools.py": {
+      "classes": [
+        "TestResearchTools"
+      ],
+      "tests": 21
+    },
+    "tests/5_3_2 工具集开发/test_comparison_keywords.py": {
+      "classes": [
+        "TestComparisonAndKeywords"
+      ],
+      "tests": 23
+    },
+    "tests/5_3_2 工具集开发/test_summary_time_search.py": {
+      "classes": [
+        "TestSummaryTimeSearch"
+      ],
+      "tests": 23
+    },
+    "tests/5_3_2 工具集开发/test_calculator_paper_list.py": {
+      "classes": [
+        "TestCalculatorAndPaperList"
+      ],
+      "tests": 20
+    },
+    "tests/5_3_3 Agent决策优化/test_routing_parallel.py": {
+      "classes": [
+        "TestRoutingAndParallel"
+      ],
+      "tests": 22
+    },
+    "tests/5_3_3 Agent决策优化/test_error_recovery.py": {
+      "classes": [
+        "TestErrorRecovery"
+      ],
+      "tests": 23
+    },
+    "tests/5_3_4 多轮对话记忆管理/test_session_isolation.py": {
+      "classes": [
+        "TestSessionIsolation"
+      ],
+      "tests": 23
+    },
+    "tests/5_3_4 多轮对话记忆管理/test_history_window.py": {
+      "classes": [
+        "TestHistoryTokenWindow"
+      ],
+      "tests": 14
+    },
+    "tests/5_3_4 多轮对话记忆管理/test_conversation_summary.py": {
+      "classes": [
+        "TestConversationSummary"
+      ],
+      "tests": 18
+    },
+    "tests/5_4_1 RAG与Agent深度融合/test_source_routing.py": {
+      "classes": [
+        "TestRAGSearchRouting"
+      ],
+      "tests": 18
+    },
+    "tests/5_4_1 RAG与Agent深度融合/test_memory_context.py": {
+      "classes": [
+        "TestAgentMemoryContext"
+      ],
+      "tests": 10
+    },
+    "tests/5_4_2 可观测性与健康检查/test_health_check.py": {
+      "classes": [
+        "TestHealthCheck",
+        "TestHealthCheckPage"
+      ],
+      "tests": 19
+    },
+    "tests/5_4_2 可观测性与健康检查/test_agent_metrics.py": {
+      "classes": [
+        "TestAgentMetrics",
+        "TestAgentTraceMetrics",
+        "TestAgentMetricsEntryAndPage"
+      ],
+      "tests": 37
+    },
+    "tests/5_4_3 前端与会话管理/test_document_management.py": {
+      "classes": [
+        "TestDocumentManagement"
+      ],
+      "tests": 6
+    },
+    "tests/5_4_3 前端与会话管理/test_chat_streaming.py": {
+      "classes": [
+        "TestStreamingFrontend"
+      ],
+      "tests": 24
+    },
+    "tests/5_4_3 前端与会话管理/test_conversation_history.py": {
+      "classes": [
+        "TestConversationHistory"
+      ],
+      "tests": 5
+    },
+    "tests/5_4_4 端到端联调与测试/test_document_flow.py": {
+      "classes": [
+        "TestImportFrontend"
+      ],
+      "tests": 28
+    }
+  },
+  "sections": {
+    "5_1_1 文档加载与批量导入": {
+      "tests": 39,
+      "discovery_passed": true
+    },
+    "5_1_2 文本分块策略": {
+      "tests": 38,
+      "discovery_passed": true
+    },
+    "5_1_3 向量化与存储": {
+      "tests": 30,
+      "discovery_passed": true
+    },
+    "5_1_4 混合检索与重排序": {
+      "tests": 42,
+      "discovery_passed": true
+    },
+    "5_2_1 Prompt工程与生成策略": {
+      "tests": 57,
+      "discovery_passed": true
+    },
+    "5_2_2 流式输出与引用": {
+      "tests": 17,
+      "discovery_passed": true
+    },
+    "5_2_3 缓存与降级策略": {
+      "tests": 20,
+      "discovery_passed": true
+    },
+    "5_2_4 日志与可观测性": {
+      "tests": 8,
+      "discovery_passed": true
+    },
+    "5_3_1 Agent核心循环": {
+      "tests": 48,
+      "discovery_passed": true
+    },
+    "5_3_2 工具集开发": {
+      "tests": 87,
+      "discovery_passed": true
+    },
+    "5_3_3 Agent决策优化": {
+      "tests": 45,
+      "discovery_passed": true
+    },
+    "5_3_4 多轮对话记忆管理": {
+      "tests": 55,
+      "discovery_passed": true
+    },
+    "5_4_1 RAG与Agent深度融合": {
+      "tests": 28,
+      "discovery_passed": true
+    },
+    "5_4_2 可观测性与健康检查": {
+      "tests": 56,
+      "discovery_passed": true
+    },
+    "5_4_3 前端与会话管理": {
+      "tests": 35,
+      "discovery_passed": true
+    },
+    "5_4_4 端到端联调与测试": {
+      "tests": 28,
+      "discovery_passed": true
+    }
+  },
+  "all_discovery_unique_tests": 633,
+  "module4_selected_tests": 170,
+  "external_entry_checks": [
+    {
+      "path": "tests/5_1_1 文档加载与批量导入/test_pdf_loader.py",
+      "arguments": [
+        "-q"
+      ],
+      "cwd": "/private/tmp",
+      "exit_code": 0,
+      "tests": 11,
+      "passed": true,
+      "summary": "----------------------------------------------------------------------\nRan 11 tests in 0.096s\n\nOK\n"
+    },
+    {
+      "path": "tests/5_2_2 流式输出与引用/test_streaming.py",
+      "arguments": [
+        "-q"
+      ],
+      "cwd": "/private/tmp",
+      "exit_code": 0,
+      "tests": 17,
+      "passed": true,
+      "summary": "----------------------------------------------------------------------\nRan 17 tests in 0.054s\n\nOK\n"
+    },
+    {
+      "path": "tests/5_3_1 Agent核心循环/test_action.py",
+      "arguments": [
+        "TestAction",
+        "-q"
+      ],
+      "cwd": "/private/tmp",
+      "exit_code": 0,
+      "tests": 17,
+      "passed": true,
+      "summary": "----------------------------------------------------------------------\nRan 17 tests in 0.213s\n\nOK\n"
+    },
+    {
+      "path": "tests/5_1_3 向量化与存储/test_batch_index.py",
+      "arguments": [
+        "-q"
+      ],
+      "cwd": "/private/tmp",
+      "exit_code": 0,
+      "tests": 10,
+      "passed": true,
+      "summary": "ng the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.\n  return self.model_fields  # pydantic 2.x\n----------------------------------------------------------------------\nRan 10 tests in 0.545s\n\nOK\nsys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute\n"
+    },
+    {
+      "path": "tests/5_4_3 前端与会话管理/test_document_management.py",
+      "arguments": [
+        "-q"
+      ],
+      "cwd": "/private/tmp",
+      "exit_code": 0,
+      "tests": 6,
+      "passed": true,
+      "summary": "ibute\n<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute\n<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute\n----------------------------------------------------------------------\nRan 6 tests in 0.543s\n\nOK\nsys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute\n"
+    },
+    {
+      "path": "tests/5_4_4 端到端联调与测试/test_document_flow.py",
+      "arguments": [
+        "-q"
+      ],
+      "cwd": "/private/tmp",
+      "exit_code": 0,
+      "tests": 28,
+      "passed": true,
+      "summary": "arning can be ignored when running in bare mode.\n2026-10-03 18:36:34.842 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n2026-10-03 18:36:35.283 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n----------------------------------------------------------------------\nRan 28 tests in 15.336s\n\nOK\n"
+    },
+    {
+      "mode": "section_discovery",
+      "section": "5_1_1 文档加载与批量导入",
+      "cwd": "/private/tmp",
+      "tests": 39,
+      "passed": true
+    }
+  ],
+  "regression": {
+    "path": "reports/模块完整性验证/测试按小节重构全量回归_20261003.json",
+    "run": 633,
+    "passed": true,
+    "elapsed_seconds": 40.53758133298834
+  },
+  "immutable_historical_files_checked": 335,
+  "local_markdown_links_checked": 1133,
+  "broken_links": [],
+  "boundary": "自动化模型HTTP/向量样例隔离；历史模型性能、浏览器证据及质量结论不改写。",
+  "verification_script_initial_issue": "首轮文件链接核验包含尚未生成的自身输出，检查顺序修正后复核；该问题不涉及测试失败。"
+}

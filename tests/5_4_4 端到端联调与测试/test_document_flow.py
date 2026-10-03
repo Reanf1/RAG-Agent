@@ -1,0 +1,662 @@
+"""5.4.4 端到端联调与测试：TestImportFrontend。"""
+
+import sys
+from pathlib import Path
+
+# 从其他目录直接运行测试文件时，也能定位 src 和共用样例。
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+
+import tempfile
+import unittest
+from unittest.mock import patch
+from langchain_core.documents import Document
+from src.data_loader import batch_import, create_import_tasks, load_document
+from src.retrieval.vector_store import VectorStore
+from tests.helpers import SmallEmbeddings
+
+
+class TestImportFrontend(unittest.TestCase):
+    """真实上传组件与 Chroma，隔离原文/索引；小型向量隔离大模型。"""
+
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        from src.utils.config import load_config
+        config = load_config()
+        config["paths"]["raw_documents"] = str(Path(self.directory.name) / "raw")
+        config["paths"]["session_db"] = str(Path(self.directory.name) / "memory.sqlite3")
+        config["paths"]["vector_index"] = str(Path(self.directory.name) / "index")
+        config["paths"]["logs"] = str(Path(self.directory.name) / "logs")
+        self.embeddings = SmallEmbeddings()
+        for target, value in (("src.utils.config.load_config", config),
+                              ("src.utils.logger.load_config", config),
+                              ("src.retrieval.vector_store.load_config", config),
+                              ("src.retrieval.hybrid_retriever.load_config", config),
+                              ("src.retrieval.reranker.load_config", config),
+                              ("src.retrieval.vector_store.get_embeddings", self.embeddings)):
+            patcher = patch(target, return_value=value)
+            patcher.start()
+            self.addCleanup(patcher.stop)
+        from streamlit.testing.v1 import AppTest
+        app_path = Path(__file__).resolve().parents[2] / "src/frontend/app.py"
+        # 新环境首次加载界面依赖较慢，避免默认 3 秒等待导致误报。
+        self.app = AppTest.from_file(str(app_path), default_timeout=10).run()
+
+    def test_batch_upload_progress_state_and_rerun(self):
+        """实际操作上传/按钮，核验混合结果、完整进度和重跑不重复执行。"""
+        app = self.app
+        self.assertTrue(app.button(key="start_import").disabled)
+        # 开发过程中页面可能保留上一阶段“只加载成功”的任务，不得显示索引成功。
+        loaded = create_import_tasks([("good.txt", "中文正文".encode("utf-8"))])
+        list(batch_import(loaded, Path(self.directory.name) / "raw"))
+        app.session_state["import_tasks"] = loaded
+        app.file_uploader[0].set_value([("good.txt", "中文正文".encode("utf-8"), "text/plain")]).run()
+        self.assertEqual(list(app.sidebar.dataframe[0].value["状态"]), ["待索引"])
+        self.assertFalse(app.button(key="start_import").disabled)
+        app.file_uploader[0].set_value([
+            ("good.txt", "中文正文".encode("utf-8"), "text/plain"),
+            ("bad.txt", b"\xff", "text/plain"),
+        ]).run()
+        app.button(key="start_import").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(list(app.sidebar.dataframe[0].value["状态"]), ["成功", "失败"])
+        self.assertEqual(list(app.sidebar.dataframe[0].value["本次新增块"]), [1, 0])
+        self.assertTrue(app.session_state["import_tasks"][0]["indexed"])
+        self.assertEqual(app.session_state["import_progress"], {"completed": 2, "total": 2})
+        self.assertEqual(app.get("progress")[0].proto.value, 100)
+        self.assertTrue(app.button(key="start_import").disabled)
+        self.assertFalse(app.button(key="retry_import").disabled)
+        app.button(key="retry_import").click().run()
+        self.assertEqual([t["attempts"] for t in app.session_state["import_tasks"]], [1, 2])
+        app.run()
+        self.assertEqual([t["attempts"] for t in app.session_state["import_tasks"]], [1, 2])
+
+    def test_oversized_upload_shows_failure_and_valid_file_still_indexes(self):
+        """AppTest绕过浏览器大小限制，验证20MiB后端保护与页面失败/重试状态。"""
+        app = self.app
+        app.file_uploader[0].set_value([("oversized.pdf", b"x" * (20 * 1024 * 1024 + 1), "application/pdf"),
+                                       ("valid.txt", b"Neural network", "text/plain")]).run()
+        with patch("src.data_loader.load_document", wraps=load_document) as loader:
+            app.button(key="start_import").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual([call.args[0].name for call in loader.call_args_list], ["valid.txt"])
+        tasks = app.session_state["import_tasks"]
+        self.assertEqual([task["status"] for task in tasks], ["failed", "success"])
+        self.assertIn("文件过大", tasks[0]["error"])
+        self.assertEqual(tasks[0]["path"], "")
+        self.assertFalse(tasks[0]["indexed"])
+        self.assertTrue(tasks[1]["indexed"])
+        self.assertEqual(list(app.sidebar.dataframe[0].value["状态"]), ["失败", "成功"])
+        self.assertFalse(app.button(key="retry_import").disabled)
+        app.button(key="retry_import").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual([task["attempts"] for task in app.session_state["import_tasks"]], [2, 1])
+        self.assertEqual(self.embeddings.document_calls, [["Neural network"]])
+
+    def test_failed_upload_recovers_and_disables_retry(self):
+        """页面通过失败按钮恢复成功，之后重试按钮禁用且文献存在。"""
+        app = self.app
+        app.file_uploader[0].set_value([("retry.txt", b"Retry", "text/plain")]).run()
+        with patch("src.data_loader.load_document", side_effect=OSError("暂时失败")):
+            app.button(key="start_import").click().run()
+        self.assertEqual(app.session_state["import_tasks"][0]["status"], "failed")
+        app.button(key="retry_import").click().run()
+        self.assertFalse(app.exception)
+        task = app.session_state["import_tasks"][0]
+        self.assertEqual(task["status"], "success")
+        self.assertEqual(task["attempts"], 2)
+        self.assertEqual(task["error"], "")
+        self.assertTrue(Path(task["path"]).is_file())
+        self.assertTrue(app.button(key="retry_import").disabled)
+
+    def test_new_upload_is_incremental_and_repeat_upload_skips_encoding(self):
+        """改变文件选择新增文献，重新选原文也不重算已有向量。"""
+        app = self.app
+        for filename, content in (("first.txt", b"First"), ("second.txt", b"Second"), ("first.txt", b"First")):
+            app.file_uploader[0].set_value([(filename, content, "text/plain")]).run()
+            app.button(key="start_import").click().run()
+            self.assertFalse(app.exception)
+        task = app.session_state["import_tasks"][0]
+        self.assertEqual(task["added_chunks"], 0)
+        self.assertEqual(task["index_total"], 2)
+        self.assertEqual(self.embeddings.document_calls, [["First"], ["Second"]])
+
+    def test_model_error_keeps_file_and_retry_completes_index(self):
+        """缺失本地模型时不误报成功，恢复模型后仅重试索引。"""
+        app = self.app
+        app.file_uploader[0].set_value([("retry.txt", b"Retry", "text/plain")]).run()
+        with patch("src.retrieval.vector_store.get_embeddings", side_effect=FileNotFoundError("本地模型不存在")):
+            app.button(key="start_import").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(app.session_state["import_tasks"][0]["status"], "failed")
+        self.assertTrue(Path(app.session_state["import_tasks"][0]["path"]).is_file())
+        with patch("src.data_loader.load_document", side_effect=AssertionError("不应重新加载")):
+            app.button(key="retry_import").click().run()
+        task = app.session_state["import_tasks"][0]
+        self.assertEqual(task["status"], "success")
+        self.assertTrue(task["indexed"])
+        self.assertEqual(task["added_chunks"], 1)
+        self.assertEqual(task["attempts"], 2)
+
+    def test_vector_search_uses_persisted_index_and_top_k(self):
+        """页面没有上传任务也能查旧库，展示排序、跨页来源与负相似度。"""
+        chunks = [
+            Document(page_content="神经网络实验", metadata={"chunk_id": "a1", "doc_id": "a",
+                     "source_file": "论文A.pdf", "page_number": 2, "page_end": 3}),
+            Document(page_content="农业实验", metadata={"chunk_id": "b1", "doc_id": "b",
+                     "source_file": "论文B.pdf", "page_number": 1}),
+            Document(page_content="反向向量实验", metadata={"chunk_id": "c1", "doc_id": "c",
+                     "source_file": "论文C.pdf", "page_number": 4}),
+        ]
+        VectorStore().add_chunks(chunks)
+        app = self.app
+        self.assertEqual(app.number_input(key="vector_top_k").value, 5)
+        self.assertEqual(app.session_state["import_tasks"], [])
+        app.text_input(key="vector_query").set_value("神经网络")
+        app.number_input(key="vector_top_k").set_value(2)
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual([element.value for element in app.text], ["神经网络实验", "农业实验"])
+        self.assertTrue(any("1. 论文A.pdf · 余弦相似度 1.0000" in panel.label for panel in app.expander))
+        self.assertIn("来源：论文A.pdf；物理页码：2–3", [element.value for element in app.caption])
+        app.number_input(key="vector_top_k").set_value(10)
+        app.button(key="vector_search").click().run()
+        self.assertEqual(len(app.text), 3)
+        self.assertTrue(any(panel.label.startswith("3. ") and "余弦相似度 -1.0000" in panel.label
+                            for panel in app.expander))
+        self.assertEqual(self.embeddings.query_calls, ["神经网络", "神经网络"])
+        self.assertEqual(self.embeddings.document_calls, [[chunk.page_content for chunk in chunks]])
+
+    def test_vector_search_document_filter_and_non_pdf_locations(self):
+        """文档过滤生效，Word 显示段落/表格、TXT 显示行号，不伪造页码。"""
+        VectorStore().add_chunks([
+            Document(page_content="Word 神经网络正文", metadata={"chunk_id": "w1", "doc_id": "word",
+                     "source_file": "论文.docx", "paragraph_index": 3}),
+            Document(page_content="反向表格", metadata={"chunk_id": "w2", "doc_id": "word",
+                     "source_file": "论文.docx", "table_index": 2}),
+            Document(page_content="农业文本", metadata={"chunk_id": "t1", "doc_id": "text",
+                     "source_file": "论文.txt", "line_start": 4, "line_end": 8}),
+        ])
+        app = self.app
+        app.text_input(key="vector_query").set_value("神经网络")
+        app.text_input(key="vector_doc_id").set_value(" word ")
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual([element.value for element in app.text], ["Word 神经网络正文", "反向表格"])
+        captions = [element.value for element in app.caption]
+        self.assertIn("来源：论文.docx；段落：3", captions)
+        self.assertIn("来源：论文.docx；表格：2", captions)
+        self.assertFalse(any("物理页码" in value for value in captions))
+        app.text_input(key="vector_query").set_value("农业")
+        app.text_input(key="vector_doc_id").set_value("text")
+        app.button(key="vector_search").click().run()
+        self.assertEqual([element.value for element in app.text], ["农业文本"])
+        self.assertIn("来源：论文.txt；行范围：4–8", [element.value for element in app.caption])
+        app.text_input(key="vector_doc_id").set_value("missing")
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.text)
+        self.assertTrue(any("没有可检索的文档块" in element.value for element in app.info))
+        self.assertEqual(self.embeddings.query_calls, ["神经网络", "农业"])
+
+    def test_vector_search_blank_input_and_empty_index(self):
+        """启动/空问题不初始化模型，空库明确提示且不计算查询向量。"""
+        app = self.app
+        with patch("src.retrieval.vector_store.get_embeddings") as model:
+            app.run()
+            app.text_input(key="vector_query").set_value("  ")
+            app.button(key="vector_search").click().run()
+            model.assert_not_called()
+        self.assertFalse(app.exception)
+        self.assertTrue(any("请输入查询内容" in element.value for element in app.warning))
+        app.text_input(key="vector_query").set_value("神经网络")
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.exception)
+        self.assertTrue(any("没有可检索的文档块" in element.value for element in app.info))
+        self.assertEqual(self.embeddings.query_calls, [])
+
+    def test_vector_search_errors_are_visible_and_retryable(self):
+        """模型/数据库失败明确报错，修复后重新提交可检索，不当作空库。"""
+        VectorStore().add_chunks([Document(page_content="神经网络", metadata={
+            "chunk_id": "a1", "doc_id": "a", "source_file": "论文.txt", "line_start": 1, "line_end": 1})])
+        app = self.app
+        app.text_input(key="vector_query").set_value("神经网络")
+        for target, error in (("src.retrieval.vector_store.get_embeddings", FileNotFoundError("本地模型不存在")),
+                              ("src.retrieval.vector_store.VectorStore.search", RuntimeError("数据库不可用"))):
+            with self.subTest(target=target), patch(target, side_effect=error):
+                app.button(key="vector_search").click().run()
+            self.assertFalse(app.exception)
+            self.assertTrue(any(str(error) in element.value for element in app.error))
+            self.assertFalse(any("没有可检索的文档块" in element.value for element in app.info))
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.exception)
+        self.assertFalse(app.error)
+        self.assertEqual([element.value for element in app.text], ["神经网络"])
+
+    def test_bm25_search_without_model_and_with_document_filter(self):
+        """页面 BM25 不加载权重，单文献负分仍展示正文、位置与 ID。"""
+        VectorStore().add_chunks([Document(page_content="BatchNormalization", metadata={
+            "chunk_id": "bn1", "doc_id": "bn", "source_file": "论文.pdf", "page_number": 2})])
+        app = self.app
+        app.selectbox(key="retrieval_method").set_value("BM25 关键词")
+        app.text_input(key="vector_query").set_value("BATCHNORMALIZATION")
+        app.text_input(key="vector_doc_id").set_value(" bn ")
+        with patch("src.retrieval.vector_store.get_embeddings", side_effect=AssertionError("不能加载模型")) as model:
+            app.button(key="vector_search").click().run()
+            model.assert_not_called()
+        self.assertFalse(app.exception)
+        self.assertEqual([element.value for element in app.text], ["BatchNormalization"])
+        self.assertTrue(any("BM25 分数 -" in panel.label for panel in app.expander))
+        self.assertIn("来源：论文.pdf；物理页码：2", [element.value for element in app.caption])
+        self.assertEqual(self.embeddings.query_calls, [])
+        app.text_input(key="vector_query").set_value("Normalization")
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.text)
+        self.assertTrue(any("关键词无匹配" in element.value for element in app.info))
+
+    def test_bm25_search_reflects_upload_and_delete(self):
+        """上传后每次查询读取当前语料，新文档立即可查，已删除文档不再出现。"""
+        app = self.app
+        app.file_uploader[0].set_value([("first.txt", b"BatchNormalization", "text/plain")]).run()
+        app.button(key="start_import").click().run()
+        first_doc_id = app.session_state["import_tasks"][0]["documents"][0].metadata["doc_id"]
+        app.selectbox(key="retrieval_method").set_value("BM25 关键词")
+        app.text_input(key="vector_query").set_value("BatchNormalization")
+        app.button(key="vector_search").click().run()
+        self.assertEqual([element.value for element in app.text], ["BatchNormalization"])
+        app.file_uploader[0].set_value([("second.txt", b"Adam", "text/plain")]).run()
+        app.button(key="start_import").click().run()
+        app.text_input(key="vector_query").set_value("Adam")
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual([element.value for element in app.text], ["Adam"])
+        VectorStore().delete_document(first_doc_id)
+        app.text_input(key="vector_query").set_value("BatchNormalization")
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.text)
+        self.assertEqual(self.embeddings.document_calls, [["BatchNormalization"], ["Adam"]])
+        self.assertEqual(self.embeddings.query_calls, [])
+
+    def test_bm25_database_error_is_visible_and_retryable(self):
+        """语料读取异常明确提示，恢复后重新提交可查，不静默切换检索方式。"""
+        VectorStore().add_chunks([Document(page_content="Adam", metadata={
+            "chunk_id": "a1", "doc_id": "a", "source_file": "论文.txt", "line_start": 1, "line_end": 1})])
+        app = self.app
+        app.selectbox(key="retrieval_method").set_value("BM25 关键词")
+        app.text_input(key="vector_query").set_value("Adam")
+        with patch("src.retrieval.vector_store.VectorStore.list_chunks", side_effect=RuntimeError("语料读取失败")):
+            app.button(key="vector_search").click().run()
+        self.assertFalse(app.exception)
+        self.assertTrue(any("语料读取失败" in element.value for element in app.error))
+        self.assertFalse(app.text)
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.exception)
+        self.assertFalse(app.error)
+        self.assertEqual([element.value for element in app.text], ["Adam"])
+        self.assertEqual(self.embeddings.query_calls, [])
+
+    def test_rrf_search_displays_fused_score_and_original_source(self):
+        """页面切换混合检索，共同命中的块排序提高，并保留 Word 位置。"""
+        VectorStore().add_chunks([
+            Document(page_content="神经网络", metadata={"chunk_id": "a", "doc_id": "a",
+                     "source_file": "论文A.pdf", "page_number": 1}),
+            Document(page_content="BatchNormalization", metadata={"chunk_id": "b", "doc_id": "b",
+                     "source_file": "论文B.docx", "paragraph_index": 3}),
+            Document(page_content="农业 BatchNormalization", metadata={"chunk_id": "c", "doc_id": "c",
+                     "source_file": "论文C.txt", "line_start": 1, "line_end": 1}),
+        ])
+        app = self.app
+        app.selectbox(key="retrieval_method").set_value("RRF 混合检索")
+        app.text_input(key="vector_query").set_value("BatchNormalization")
+        app.number_input(key="vector_top_k").set_value(1)
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual([element.value for element in app.text], ["BatchNormalization"])
+        self.assertTrue(any("1. 论文B.docx · RRF 分数" in panel.label for panel in app.expander))
+        self.assertIn("来源：论文B.docx；段落：3", [element.value for element in app.caption])
+        self.assertEqual(self.embeddings.query_calls, ["BatchNormalization"])
+
+    def test_rrf_empty_input_empty_store_and_model_error(self):
+        """空问题/空库无需权重；有数据但模型失败不静默改为 BM25。"""
+        app = self.app
+        app.selectbox(key="retrieval_method").set_value("RRF 混合检索")
+        with patch("src.retrieval.vector_store.get_embeddings", side_effect=AssertionError("不应加载模型")) as model:
+            app.button(key="vector_search").click().run()
+            app.text_input(key="vector_query").set_value("BERT")
+            app.button(key="vector_search").click().run()
+            model.assert_not_called()
+        self.assertFalse(app.exception)
+        self.assertFalse(app.error)
+        self.assertFalse(app.text)
+        VectorStore().add_chunks([Document(page_content="BERT", metadata={
+            "chunk_id": "b", "doc_id": "b", "source_file": "论文.txt", "line_start": 1, "line_end": 1})])
+        with patch("src.retrieval.vector_store.get_embeddings", side_effect=FileNotFoundError("本地模型不存在")):
+            app.button(key="vector_search").click().run()
+        self.assertFalse(app.exception)
+        self.assertTrue(any("本地模型不存在" in element.value for element in app.error))
+        self.assertFalse(app.text)
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.error)
+        self.assertEqual([element.value for element in app.text], ["BERT"])
+
+    def test_rrf_search_after_upload_and_database_recovery(self):
+        """新上传文档参加两路召回，数据库异常恢复后可查，删除过滤无陈旧块。"""
+        app = self.app
+        for filename, text in (("first.txt", b"BERT"), ("second.txt", b"Reranker")):
+            app.file_uploader[0].set_value([(filename, text, "text/plain")]).run()
+            app.button(key="start_import").click().run()
+        doc_id = app.session_state["import_tasks"][0]["documents"][0].metadata["doc_id"]
+        app.selectbox(key="retrieval_method").set_value("RRF 混合检索")
+        app.text_input(key="vector_query").set_value("Reranker")
+        app.number_input(key="vector_top_k").set_value(1)
+        with patch("src.retrieval.vector_store.VectorStore.list_chunks", side_effect=RuntimeError("语料读取失败")):
+            app.button(key="vector_search").click().run()
+        self.assertFalse(app.exception)
+        self.assertTrue(any("语料读取失败" in element.value for element in app.error))
+        self.assertFalse(app.text)
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.error)
+        self.assertEqual([element.value for element in app.text], ["Reranker"])
+        VectorStore().delete_document(doc_id)
+        app.text_input(key="vector_doc_id").set_value(doc_id)
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.text)
+        self.assertEqual(self.embeddings.document_calls, [["BERT"], ["Reranker"]])
+
+    def test_model_reranking_displays_new_order_score_and_sources(self):
+        """页面使用模型分数重新排列，保留 Word 段落与 TXT 行范围。"""
+        VectorStore().add_chunks([
+            Document(page_content="神经网络", metadata={"chunk_id": "a", "doc_id": "a",
+                     "source_file": "论文A.pdf", "page_number": 1}),
+            Document(page_content="BatchNormalization", metadata={"chunk_id": "b", "doc_id": "b",
+                     "source_file": "论文B.docx", "paragraph_index": 3}),
+            Document(page_content="农业 BatchNormalization", metadata={"chunk_id": "c", "doc_id": "c",
+                     "source_file": "论文C.txt", "line_start": 2, "line_end": 3}),
+        ])
+        app = self.app
+        app.selectbox(key="retrieval_method").set_value("RRF + 模型重排")
+        app.text_input(key="vector_query").set_value("BatchNormalization")
+        app.number_input(key="vector_top_k").set_value(2)
+        with patch("src.retrieval.reranker.get_reranker") as model:
+            # 按正文给出明确测试分数，模型无需与实际论文质量等同。
+            values = {"神经网络": 0.1, "BatchNormalization": 0.8, "农业 BatchNormalization": 0.9}
+            model.return_value.predict.side_effect = lambda pairs, **kwargs: [values[text] for _, text in pairs]
+            app.button(key="vector_search").click().run()
+            self.assertEqual(len(model.return_value.predict.call_args.args[0]), 3)
+        self.assertFalse(app.exception)
+        self.assertEqual([element.value for element in app.text], ["农业 BatchNormalization", "BatchNormalization"])
+        self.assertTrue(any("论文C.txt · 模型相关性分数 0.9000" in panel.label for panel in app.expander))
+        self.assertIn("来源：论文C.txt；行范围：2–3", [element.value for element in app.caption])
+        self.assertIn("来源：论文B.docx；段落：3", [element.value for element in app.caption])
+
+    def test_model_reranking_empty_cases_and_error_recovery(self):
+        """空问题/空库无需模型，模型缺失或推理失败有错误提示，修复后可重新提交。"""
+        app = self.app
+        app.selectbox(key="retrieval_method").set_value("RRF + 模型重排")
+        with patch("src.retrieval.reranker.get_reranker", side_effect=AssertionError("不应加载模型")) as model:
+            app.button(key="vector_search").click().run()
+            app.text_input(key="vector_query").set_value("BERT")
+            app.button(key="vector_search").click().run()
+            model.assert_not_called()
+        self.assertFalse(app.error)
+        VectorStore().add_chunks([Document(page_content="BERT", metadata={
+            "chunk_id": "b", "doc_id": "b", "source_file": "论文.txt", "line_start": 1, "line_end": 1})])
+        for message in ("重排模型不存在", "重排推理失败"):
+            with patch("src.retrieval.reranker.get_reranker", side_effect=RuntimeError(message)):
+                app.button(key="vector_search").click().run()
+            self.assertFalse(app.exception)
+            self.assertTrue(any(message in element.value for element in app.error))
+            self.assertFalse(app.text)
+        with patch("src.retrieval.reranker.get_reranker") as model:
+            model.return_value.predict.return_value = [0.8]
+            app.button(key="vector_search").click().run()
+        self.assertFalse(app.error)
+        self.assertEqual([element.value for element in app.text], ["BERT"])
+
+    def test_model_reranking_uploaded_document_filter_and_delete(self):
+        """新文献可精排，文档 ID 限定在模型评分前生效，删除后不加载重排模型。"""
+        app = self.app
+        for filename, text in (("first.txt", b"BERT"), ("second.txt", b"Reranker")):
+            app.file_uploader[0].set_value([(filename, text, "text/plain")]).run()
+            app.button(key="start_import").click().run()
+        doc_id = app.session_state["import_tasks"][0]["documents"][0].metadata["doc_id"]
+        app.selectbox(key="retrieval_method").set_value("RRF + 模型重排")
+        app.text_input(key="vector_query").set_value("Reranker")
+        app.text_input(key="vector_doc_id").set_value(doc_id)
+        with patch("src.retrieval.reranker.get_reranker") as model:
+            model.return_value.predict.return_value = [0.7]
+            app.button(key="vector_search").click().run()
+            self.assertEqual([element.value for element in app.text], ["Reranker"])
+            model.return_value.predict.assert_called_once_with(
+                [["Reranker", "Reranker"]], batch_size=8, show_progress_bar=False)
+            VectorStore().delete_document(doc_id)
+            model.reset_mock()
+            app.button(key="vector_search").click().run()
+            self.assertFalse(app.text)
+            model.assert_not_called()
+        self.assertFalse(app.exception)
+        self.assertEqual(self.embeddings.document_calls, [["BERT"], ["Reranker"]])
+
+
+    def test_layout_library_delete_cancel_restore_and_cache(self):
+        """真实页面上传、取消删除、删除和恢复均核验原文及Chroma。"""
+        from src.frontend.components.documents import list_documents
+        app = self.app
+        raw, index = Path(self.directory.name) / "raw", Path(self.directory.name) / "index"
+        app.file_uploader[0].set_value([("paper.md", b"Transformer uses six layers.", "text/markdown")]).run()
+        app.button(key="start_import").click().run()
+        doc_id = list_documents(raw, index)[0]["doc_id"]
+        self.assertEqual([tab.label for tab in app.tabs], ["Agent 科研助理", "RAG 流式问答"])
+        self.assertEqual(app.sidebar.get("progress")[0].proto.value, 100)
+        self.assertEqual(app.sidebar.selectbox(key="manage_doc_id").value, doc_id)
+        app.button(key="delete_document").click().run()
+        self.assertEqual(VectorStore().count(), 1)
+        app.button(key="cancel_delete_document").click().run()
+        self.assertTrue((raw / doc_id / "paper.md").is_file())
+        app.session_state["rag_cache"].clear = unittest.mock.Mock()
+        app.button(key="delete_document").click().run()
+        app.button(key="confirm_delete_document").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(VectorStore().count(), 0)
+        self.assertFalse((raw / doc_id).exists())
+        self.assertEqual((raw / ".trash" / doc_id / "paper.md").read_bytes(), b"Transformer uses six layers.")
+        self.assertEqual(app.session_state["import_tasks"], [])
+        self.assertFalse(app.button(key="start_import").disabled)
+        app.session_state["rag_cache"].clear.assert_called_once()
+        app.button(key="restore_document").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(VectorStore().count(), 1)
+        self.assertTrue(app.session_state["import_tasks"][0]["indexed"])
+        self.assertTrue((raw / doc_id / "paper.md").exists())
+        self.assertFalse((raw / ".trash" / doc_id).exists())
+        app.run()
+        self.assertEqual(VectorStore().count(), 1)
+
+    def test_delete_only_selected_document_keeps_other_index_and_progress(self):
+        """删除一份文献不会清空全库，保留任务的进度与真实列表一致。"""
+        app = self.app
+        app.file_uploader[0].set_value([("a.txt", b"Adam", "text/plain"),
+                                       ("b.txt", b"Transformer", "text/plain")]).run()
+        app.button(key="start_import").click().run()
+        app.button(key="delete_document").click().run()
+        app.button(key="confirm_delete_document").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(VectorStore().count(), 1)
+        self.assertEqual(VectorStore().list_chunks()[0].page_content, "Transformer")
+        self.assertEqual(app.session_state["import_progress"], {"completed": 1, "total": 1})
+        self.assertEqual(len(app.selectbox(key="manage_doc_id").options), 1)
+        app.selectbox(key="retrieval_method").set_value("BM25 关键词")
+        app.text_input(key="vector_query").set_value("Adam")
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.text)
+
+    def test_library_persists_without_upload_and_failure_keeps_original(self):
+        """页面重载读全库；索引删除失败会回滚原文且允许重试。"""
+        app = self.app
+        app.file_uploader[0].set_value([("keep.txt", b"Adam", "text/plain")]).run()
+        app.button(key="start_import").click().run()
+        app.session_state["import_tasks"] = []
+        app.file_uploader[0].set_value([]).run()
+        doc_id = app.selectbox(key="manage_doc_id").value
+        app.button(key="delete_document").click().run()
+        with patch("src.retrieval.vector_store.VectorStore.delete_document", side_effect=RuntimeError("索引删除失败")):
+            app.button(key="confirm_delete_document").click().run()
+        self.assertFalse(app.exception)
+        self.assertTrue(any("索引删除失败" in e.value for e in app.error))
+        self.assertEqual(VectorStore().count(), 1)
+        self.assertTrue((Path(self.directory.name) / "raw" / doc_id / "keep.txt").exists())
+        app.button(key="confirm_delete_document").click().run()
+        self.assertEqual(VectorStore().count(), 0)
+
+    def test_restore_index_failure_can_retry(self):
+        """回收原文恢复后模型失败，不冒充入库成功；现有失败重试补全索引。"""
+        app = self.app
+        app.file_uploader[0].set_value([("restore.txt", b"Neural network", "text/plain")]).run()
+        app.button(key="start_import").click().run()
+        app.button(key="delete_document").click().run()
+        app.button(key="confirm_delete_document").click().run()
+        with patch("src.retrieval.vector_store.get_embeddings", side_effect=FileNotFoundError("权重缺失")):
+            app.button(key="restore_document").click().run()
+        task = app.session_state["import_tasks"][0]
+        self.assertEqual(task["status"], "failed")
+        self.assertTrue(Path(task["path"]).exists())
+        self.assertEqual(VectorStore().count(), 0)
+        app.button(key="retry_import").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(VectorStore().count(), 1)
+
+
+    def knowledge_rows(self, app=None):
+        """按字段找到只读表格，避免依赖新增面板后的全局元素顺序。"""
+        return next(table.value for table in (app or self.app).dataframe if "向量化状态" in table.value.columns)
+
+    def test_knowledge_panel_empty_is_read_only(self):
+        """空库显示真实零值，刷新不会建向量库、编码或改变当前会话。"""
+        app = self.app
+        self.assertEqual({m.label: m.value for m in app.metric if m.label.startswith("知识库")
+                          or m.label == "已向量化文档数"},
+                         {"知识库文档数": "0", "已向量化文档数": "0", "知识库索引块数": "0"})
+        session = app.session_state["agent_session_id"]
+        app.button(key="refresh_knowledge").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(app.session_state["agent_session_id"], session)
+        self.assertFalse((Path(self.directory.name) / "index").exists())
+        self.assertEqual(self.embeddings.document_calls, [])
+
+    def test_knowledge_panel_tracks_failed_unindexed_and_refresh(self):
+        """成功与写入失败并存，刷新后磁盘状态仍准确但不补造本页批次结果。"""
+        from streamlit.testing.v1 import AppTest
+        app = self.app
+        app.file_uploader[0].set_value([("ok.txt", b"Adam", "text/plain"),
+                                       ("failed.txt", b"Failure", "text/plain")]).run()
+        original = VectorStore.add_chunks
+        def write_or_fail(store, chunks):
+            if chunks[0].metadata["source_file"] == "failed.txt":
+                raise OSError("测试索引写入失败")
+            return original(store, chunks)
+        with patch.object(VectorStore, "add_chunks", autospec=True, side_effect=write_or_fail):
+            app.button(key="start_import").click().run()
+        rows = self.knowledge_rows(app).set_index("文件名")
+        self.assertEqual(rows.loc["ok.txt", "向量化状态"], "已向量化")
+        self.assertEqual(rows.loc["failed.txt", "向量化状态"], "未向量化")
+        self.assertEqual(rows.loc["failed.txt", "导入结果（本页）"], "失败")
+        self.assertIn("索引写入失败", rows.loc["failed.txt", "错误（本页）"])
+        self.assertEqual({m.label: m.value for m in app.metric if m.label.startswith("知识库")
+                          or m.label == "已向量化文档数"},
+                         {"知识库文档数": "2", "已向量化文档数": "1", "知识库索引块数": "1"})
+        calls = len(self.embeddings.document_calls)
+        restored = AppTest.from_file(str(Path(__file__).resolve().parents[2] / "src/frontend/app.py"),
+                                     default_timeout=10).run()
+        rows = self.knowledge_rows(restored)
+        self.assertEqual(set(rows["导入结果（本页）"]), {"—"})
+        self.assertEqual(set(rows["向量化状态"]), {"已向量化", "未向量化"})
+        self.assertEqual(len(self.embeddings.document_calls), calls)
+        app.button(key="retry_import").click().run()
+        rows = self.knowledge_rows(app)
+        self.assertEqual(set(rows["向量化状态"]), {"已向量化"})
+        self.assertEqual(set(rows["导入结果（本页）"]), {"成功"})
+
+    def test_knowledge_panel_partial_index_does_not_claim_import_success(self):
+        """第二批失败时500块仍存在，面板同时保留失败/预期501块，重试补全。"""
+        import hashlib
+        app = self.app
+        data = b"Paper blocks"
+        doc_id = hashlib.sha256(data).hexdigest()
+        chunks = [Document(page_content=f"block {i}", metadata={"doc_id": doc_id,
+                  "chunk_id": f"block-{i}", "source_file": "partial.txt"}) for i in range(501)]
+        app.file_uploader[0].set_value([("partial.txt", data, "text/plain")]).run()
+        original = VectorStore.add_chunks
+        def fail_last_batch(store, batch):
+            if len(batch) == 1:
+                raise TimeoutError("第二批失败")
+            return original(store, batch)
+        with patch("src.chunking.split_documents", return_value=chunks), \
+                patch.object(VectorStore, "add_chunks", autospec=True, side_effect=fail_last_batch):
+            app.button(key="start_import").click().run()
+        row = self.knowledge_rows(app).iloc[0]
+        self.assertEqual(row["索引块数"], 500)
+        self.assertEqual(row["导入结果（本页）"], "失败")
+        self.assertEqual(row["本次预期块数"], "501")
+        self.assertTrue(any("不保证完整入库" in c.value for c in app.caption))
+        with patch("src.chunking.split_documents", return_value=chunks):
+            app.button(key="retry_import").click().run()
+        self.assertEqual(self.knowledge_rows(app).iloc[0]["索引块数"], 501)
+        self.assertEqual(len(self.embeddings.document_calls[-1]), 1)
+
+    def test_knowledge_panel_missing_source_and_external_index_change(self):
+        """只剩索引时明确原文缺失；外部移除块后刷新显示未向量化，不沿用旧批次成功。"""
+        app = self.app
+        app.file_uploader[0].set_value([("paper.txt", b"BERT", "text/plain")]).run()
+        app.button(key="start_import").click().run()
+        task = app.session_state["import_tasks"][0]
+        source = Path(task["path"])
+        source.unlink()
+        app.button(key="refresh_knowledge").click().run()
+        row = self.knowledge_rows(app).iloc[0]
+        self.assertEqual(row["原文状态"], "缺失")
+        self.assertEqual(row["向量化状态"], "已向量化")
+        self.assertTrue(app.button(key="delete_document").disabled)
+        source.write_bytes(b"BERT")
+        VectorStore().delete_document(row["文档 ID"])
+        app.button(key="refresh_knowledge").click().run()
+        row = self.knowledge_rows(app).iloc[0]
+        self.assertEqual(row["向量化状态"], "未向量化")
+        self.assertEqual(row["索引块数"], 0)
+        self.assertEqual(row["导入结果（本页）"], "成功")  # 原批次事实不能冒充当前索引状态。
+
+    def test_knowledge_panel_content_alias_keeps_both_batch_results(self):
+        """同内容异名按指纹合并，仍保留一个成功和另一个失败的实际结果。"""
+        app = self.app
+        app.file_uploader[0].set_value([("a.txt", b"BERT", "text/plain"),
+                                       ("b.txt", b"BERT", "text/plain")]).run()
+        original = VectorStore.add_chunks
+        def fail_alias(store, chunks):
+            if chunks[0].metadata["source_file"] == "b.txt":
+                raise OSError("第二个别名失败")
+            return original(store, chunks)
+        with patch.object(VectorStore, "add_chunks", autospec=True, side_effect=fail_alias):
+            app.button(key="start_import").click().run()
+        rows = self.knowledge_rows(app)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows.iloc[0]["文件名"], "a.txt / b.txt")
+        self.assertEqual(rows.iloc[0]["索引块数"], 1)
+        self.assertEqual(rows.iloc[0]["导入结果（本页）"], "成功 / 失败")
+        self.assertIn("第二个别名失败", rows.iloc[0]["错误（本页）"])
+
+    def test_knowledge_panel_index_error_is_unknown_not_zero(self):
+        """索引不可读不显示正常空库或捏造零统计，修复后刷新重新读取。"""
+        app = self.app
+        app.file_uploader[0].set_value([("paper.txt", b"BERT", "text/plain")]).run()
+        app.button(key="start_import").click().run()
+        with patch("src.frontend.components.documents.VectorStore.list_chunks", side_effect=RuntimeError("索引不可读")):
+            app.button(key="refresh_knowledge").click().run()
+        self.assertFalse(app.exception)
+        self.assertTrue(any("索引不可读" in e.value for e in app.error))
+        self.assertFalse([m for m in app.metric if m.label.startswith("知识库")])
+        self.assertFalse([d for d in app.dataframe if "向量化状态" in d.value.columns])
+        app.button(key="refresh_knowledge").click().run()
+        self.assertEqual(self.knowledge_rows(app).iloc[0]["索引块数"], 1)
+
+
+if __name__ == "__main__":
+    unittest.main()
