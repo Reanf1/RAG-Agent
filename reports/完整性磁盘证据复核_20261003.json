@@ -1,0 +1,31 @@
+{
+  "source": "reports/模块一至四最终真实联调_20261003.json",
+  "checks": {
+    "actual_sqlite_agent_history_matches_two_requests": true,
+    "actual_sqlite_rag_and_cache_snapshots_match": true,
+    "actual_restored_index_has_94_paper_and_one_incremental_chunk": true,
+    "actual_rag_reference_maps_to_restored_source": true,
+    "actual_logs_parse_and_two_agent_terminals_match": true,
+    "request_recording_proves_cache_did_not_make_second_stream_request": true,
+    "agent_token_totals_match_recorded_phase_calls": true,
+    "real_trace_graph_contains_tool_and_observation": true
+  },
+  "functional_evidence_passed": true,
+  "all_requirements_accepted": false,
+  "quality_checks": {
+    "first_answer_has_six_and_page_three": true,
+    "first_final_answer_keeps_source_filename": false
+  },
+  "manual_development_review": [
+    "参考2第3页明确支持N=6；参考4第5页讲自注意力，但该证据段未明确给出6层。",
+    "Agent最终答案遗漏来源文件名及引用编号。",
+    "计算器实际执行6*2=12；最终答案遗漏所要求算式。",
+    "缓存原样复用同一多余证据。"
+  ],
+  "remaining_requirements": [
+    "五组分块设置的检索召回对比",
+    "引用页跳转",
+    "Agent最终答案逐Token输出",
+    "独立答案与引用质量评测"
+  ]
+}

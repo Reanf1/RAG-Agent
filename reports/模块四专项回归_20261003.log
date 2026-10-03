@@ -1,0 +1,279 @@
+test_all_stages_receive_same_history_summary_and_rag_references (test_agent.TestAgentMemoryContext) ... ok
+test_direct_message_history_is_usable_by_react_and_done_is_json_ready (test_agent.TestAgentMemoryContext) ... ok
+test_invalid_context_stops_before_model_and_tool_io (test_agent.TestAgentMemoryContext) ... ok
+test_invalid_history_roles_and_intermediate_calls_are_not_archived (test_agent.TestAgentMemoryContext) ... ok
+test_langchain_and_native_role_history_normalize_to_same_snapshot (test_agent.TestAgentMemoryContext) ... ok
+test_native_messages_keep_roles_tool_name_and_argument_copy (test_agent.TestAgentMemoryContext) ... ok
+test_plain_dict_and_multimodal_native_messages_are_rejected (test_agent.TestAgentMemoryContext) ... ok
+test_rag_and_agent_native_requests_use_identical_message_conversion (test_agent.TestAgentMemoryContext) ... ok
+test_reopened_memory_context_keeps_budget_and_other_users_out (test_agent.TestAgentMemoryContext) ... ok
+test_two_round_public_entry_uses_memory_for_calculator_action (test_agent.TestAgentMemoryContext) ... ok
+test_failure_and_timeout_cannot_report_zero_tokens (test_agent.TestAgentMetrics) ... ok
+test_invalid_usage_is_not_zero_or_negative_consumption (test_agent.TestAgentMetrics) ... ok
+test_memory_summary_only_counts_current_calls_and_request_ids_change (test_agent.TestAgentMetrics) ... ok
+test_missing_usage_preserves_known_part_and_unknown_total (test_agent.TestAgentMetrics) ... ok
+test_no_retrieval_samples_do_not_show_zero_percent (test_agent.TestAgentMetrics) ... ok
+test_parallel_action_only_once_and_tool_usage_separate (test_agent.TestAgentMetrics) ... ok
+test_pending_generation_is_not_a_finished_response_latency (test_agent.TestAgentMetrics) ... ok
+test_rag_result_records_returned_count_and_real_retrieval_time (test_agent.TestAgentMetrics) ... ok
+test_retrieval_hit_rate_excludes_cache_not_called_and_failure (test_agent.TestAgentMetrics) ... ok
+test_retry_does_not_claim_only_final_usage_as_total (test_agent.TestAgentMetrics) ... ok
+test_rule_and_non_model_tool_can_report_true_zero (test_agent.TestAgentMetrics) ... ok
+test_snapshot_does_not_mutate_previous_event_or_input (test_agent.TestAgentMetrics) ... ok
+test_cancel_delete_archive_restore_preserve_history (test_agent.TestAgentMetricsEntryAndPage) ... 2026-10-03 17:35:41.470 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_central_chat_and_graph_survive_rerun_without_duplicate (test_agent.TestAgentMetricsEntryAndPage)
+中央展示真实问答，底部按调用ID画图；页面重跑不重复生成或追加历史。 ... 2026-10-03 17:35:43.101 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_close_after_first_event_logs_partial_request_without_half_turn (test_agent.TestAgentMetricsEntryAndPage) ... ok
+test_delete_database_failure_keeps_current_session_and_retry_works (test_agent.TestAgentMetricsEntryAndPage) ... 2026-10-03 17:35:43.646 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_failed_summary_is_not_hidden_from_request_usage (test_agent.TestAgentMetricsEntryAndPage) ... ok
+test_last_deleted_session_is_replaced_and_foreign_url_is_not_loaded (test_agent.TestAgentMetricsEntryAndPage) ... 2026-10-03 17:35:44.138 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-03 17:35:44.332 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_log_failure_does_not_destroy_successful_answer (test_agent.TestAgentMetricsEntryAndPage) ... ok
+test_new_switch_and_followup_use_only_selected_history (test_agent.TestAgentMetricsEntryAndPage)
+新会话无旧轨迹；切回A后续问的Context只包含A原始问答。 ... 2026-10-03 17:35:44.726 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_page_direct_answer_has_trace_and_no_tool_rate (test_agent.TestAgentMetricsEntryAndPage) ... 2026-10-03 17:35:45.505 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_page_is_lazy_and_shows_tool_tokens_without_reexecuting_on_rerun (test_agent.TestAgentMetricsEntryAndPage) ... 2026-10-03 17:35:45.805 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_page_shows_round_trace_stats_and_actual_error_without_reexecution (test_agent.TestAgentMetricsEntryAndPage) ... 2026-10-03 17:35:46.256 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_page_unknown_usage_and_incomplete_answer_are_both_visible (test_agent.TestAgentMetricsEntryAndPage) ... 2026-10-03 17:35:46.684 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_refresh_keeps_identity_history_incomplete_status_and_trace (test_agent.TestAgentMetricsEntryAndPage) ... 2026-10-03 17:35:47.051 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-03 17:35:47.365 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_session_log_trace_is_incremental_and_request_isolated (test_agent.TestAgentMetricsEntryAndPage) ... ok
+test_session_persists_incremental_metrics_identity_and_answer (test_agent.TestAgentMetricsEntryAndPage) ... ok
+test_deadline_failure_preserves_background_pending_fact (test_agent.TestAgentTraceMetrics) ... ok
+test_missing_or_invalid_time_is_not_reported_as_zero (test_agent.TestAgentTraceMetrics) ... ok
+test_no_tools_and_skipped_action_keep_no_samples (test_agent.TestAgentTraceMetrics) ... ok
+test_parallel_pending_calls_do_not_enter_success_rate_denominator (test_agent.TestAgentTraceMetrics) ... ok
+test_real_completed_timeout_retry_keeps_attempts_and_one_success (test_agent.TestAgentTraceMetrics) ... ok
+test_real_parallel_calls_keep_ids_modes_and_individual_time (test_agent.TestAgentTraceMetrics) ... ok
+test_retry_success_is_one_call_and_not_task_completion (test_agent.TestAgentTraceMetrics) ... ok
+test_same_tool_different_ids_and_duplicate_snapshot_count_once (test_agent.TestAgentTraceMetrics) ... ok
+test_snapshots_and_new_requests_do_not_share_trace (test_agent.TestAgentTraceMetrics) ... ok
+test_trace_keeps_all_parallel_actions_and_public_fields_only (test_agent.TestAgentTraceMetrics) ... ok
+test_archive_restore_keeps_turn_citations_and_summary (test_agent.TestConversationHistory) ... ok
+test_deleted_session_rejects_reads_writes_and_generation (test_agent.TestConversationHistory) ... ok
+test_invalid_details_never_save_half_turn (test_agent.TestConversationHistory) ... ok
+test_old_database_migration_keeps_ids_messages_and_summary (test_agent.TestConversationHistory) ... ok
+test_rag_and_trace_do_not_enter_agent_context_and_clear_is_scoped (test_agent.TestConversationHistory) ... ok
+test_disabled_latest_request_finishes_incomplete_without_tools (test_agent.TestRAGSearchRouting) ... ok
+test_disabled_latest_request_with_history_still_skips_all_io (test_agent.TestRAGSearchRouting) ... ok
+test_disabled_search_never_routes_latest_query_to_local_rag (test_agent.TestRAGSearchRouting) ... ok
+test_disabled_search_policy_uses_actual_registry (test_agent.TestRAGSearchRouting) ... ok
+test_enabled_search_policy_reports_availability (test_agent.TestRAGSearchRouting) ... ok
+test_enabled_search_runs_real_parser_without_touching_rag (test_agent.TestRAGSearchRouting) ... ok
+test_existing_context_and_negation_are_not_overridden (test_agent.TestRAGSearchRouting) ... ok
+test_existing_local_and_general_concept_routes_still_work (test_agent.TestRAGSearchRouting) ... ok
+test_explicit_registered_tool_is_not_replaced_by_freshness (test_agent.TestRAGSearchRouting) ... ok
+test_external_search_phrases_route_when_enabled (test_agent.TestRAGSearchRouting) ... ok
+test_grounded_rag_without_valid_citations_is_not_completed (test_agent.TestRAGSearchRouting) ... ok
+test_latest_external_papers_route_to_enabled_search (test_agent.TestRAGSearchRouting) ... ok
+test_local_scope_beats_freshness_words (test_agent.TestRAGSearchRouting) ... ok
+test_missing_tools_do_not_create_fake_routes (test_agent.TestRAGSearchRouting) ... ok
+test_mixed_local_and_external_sources_need_model_planning (test_agent.TestRAGSearchRouting) ... ok
+test_rag_action_observation_keeps_actual_sources_and_calls_retrieval_once (test_agent.TestRAGSearchRouting) ... ok
+test_search_failure_cannot_recover_via_local_old_papers (test_agent.TestRAGSearchRouting) ... ok
+test_source_policy_is_present_in_all_stages (test_agent.TestRAGSearchRouting) ... ok
+test_agent_foreign_access_fails_before_any_model_or_tool_call (test_agent.TestSessionIsolation) ... ok
+test_agent_persistence_failure_does_not_emit_successful_done_or_save_half_turn (test_agent.TestSessionIsolation) ... ok
+test_agent_request_context_is_fresh_and_does_not_reuse_prior_tool_state (test_agent.TestSessionIsolation) ... ok
+test_agent_requests_only_current_session_history_and_saves_finished_pair (test_agent.TestSessionIsolation) ... ok
+test_clear_only_current_owned_session_and_keep_identifier (test_agent.TestSessionIsolation) ... ok
+test_closing_agent_stream_saves_no_incomplete_turn (test_agent.TestSessionIsolation) ... ok
+test_concurrent_agent_requests_keep_model_context_history_and_logs_owned (test_agent.TestSessionIsolation)
+真实Agent/SQLite/日志并发；仅模型HTTP构造，屏障要求两请求同时到达。 ... ok
+test_default_manager_uses_configured_path (test_agent.TestSessionIsolation) ... ok
+test_different_users_keep_independent_history (test_agent.TestSessionIsolation) ... ok
+test_foreign_session_read_append_and_clear_are_rejected_without_changes (test_agent.TestSessionIsolation) ... ok
+test_incomplete_answer_is_saved_as_real_response_without_claiming_success (test_agent.TestSessionIsolation) ... ok
+test_invalid_identity_or_message_does_not_save_half_turn (test_agent.TestSessionIsolation) ... ok
+test_messages_keep_role_order_unicode_formula_and_markdown (test_agent.TestSessionIsolation) ... ok
+test_new_python_process_restores_persistent_history (test_agent.TestSessionIsolation) ... ok
+test_new_sessions_are_unique_empty_and_owned_lists_include_no_foreign_session (test_agent.TestSessionIsolation) ... ok
+test_reopening_manager_restores_both_users_without_shared_message_cache (test_agent.TestSessionIsolation) ... ok
+test_returned_message_mutation_does_not_modify_store_or_other_session (test_agent.TestSessionIsolation) ... ok
+test_same_session_concurrent_appends_do_not_overwrite_or_split_turns (test_agent.TestSessionIsolation) ... ok
+test_same_user_different_sessions_have_independent_history (test_agent.TestSessionIsolation) ... ok
+test_second_insert_failure_rolls_back_entire_turn (test_agent.TestSessionIsolation) ... ok
+test_sql_metacharacters_are_literal_identity_values (test_agent.TestSessionIsolation) ... ok
+test_threads_and_manager_instances_append_owned_sessions_without_cross_contamination (test_agent.TestSessionIsolation) ... ok
+test_unknown_session_is_not_implicitly_created (test_agent.TestSessionIsolation) ... ok
+test_cache_hit_logs_zero_current_tokens_and_no_new_retrieval_score (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:48.401 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_cache_write_failure_keeps_completed_answer_and_gives_notice (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:48.933 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_cancel_and_clear_remove_pending_request_without_generation (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:49.243 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_cancel_supersede_and_clear_keep_request_records (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:49.792 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_changed_generation_settings_do_not_reuse_old_answer (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:50.416 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_changed_knowledge_or_configuration_cannot_confirm_stale_context (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:50.812 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_empty_library_notice_and_retrieval_failure_never_hide_errors (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:51.368 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_empty_notice_and_error_advice_survive_history_rerun (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:51.749 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_history_rerun_does_not_generate_again_and_clear_removes_it (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:52.290 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_history_write_failure_is_visible_and_partial_text_is_kept (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:52.777 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_incomplete_stream_is_visible_error_with_partial_answer (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:53.060 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_interrupted_answer_is_not_cached_and_retry_calls_model (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:53.388 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_knowledge_change_and_clear_invalidate_cache (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:53.751 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_knowledge_changed_during_generation_does_not_store_stale_answer (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:54.345 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_logging_failure_warns_without_losing_completed_answer (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:54.660 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_low_relevance_waits_for_confirmation_then_generates_once (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:54.945 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_new_question_replaces_pending_low_relevance_question (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:55.586 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_page_start_is_lazy_and_chat_shows_sources_and_actual_usage (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:55.992 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_partial_failure_and_retrieval_failure_log_different_token_states (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:56.323 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_pending_confirmation_updates_one_log_and_one_score_sample (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:56.682 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_repeated_and_similar_questions_skip_retrieval_and_model_and_keep_sources (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:57.136 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_request_log_keeps_full_topk_separate_from_truncated_context (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:57.619 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_sessions_restore_rag_citations_after_switch_and_refresh (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:57.977 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-03 17:35:58.532 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_switch_cancels_low_relevance_request_without_generating (test_generation.TestStreamingFrontend) ... 2026-10-03 17:35:58.843 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_archive_conflict_preserves_source (test_retrieval.TestDocumentManagement) ... ok
+test_graph_parallel_ids_and_join (test_retrieval.TestDocumentManagement) ... ok
+test_missing_source_never_deletes_index (test_retrieval.TestDocumentManagement) ... ok
+test_reject_path_and_symlink (test_retrieval.TestDocumentManagement) ... ok
+test_restore_rejects_changed_content_and_no_overwrite (test_retrieval.TestDocumentManagement) ... ok
+test_unindexed_list_delete_restore_without_creating_database (test_retrieval.TestDocumentManagement) ... ok
+test_cloud_or_wrong_provider_is_rejected_without_network (test_retrieval.TestHealthCheck) ... ok
+test_connection_failure_does_not_skip_database_check (test_retrieval.TestHealthCheck) ... ok
+test_corrupt_sqlite_file_is_reported_as_database_error (test_retrieval.TestHealthCheck) ... ok
+test_database_heartbeat_failure_keeps_independent_llm_status (test_retrieval.TestHealthCheck) ... ok
+test_existing_empty_database_is_available_not_missing (test_retrieval.TestHealthCheck) ... ok
+test_http_error_and_redirect_do_not_report_reachable_service (test_retrieval.TestHealthCheck) ... ok
+test_index_version_or_parameters_mismatch_is_not_available (test_retrieval.TestHealthCheck) ... ok
+test_invalid_directory_or_backend_is_reported_as_database_error (test_retrieval.TestHealthCheck) ... ok
+test_invalid_json_or_model_list_is_error_not_model_missing (test_retrieval.TestHealthCheck) ... ok
+test_missing_collection_never_creates_a_new_collection (test_retrieval.TestHealthCheck) ... ok
+test_missing_index_never_creates_directory_or_database (test_retrieval.TestHealthCheck) ... ok
+test_model_without_tag_matches_latest_only (test_retrieval.TestHealthCheck) ... ok
+test_network_timeout_has_friendly_error_and_three_second_limit (test_retrieval.TestHealthCheck) ... ok
+test_nonempty_database_keeps_chunks_metadata_and_no_embedding_calls (test_retrieval.TestHealthCheck) ... ok
+test_reachable_service_missing_configured_model_is_not_ready (test_retrieval.TestHealthCheck) ... ok
+test_failed_llm_and_missing_index_are_visible_independently (test_retrieval.TestHealthCheckPage) ... 2026-10-03 17:35:59.698 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_manual_check_shows_both_results_and_rerun_does_not_probe_again (test_retrieval.TestHealthCheckPage) ... 2026-10-03 17:36:00.028 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_missing_model_and_database_failure_are_not_green (test_retrieval.TestHealthCheckPage) ... 2026-10-03 17:36:00.538 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_page_startup_does_not_probe_service_or_create_health_snapshot (test_retrieval.TestHealthCheckPage) ... 2026-10-03 17:36:00.830 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_batch_upload_progress_state_and_rerun (test_retrieval.TestImportFrontend)
+实际操作上传/按钮，核验混合结果、完整进度和重跑不重复执行。 ... 2026-10-03 17:36:01.035 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-03 17:36:01.232 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_bm25_database_error_is_visible_and_retryable (test_retrieval.TestImportFrontend)
+语料读取异常明确提示，恢复后重新提交可查，不静默切换检索方式。 ... 2026-10-03 17:36:01.711 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_bm25_search_reflects_upload_and_delete (test_retrieval.TestImportFrontend)
+上传后每次查询读取当前语料，新文档立即可查，已删除文档不再出现。 ... 2026-10-03 17:36:02.134 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_bm25_search_without_model_and_with_document_filter (test_retrieval.TestImportFrontend)
+页面 BM25 不加载权重，单文献负分仍展示正文、位置与 ID。 ... 2026-10-03 17:36:02.976 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_delete_only_selected_document_keeps_other_index_and_progress (test_retrieval.TestImportFrontend)
+删除一份文献不会清空全库，保留任务的进度与真实列表一致。 ... 2026-10-03 17:36:03.391 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_failed_upload_recovers_and_disables_retry (test_retrieval.TestImportFrontend)
+页面通过失败按钮恢复成功，之后重试按钮禁用且文献存在。 ... 2026-10-03 17:36:04.092 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_knowledge_panel_content_alias_keeps_both_batch_results (test_retrieval.TestImportFrontend)
+同内容异名按指纹合并，仍保留一个成功和另一个失败的实际结果。 ... 2026-10-03 17:36:04.590 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_knowledge_panel_empty_is_read_only (test_retrieval.TestImportFrontend)
+空库显示真实零值，刷新不会建向量库、编码或改变当前会话。 ... 2026-10-03 17:36:04.988 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_knowledge_panel_index_error_is_unknown_not_zero (test_retrieval.TestImportFrontend)
+索引不可读不显示正常空库或捏造零统计，修复后刷新重新读取。 ... 2026-10-03 17:36:05.269 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_knowledge_panel_missing_source_and_external_index_change (test_retrieval.TestImportFrontend)
+只剩索引时明确原文缺失；外部移除块后刷新显示未向量化，不沿用旧批次成功。 ... 2026-10-03 17:36:05.878 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_knowledge_panel_partial_index_does_not_claim_import_success (test_retrieval.TestImportFrontend)
+第二批失败时500块仍存在，面板同时保留失败/预期501块，重试补全。 ... 2026-10-03 17:36:06.466 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_knowledge_panel_tracks_failed_unindexed_and_refresh (test_retrieval.TestImportFrontend)
+成功与写入失败并存，刷新后磁盘状态仍准确但不补造本页批次结果。 ... 2026-10-03 17:36:07.088 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-03 17:36:07.482 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_layout_library_delete_cancel_restore_and_cache (test_retrieval.TestImportFrontend)
+真实页面上传、取消删除、删除和恢复均核验原文及Chroma。 ... 2026-10-03 17:36:07.819 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_library_persists_without_upload_and_failure_keeps_original (test_retrieval.TestImportFrontend)
+页面重载读全库；索引删除失败会回滚原文且允许重试。 ... 2026-10-03 17:36:08.793 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-03 17:36:09.240 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_model_error_keeps_file_and_retry_completes_index (test_retrieval.TestImportFrontend)
+缺失本地模型时不误报成功，恢复模型后仅重试索引。 ... 2026-10-03 17:36:09.576 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_model_reranking_displays_new_order_score_and_sources (test_retrieval.TestImportFrontend)
+页面使用模型分数重新排列，保留 Word 段落与 TXT 行范围。 ... 2026-10-03 17:36:10.107 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_model_reranking_empty_cases_and_error_recovery (test_retrieval.TestImportFrontend)
+空问题/空库无需模型，模型缺失或推理失败有错误提示，修复后可重新提交。 ... 2026-10-03 17:36:10.454 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_model_reranking_uploaded_document_filter_and_delete (test_retrieval.TestImportFrontend)
+新文献可精排，文档 ID 限定在模型评分前生效，删除后不加载重排模型。 ... 2026-10-03 17:36:11.132 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_new_upload_is_incremental_and_repeat_upload_skips_encoding (test_retrieval.TestImportFrontend)
+改变文件选择新增文献，重新选原文也不重算已有向量。 ... 2026-10-03 17:36:11.897 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_oversized_upload_shows_failure_and_valid_file_still_indexes (test_retrieval.TestImportFrontend)
+AppTest绕过浏览器大小限制，验证20MiB后端保护与页面失败/重试状态。 ... 2026-10-03 17:36:12.658 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_restore_index_failure_can_retry (test_retrieval.TestImportFrontend)
+回收原文恢复后模型失败，不冒充入库成功；现有失败重试补全索引。 ... 2026-10-03 17:36:13.257 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_rrf_empty_input_empty_store_and_model_error (test_retrieval.TestImportFrontend)
+空问题/空库无需权重；有数据但模型失败不静默改为 BM25。 ... 2026-10-03 17:36:14.058 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_rrf_search_after_upload_and_database_recovery (test_retrieval.TestImportFrontend)
+新上传文档参加两路召回，数据库异常恢复后可查，删除过滤无陈旧块。 ... 2026-10-03 17:36:14.649 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_rrf_search_displays_fused_score_and_original_source (test_retrieval.TestImportFrontend)
+页面切换混合检索，共同命中的块排序提高，并保留 Word 位置。 ... 2026-10-03 17:36:15.502 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_vector_search_blank_input_and_empty_index (test_retrieval.TestImportFrontend)
+启动/空问题不初始化模型，空库明确提示且不计算查询向量。 ... 2026-10-03 17:36:15.795 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_vector_search_document_filter_and_non_pdf_locations (test_retrieval.TestImportFrontend)
+文档过滤生效，Word 显示段落/表格、TXT 显示行号，不伪造页码。 ... 2026-10-03 17:36:16.288 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_vector_search_errors_are_visible_and_retryable (test_retrieval.TestImportFrontend)
+模型/数据库失败明确报错，修复后重新提交可检索，不当作空库。 ... 2026-10-03 17:36:16.795 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_vector_search_uses_persisted_index_and_top_k (test_retrieval.TestImportFrontend)
+页面没有上传任务也能查旧库，展示排序、跨页来源与负相似度。 ... 2026-10-03 17:36:17.275 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+
+----------------------------------------------------------------------
+Ran 170 tests in 36.612s
+
+OK
+{"scope": "module4", "run": 170, "classes": {"TestAgentMemoryContext": 10, "TestAgentMetrics": 12, "TestAgentMetricsEntryAndPage": 15, "TestAgentTraceMetrics": 10, "TestConversationHistory": 5, "TestRAGSearchRouting": 18, "TestSessionIsolation": 23, "TestStreamingFrontend": 24, "TestDocumentManagement": 6, "TestHealthCheck": 15, "TestHealthCheckPage": 4, "TestImportFrontend": 28}, "elapsed_seconds": 36.6116062499932, "passed": true}

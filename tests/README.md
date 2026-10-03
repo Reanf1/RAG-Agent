@@ -1,5 +1,18 @@
 # 测试计划
 
+最新完整性复测（2026-10-03）：全项目633项通过，检索202、生成126、Agent305；模块四专项为其中170项，不能相加为803项。失败、错误和跳过均为0。逐项名称及结果见[专项JSON](../reports/模块四专项回归_20261003.json)、[全量JSON](../reports/模块一至四全量回归_20261003.json)及[模块四完整性QA](../docs/QA/模块四完整性验证.md)。下文保留各阶段测试规模与证据，历史计数不是当前总数。
+
+真实四模块联调使用`reports/verify_modules_one_to_four.py`，实际AppTest上传完整PDF、M3E/Chroma入库、混合重排、Qwen问答/带历史计算、流式引用、缓存、会话恢复及增量/删除/恢复。只替换临时数据路径；模型、加载、分块、检索、工具和页面均实际运行。AppTest不证明原生浏览器动画或文件选择时序；已有浏览器证据与本次输出质量问题另见[四模块QA](../docs/QA/模块一至四完整性验证.md)。
+
+```bash
+.venv/bin/python reports/verify_completeness_tests.py --scope module4 --output reports/模块四专项_新时间.json
+.venv/bin/python reports/verify_completeness_tests.py --scope all --output reports/全量回归_新时间.json
+.venv/bin/python reports/verify_modules_one_to_four.py --root /private/tmp/rag-modules-新时间 \
+  --output reports/四模块联调_新时间.json
+```
+
+自动化入口无需启动LLM；真实联调需准备配置指定的本地权重并启动本机Ollama。测试目录与报告路径必须不存在，历史失败不可覆盖。
+
 当前 `test_retrieval.py` 有 165 个测试：基础 PDF 11 个、学术 PDF 17 个、Word 8 个、TXT/Markdown 8 个、分块 21 个、Embedding 接口 3 个与评测公式 2 个、三档检索评测 5 个、Chroma 操作 15 个、BM25 11 个、RRF 融合 7 个、混合检索 9 个、精排 7 个、重排模型加载 3 个、批量导入 12 个、批量索引 9 个、Streamlit 界面 17 个。使用临时生成的实际文件验证中文、来源与位置、稳定文档标识、Word 正文/表格顺序、UTF-8 BOM 和 Markdown 保真。
 
 `test_generation.py` 有 123 个测试：8 个 Prompt、16 个上下文策略、17 个引用溯源、6 个降级上下文、10 个本地生成接口、17 个流式/增量引用、14 个语义缓存、8 个日志文件、21 个聊天界面和 6 个生成评分规则测试，当前合计 288 个测试通过。直接使用真实 LangChain 模板，检查四部分与消息角色、空上下文提示、空问题拒绝、公式/花括号/Markdown 保真、动态文本不改变系统消息、调用之间互不污染、长文本/空白保留，以及上游 Context 字典的文本接口。样例由测试中明确构造，不调用模型或网络；消息结构检查不代表模型能抵御所有提示词注入，也不代表模型引用语义准确性或答案质量已验证。详见 [Prompt QA](../docs/QA/5.2.1%20RAG专用Prompt模板.md)。
