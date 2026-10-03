@@ -1926,6 +1926,7 @@ class TestImportFrontend(unittest.TestCase):
         from src.utils.config import load_config
         config = load_config()
         config["paths"]["raw_documents"] = str(Path(self.directory.name) / "raw")
+        config["paths"]["session_db"] = str(Path(self.directory.name) / "memory.sqlite3")
         config["paths"]["vector_index"] = str(Path(self.directory.name) / "index")
         config["paths"]["logs"] = str(Path(self.directory.name) / "logs")
         self.embeddings = SmallEmbeddings()
@@ -2650,6 +2651,14 @@ class TestHealthCheckPage(unittest.TestCase):
     """页面按需调用，实际检查函数另有真实数据库测试。"""
 
     def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        from src.utils.config import load_config
+        config = load_config()
+        config["paths"]["session_db"] = str(Path(self.directory.name) / "memory.sqlite3")
+        config_patcher = patch("src.utils.config.load_config", return_value=config)
+        config_patcher.start()
+        self.addCleanup(config_patcher.stop)
         self.result = {"status": "ok", "checked_at": "2026-10-03T12:00:00+08:00",
                        "llm": {"status": "ok", "detail": "模型服务正常，未执行推理。", "seconds": 0.01},
                        "vector_database": {"status": "ok", "detail": "集合可读取。", "seconds": 0.02,

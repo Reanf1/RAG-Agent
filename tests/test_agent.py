@@ -2253,6 +2253,98 @@ class TestErrorRecovery(unittest.TestCase):
         self.assertEqual(self.invocations, [])
 
 
+class TestConversationHistory(unittest.TestCase):
+    """会话归属、回收及旧SQLite迁移，数据库和文件均实际执行。"""
+
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        self.path = Path(self.directory.name) / "history.sqlite3"
+        self.memory = MemoryManager(self.path)
+        self.a = self.memory.create_session("alice")
+        self.b = self.memory.create_session("bob")
+
+    def test_archive_restore_keeps_turn_citations_and_summary(self):
+        details = {"task_complete": False, "stop_reason": "incomplete", "event": {"type": "done"}}
+        self.memory.append_turn("alice", self.a, "问题", "部分答案", details=details)
+        rag = {"question": "层数", "answer": "6层", "citations": [{"source_file": "论文.pdf", "location": "第3页"}]}
+        self.memory.append_rag_message("alice", self.a, rag)
+        with sqlite3.connect(self.path) as connection:
+            last = connection.execute("SELECT MAX(id) FROM messages WHERE session_id=?", (self.a,)).fetchone()[0]
+            connection.execute("INSERT INTO summaries VALUES(?, ?, ?)", (self.a, "已压缩历史", last))
+        self.memory.delete_session("alice", self.a)
+        self.assertEqual(self.memory.list_sessions("alice"), [])
+        self.assertEqual(self.memory.list_sessions("alice", archived=True), [self.a])
+        self.assertEqual(self.memory.list_sessions("bob"), [self.b])
+        self.memory = MemoryManager(self.path)
+        self.memory.restore_session("alice", self.a)
+        self.assertEqual(self.memory.get_messages("alice", self.a)[1].additional_kwargs, details)
+        self.assertEqual(self.memory.get_rag_messages("alice", self.a), [rag])
+        with sqlite3.connect(self.path) as connection:
+            self.assertEqual(connection.execute("SELECT content FROM summaries WHERE session_id=?", (self.a,)).fetchone()[0], "已压缩历史")
+
+    def test_deleted_session_rejects_reads_writes_and_generation(self):
+        self.memory.delete_session("alice", self.a)
+        for operation in (lambda: self.memory.get_messages("alice", self.a),
+                          lambda: self.memory.get_rag_messages("alice", self.a),
+                          lambda: self.memory.append_turn("alice", self.a, "问", "答"),
+                          lambda: self.memory.append_rag_message("alice", self.a, {}),
+                          lambda: self.memory.clear_rag_messages("alice", self.a),
+                          lambda: list(run_session("问", "alice", self.a, memory=self.memory))):
+            with self.subTest(operation=operation), patch("src.agent.react_loop.run_react") as model:
+                with self.assertRaises(LookupError):
+                    operation()
+                model.assert_not_called()
+        for operation in (self.memory.delete_session, self.memory.restore_session):
+            with self.assertRaises(PermissionError):
+                operation("bob", self.a)
+        self.assertEqual(self.memory.list_sessions("alice", archived=True), [self.a])
+
+    def test_old_database_migration_keeps_ids_messages_and_summary(self):
+        old = Path(self.directory.name) / "old.sqlite3"
+        with sqlite3.connect(old) as connection:
+            connection.executescript("""
+                CREATE TABLE sessions(session_id TEXT PRIMARY KEY, user_id TEXT NOT NULL);
+                CREATE TABLE messages(id INTEGER PRIMARY KEY AUTOINCREMENT, session_id TEXT, role TEXT, content TEXT);
+                CREATE TABLE summaries(session_id TEXT PRIMARY KEY, content TEXT, through_message_id INTEGER);
+                INSERT INTO sessions VALUES('old-session', 'alice');
+                INSERT INTO messages(session_id,role,content) VALUES('old-session','human','旧问题'),('old-session','ai','旧答案');
+                INSERT INTO summaries VALUES('old-session','旧摘要',2);
+            """)
+        for _ in range(2):
+            memory = MemoryManager(old)
+            self.assertEqual(memory.list_sessions("alice"), ["old-session"])
+            self.assertEqual([m.content for m in memory.get_messages("alice", "old-session")], ["旧问题", "旧答案"])
+            self.assertEqual(memory.get_messages("alice", "old-session")[1].additional_kwargs, {})
+        with sqlite3.connect(old) as connection:
+            self.assertEqual(connection.execute("SELECT content,through_message_id FROM summaries").fetchone(), ("旧摘要", 2))
+
+    def test_rag_and_trace_do_not_enter_agent_context_and_clear_is_scoped(self):
+        self.memory.append_turn("alice", self.a, "Agent问题", "Agent答案", details={"event": {"tool_data": "旧工具秘密"}})
+        self.memory.append_rag_message("alice", self.a, {"question": "RAG问题", "answer": "RAG答案", "citations": ["原文"]})
+        self.memory.append_rag_message("bob", self.b, {"question": "另一用户问题"})
+        context = self.memory.get_context("alice", self.a)
+        self.assertEqual(context["history"], [{"role": "human", "content": "Agent问题"}, {"role": "ai", "content": "Agent答案"}])
+        self.assertNotIn("旧工具秘密", json.dumps(context, ensure_ascii=False))
+        returned = self.memory.get_rag_messages("alice", self.a)
+        returned[0]["citations"].clear()
+        self.assertEqual(self.memory.get_rag_messages("alice", self.a)[0]["citations"], ["原文"])
+        with self.assertRaises(PermissionError):
+            self.memory.clear_rag_messages("bob", self.a)
+        self.memory.clear_rag_messages("alice", self.a)
+        self.assertEqual(self.memory.get_rag_messages("alice", self.a), [])
+        self.assertEqual(len(self.memory.get_messages("alice", self.a)), 2)
+        self.assertEqual(len(self.memory.get_rag_messages("bob", self.b)), 1)
+
+    def test_invalid_details_never_save_half_turn(self):
+        with self.assertRaises(ValueError):
+            self.memory.append_turn("alice", self.a, "问题", "答案", details={"score": float("nan")})
+        self.assertEqual(self.memory.get_messages("alice", self.a), [])
+        with self.assertRaises(TypeError):
+            self.memory.append_rag_message("alice", self.a, {"invalid": object()})
+        self.assertEqual(self.memory.get_rag_messages("alice", self.a), [])
+
+
 class TestSessionIsolation(unittest.TestCase):
     """真实临时SQLite隔离测试；模型HTTP按既有方式隔离，不替换存储和Agent循环。"""
 
@@ -3507,7 +3599,8 @@ class TestAgentMetricsEntryAndPage(unittest.TestCase):
         app = self.page()
         self.assertFalse(app.exception)
         self.core.assert_not_called()
-        self.assertFalse(Path(self.config["paths"]["session_db"]).exists())
+        self.assertTrue(Path(self.config["paths"]["session_db"]).exists())
+        self.assertEqual(len(app.session_state["agent_memory"].list_sessions(app.session_state["agent_user_id"])), 1)
         app.text_input(key="agent_question").set_value("计算")
         app.button(key="run_agent").click().run()
         self.assertFalse(app.exception)
@@ -3598,6 +3691,116 @@ class TestAgentMetricsEntryAndPage(unittest.TestCase):
         app.button(key="run_agent").click().run()
         self.assertEqual(len(app.chat_message), 4)
         self.assertEqual(len(app.session_state["agent_messages"]), 2)
+
+    def test_new_switch_and_followup_use_only_selected_history(self):
+        """新会话无旧轨迹；切回A后续问的Context只包含A原始问答。"""
+        app = self.page()
+        a = app.session_state["agent_session_id"]
+        app.text_input(key="agent_question").set_value("会话A研究代号")
+        app.button(key="run_agent").click().run()
+        self.assertIn("会话A研究代号", app.selectbox(key="conversation_select").options[0])
+        app.button(key="new_conversation").click().run()
+        b = app.session_state["agent_session_id"]
+        self.assertNotEqual(a, b)
+        self.assertEqual(app.session_state["agent_messages"], [])
+        self.assertNotIn("agent_last_event", app.session_state)
+        self.assertEqual(app.text_input(key="agent_question").value, "")
+        app.text_input(key="agent_question").set_value("会话B研究代号")
+        app.button(key="run_agent").click().run()
+        app.text_input(key="agent_question").set_value("会话B未提交草稿")
+        app.selectbox(key="conversation_select").set_value(a).run()
+        self.assertFalse(app.exception)
+        self.assertEqual(len(app.chat_message), 2)
+        self.assertEqual(app.session_state["agent_messages"][0]["question"], "会话A研究代号")
+        self.assertEqual(app.text_input(key="agent_question").value, "")
+        self.assertEqual(self.core.call_count, 2)
+        app.text_input(key="agent_question").set_value("继续会话A")
+        app.button(key="run_agent").click().run()
+        context = self.core.call_args.args[2]
+        self.assertEqual(context["history"][0]["content"], "会话A研究代号")
+        self.assertNotIn("会话B研究代号", json.dumps(context, ensure_ascii=False))
+
+    def test_refresh_keeps_identity_history_incomplete_status_and_trace(self):
+        from streamlit.testing.v1 import AppTest
+        events = TestAgentMetrics.events()
+        events[-1].update(task_complete=False, stop_reason="incomplete")
+        self.core.side_effect = lambda *args: iter(deepcopy(events))
+        app = self.page()
+        app.text_input(key="agent_question").set_value("未完成请求")
+        app.button(key="run_agent").click().run()
+        refreshed = AppTest.from_file(str(Path(__file__).resolve().parents[1] / "src/frontend/app.py"), default_timeout=10)
+        refreshed.query_params.update(app.query_params)
+        refreshed.run()
+        self.assertFalse(refreshed.exception)
+        self.assertEqual(refreshed.session_state["agent_session_id"], app.session_state["agent_session_id"])
+        self.assertEqual(refreshed.session_state["agent_user_id"], app.session_state["agent_user_id"])
+        self.assertEqual(len(refreshed.chat_message), 2)
+        self.assertFalse(refreshed.session_state["agent_messages"][0]["complete"])
+        self.assertTrue(any("任务未完成" in w.value for w in refreshed.warning))
+        self.assertTrue(refreshed.get("graphviz_chart"))
+        self.core.assert_called_once()
+
+    def test_cancel_delete_archive_restore_preserve_history(self):
+        app = self.page()
+        a = app.session_state["agent_session_id"]
+        app.text_input(key="agent_question").set_value("待回收历史")
+        app.button(key="run_agent").click().run()
+        app.button(key="new_conversation").click().run()
+        b = app.session_state["agent_session_id"]
+        app.selectbox(key="conversation_select").set_value(a).run()
+        app.button(key="delete_conversation").click().run()
+        app.button(key="cancel_delete_conversation").click().run()
+        self.assertEqual(app.session_state["agent_session_id"], a)
+        app.button(key="delete_conversation").click().run()
+        app.button(key="confirm_delete_conversation").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(app.session_state["agent_session_id"], b)
+        self.assertEqual(len(app.selectbox(key="conversation_select").options), 1)
+        self.assertEqual(app.selectbox(key="conversation_select").value, b)
+        memory, user = app.session_state["agent_memory"], app.session_state["agent_user_id"]
+        self.assertEqual(memory.list_sessions(user, archived=True), [a])
+        app.button(key="restore_conversation").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(app.session_state["agent_session_id"], a)
+        self.assertEqual(len(app.chat_message), 2)
+        self.core.assert_called_once()
+
+    def test_last_deleted_session_is_replaced_and_foreign_url_is_not_loaded(self):
+        from streamlit.testing.v1 import AppTest
+        app = self.page()
+        old = app.session_state["agent_session_id"]
+        memory = app.session_state["agent_memory"]
+        foreign = memory.create_session("another-user")
+        memory.append_turn("another-user", foreign, "其他用户私有问题", "其他用户私有回答")
+        refreshed = AppTest.from_file(str(Path(__file__).resolve().parents[1] / "src/frontend/app.py"), default_timeout=10)
+        refreshed.query_params.update(app.query_params)
+        refreshed.query_params["conversation"] = foreign
+        refreshed.run()
+        self.assertEqual(refreshed.session_state["agent_session_id"], old)
+        self.assertEqual(len(refreshed.selectbox(key="conversation_select").options), 1)
+        self.assertEqual(refreshed.selectbox(key="conversation_select").value, old)
+        self.assertFalse(refreshed.chat_message)
+        app.button(key="delete_conversation").click().run()
+        app.button(key="confirm_delete_conversation").click().run()
+        self.assertFalse(app.exception)
+        self.assertNotEqual(app.session_state["agent_session_id"], old)
+        self.assertEqual(app.session_state["agent_messages"], [])
+        self.assertEqual(len(app.selectbox(key="conversation_select").options), 1)
+        self.core.assert_not_called()
+
+    def test_delete_database_failure_keeps_current_session_and_retry_works(self):
+        app = self.page()
+        old = app.session_state["agent_session_id"]
+        app.button(key="delete_conversation").click().run()
+        with patch("src.agent.memory.MemoryManager.delete_session", side_effect=sqlite3.OperationalError("只读数据库")):
+            app.button(key="confirm_delete_conversation").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(app.session_state["agent_session_id"], old)
+        self.assertTrue(any("只读数据库" in e.value for e in app.error))
+        self.assertTrue(app.button(key="run_agent").disabled)
+        app.button(key="confirm_delete_conversation").click().run()
+        self.assertFalse(app.exception)
+        self.assertNotEqual(app.session_state["agent_session_id"], old)
 
 if __name__ == "__main__":
     unittest.main()

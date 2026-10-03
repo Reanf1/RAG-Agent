@@ -1,0 +1,83 @@
+.....2026-10-03 12:48:07.657 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+F2026-10-03 12:48:08.796 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+..2026-10-03 12:48:09.241 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+..2026-10-03 12:48:09.654 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-03 12:48:09.852 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+F.2026-10-03 12:48:10.030 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:10.629 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:10.900 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:11.253 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:11.593 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:11.879 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-03 12:48:12.136 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+...2026-10-03 12:48:12.352 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:12.761 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:12.998 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:13.462 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:13.994 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:14.326 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:14.807 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:15.130 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:15.572 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:15.969 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:16.203 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:16.471 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:16.778 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:17.275 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:17.509 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:17.773 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:18.314 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:18.643 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:18.881 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:19.293 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:19.708 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:20.196 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:20.543 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-03 12:48:21.063 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:48:21.362 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+F
+======================================================================
+FAIL: test_cancel_delete_archive_restore_preserve_history (tests.test_agent.TestAgentMetricsEntryAndPage)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 3755, in test_cancel_delete_archive_restore_preserve_history
+    self.assertEqual(app.selectbox(key="conversation_select").options, [b])
+AssertionError: Lists differ: ['新会话 · 18f9e174'] != ['18f9e17495e142d0987fa3f32ab9d106']
+
+First differing element 0:
+'新会话 · 18f9e174'
+'18f9e17495e142d0987fa3f32ab9d106'
+
+- ['新会话 · 18f9e174']
++ ['18f9e17495e142d0987fa3f32ab9d106']
+
+======================================================================
+FAIL: test_last_deleted_session_is_replaced_and_foreign_url_is_not_loaded (tests.test_agent.TestAgentMetricsEntryAndPage)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 3776, in test_last_deleted_session_is_replaced_and_foreign_url_is_not_loaded
+    self.assertEqual(refreshed.selectbox(key="conversation_select").options, [old])
+AssertionError: Lists differ: ['新会话 · 2bd4246d'] != ['2bd4246d95a7463fbf4f8bab5ed76a8b']
+
+First differing element 0:
+'新会话 · 2bd4246d'
+'2bd4246d95a7463fbf4f8bab5ed76a8b'
+
+- ['新会话 · 2bd4246d']
++ ['2bd4246d95a7463fbf4f8bab5ed76a8b']
+
+======================================================================
+FAIL: test_switch_cancels_low_relevance_request_without_generating (tests.test_generation.TestStreamingFrontend)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/test_generation.py", line 1556, in test_switch_cancels_low_relevance_request_without_generating
+    self.assertIn("rag_pending", self.app.session_state)
+AssertionError: 'rag_pending' not found in {'agent_session_id': '56cd3242815145c09e8e4174e29f34d8', 'vector_search': False, 'vector_doc_id': '', 'conversation_select': '56cd3242815145c09e8e4174e29f34d8', 'start_import': False, 'rag_cache': <src.generation.cache.SemanticCache object at 0x130dff340>, 'agent_question': '', 'rag_messages': [{'question': '低相关问题', 'answer': '', 'citations': [], 'warnings': [], 'complete': False, 'request_id': '1a053f09aabe41e9a302bf88e4097b0f', 'session_id': '56cd3242815145c09e8e4174e29f34d8', 'started_at': '2026-10-03T12:48:21.603077+08:00', 'request_info': {'llm': {'provider': 'ollama', 'base_url': 'http://localhost:11434', 'model': 'qwen2.5:7b', 'temperature': 0.1, 'top_p': 0.9, 'top_k': 40, 'num_ctx': 8192, 'num_predict': 512, 'repeat_penalty': 1.0}, 'retrieval': {'vector_store': 'chroma', 'collection_name': 'paper_chunks', 'search_ef': 100, 'index_threads': 4, 'top_k': 5, 'candidate_k': 20, 'rrf_k': 60, 'reranker_model': 'BAAI/bge-reranker-base', 'reranker_revision': '2cfc18c9415c912f9d8155881c133215df768a70', 'reranker_local_path': 'data/models/bge-reranker-base', 'reranker_device': 'cpu', 'reranker_batch_size': 8, 'reranker_max_length': 512}, 'prompt_version': 'rag-v3'}, 'retrieval_status': 'success', 'retrieved_documents': [{'rank': 1, 'text': '编码器有6层。', 'metadata': {'source_file': 'attention.pdf', 'page_number': 3, 'chunk_id': '功能样例块'}, 'score': 0.1}], 'retrieval_seconds': 7.449999975506216e-05, 'context': {'context': '[参考文档1 - 来源: attention.pdf；原始块位置: 第3页（物理页码）]\n编码器有6层。', 'sources': ['attention.pdf'], 'chunk_count': 1, 'references': [{'id': 1, 'source_file': 'attention.pdf', 'location': '第3页（物理页码）', 'text': '编码器有6层。', 'metadata': {'source_file': 'attention.pdf', 'page_number': 3, 'chunk_id': '功能样例块'}, 'truncated': False, 'score': 0.1}], 'context_budget_chars': 6000, 'context_chars': 52, 'prompt_chars': 706, 'truncated': False, 'dropped_count': 0, 'generation_mode': 'grounded', 'top_score': 0.1, 'threshold': 0.1, 'confirmed': False}, 'generation_mode': 'grounded', 'elapsed_seconds': 0.0019076669996138662, 'generation_attempted': True, 'type': 'error', 'message': '本地 Ollama 流已断开，未收到完成标记；回答尚未完成。', 'retry_advice': '检查本地模型服务日志与可用内存，必要时重启 Ollama 后重新提交问题。', 'error_detail': 'RuntimeError: 本地 Ollama 流已断开，未收到完成标记；回答尚未完成。', 'raw_answer': '', 'invalid_citation_ids': [], 'missing_citations': False, 'notice': '', 'generation_seconds': 0.0005189999938011169, 'error': '本地 Ollama 流已断开，未收到完成标记；回答尚未完成。'}], 'delete_conversation': False, 'vector_query': '', 'rag_question': None, 'vector_top_k': 5, 'check_health': False, 'clear_rag_chat': False, 'retry_import': False, 'import_progress': {'completed': 0, 'total': 0}, 'run_agent': False, 'agent_memory': <src.agent.memory.MemoryManager object at 0x130dfec20>, 'agent_messages': [], 'rag_session_id': '56cd3242815145c09e8e4174e29f34d8', 'import_tasks': [], 'document_uploads': [], 'new_conversation': False, 'agent_user_id': 'fe0ccfbf42d44af3b7e662901c7eb989', 'retrieval_method': '向量相似度'}
+
+----------------------------------------------------------------------
+Ran 44 tests in 14.162s
+
+FAILED (failures=3)

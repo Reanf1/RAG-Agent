@@ -114,14 +114,16 @@ class MemoryManager:
             connection.executescript("""
                 CREATE TABLE IF NOT EXISTS sessions (
                     session_id TEXT PRIMARY KEY,
-                    user_id TEXT NOT NULL
+                    user_id TEXT NOT NULL,
+                    archived INTEGER NOT NULL DEFAULT 0
                 );
                 CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
                 CREATE TABLE IF NOT EXISTS messages (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     session_id TEXT NOT NULL REFERENCES sessions(session_id),
                     role TEXT NOT NULL CHECK(role IN ('human', 'ai')),
-                    content TEXT NOT NULL
+                    content TEXT NOT NULL,
+                    details TEXT NOT NULL DEFAULT '{}'
                 );
                 CREATE INDEX IF NOT EXISTS idx_messages_session ON messages(session_id, id);
                 CREATE TABLE IF NOT EXISTS summaries (
@@ -129,7 +131,19 @@ class MemoryManager:
                     content TEXT NOT NULL,
                     through_message_id INTEGER NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS rag_history (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    session_id TEXT NOT NULL REFERENCES sessions(session_id),
+                    data TEXT NOT NULL
+                );
+                CREATE INDEX IF NOT EXISTS idx_rag_session ON rag_history(session_id, id);
             """)
+            # 旧课程数据库保留消息与摘要，只补本轮需要的两列。
+            if "archived" not in {r[1] for r in connection.execute("PRAGMA table_info(sessions)")}:
+                connection.execute("ALTER TABLE sessions ADD COLUMN archived INTEGER NOT NULL DEFAULT 0")
+            if "details" not in {r[1] for r in connection.execute("PRAGMA table_info(messages)")}:
+                connection.execute("ALTER TABLE messages ADD COLUMN details TEXT NOT NULL DEFAULT '{}'")
+            connection.commit()
 
     def _connect(self):
         connection = sqlite3.connect(self.db_path)
@@ -137,14 +151,16 @@ class MemoryManager:
         return connection
 
     @staticmethod
-    def _check_session(connection, user_id: str, session_id: str):
+    def _check_session(connection, user_id: str, session_id: str, *, include_archived=False):
         _nonempty(user_id, "user_id")
         _nonempty(session_id, "session_id")
-        row = connection.execute("SELECT user_id FROM sessions WHERE session_id=?", (session_id,)).fetchone()
+        row = connection.execute("SELECT user_id, archived FROM sessions WHERE session_id=?", (session_id,)).fetchone()
         if row is None:
             raise LookupError("会话不存在，请先创建会话")
         if row[0] != user_id:
             raise PermissionError("不能访问其他用户的会话")
+        if row[1] and not include_archived:
+            raise LookupError("会话已删除，请先从回收区恢复")
 
     def create_session(self, user_id: str) -> str:
         """创建归属固定的独立会话，UUID只用于标识，不用作登录凭据。"""
@@ -154,30 +170,63 @@ class MemoryManager:
             connection.execute("INSERT INTO sessions(session_id, user_id) VALUES(?, ?)", (session_id, user_id))
         return session_id
 
-    def list_sessions(self, user_id: str) -> list[str]:
+    def list_sessions(self, user_id: str, *, archived=False) -> list[str]:
         """只列出本用户的会话，包括尚未产生消息的空会话。"""
         _nonempty(user_id, "user_id")
         with closing(self._connect()) as connection:
             return [row[0] for row in connection.execute(
-                "SELECT session_id FROM sessions WHERE user_id=? ORDER BY rowid", (user_id,))]
+                "SELECT session_id FROM sessions WHERE user_id=? AND archived=? ORDER BY rowid", (user_id, int(archived)))]
 
     def get_messages(self, user_id: str, session_id: str) -> list:
         """按入库顺序返回新的LangChain消息对象，修改返回值不会污染存储。"""
         with closing(self._connect()) as connection:
             self._check_session(connection, user_id, session_id)
-            rows = connection.execute("SELECT role, content FROM messages WHERE session_id=? ORDER BY id",
+            rows = connection.execute("SELECT role, content, details FROM messages WHERE session_id=? ORDER BY id",
                                       (session_id,)).fetchall()
         classes = {"human": HumanMessage, "ai": AIMessage}
-        return [classes[role](content=content) for role, content in rows]
+        return [classes[role](content=content, additional_kwargs=json.loads(details)) for role, content, details in rows]
 
-    def append_turn(self, user_id: str, session_id: str, question: str, answer: str):
+    def append_turn(self, user_id: str, session_id: str, question: str, answer: str, *, details: dict | None = None):
         """事务内追加一整轮，避免覆盖其他线程追加的历史或只保存半轮。"""
         _nonempty(question, "question")
         _nonempty(answer, "answer")
+        serialized = json.dumps(details or {}, ensure_ascii=False, allow_nan=False)
         with closing(self._connect()) as connection, connection:
             self._check_session(connection, user_id, session_id)
-            connection.executemany("INSERT INTO messages(session_id, role, content) VALUES(?, ?, ?)",
-                                   [(session_id, "human", question), (session_id, "ai", answer)])
+            connection.executemany("INSERT INTO messages(session_id, role, content, details) VALUES(?, ?, ?, ?)",
+                                   [(session_id, "human", question, "{}"), (session_id, "ai", answer, serialized)])
+
+    def delete_session(self, user_id: str, session_id: str):
+        """删除为可恢复回收；历史和摘要保留，但不能继续访问或生成。"""
+        with closing(self._connect()) as connection, connection:
+            self._check_session(connection, user_id, session_id)
+            connection.execute("UPDATE sessions SET archived=1 WHERE session_id=?", (session_id,))
+
+    def restore_session(self, user_id: str, session_id: str):
+        """只恢复本用户会话，不改变原ID、消息、引用和摘要。"""
+        with closing(self._connect()) as connection, connection:
+            self._check_session(connection, user_id, session_id, include_archived=True)
+            connection.execute("UPDATE sessions SET archived=0 WHERE session_id=?", (session_id,))
+
+    def append_rag_message(self, user_id: str, session_id: str, message: dict):
+        """保存RAG页面的真实回答、引用与错误状态，不送入Agent记忆。"""
+        data = json.dumps(message, ensure_ascii=False, allow_nan=False)
+        with closing(self._connect()) as connection, connection:
+            self._check_session(connection, user_id, session_id)
+            connection.execute("INSERT INTO rag_history(session_id, data) VALUES(?, ?)", (session_id, data))
+
+    def get_rag_messages(self, user_id: str, session_id: str) -> list[dict]:
+        """按原始顺序加载引用详情；不重新检索或调用模型。"""
+        with closing(self._connect()) as connection:
+            self._check_session(connection, user_id, session_id)
+            return [json.loads(row[0]) for row in connection.execute(
+                "SELECT data FROM rag_history WHERE session_id=? ORDER BY id", (session_id,))]
+
+    def clear_rag_messages(self, user_id: str, session_id: str):
+        """只清空当前会话的RAG页面记录；Agent历史与知识库不受影响。"""
+        with closing(self._connect()) as connection, connection:
+            self._check_session(connection, user_id, session_id)
+            connection.execute("DELETE FROM rag_history WHERE session_id=?", (session_id,))
 
     def _read_memory(self, user_id: str, session_id: str):
         """同一读事务取得归档和摘要边界，避免把清空前后数据拼接。"""
@@ -288,6 +337,7 @@ class MemoryManager:
         with closing(self._connect()) as connection, connection:
             self._check_session(connection, user_id, session_id)
             connection.execute("DELETE FROM summaries WHERE session_id=?", (session_id,))
+            connection.execute("DELETE FROM rag_history WHERE session_id=?", (session_id,))
             connection.execute("DELETE FROM messages WHERE session_id=?", (session_id,))
 
 
@@ -307,7 +357,13 @@ def run_session(question: str, user_id: str, session_id: str, tools=None, *, mem
     context = memory.get_context(user_id, session_id)
     for event in run_react(question, tools, context):
         if event["type"] == "done":
-            memory.append_turn(user_id, session_id, question, event["full_response"])
+            if "metrics" in event:
+                event["metrics"]["response_seconds"] = perf_counter() - started
+            snapshot = {key: value for key, value in event.items() if key != "full_response"}
+            snapshot.update(user_id=user_id, session_id=session_id)
+            memory.append_turn(user_id, session_id, question, event["full_response"],
+                               details={"task_complete": event["task_complete"],
+                                        "stop_reason": event["stop_reason"], "event": snapshot})
         event = {**event, "user_id": user_id, "session_id": session_id}
         if "metrics" in event:
             event["metrics"]["response_seconds"] = perf_counter() - started  # 包括记忆准备和最终保存。

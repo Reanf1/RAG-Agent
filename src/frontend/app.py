@@ -18,7 +18,8 @@ if str(project_root) not in sys.path:
 from src.data_loader import LOADERS, create_import_tasks
 from src.frontend.components.documents import list_documents, delete_document, restore_document
 from src.frontend.components.trace import trace_graph
-from src.agent import MemoryManager, run_session
+from src.agent import run_session
+from src.frontend.components.sessions import render_sessions
 from src.generation.cache import SemanticCache, cache_scope
 from src.generation.prompt_template import PROMPT_VERSION
 from src.generation.rag_pipeline import prepare_rag_context
@@ -184,11 +185,26 @@ def save_request(message, status):
         st.session_state.rag_log_error = message["log_error"]  # 清空或替换请求后也能看见故障。
 
 
+session_ready = render_sessions(project_root / config["paths"]["session_db"], save_request)
+
+
+def save_rag_message(message):
+    """完成/错误回答持久化，保存失败明确提示；不重新生成答案。"""
+    st.session_state.rag_messages.append(message)
+    try:
+        st.session_state.agent_memory.append_rag_message(st.session_state.agent_user_id,
+                                                       st.session_state.rag_session_id, message)
+    except Exception as error:
+        st.warning(f"RAG历史未保存：{type(error).__name__}: {error}。本页答案仍保留，请检查会话数据库。")
+    else:
+        st.rerun()  # 更新侧栏会话标题，重绘已有答案，不重新生成。
+
+
 st.subheader("科研对话")
 agent_tab, rag_tab = st.tabs(["Agent 科研助理", "RAG 流式问答"])
 with agent_tab:
     st.subheader("Agent 科研助理")
-    st.caption("本页独立会话接入历史记忆；每个阶段完成即刷新实际 Token、工具成功率/耗时和决策轨迹。Action负责选择工具，内部用量单列；并行批次共享的Action只统计一次。历史会话管理后续补充。")
+    st.caption("本页独立会话接入历史记忆；每个阶段完成即刷新实际 Token、工具成功率/耗时和决策轨迹。Action负责选择工具，内部用量单列；并行批次共享的Action只统计一次。左侧可新建、切换、删除或恢复历史会话。")
     if "agent_messages" not in st.session_state:
         st.session_state.agent_messages = []
     for previous in st.session_state.agent_messages:
@@ -196,32 +212,35 @@ with agent_tab:
             st.markdown(previous["question"])
         with st.chat_message("assistant"):
             st.markdown(previous["answer"])
-            if not previous["complete"]:
+            if previous["complete"] is False:
                 st.warning(f"任务未完成：{previous['stop_reason']}")
     agent_user_panel = st.empty()
     agent_answer_panel = st.empty()
     with st.form("agent_metrics_form"):
         agent_question = st.text_input("向 Agent 提问", key="agent_question")
-        agent_submitted = st.form_submit_button("运行 Agent", key="run_agent")
+        agent_submitted = st.form_submit_button("运行 Agent", key="run_agent", disabled=not session_ready)
 
 
 with rag_tab:
     st.subheader("RAG 流式问答")
-    st.caption("每个问题先匹配当前会话答案缓存；未命中再独立检索并由本地 Ollama 生成。历史仅保留展示，不作为多轮推理上下文。引用对应实际文件和位置，原文证据可展开查看。")
+    st.caption("每个问题先匹配当前会话答案缓存；未命中再独立检索并由本地 Ollama 生成。历史和引用保存在当前会话，只用于展示，不作为RAG多轮推理上下文。引用对应实际文件和位置，原文证据可展开查看。")
     if "rag_messages" not in st.session_state:
         st.session_state.rag_messages = []
-    if "rag_session_id" not in st.session_state:
-        st.session_state.rag_session_id = uuid4().hex
     if "rag_cache" not in st.session_state or st.session_state.rag_cache.settings != config["generation"]["cache"]:
         st.session_state.rag_cache = SemanticCache()
-    st.caption("清空当前对话会移除历史展示和答案缓存，本地请求日志会保留。")
-    if st.button("清空当前对话", key="clear_rag_chat"):
-        if "rag_pending" in st.session_state:
-            save_request(st.session_state.rag_pending["message"], "cancelled")
-        st.session_state.rag_messages = []
-        st.session_state.rag_cache.clear()
-        st.session_state.pop("rag_pending", None)
-        st.rerun()
+    st.caption("清空会删除当前会话的RAG历史和答案缓存，Agent历史、知识库和请求日志保留。")
+    if st.button("清空当前对话", key="clear_rag_chat", disabled=not session_ready):
+        try:
+            st.session_state.agent_memory.clear_rag_messages(st.session_state.agent_user_id, st.session_state.rag_session_id)
+        except Exception as error:
+            st.error(f"RAG历史清空失败：{type(error).__name__}: {error}。历史和缓存保留，可修复后重试。")
+        else:
+            if "rag_pending" in st.session_state:
+                save_request(st.session_state.rag_pending["message"], "cancelled")
+            st.session_state.rag_messages = []
+            st.session_state.rag_cache.clear()
+            st.session_state.pop("rag_pending", None)
+            st.rerun()
 
 
     def show_answer_details(message):
@@ -239,7 +258,9 @@ with rag_tab:
                 hit = message["cache"]
                 match = "相同问题" if hit["mode"] == "exact" else f"语义相似度 {hit['similarity']:.4f}"
                 st.info(f"缓存命中（{match}），本次未调用检索、重排或生成模型。原问题：{hit['question']}")
-        if message.get("notice"):
+        if message.get("generation_mode") == "empty":
+            st.info("当前知识库中未找到相关文档；以下回答没有文献依据，为纯模型回答。")
+        elif message.get("notice"):
             st.info(message["notice"])
         if message.get("log_error"):
             st.warning(message["log_error"])
@@ -287,7 +308,7 @@ with rag_tab:
             st.markdown(message["answer"])
             show_answer_details(message)
 
-    question = st.chat_input("询问已上传论文（支持中英文）", key="rag_question")
+    question = st.chat_input("询问已上传论文（支持中英文）", key="rag_question", disabled=not session_ready)
     if question and question.strip():
         # 新问题取代旧的待确认请求，避免后来误点生成旧问题。
         if "rag_pending" in st.session_state:
@@ -342,7 +363,7 @@ with rag_tab:
             elif message.get("log_error"):
                 st.warning(message["log_error"])
         if "rag_pending" not in st.session_state:
-            st.session_state.rag_messages.append(message)
+            save_rag_message(message)
 
     if "rag_pending" in st.session_state:
         pending = st.session_state.rag_pending
@@ -379,7 +400,7 @@ with rag_tab:
                     placeholder.markdown(message["answer"])
                     save_request(message, "completed" if message["complete"] else "error")
                     show_answer_details(message)
-                st.session_state.rag_messages.append(message)
+                save_rag_message(message)
 
 
 st.subheader("Agent 决策轨迹与运行指标")
@@ -411,6 +432,8 @@ def show_agent_metrics(event, show_answer=True):
     metrics = event["metrics"]
     tokens = metrics["tokens"]
     with agent_metrics_panel.container():
+        if event.get("history_replayed"):
+            st.caption("历史请求快照：加载保存时的公开轨迹与指标，未重新执行Agent。")
         columns = st.columns(2)
         columns[0].metric("本次 Agent Token", str(tokens["total"]) if tokens["total"] is not None else "未知")
         columns[1].metric("Agent 响应耗时", f"{metrics['response_seconds']:.3f} 秒")
@@ -502,10 +525,6 @@ if agent_submitted:
         with agent_user_panel.container(), st.chat_message("user"):
             st.markdown(agent_question.strip())
         try:
-            if "agent_session_id" not in st.session_state:
-                st.session_state.agent_memory = MemoryManager()
-                st.session_state.agent_user_id = uuid4().hex
-                st.session_state.agent_session_id = st.session_state.agent_memory.create_session(st.session_state.agent_user_id)
             for event in run_session(agent_question.strip(), st.session_state.agent_user_id,
                                      st.session_state.agent_session_id, memory=st.session_state.agent_memory):
                 st.session_state.agent_last_event = event
@@ -515,6 +534,8 @@ if agent_submitted:
                         "stop_reason": event["stop_reason"]})
                 show_agent_metrics(event)
                 show_retrieval_metrics()
+            if st.session_state.get("agent_last_event", {}).get("type") == "done":
+                st.rerun()  # 完整问答已经入库，刷新标题与历史即可。
         except Exception as error:
             st.error(f"Agent 运行失败：{type(error).__name__}: {error}。请检查本地服务后重试。")
 elif "agent_last_event" in st.session_state:
@@ -627,7 +648,7 @@ st.table(
         {"模块": "一：文档处理与检索", "状态": "部分实现", "范围": "已实现批量导入、分块、增量索引、向量/BM25/RRF 与模型重排；三档质量已评测，分块召回对比待完成"},
         {"模块": "二：RAG 生成", "状态": "已实现", "范围": "已实现 Prompt、上下文/引用、本地生成、流式、缓存、降级、请求日志与分数分布，完成参数对照；独立答案质量评测待完成"},
         {"模块": "三：Agent 决策", "状态": "已实现", "范围": "有界ReAct、八个本地工具、路由/并行/恢复、会话隔离与窗口/摘要记忆"},
-        {"模块": "四：系统集成与前端", "状态": "部分实现", "范围": "已有文档入库、RAG/Agent问答、会话记忆、决策轨迹、实时指标与健康检查；已支持文档列表、回收删除和恢复；历史会话管理待开发"},
+        {"模块": "四：系统集成与前端", "状态": "部分实现", "范围": "已有文档入库、RAG/Agent问答、会话记忆、决策轨迹、实时指标与健康检查；已支持文档列表、回收删除和恢复；已支持历史会话新建/切换/回收删除与恢复"},
         {"模块": "五：评测与交付", "状态": "部分实现", "范围": "已有三档检索实测、图表与 Excel；完整系统评测待完成"},
     ]
 )

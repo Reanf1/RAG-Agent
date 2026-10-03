@@ -1199,6 +1199,7 @@ class TestStreamingFrontend(unittest.TestCase):
         self.directory = tempfile.TemporaryDirectory()
         self.addCleanup(self.directory.cleanup)
         self.config["paths"]["raw_documents"] = str(Path(self.directory.name) / "raw")
+        self.config["paths"]["session_db"] = str(Path(self.directory.name) / "memory.sqlite3")
         self.config["paths"]["vector_index"] = str(Path(self.directory.name) / "index")
         self.config["paths"]["logs"] = str(Path(self.directory.name) / "logs")
         for target in ("src.utils.config.load_config", "src.generation.rag_pipeline.load_config",
@@ -1522,6 +1523,59 @@ class TestStreamingFrontend(unittest.TestCase):
         self.assertNotIn("error", message)
         self.assertTrue(any("请求日志未保存" in item.value for item in self.app.warning))
         self.assertTrue(self.app.session_state["rag_cache"].entries)
+
+
+    def test_sessions_restore_rag_citations_after_switch_and_refresh(self):
+        from streamlit.testing.v1 import AppTest
+        self.reply()
+        app = self.app
+        a = app.session_state["rag_session_id"]
+        app.chat_input(key="rag_question").set_value("会话A层数？").run()
+        self.assertIn("会话A层数？", app.selectbox(key="conversation_select").options[0])
+        stored = deepcopy(app.session_state["rag_messages"][0])
+        app.button(key="new_conversation").click().run()
+        self.assertEqual(app.session_state["rag_messages"], [])
+        self.assertFalse(app.session_state["rag_cache"].entries)
+        self.reply()
+        app.chat_input(key="rag_question").set_value("会话B层数？").run()
+        app.selectbox(key="conversation_select").set_value(a).run()
+        self.assertEqual(app.session_state["rag_messages"], [stored])
+        self.assertEqual(len(app.chat_message), 2)
+        refreshed = AppTest.from_file(str(Path(__file__).resolve().parents[1] / "src/frontend/app.py"), default_timeout=10)
+        refreshed.query_params.update(app.query_params)
+        refreshed.run()
+        self.assertFalse(refreshed.exception)
+        self.assertEqual(refreshed.session_state["rag_messages"], [stored])
+        self.assertEqual(refreshed.text[0].value, "编码器有6层。")
+        self.assertEqual(self.opener.call_count, 2)
+        refreshed.button(key="clear_rag_chat").click().run()
+        self.assertEqual(refreshed.session_state["agent_memory"].get_rag_messages(refreshed.session_state["agent_user_id"], a), [])
+
+    def test_switch_cancels_low_relevance_request_without_generating(self):
+        self.retriever.search.return_value[0] = (self.retriever.search.return_value[0][0], 0.05)
+        self.app.chat_input(key="rag_question").set_value("低相关问题").run()
+        self.assertIn("rag_pending", self.app.session_state)
+        a = self.app.session_state["rag_session_id"]
+        self.app.button(key="new_conversation").click().run()
+        self.assertFalse(self.app.exception)
+        self.assertNotIn("rag_pending", self.app.session_state)
+        self.assertEqual(self.app.session_state["rag_messages"], [])
+        self.app.selectbox(key="conversation_select").set_value(a).run()
+        self.assertNotIn("rag_pending", self.app.session_state)
+        records, _ = read_rag_requests()
+        self.assertEqual(records[-1]["status"], "cancelled")
+        self.opener.assert_not_called()
+
+    def test_history_write_failure_is_visible_and_partial_text_is_kept(self):
+        self.reply(done=False)
+        with patch("src.agent.memory.MemoryManager.append_rag_message", side_effect=OSError("磁盘已满")):
+            self.app.chat_input(key="rag_question").set_value("保存失败问题").run()
+        self.assertFalse(self.app.exception)
+        self.assertTrue(any("磁盘已满" in w.value for w in self.app.warning))
+        self.assertTrue(self.app.session_state["rag_messages"][0]["answer"])
+        self.assertFalse(self.app.session_state["rag_messages"][0]["complete"])
+        self.assertEqual(self.app.session_state["agent_memory"].get_rag_messages(
+            self.app.session_state["agent_user_id"], self.app.session_state["rag_session_id"]), [])
 
 
 class TestGenerationEvaluation(unittest.TestCase):
