@@ -1,0 +1,315 @@
+{
+  "rows": [
+    {
+      "script": "reports/5_1_3 向量化与存储/compare_embeddings.py",
+      "code": 0,
+      "seconds": 0.051802834001136944,
+      "stdout": "usage: compare_embeddings.py [-h] [--download] [--output OUTPUT]\n                             [--verify-results VERIFY_RESULTS]\n                             [--sample SAMPLE]\n\n在同一固定检索样本上实测两种 Embedding；支持论文双语基准与历史中文子集。\n\noptions:\n  -h, --help            show this help message and exit\n  --download            先下载固定版本的公开模型和数据\n  --output OUTPUT       结果路径；论文基准与旧中文实验默认分开保存\n  --verify-results VERIFY_RESULTS\n                        仅重编码一轮，复核指定结果的指标与排名\n  --sample SAMPLE       使用已准备、已锁定的论文双语样本 JSON\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_1_3 向量化与存储/compare_vector_stores.py",
+      "code": 0,
+      "seconds": 0.051885624998249114,
+      "stdout": "usage: compare_vector_stores.py [-h] [--verify-backend {chroma,faiss}]\n                                [--directory DIRECTORY] [--vectors VECTORS]\n                                [--encode-only] [--reuse-vectors]\n                                [--search-ef SEARCH_EF] [--output OUTPUT]\n\n同一批本地 M3E 向量比较 Chroma 与 FAISS；FAISS 只用于实验。\n\noptions:\n  -h, --help            show this help message and exit\n  --verify-backend {chroma,faiss}\n  --directory DIRECTORY\n  --vectors VECTORS\n  --encode-only\n  --reuse-vectors\n  --search-ef SEARCH_EF\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_1_3 向量化与存储/prepare_paper_benchmark.py",
+      "code": 0,
+      "seconds": 0.45288700000674,
+      "stdout": "usage: prepare_paper_benchmark.py [-h] [--download]\n\n按已锁定的原文、问题和相关段落，准备 AI 论文双语检索基准。\n\noptions:\n  -h, --help  show this help message and exit\n  --download  显式下载尚未准备的论文 PDF\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_1_4 混合检索与重排序/compare_retrieval.py",
+      "code": 0,
+      "seconds": 0.046496708993799984,
+      "stdout": "usage: compare_retrieval.py [-h] [--runs RUNS] [--output OUTPUT]\n\n在锁定的中英论文基准上实测向量、RRF、RRF+BGE 的 Top-5 质量。\n\noptions:\n  -h, --help       show this help message and exit\n  --runs RUNS      预热后重复轮次，默认 3\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_2_1 Prompt工程与生成策略/compare_generation.py",
+      "code": 0,
+      "seconds": 0.3282485419913428,
+      "stdout": "usage: compare_generation.py [-h] [--output OUTPUT] [--rescore]\n\n固定真实论文上下文，逐项比较本地 Qwen 的生成采样参数并保存全部答案。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n  --rescore        只重算已有原始答案的规则分数，不调用模型\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_2_2 流式输出与引用/verify_streaming.py",
+      "code": 0,
+      "seconds": 0.32249954200233333,
+      "stdout": "usage: verify_streaming.py [-h] [--output OUTPUT]\n\n使用真实本地 Qwen 记录片段、正文/引用出现时序，保留可复核的原始回答。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_2_3 缓存与降级策略/verify_degradation.py",
+      "code": 0,
+      "seconds": 0.909134792003897,
+      "stdout": "usage: verify_degradation.py [-h] [--output OUTPUT]\n\n真实本地检索、Qwen 与 Streamlit AppTest 验证降级；不修改用户默认索引。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_2_3 缓存与降级策略/verify_semantic_cache.py",
+      "code": 0,
+      "seconds": 0.9686997910030186,
+      "stdout": "usage: verify_semantic_cache.py [-h] [--output OUTPUT]\n\n真实本地模型与 Streamlit AppTest 验证语义缓存，计时和调用次数均取实际执行。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_2_4 日志与可观测性/verify_rag_logging.py",
+      "code": 0,
+      "seconds": 0.9287324999895645,
+      "stdout": "usage: verify_rag_logging.py [-h] [--output OUTPUT]\n\n用真实本地模型和 AppTest 核对请求 JSONL、实际用量与检索分布。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_3_1 Agent核心循环/verify_action.py",
+      "code": 0,
+      "seconds": 0.348879291996127,
+      "stdout": "usage: verify_action.py [-h] [--output OUTPUT]\n\n真实本地Thought→Function Calling→工具执行，记录成功、异常与跳过。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_3_1 Agent核心循环/verify_react.py",
+      "code": 0,
+      "seconds": 0.3410151669959305,
+      "stdout": "usage: verify_react.py [-h] [--output OUTPUT]\n\n真实本地模型验证Observation与循环终止；不模拟模型或工具结果。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_3_1 Agent核心循环/verify_thought.py",
+      "code": 0,
+      "seconds": 0.3381232920073671,
+      "stdout": "usage: verify_thought.py [-h] [--output OUTPUT]\n\n真实本地 Qwen 的 Thought 单轮规划开发验证，不执行工具或完整ReAct循环。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_3_2 工具集开发/verify_comparison_keywords.py",
+      "code": 0,
+      "seconds": 0.8380192079930566,
+      "stdout": "usage: verify_comparison_keywords.py [-h] --output OUTPUT\n\n完整AI论文、本地模型和临时索引的对比/关键词功能验证，不作为独立质量评测。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_3_2 工具集开发/verify_research_tools.py",
+      "code": 0,
+      "seconds": 0.8552575409994461,
+      "stdout": "usage: verify_research_tools.py [-h] [--output OUTPUT]\n\n用完整AI论文、真实本地模型和临时索引验证两个科研工具及Agent注册调用。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_3_2 工具集开发/verify_summary_time_search.py",
+      "code": 0,
+      "seconds": 0.6176099580043228,
+      "stdout": "usage: verify_summary_time_search.py [-h] --output OUTPUT\n\n真实论文、本地模型、系统时钟和可选DuckDuckGo功能核验；不替代独立质量评测。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_3_3 Agent决策优化/verify_eight_tool_parallel.py",
+      "code": 0,
+      "seconds": 0.34530604199972004,
+      "stdout": "usage: verify_eight_tool_parallel.py [-h] --output OUTPUT\n\n八工具下的独立并行专项复测；模型/工具实际执行，不覆盖首次串行结果。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_3_3 Agent决策优化/verify_error_recovery.py",
+      "code": 0,
+      "seconds": 0.3502463750046445,
+      "stdout": "usage: verify_error_recovery.py [-h] --output OUTPUT\n\n错误恢复功能核验：真实本地Qwen与工具执行，故障显式注入，不算科研质量评测。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_3_3 Agent决策优化/verify_routing_parallel.py",
+      "code": 0,
+      "seconds": 0.41465425000933465,
+      "stdout": "usage: verify_routing_parallel.py [-h] --output OUTPUT\n\n本地Qwen路由/原生批次与真实论文工具串并行核验，不冒充正式路由准确率实验。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_3_4 多轮对话记忆管理/verify_conversation_summary.py",
+      "code": 0,
+      "seconds": 0.34366416599368677,
+      "stdout": "usage: verify_conversation_summary.py [-h] --output OUTPUT\n\n构造长对话与真实本机Qwen核验：阶段压缩、旧事实追问、纠正与会话隔离。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_3_4 多轮对话记忆管理/verify_history_window.py",
+      "code": 0,
+      "seconds": 0.3347787919919938,
+      "stdout": "usage: verify_history_window.py [-h] --output OUTPUT\n\n50轮构造历史与真实本机Qwen的窗口核验；不是50轮真实模型对话或论文质量评测。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_3_4 多轮对话记忆管理/verify_session_isolation.py",
+      "code": 0,
+      "seconds": 0.33264779100136366,
+      "stdout": "usage: verify_session_isolation.py [-h] --output OUTPUT\n\n真实SQLite与本地Qwen的三会话多轮核验，临时代号为功能样例，不是论文质量评测。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_3_4 多轮对话记忆管理/verify_summary_context_followup.py",
+      "code": 0,
+      "seconds": 0.33712062498671,
+      "stdout": "usage: verify_summary_context_followup.py [-h] --source SOURCE --output OUTPUT\n\n复用首次失败的真实摘要Context，验证模型读取已给出的会话代号；不重写失败结果。\n\noptions:\n  -h, --help       show this help message and exit\n  --source SOURCE\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_4_1 RAG与Agent深度融合/verify_memory_context_integration.py",
+      "code": 0,
+      "seconds": 0.33793458400759846,
+      "stdout": "usage: verify_memory_context_integration.py [-h] --output OUTPUT\n\n模块四记忆/消息联调：真实SQLite、Qwen及计算器；临时代号是功能样例。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_4_1 RAG与Agent深度融合/verify_rag_search_routing.py",
+      "code": 0,
+      "seconds": 0.8008625420043245,
+      "stdout": "usage: verify_rag_search_routing.py [-h] --output OUTPUT\n\n模块四来源决策实测：真实本地模型/论文/索引，外网可用性单独记录。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_4_2 可观测性与健康检查/verify_agent_metrics.py",
+      "code": 0,
+      "seconds": 1.042892083991319,
+      "stdout": "usage: verify_agent_metrics.py [-h] --output OUTPUT\n\n指标功能核验：真实本地模型、SQLite和公开论文，临时索引不改用户数据。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_4_2 可观测性与健康检查/verify_agent_trace.py",
+      "code": 0,
+      "seconds": 0.5361164170026314,
+      "stdout": "usage: verify_agent_trace.py [-h] --output OUTPUT\n\n真实本地模型与SQLite核验公开决策轨迹、工具调用成功率和耗时。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_4_2 可观测性与健康检查/verify_health_check.py",
+      "code": 0,
+      "seconds": 0.9795483329944545,
+      "stdout": "usage: verify_health_check.py [-h] --output OUTPUT\n\n核验真实Ollama和Chroma健康状态；异常路径隔离，用户索引不写入。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_4_4 端到端联调与测试/verify_concurrent_evidence.py",
+      "code": 0,
+      "seconds": 1.0491811249958118,
+      "stdout": "usage: verify_concurrent_evidence.py [-h] --backend BACKEND --ui-root UI_ROOT\n                                     --ui-identities UI_IDENTITIES --output\n                                     OUTPUT\n\n只读核验并发测试已落盘的事件、SQLite和日志；不重新生成答案或修改失败记录。\n\noptions:\n  -h, --help            show this help message and exit\n  --backend BACKEND\n  --ui-root UI_ROOT\n  --ui-identities UI_IDENTITIES\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_4_4 端到端联调与测试/verify_concurrent_users.py",
+      "code": 0,
+      "seconds": 0.80930912499025,
+      "stdout": "usage: verify_concurrent_users.py [-h] --root ROOT --source SOURCE --output\n                                  OUTPUT\n\n真实本地模型多用户并发核验；共享论文索引，独立会话，保留所有事件与失败。\n\noptions:\n  -h, --help       show this help message and exit\n  --root ROOT\n  --source SOURCE  已验证的真实论文raw/index目录\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_4_4 端到端联调与测试/verify_edge_evidence.py",
+      "code": 0,
+      "seconds": 0.8841131670051254,
+      "stdout": "usage: verify_edge_evidence.py [-h] --backend BACKEND --ui-root UI_ROOT\n                               --ui-identities UI_IDENTITIES --output OUTPUT\n\n只读复核边缘场景的真实输入输出、索引、SQLite摘要及浏览器记录。\n\noptions:\n  -h, --help            show this help message and exit\n  --backend BACKEND\n  --ui-root UI_ROOT\n  --ui-identities UI_IDENTITIES\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_4_4 端到端联调与测试/verify_edge_scenarios.py",
+      "code": 0,
+      "seconds": 1.160077041000477,
+      "stdout": "usage: verify_edge_scenarios.py [-h] --root ROOT --output OUTPUT\n\n本机真实边缘验收：空库、20MiB上传边界、长历史；逐步保存失败，不改业务数据。\n\noptions:\n  -h, --help       show this help message and exit\n  --root ROOT\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_4_4 端到端联调与测试/verify_full_flow.py",
+      "code": 0,
+      "seconds": 1.0800219169905176,
+      "stdout": "usage: verify_full_flow.py [-h] --root ROOT --output OUTPUT\n\n核验真实页面完整流程留下的原文、Chroma、SQLite和请求日志，不替换模型结果。\n\noptions:\n  -h, --help       show this help message and exit\n  --root ROOT      隔离页面的测试数据目录\n  --output OUTPUT  新的证据文件，禁止覆盖历史结果\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/5_4_4 端到端联调与测试/verify_full_flow_app.py",
+      "code": 0,
+      "seconds": 0.3327462910092436,
+      "stdout": "usage: verify_full_flow_app.py [-h] --root ROOT\n\n完整流程测试启动器：只替换数据路径，运行原Streamlit页面和真实本地模型。\n\noptions:\n  -h, --help   show this help message and exit\n  --root ROOT  本轮独立测试数据目录\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/模块完整性验证/verify_completeness_tests.py",
+      "code": 0,
+      "seconds": 0.031173082999885082,
+      "stdout": "usage: verify_completeness_tests.py [-h] --scope {module4,all} --output OUTPUT\n\n模块四专项与全项目回归入口；记录实际测试名称、失败和跳过，不覆盖历史证据。\n\noptions:\n  -h, --help            show this help message and exit\n  --scope {module4,all}\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/模块完整性验证/verify_module_one.py",
+      "code": 0,
+      "seconds": 0.04741683299653232,
+      "stdout": "usage: verify_module_one.py [-h] [--output OUTPUT] [--ingestion INGESTION]\n                            [--reopen REOPEN]\n\n模块一真实链路核验：多格式导入、五组分块、增量索引与四种检索。 只使用本地权重与临时索引；生成的 Word/TXT/Markdown 用于功能验证，\n公开论文用于真实 PDF 解析，不把这些样例当作质量评测数据。\n\noptions:\n  -h, --help            show this help message and exit\n  --output OUTPUT\n  --ingestion INGESTION\n  --reopen REOPEN\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/模块完整性验证/verify_module_three.py",
+      "code": 0,
+      "seconds": 0.9879531250044238,
+      "stdout": "usage: verify_module_three.py [-h] --output OUTPUT\n\n模块三完整性联调：真实论文/索引/本机模型，缺项与失败分别记录，不冒充全部验收通过。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/模块完整性验证/verify_modules_one_to_four.py",
+      "code": 0,
+      "seconds": 1.0511034590017516,
+      "stdout": "usage: verify_modules_one_to_four.py [-h] --root ROOT --output OUTPUT\n\n四模块真实联调：AppTest操作原页面，真实本地模型、Chroma、SQLite和JSONL。\n仅隔离数据路径；AppTest上传不是原生浏览器文件选择或动画时序验收。\n\noptions:\n  -h, --help       show this help message and exit\n  --root ROOT\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "script": "reports/模块完整性验证/verify_modules_one_two.py",
+      "code": 0,
+      "seconds": 1.0503213750052964,
+      "stdout": "usage: verify_modules_one_two.py [-h] [--output OUTPUT]\n\n完整 PDF 入库后用真实本地模型测试模块一、二的连接，保留质量问题。\n\noptions:\n  -h, --help       show this help message and exit\n  --output OUTPUT\n",
+      "stderr": "",
+      "passed": true
+    }
+  ],
+  "non_cli_ast_checked_only": [
+    "reports/5_1_4 混合检索与重排序/plot_retrieval.py",
+    "reports/5_2_1 Prompt工程与生成策略/plot_generation.py"
+  ],
+  "ast_parsed_scripts": 40,
+  "passed": true,
+  "scope": "从项目外目录执行--help；不运行下载、模型推理或绘图。"
+}

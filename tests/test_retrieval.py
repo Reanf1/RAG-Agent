@@ -9,6 +9,7 @@ import os
 import sys
 import tempfile
 import unittest
+from importlib import import_module
 from pathlib import Path
 from unittest.mock import patch
 
@@ -723,7 +724,7 @@ class TestEmbeddingEvaluation(unittest.TestCase):
     def test_hit_recall_and_mrr_cutoffs(self):
         """排名六的相关项不算 Hit@5，排名十一的项不算 MRR@10。"""
         import numpy as np
-        from reports.compare_embeddings import evaluate_rankings
+        evaluate_rankings = import_module("reports.5_1_3 向量化与存储.compare_embeddings").evaluate_rankings
 
         sample = {"corpus": [{"id": str(index)} for index in range(11)], "queries": [
             {"id": "q1", "relevant_ids": ["0"]},
@@ -739,7 +740,7 @@ class TestEmbeddingEvaluation(unittest.TestCase):
     def test_language_groups_use_equal_weight_macro_average(self):
         """问题数不等时宏平均仍等权，并保留表现较差的语言组。"""
         import numpy as np
-        from reports.compare_embeddings import evaluate_rankings
+        evaluate_rankings = import_module("reports.5_1_3 向量化与存储.compare_embeddings").evaluate_rankings
 
         sample = {"corpus": [{"id": str(index)} for index in range(6)], "queries": [
             {"id": "zh1", "group": "zh->zh", "relevant_ids": ["0"]},
@@ -758,7 +759,7 @@ class TestRetrievalEvaluation(unittest.TestCase):
     """手算 Top-5 边界、相关块集合与宏平均，实验质量来自真实模型。"""
 
     def test_rank_five_counts_and_rank_six_does_not(self):
-        from reports.compare_retrieval import evaluate_ranking
+        evaluate_ranking = import_module("reports.5_1_4 混合检索与重排序.compare_retrieval").evaluate_ranking
         ranking = [str(i) for i in range(8)]
         found = evaluate_ranking(ranking, ["4", "7"])
         self.assertTrue(found["hit_at_5"])
@@ -769,7 +770,7 @@ class TestRetrievalEvaluation(unittest.TestCase):
         self.assertEqual(evaluate_ranking(ranking, ["5"])["mrr_at_5"], 0)
 
     def test_multiple_relevant_short_and_empty_results(self):
-        from reports.compare_retrieval import evaluate_ranking
+        evaluate_ranking = import_module("reports.5_1_4 混合检索与重排序.compare_retrieval").evaluate_ranking
         found = evaluate_ranking(["a", "b", "c"], ["b", "c", "z"])
         self.assertEqual(found["relevant_returned"], 2)
         self.assertEqual(found["recall_at_5"], 2 / 3)
@@ -777,13 +778,14 @@ class TestRetrievalEvaluation(unittest.TestCase):
         self.assertEqual(evaluate_ranking([], ["a"])["recall_at_5"], 0)
 
     def test_empty_annotations_and_duplicate_results_are_errors(self):
-        from reports.compare_retrieval import evaluate_ranking
+        evaluate_ranking = import_module("reports.5_1_4 混合检索与重排序.compare_retrieval").evaluate_ranking
         for ranking, labels in ((["a"], []), (["a", "a"], ["a"])):
             with self.subTest(ranking=ranking), self.assertRaises(ValueError):
                 evaluate_ranking(ranking, labels)
 
     def test_unequal_groups_and_repeated_timing_are_not_duplicate_queries(self):
-        from reports.compare_retrieval import evaluate_ranking, summarize
+        evaluate_ranking = import_module("reports.5_1_4 混合检索与重排序.compare_retrieval").evaluate_ranking
+        summarize = import_module("reports.5_1_4 混合检索与重排序.compare_retrieval").summarize
         rows = [{**evaluate_ranking(ids, ["a"]), "group": group, "latency_ms_runs": times}
                 for ids, group, times in ((["a"], "zh->zh", [10, 20]),
                                          (["b"], "zh->zh", [30, 40]),
@@ -798,7 +800,7 @@ class TestRetrievalEvaluation(unittest.TestCase):
         self.assertEqual(result["latency_p95_ms"], 57.5)
 
     def test_sample_ids_and_annotation_membership_are_validated(self):
-        from reports.compare_retrieval import validate_sample
+        validate_sample = import_module("reports.5_1_4 混合检索与重排序.compare_retrieval").validate_sample
         sample = {"corpus": [{"id": "a"}], "queries": [{"id": "q", "relevant_ids": ["a"]}]}
         validate_sample(sample)
         sample["queries"][0]["relevant_ids"] = ["missing"]

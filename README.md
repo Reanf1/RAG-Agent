@@ -1,141 +1,178 @@
-# 智能科研助理
+# 智能科研助理：RAG + Agent 论文知识库问答系统
 
-基于 RAG + Agent 的论文知识库问答系统，依据南京农业大学生产实习课程要求建设。
+面向本科课程实践的本地科研助理。上传 PDF、Word、TXT 或 Markdown 文献后，由 Agent 根据问题选择知识库问答、论文分析或计算等工具，在网页中展示回答、来源、工具执行过程和运行指标。
 
-当前已实现 PDF、Word（.docx）及 TXT/Markdown 加载，以及 Streamlit 批量上传、进度显示、状态追踪和失败项重试。固定、递归、句段三种分块、本地 Embedding 和 Chroma 操作封装已实现；上传后自动分块、批量向量化并增量构建索引，页面支持向量、BM25、RRF 与模型重排 Top-K 检索，共 288 个测试通过；RAG Prompt、上下文排序/截断、引用溯源、本地流式/非流式生成、页面问答、语义缓存、三类降级、完整请求日志和Top-1分布已实现，八组生成参数对照已完成。PDF 已补常见双栏排序、表格与续表处理、公式符号/上下标及原文定位。Embedding 经人工智能论文中英双语基准重新比较后保留 M3E-base；跨语言质量仍不足。导入成功表示原文已保存、全部预期块已处理并写入索引；重复块跳过，新文献追加，Agent核心、八个本地工具与记忆已实现，页面已接入Agent问答及实时指标。实现说明见 [PDF 加载器选择](docs/QA/5.1.1%20PDF加载器选择.md)、[Word 和纯文本加载](docs/QA/5.1.1%20Word与纯文本加载器实现.md)、[批量文档导入](docs/QA/5.1.1%20批量文档导入与状态追踪.md)、[学术 PDF 解析优化](docs/QA/5.1.2%20学术论文PDF解析优化.md)、[三种文本分块策略](docs/QA/5.1.2%20三种文本分块策略.md)、[Embedding 对比和选择](docs/QA/5.1.3%20Embedding模型对比与选择.md)、[向量数据库对比和选择](docs/QA/5.1.3%20向量数据库对比与选择.md)、[批量向量化及增量索引](docs/QA/5.1.3%20批量向量化与增量索引.md)、[向量 Top-K 检索](docs/QA/5.1.3%20向量相似度Top-K检索.md)、[BM25 关键词检索](docs/QA/5.1.4%20BM25关键词检索.md)、[RRF 混合检索](docs/QA/5.1.4%20RRF混合检索.md)、[模型重排序](docs/QA/5.1.4%20模型重排序.md) 与 [三档检索评测](docs/QA/5.1.4%20检索质量评估实验.md)，生成参数见 [对比与选择](docs/QA/5.2.1%20生成参数对比与选择.md)，动态引用和真实页面验证见 [流式 QA](docs/QA/5.2.2%20流式输出与引用.md)，问题复用与失效见 [语义缓存 QA](docs/QA/5.2.3%20语义缓存.md)，空库、低相关确认与接口故障见 [降级 QA](docs/QA/5.2.3%20降级策略.md)，请求记录与分布见 [日志 QA](docs/QA/5.2.4%20日志与检索质量自评.md)。
+项目采用“Agent 负责决策，RAG 作为核心知识工具”的架构。参考 [dsy1018/ai-chatbot 固定版本](https://github.com/dsy1018/ai-chatbot/tree/6979d7173ed0f92910a8571dd4ca1b4a171a2c49)，保留本项目的模块目录；手写 ReAct 和 RRF，使用 LangChain 基础组件、Chroma、SQLite 和单个 Streamlit 应用。
 
-新增 Agent 实时指标：按工具调用显示实际输入/输出Token，记录每阶段快照；RAG面板展示候选命中率及检索/响应延迟。共享Action仅计一次，未知用量明确标注；候选命中率不代表Hit@5。上阶段新增18项测试，使用方式与真实核验见[指标QA](docs/QA/5.4.2%20AgentToken与RAG检索指标.md)。
+## 当前进度
 
-新增 Agent 公开决策轨迹：按轮次展示Thought→Action→实际返回→Observation，保留跳过、恢复和终止；实时展示按调用ID/工具名统计的成功率与耗时，重试计一次、未返回不进分母。新增13项测试，该阶段全项目578项通过，三项真实模型核验及浏览器展示通过，见[轨迹与工具指标QA](docs/QA/5.4.2%20Agent决策轨迹与工具指标.md)。
+截至 2026-10-03，模块一至四的主要功能已接通，课程全部验收尚未完成。
 
-新增按需健康检查：页面顶部点击“检查服务状态”，或调用`src.utils.config.check_health()`，分别检查本地Ollama及配置模型、已有Chroma集合/块数；缺索引不自动建库，未知不写成0。新增19项测试，当前全项目597项通过，六项真实核验与浏览器检查通过，见[健康检查QA](docs/QA/5.4.2%20简单健康检查接口.md)。
+| 模块 | 已实现内容 | 待完成或验证 |
+| --- | --- | --- |
+| 一：文档处理与检索 | PyMuPDF/python-docx/纯文本加载，批量进度与失败重试；固定/递归/句段分块；M3E、Chroma 增量索引；向量、BM25、手写 RRF、BGE 模型重排 | 五组分块设置的检索召回对比；复杂 PDF 解析及跨语言质量改进 |
+| 二：RAG 生成 | 专用 Prompt、相关性排序/上下文截断、文档名/位置引用、流式正文、语义缓存、三类降级、请求日志与分数分布 | 独立答案和引用语义评测；已发现多余/错误证据和错答被缓存的问题 |
+| 三：Agent 决策 | 有上限的 ReAct、八个本地工具、路由/并行/有界恢复、多会话隔离、Token 窗口和阶段摘要 | 独立路由/任务质量评测；最终答案可能遗漏工具结果中的来源或格式信息 |
+| 四：系统与前端 | 文档/知识库管理、两类问答与历史会话、公开决策轨迹、Token/检索/工具指标、健康检查 | 引用页跳转、Agent 最终答案逐 Token 输出、部署容量验收 |
+| 五：评测与交付 | 检索开发集、生成参数控制实验、原始证据与 Bad Case 记录 | 10–20 篇论文、50+独立四类问答集、人工评分、优化前后对照、完整部署和演示交付 |
 
-当前 6 篇人工智能论文、96 条中英配对查询的三档实测已完成：Hit@5 为 34.38% / 35.42% / 45.83%，MRR@5 为 0.2188 / 0.2597 / 0.3788。原始排名、三轮计时、图表及 Excel 见 [实验报告](docs/QA/5.1.4%20检索质量评估实验.md)。这是 48 个意图的开发集，标注尚未经独立人工复核，不替代完整系统评测。
+最新完整性测试：模块四专项 **170 项**、全项目 **633 项**自动化通过（专项包含在总数内）；另有 **30 项真实本地联调**和 **8 项证据复核**通过。功能检查通过不等于引用语义、答案质量或全部课程验收通过。详见 [模块四完整性报告](docs/QA/模块四完整性验证.md)和 [模块一至四完整性报告](docs/QA/模块一至四完整性验证.md)。
 
-模块一完整性核验：165 项测试与真实本地模型链路通过；五组分块设置的检索召回对比仍缺失，模块一保持部分完成。详见 [完整性验证报告](docs/QA/5.1%20模块一完整性验证.md)。
+## 系统如何工作
 
-RAG 专用 Prompt 已完成系统角色、检索上下文、用户问题和输出格式四部分，当前版本 `rag-v3`；返回 LangChain 消息，约束真实来源引用和资料不足提示，允许空库时用模型知识解释通用概念。调用与验证见 [Prompt QA](docs/QA/5.2.1%20RAG专用Prompt模板.md)，v3 变更见 [降级 QA](docs/QA/5.2.3%20降级策略.md)。已补按相关性拼接和动态字符预算截断，调用与边界见 [上下文 QA](docs/QA/5.2.1%20上下文智能拼接与截断.md)；已补按正文编号展示文件名/页码和原文证据的 [引用溯源接口](docs/QA/5.2.1%20引用溯源机制.md)；本地模型和页面流式问答已接通，独立引用语义评测仍待完成。
+```mermaid
+flowchart LR
+    UI[Streamlit：上传与对话] --> Agent[Agent：决策与工具执行]
+    Agent <--> Memory[SQLite：会话与摘要]
+    Agent --> RAG[RAG 知识库工具]
+    Agent --> Tools[论文分析、计算器等工具]
+    RAG --> Retrieval[向量 + BM25 → RRF → 模型重排]
+    Retrieval --> LLM[本地 Qwen：根据证据生成]
+    LLM --> UI
+    UI --> Index[加载 → 分块 → M3E → Chroma]
+    Index --> Retrieval
+```
 
-## 课程依据
+八个默认本地工具如下；可选联网搜索默认关闭，不计入八个工具。
 
-- [课程实践方案](docs/南京农业大学课程实践.docx)：项目功能、实验要求与交付物。
-- [项目交付模板](docs/项目交付模板.docx)：课程报告章节、格式和目录示例。
-- [技术设计与验收](docs/技术设计文档.md)：固定目录、参考代码映射、五模块需求和验收方式。
+| 工具 | 用途 |
+| --- | --- |
+| `knowledge_base_search` | 混合检索、重排和带来源的 RAG 回答 |
+| `paper_metadata` | 提取标题、作者、年份、摘要、DOI及原文证据 |
+| `paper_compare` | 对比两篇已上传论文的方法、数据集和实验结果 |
+| `keyword_extract` | 从问题或指定文档提取关键词 |
+| `paper_summary` | 生成背景、方法、结果、结论四部分摘要 |
+| `current_time` | 读取系统当前时间 |
+| `calculator` | 计算数学表达式 |
+| `paper_list` | 列出已上传文献及索引状态 |
 
-默认采用课程主方案“智能科研助理”。企业制度、教学辅导、法律文书三个题目为备选，不纳入当前骨架。
+## 本地启动
 
-## 快速启动
+### 1. Python 环境
 
-当前项目 `.venv` 使用 Python 3.10.10，根目录 `.python-version` 同步指定该版本，供 pyenv 选择解释器。重建环境前确认 `python3.10 --version` 输出 `Python 3.10.10`。
+在项目根目录执行。项目使用 **Python 3.10.10**，依赖版本固定在 [requirements.txt](requirements.txt)。已有 `.venv` 时直接激活，无需重新创建。
 
 ```bash
-# 在项目根目录创建并启用虚拟环境。
+python3.10 --version  # 确认版本为 3.10.10。
 python3.10 -m venv .venv
 source .venv/bin/activate
-
-# 安装页面、文档加载、分块、本地 Embedding 与 Chroma 依赖。
 python -m pip install -r requirements.txt
+python -m pip check
+```
 
-# 按用户手册准备本地 M3E 权重后，启动文档导入/索引应用。
+Windows 的虚拟环境激活方式见 [用户使用手册](docs/用户使用手册.md)。
+
+### 2. 准备本地模型
+
+模型文件不随 Git 提交。首次准备需要联网；准备后，默认业务读取本地权重并连接本机 Ollama，失败会明确提示，不静默转云端。
+
+| 组件 | 当前选择与路径 | 准备说明 |
+| --- | --- | --- |
+| Embedding | `moka-ai/m3e-base`；`data/models/m3e-base/` | [用户手册](docs/用户使用手册.md)，版本读取 YAML |
+| 重排 | `BAAI/bge-reranker-base`；`data/models/bge-reranker-base/` | [重排 QA](docs/QA/5.1.4%20模型重排序.md)，版本读取 YAML |
+| 生成 | Ollama + `qwen2.5:7b`；本机地址 `http://localhost:11434` | [用户手册](docs/用户使用手册.md) |
+| 历史 Token 计数 | Qwen 官方 `tokenizer.json`；`data/models/qwen2.5-tokenizer/tokenizer.json` | [词表准备与校验](docs/QA/5.3.4%20滑动窗口Token管理.md) |
+
+页面启动不加载模型。新文献向量化需要 M3E；混合重排问答需要 M3E、BGE 和 Ollama；Agent 的历史预算还需要本地 Qwen 词表。Embedding 和重排默认使用 CPU。
+
+本机已准备项目内 Ollama 运行包和模型时，在一个终端启动服务：
+
+```bash
+OLLAMA_MODELS="$PWD/data/models/ollama/models" OLLAMA_HOST=127.0.0.1:11434 OLLAMA_NO_CLOUD=1 OLLAMA_NUM_PARALLEL=1 data/models/ollama/runtime/ollama serve
+```
+
+这是项目内运行包的路径；换机器时按手册准备相应平台的 Ollama。若 11434 已有服务，先核对模型及地址，再使用该服务。
+
+### 3. 启动页面
+
+在另一个终端激活虚拟环境后执行：
+
+```bash
+source .venv/bin/activate
 python -m streamlit run src/frontend/app.py
 ```
 
-打开 http://localhost:8501，先按 [用户手册](docs/用户使用手册.md) 准备本地 M3E 权重，在左侧选择多份文档并点击“开始导入”，查看加载/分块/索引阶段、分块数和本次新增数。新文献增量加入；“重试失败项”只处理失败文件，索引失败时复用已加载原文并跳过已写入块。单份文件默认最大 20 MB，可在 `config.yaml` 的 `importing.max_file_size_mb` 调整。提问前按手册启动本地 Ollama，“RAG 流式问答”默认使用混合检索和模型重排，逐步输出正文并在引用位置补全文档名/真实位置；来源证据可展开。RAG 历史与引用已保存到 SQLite，只用于展示，不作为多轮推理上下文；相同或高度相似的问题可直接复用本会话答案缓存，命中不调用检索/重排/LLM，知识库或配置变化后失效。
+打开 [本地页面](http://localhost:8501)，按以下顺序使用：
 
-页面采用左侧文档管理、中央对话、底部 Agent 轨迹布局。左侧文档列表显示当前块数，删除需确认，原文移入回收区并同步移除索引，可恢复并重新入库；失败仍可重试。中央默认“Agent 科研助理”使用 SQLite 会话记忆并展示问答历史；“RAG 流式问答”保留真实逐 Token 输出和引用。底部关系图及步骤明细对应实际工具事件，重跑不重复执行。Agent 最终答案暂非逐 Token 流式；左侧可新建、切换、删除及恢复会话，同时切换 Agent 和 RAG 历史；保留带访客标识的当前地址可在刷新后找回记录。主区可展开“知识库管理面板”，查看汇总、逐文档向量化状态、真实块数及本页导入结果；左侧可刷新状态，有块不保证完整入库。详见[知识库面板QA](docs/QA/5.4.3%20知识库管理面板.md)、[前端QA](docs/QA/5.4.3%20前端布局与文档管理.md)和[会话历史QA](docs/QA/5.4.3%20对话历史管理.md)。
+1. 左侧选择文档，点击“开始导入”，查看加载、分块、向量化状态。默认单份上限为20 MiB；重试只处理失败项。
+2. 在“Agent 科研助理”提问，由 Agent 选择工具并使用当前会话历史；“RAG 流式问答”直接检索生成，历史只供展示。
+3. 查看回答、引用原文、公开决策轨迹与运行指标。低相关候选需要确认；空库或模型失败会显示提示。
+4. 左侧可管理文档和会话。文档删除影响共享知识库；原文可回收恢复。保存带访客/会话标识的当前地址，可在刷新后恢复历史。
+5. 点击“检查服务状态”，分别查看本机 LLM 和现有索引状态。
 
-`requirements.txt` 只声明当前实际使用的依赖。后续功能需要新依赖时，再加入并验证版本。
+随机访客标识用于本机演示隔离，不是登录认证。RAG 答案可逐 Token 输出；Agent 当前按阶段刷新轨迹和指标，最终答案一次显示。
 
-## 目录结构
+## 配置与数据
+
+运行配置统一由 [config.yaml](config.yaml)读取。
+
+| 配置 | 当前默认值 |
+| --- | --- |
+| 分块 | 递归，512字符，重叠64字符；固定策略实验比较256/512/1024，句段策略使用默认参数 |
+| 检索 | 两路候选各20，RRF常数60，重排后返回Top-5；Chroma `search_ef=100` |
+| 生成 | Temperature=0.1、Top-p=0.9、Top-k=40、上下文8192 Token、输出上限512 Token |
+| Agent | 最多8轮、同轮最多2个独立工具、有界超时/重试/重复调用终止 |
+| 记忆 | 摘要＋历史窗口2000 Token；10轮触发摘要，保留最近4轮 |
+| 存储 | 原文 `data/raw/`；索引 `data/index/`；会话 `data/sessions/memory.sqlite3`；日志 `logs/` |
+
+字符大小与模型 Token 数不同。检索、生成的 `top_k` 含义也不同。模型或索引参数改变后，要按手册核对旧库兼容性，不能直接混用。
+
+文献、模型、索引、会话和业务日志默认不提交。课程原始资料在 `docs/`，不会自动作为知识库论文导入。
+
+## 测试与实验
+
+无需启动 Ollama即可运行自动化回归；各用例的模型HTTP/向量隔离边界见 [测试说明](tests/README.md)。
+
+```bash
+.venv/bin/python -m unittest discover -s tests -p 'test_*.py' -v
+# 模块四专项：输出使用新路径，避免覆盖历史结果。
+.venv/bin/python reports/模块完整性验证/verify_completeness_tests.py --scope module4 --output reports/模块完整性验证/模块四专项_新时间.json
+```
+
+准备模型并启动 Ollama后，可复测真实四模块链路；测试数据目录和报告路径必须不存在：
+
+```bash
+.venv/bin/python reports/模块完整性验证/verify_modules_one_to_four.py --root /private/tmp/rag-modules-新时间 --output reports/模块完整性验证/四模块联调_新时间.json
+```
+
+已有三档检索实验使用6篇AI论文、821块、48个意图的96条中英配对查询，结果如下。这是开发集，尚未经独立人工复核，不能替代模块五正式评测。
+
+| 检索方式 | Hit@5 | MRR@5 |
+| --- | ---: | ---: |
+| 纯向量 | 34.38% | 0.2188 |
+| 混合检索 | 35.42% | 0.2597 |
+| 混合＋模型重排 | 45.83% | 0.3788 |
+
+原始结果、计时、图表和局限见 [检索质量 QA](docs/QA/5.1.4%20检索质量评估实验.md)。八组生成参数实验保存了160条真实回答；参数选型不等于引用质量已达标。
+
+所有实验与验证按“编号 中文小节名”归档，入口为 [reports 目录索引](reports/README.md)。历史失败、修正和复测均保留，正式 [评测集](reports/评测集.json)尚未构建；[性能表](reports/性能评测数据.xlsx)当前记录检索实验。报告目录含空格，运行小节脚本时须给路径加引号。
+
+## 项目结构
 
 ```text
 RAG+Agent/
-├── AGENTS.md                  开发约定
-├── README.md                  项目入口
-├── requirements.txt           当前运行依赖
-├── config.yaml                页面、分块、Embedding 配置与后续参数样例
+├── AGENTS.md / README.md / requirements.txt / config.yaml
 ├── src/
-│   ├── data_loader/            模块一：PDF、Word、TXT/Markdown 加载
-│   ├── chunking/               模块一：固定、递归、语义分块
-│   ├── retrieval/              模块一：M3E/Chroma/BM25/RRF/模型重排已实现
-│   ├── generation/             模块二：Prompt、RAG、流式、缓存
-│   ├── agent/                  模块三：ReAct、工具、路由、记忆
-│   ├── frontend/               模块四：Streamlit 入口、页面与组件
-│   └── utils/                  配置读取与日志预留位置
-├── tests/                     文档加载、分块、Embedding、Chroma、批量导入及界面测试
-├── data/                      原始文献与索引，内容默认不提交
-├── logs/                      运行日志，内容默认不提交
-├── docs/                      原始资料、需求、技术设计、使用手册、课程报告
-├── reports/                   评测集、系统评测、分块实验与 Bad Case 报告
-└── docker/                    Dockerfile 与 Compose 文件
+│   ├── data_loader/     文档加载
+│   ├── chunking/        三种分块
+│   ├── retrieval/       向量、BM25、RRF、重排
+│   ├── generation/      Prompt、RAG、流式、缓存
+│   ├── agent/           ReAct、工具、路由、记忆
+│   ├── frontend/        Streamlit应用、页面与组件
+│   └── utils/           配置、健康检查与日志
+├── tests/               自动化用例与测试说明
+├── docs/                课程原始资料、技术设计、使用手册、QA
+├── reports/             课程交付文件、小节实验与完整性验证
+├── data/                本地文献、模型、索引与会话
+├── logs/                运行日志
+└── docker/              Dockerfile与Compose文件
 ```
 
-## 实施顺序
+Docker文件目前只打包Streamlit应用，尚未提供完整的模型/数据挂载和Ollama服务编排；完整Docker部署未验收。当前使用上面的本地启动流程。
 
-1. 文档加载 → 三种分块 → 增量索引 → 向量/BM25/RRF/重排序；核验召回与页码溯源。
-2. RAG 生成 → 引用 → 流式 → 缓存与降级；核验回答来源和边缘场景。
-3. 手写 ReAct → 工具集 → 路由/并行/恢复 → 会话记忆；核验工具选择和终止条件。
-4. 前端联调 → 监控与健康检查；核验上传论文到得到回答的完整流程。
-5. 10–20 篇论文、至少 50 条评测问题 → 对比实验 → Bad Case 优化 → 完整交付。
+## 项目文档
 
-当前 Embedding 选择本地 `moka-ai/m3e-base`，基于 3 篇中文、3 篇英文人工智能论文重新比较两模型后保留，权重已在本机准备。宏平均 Hit@5 为 M3E 34.38%、BGE 31.25%，M3E 文档编码约快 3.14 倍；英文与跨语言检索仍有明显不足，选型不表示质量已达标。向量库经 Chroma/FAISS 实测后选择 Chroma，`search_ef=100`；本地 Ollama + Qwen2.5:7b 流式/非流式接口、参数实验和 RAG 页面已接通；完整 Agent 系统联调待实现。配置数值均为工程起点，不代表全部科研场景的最优结果。
-
-在项目根目录调用分块模块：
-
-```python
-from src.data_loader import load_document
-from src.chunking import split_documents
-
-documents = load_document("data/raw/论文.pdf")  # 改为实际文档路径。
-chunks = split_documents(documents)  # 读取 config.yaml：recursive、512/64 字符。
-chunks = split_documents(documents, strategy="semantic")  # 句段策略使用 YAML 默认参数。
-```
-
-策略名为 `fixed`、`recursive`、`semantic`。仅固定策略比较 256/512/1024 字符；递归和句段策略使用 YAML 默认的 512/64 参数。正文块不超过设置大小；已独立识别的 PDF/Word 表格整块保留，可能超限。块继承来源位置并增加稳定 ID 与字符区间。语义策略基于句段规则，重叠只复用完整单元，可能为零；不使用语义模型。当前仅记录 [分块统计](reports/分块策略对比实验报告.md)，召回实验待检索层接入。
-
-已准备本地权重后，可继续生成向量：
-
-```python
-from src.retrieval.vector_store import get_embeddings
-
-embeddings = get_embeddings()  # 首次加载，之后在进程内复用；只读本地 M3E。
-vectors = embeddings.embed_documents([chunk.page_content for chunk in chunks])
-query_vector = embeddings.embed_query("论文使用了什么实验方法？")
-english_vector = embeddings.embed_query("Which experimental method does the paper use?")
-print(len(vectors), len(query_vector))  # 查询向量为 768 维，向量已归一化。
-```
-
-首次准备权重的操作见 [用户手册](docs/用户使用手册.md)。Embedding 的 821 个论文分块、96 条查询（48 个中英配对意图）实测与原始排名/计时见 [QA](docs/QA/5.1.3%20Embedding模型对比与选择.md)、[双语评测集](reports/Embedding论文双语评测集.json) 和 [结果 JSON](reports/Embedding论文双语对比结果.json)。问题与标注由 Codex 根据原文编写，尚未经人工复核；旧中文网页数据保留在原结果文件中，不替代论文知识库完整系统评测。
-
-也可将分块持久化并检索：
-
-```python
-from src.retrieval.vector_store import VectorStore
-
-store = VectorStore()  # 打开本地 Chroma；新增块或有效向量查询时才加载 M3E。
-print("新增块数：", store.add_chunks(chunks))  # 重复导入跳过已有 chunk_id。
-for document, score in store.search("论文使用了什么方法？"):
-    print(document.metadata["source_file"], score, document.page_content)
-print("库中块数：", store.count())
-# 需要移除某份文档的索引时调用；原始文件保留。
-# store.delete_document(chunks[0].metadata["doc_id"])
-```
-
-两库实测、默认参数不足与最终选择见 [向量数据库 QA](docs/QA/5.1.3%20向量数据库对比与选择.md)。FAISS 仅用于独立实验，不是业务运行依赖。上传页面已自动构建索引，也可通过 `batch_build_index()` 完成多文件入库，见 [批量索引 QA](docs/QA/5.1.3%20批量向量化与增量索引.md)。
-
-页面中的“文档 Top-K 检索”可选择向量相似度、BM25 关键词、RRF 混合检索或 RRF + 模型重排，输入中英文问题、设置 K（默认 5），并可填写文档 ID 限定范围。四种方式均按各自分数降序展示正文、文件名和来源位置；分数不可直接比较，也不是命中概率。向量接口为 `store.search(query, k=5, doc_id=None)`；关键词接口为 `BM25Retriever().search(query, k=5, doc_id=None)`。BM25 从 Chroma 正文重建内存索引，无需 Embedding 权重；Python 长期复用实例时，在新增/删除后调用 `rebuild()`，页面每次提交自动读取最新语料。英文按词、中文按单字，支持全角字符归一化；没有词项交集返回空列表，命中结果保留零分/负分。说明见 [Top-K QA](docs/QA/5.1.3%20向量相似度Top-K检索.md) 与 [BM25 QA](docs/QA/5.1.4%20BM25关键词检索.md)。当前返回片段，尚不生成答案。
-
-混合接口为 `HybridRetriever().search(query, k=5, doc_id=None)`：默认两路各召回 20 项，按 `chunk_id` 合并并累加 `1/(60+排名)`，排名从 1 开始，再取最终 K 项。BM25 每次读取当前正文；新增/删除后再查即可，不重算旧文档向量。有效混合查询需本地 M3E，错误明确上报。算法与核验见 [RRF QA](docs/QA/5.1.4%20RRF混合检索.md)。
-
-启用精排调用 `HybridRetriever().search(query, k=5, rerank=True)`，先将融合后的默认 Top-20 交给本地 `bge-reranker-base`，再按模型分数取最终 K 项。页面选择“RRF + 模型重排”；本机权重已准备，首次有效精排才加载，失败不改用关键词。复用现有 sentence-transformers，不新增依赖；权重准备、Token 截断与真实核验见 [模型重排 QA](docs/QA/5.1.4%20模型重排序.md)。
-
-## 交付文档
-
-- [技术设计文档](docs/技术设计文档.md)
-- [用户使用手册](docs/用户使用手册.md)
-- [课程报告骨架](docs/课程报告.md)
-- [系统评测报告](reports/系统评测报告.md)
-- [分块策略对比实验报告](reports/分块策略对比实验报告.md)
-- [Bad Case 分析报告](reports/Bad_Case分析报告.md)
-
-Docker 启动：`docker compose -f docker/docker-compose.yml up --build`。部署入口为同一 Streamlit 应用，当前未实测容器中的导入功能；后续接入模型与索引服务后再补充完整系统的部署验证。
+- [技术设计与验收](docs/技术设计文档.md)：架构、接口、源码映射、五模块需求和实施记录。
+- [用户使用手册](docs/用户使用手册.md)：模型准备、具体操作、配置与故障处理。
+- [课程实践方案](docs/南京农业大学课程实践.docx)与 [项目交付模板](docs/项目交付模板.docx)：课程依据及报告格式。
+- [报告与证据索引](reports/README.md)、[系统评测报告](reports/系统评测报告.md)、[Bad Case分析](reports/Bad_Case分析报告.md)：实验和真实失败记录。

@@ -10,6 +10,7 @@ import sys
 import tempfile
 from threading import Thread
 import unittest
+from importlib import import_module
 from pathlib import Path
 from unittest.mock import patch
 from urllib.error import HTTPError, URLError
@@ -29,7 +30,9 @@ from src.generation.rag_pipeline import (
 from src.generation.streaming import render_partial_answer, stream_answer
 from src.generation.cache import SemanticCache, cache_scope
 from src.utils.logger import read_rag_requests, record_rag_request, retrieval_score_distribution
-from reports.compare_generation import evaluate_answer, summarize
+# 小节目录含编号和空格，按完整模块名加载评测函数。
+evaluate_answer = import_module("reports.5_2_1 Prompt工程与生成策略.compare_generation").evaluate_answer
+summarize = import_module("reports.5_2_1 Prompt工程与生成策略.compare_generation").summarize
 
 
 class TestRAGPrompt(unittest.TestCase):
