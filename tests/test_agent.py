@@ -3580,5 +3580,24 @@ class TestAgentMetricsEntryAndPage(unittest.TestCase):
         self.assertTrue(any("Action · 已跳过" in m.value for m in app.markdown))
 
 
+    def test_central_chat_and_graph_survive_rerun_without_duplicate(self):
+        """中央展示真实问答，底部按调用ID画图；页面重跑不重复生成或追加历史。"""
+        app = self.page()
+        app.text_input(key="agent_question").set_value("计算")
+        app.button(key="run_agent").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(len(app.chat_message), 2)
+        self.assertEqual(app.session_state["agent_messages"][0]["answer"], "结果为6。")
+        self.assertTrue(app.get("graphviz_chart"))
+        app.run()
+        self.assertFalse(app.exception)
+        self.assertEqual(len(app.chat_message), 2)
+        self.assertEqual(len(app.session_state["agent_messages"]), 1)
+        self.core.assert_called_once()
+        app.text_input(key="agent_question").set_value("再次计算")
+        app.button(key="run_agent").click().run()
+        self.assertEqual(len(app.chat_message), 4)
+        self.assertEqual(len(app.session_state["agent_messages"]), 2)
+
 if __name__ == "__main__":
     unittest.main()

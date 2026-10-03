@@ -1,0 +1,22 @@
+2026-10-03 12:20:37.738 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+F...2026-10-03 12:20:39.010 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:20:39.267 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:20:39.650 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-03 12:20:40.022 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+...
+======================================================================
+FAIL: test_central_chat_and_graph_survive_rerun_without_duplicate (tests.test_agent.TestAgentMetricsEntryAndPage)
+中央展示真实问答，底部按调用ID画图；页面重跑不重复生成或追加历史。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/test_agent.py", line 3608, in test_central_chat_and_graph_survive_rerun_without_duplicate
+    self.assertEqual(len(app.chat_message), 2)
+AssertionError: 1 != 2
+
+----------------------------------------------------------------------
+Ran 10 tests in 2.703s
+
+FAILED (failures=1)

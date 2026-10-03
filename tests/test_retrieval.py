@@ -2315,6 +2315,174 @@ class TestImportFrontend(unittest.TestCase):
         self.assertEqual(self.embeddings.document_calls, [["BERT"], ["Reranker"]])
 
 
+    def test_layout_library_delete_cancel_restore_and_cache(self):
+        """真实页面上传、取消删除、删除和恢复均核验原文及Chroma。"""
+        from src.frontend.components.documents import list_documents
+        app = self.app
+        raw, index = Path(self.directory.name) / "raw", Path(self.directory.name) / "index"
+        app.file_uploader[0].set_value([("paper.md", b"Transformer uses six layers.", "text/markdown")]).run()
+        app.button(key="start_import").click().run()
+        doc_id = list_documents(raw, index)[0]["doc_id"]
+        self.assertEqual([tab.label for tab in app.tabs], ["Agent 科研助理", "RAG 流式问答"])
+        self.assertEqual(app.sidebar.get("progress")[0].proto.value, 100)
+        self.assertEqual(app.sidebar.selectbox(key="manage_doc_id").value, doc_id)
+        app.button(key="delete_document").click().run()
+        self.assertEqual(VectorStore().count(), 1)
+        app.button(key="cancel_delete_document").click().run()
+        self.assertTrue((raw / doc_id / "paper.md").is_file())
+        app.session_state["rag_cache"].clear = unittest.mock.Mock()
+        app.button(key="delete_document").click().run()
+        app.button(key="confirm_delete_document").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(VectorStore().count(), 0)
+        self.assertFalse((raw / doc_id).exists())
+        self.assertEqual((raw / ".trash" / doc_id / "paper.md").read_bytes(), b"Transformer uses six layers.")
+        self.assertEqual(app.session_state["import_tasks"], [])
+        self.assertFalse(app.button(key="start_import").disabled)
+        app.session_state["rag_cache"].clear.assert_called_once()
+        app.button(key="restore_document").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(VectorStore().count(), 1)
+        self.assertTrue(app.session_state["import_tasks"][0]["indexed"])
+        self.assertTrue((raw / doc_id / "paper.md").exists())
+        self.assertFalse((raw / ".trash" / doc_id).exists())
+        app.run()
+        self.assertEqual(VectorStore().count(), 1)
+
+    def test_delete_only_selected_document_keeps_other_index_and_progress(self):
+        """删除一份文献不会清空全库，保留任务的进度与真实列表一致。"""
+        app = self.app
+        app.file_uploader[0].set_value([("a.txt", b"Adam", "text/plain"),
+                                       ("b.txt", b"Transformer", "text/plain")]).run()
+        app.button(key="start_import").click().run()
+        app.button(key="delete_document").click().run()
+        app.button(key="confirm_delete_document").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(VectorStore().count(), 1)
+        self.assertEqual(VectorStore().list_chunks()[0].page_content, "Transformer")
+        self.assertEqual(app.session_state["import_progress"], {"completed": 1, "total": 1})
+        self.assertEqual(len(app.selectbox(key="manage_doc_id").options), 1)
+        app.selectbox(key="retrieval_method").set_value("BM25 关键词")
+        app.text_input(key="vector_query").set_value("Adam")
+        app.button(key="vector_search").click().run()
+        self.assertFalse(app.text)
+
+    def test_library_persists_without_upload_and_failure_keeps_original(self):
+        """页面重载读全库；索引删除失败会回滚原文且允许重试。"""
+        app = self.app
+        app.file_uploader[0].set_value([("keep.txt", b"Adam", "text/plain")]).run()
+        app.button(key="start_import").click().run()
+        app.session_state["import_tasks"] = []
+        app.file_uploader[0].set_value([]).run()
+        doc_id = app.selectbox(key="manage_doc_id").value
+        app.button(key="delete_document").click().run()
+        with patch("src.retrieval.vector_store.VectorStore.delete_document", side_effect=RuntimeError("索引删除失败")):
+            app.button(key="confirm_delete_document").click().run()
+        self.assertFalse(app.exception)
+        self.assertTrue(any("索引删除失败" in e.value for e in app.error))
+        self.assertEqual(VectorStore().count(), 1)
+        self.assertTrue((Path(self.directory.name) / "raw" / doc_id / "keep.txt").exists())
+        app.button(key="confirm_delete_document").click().run()
+        self.assertEqual(VectorStore().count(), 0)
+
+    def test_restore_index_failure_can_retry(self):
+        """回收原文恢复后模型失败，不冒充入库成功；现有失败重试补全索引。"""
+        app = self.app
+        app.file_uploader[0].set_value([("restore.txt", b"Neural network", "text/plain")]).run()
+        app.button(key="start_import").click().run()
+        app.button(key="delete_document").click().run()
+        app.button(key="confirm_delete_document").click().run()
+        with patch("src.retrieval.vector_store.get_embeddings", side_effect=FileNotFoundError("权重缺失")):
+            app.button(key="restore_document").click().run()
+        task = app.session_state["import_tasks"][0]
+        self.assertEqual(task["status"], "failed")
+        self.assertTrue(Path(task["path"]).exists())
+        self.assertEqual(VectorStore().count(), 0)
+        app.button(key="retry_import").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(VectorStore().count(), 1)
+
+
+class TestDocumentManagement(unittest.TestCase):
+    """回收边界与实际加载任务验证；无需生成模型。"""
+
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        self.raw = Path(self.directory.name) / "raw"
+        self.index = Path(self.directory.name) / "index"
+        self.data = b"Six encoder layers"
+        import hashlib
+        self.doc_id = hashlib.sha256(self.data).hexdigest()
+        self.folder = self.raw / self.doc_id
+        self.folder.mkdir(parents=True)
+        (self.folder / "paper.txt").write_bytes(self.data)
+
+    def test_unindexed_list_delete_restore_without_creating_database(self):
+        from src.frontend.components.documents import list_documents, delete_document, restore_document
+        with patch("src.retrieval.vector_store.get_embeddings", side_effect=AssertionError("不可加载模型")):
+            self.assertEqual(list_documents(self.raw, self.index)[0]["chunks"], 0)
+            self.assertEqual(delete_document(self.raw, self.index, self.doc_id), 0)
+            self.assertEqual(list_documents(self.raw, self.index), [])
+            tasks = restore_document(self.raw, self.doc_id)
+        self.assertEqual(tasks[0]["data"], self.data)
+        self.assertEqual(tasks[0]["status"], "pending")
+        self.assertFalse(self.index.exists())
+
+    def test_reject_path_and_symlink(self):
+        from src.frontend.components.documents import delete_document, list_documents
+        with self.assertRaises(ValueError):
+            delete_document(self.raw, self.index, "../outside")
+        link = self.raw / ("a" * 64)
+        link.symlink_to(self.folder, target_is_directory=True)
+        with self.assertRaises(ValueError):
+            delete_document(self.raw, self.index, link.name)
+        self.assertEqual(len(list_documents(self.raw, self.index)), 1)
+        self.assertTrue((self.folder / "paper.txt").exists())
+
+    def test_archive_conflict_preserves_source(self):
+        from src.frontend.components.documents import delete_document
+        (self.raw / ".trash" / self.doc_id).mkdir(parents=True)
+        with self.assertRaises(ValueError):
+            delete_document(self.raw, self.index, self.doc_id)
+        self.assertEqual((self.folder / "paper.txt").read_bytes(), self.data)
+
+    def test_restore_rejects_changed_content_and_no_overwrite(self):
+        from src.frontend.components.documents import delete_document, restore_document
+        delete_document(self.raw, self.index, self.doc_id)
+        archived = self.raw / ".trash" / self.doc_id / "paper.txt"
+        archived.write_bytes(b"Changed")
+        with self.assertRaises(ValueError):
+            restore_document(self.raw, self.doc_id)
+        self.assertTrue(archived.exists())
+        archived.write_bytes(self.data)
+        self.folder.mkdir()
+        with self.assertRaises(FileExistsError):
+            restore_document(self.raw, self.doc_id)
+        self.assertTrue(archived.exists())
+
+    def test_missing_source_never_deletes_index(self):
+        from src.frontend.components.documents import delete_document
+        with patch("src.frontend.components.documents.VectorStore") as store:
+            with self.assertRaises(FileNotFoundError):
+                delete_document(self.raw, self.index, "b" * 64)
+            store.assert_not_called()
+
+    def test_graph_parallel_ids_and_join(self):
+        from src.frontend.components.trace import trace_graph
+        graph = trace_graph([
+            {"type": "thought"},
+            {"type": "tool_call", "name": 'a"tool', "call_id": "a"},
+            {"type": "tool_call", "name": "b", "call_id": "b"},
+            {"type": "tool_result", "name": "b", "call_id": "b"},
+            {"type": "tool_result", "name": "a", "call_id": "a"},
+            {"type": "observation", "decision": "continue"},
+            {"type": "thought"}, {"type": "done", "stop_reason": "max_iterations"}])
+        for edge in ("n0 -> n1", "n0 -> n2", "n2 -> n3", "n1 -> n4", "n3 -> n5", "n4 -> n5", "n5 -> n6"):
+            self.assertIn(edge, graph)
+        self.assertIn('a\\"tool', graph)
+        self.assertNotIn("n1 -> n2", graph)
+
 class TestHealthCheck(unittest.TestCase):
     """隔离Ollama HTTP，Chroma使用真实临时数据库；不生成回答或编码向量。"""
 
