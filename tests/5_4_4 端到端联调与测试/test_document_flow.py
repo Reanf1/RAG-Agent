@@ -53,7 +53,7 @@ class TestImportFrontend(unittest.TestCase):
         return (app or self.app).button(key=f"delete_document:{doc_id}")
 
     def test_workbench_tabs_keep_features_in_their_sections(self):
-        """四类工作区分别承载问答、检索和原文管理。"""
+        """三个工作区分别承载问答、检索和原文管理。"""
         app = self.app
         self.assertFalse(app.exception)
         self.assertEqual(app.title[0].value, "智能科研助理")
@@ -62,7 +62,13 @@ class TestImportFrontend(unittest.TestCase):
         chat, retrieval, knowledge = app.tabs
         self.assertEqual(len(chat.chat_input), 1)
         self.assertFalse(app.text_input(key="vector_query").value)
-        self.assertTrue(any(e.label == "知识库管理面板" for e in knowledge.expander))
+        self.assertTrue(any(s.value == "知识库管理面板" for s in knowledge.subheader))
+        self.assertFalse(any(e.label == "知识库管理面板" for e in knowledge.expander))
+        self.assertEqual(app.text_input(key="vector_query").label, "查询内容")
+        self.assertEqual(app.text_input(key="vector_doc_id").label, "文档ID")
+        self.assertEqual(app.number_input(key="vector_top_k").label, "Top-k")
+        self.assertFalse(any("此处只检索文档块" in c.value or "统计本地请求日志中的实际 RAG 检索" in c.value
+                             or "共享知识库按文档内容指纹汇总" in c.value for c in app.caption))
         self.assertTrue(any(s.value == "检索分数分布" for s in retrieval.subheader))
         self.assertTrue(any(s.value == "状态统计" for s in chat.subheader))
         self.assertFalse(app.get("graphviz_chart"))
@@ -700,8 +706,8 @@ class TestImportFrontend(unittest.TestCase):
         rows = self.knowledge_rows(app).set_index("文件名")
         self.assertEqual(rows.loc["ok.txt", "向量化状态"], "已向量化")
         self.assertEqual(rows.loc["failed.txt", "向量化状态"], "未向量化")
-        self.assertEqual(rows.loc["failed.txt", "导入结果（本页）"], "失败")
-        self.assertIn("索引写入失败", rows.loc["failed.txt", "错误（本页）"])
+        self.assertEqual(set(rows.columns), {"文档 ID", "原文状态", "向量化状态", "索引块数"})
+        self.assertTrue(any("索引写入失败" in c.value for c in app.sidebar.caption))
         self.assertEqual({m.label: m.value for m in app.metric if m.label.startswith("知识库")
                           or m.label == "已向量化文档数"},
                          {"知识库文档数": "2", "已向量化文档数": "1", "知识库索引块数": "1"})
@@ -709,16 +715,16 @@ class TestImportFrontend(unittest.TestCase):
         restored = AppTest.from_file(str(Path(__file__).resolve().parents[2] / "src/frontend/app.py"),
                                      default_timeout=10).run()
         rows = self.knowledge_rows(restored)
-        self.assertEqual(set(rows["导入结果（本页）"]), {"—"})
+        self.assertEqual(list(rows.columns), ["文件名", "文档 ID", "原文状态", "向量化状态", "索引块数"])
         self.assertEqual(set(rows["向量化状态"]), {"已向量化", "未向量化"})
         self.assertEqual(len(self.embeddings.document_calls), calls)
         app.button(key="retry_import").click().run()
         rows = self.knowledge_rows(app)
         self.assertEqual(set(rows["向量化状态"]), {"已向量化"})
-        self.assertEqual(set(rows["导入结果（本页）"]), {"成功"})
+        self.assertTrue(all(task["indexed"] for task in app.session_state["import_tasks"]))
 
     def test_knowledge_panel_partial_index_does_not_claim_import_success(self):
-        """第二批失败时500块仍存在，面板同时保留失败/预期501块，重试补全。"""
+        """第二批失败时面板显示实际500块，左侧保留失败详情，重试补全。"""
         import hashlib
         app = self.app
         data = b"Paper blocks"
@@ -736,9 +742,10 @@ class TestImportFrontend(unittest.TestCase):
             app.button(key="start_import").click().run()
         row = self.knowledge_rows(app).iloc[0]
         self.assertEqual(row["索引块数"], 500)
-        self.assertEqual(row["导入结果（本页）"], "失败")
-        self.assertEqual(row["本次预期块数"], "501")
-        self.assertTrue(any("不保证完整入库" in c.value for c in app.caption))
+        self.assertEqual(row["向量化状态"], "已向量化")
+        task = app.session_state["import_tasks"][0]
+        self.assertEqual((task["status"], task["chunk_count"]), ("failed", 501))
+        self.assertTrue(any("第二批失败" in c.value for c in app.sidebar.caption))
         with patch("src.chunking.split_documents", return_value=chunks):
             app.button(key="retry_import").click().run()
         self.assertEqual(self.knowledge_rows(app).iloc[0]["索引块数"], 501)
@@ -763,7 +770,7 @@ class TestImportFrontend(unittest.TestCase):
         row = self.knowledge_rows(app).iloc[0]
         self.assertEqual(row["向量化状态"], "未向量化")
         self.assertEqual(row["索引块数"], 0)
-        self.assertEqual(row["导入结果（本页）"], "成功")  # 原批次事实不能冒充当前索引状态。
+        self.assertTrue(app.session_state["import_tasks"][0]["indexed"])  # 旧批次不能冒充当前索引状态。
 
     def test_knowledge_panel_content_alias_keeps_both_batch_results(self):
         """同内容异名按指纹合并，仍保留一个成功和另一个失败的实际结果。"""
@@ -781,8 +788,8 @@ class TestImportFrontend(unittest.TestCase):
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows.iloc[0]["文件名"], "a.txt / b.txt")
         self.assertEqual(rows.iloc[0]["索引块数"], 1)
-        self.assertEqual(rows.iloc[0]["导入结果（本页）"], "成功 / 失败")
-        self.assertIn("第二个别名失败", rows.iloc[0]["错误（本页）"])
+        self.assertEqual([task["status"] for task in app.session_state["import_tasks"]], ["success", "failed"])
+        self.assertTrue(any("第二个别名失败" in c.value for c in app.sidebar.caption))
 
     def test_knowledge_panel_index_error_is_unknown_not_zero(self):
         """索引不可读不显示正常空库或捏造零统计，修复后刷新重新读取。"""

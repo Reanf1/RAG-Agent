@@ -191,31 +191,33 @@ with knowledge_tab:
                 # 库读取失败时仍保留刷新入口，便于修复后重新读取。
                 st.button("刷新知识库状态", key="refresh_knowledge")
                 raise
-            if not library:
-                st.caption("知识库暂无文档。")
             identifiers = [document["doc_id"] for document in library]
             if st.session_state.get("knowledge_document_id") not in identifiers:
                 st.session_state.knowledge_document_id = identifiers[0] if identifiers else None
             confirm_delete = cancel_delete = False
-            for document in library:
-                pending = st.session_state.get("delete_pending") == document["doc_id"]
-                # 为操作列留出空间，文件名换行显示，按钮保持54×40像素。
-                details, actions = st.columns([2, 1], gap="small", vertical_alignment="center")
-                with details:
-                    selected = st.session_state.knowledge_document_id == document["doc_id"]
-                    if st.button(document["name"], key=f"knowledge_document:{document['doc_id']}",
-                                 type="primary" if selected else "secondary", width="stretch"):
-                        st.session_state.knowledge_document_id = document["doc_id"]
-                        st.rerun()
-                with actions:
-                    if pending:
-                        confirm_delete = st.button("确认删除", key="confirm_delete_document", width=54)
-                        cancel_delete = st.button("取消", key="cancel_delete_document", width=54)
-                    elif st.button("删除", key=f"delete_document:{document['doc_id']}",
-                                 help=f"删除{document['name']}", disabled=not document["source_available"], width=54):
-                        st.session_state.delete_pending = document["doc_id"]
-                        st.rerun()
-                st.caption(f"ID：{document['doc_id'][:8]}")
+            # 文件列表与右侧原文区同高，长列表只在框内滚动。
+            with st.container(height=600, border=True, key="knowledge_document_list"):
+                if not library:
+                    st.caption("知识库暂无文档。")
+                for document in library:
+                    pending = st.session_state.get("delete_pending") == document["doc_id"]
+                    # 为操作列留出空间，文件名换行显示，按钮保持54×40像素。
+                    details, actions = st.columns([2, 1], gap="small", vertical_alignment="center")
+                    with details:
+                        selected = st.session_state.knowledge_document_id == document["doc_id"]
+                        if st.button(document["name"], key=f"knowledge_document:{document['doc_id']}",
+                                     type="primary" if selected else "secondary", width="stretch"):
+                            st.session_state.knowledge_document_id = document["doc_id"]
+                            st.rerun()
+                    with actions:
+                        if pending:
+                            confirm_delete = st.button("确认删除", key="confirm_delete_document", width=54)
+                            cancel_delete = st.button("取消", key="cancel_delete_document", width=54)
+                        elif st.button("删除", key=f"delete_document:{document['doc_id']}",
+                                     help=f"删除{document['name']}", disabled=not document["source_available"], width=54):
+                            st.session_state.delete_pending = document["doc_id"]
+                            st.rerun()
+                    st.caption(f"ID：{document['doc_id'][:8]}")
             # 刷新放在文档列表下方、已归档知识上方。
             st.button("刷新知识库状态", key="refresh_knowledge")
             if library:
@@ -409,47 +411,33 @@ with chat_tab:
         show_statistics()
 
 with knowledge_tab:
-    with st.expander("知识库管理面板"):
-        st.caption("共享知识库按文档内容指纹汇总，回收文档不计入活动列表。已向量化仅表示当前有索引块，"
-                   "不保证完整入库；导入结果/预期块数/错误仅来自当前页面批次，刷新后未知时显示“—”。")
-        if library is None:
-            st.error(library_error or "知识库状态读取失败，请修正后刷新。")
+    st.subheader("知识库管理面板")
+    if library is None:
+        st.error(library_error or "知识库状态读取失败，请修正后刷新。")
+    else:
+        summary = st.columns(3)
+        summary[0].metric("知识库文档数", len(library))
+        summary[1].metric("已向量化文档数", sum(document["chunks"] > 0 for document in library))
+        summary[2].metric("知识库索引块数", sum(document["chunks"] for document in library))
+        if not library:
+            st.info("知识库暂无文档，请在左侧上传并开始导入。")
         else:
-            summary = st.columns(3)
-            summary[0].metric("知识库文档数", len(library))
-            summary[1].metric("已向量化文档数", sum(document["chunks"] > 0 for document in library))
-            summary[2].metric("知识库索引块数", sum(document["chunks"] for document in library))
-            if not library:
-                st.info("知识库暂无文档，请在左侧上传并开始导入。")
-            else:
-                # 磁盘/Chroma为当前状态；本页批次仅补充最近处理结果，二者不能互相冒充。
-                batches = {}
-                for task in st.session_state.import_tasks:
-                    batches.setdefault(sha256(task["data"]).hexdigest(), []).append(task)
-                rows = []
-                for document in library:
-                    batch = batches.get(document["doc_id"], [])
-                    # 同内容不同文件名只算一份文献，合并批次结果，不能隐藏其中一次失败。
-                    states = ["待索引" if task["status"] == "success" and not task.get("indexed", False)
-                              else status_labels[task["status"]] for task in batch]
-                    rows.append({"文件名": document["name"], "文档 ID": document["doc_id"][:8],
-                                 "原文状态": "已保存" if document["source_available"] else "缺失",
-                                 "向量化状态": "已向量化" if document["chunks"] else "未向量化",
-                                 "索引块数": document["chunks"], "导入结果（本页）": " / ".join(dict.fromkeys(states)) or "—",
-                                 "本次预期块数": " / ".join(dict.fromkeys(str(task["chunk_count"]) for task in batch
-                                                                         if task.get("chunk_count"))) or "—",
-                                 "错误（本页）": " / ".join(dict.fromkeys(task["error"] for task in batch if task["error"])) or "—"})
-                st.dataframe(rows, hide_index=True, width="stretch")
+            # 表格仅显示磁盘与Chroma的当前状态，批次失败仍在左侧导入区查看。
+            rows = [{"文件名": document["name"], "文档 ID": document["doc_id"][:8],
+                     "原文状态": "已保存" if document["source_available"] else "缺失",
+                     "向量化状态": "已向量化" if document["chunks"] else "未向量化",
+                     "索引块数": document["chunks"]} for document in library]
+            st.dataframe(rows, hide_index=True, width="stretch")
 
 with retrieval_tab:
     st.subheader("文档 Top-K 检索")
-    st.caption("此处只检索文档块；可选向量、BM25、RRF 或 RRF + 模型重排。各类分数不可直接比较，也不是命中概率。生成答案请切换到科研对话。")
     with st.form("vector_search_form"):
-        method = st.selectbox("检索方式", ["向量相似度", "BM25 关键词", "RRF 混合检索", "RRF + 模型重排"], key="retrieval_method")
-        query = st.text_input("查询内容（支持中英文）", key="vector_query")
-        top_k = st.number_input("返回数量 Top-K", min_value=1,
-                                value=config["retrieval"]["top_k"], step=1, key="vector_top_k")
-        doc_id = st.text_input("限定文档 ID（可选，支持前8位）", key="vector_doc_id")
+        method_column, count_column, document_column = st.columns([2, 1, 2])
+        method = method_column.selectbox("检索方式", ["向量相似度", "BM25 关键词", "RRF 混合检索", "RRF + 模型重排"], key="retrieval_method")
+        top_k = count_column.number_input("Top-k", min_value=1,
+                                          value=config["retrieval"]["top_k"], step=1, key="vector_top_k")
+        doc_id = document_column.text_input("文档ID", key="vector_doc_id", help="留空检索全部文献；支持前8位ID。")
+        query = st.text_input("查询内容", key="vector_query")
         search_submitted = st.form_submit_button("检索", key="vector_search")
 
     if search_submitted:
@@ -509,7 +497,6 @@ with retrieval_tab:
                         st.text(document.page_content)
 
     st.subheader("检索分数分布")
-    st.caption("统计本地请求日志中的实际 RAG 检索：Top-1 为 BGE sigmoid 重排分数，不是命中率或正确概率。空库、检索失败和缓存跳过均单独计数。")
     try:
         statistics = retrieval_score_distribution()
         st.caption(f"请求 {statistics['requests']} · 缓存命中 {statistics['cache_hits']} · "
