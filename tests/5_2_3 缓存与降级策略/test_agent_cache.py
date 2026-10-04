@@ -55,8 +55,8 @@ class TestAgentCache(unittest.TestCase):
         patcher.start()
         self.addCleanup(patcher.stop)
 
-    def search(self, question="ViT使用什么输入？", doc_id=None, cache=None):
-        tools = get_available_tools(cache=self.cache if cache is None else cache, session_id="test-session")
+    def search(self, question="ViT使用什么输入？", doc_id=None, cache=None, **kwargs):
+        tools = get_available_tools(cache=self.cache if cache is None else cache, session_id="test-session", **kwargs)
         tool = next(item for item in tools if item.name == "knowledge_base_search")
         self.assertEqual(set(tool.args), {"question", "doc_id"})
         return tool.invoke({"question": question, "doc_id": doc_id})
@@ -107,6 +107,81 @@ class TestAgentCache(unittest.TestCase):
         self.assertEqual(result["status"], "answered")
         self.assertIn("缓存保存失败", result["warnings"][-1])
         self.assertTrue(result["citations"])
+
+    def test_confirmed_low_candidate_uses_reviewed_snapshot_without_second_retrieval(self):
+        pending = {}
+        self.retriever.search.return_value = [(self.documents[0], .01)]
+        low = self.search(pending=pending, request_question="请根据论文回答输入形式")
+        snapshot = pending[low["confirmation_id"]]
+        self.assertFalse(self.model_calls)
+        self.assertEqual(snapshot["question"], "请根据论文回答输入形式")
+        result = self.search(confirmation=snapshot)
+        self.assertEqual(self.retriever.search.call_count, 1)
+        self.assertEqual(len(self.model_calls), 1)
+        self.assertIn("已按你的确认", result["answer"])
+        self.assertEqual(result["citations"][0]["text"], low["references"][0]["text"])
+        self.assertEqual(result["retrieval"]["status"], "confirmed")
+        self.assertFalse(self.cache.entries)
+
+    def test_changed_corpus_or_session_rejects_confirmation_before_generation(self):
+        pending = {}
+        self.retriever.search.return_value = [(self.documents[0], .01)]
+        low = self.search(pending=pending)
+        snapshot = pending[low["confirmation_id"]]
+        wrong = {**snapshot, "session_id": "another-session"}
+        with self.assertRaisesRegex(ValueError, "会话"):
+            self.search(confirmation=wrong)
+        self.store.delete_document(self.documents[1].metadata["doc_id"])
+        with self.assertRaisesRegex(ValueError, "失效"):
+            self.search(confirmation=snapshot)
+        self.assertFalse(self.model_calls)
+
+    def test_confirmation_session_entry_fixes_action_args_and_preserves_memory(self):
+        from src.agent.memory import MemoryManager, run_session
+        memory = MemoryManager(Path(self.directory.name) / "sessions.sqlite3")
+        session = memory.create_session("alice")
+        memory.append_turn("alice", session, "之前的问题", "之前的回答")
+        pending = {}
+        tools = get_available_tools(session_id=session, pending=pending)
+        self.retriever.search.return_value = [(self.documents[0], .01)]
+        low = tools[0].invoke({"question": "ViT输入？"})
+        snapshot = pending[low["confirmation_id"]]
+        tools = get_available_tools(session_id=session, confirmation=snapshot)
+        decision = {"observation": "已有引用", "decision": "finish", "task_complete": True, "answer": "简要答复"}
+        packet = BytesIO(json.dumps({"done": True, "done_reason": "stop", "model": "mock",
+            "prompt_eval_count": 20, "eval_count": 5, "message": {"content": json.dumps(decision)}}).encode())
+        with patch("src.agent.react_loop.urlopen", return_value=packet) as http:
+            events = list(run_session("ViT输入？", "alice", session, tools=tools, memory=memory,
+                                      confirmed_rag_args={"question": "ViT输入？", "doc_id": None}))
+        self.assertEqual(events[0]["route"], "confirmation")
+        self.assertEqual(next(e for e in events if e["type"] == "tool_call")["args"], {"question": "ViT输入？", "doc_id": None})
+        http.assert_called_once()  # 只有Observation，规划/Action不重新生成已确认参数。
+        self.assertEqual(self.retriever.search.call_count, 1)
+        self.assertIn("已按你的确认", events[-1]["full_response"])
+        self.assertEqual(len(memory.get_messages("alice", session)), 4)
+        with self.assertRaises(PermissionError):
+            list(run_session("ViT输入？", "bob", session, tools=tools, memory=memory,
+                             confirmed_rag_args={"question": "ViT输入？", "doc_id": None}))
+
+    def test_waiting_observation_does_not_ask_model_to_approve_candidate(self):
+        from src.agent.react_loop import _observe_events
+        pending = {}
+        self.retriever.search.return_value = [(self.documents[0], .01)]
+        low = self.search(pending=pending)
+        context = {"observations": [{"name": "knowledge_base_search", "status": "success", "result": low}]}
+        with patch("src.agent.react_loop.urlopen") as http:
+            events = list(_observe_events("ViT输入？", get_available_tools(), context, stream=True))
+        self.assertFalse(events[-1]["task_complete"])
+        self.assertEqual(events[-1]["decision"], "finish")
+        http.assert_not_called()
+
+    def test_confirmation_does_not_approve_a_different_followup_query(self):
+        pending = {}
+        self.retriever.search.return_value = [(self.documents[0], .01)]
+        low = self.search(pending=pending)
+        result = self.search("ViT数据集？", confirmation=pending[low["confirmation_id"]], pending=pending)
+        self.assertEqual(result["status"], "needs_confirmation")
+        self.assertFalse(self.model_calls)
 
 
 if __name__ == "__main__":

@@ -93,6 +93,8 @@ def conversation_statistics(messages: list[dict]) -> dict:
     successes = sum(call["status"] == "success" for call in finished)
     tool_times = [call["seconds"] for call in finished if call.get("seconds") is not None]
     retrievals = [retrieval for item in metrics for retrieval in item.get("retrievals", [])]
+    # 缓存和确认复用没有发起新检索，不进入检索次数或平均耗时。
+    retrievals = [item for item in retrievals if item.get("status") in {"success", "empty", "error"}]
     retrieved = [item for item in retrievals if item.get("status") in {"success", "empty"}]
     hits = sum(item.get("returned_chunks", 0) > 0 for item in retrieved)
     retrieval_times = [item["seconds"] for item in retrievals if item.get("seconds") is not None]

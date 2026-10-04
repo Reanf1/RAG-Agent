@@ -1,6 +1,7 @@
 """SQLite会话隔离、阶段性摘要与本地Qwen Token窗口；原始记录保留。"""
 
 from contextlib import closing
+from copy import deepcopy
 from functools import lru_cache
 import json
 from pathlib import Path
@@ -355,7 +356,7 @@ class MemoryManager:
 
 
 def run_session(question: str, user_id: str, session_id: str, tools=None, *, memory: MemoryManager | None = None,
-                stream: bool = False):
+                stream: bool = False, confirmed_rag_args: dict | None = None):
     """有记忆的Agent入口：先校验归属，只从当前会话重建历史Context。
 
     不接收外部执行Context，避免误传其他会话的工具结果或恢复状态。
@@ -369,6 +370,11 @@ def run_session(question: str, user_id: str, session_id: str, tools=None, *, mem
     _nonempty(question, "question")
     memory = memory if memory is not None else MemoryManager()
     context = memory.get_context(user_id, session_id)
+    if confirmed_rag_args is not None:
+        # Python界面确认专用，先校验会话归属；模型工具Schema没有这项参数。
+        if set(confirmed_rag_args) != {"question", "doc_id"} or not isinstance(confirmed_rag_args["question"], str) or not confirmed_rag_args["question"].strip():
+            raise ValueError("候选确认需要原查询和文档过滤")
+        context["confirmed_rag_args"] = deepcopy(confirmed_rag_args)
     events = run_react(question, tools, context, stream=True) if stream else run_react(question, tools, context)
     for event in events:
         if event["type"] == "done":

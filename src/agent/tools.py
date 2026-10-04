@@ -65,7 +65,8 @@ def knowledge_base_search(question: str, doc_id: str | None = None) -> dict:
     return _knowledge_base_search(question, doc_id)
 
 
-def _knowledge_base_search(question: str, doc_id: str | None = None, *, cache=None, session_id: str | None = None) -> dict:
+def _knowledge_base_search(question: str, doc_id: str | None = None, *, cache=None, session_id: str | None = None,
+                           pending: dict | None = None, confirmation: dict | None = None, request_question: str | None = None) -> dict:
     """真实RAG实现；缓存只由Python会话入口绑定，不向模型暴露会话或缓存参数。"""
     from src.generation.rag_pipeline import generate_answer, prepare_rag_context
     from src.retrieval.hybrid_retriever import HybridRetriever
@@ -87,8 +88,13 @@ def _knowledge_base_search(question: str, doc_id: str | None = None, *, cache=No
     scope, cache_store = None, None
     cache_warnings = []
     try:
+        pending_scope = None
+        if pending is not None:
+            from src.generation.cache import cache_scope
+            from src.retrieval.vector_store import VectorStore
+            pending_scope = cache_scope(VectorStore())
         # 依赖前文的短追问不复用答案；先由Agent补全问题或明确指定论文再检索。
-        if cache is not None and not re.search(r"刚才|之前|上一|前面|上述|它|这(?:篇|份|个|些)|本文|该(?:论文|文档)|\b(?:it|this|that|previous|above)\b", question, re.I):
+        if confirmation is None and cache is not None and not re.search(r"刚才|之前|上一|前面|上述|它|这(?:篇|份|个|些)|本文|该(?:论文|文档)|\b(?:it|this|that|previous|above)\b", question, re.I):
             from src.generation.cache import cache_scope
             from src.retrieval.vector_store import VectorStore
             cache_store = VectorStore()
@@ -105,19 +111,42 @@ def _knowledge_base_search(question: str, doc_id: str | None = None, *, cache=No
                 message.update(result, retrieval_status="cache")
                 return result
         message["retrieval_status"] = "error"
-        results = HybridRetriever().search(question, doc_id=doc_id, rerank=True)
-        message["retrieved_documents"] = [{"rank": rank, "text": document.page_content,
-                                          "metadata": deepcopy(document.metadata), "score": score}
-                                         for rank, (document, score) in enumerate(results, 1)]
-        message["retrieval_status"] = "success" if results else "empty"
-        context = prepare_rag_context(question, results)
-        message.update(context=context, generation_mode=context["generation_mode"], retrieval_seconds=perf_counter() - started)
-        if context["generation_mode"] == "low":
+        if confirmation is not None:
+            from src.generation.cache import cache_scope
+            from src.retrieval.vector_store import VectorStore
+            if confirmation["session_id"] != session_id:
+                raise ValueError("候选确认不属于当前会话")
+            if confirmation["tool_question"] != question or confirmation["doc_id"] != doc_id:
+                raise ValueError("候选确认只适用于已展示的原查询与文档")
+            if confirmation["scope"] != cache_scope(VectorStore()):
+                raise ValueError("候选内容或配置已变化，确认已失效，请重新提问")
+            context = deepcopy(confirmation["context"])
+            context["confirmed"] = True
+            message["retrieval_status"] = "confirmed"  # 复用已审阅候选，不记为新检索。
+            message["retrieved_documents"] = deepcopy(confirmation["retrieved_documents"])
+            returned_chunks = 0
+        else:
+            results = HybridRetriever().search(question, doc_id=doc_id, rerank=True)
+            returned_chunks = len(results)
+            message["retrieved_documents"] = [{"rank": rank, "text": document.page_content,
+                                              "metadata": deepcopy(document.metadata), "score": score}
+                                             for rank, (document, score) in enumerate(results, 1)]
+            message["retrieval_status"] = "success" if results else "empty"
+            context = prepare_rag_context(question, results)
+        message.update(context=context, generation_mode=context["generation_mode"],
+                       retrieval_seconds=0.0 if confirmation is not None else perf_counter() - started)
+        if context["generation_mode"] == "low" and not context["confirmed"]:
             status = "awaiting_confirmation"
             result = {"status": "needs_confirmation", "answer": "检索结果相关性低，请用户查看候选原文后确认。",
                       "generation_mode": "low", "references": _tool_references(context["references"]), "citations": [],
                       "top_score": context["top_score"], "threshold": context["threshold"],
                       "usage": {"prompt_eval_count": 0, "eval_count": 0}}
+            if pending is not None and pending_scope == cache_scope(VectorStore()):
+                # 完整生成Context只留在当前页面会话，不重复塞入模型工具结果。
+                pending[request_id] = {"question": request_question or question, "tool_question": question, "doc_id": doc_id,
+                                       "session_id": session_id, "scope": pending_scope, "context": deepcopy(context),
+                                       "retrieved_documents": deepcopy(message["retrieved_documents"])}
+                result["confirmation_id"] = request_id
         else:
             generation_started = perf_counter()
             message["generation_attempted"] = True
@@ -127,12 +156,13 @@ def _knowledge_base_search(question: str, doc_id: str | None = None, *, cache=No
                 message["generation_seconds"] = perf_counter() - generation_started
             result["citations"] = _tool_references(result["citations"])
             result.update(status="answered", doc_id=doc_id, sources=context["sources"], top_score=context["top_score"])
-            if context["generation_mode"] == "grounded" and not result["citations"]:
+            result["confirmed"] = context["confirmed"]
+            if context["generation_mode"] in {"grounded", "low"} and not result["citations"]:
                 result["status"] = "insufficient_evidence"  # 有检索候选却没有有效引用，不能冒充已溯源回答。
             status = "incomplete" if result["status"] == "insufficient_evidence" else "completed"
         result.update(retrieval_seconds=message["retrieval_seconds"], elapsed_seconds=perf_counter() - started,
                       retrieval={"request_id": request_id, "status": message["retrieval_status"],
-                                 "returned_chunks": len(results)})
+                                 "returned_chunks": returned_chunks})
         if cache_warnings:
             result.setdefault("warnings", []).extend(cache_warnings)
         message.update(result)
@@ -786,12 +816,15 @@ AVAILABLE_TOOLS = [knowledge_base_search, paper_metadata, paper_compare, keyword
                    calculator, paper_list]
 
 
-def get_available_tools(*, cache=None, session_id: str | None = None) -> list[BaseTool]:
+def get_available_tools(*, cache=None, session_id: str | None = None, pending: dict | None = None,
+                        confirmation: dict | None = None, request_question: str | None = None) -> list[BaseTool]:
     """每次运行读取联网开关，避免导入时固定配置；不修改全局本地工具列表。"""
     tools = [*AVAILABLE_TOOLS, web_search] if load_config()["agent"]["online_search_enabled"] is True else list(AVAILABLE_TOOLS)
-    if cache is not None:
+    if cache is not None or pending is not None or confirmation is not None:
         def search(question: str, doc_id: str | None = None) -> dict:
-            return _knowledge_base_search(question, doc_id, cache=cache, session_id=session_id)
+            approved = confirmation if confirmation is not None and confirmation["tool_question"] == question and confirmation["doc_id"] == doc_id else None
+            return _knowledge_base_search(question, doc_id, cache=cache, session_id=session_id, pending=pending,
+                                          confirmation=approved, request_question=request_question)
         search.__doc__ = knowledge_base_search.description
         tools[0] = tool("knowledge_base_search")(search)
     return tools

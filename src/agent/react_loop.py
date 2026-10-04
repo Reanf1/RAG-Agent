@@ -253,7 +253,11 @@ def act(question: str, thought: dict, tools: list[BaseTool], context: dict | Non
         known_ids = set(re.findall(r"(?<![A-Za-z0-9])[0-9a-f]{64}(?![A-Za-z0-9])",
                                    question + json.dumps(context or {}, ensure_ascii=False)))
         started = perf_counter()
-        if thought.get("route") == "rule" and names == ["knowledge_base_search"] and not batch and not known_ids:
+        if thought.get("route") == "confirmation" and names == ["knowledge_base_search"] and not batch:
+            # 参数来自界面已确认的候选，固定本次调用，不能让模型改写已审阅的查询。
+            result = {"model": None, "prompt_eval_count": 0, "eval_count": 0,
+                      "message": {"tool_calls": [{"function": {"name": names[0], "arguments": deepcopy(context["confirmed_rag_args"])}}]}}
+        elif thought.get("route") == "rule" and names == ["knowledge_base_search"] and not batch and not known_ids:
             # 明确单工具意图的唯一必填参数就是原问题，直接传递，避免模型编造可选论文ID。
             # 仍走相同执行器、工具事件与Observation；此Action未调用模型，真实Token为0。
             result = {"model": None, "prompt_eval_count": 0, "eval_count": 0,
@@ -392,7 +396,7 @@ def _structured_tool_observation(question: str, tools: list[BaseTool], observati
 
     文献列表只是查ID；其他工具或后续分析属于组合任务，仍交给模型观察。
     """
-    items = [item for item in observations if item.get("name") != "paper_list"]
+    items = [item for item in observations if item.get("name") != "paper_list" or item.get("status") != "success"]
     if len(items) != 1 or items[0].get("status") != "success":
         return None
     item = items[0]
@@ -446,6 +450,17 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
         raise ValueError("recovery必须为恢复状态字典")
     count = sum(isinstance(item, ToolMessage) for item in (messages or []))
     latest = observations[-count:] if count else observations[-1:]
+    waiting = [item for item in latest if item.get("status") == "success" and isinstance(item.get("result"), dict)
+               and item["result"].get("status") == "needs_confirmation" and item["result"].get("references")]
+    if waiting:
+        # 用户批准是外部输入，不能让Observation继续重试或把低相关候选当成已批准。
+        answer = "检索结果相关性低，请查看候选原文后确认是否使用；尚未调用生成模型。"
+        if stream:
+            yield {"type": "token", "answer": answer, "provisional": False}
+        yield {"type": "observation", "observation": "等待用户确认候选。", "decision": "finish",
+               "task_complete": False, "answer": answer, "model": None,
+               "usage": {"prompt_eval_count": 0, "eval_count": 0}, "elapsed_seconds": perf_counter() - started}
+        return
     prompt.extend(messages if messages is not None else [])
     schema = {"type": "object", "properties": {
         "observation": {"type": "string", "minLength": 1, "maxLength": 200},
@@ -530,9 +545,17 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
             # 多工具、子问题、降级和资料不足仍使用Observation，不自动补造引用。
             if (item.get("name") == "knowledge_base_search" and item.get("status") == "success"
                     and item.get("args", {}).get("question") == question and isinstance(evidence, dict)
-                    and evidence.get("status") == "answered" and evidence.get("generation_mode") == "grounded"
+                    and evidence.get("status") == "answered" and (evidence.get("generation_mode") == "grounded"
+                    or evidence.get("generation_mode") == "low" and evidence.get("confirmed") is True)
                     and evidence.get("citations") and isinstance(evidence.get("answer"), str) and evidence["answer"].strip()):
                 decision["answer"] = evidence["answer"]
+        if decision["decision"] == "finish":
+            for item in latest:
+                evidence = item.get("result")
+                if isinstance(evidence, dict) and evidence.get("confirmed") is True and evidence.get("generation_mode") == "low":
+                    notice = evidence.get("notice", "检索结果相关性低；已按你的确认使用候选内容，回答依据仍需核实。")
+                    if notice not in decision["answer"]:
+                        decision["answer"] = notice + "\n\n" + decision["answer"]
         yield {"type": "observation", **decision, "model": result["model"],
                 "usage": {key: result.get(key) for key in ("prompt_eval_count", "eval_count")},
                 "elapsed_seconds": perf_counter() - started}
@@ -574,11 +597,15 @@ def _run_react(question: str, tools: list[BaseTool] | None = None, context: dict
         for iteration in range(1, limit + 1):
             available = [item for item in tools if item.name not in blocked and (not external_only or item.name == "web_search")]
             routed = route_question(question, available, state) if iteration == 1 else None
+            if iteration == 1 and state.get("confirmed_rag_args"):
+                routed = {"type": "thought", "thought": "使用用户已确认的候选原文回答。", "next_step": "tool",
+                          "tool_name": "knowledge_base_search", "parallel_tools": [], "route": "confirmation",
+                          "model": None, "usage": {"prompt_eval_count": 0, "eval_count": 0}}
             thought = routed if routed is not None else think(question, available, state)
             required_ids = 2 if thought.get("tool_name") == "paper_compare" else 1 if thought.get("tool_name") in {"paper_metadata", "paper_summary"} else 0
             known_ids = set(re.findall(r"(?<![A-Za-z0-9])[0-9a-f]{64}(?![A-Za-z0-9])", question + json.dumps(state, ensure_ascii=False)))
             # 有历史时仍先核对文件名，不能绕过文档过滤或把模型猜测的ID当作真实指纹。
-            needs_filename = ("knowledge_base_search" in [thought.get("tool_name"), *thought.get("parallel_tools", [])]
+            needs_filename = (thought.get("route") != "confirmation" and "knowledge_base_search" in [thought.get("tool_name"), *thought.get("parallel_tools", [])]
                               and re.search(r"\.(?:pdf|docx|txt|md)(?=$|[^A-Za-z0-9])", question, re.I)
                               and not any(item.get("name") == "paper_list" and item.get("status") == "success"
                                           for item in state["observations"]))

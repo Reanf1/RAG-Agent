@@ -53,6 +53,24 @@ def show_agent_sources(event):
                 key = f"agent-citation:{event['request_id']}:{item.get('call_id')}:{reference['id']}"
                 if st.button(f"查看{reference['source_file']} · {reference['location']}", key=key):
                     show_original_page(reference)
+        if isinstance(result, dict) and result.get("status") == "needs_confirmation":
+            with st.expander("低相关候选：请核对原文", expanded=True):
+                for reference in result.get("references", []):
+                    st.caption(f"{reference['source_file']} · {reference['location']} · 重排分数 {reference['score']:.4f}")
+                    st.markdown(reference["text"])
+                    if Path(reference["source_file"]).suffix.lower() == ".pdf" and "page_number" in reference["metadata"]:
+                        if st.button(f"查看{reference['source_file']} · {reference['location']}",
+                                     key=f"agent-candidate:{event['request_id']}:{item.get('call_id')}:{reference['id']}"):
+                            show_original_page(reference)
+                identifier = result.get("confirmation_id")
+                if identifier in st.session_state.agent_pending_rag:
+                    confirm, cancel = st.columns(2)
+                    if confirm.button("确认使用候选", key=f"confirm-rag:{identifier}"):
+                        st.session_state.agent_confirmed_rag = st.session_state.agent_pending_rag.pop(identifier)
+                        st.rerun()
+                    if cancel.button("取消", key=f"cancel-rag:{identifier}"):
+                        st.session_state.agent_pending_rag.pop(identifier)
+                        st.rerun()
 
 
 raw_dir = project_root / config["paths"]["raw_documents"]
@@ -349,6 +367,8 @@ with chat_tab:
     if st.session_state.get("agent_cache_owner") != cache_owner:
         st.session_state.agent_cache_owner = deepcopy(cache_owner)
         st.session_state.agent_rag_cache = SemanticCache()
+        st.session_state.agent_pending_rag = {}
+        st.session_state.pop("agent_confirmed_rag", None)
     # 固定高度消息区内部滚动；新增消息和流式增量自动滚到最新内容。
     history_panel = st.container(height=460, border=True, key="agent_chat_history", autoscroll=True)
     with history_panel:
@@ -366,9 +386,13 @@ with chat_tab:
         [class*="st-key-agent_question-"] [data-testid="stChatInputSubmitButton"]::after {content: '发送'; font-size: 14px;}
     </style>""")
     agent_question = st.chat_input("输入消息…", key=f"agent_question:{st.session_state.get('agent_session_id', 'unavailable')}", disabled=not session_ready)
+    approval = st.session_state.pop("agent_confirmed_rag", None) if session_ready else None
+    if approval:
+        agent_question = approval["question"]
     execution_panel = st.empty()
     statistics_panel = st.empty()
     if agent_question and agent_question.strip():
+        st.session_state.agent_pending_rag.clear()  # 新问题使此前候选确认失效；确认快照已单独取出。
         question = agent_question.strip()
         incoming = {"question": question, "answer": "", "complete": False, "event": {}}
         started = perf_counter()
@@ -382,7 +406,10 @@ with chat_tab:
                         for event in run_session(question, st.session_state.agent_user_id,
                                                  st.session_state.agent_session_id,
                                                  tools=get_available_tools(cache=st.session_state.agent_rag_cache,
-                                                                           session_id=st.session_state.agent_session_id),
+                                                                           session_id=st.session_state.agent_session_id,
+                                                                           pending=st.session_state.agent_pending_rag,
+                                                                           confirmation=approval, request_question=question),
+                                                 confirmed_rag_args={"question": approval["tool_question"], "doc_id": approval["doc_id"]} if approval else None,
                                                  memory=st.session_state.agent_memory, stream=True):
                             if event["type"] == "token":
                                 incoming["answer"] = event["answer"]

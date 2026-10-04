@@ -1,0 +1,137 @@
+- heading "系统状态" [level=2]
+- paragraph: 系统时间：2026-10-04 21:02:18
+- status:
+  - paragraph: LLM服务：正常（模拟模型（界面核验））
+- status:
+  - paragraph: 向量数据库：正常（Chroma）
+- button "刷新状态":
+  - paragraph: 刷新状态
+- heading "文档上传与管理" [level=2]
+- paragraph: 上传文档
+- region "上传文档":
+  - button "file upload"
+  - button "upload Upload":
+    - generic: upload
+    - paragraph: Upload
+  - generic: 20MB per file • PDF, DOCX, TXT, MD, MARKDOWN
+- paragraph: 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+- button "开始导入" [disabled]:
+  - generic "开始导入":
+    - paragraph: 开始导入
+- button "重试失败项" [disabled]:
+  - generic "重试失败项":
+    - paragraph: 重试失败项
+- heading "对话历史管理" [level=2]
+- button "新建会话":
+  - paragraph: 新建会话
+- paragraph: 最近
+- button "论文低相关核验：ViT使用什么输入？":
+  - paragraph: 论文低相关核验：ViT使用什么输入？
+- button "删除当前会话":
+  - paragraph: 删除当前会话
+- banner:
+  - button "Deploy":
+    - generic: Deploy
+  - button "Main menu":
+- heading "智能科研助理" [level=1]:
+  - text: 智能科研助理
+  - link "Link to heading":
+    - /url: "#2d7dc4e4"
+- paragraph: 基于 RAG + Agent 的论文知识库问答系统
+- tablist:
+  - tab "科研对话" [selected]:
+    - paragraph: 科研对话
+  - tab "文档检索":
+    - paragraph: 文档检索
+  - tab "知识库":
+    - paragraph: 知识库
+- tabpanel "科研对话":
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 论文低相关核验：ViT使用什么输入？
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: 检索结果相关性低，请查看候选原文后确认是否使用；尚未调用生成模型。
+    - paragraph: 本次 Token：0 · Agent响应耗时：0.147 秒
+    - alert:
+      - paragraph: 任务未完成：incomplete
+    - generic "keyboard_arrow_down 低相关候选：请核对原文":
+      - generic: keyboard_arrow_down
+      - paragraph: 低相关候选：请核对原文
+    - paragraph: 界面验证论文.md · 行1–3 · 重排分数 0.0100
+    - heading "明确构造的界面验证样例" [level=1]:
+      - text: 明确构造的界面验证样例
+      - link "Link to heading":
+        - /url: "#d393e997"
+    - paragraph: ViT使用图像patch作为输入。本文件只用于检查候选原文、引用和确认按钮。
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 论文低相关核验：ViT使用什么输入？
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: 检索结果相关性低，请查看候选原文后确认是否使用；尚未调用生成模型。
+    - paragraph: 本次 Token：25 · Agent响应耗时：0.042 秒
+    - alert:
+      - paragraph: 任务未完成：incomplete
+    - generic "keyboard_arrow_down 低相关候选：请核对原文":
+      - generic: keyboard_arrow_down
+      - paragraph: 低相关候选：请核对原文
+    - paragraph: 界面验证论文.md · 行1–3 · 重排分数 0.0100
+    - heading "明确构造的界面验证样例" [level=1]:
+      - text: 明确构造的界面验证样例
+      - link "Link to heading":
+        - /url: "#d393e997"
+    - paragraph: ViT使用图像patch作为输入。本文件只用于检查候选原文、引用和确认按钮。
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 论文低相关核验：ViT使用什么输入？
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: 检索结果相关性低；已按你的确认使用候选内容，回答依据仍需核实。
+    - paragraph: 界面验证样例：ViT使用图像patch作为输入。[参考文档1：界面验证论文.md；行1–3]
+    - heading "参考来源" [level=2]:
+      - text: 参考来源
+      - link "Link to heading":
+        - /url: "#4f4c5596"
+    - list:
+      - listitem: "[参考文档1] 界面验证论文.md；行1–3"
+    - paragraph: 本次 Token：115 · Agent响应耗时：0.043 秒
+  - textbox "输入消息…"
+  - button "Send message" [disabled]: 发送
+  - generic "keyboard_arrow_right 论文低相关核验：ViT使用什么输入？":
+    - generic: keyboard_arrow_right
+    - paragraph: 论文低相关核验：ViT使用什么输入？
+  - generic "keyboard_arrow_right 论文低相关核验：ViT使用什么输入？":
+    - generic: keyboard_arrow_right
+    - paragraph: 论文低相关核验：ViT使用什么输入？
+  - generic "keyboard_arrow_down 论文低相关核验：ViT使用什么输入？":
+    - generic: keyboard_arrow_down
+    - paragraph: 论文低相关核验：ViT使用什么输入？
+  - button "Show/hide columns":
+  - button "Download as CSV":
+  - button "Search":
+  - button "Fullscreen":
+  - heading "状态统计" [level=3]:
+    - text: 状态统计
+    - link "Link to heading":
+      - /url: "#f3abdead"
+  - paragraph: 当前会话累计；工具成功率只统计已返回调用，未报告的用量不计为零。
+  - paragraph: 对话次数
+  - paragraph: "3"
+  - paragraph: 累计Token
+  - paragraph: "140"
+  - paragraph: 累计响应耗时
+  - paragraph: 0.232 秒
+  - paragraph: 平均响应耗时
+  - paragraph: 0.077 秒
+  - paragraph: 任务完成率
+  - paragraph: 33.3%
+  - paragraph: 工具调用次数
+  - paragraph: "3"
+  - paragraph: 工具调用成功率
+  - paragraph: 100.0%
+  - paragraph: 平均推理轮次
+  - paragraph: "1.00"
+  - paragraph: RAG检索 2 次 · 候选命中率 100.0% · 平均检索耗时 0.008 秒 · 平均工具耗时 0.011 秒。
+  - paragraph: 工具成功 3 · 失败 0 · 待返回 0；已报告Token 140 · 用量未知 0 次。
+- paragraph: 界面模拟核验计数：检索 2 次，生成 1 次。时间和Token均不是实际模型性能。

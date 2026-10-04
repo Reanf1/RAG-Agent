@@ -1,0 +1,37 @@
+...2026-10-04 20:57:10.551 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+2026-10-04 20:57:11.155 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 20:57:11.207 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-04 20:57:11.359 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-04 20:57:11.359 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+F2026-10-04 20:57:11.411 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 20:57:12.142 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-04 20:57:12.311 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-04 20:57:12.311 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+F2026-10-04 20:57:12.412 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 20:57:12.735 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 20:57:12.910 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 20:57:13.233 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.
+======================================================================
+FAIL: test_low_candidate_confirm_and_cancel_do_not_rely_on_model_permission (test_chat_streaming.TestStreamingFrontend)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_3 前端与会话管理/test_chat_streaming.py", line 144, in test_low_candidate_confirm_and_cancel_do_not_rely_on_model_permission
+    self.assertTrue(any("需人工核对的候选原文" in m.value for m in self.app.markdown))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_session_switch_invalidates_pending_candidates (test_chat_streaming.TestStreamingFrontend)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_3 前端与会话管理/test_chat_streaming.py", line 160, in test_session_switch_invalidates_pending_candidates
+    self.assertFalse(self.app.session_state["agent_pending_rag"])
+AssertionError: {'pending-one': {'question': '论文输入？', 'tool_question': 'ViT输入？', 'doc_id': None, 'session_id': '0c918fbe9c204026b288e53ff664aa56'}} is not false
+
+----------------------------------------------------------------------
+Ran 11 tests in 3.237s
+
+FAILED (failures=2)

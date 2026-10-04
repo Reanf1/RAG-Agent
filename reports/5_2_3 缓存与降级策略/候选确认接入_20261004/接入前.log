@@ -1,0 +1,41 @@
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+./Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+EE/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+./Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+./Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+./Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+.
+======================================================================
+ERROR: test_changed_corpus_or_session_rejects_confirmation_before_generation (test_agent_cache.TestAgentCache)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_2_3 缓存与降级策略/test_agent_cache.py", line 129, in test_changed_corpus_or_session_rejects_confirmation_before_generation
+    low = self.search(pending=pending)
+  File "/Users/rean/github/RAG+Agent/tests/5_2_3 缓存与降级策略/test_agent_cache.py", line 59, in search
+    tools = get_available_tools(cache=self.cache if cache is None else cache, session_id="test-session", **kwargs)
+TypeError: get_available_tools() got an unexpected keyword argument 'pending'
+
+======================================================================
+ERROR: test_confirmed_low_candidate_uses_reviewed_snapshot_without_second_retrieval (test_agent_cache.TestAgentCache)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_2_3 缓存与降级策略/test_agent_cache.py", line 114, in test_confirmed_low_candidate_uses_reviewed_snapshot_without_second_retrieval
+    low = self.search(pending=pending, request_question="请根据论文回答输入形式")
+  File "/Users/rean/github/RAG+Agent/tests/5_2_3 缓存与降级策略/test_agent_cache.py", line 59, in search
+    tools = get_available_tools(cache=self.cache if cache is None else cache, session_id="test-session", **kwargs)
+TypeError: get_available_tools() got an unexpected keyword argument 'pending'
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.350s
+
+FAILED (errors=2)
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

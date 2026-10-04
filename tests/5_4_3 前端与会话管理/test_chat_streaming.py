@@ -127,6 +127,39 @@ class TestStreamingFrontend(unittest.TestCase):
         self.assertEqual(keys, {'agent-citation:saved-request:first:1', 'agent-citation:saved-request:second:1'})
         self.core.assert_not_called()
 
+    def pending_candidate(self):
+        # 明确样例，不作真实模型测试；按钮必须只处理当前会话的候选。
+        reference = {"id": 1, "source_file": "review.md", "location": "行1", "text": "需人工核对的候选原文", "score": .01, "metadata": {}}
+        event = {"request_id": "low-request", "context": {"observations": [{"call_id": "low-call", "result": {
+            "status": "needs_confirmation", "answer": "待确认", "citations": [], "references": [reference],
+            "confirmation_id": "pending-one"}}]}}
+        self.app.session_state["agent_pending_rag"] = {"pending-one": {"question": "论文输入？", "tool_question": "ViT输入？",
+            "doc_id": None, "session_id": self.app.session_state["agent_session_id"]}}
+        self.app.session_state["agent_messages"] = [{"question": "论文输入？", "answer": "待确认", "complete": False, "event": event}]
+        self.app.run()
+
+    def test_low_candidate_confirm_and_cancel_do_not_rely_on_model_permission(self):
+        self.pending_candidate()
+        self.assertFalse(self.app.exception)
+        self.assertTrue(any("需人工核对的候选原文" in m.value for m in self.app.markdown))
+        self.app.button(key="cancel-rag:pending-one").click().run()
+        self.core.assert_not_called()
+        self.assertFalse(self.app.session_state["agent_pending_rag"])
+        self.pending_candidate()
+        self.app.button(key="confirm-rag:pending-one").click().run()
+        self.assertFalse(self.app.exception)
+        self.assertEqual(self.core.call_count, 1, [e.value for e in self.app.error])
+        self.assertEqual(self.core.call_args.args[2]["confirmed_rag_args"], {"question": "ViT输入？", "doc_id": None})
+        self.assertFalse(self.app.session_state["agent_pending_rag"])
+        self.app.run()
+        self.core.assert_called_once()
+
+    def test_session_switch_invalidates_pending_candidates(self):
+        self.pending_candidate()
+        self.app.button(key="new_conversation").click().run()
+        self.assertFalse(self.app.session_state["agent_pending_rag"])
+        self.core.assert_not_called()
+
 
 class TestConversationStatistics(unittest.TestCase):
     """核验累计口径、未知历史和并行共享用量，避免UI重复记账。"""
@@ -190,6 +223,17 @@ class TestConversationStatistics(unittest.TestCase):
             metrics = update_agent_metrics(metrics, event)
         self.assertEqual([row['阶段'] for row in execution_rows({'metrics': metrics})],
                          ['Thought', 'Action（跳过）', 'Observation'])
+
+    def test_cache_and_confirmation_reuse_are_not_new_retrieval_samples(self):
+        from src.frontend.components.trace import conversation_statistics
+        event = self.snapshot()
+        event["metrics"]["retrievals"] = [{"status": "success", "returned_chunks": 5, "seconds": .3},
+                                         {"status": "cache", "returned_chunks": 0, "seconds": 0},
+                                         {"status": "confirmed", "returned_chunks": 0, "seconds": 0}]
+        stats = conversation_statistics([{"complete": True, "event": event}])
+        self.assertEqual(stats["retrieval_count"], 1)
+        self.assertEqual(stats["retrieval_hit_rate"], 1)
+        self.assertEqual(stats["mean_retrieval_seconds"], .3)
 
 
 if __name__ == '__main__':
