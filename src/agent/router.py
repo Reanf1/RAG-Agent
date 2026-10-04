@@ -53,7 +53,8 @@ def route_question(question: str, tools: list[BaseTool], context: dict | None = 
         return None  # “最近的代号”是历史追问，不是需要联网核验的近期资讯。
     if local and (web or fresh) and re.search(r"同时|以及|另外|并(?:且|联网)|\b(?:and|also)\b", question, re.I):
         return None  # 本地证据与外部进展的组合任务交给ReAct，不跳过其中一种来源。
-    hits = explicit or [name for name, pattern in patterns.items() if re.search(pattern, question, re.I)]
+    # 显式名称不能遮住问题中的第二种意图；组合任务继续交给ReAct规划。
+    hits = list(dict.fromkeys([*explicit, *[name for name, pattern in patterns.items() if re.search(pattern, question, re.I)]]))
     if fresh and not local and not explicit and not any(name in hits for name in ("current_time", "keyword_extract", "paper_list")):
         hits = ["web_search"]
     if hits == ["web_search"] and "web_search" not in names:

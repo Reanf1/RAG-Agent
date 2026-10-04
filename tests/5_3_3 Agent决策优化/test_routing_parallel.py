@@ -99,6 +99,13 @@ class TestRoutingAndParallel(unittest.TestCase):
         self.assertIsNone(route_question("3.14乘以2.56", [item for item in AVAILABLE_TOOLS if item.name != "calculator"]))
         self.assertEqual(route_question("联网搜索论文", [web_search])["tool_name"], "web_search")
 
+    def test_explicit_tool_does_not_hide_second_semantic_intent(self):
+        # 显式工具名和自然语言意图都要考虑，不能只完成组合任务的第一项。
+        for question in ("请调用keyword_extract提取关键词，并告诉我当前时间",
+                         "调用current_time，然后提取关键词", "调用keyword_extract并联网搜索论文"):
+            self.assertIsNone(route_question(question, AVAILABLE_TOOLS))
+        self.assertEqual(route_question("调用keyword_extract提取关键词", AVAILABLE_TOOLS)["tool_name"], "keyword_extract")
+
     def test_explicit_tool_names_and_two_papers_use_same_tool_batch(self):
         plan = route_question("请调用paper_metadata，分别读取两篇论文：" + "a" * 64 + "和" + "b" * 64, AVAILABLE_TOOLS)
         self.assertEqual(plan["tool_name"], "paper_metadata")

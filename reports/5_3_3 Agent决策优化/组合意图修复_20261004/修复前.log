@@ -1,0 +1,13 @@
+.........F..............
+======================================================================
+FAIL: test_explicit_tool_does_not_hide_second_semantic_intent (test_routing_parallel.TestRoutingAndParallel)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_3 Agent决策优化/test_routing_parallel.py", line 106, in test_explicit_tool_does_not_hide_second_semantic_intent
+    self.assertIsNone(route_question(question, AVAILABLE_TOOLS))
+AssertionError: {'type': 'thought', 'thought': '明确工具意图，跳过模型规划，交由Action生成参数。', 'next_step': 'tool', 'tool_name': 'keyword_extract', 'parallel_tools': [], 'route': 'rule', 'model': None, 'usage': {'prompt_eval_count': 0, 'eval_count': 0}, 'elapsed_seconds': 1.912500010803342e-05} is not None
+
+----------------------------------------------------------------------
+Ran 24 tests in 0.134s
+
+FAILED (failures=1)
