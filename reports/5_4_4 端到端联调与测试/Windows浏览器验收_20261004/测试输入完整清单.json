@@ -1,0 +1,55 @@
+{
+  "word_validation": {
+    "opc_and_xml": "passed",
+    "python_docx_readback": "passed",
+    "paragraphs": [
+      "Windows Word加载验收",
+      "Word标记为WINDOCX20261004。本文仅验证中文段落加载和增量索引。"
+    ],
+    "skill_validator": "缺少defusedxml，未运行；没有安装额外项目依赖"
+  },
+  "files": [
+    {
+      "name": "Windows验收_DETR节选.pdf",
+      "bytes": 533907,
+      "sha256": "ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c3079f448a2ad",
+      "expected": "load_success",
+      "scope": "DETR前2物理页节选"
+    },
+    {
+      "name": "Windows验收_ViT.pdf",
+      "bytes": 3743814,
+      "sha256": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+      "expected": "load_success",
+      "scope": "Windows功能验收输入"
+    },
+    {
+      "name": "Windows验收_损坏.pdf",
+      "bytes": 44,
+      "sha256": "81d100adfd77abe2e22365c86ceb6819340b41491da903139fdd65b60a7be964",
+      "expected": "parse_failure",
+      "scope": "Windows功能验收输入"
+    },
+    {
+      "name": "Windows验收_说明.docx",
+      "bytes": 8620,
+      "sha256": "b308ae667c36aee4fc2632d9647925c2aa181f67ca755269a80c6543938d8ada",
+      "expected": "load_success",
+      "scope": "Windows功能验收输入"
+    },
+    {
+      "name": "Windows验收_说明.md",
+      "bytes": 114,
+      "sha256": "6326740a22ac644e69c18724d7f97dc254dae0dece865156f724337be85d025c",
+      "expected": "load_success",
+      "scope": "Windows功能验收输入"
+    },
+    {
+      "name": "Windows验收_说明.txt",
+      "bytes": 191,
+      "sha256": "0b027726e389d2550eede20d2b53bb2438a4094b56692636077ad0f111e90d87",
+      "expected": "load_success",
+      "scope": "Windows功能验收输入"
+    }
+  ]
+}

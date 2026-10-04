@@ -1,0 +1,1301 @@
+2026-10-04 18:03:49.573 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-04 18:03:50.270 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+F2026-10-04 18:03:50.772 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:03:51.155 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+E2026-10-04 18:03:51.634 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:03:52.045 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+F2026-10-04 18:03:52.866 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+F2026-10-04 18:03:53.421 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+E2026-10-04 18:03:53.908 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:03:54.177 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+E2026-10-04 18:03:54.755 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+E2026-10-04 18:03:55.382 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+E2026-10-04 18:03:55.962 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+E2026-10-04 18:03:56.412 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+F2026-10-04 18:03:57.662 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+2026-10-04 18:03:58.132 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:03:58.507 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+F2026-10-04 18:03:58.979 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:03:59.304 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:03:59.962 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+E2026-10-04 18:04:00.745 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+F2026-10-04 18:04:01.228 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+F2026-10-04 18:04:01.735 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+F2026-10-04 18:04:02.805 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:03.382 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+[31m──[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m──[0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mexec_code.py[0m:136 in exec_func_with_error_handling         [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:907 in code_to_exec                      [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/ru[0m [31m [0m
+[31m [0m [2mntime/scriptrunner/[0m[1mscript_runner.py[0m:170 in _mpa_v1                           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/na[0m [31m [0m
+[31m [0m [2mvigation/[0m[1mpage.py[0m:502 in run                                                  [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:605 in <module>             [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m602 [0m[2m│   │   │   [0m[94mfor[0m document [95min[0m library:                                   [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m [31m❱ [0m605 [2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m   [2m606 [0m[2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m [2m/Users/rean/github/RAG+Agent/src/frontend/[0m[1mapp.py[0m:606 in <listcomp>           [31m [0m
+[31m [0m                                                                              [31m [0m
+[31m [0m   [2m603 [0m[2m│   │   │   │   [0mbatch = batches.get(document[[33m"[0m[33mdoc_id[0m[33m"[0m], [])            [31m [0m
+[31m [0m   [2m604 [0m[2m│   │   │   │   [0m[2m# 同内容不同文件名只算一份文献，合并批次结果，不能隐藏[0m [31m [0m
+[31m [0m   [2m605 [0m[2m│   │   │   │   [0mstates = [[33m"[0m[33m待索引[0m[33m"[0m [94mif[0m task[[33m"[0m[33mstatus[0m[33m"[0m] == [33m"[0m[33msuccess[0m[33m"[0m [95mand[0m  [31m [0m
+[31m [0m [31m❱ [0m606 [2m│   │   │   │   │   │     [0m[94melse[0m status_labels[task[[33m"[0m[33mstatus[0m[33m"[0m]] [94mfor[0m task  [31m [0m
+[31m [0m   [2m607 [0m[2m│   │   │   │   [0mrows.append({[33m"[0m[33m文件名[0m[33m"[0m: document[[33m"[0m[33mname[0m[33m"[0m], [33m"[0m[33m文档 ID[0m[33m"[0m: do [31m [0m
+[31m [0m   [2m608 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m原文状态[0m[33m"[0m: [33m"[0m[33m已保存[0m[33m"[0m [94mif[0m document[[33m"[0m[33msource_[0m [31m [0m
+[31m [0m   [2m609 [0m[2m│   │   │   │   │   │   │    [0m[33m"[0m[33m向量化状态[0m[33m"[0m: [33m"[0m[33m已向量化[0m[33m"[0m [94mif[0m document[[33m"[0m[33mchu[0m [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mNameError: [0mname [32m'status_labels'[0m is not defined
+E2026-10-04 18:04:04.199 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:04.501 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:04.981 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:05.509 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:06.008 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:06.393 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-04 18:04:06.613 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:06.696 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:07.216 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:07.530 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:08.095 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:08.779 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:09.191 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:09.762 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:10.127 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:10.716 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:11.207 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:11.484 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:11.801 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:12.211 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:12.796 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:13.078 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:13.388 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:14.037 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:14.437 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:14.719 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:15.125 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:15.586 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:15.989 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:16.486 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:16.856 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-04 18:04:17.461 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:17.749 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.............2026-10-04 18:04:18.273 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:19.481 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+..2026-10-04 18:04:20.078 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+..2026-10-04 18:04:20.597 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-04 18:04:20.835 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+..2026-10-04 18:04:21.226 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:22.070 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:22.376 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:22.844 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:23.302 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-04 18:04:23.625 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-04 18:04:24.003 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.............
+======================================================================
+ERROR: test_bm25_search_reflects_upload_and_delete (tests.5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+上传后每次查询读取当前语料，新文档立即可查，已删除文档不再出现。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_4 端到端联调与测试/test_document_flow.py", line 272, in test_bm25_search_reflects_upload_and_delete
+    app.selectbox(key="retrieval_method").set_value("BM25 关键词")
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/testing/v1/element_tree.py", line 339, in __call__
+    raise KeyError(key)
+KeyError: 'retrieval_method'
+
+======================================================================
+ERROR: test_knowledge_panel_content_alias_keeps_both_batch_results (tests.5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+同内容异名按指纹合并，仍保留一个成功和另一个失败的实际结果。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_4 端到端联调与测试/test_document_flow.py", line 649, in test_knowledge_panel_content_alias_keeps_both_batch_results
+    rows = self.knowledge_rows(app)
+  File "/Users/rean/github/RAG+Agent/tests/5_4_4 端到端联调与测试/test_document_flow.py", line 541, in knowledge_rows
+    return next(table.value for table in (app or self.app).dataframe if "向量化状态" in table.value.columns)
+StopIteration
+
+======================================================================
+ERROR: test_knowledge_panel_index_error_is_unknown_not_zero (tests.5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+索引不可读不显示正常空库或捏造零统计，修复后刷新重新读取。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_4 端到端联调与测试/test_document_flow.py", line 667, in test_knowledge_panel_index_error_is_unknown_not_zero
+    app.button(key="refresh_knowledge").click().run()
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/testing/v1/element_tree.py", line 339, in __call__
+    raise KeyError(key)
+KeyError: 'refresh_knowledge'
+
+======================================================================
+ERROR: test_knowledge_panel_missing_source_and_external_index_change (tests.5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+只剩索引时明确原文缺失；外部移除块后刷新显示未向量化，不沿用旧批次成功。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_4 端到端联调与测试/test_document_flow.py", line 625, in test_knowledge_panel_missing_source_and_external_index_change
+    row = self.knowledge_rows(app).iloc[0]
+  File "/Users/rean/github/RAG+Agent/tests/5_4_4 端到端联调与测试/test_document_flow.py", line 541, in knowledge_rows
+    return next(table.value for table in (app or self.app).dataframe if "向量化状态" in table.value.columns)
+StopIteration
+
+======================================================================
+ERROR: test_knowledge_panel_partial_index_does_not_claim_import_success (tests.5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+第二批失败时500块仍存在，面板同时保留失败/预期501块，重试补全。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_4 端到端联调与测试/test_document_flow.py", line 606, in test_knowledge_panel_partial_index_does_not_claim_import_success
+    row = self.knowledge_rows(app).iloc[0]
+  File "/Users/rean/github/RAG+Agent/tests/5_4_4 端到端联调与测试/test_document_flow.py", line 541, in knowledge_rows
+    return next(table.value for table in (app or self.app).dataframe if "向量化状态" in table.value.columns)
+StopIteration
+
+======================================================================
+ERROR: test_knowledge_panel_tracks_failed_unindexed_and_refresh (tests.5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+成功与写入失败并存，刷新后磁盘状态仍准确但不补造本页批次结果。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_4 端到端联调与测试/test_document_flow.py", line 569, in test_knowledge_panel_tracks_failed_unindexed_and_refresh
+    rows = self.knowledge_rows(app).set_index("文件名")
+  File "/Users/rean/github/RAG+Agent/tests/5_4_4 端到端联调与测试/test_document_flow.py", line 541, in knowledge_rows
+    return next(table.value for table in (app or self.app).dataframe if "向量化状态" in table.value.columns)
+StopIteration
+
+======================================================================
+ERROR: test_model_reranking_uploaded_document_filter_and_delete (tests.5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+新文献可精排，文档 ID 限定在模型评分前生效，删除后不加载重排模型。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_4 端到端联调与测试/test_document_flow.py", line 432, in test_model_reranking_uploaded_document_filter_and_delete
+    app.selectbox(key="retrieval_method").set_value("RRF + 模型重排")
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/testing/v1/element_tree.py", line 339, in __call__
+    raise KeyError(key)
+KeyError: 'retrieval_method'
+
+======================================================================
+ERROR: test_rrf_search_after_upload_and_database_recovery (tests.5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+新上传文档参加两路召回，数据库异常恢复后可查，删除过滤无陈旧块。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_4 端到端联调与测试/test_document_flow.py", line 358, in test_rrf_search_after_upload_and_database_recovery
+    app.selectbox(key="retrieval_method").set_value("RRF 混合检索")
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/streamlit/testing/v1/element_tree.py", line 339, in __call__
+    raise KeyError(key)
+KeyError: 'retrieval_method'
+
+======================================================================
+FAIL: test_batch_upload_progress_state_and_rerun (tests.5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+实际操作上传/按钮，核验混合结果、完整进度和重跑不重复执行。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_4 端到端联调与测试/test_document_flow.py", line 70, in test_batch_upload_progress_state_and_rerun
+    self.assertFalse(app.exception)
+AssertionError: ElementList(_list=[Exception(message="name 'status_labels' is not defined", stack_trace=['File "/Users/rean/github/RAG+Agent/src/frontend/app.py", line 605, in <module>\n    states = ["待索引" if task["status"] == "success" and not task.get("indexed", False)', 'File "/Users/rean/github/RAG+Agent/src/frontend/app.py", line 606, in <listcomp>\n    else status_labels[task["status"]] for task in batch]'])]) is not false
+
+======================================================================
+FAIL: test_delete_only_selected_document_keeps_other_index_and_progress (tests.5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+删除一份文献不会清空全库，保留任务的进度与真实列表一致。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_4 端到端联调与测试/test_document_flow.py", line 492, in test_delete_only_selected_document_keeps_other_index_and_progress
+    self.assertFalse(app.exception)
+AssertionError: ElementList(_list=[Exception(message="name 'status_labels' is not defined", stack_trace=['File "/Users/rean/github/RAG+Agent/src/frontend/app.py", line 605, in <module>\n    states = ["待索引" if task["status"] == "success" and not task.get("indexed", False)', 'File "/Users/rean/github/RAG+Agent/src/frontend/app.py", line 606, in <listcomp>\n    else status_labels[task["status"]] for task in batch]'])]) is not false
+
+======================================================================
+FAIL: test_failed_upload_recovers_and_disables_retry (tests.5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+页面通过失败按钮恢复成功，之后重试按钮禁用且文献存在。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_4 端到端联调与测试/test_document_flow.py", line 114, in test_failed_upload_recovers_and_disables_retry
+    self.assertFalse(app.exception)
+AssertionError: ElementList(_list=[Exception(message="name 'status_labels' is not defined", stack_trace=['File "/Users/rean/github/RAG+Agent/src/frontend/app.py", line 605, in <module>\n    states = ["待索引" if task["status"] == "success" and not task.get("indexed", False)', 'File "/Users/rean/github/RAG+Agent/src/frontend/app.py", line 606, in <listcomp>\n    else status_labels[task["status"]] for task in batch]'])]) is not false
+
+======================================================================
+FAIL: test_layout_library_delete_cancel_restore_and_cache (tests.5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+真实页面上传、取消删除、删除和恢复均核验原文及Chroma。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_4 端到端联调与测试/test_document_flow.py", line 476, in test_layout_library_delete_cancel_restore_and_cache
+    self.assertFalse(app.exception)
+AssertionError: ElementList(_list=[Exception(message="name 'status_labels' is not defined", stack_trace=['File "/Users/rean/github/RAG+Agent/src/frontend/app.py", line 605, in <module>\n    states = ["待索引" if task["status"] == "success" and not task.get("indexed", False)', 'File "/Users/rean/github/RAG+Agent/src/frontend/app.py", line 606, in <listcomp>\n    else status_labels[task["status"]] for task in batch]'])]) is not false
+
+======================================================================
+FAIL: test_model_error_keeps_file_and_retry_completes_index (tests.5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+缺失本地模型时不误报成功，恢复模型后仅重试索引。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_4 端到端联调与测试/test_document_flow.py", line 140, in test_model_error_keeps_file_and_retry_completes_index
+    self.assertFalse(app.exception)
+AssertionError: ElementList(_list=[Exception(message="name 'status_labels' is not defined", stack_trace=['File "/Users/rean/github/RAG+Agent/src/frontend/app.py", line 605, in <module>\n    states = ["待索引" if task["status"] == "success" and not task.get("indexed", False)', 'File "/Users/rean/github/RAG+Agent/src/frontend/app.py", line 606, in <listcomp>\n    else status_labels[task["status"]] for task in batch]'])]) is not false
+
+======================================================================
+FAIL: test_new_upload_is_incremental_and_repeat_upload_skips_encoding (tests.5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+改变文件选择新增文献，重新选原文也不重算已有向量。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_4 端到端联调与测试/test_document_flow.py", line 128, in test_new_upload_is_incremental_and_repeat_upload_skips_encoding
+    self.assertFalse(app.exception)
+AssertionError: ElementList(_list=[Exception(message="name 'status_labels' is not defined", stack_trace=['File "/Users/rean/github/RAG+Agent/src/frontend/app.py", line 605, in <module>\n    states = ["待索引" if task["status"] == "success" and not task.get("indexed", False)', 'File "/Users/rean/github/RAG+Agent/src/frontend/app.py", line 606, in <listcomp>\n    else status_labels[task["status"]] for task in batch]'])]) is not false
+
+======================================================================
+FAIL: test_oversized_upload_shows_failure_and_valid_file_still_indexes (tests.5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+AppTest绕过浏览器大小限制，验证20MiB后端保护与页面失败/重试状态。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_4 端到端联调与测试/test_document_flow.py", line 91, in test_oversized_upload_shows_failure_and_valid_file_still_indexes
+    self.assertFalse(app.exception)
+AssertionError: ElementList(_list=[Exception(message="name 'status_labels' is not defined", stack_trace=['File "/Users/rean/github/RAG+Agent/src/frontend/app.py", line 605, in <module>\n    states = ["待索引" if task["status"] == "success" and not task.get("indexed", False)', 'File "/Users/rean/github/RAG+Agent/src/frontend/app.py", line 606, in <listcomp>\n    else status_labels[task["status"]] for task in batch]'])]) is not false
+
+======================================================================
+FAIL: test_restore_index_failure_can_retry (tests.5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+回收原文恢复后模型失败，不冒充入库成功；现有失败重试补全索引。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_4 端到端联调与测试/test_document_flow.py", line 535, in test_restore_index_failure_can_retry
+    self.assertFalse(app.exception)
+AssertionError: ElementList(_list=[Exception(message="name 'status_labels' is not defined", stack_trace=['File "/Users/rean/github/RAG+Agent/src/frontend/app.py", line 605, in <module>\n    states = ["待索引" if task["status"] == "success" and not task.get("indexed", False)', 'File "/Users/rean/github/RAG+Agent/src/frontend/app.py", line 606, in <listcomp>\n    else status_labels[task["status"]] for task in batch]'])]) is not false
+
+----------------------------------------------------------------------
+Ran 91 tests in 34.809s
+
+FAILED (failures=8, errors=8)

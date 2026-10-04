@@ -34,7 +34,6 @@ def activate_session(memory: MemoryManager, user_id: str, session_id: str, cance
     st.session_state.agent_messages = history
     st.session_state.rag_messages = rag_messages
     st.session_state.agent_session_id = st.session_state.rag_session_id = session_id
-    st.session_state.reset_session_selector = True
     st.query_params["conversation"] = session_id
 
 
@@ -42,7 +41,6 @@ def render_sessions(db_path: Path, cancel_request) -> bool:
     """管理当前本机访客的会话；随机地址标识用于演示隔离，不是登录认证。"""
     with st.sidebar:
         st.subheader("对话历史管理")
-        st.caption("新建与切换同时作用于两个问答标签。保留当前地址可在刷新后找回历史；访客标识不是登录认证。")
         try:
             if "agent_user_id" not in st.session_state:
                 visitor = st.query_params.get("visitor", "")
@@ -66,14 +64,24 @@ def render_sessions(db_path: Path, cancel_request) -> bool:
                 saved = memory.get_messages(user_id, identifier)
                 rag_saved = memory.get_rag_messages(user_id, identifier)
                 title = saved[0].content if saved else (rag_saved[0]["question"] if rag_saved else "新会话")
-                labels[identifier] = f"{title[:24]} · {identifier[:8]}"
-            if st.session_state.pop("reset_session_selector", False) or st.session_state.get("conversation_select") not in sessions:
-                st.session_state.conversation_select = current
-            selected = st.selectbox("历史会话", sessions, key="conversation_select", format_func=labels.get)
-            if selected != current:
-                activate_session(memory, user_id, selected, cancel_request)
-                current = selected
-            st.caption(f"当前会话：{current}")
+                labels[identifier] = title[:24]
+            st.caption("最近")
+            st.markdown("""<style>
+                .st-key-conversation_history button {border: 0; text-align: left;}
+                .st-key-conversation_history button > div {width: 100%; justify-content: flex-start;}
+                .st-key-conversation_history button[kind="secondary"] {background-color: transparent;}
+                .st-key-conversation_history button[kind="primary"] {
+                    background-color: rgba(128, 128, 128, 0.25); color: inherit;
+                }
+            </style>""", unsafe_allow_html=True)
+            # 直接点击会话标题切换；当前会话使用主按钮高亮，ID只用于稳定key。
+            with st.container(key="conversation_history"):
+                for identifier in reversed(sessions):
+                    if st.button(labels[identifier], key=f"conversation:{identifier}",
+                                 type="primary" if identifier == current else "secondary", width="stretch"):
+                        if identifier != current:
+                            activate_session(memory, user_id, identifier, cancel_request)
+                            st.rerun()
             if st.button("删除当前会话", key="delete_conversation"):
                 st.session_state.delete_session_pending = current
             if st.session_state.get("delete_session_pending") == current:

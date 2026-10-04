@@ -1,0 +1,391 @@
+- log
+- log
+- button "keyboard_double_arrow_left":
+  - generic: keyboard_double_arrow_left
+- heading "文档上传与管理" [level=2]
+- paragraph: 选择多份文档
+- region "选择多份文档":
+  - button "file upload"
+  - generic "Windows验收_说明.txt, 191.0B":
+    - generic "Windows验收_说明.txt"
+    - generic: 191.0B
+    - button "Remove Windows验收_说明.txt":
+  - generic "Windows验收_说明.md, 114.0B":
+    - generic "Windows验收_说明.md"
+    - generic: 114.0B
+    - button "Remove Windows验收_说明.md":
+  - generic "Windows验收_说明.docx, 8.6KB":
+    - generic "Windows验收_说明.docx"
+    - generic: 8.6KB
+    - button "Remove Windows验收_说明.docx":
+  - generic "Windows验收_损坏.pdf, 44.0B":
+    - generic "Windows验收_损坏.pdf"
+    - generic: 44.0B
+    - button "Remove Windows验收_损坏.pdf":
+  - generic "Windows验收_DETR节选.pdf, 0.5MB":
+    - generic "Windows验收_DETR节选.pdf"
+    - generic: 0.5MB
+    - button "Remove Windows验收_DETR节选.pdf":
+  - button "Add files":
+    - generic: add
+- paragraph: 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+- button "开始导入":
+  - paragraph: 开始导入
+- button "重试失败项" [disabled]:
+  - paragraph: 重试失败项
+- heading "本批导入状态" [level=3]
+- paragraph: 已处理 1/1 份
+- progressbar "progress"
+- button "Show/hide columns":
+- button "Download as CSV":
+- button "Search":
+- button "Fullscreen":
+- paragraph: 索引成功 1 份，失败 0 份。已处理块含跳过的重复项，新增块只计本次尝试；进度包含失败项。
+- heading "知识库文档" [level=3]
+- paragraph: 文档列表来自本地原文与索引；块数表示当前库中数量，不代表全部预期块均已导入。
+- button "刷新知识库状态":
+  - paragraph: 刷新知识库状态
+- status:
+  - paragraph: 原文已恢复，请查看本批导入状态；失败项可重试。
+- paragraph:
+  - strong: Windows验收_DETR节选.pdf
+- paragraph: ef1a2a0c29a7… · 13 块 · 已向量化 · 原文已保存
+- paragraph:
+  - strong: Windows验收_ViT.pdf
+- paragraph: 8ce7b83971a1… · 167 块 · 已向量化 · 原文已保存
+- paragraph:
+  - strong: Windows验收_说明.docx
+- paragraph: b308ae667c36… · 2 块 · 已向量化 · 原文已保存
+- paragraph:
+  - strong: Windows验收_说明.md
+- paragraph: 6326740a22ac… · 1 块 · 已向量化 · 原文已保存
+- paragraph:
+  - strong: Windows验收_说明.txt
+- paragraph: 0b027726e389… · 1 块 · 已向量化 · 原文已保存
+- paragraph: 管理文档
+- combobox "管理文档": Windows验收_DETR节选.pdf · ef1a2a0c
+- button "Open":
+- button "删除文档":
+  - paragraph: 删除文档
+- heading "对话历史管理" [level=3]
+- paragraph: 新建与切换同时作用于两个问答标签。保留当前地址可在刷新后找回历史；访客标识不是登录认证。
+- button "新建会话":
+  - paragraph: 新建会话
+- paragraph: 历史会话
+- combobox "历史会话": 请同时完成两件事：告诉我当前时间，并使用keyw · 136f3dc8
+- button "Open":
+- paragraph: 当前会话：136f3dc80e0349ea80b6b0ecaf093b16
+- button "删除当前会话":
+  - paragraph: 删除当前会话
+- heading "课程资料" [level=2]
+- paragraph: 南京农业大学生产实习课程实践
+- paragraph: 技术设计与验收：docs/技术设计文档.md
+- banner:
+  - button "Main menu":
+- heading "智能科研助理" [level=1]:
+  - text: 智能科研助理
+  - link "Link to heading":
+    - /url: "#2d7dc4e4"
+- paragraph: 基于 RAG + Agent 的论文知识库问答系统
+- status:
+  - paragraph: 上传文档后增量写入本地知识库；下方 RAG 问答使用混合检索与模型重排，本地模型逐步输出答案并补全文献引用。
+- heading "科研对话" [level=3]:
+  - text: 科研对话
+  - link "Link to heading":
+    - /url: "#952dd83b"
+- tablist:
+  - tab "Agent 科研助理":
+    - paragraph: Agent 科研助理
+  - tab "RAG 流式问答" [selected]:
+    - paragraph: RAG 流式问答
+- tabpanel "RAG 流式问答":
+  - heading "RAG 流式问答" [level=3]:
+    - text: RAG 流式问答
+    - link "Link to heading":
+      - /url: "#rag"
+  - paragraph: 每个问题先匹配当前会话答案缓存；未命中再独立检索并由本地 Ollama 生成。历史和引用保存在当前会话，只用于展示，不作为RAG多轮推理上下文。引用对应实际文件和位置，原文证据可展开查看。
+  - paragraph: 清空会删除当前会话的RAG历史和答案缓存，Agent历史、知识库和请求日志保留。
+  - button "清空当前对话":
+    - paragraph: 清空当前对话
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请用一句话解释Transformer，并注明是否依据知识库。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: 当前知识库中未找到相关文档。以下为纯模型回答，没有知识库文献依据。
+    - paragraph: 当前知识库中未找到相关文档。Transformer是一种基于自注意力机制的神经网络架构，广泛用于自然语言处理任务中，如机器翻译和文本生成。[无可引用来源]
+    - heading "参考来源" [level=2]:
+      - text: 参考来源
+      - link "Link to heading":
+        - /url: "#4f4c5596"
+    - paragraph: 无可引用来源
+    - paragraph: 服务已结束 · 检索 0.02 秒 · 总耗时 3.10 秒 · 输入 Token 440 · 输出 Token 41
+    - status:
+      - paragraph: 当前知识库中未找到相关文档；以下回答没有文献依据，为纯模型回答。
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 根据Windows验收_ViT.pdf，ViT如何将图像patch转换成Transformer输入，为什么添加位置嵌入？请标注文献引用。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - heading "回答" [level=2]:
+      - text: 回答
+      - link "Link to heading":
+        - /url: "#3a622f65"
+    - paragraph: 根据文档描述，ViT将图像分割成固定大小的patch，然后对每个patch进行线性嵌入，将其作为Transformer的输入。这些patch在处理过程中与文本中的token（单词）类似。[参考文档1：Windows验收_ViT.pdf；第1页（物理页码）]和[参考文档3：Windows验收_ViT.pdf；第1页（物理页码）]中都有提到这一过程。
+    - paragraph: 添加位置嵌入的原因在于，尽管在patch级别输入的情况下，空间信息的编码方式差异可能不那么重要，但为了确保Transformer能够理解patch之间的相对位置关系，仍然需要添加位置嵌入。[参考文档5：Windows验收_ViT.pdf；第18页（物理页码）]中提到，由于patch的尺寸远小于原始像素级别输入，例如14×14与224×224相比，学习表示这种分辨率下的空间关系对于不同的位置编码策略来说是相对容易的。因此，尽管如此，位置嵌入仍然是必要的，以确保Transformer能够正确处理patch之间的相对位置。[参考文档5：Windows验收_ViT.pdf；第18页（物理页码）]
+    - heading "参考来源" [level=2]:
+      - text: 参考来源
+      - link "Link to heading":
+        - /url: "#4f4c5596"
+    - list:
+      - listitem: "[参考文档1] Windows验收_ViT.pdf；第1页（物理页码）"
+      - listitem: "[参考文档3] Windows验收_ViT.pdf；第1页（物理页码）"
+      - listitem: "[参考文档5] Windows验收_ViT.pdf；第18页（物理页码）"
+    - paragraph: 服务已结束 · 检索 4.43 秒 · 总耗时 11.99 秒 · 输入 Token 1184 · 输出 Token 209
+    - generic "keyboard_arrow_right 参考文档1 · Windows验收_ViT.pdf · 第1页（物理页码）":
+      - generic: keyboard_arrow_right
+      - paragraph: 参考文档1 · Windows验收_ViT.pdf · 第1页（物理页码）
+    - generic "keyboard_arrow_right 参考文档3 · Windows验收_ViT.pdf · 第1页（物理页码）":
+      - generic: keyboard_arrow_right
+      - paragraph: 参考文档3 · Windows验收_ViT.pdf · 第1页（物理页码）
+    - generic "keyboard_arrow_right 参考文档5 · Windows验收_ViT.pdf · 第18页（物理页码）":
+      - generic: keyboard_arrow_right
+      - paragraph: 参考文档5 · Windows验收_ViT.pdf · 第18页（物理页码）
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 根据Windows验收_ViT.pdf，ViT如何将图像patch转换成Transformer输入，为什么添加位置嵌入？请标注文献引用。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - heading "回答" [level=2]:
+      - text: 回答
+      - link "Link to heading":
+        - /url: "#3a622f65"
+    - paragraph: 根据文档描述，ViT将图像分割成固定大小的patch，然后对每个patch进行线性嵌入，将其作为Transformer的输入。这些patch在处理过程中与文本中的token（单词）类似。[参考文档1：Windows验收_ViT.pdf；第1页（物理页码）]和[参考文档3：Windows验收_ViT.pdf；第1页（物理页码）]中都有提到这一过程。
+    - paragraph: 添加位置嵌入的原因在于，尽管在patch级别输入的情况下，空间信息的编码方式差异可能不那么重要，但为了确保Transformer能够理解patch之间的相对位置关系，仍然需要添加位置嵌入。[参考文档5：Windows验收_ViT.pdf；第18页（物理页码）]中提到，由于patch的尺寸远小于原始像素级别输入，例如14×14与224×224相比，学习表示这种分辨率下的空间关系对于不同的位置编码策略来说是相对容易的。因此，尽管如此，位置嵌入仍然是必要的，以确保Transformer能够正确处理patch之间的相对位置。[参考文档5：Windows验收_ViT.pdf；第18页（物理页码）]
+    - heading "参考来源" [level=2]:
+      - text: 参考来源
+      - link "Link to heading":
+        - /url: "#4f4c5596"
+    - list:
+      - listitem: "[参考文档1] Windows验收_ViT.pdf；第1页（物理页码）"
+      - listitem: "[参考文档3] Windows验收_ViT.pdf；第1页（物理页码）"
+      - listitem: "[参考文档5] Windows验收_ViT.pdf；第18页（物理页码）"
+    - paragraph: 缓存已返回 · 检索 0.00 秒 · 总耗时 0.18 秒 · 输入 Token 0 · 输出 Token 0
+    - status:
+      - paragraph: 缓存命中（相同问题），本次未调用检索、重排或生成模型。原问题：根据Windows验收_ViT.pdf，ViT如何将图像patch转换成Transformer输入，为什么添加位置嵌入？请标注文献引用。
+    - generic "keyboard_arrow_right 参考文档1 · Windows验收_ViT.pdf · 第1页（物理页码）":
+      - generic: keyboard_arrow_right
+      - paragraph: 参考文档1 · Windows验收_ViT.pdf · 第1页（物理页码）
+    - generic "keyboard_arrow_right 参考文档3 · Windows验收_ViT.pdf · 第1页（物理页码）":
+      - generic: keyboard_arrow_right
+      - paragraph: 参考文档3 · Windows验收_ViT.pdf · 第1页（物理页码）
+    - generic "keyboard_arrow_right 参考文档5 · Windows验收_ViT.pdf · 第18页（物理页码）":
+      - generic: keyboard_arrow_right
+      - paragraph: 参考文档5 · Windows验收_ViT.pdf · 第18页（物理页码）
+  - textbox "询问已上传论文（支持中英文）"
+  - button "Send message" [disabled]:
+- heading "Agent 决策轨迹与运行指标" [level=3]:
+  - text: Agent 决策轨迹与运行指标
+  - link "Link to heading":
+    - /url: "#agent"
+- paragraph: 本次 Agent Token
+- paragraph: "12278"
+- paragraph: Agent 响应耗时
+- paragraph: 20.843 秒
+- paragraph: 阶段：done · 请求：0ad3b66c6c4a448984fe30f11d70aa5d · 已报告 Token：12278 · 用量未完整报告：0 项
+- button "Show/hide columns":
+- button "Download as CSV":
+- button "Search":
+- button "Fullscreen":
+- paragraph: 本次工具调用成功率
+- paragraph: 100.0%
+- paragraph: 平均工具耗时
+- paragraph: 1.221 秒
+- paragraph: 已计划 2 · 已返回 2 · 成功 2 · 失败 0 · 待返回 0。成功指工具执行成功，不能代替任务完成或答案正确；重试按最终调用状态计一次，并行耗时可重叠。
+- button "Show/hide columns":
+- button "Download as CSV":
+- button "Search":
+- button "Fullscreen":
+- button "Show/hide columns":
+- button "Download as CSV":
+- button "Search":
+- button "Fullscreen":
+- paragraph:
+  - strong: Agent 决策轨迹
+- paragraph: 展示公开决策说明与真实工具事件；分支表示同轮调用，执行方式以工具记录为准。
+- button "Fullscreen":
+- generic "keyboard_arrow_down 第1轮 · Thought → Action → Observation":
+  - generic: keyboard_arrow_down
+  - paragraph: 第1轮 · Thought → Action → Observation
+- paragraph:
+  - strong: Thought · 决策说明
+- paragraph: 明确工具意图，跳过模型规划，交由Action生成参数。
+- paragraph: 下一步：tool · 计划工具：keyword_extract · 路由：rule
+- paragraph:
+  - strong: Action · keyword_extract
+- paragraph: 调用ID：f5801a5b176349599c21e28846b1906b
+- generic: "{"
+- generic: ...
+- generic: "}"
+- paragraph:
+  - strong: 工具返回 · keyword_extract · 成功
+- paragraph: 调用ID：f5801a5b176349599c21e28846b1906b · 执行方式：serial · 耗时：2.440 秒
+- generic: "{"
+- generic: ...
+- generic: "}"
+- generic: "{"
+- generic: ...
+- generic: "}"
+- paragraph:
+  - strong: Observation · 结果判断
+- paragraph: 当前时间已获取，关键词提取完成。
+- paragraph: 决策：continue · 任务完成：False
+- generic "keyboard_arrow_down 第2轮 · Thought → Action → Observation":
+  - generic: keyboard_arrow_down
+  - paragraph: 第2轮 · Thought → Action → Observation
+- paragraph:
+  - strong: Thought · 决策说明
+- paragraph: 已获取当前时间和关键词，下一步调用current_time获取时间。
+- paragraph: 下一步：tool · 计划工具：current_time · 路由：model
+- paragraph:
+  - strong: Action · current_time
+- paragraph: 调用ID：521632866d84452eafce41db4bc9f027
+- generic: "{"
+- generic: "}"
+- paragraph:
+  - strong: 工具返回 · current_time · 成功
+- paragraph: 调用ID：521632866d84452eafce41db4bc9f027 · 执行方式：serial · 耗时：0.002 秒
+- generic: "{"
+- generic: ...
+- generic: "}"
+- generic: "{"
+- generic: ...
+- generic: "}"
+- paragraph:
+  - strong: Observation · 结果判断
+- paragraph: 当前时间为2026年10月4日17点32分52秒（中国标准时间），关键词提取完成。
+- paragraph: 决策：finish · 任务完成：True
+- paragraph: 终止原因：task_complete · 任务完成：True
+- heading "RAG 运行指标" [level=3]:
+  - text: RAG 运行指标
+  - link "Link to heading":
+    - /url: "#rag"
+- paragraph: 候选命中率 = 非空检索次数 / 已完成检索次数；仅表示找到文档块，不代表回答正确或 Hit@5。缓存、未执行和检索失败不计入分母。统计包含直接 RAG 问答和 Agent 的知识库工具。
+- paragraph: RAG 候选命中率
+- paragraph: 60.0%
+- paragraph: 平均检索延迟
+- paragraph: 2.281 秒
+- paragraph: 平均 RAG 响应延迟
+- paragraph: 6.472 秒
+- paragraph: 实际检索 5 次 · 已完成 5 次 · 非空 3 次 · 失败 0 次。延迟统计实际检索请求，含失败；响应延迟含检索和生成，不含用户确认等待。
+- separator
+- generic "keyboard_arrow_down 知识库管理面板":
+  - generic: keyboard_arrow_down
+  - paragraph: 知识库管理面板
+- paragraph: 共享知识库按文档内容指纹汇总，回收文档不计入活动列表。已向量化仅表示当前有索引块，不保证完整入库；导入结果/预期块数/错误仅来自当前页面批次，刷新后未知时显示“—”。
+- paragraph: 知识库文档数
+- paragraph: "5"
+- paragraph: 已向量化文档数
+- paragraph: "5"
+- paragraph: 知识库索引块数
+- paragraph: "184"
+- button "Show/hide columns":
+- button "Download as CSV":
+- button "Search":
+- button "Fullscreen":
+- heading "检索实验与服务维护" [level=3]:
+  - text: 检索实验与服务维护
+  - link "Link to heading":
+    - /url: "#f4ddf962"
+- heading "文档 Top-K 检索" [level=3]:
+  - text: 文档 Top-K 检索
+  - link "Link to heading":
+    - /url: "#top-k"
+- paragraph: 此处只检索文档块；可选向量、BM25、RRF 或 RRF + 模型重排。各类分数不可直接比较，也不是命中概率。生成答案请使用上方 RAG 问答。
+- paragraph: 检索方式
+- combobox "检索方式": 向量相似度
+- button "Open":
+- paragraph: 查询内容（支持中英文）
+- textbox "查询内容（支持中英文）":
+  - /placeholder: ""
+- paragraph: 返回数量 Top-K
+- spinbutton "返回数量 Top-K": "5"
+- button "Decrement":
+- button "Increment":
+- paragraph: 限定文档 ID（可选，留空检索全部文档）
+- textbox "限定文档 ID（可选，留空检索全部文档）":
+  - /placeholder: ""
+- button "检索":
+  - paragraph: 检索
+- paragraph:
+  - strong: 系统健康检查
+- paragraph: 按需检查本地LLM服务和现有Chroma索引，不生成回答或写入文档。状态为上次检查快照，不代表推理或检索质量。
+- button "检查服务状态":
+  - paragraph: 检查服务状态
+- status:
+  - paragraph: 尚未检查；点击按钮获取当前状态。
+- heading "检索分数分布" [level=3]:
+  - text: 检索分数分布
+  - link "Link to heading":
+    - /url: "#cf661d5"
+- paragraph: 统计本地请求日志中的实际 RAG 检索：Top-1 为 BGE sigmoid 重排分数，不是命中率或正确概率。空库、检索失败和缓存跳过均单独计数。
+- paragraph: 请求 6 · 缓存命中 1 · 空结果 2 · 检索失败 0
+- paragraph: BAAI/bge-reranker-base · 版本 2cfc18c9 · 样本 3 · 均值 0.2263 · 范围 0.0000–0.5124
+- button "Show data":
+- button "Download as PNG":
+- button "Fullscreen":
+- generic "Vega visualization":
+- heading "模块开发状态" [level=3]:
+  - text: 模块开发状态
+  - link "Link to heading":
+    - /url: "#8cdbaa23"
+- table:
+  - rowgroup:
+    - row "模块 状态 范围":
+      - columnheader "模块":
+        - paragraph: 模块
+      - columnheader "状态":
+        - paragraph: 状态
+      - columnheader "范围":
+        - paragraph: 范围
+  - rowgroup:
+    - row "一：文档处理与检索 已实现 批量导入、三种分块、增量索引、向量/BM25/RRF 与模型重排；五组分块及三档检索质量已实际评测":
+      - cell "一：文档处理与检索":
+        - paragraph: 一：文档处理与检索
+      - cell "已实现":
+        - paragraph: 已实现
+      - cell "批量导入、三种分块、增量索引、向量/BM25/RRF 与模型重排；五组分块及三档检索质量已实际评测":
+        - paragraph: 批量导入、三种分块、增量索引、向量/BM25/RRF 与模型重排；五组分块及三档检索质量已实际评测
+    - row "二：RAG 生成 已实现 已实现 Prompt、上下文/引用、本地生成、流式、缓存、降级、请求日志与分数分布，完成参数对照；独立答案质量评测待完成":
+      - cell "二：RAG 生成":
+        - paragraph: 二：RAG 生成
+      - cell "已实现":
+        - paragraph: 已实现
+      - cell "已实现 Prompt、上下文/引用、本地生成、流式、缓存、降级、请求日志与分数分布，完成参数对照；独立答案质量评测待完成":
+        - paragraph: 已实现 Prompt、上下文/引用、本地生成、流式、缓存、降级、请求日志与分数分布，完成参数对照；独立答案质量评测待完成
+    - row "三：Agent 决策 已实现 有界ReAct、八个本地工具、路由/并行/恢复、会话隔离与窗口/摘要记忆":
+      - cell "三：Agent 决策":
+        - paragraph: 三：Agent 决策
+      - cell "已实现":
+        - paragraph: 已实现
+      - cell "有界ReAct、八个本地工具、路由/并行/恢复、会话隔离与窗口/摘要记忆":
+        - paragraph: 有界ReAct、八个本地工具、路由/并行/恢复、会话隔离与窗口/摘要记忆
+    - row "四：系统集成与前端 已实现 文档/会话管理与回收恢复、RAG/Agent正文流式、引用原文物理页、记忆、公开轨迹、实时指标与健康检查":
+      - cell "四：系统集成与前端":
+        - paragraph: 四：系统集成与前端
+      - cell "已实现":
+        - paragraph: 已实现
+      - cell "文档/会话管理与回收恢复、RAG/Agent正文流式、引用原文物理页、记忆、公开轨迹、实时指标与健康检查":
+        - paragraph: 文档/会话管理与回收恢复、RAG/Agent正文流式、引用原文物理页、记忆、公开轨迹、实时指标与健康检查
+    - row "五：评测与交付 人工评分待完成 已有12篇/60题、检索与Agent实际评测、图表及Bad Case优化；基线120条和优化60条的人工质量评分待评阅":
+      - cell "五：评测与交付":
+        - paragraph: 五：评测与交付
+      - cell "人工评分待完成":
+        - paragraph: 人工评分待完成
+      - cell "已有12篇/60题、检索与Agent实际评测、图表及Bad Case优化；基线120条和优化60条的人工质量评分待评阅":
+        - paragraph: 已有12篇/60题、检索与Agent实际评测、图表及Bad Case优化；基线120条和优化60条的人工质量评分待评阅
+- heading "评阅说明" [level=3]:
+  - text: 评阅说明
+  - link "Link to heading":
+    - /url: "#b961d6c5"
+- paragraph: 功能测试、检索命中和模型自报完成均不能代替人工答案评分。180条实际答案按正确性、完整性和引用准确性评阅。

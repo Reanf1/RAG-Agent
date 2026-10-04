@@ -1,0 +1,253 @@
+- log
+- log
+- heading "文档上传与管理" [level=2]
+- paragraph: 选择多份文档
+- region "选择多份文档":
+  - button "file upload"
+  - button "upload Upload":
+    - generic: upload
+    - paragraph: Upload
+  - generic: 20MB per file • PDF, DOCX, TXT, MD, MARKDOWN
+- paragraph: 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+- button "开始导入" [disabled]:
+  - paragraph: 开始导入
+- button "重试失败项" [disabled]:
+  - paragraph: 重试失败项
+- heading "本批导入状态" [level=3]
+- paragraph: 已处理 0/0 份
+- progressbar "progress"
+- paragraph: 在左侧选择文档后，点击“开始导入”。
+- heading "知识库文档" [level=3]
+- paragraph: 文档列表来自本地原文与索引；块数表示当前库中数量，不代表全部预期块均已导入。
+- button "刷新知识库状态":
+  - paragraph: 刷新知识库状态
+- paragraph:
+  - strong: Windows验收_DETR节选.pdf
+- paragraph: ef1a2a0c29a7… · 13 块 · 已向量化 · 原文已保存
+- paragraph:
+  - strong: Windows验收_ViT.pdf
+- paragraph: 8ce7b83971a1… · 167 块 · 已向量化 · 原文已保存
+- paragraph:
+  - strong: Windows验收_说明.docx
+- paragraph: b308ae667c36… · 2 块 · 已向量化 · 原文已保存
+- paragraph:
+  - strong: Windows验收_说明.md
+- paragraph: 6326740a22ac… · 1 块 · 已向量化 · 原文已保存
+- paragraph:
+  - strong: Windows验收_说明.txt
+- paragraph: 0b027726e389… · 1 块 · 已向量化 · 原文已保存
+- paragraph: 管理文档
+- combobox "管理文档": Windows验收_ViT.pdf · 8ce7b839
+- button "Open":
+- button "删除文档":
+  - paragraph: 删除文档
+- heading "对话历史管理" [level=3]
+- paragraph: 新建与切换同时作用于两个问答标签。保留当前地址可在刷新后找回历史；访客标识不是登录认证。
+- button "新建会话":
+  - paragraph: 新建会话
+- paragraph: 历史会话
+- combobox "历史会话": 请并行调用paper_metadata，分别提取 · d7b03beb
+- button "Open":
+- paragraph: 当前会话：d7b03beb7409455eb1033c41f54a9654
+- button "删除当前会话":
+  - paragraph: 删除当前会话
+- heading "课程资料" [level=2]
+- paragraph: 南京农业大学生产实习课程实践
+- paragraph: 技术设计与验收：docs/技术设计文档.md
+- banner:
+  - img "Running...":
+  - button "Stop"
+  - button "Main menu":
+- heading "智能科研助理" [level=1]:
+  - text: 智能科研助理
+  - link "Link to heading":
+    - /url: "#2d7dc4e4"
+- paragraph: 基于 RAG + Agent 的论文知识库问答系统
+- status:
+  - paragraph: 上传文档后增量写入本地知识库；下方 RAG 问答使用混合检索与模型重排，本地模型逐步输出答案并补全文献引用。
+- heading "科研对话" [level=3]:
+  - text: 科研对话
+  - link "Link to heading":
+    - /url: "#952dd83b"
+- tablist:
+  - tab "Agent 科研助理" [selected]:
+    - paragraph: Agent 科研助理
+  - tab "RAG 流式问答":
+    - paragraph: RAG 流式问答
+- tabpanel "Agent 科研助理":
+  - heading "Agent 科研助理" [level=3]:
+    - text: Agent 科研助理
+    - link "Link to heading":
+      - /url: "#agent"
+  - paragraph: 本页独立会话接入历史记忆；每个阶段完成即刷新实际 Token、工具成功率/耗时和决策轨迹。Action负责选择工具，内部用量单列；并行批次共享的Action只统计一次。左侧可新建、切换、删除或恢复历史会话。
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请并行调用paper_metadata，分别提取两篇论文的标题、作者、年份、摘要和DOI。论文ID分别为8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6和ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c3079f448a2ad。DETR只上传了前两页节选，缺失字段请明确说明。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: "已经成功获取了两篇论文的元数据。其中一篇论文是《End-to-End Object Detection with Transformers》，作者为Nicolas Carion, Francisco Massa, Gabriel Synnaeve, Nicolas Usunier, Alexander Kirillov, Sergey Zagoruyko，发表于2020年，但缺少摘要和DOI。另一篇论文是《AN IMAGE IS WORTH 16X16 WORDS: TRANSFORMERS FOR IMAGE RECOGNITION AT SCALE》，作者为Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, Dirk Weissenborn, Xiaohua Zhai, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer, Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby，发表于2021年，摘要为：虽然Transformer架构已成为自然语言处理任务的事实标准，但在计算机视觉中的应用仍然有限。我们展示了这种依赖于CNNs是不必要的，直接应用于图像补丁序列的纯Transformer可以在图像分类任务上表现得很好。当在大量数据上预训练并转移到多个中型或小型图像识别基准（如ImageNet、CIFAR-100、VTAB等）时，Vision Transformer (ViT) 达到了与最先进的卷积网络相比的出色结果，同时需要的计算资源要少得多。"
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请使用paper_summary为论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6生成背景、方法、结果、结论四部分摘要，每部分一句话并附引用。
+  - paragraph: 向 Agent 提问
+  - textbox "向 Agent 提问":
+    - /placeholder: ""
+    - text: 请使用paper_summary为论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6生成背景、方法、结果、结论四部分摘要，每部分一句话并附引用。
+  - button "运行 Agent" [active]:
+    - paragraph: 运行 Agent
+- heading "Agent 决策轨迹与运行指标" [level=3]:
+  - text: Agent 决策轨迹与运行指标
+  - link "Link to heading":
+    - /url: "#agent"
+- paragraph: 本次 Agent Token
+- paragraph: "6986"
+- paragraph: Agent 响应耗时
+- paragraph: 19.664 秒
+- paragraph: 阶段：tool_result · 请求：c6bd5177886443ce9b5af53c608fbb2c · 已报告 Token：6986 · 用量未完整报告：0 项
+- button "Show/hide columns":
+- button "Download as CSV":
+- button "Search":
+- button "Fullscreen":
+- paragraph: 本次工具调用成功率
+- paragraph: 100.0%
+- paragraph: 平均工具耗时
+- paragraph: 11.687 秒
+- paragraph: 已计划 1 · 已返回 1 · 成功 1 · 失败 0 · 待返回 0。成功指工具执行成功，不能代替任务完成或答案正确；重试按最终调用状态计一次，并行耗时可重叠。
+- button "Show/hide columns":
+- button "Download as CSV":
+- button "Search":
+- button "Fullscreen":
+- button "Show/hide columns":
+- button "Download as CSV":
+- button "Search":
+- button "Fullscreen":
+- paragraph:
+  - strong: Agent 决策轨迹
+- paragraph: 展示公开决策说明与真实工具事件；分支表示同轮调用，执行方式以工具记录为准。
+- button "Fullscreen":
+- generic "keyboard_arrow_down 第1轮 · Thought → Action → Observation":
+  - generic: keyboard_arrow_down
+  - paragraph: 第1轮 · Thought → Action → Observation
+- paragraph:
+  - strong: Thought · 决策说明
+- paragraph: 根据用户需求，使用paper_summary生成摘要。
+- paragraph: 下一步：tool · 计划工具：paper_summary · 路由：model
+- paragraph:
+  - strong: Action · paper_summary
+- paragraph: 调用ID：599d773b61884af887a01a0d5df1bee5
+- generic: "{"
+- generic: ...
+- generic: "}"
+- heading "RAG 运行指标" [level=3]:
+  - text: RAG 运行指标
+  - link "Link to heading":
+    - /url: "#rag"
+- paragraph: 候选命中率 = 非空检索次数 / 已完成检索次数；仅表示找到文档块，不代表回答正确或 Hit@5。缓存、未执行和检索失败不计入分母。统计包含直接 RAG 问答和 Agent 的知识库工具。
+- paragraph: RAG 候选命中率
+- paragraph: 60.0%
+- paragraph: 平均检索延迟
+- paragraph: 2.281 秒
+- paragraph: 平均 RAG 响应延迟
+- paragraph: 6.472 秒
+- paragraph: 实际检索 5 次 · 已完成 5 次 · 非空 3 次 · 失败 0 次。延迟统计实际检索请求，含失败；响应延迟含检索和生成，不含用户确认等待。
+- separator
+- generic "keyboard_arrow_right 知识库管理面板":
+  - generic: keyboard_arrow_right
+  - paragraph: 知识库管理面板
+- heading "检索实验与服务维护" [level=3]:
+  - text: 检索实验与服务维护
+  - link "Link to heading":
+    - /url: "#f4ddf962"
+- heading "文档 Top-K 检索" [level=3]:
+  - text: 文档 Top-K 检索
+  - link "Link to heading":
+    - /url: "#top-k"
+- paragraph: 此处只检索文档块；可选向量、BM25、RRF 或 RRF + 模型重排。各类分数不可直接比较，也不是命中概率。生成答案请使用上方 RAG 问答。
+- paragraph: 检索方式
+- combobox "检索方式": RRF + 模型重排
+- button "Open":
+- paragraph: 查询内容（支持中英文）
+- textbox "查询内容（支持中英文）":
+  - /placeholder: ""
+  - text: linear projection flattened patches positional embeddings
+- paragraph: 返回数量 Top-K
+- spinbutton "返回数量 Top-K": "5"
+- button "Decrement":
+- button "Increment":
+- paragraph: 限定文档 ID（可选，留空检索全部文档）
+- textbox "限定文档 ID（可选，留空检索全部文档）":
+  - /placeholder: ""
+- button "检索":
+  - paragraph: 检索
+- paragraph:
+  - strong: 系统健康检查
+- paragraph: 按需检查本地LLM服务和现有Chroma索引，不生成回答或写入文档。状态为上次检查快照，不代表推理或检索质量。
+- button "检查服务状态":
+  - paragraph: 检查服务状态
+- status:
+  - paragraph: 尚未检查；点击按钮获取当前状态。
+- heading "检索分数分布" [level=3]:
+  - text: 检索分数分布
+  - link "Link to heading":
+    - /url: "#cf661d5"
+- paragraph: 统计本地请求日志中的实际 RAG 检索：Top-1 为 BGE sigmoid 重排分数，不是命中率或正确概率。空库、检索失败和缓存跳过均单独计数。
+- paragraph: 请求 6 · 缓存命中 1 · 空结果 2 · 检索失败 0
+- paragraph: BAAI/bge-reranker-base · 版本 2cfc18c9 · 样本 3 · 均值 0.2263 · 范围 0.0000–0.5124
+- button "Show data":
+- button "Download as PNG":
+- button "Fullscreen":
+- generic "Vega visualization":
+- heading "模块开发状态" [level=3]:
+  - text: 模块开发状态
+  - link "Link to heading":
+    - /url: "#8cdbaa23"
+- table:
+  - rowgroup:
+    - row "模块 状态 范围":
+      - columnheader "模块":
+        - paragraph: 模块
+      - columnheader "状态":
+        - paragraph: 状态
+      - columnheader "范围":
+        - paragraph: 范围
+  - rowgroup:
+    - row "一：文档处理与检索 已实现 批量导入、三种分块、增量索引、向量/BM25/RRF 与模型重排；五组分块及三档检索质量已实际评测":
+      - cell "一：文档处理与检索":
+        - paragraph: 一：文档处理与检索
+      - cell "已实现":
+        - paragraph: 已实现
+      - cell "批量导入、三种分块、增量索引、向量/BM25/RRF 与模型重排；五组分块及三档检索质量已实际评测":
+        - paragraph: 批量导入、三种分块、增量索引、向量/BM25/RRF 与模型重排；五组分块及三档检索质量已实际评测
+    - row "二：RAG 生成 已实现 已实现 Prompt、上下文/引用、本地生成、流式、缓存、降级、请求日志与分数分布，完成参数对照；独立答案质量评测待完成":
+      - cell "二：RAG 生成":
+        - paragraph: 二：RAG 生成
+      - cell "已实现":
+        - paragraph: 已实现
+      - cell "已实现 Prompt、上下文/引用、本地生成、流式、缓存、降级、请求日志与分数分布，完成参数对照；独立答案质量评测待完成":
+        - paragraph: 已实现 Prompt、上下文/引用、本地生成、流式、缓存、降级、请求日志与分数分布，完成参数对照；独立答案质量评测待完成
+    - row "三：Agent 决策 已实现 有界ReAct、八个本地工具、路由/并行/恢复、会话隔离与窗口/摘要记忆":
+      - cell "三：Agent 决策":
+        - paragraph: 三：Agent 决策
+      - cell "已实现":
+        - paragraph: 已实现
+      - cell "有界ReAct、八个本地工具、路由/并行/恢复、会话隔离与窗口/摘要记忆":
+        - paragraph: 有界ReAct、八个本地工具、路由/并行/恢复、会话隔离与窗口/摘要记忆
+    - row "四：系统集成与前端 已实现 文档/会话管理与回收恢复、RAG/Agent正文流式、引用原文物理页、记忆、公开轨迹、实时指标与健康检查":
+      - cell "四：系统集成与前端":
+        - paragraph: 四：系统集成与前端
+      - cell "已实现":
+        - paragraph: 已实现
+      - cell "文档/会话管理与回收恢复、RAG/Agent正文流式、引用原文物理页、记忆、公开轨迹、实时指标与健康检查":
+        - paragraph: 文档/会话管理与回收恢复、RAG/Agent正文流式、引用原文物理页、记忆、公开轨迹、实时指标与健康检查
+    - row "五：评测与交付 人工评分待完成 已有12篇/60题、检索与Agent实际评测、图表及Bad Case优化；基线120条和优化60条的人工质量评分待评阅":
+      - cell "五：评测与交付":
+        - paragraph: 五：评测与交付
+      - cell "人工评分待完成":
+        - paragraph: 人工评分待完成
+      - cell "已有12篇/60题、检索与Agent实际评测、图表及Bad Case优化；基线120条和优化60条的人工质量评分待评阅":
+        - paragraph: 已有12篇/60题、检索与Agent实际评测、图表及Bad Case优化；基线120条和优化60条的人工质量评分待评阅
+- heading "评阅说明" [level=3]:
+  - text: 评阅说明
+  - link "Link to heading":
+    - /url: "#b961d6c5"
+- paragraph: 功能测试、检索命中和模型自报完成均不能代替人工答案评分。180条实际答案按正确性、完整性和引用准确性评阅。

@@ -1,0 +1,133 @@
+===物理页1===
+Published as a conference paper at ICLR 2021
+AN IMAGE IS WORTH 16X16 WORDS:
+TRANSFORMERS FOR IMAGE RECOGNITION AT SCALE
+Alexey Dosovitskiy∗,†, Lucas Beyer∗, Alexander Kolesnikov∗, Dirk Weissenborn∗,
+Xiaohua Zhai∗, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer,
+Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby∗,†
+∗equal technical contribution, †equal advising
+Google Research, Brain Team
+{adosovitskiy, neilhoulsby}@google.com
+ABSTRACT
+While the Transformer architecture has become the de-facto standard for natural
+language processing tasks, its applications to computer vision remain limited. In
+vision, attention is either applied in conjunction with convolutional networks, or
+used to replace certain components of convolutional networks while keeping their
+overall structure in place. We show that this reliance on CNNs is not necessary
+and a pure transformer applied directly to sequences of image patches can perform
+very well on image classiﬁcation tasks. When pre-trained on large amounts of
+data and transferred to multiple mid-sized or small image recognition benchmarks
+(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent
+results compared to state-of-the-art convolutional networks while requiring sub-
+stantially fewer computational resources to train.1
+1
+INTRODUCTION
+Self-attention-based architectures, in particular Transformers (Vaswani et al., 2017), have become
+the model of choice in natural language processing (NLP). The dominant approach is to pre-train on
+a large text corpus and then ﬁne-tune on a smaller task-speciﬁc dataset (Devlin et al., 2019). Thanks
+to Transformers’ computational efﬁciency and scalability, it has become possible to train models of
+unprecedented size, with over 100B parameters (Brown et al., 2020; Lepikhin et al., 2020). With the
+models and datasets growing, there is still no sign of saturating performance.
+In computer vision, however, convolutional architectures remain dominant (LeCun et al., 1989;
+Krizhevsky et al., 2012; He et al., 2016). Inspired by NLP successes, multiple works try combining
+CNN-like architectures with self-attention (Wang et al., 2018; Carion et al., 2020), some replacing
+the convolutions entirely (Ramachandran et al., 2019; Wang et al., 2020a). The latter models, while
+theoretically efﬁcient, have not yet been scaled effectively on modern hardware accelerators due to
+the use of specialized attention patterns. Therefore, in large-scale image recognition, classic ResNet-
+like architectures are still state of the art (Mahajan et al., 2018; Xie et al., 2020; Kolesnikov et al.,
+2020).
+Inspired by the Transformer scaling successes in NLP, we experiment with applying a standard
+Transformer directly to images, with the fewest possible modiﬁcations. To do so, we split an image
+into patches and provide the sequence of linear embeddings of these patches as an input to a Trans-
+former. Image patches are treated the same way as tokens (words) in an NLP application. We train
+the model on image classiﬁcation in supervised fashion.
+When trained on mid-sized datasets such as ImageNet without strong regularization, these mod-
+els yield modest accuracies of a few percentage points below ResNets of comparable size. This
+seemingly discouraging outcome may be expected: Transformers lack some of the inductive biases
+1Fine-tuning
+code
+and
+pre-trained
+models
+are
+available
+at
+https://github.com/
+google-research/vision_transformer
+1
+arXiv:2010.11929v2  [cs.CV]  3 Jun 2021
+
+===物理页3===
+Published as a conference paper at ICLR 2021
+Transformer Encoder
+MLP 
+Head
+Vision Transformer (ViT)
+*
+Linear Projection of Flattened Patches
+* Extra learnable
+     [ cl ass] embedding
+1
+2
+3
+4
+5
+6
+7
+8
+9
+0
+Patch + Position 
+Embedding
+Class
+Bird
+Ball
+Car
+...
+Embedded 
+Patches
+Multi-Head 
+Attention
+Norm
+MLP
+Norm
++
+L x
++
+Transformer Encoder
+Figure 1: Model overview. We split an image into ﬁxed-size patches, linearly embed each of them,
+add position embeddings, and feed the resulting sequence of vectors to a standard Transformer
+encoder. In order to perform classiﬁcation, we use the standard approach of adding an extra learnable
+“classiﬁcation token” to the sequence. The illustration of the Transformer encoder was inspired by
+Vaswani et al. (2017).
+3
+METHOD
+In model design we follow the original Transformer (Vaswani et al., 2017) as closely as possible.
+An advantage of this intentionally simple setup is that scalable NLP Transformer architectures – and
+their efﬁcient implementations – can be used almost out of the box.
+3.1
+VISION TRANSFORMER (VIT)
+An overview of the model is depicted in Figure 1. The standard Transformer receives as input a 1D
+sequence of token embeddings. To handle 2D images, we reshape the image x ∈RH×W ×C into a
+sequence of ﬂattened 2D patches xp ∈RN×(P 2·C), where (H, W) is the resolution of the original
+image, C is the number of channels, (P, P) is the resolution of each image patch, and N = HW/P 2
+is the resulting number of patches, which also serves as the effective input sequence length for the
+Transformer. The Transformer uses constant latent vector size D through all of its layers, so we
+ﬂatten the patches and map to D dimensions with a trainable linear projection (Eq. 1). We refer to
+the output of this projection as the patch embeddings.
+Similar to BERT’s [class] token, we prepend a learnable embedding to the sequence of embed-
+ded patches (z0
+0 = xclass), whose state at the output of the Transformer encoder (z0
+L) serves as the
+image representation y (Eq. 4). Both during pre-training and ﬁne-tuning, a classiﬁcation head is at-
+tached to z0
+L. The classiﬁcation head is implemented by a MLP with one hidden layer at pre-training
+time and by a single linear layer at ﬁne-tuning time.
+Position embeddings are added to the patch embeddings to retain positional information. We use
+standard learnable 1D position embeddings, since we have not observed signiﬁcant performance
+gains from using more advanced 2D-aware position embeddings (Appendix D.4). The resulting
+sequence of embedding vectors serves as input to the encoder.
+The Transformer encoder (Vaswani et al., 2017) consists of alternating layers of multiheaded self-
+attention (MSA, see Appendix A) and MLP blocks (Eq. 2, 3). Layernorm (LN) is applied before
+every block, and residual connections after every block (Wang et al., 2019; Baevski & Auli, 2019).
+3

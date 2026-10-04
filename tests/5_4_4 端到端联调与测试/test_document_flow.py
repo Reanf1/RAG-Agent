@@ -43,6 +43,13 @@ class TestImportFrontend(unittest.TestCase):
         # 新环境首次加载界面依赖较慢，避免默认 3 秒等待导致误报。
         self.app = AppTest.from_file(str(app_path), default_timeout=10).run()
 
+    def delete_button(self, app=None, doc_id=None):
+        """根据真实文档ID找到行内删除按钮，支持页面刷新后无上传任务的情况。"""
+        from src.frontend.components.documents import list_documents
+        if doc_id is None:
+            doc_id = list_documents(Path(self.directory.name) / "raw", Path(self.directory.name) / "index")[0]["doc_id"]
+        return (app or self.app).button(key=f"delete_document:{doc_id}")
+
     def test_batch_upload_progress_state_and_rerun(self):
         """实际操作上传/按钮，核验混合结果、完整进度和重跑不重复执行。"""
         app = self.app
@@ -52,7 +59,8 @@ class TestImportFrontend(unittest.TestCase):
         list(batch_import(loaded, Path(self.directory.name) / "raw"))
         app.session_state["import_tasks"] = loaded
         app.file_uploader[0].set_value([("good.txt", "中文正文".encode("utf-8"), "text/plain")]).run()
-        self.assertEqual(list(app.sidebar.dataframe[0].value["状态"]), ["待索引"])
+        self.assertFalse(app.sidebar.dataframe)
+        self.assertFalse(app.get("progress"))
         self.assertFalse(app.button(key="start_import").disabled)
         app.file_uploader[0].set_value([
             ("good.txt", "中文正文".encode("utf-8"), "text/plain"),
@@ -61,7 +69,8 @@ class TestImportFrontend(unittest.TestCase):
         app.button(key="start_import").click().run()
         self.assertFalse(app.exception)
         self.assertEqual(list(app.sidebar.dataframe[0].value["状态"]), ["成功", "失败"])
-        self.assertEqual(list(app.sidebar.dataframe[0].value["本次新增块"]), [1, 0])
+        self.assertEqual(list(app.sidebar.dataframe[0].value.columns), ["文件", "状态"])
+        self.assertFalse(app.file_uploader[0].value)
         self.assertTrue(app.session_state["import_tasks"][0]["indexed"])
         self.assertEqual(app.session_state["import_progress"], {"completed": 2, "total": 2})
         self.assertEqual(app.get("progress")[0].proto.value, 100)
@@ -120,6 +129,21 @@ class TestImportFrontend(unittest.TestCase):
         task = app.session_state["import_tasks"][0]
         self.assertEqual(task["added_chunks"], 0)
         self.assertEqual(task["index_total"], 2)
+        self.assertEqual(self.embeddings.document_calls, [["First"], ["Second"]])
+
+    def test_retry_keeps_new_unimported_selection(self):
+        """重试旧失败文件时，不清空用户新选但尚未导入的其他文件。"""
+        app = self.app
+        app.file_uploader[0].set_value([("old.txt", b"First", "text/plain")]).run()
+        with patch("src.data_loader.load_document", side_effect=OSError("暂时失败")):
+            app.button(key="start_import").click().run()
+        app.file_uploader[0].set_value([("new.txt", b"Second", "text/plain")]).run()
+        app.button(key="retry_import").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(app.file_uploader[0].value[0].name, "new.txt")
+        self.assertFalse(app.button(key="start_import").disabled)
+        app.button(key="start_import").click().run()
+        self.assertFalse(app.file_uploader[0].value)
         self.assertEqual(self.embeddings.document_calls, [["First"], ["Second"]])
 
     def test_model_error_keeps_file_and_retry_completes_index(self):
@@ -448,20 +472,20 @@ class TestImportFrontend(unittest.TestCase):
         doc_id = list_documents(raw, index)[0]["doc_id"]
         self.assertEqual([tab.label for tab in app.tabs], ["Agent 科研助理", "RAG 流式问答"])
         self.assertEqual(app.sidebar.get("progress")[0].proto.value, 100)
-        self.assertEqual(app.sidebar.selectbox(key="manage_doc_id").value, doc_id)
-        app.button(key="delete_document").click().run()
+        self.assertEqual(self.delete_button(app, doc_id).label, "删除")
+        self.delete_button(app).click().run()
         self.assertEqual(VectorStore().count(), 1)
         app.button(key="cancel_delete_document").click().run()
         self.assertTrue((raw / doc_id / "paper.md").is_file())
         app.session_state["rag_cache"].clear = unittest.mock.Mock()
-        app.button(key="delete_document").click().run()
+        self.delete_button(app).click().run()
         app.button(key="confirm_delete_document").click().run()
         self.assertFalse(app.exception)
         self.assertEqual(VectorStore().count(), 0)
         self.assertFalse((raw / doc_id).exists())
         self.assertEqual((raw / ".trash" / doc_id / "paper.md").read_bytes(), b"Transformer uses six layers.")
         self.assertEqual(app.session_state["import_tasks"], [])
-        self.assertFalse(app.button(key="start_import").disabled)
+        self.assertTrue(app.button(key="start_import").disabled)
         app.session_state["rag_cache"].clear.assert_called_once()
         app.button(key="restore_document").click().run()
         self.assertFalse(app.exception)
@@ -478,13 +502,13 @@ class TestImportFrontend(unittest.TestCase):
         app.file_uploader[0].set_value([("a.txt", b"Adam", "text/plain"),
                                        ("b.txt", b"Transformer", "text/plain")]).run()
         app.button(key="start_import").click().run()
-        app.button(key="delete_document").click().run()
+        self.delete_button(app).click().run()
         app.button(key="confirm_delete_document").click().run()
         self.assertFalse(app.exception)
         self.assertEqual(VectorStore().count(), 1)
         self.assertEqual(VectorStore().list_chunks()[0].page_content, "Transformer")
         self.assertEqual(app.session_state["import_progress"], {"completed": 1, "total": 1})
-        self.assertEqual(len(app.selectbox(key="manage_doc_id").options), 1)
+        self.assertEqual(sum((b.key or "").startswith("delete_document:") for b in app.sidebar.button), 1)
         app.selectbox(key="retrieval_method").set_value("BM25 关键词")
         app.text_input(key="vector_query").set_value("Adam")
         app.button(key="vector_search").click().run()
@@ -497,8 +521,9 @@ class TestImportFrontend(unittest.TestCase):
         app.button(key="start_import").click().run()
         app.session_state["import_tasks"] = []
         app.file_uploader[0].set_value([]).run()
-        doc_id = app.selectbox(key="manage_doc_id").value
-        app.button(key="delete_document").click().run()
+        from src.frontend.components.documents import list_documents
+        doc_id = list_documents(Path(self.directory.name) / "raw", Path(self.directory.name) / "index")[0]["doc_id"]
+        self.delete_button(app).click().run()
         with patch("src.retrieval.vector_store.VectorStore.delete_document", side_effect=RuntimeError("索引删除失败")):
             app.button(key="confirm_delete_document").click().run()
         self.assertFalse(app.exception)
@@ -513,7 +538,7 @@ class TestImportFrontend(unittest.TestCase):
         app = self.app
         app.file_uploader[0].set_value([("restore.txt", b"Neural network", "text/plain")]).run()
         app.button(key="start_import").click().run()
-        app.button(key="delete_document").click().run()
+        self.delete_button(app).click().run()
         app.button(key="confirm_delete_document").click().run()
         with patch("src.retrieval.vector_store.get_embeddings", side_effect=FileNotFoundError("权重缺失")):
             app.button(key="restore_document").click().run()
@@ -615,7 +640,7 @@ class TestImportFrontend(unittest.TestCase):
         row = self.knowledge_rows(app).iloc[0]
         self.assertEqual(row["原文状态"], "缺失")
         self.assertEqual(row["向量化状态"], "已向量化")
-        self.assertTrue(app.button(key="delete_document").disabled)
+        self.assertTrue(self.delete_button(app).disabled)
         source.write_bytes(b"BERT")
         VectorStore().delete_document(row["文档 ID"])
         app.button(key="refresh_knowledge").click().run()

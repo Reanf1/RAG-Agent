@@ -1,0 +1,271 @@
+[
+  {
+    "case": "健康检查",
+    "time": "2026-10-04T09:16:03.090Z",
+    "status": "passed",
+    "evidence": "01_初始页面.txt",
+    "notes": "Qwen已安装、Chroma可读，0块；既有日志1次空库请求，不计入本轮。"
+  },
+  {
+    "case": "空知识库降级",
+    "time": "2026-10-04T09:16:39.475Z",
+    "status": "passed",
+    "evidence": "02_空库_结果.txt",
+    "server_seconds": 3.1,
+    "input_tokens": 440,
+    "output_tokens": 41,
+    "notes": "无文献依据、无可引用来源；没有伪造文档引用。"
+  },
+  {
+    "case": "PDF上传选择",
+    "time": "2026-10-04T09:27:51.020Z",
+    "status": "passed_with_observation",
+    "evidence": "03_PDF上传选择.txt",
+    "notes": "22页3.74MB公开论文，浏览器工具操作663.37秒，含选择/文件传输，不能归因到服务器或计为索引耗时。"
+  },
+  {
+    "case": "PDF解析分块与索引",
+    "time": "2026-10-04T09:29:04.500Z",
+    "status": "passed",
+    "evidence": "04_PDF导入_后续.txt",
+    "chunks": 167,
+    "notes": "1份成功、0失败；原文已保存，文档ID与原文件SHA-256一致。"
+  },
+  {
+    "case": "计算器路由与结果",
+    "time": "2026-10-04T09:29:04.500Z",
+    "status": "passed",
+    "evidence": "05_访客B计算器_进度.txt",
+    "server_seconds": 13.557,
+    "tokens": 6482,
+    "notes": "1轮calculator实际调用，8.0384，工具成功率100%；该题走模型规划。"
+  },
+  {
+    "case": "论文RAG回答与引用标记",
+    "time": "2026-10-04T09:29:44.453Z",
+    "status": "passed_with_quality_observation",
+    "evidence": "06_RAG论文问题_结果.txt",
+    "server_seconds": 11.99,
+    "retrieval_seconds": 4.43,
+    "input_tokens": 1184,
+    "output_tokens": 209,
+    "notes": "答案引用第1/18页；第3页为主方法原文，引用依据的细粒度质量继续检查。"
+  },
+  {
+    "case": "Agent多轮记忆",
+    "time": "2026-10-04T09:29:53.009Z",
+    "status": "passed",
+    "evidence": "07_访客B记忆追问_结果.txt",
+    "server_seconds": 9.771,
+    "tokens": 6641,
+    "notes": "追问正确使用上一轮8.0384，calculator返回16.0768，1轮结束。"
+  },
+  {
+    "case": "PDF引用原文物理页",
+    "time": "2026-10-04T09:30:10.992Z",
+    "status": "passed",
+    "evidence": "08_引用原文_结果.jpg",
+    "notes": "弹窗实际显示Windows验收_ViT.pdf第18页及原论文图10/位置编码消融，能回到原文；本轮送模片段在句中结束，属于分块质量观察。"
+  },
+  {
+    "case": "相同问题缓存",
+    "time": "2026-10-04T09:31:20.739Z",
+    "status": "passed",
+    "evidence": "09_相同问题缓存_结果.txt",
+    "server_seconds": 0.18,
+    "tokens": 0,
+    "notes": "exact缓存命中，未调用检索/重排/生成，实际检索总数未增加。"
+  },
+  {
+    "case": "纯向量Top-K",
+    "time": "2026-10-04T09:31:20.739Z",
+    "status": "passed",
+    "evidence": "10_向量检索_提交.txt",
+    "returned": 5,
+    "notes": "5个来源块，含第3页方法图，余弦分数递减。"
+  },
+  {
+    "case": "BM25关键词Top-K",
+    "time": "2026-10-04T09:31:33.188Z",
+    "status": "passed",
+    "evidence": "11_BM25检索.txt",
+    "returned": 5,
+    "notes": "英文查询准确命中第3页，分数递减；页3包含展平/线性映射/位置嵌入正文。"
+  },
+  {
+    "case": "RRF混合Top-K",
+    "time": "2026-10-04T09:31:59.977Z",
+    "status": "passed",
+    "evidence": "12_RRF混合检索_结果.txt",
+    "returned": 5,
+    "notes": "分数递减，第1名为物理第3页方法图。"
+  },
+  {
+    "case": "混合检索加模型重排",
+    "time": "2026-10-04T09:34:33.082Z",
+    "status": "passed",
+    "evidence": "14_模型重排_结果.txt",
+    "returned": 5,
+    "notes": "BGE分数0.9658/0.8099/0.7100/0.3490/0.3396，第3页进入前三。"
+  },
+  {
+    "case": "当前时间与关键词组合任务",
+    "time": "2026-10-04T09:34:33.082Z",
+    "status": "passed_with_routing_observation",
+    "evidence": "15_组合工具路由_结果.txt",
+    "server_seconds": 20.843,
+    "tokens": 12278,
+    "notes": "规则首轮只选keyword_extract，后续ReAct补current_time，两轮串行完成；没有复现旧Mac遗漏终止，但此例不算并行通过。"
+  },
+  {
+    "case": "Agent按论文文件名调用知识库",
+    "time": "2026-10-04T09:36:08.625Z",
+    "status": "failed",
+    "evidence": "16_Agent知识库工具_进度.txt",
+    "server_seconds": 7.678,
+    "known_tokens": 2475,
+    "tokens": null,
+    "notes": "知识库doc_id不是来自问题或Context，Action参数校验拒绝，实际工具0次，任务error。"
+  },
+  {
+    "case": "Agent真实论文ID核心RAG工具",
+    "time": "2026-10-04T09:38:13.030Z",
+    "status": "passed",
+    "evidence": "18_Agent真实ID问答_进度.txt",
+    "server_seconds": 24.901,
+    "tokens": 11815,
+    "retrieval_seconds": 3.606,
+    "notes": "knowledge_base_search实际成功调用，返回1D位置嵌入及第3页引用；文件名自动定位缺陷仍未修复。"
+  },
+  {
+    "case": "PDF/DOCX/TXT/Markdown批量增量导入",
+    "time": "2026-10-04T09:38:13.030Z",
+    "status": "passed",
+    "evidence": "17_批量文档导入_结果.txt",
+    "documents": 5,
+    "chunks": 184,
+    "notes": "新批4成功1预期损坏PDF失败，DETR13块、Word2块、TXT/MD各1块，原ViT167块保留。"
+  },
+  {
+    "case": "失败项单独重试",
+    "status": "passed",
+    "evidence": "19_损坏PDF重试_AX.txt",
+    "notes": "四份成功文件仍为首次尝试，损坏PDF为第2次；只处理1项且预期仍失败，知识库保持5份184块。",
+    "evidence_saved_at": "2026-10-04T09:42:06.953Z"
+  },
+  {
+    "case": "新建独立会话",
+    "status": "passed",
+    "evidence": "20_新会话_结果.txt",
+    "notes": "同访客新会话d7b03beb7409455eb1033c41f54a9654起始为空，无旧计算记录。",
+    "evidence_saved_at": "2026-10-04T09:39:05.416Z"
+  },
+  {
+    "case": "双论文元信息并行调用",
+    "status": "passed_with_quality_defect",
+    "evidence": "21_并行论文元信息_结果.txt",
+    "server_seconds": 64.528,
+    "tokens": 38203,
+    "notes": "两轮均各有两次parallel实际调用，执行通过；DETR第一页可见摘要未提取，重复调用共4次、3轮结束，答案未逐篇交代DOI缺失。",
+    "evidence_saved_at": "2026-10-04T09:42:06.803Z"
+  },
+  {
+    "case": "刷新持久化与两访客隔离",
+    "status": "passed",
+    "evidence": "22_A刷新后RAG历史.txt",
+    "notes": "A恢复三轮RAG及自己的Agent历史，B旧会话恢复计算/追问/知识库四轮；A未出现B的计算记录。只证明访客标识隔离，不是登录鉴权。",
+    "evidence_saved_at": "2026-10-04T09:42:31.779Z"
+  },
+  {
+    "case": "历史会话切换与保存轨迹",
+    "status": "passed",
+    "evidence": "23_B历史切换_结果.txt",
+    "notes": "旧会话的真实ID回答、原文页按钮及保存轨迹恢复，未重新执行Agent。",
+    "evidence_saved_at": "2026-10-04T09:42:39.652Z"
+  },
+  {
+    "case": "低相关确认与取消",
+    "status": "passed_with_ui_observation",
+    "evidence": "24_低相关问题_结果.txt",
+    "notes": "最高BGE分数约0，低于0.1，候选展示后等待确认；取消返回提示，下一次重绘移除候选。取消当次仍留旧确认控件，属于界面及时性问题。",
+    "evidence_saved_at": "2026-10-04T09:42:50.978Z"
+  },
+  {
+    "case": "文献列表工具",
+    "status": "passed",
+    "evidence": "25_文献列表_结果.txt",
+    "server_seconds": 20.575,
+    "tokens": 9040,
+    "notes": "paper_list实际1次成功、1轮结束，5份文件/文档ID/块数与KB一致。",
+    "evidence_saved_at": "2026-10-04T09:43:26.605Z"
+  },
+  {
+    "case": "会话可恢复删除",
+    "status": "passed",
+    "evidence": "26_会话恢复_结果.txt",
+    "notes": "仅回收本次并行测试会话，恢复同一ID、答案及公开轨迹，无重新执行。",
+    "evidence_saved_at": "2026-10-04T09:44:15.241Z"
+  },
+  {
+    "case": "文档可恢复删除及增量恢复",
+    "status": "passed",
+    "evidence": "27_文档恢复_结果.txt",
+    "notes": "MD回收减少1块，活动4份183块；恢复仅索引该1块，5份184块，ViT167未变。",
+    "evidence_saved_at": "2026-10-04T09:44:25.422Z"
+  },
+  {
+    "case": "Agent结构化论文摘要",
+    "status": "failed",
+    "evidence": "28_论文摘要_工具返回_展开.txt",
+    "server_seconds": 47.632,
+    "known_tokens": 15339,
+    "tokens": null,
+    "notes": "paper_summary成功且原始返回answered/完整四栏/有效引用，但Observation错误continue，下一轮Action调用数量错误，未返回摘要；用量不完整显示未知。",
+    "evidence_saved_at": "2026-10-04T09:45:30.601Z"
+  },
+  {
+    "case": "中文TXT检索生成及引用",
+    "status": "passed",
+    "evidence": "29_中文TXT问答_结果.txt",
+    "server_seconds": 9.85,
+    "retrieval_seconds": 3.42,
+    "input_tokens": 1102,
+    "output_tokens": 46,
+    "notes": "正确返回WINRAG20261004，引用Windows验收_说明.txt行1–2；与B摘要请求执行时段重叠。",
+    "evidence_saved_at": "2026-10-04T09:45:20.352Z"
+  },
+  {
+    "case": "论文对比最终答案完整性",
+    "status": "failed_quality",
+    "evidence": "30_论文对比_结果.txt",
+    "server_seconds": 64.246,
+    "tokens": 18971,
+    "notes": "paper_compare实际成功返回三维原文表，Agent2轮完成；最终遗漏ViT方法、DETR的COCO数据集和缺失实验数字说明，来源按钮保留但正文字段与引用关系缺失。",
+    "evidence_saved_at": "2026-10-04T09:46:53.916Z"
+  },
+  {
+    "case": "可选联网搜索关闭提示",
+    "status": "passed",
+    "evidence": "31_联网关闭_结果.txt",
+    "server_seconds": 0.288,
+    "tokens": 0,
+    "notes": "unavailable路径，无工具/外部调用，明确无法核验最新信息，incomplete如实标注。",
+    "evidence_saved_at": "2026-10-04T09:46:03.955Z"
+  },
+  {
+    "case": "DETR摘要字段单独复核",
+    "status": "failed_quality",
+    "evidence": "32_DETR摘要字段复核_展开.txt",
+    "server_seconds": 18.928,
+    "tokens": 12007,
+    "notes": "paper_metadata真实返回abstract=null且input_truncated=false，单轮结束；DETR第一页确有Abstract.完整摘要。",
+    "evidence_saved_at": "2026-10-04T09:48:47.509Z"
+  },
+  {
+    "case": "两访客同时请求",
+    "status": "observed_with_business_failure",
+    "evidence": "28_论文摘要_进度.txt",
+    "notes": "B工具运行时提交A中文TXT，B仍运行时A完成；历史隔离，A正常，B摘要后续业务失败。不算并发全部通过，不推断吞吐。",
+    "evidence_saved_at": "2026-10-04T09:44:25.953Z"
+  }
+]

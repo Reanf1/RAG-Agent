@@ -1,0 +1,556 @@
+Browser tab: 11, Title: "智能科研助理", URL: "http://192.168.1.12:8501/?visitor=b369b823dd7c4e3bafca7994df9e7659&conversation=d7b03beb7409455eb1033c41f54a9654".
+0 AXWebArea 智能科研助理, URL: 192.168.1.12:8501/?visitor=b369b823dd7c4e3bafca7994df9e7659&conversation=d7b03beb7409455eb1033c41f54a9654
+	1 container
+		2 container
+			3 container
+				4 heading 文档上传与管理, Value: 2
+					5 text 文档上传与管理
+				6 container 选择多份文档
+					7 button file upload
+					8 button upload Upload
+						9 text upload
+						10 text Upload
+					11 text 20MB per file
+					12 text  • PDF, DOCX, TXT, MD, MARKDOWN
+				13 text 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+				14 button (disabled) 开始导入
+					15 text 开始导入
+				16 button (disabled) 重试失败项
+					17 text 重试失败项
+				18 heading 本批导入状态, Value: 3
+					19 text 本批导入状态
+				20 text 已处理 0/0 份
+				21 progress indicator Description: progress, Value: 0, ID: react-aria7189296020-:r5:
+				22 text 在左侧选择文档后，点击“开始导入”。
+				23 heading 知识库文档, Value: 3
+					24 text 知识库文档
+				25 text 文档列表来自本地原文与索引；块数表示当前库中数量，不代表全部预期块均已导入。
+				26 button 刷新知识库状态
+					27 text 刷新知识库状态
+				28 text Windows验收_DETR节选.pdf
+				29 text ef1a2a0c29a7… · 13 块 · 已向量化 · 原文已保存
+				30 text Windows验收_ViT.pdf
+				31 text 8ce7b83971a1… · 167 块 · 已向量化 · 原文已保存
+				32 text Windows验收_说明.docx
+				33 text b308ae667c36… · 2 块 · 已向量化 · 原文已保存
+				34 text Windows验收_说明.md
+				35 text 6326740a22ac… · 1 块 · 已向量化 · 原文已保存
+				36 text Windows验收_说明.txt
+				37 text 0b027726e389… · 1 块 · 已向量化 · 原文已保存
+				38 container
+					39 combo box (collapsed, settable) Description: 管理文档, Value: Windows验收_ViT.pdf · 8ce7b839, ID: react-aria7189296020-:re:, Secondary Actions: Expand
+					40 pop up button (collapsed) Description: Open, ID: react-aria7189296020-:ra:, Secondary Actions: Expand
+				41 button 删除文档
+					42 text 删除文档
+				43 heading 对话历史管理, Value: 3
+					44 text 对话历史管理
+				45 text 新建与切换同时作用于两个问答标签。保留当前地址可在刷新后找回历史；访客标识不是登录认证。
+				46 button 新建会话
+					47 text 新建会话
+				48 container
+					49 combo box (collapsed, settable) Description: 历史会话, Value: 新会话 · d7b03beb, ID: react-aria7189296020-:rf8:, Secondary Actions: Expand
+					50 pop up button (collapsed) Description: Open, ID: react-aria7189296020-:rf4:, Secondary Actions: Expand
+				51 text 当前会话：d7b03beb7409455eb1033c41f54a9654
+				52 button 删除当前会话
+					53 text 删除当前会话
+				54 heading 课程资料, Value: 2
+					55 text 课程资料
+				56 text 南京农业大学生产实习课程实践
+				57 text 技术设计与验收：docs/技术设计文档.md
+			58 pop up button (collapsed) Description: Main menu, Secondary Actions: Expand
+			59 container
+				60 heading 智能科研助理, Value: 1, ID: 2d7dc4e4
+					61 text 智能科研助理
+					62 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=b369b823dd7c4e3bafca7994df9e7659&conversation=d7b03beb7409455eb1033c41f54a9654#2d7dc4e4
+				63 text 基于 RAG + Agent 的论文知识库问答系统
+				64 text 上传文档后增量写入本地知识库；下方 RAG 问答使用混合检索与模型重排，本地模型逐步输出答案并补全文献引用。
+				65 heading 科研对话, Value: 3, ID: 952dd83b
+					66 text 科研对话
+					67 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=b369b823dd7c4e3bafca7994df9e7659&conversation=d7b03beb7409455eb1033c41f54a9654#952dd83b
+				68 tab group react-aria7189296020-:r17:
+					69 tab (selected, settable, boolean) Agent 科研助理, ID: react-aria7189296020-:r17:-tab-0, Value: 1
+Agent 科研助理
+					70 tab (selectable, settable, boolean) RAG 流式问答, ID: react-aria7189296020-:r17:-tab-1, Value: 0
+RAG 流式问答
+				71 container Description: Agent 科研助理, ID: react-aria7189296020-:r17:-tabpanel-0
+					72 heading Agent 科研助理, Value: 3, ID: agent
+						73 text Agent 科研助理
+						74 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=b369b823dd7c4e3bafca7994df9e7659&conversation=d7b03beb7409455eb1033c41f54a9654#agent
+					75 text 本页独立会话接入历史记忆；每个阶段完成即刷新实际 Token、工具成功率/耗时和决策轨迹。Action负责选择工具，内部用量单列；并行批次共享的Action只统计一次。左侧可新建、切换、删除或恢复历史会话。
+					76 text face
+					77 container Chat message from user
+						78 text 请并行调用paper_metadata，分别提取两篇论文的标题、作者、年份、摘要和DOI。论文ID分别为8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6和ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c3079f448a2ad。DETR只上传了前两页节选，缺失字段请明确说明。
+					79 text smart_toy
+					80 container Chat message from assistant
+						81 text 已经成功获取了两篇论文的元数据。其中一篇论文是《End-to-End Object Detection with Transformers》，作者为Nicolas Carion, Francisco Massa, Gabriel Synnaeve, Nicolas Usunier, Alexander Kirillov, Sergey Zagoruyko，发表于2020年，但缺少摘要和DOI。另一篇论文是《AN IMAGE IS WORTH 16X16 WORDS: TRANSFORMERS FOR IMAGE RECOGNITION AT SCALE》，作者为Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, Dirk Weissenborn, Xiaohua Zhai, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer, Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, Neil Houlsby，发表于2021年，摘要为：虽然Transformer架构已成为自然语言处理任务的事实标准，但在计算机视觉中的应用仍然有限。我们展示了这种依赖于CNNs是不必要的，直接应用于图像补丁序列的纯Transformer可以在图像分类任务上表现得很好。当在大量数据上预训练并转移到多个中型或小型图像识别基准（如ImageNet、CIFAR-100、VTAB等）时，Vision Transformer (ViT) 达到了与最先进的卷积网络相比的出色结果，同时需要的计算资源要少得多。
+					82 container
+						83 text field (settable) Description: 向 Agent 提问, ID: :rij:, Value: 请并行调用paper_metadata，分别提取两篇论文的标题、作者、年份、摘要和DOI。论文ID分别为8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6和ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c3079f448a2ad。DETR只上传了前两页节选，缺失字段请明确说明。
+					84 button 运行 Agent
+						85 text 运行 Agent
+				86 heading Agent 决策轨迹与运行指标, Value: 3, ID: agent
+					87 text Agent 决策轨迹与运行指标
+					88 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=b369b823dd7c4e3bafca7994df9e7659&conversation=d7b03beb7409455eb1033c41f54a9654#agent
+				89 text 本次 Agent Token
+				90 text 38203
+				91 text Agent 响应耗时
+				92 text 64.528 秒
+				93 text 阶段：done · 请求：5395affc2a4c4c40a6362ee9e79371d5 · 已报告 Token：38203 · 用量未完整报告：0 项
+				94 container
+					95 button Show/hide columns
+					96 button Download as CSV
+					97 button Search
+					98 button Fullscreen
+					99 container
+						100 image
+							101 table
+								102 row 阶段 轮次 工具 调用标识 输入 Token 输出 Token 用量完整
+									103 cell (selectable) 阶段
+									104 cell (selectable) 轮次
+									105 cell (selectable) 工具
+									106 cell (selectable) 调用标识
+									107 cell (selectable) 输入 Token
+									108 cell (selectable) 输出 Token
+									109 cell (selectable) 用量完整
+								110 container
+									111 row (selectable) Thought 1 — thought:1 0 0 是
+										112 cell (selectable) Value: Thought, ID: glide-cell-0-0
+										113 cell (selectable) Value: 1, ID: glide-cell-1-0
+										114 cell (selectable) Value: —, ID: glide-cell-2-0
+										115 cell (selectable) Value: thought:1, ID: glide-cell-3-0
+										116 cell (selectable) Value: 0, ID: glide-cell-4-0
+										117 cell (selectable) Value: 0, ID: glide-cell-5-0
+										118 cell (selectable) Value: 是, ID: glide-cell-6-0
+									119 row (selectable) Action（共享） 1 paper_metadata + paper_metadata 186e3a24bcda486c96004e100c851804, 1dbab5a6ae294ab0acf07bc005824f25 1622 155 是
+										120 cell (selectable) Value: Action（共享）, ID: glide-cell-0-1
+										121 cell (selectable) Value: 1, ID: glide-cell-1-1
+										122 cell (selectable) Value: paper_metadata + paper_metadata, ID: glide-cell-2-1
+										123 cell (selectable) Value: 186e3a24bcda486c96004e100c851804, 1dbab5a6ae294ab0acf07bc005824f25, ID: glide-cell-3-1
+										124 cell (selectable) Value: 1622, ID: glide-cell-4-1
+										125 cell (selectable) Value: 155, ID: glide-cell-5-1
+										126 cell (selectable) Value: 是, ID: glide-cell-6-1
+									127 row (selectable) 工具内部 1 paper_metadata 186e3a24bcda486c96004e100c851804 1895 156 是
+										128 cell (selectable) Value: 工具内部, ID: glide-cell-0-2
+										129 cell (selectable) Value: 1, ID: glide-cell-1-2
+										130 cell (selectable) Value: paper_metadata, ID: glide-cell-2-2
+										131 cell (selectable) Value: 186e3a24bcda486c96004e100c851804, ID: glide-cell-3-2
+										132 cell (selectable) Value: 1895, ID: glide-cell-4-2
+										133 cell (selectable) Value: 156, ID: glide-cell-5-2
+										134 cell (selectable) Value: 是, ID: glide-cell-6-2
+									135 row (selectable) 工具内部 1 paper_metadata 1dbab5a6ae294ab0acf07bc005824f25 1575 78 是
+										136 cell (selectable) Value: 工具内部, ID: glide-cell-0-3
+										137 cell (selectable) Value: 1, ID: glide-cell-1-3
+										138 cell (selectable) Value: paper_metadata, ID: glide-cell-2-3
+										139 cell (selectable) Value: 1dbab5a6ae294ab0acf07bc005824f25, ID: glide-cell-3-3
+										140 cell (selectable) Value: 1575, ID: glide-cell-4-3
+										141 cell (selectable) Value: 78, ID: glide-cell-5-3
+										142 cell (selectable) Value: 是, ID: glide-cell-6-3
+									143 row (selectable) Observation 1 — observation:1 4949 41 是
+										144 cell (selectable) Value: Observation, ID: glide-cell-0-4
+										145 cell (selectable) Value: 1, ID: glide-cell-1-4
+										146 cell (selectable) Value: —, ID: glide-cell-2-4
+										147 cell (selectable) Value: observation:1, ID: glide-cell-3-4
+										148 cell (selectable) Value: 4949, ID: glide-cell-4-4
+										149 cell (selectable) Value: 41, ID: glide-cell-5-4
+										150 cell (selectable) Value: 是, ID: glide-cell-6-4
+									151 row (selectable) Thought 2 — thought:2 5519 56 是
+										152 cell (selectable) Value: Thought, ID: glide-cell-0-5
+										153 cell (selectable) Value: 2, ID: glide-cell-1-5
+										154 cell (selectable) Value: —, ID: glide-cell-2-5
+										155 cell (selectable) Value: thought:2, ID: glide-cell-3-5
+										156 cell (selectable) Value: 5519, ID: glide-cell-4-5
+										157 cell (selectable) Value: 56, ID: glide-cell-5-5
+										158 cell (selectable) Value: 是, ID: glide-cell-6-5
+									159 row (selectable) Action（共享） 2 paper_metadata + paper_metadata 86afae22a53743558bb6b92ab7027c24, 00c95498e8c840b6ad9c4e1652f2dde1 4693 155 是
+										160 cell (selectable) Value: Action（共享）, ID: glide-cell-0-6
+										161 cell (selectable) Value: 2, ID: glide-cell-1-6
+										162 cell (selectable) Value: paper_metadata + paper_metadata, ID: glide-cell-2-6
+										163 cell (selectable) Value: 86afae22a53743558bb6b92ab7027c24, 00c95498e8c840b6ad9c4e1652f2dde1, ID: glide-cell-3-6
+										164 cell (selectable) Value: 4693, ID: glide-cell-4-6
+										165 cell (selectable) Value: 155, ID: glide-cell-5-6
+										166 cell (selectable) Value: 是, ID: glide-cell-6-6
+									167 row (selectable) 工具内部 2 paper_metadata 86afae22a53743558bb6b92ab7027c24 1895 156 是
+										168 cell (selectable) Value: 工具内部, ID: glide-cell-0-7
+										169 cell (selectable) Value: 2, ID: glide-cell-1-7
+										170 cell (selectable) Value: paper_metadata, ID: glide-cell-2-7
+										171 cell (selectable) Value: 86afae22a53743558bb6b92ab7027c24, ID: glide-cell-3-7
+										172 cell (selectable) Value: 1895, ID: glide-cell-4-7
+										173 cell (selectable) Value: 156, ID: glide-cell-5-7
+										174 cell (selectable) Value: 是, ID: glide-cell-6-7
+									175 row (selectable) 工具内部 2 paper_metadata 00c95498e8c840b6ad9c4e1652f2dde1 1575 87 是
+										176 cell (selectable) Value: 工具内部, ID: glide-cell-0-8
+										177 cell (selectable) Value: 2, ID: glide-cell-1-8
+										178 cell (selectable) Value: paper_metadata, ID: glide-cell-2-8
+										179 cell (selectable) Value: 00c95498e8c840b6ad9c4e1652f2dde1, ID: glide-cell-3-8
+										180 cell (selectable) Value: 1575, ID: glide-cell-4-8
+										181 cell (selectable) Value: 87, ID: glide-cell-5-8
+										182 cell (selectable) Value: 是, ID: glide-cell-6-8
+									183 row (selectable) Observation 2 — observation:2 4949 44 是
+										184 cell (selectable) Value: Observation, ID: glide-cell-0-9
+										185 cell (selectable) Value: 2, ID: glide-cell-1-9
+										186 cell (selectable) Value: —, ID: glide-cell-2-9
+										187 cell (selectable) Value: observation:2, ID: glide-cell-3-9
+										188 cell (selectable) Value: 4949, ID: glide-cell-4-9
+										189 cell (selectable) Value: 44, ID: glide-cell-5-9
+										190 cell (selectable) Value: 是, ID: glide-cell-6-9
+									191 row (selectable) Thought 3 — thought:3 4098 74 是
+										192 cell (selectable) Value: Thought, ID: glide-cell-0-10
+										193 cell (selectable) Value: 3, ID: glide-cell-1-10
+										194 cell (selectable) Value: —, ID: glide-cell-2-10
+										195 cell (selectable) Value: thought:3, ID: glide-cell-3-10
+										196 cell (selectable) Value: 4098, ID: glide-cell-4-10
+										197 cell (selectable) Value: 74, ID: glide-cell-5-10
+										198 cell (selectable) Value: 是, ID: glide-cell-6-10
+									199 row (selectable) Observation 3 — observation:3 4098 333 是
+										200 cell (selectable) Value: Observation, ID: glide-cell-0-11
+										201 cell (selectable) Value: 3, ID: glide-cell-1-11
+										202 cell (selectable) Value: —, ID: glide-cell-2-11
+										203 cell (selectable) Value: observation:3, ID: glide-cell-3-11
+										204 cell (selectable) Value: 4098, ID: glide-cell-4-11
+										205 cell (selectable) Value: 333, ID: glide-cell-5-11
+										206 cell (selectable) Value: 是, ID: glide-cell-6-11
+						207 image
+				208 text 本次工具调用成功率
+				209 text 100.0%
+				210 text 平均工具耗时
+				211 text 7.303 秒
+				212 text 已计划 4 · 已返回 4 · 成功 4 · 失败 0 · 待返回 0。成功指工具执行成功，不能代替任务完成或答案正确；重试按最终调用状态计一次，并行耗时可重叠。
+				213 container
+					214 button Show/hide columns
+					215 button Download as CSV
+					216 button Search
+					217 button Fullscreen
+					218 container
+						219 image
+							220 table
+								221 row 工具 轮次 调用ID 状态 耗时（秒） 尝试次数 执行方式
+									222 cell (selectable) 工具
+									223 cell (selectable) 轮次
+									224 cell (selectable) 调用ID
+									225 cell (selectable) 状态
+									226 cell (selectable) 耗时（秒）
+									227 cell (selectable) 尝试次数
+									228 cell (selectable) 执行方式
+								229 container
+									230 row (selectable) paper_metadata 1 186e3a24bcda486c96004e100c851804 成功 9.948697899999388 1 parallel
+										231 cell (selectable) Value: paper_metadata, ID: glide-cell-0-0
+										232 cell (selectable) Value: 1, ID: glide-cell-1-0
+										233 cell (selectable) Value: 186e3a24bcda486c96004e100c851804, ID: glide-cell-2-0
+										234 cell (selectable) Value: 成功, ID: glide-cell-3-0
+										235 cell (selectable) Value: 9.948697899999388, ID: glide-cell-4-0
+										236 cell (selectable) Value: 1, ID: glide-cell-5-0
+										237 cell (selectable) Value: parallel, ID: glide-cell-6-0
+									238 row (selectable) paper_metadata 1 1dbab5a6ae294ab0acf07bc005824f25 成功 5.363528699999733 1 parallel
+										239 cell (selectable) Value: paper_metadata, ID: glide-cell-0-1
+										240 cell (selectable) Value: 1, ID: glide-cell-1-1
+										241 cell (selectable) Value: 1dbab5a6ae294ab0acf07bc005824f25, ID: glide-cell-2-1
+										242 cell (selectable) Value: 成功, ID: glide-cell-3-1
+										243 cell (selectable) Value: 5.363528699999733, ID: glide-cell-4-1
+										244 cell (selectable) Value: 1, ID: glide-cell-5-1
+										245 cell (selectable) Value: parallel, ID: glide-cell-6-1
+									246 row (selectable) paper_metadata 2 86afae22a53743558bb6b92ab7027c24 成功 9.023973300001671 1 parallel
+										247 cell (selectable) Value: paper_metadata, ID: glide-cell-0-2
+										248 cell (selectable) Value: 2, ID: glide-cell-1-2
+										249 cell (selectable) Value: 86afae22a53743558bb6b92ab7027c24, ID: glide-cell-2-2
+										250 cell (selectable) Value: 成功, ID: glide-cell-3-2
+										251 cell (selectable) Value: 9.023973300001671, ID: glide-cell-4-2
+										252 cell (selectable) Value: 1, ID: glide-cell-5-2
+										253 cell (selectable) Value: parallel, ID: glide-cell-6-2
+									254 row (selectable) paper_metadata 2 00c95498e8c840b6ad9c4e1652f2dde1 成功 4.875679500000842 1 parallel
+										255 cell (selectable) Value: paper_metadata, ID: glide-cell-0-3
+										256 cell (selectable) Value: 2, ID: glide-cell-1-3
+										257 cell (selectable) Value: 00c95498e8c840b6ad9c4e1652f2dde1, ID: glide-cell-2-3
+										258 cell (selectable) Value: 成功, ID: glide-cell-3-3
+										259 cell (selectable) Value: 4.875679500000842, ID: glide-cell-4-3
+										260 cell (selectable) Value: 1, ID: glide-cell-5-3
+										261 cell (selectable) Value: parallel, ID: glide-cell-6-3
+						262 image
+				263 container
+					264 button Show/hide columns
+					265 button Download as CSV
+					266 button Search
+					267 button Fullscreen
+					268 container
+						269 image
+							270 table
+								271 row 工具 已返回 成功 失败 待返回 成功率 平均耗时（秒）
+									272 cell (selectable) 工具
+									273 cell (selectable) 已返回
+									274 cell (selectable) 成功
+									275 cell (selectable) 失败
+									276 cell (selectable) 待返回
+									277 cell (selectable) 成功率
+									278 cell (selectable) 平均耗时（秒）
+								279 row (selectable) paper_metadata 4 4 0 0 100.0% 7.302969850000409
+									280 cell (selectable) Value: paper_metadata, ID: glide-cell-0-0
+									281 cell (selectable) Value: 4, ID: glide-cell-1-0
+									282 cell (selectable) Value: 4, ID: glide-cell-2-0
+									283 cell (selectable) Value: 0, ID: glide-cell-3-0
+									284 cell (selectable) Value: 0, ID: glide-cell-4-0
+									285 cell (selectable) Value: 100.0%, ID: glide-cell-5-0
+									286 cell (selectable) Value: 7.302969850000409, ID: glide-cell-6-0
+						287 image
+				288 text Agent 决策轨迹
+				289 text 展示公开决策说明与真实工具事件；分支表示同轮调用，执行方式以工具记录为准。
+				290 container
+					291 button Fullscreen
+					292 image
+						293 container Description: agent, ID: graph0
+							294 container Description: n0, ID: node1
+								295 text Thought · 决策
+							296 container Description: n1, ID: node2
+								297 text Action · 工具调用
+								298 text paper_metadata
+							299 container Description: n0->n1, ID: edge1
+							300 container Description: n2, ID: node3
+								301 text Action · 工具调用
+								302 text paper_metadata
+							303 container Description: n0->n2, ID: edge2
+							304 container Description: n3, ID: node4
+								305 text 工具结果
+								306 text paper_metadata
+							307 container Description: n1->n3, ID: edge3
+							308 container Description: n4, ID: node5
+								309 text 工具结果
+								310 text paper_metadata
+							311 container Description: n2->n4, ID: edge4
+							312 container Description: n5, ID: node6
+								313 text Observation · 判断
+								314 text continue
+							315 container Description: n3->n5, ID: edge5
+							316 container Description: n4->n5, ID: edge6
+							317 container Description: n6, ID: node7
+								318 text Thought · 决策
+							319 container Description: n5->n6, ID: edge7
+							320 container Description: n7, ID: node8
+								321 text Action · 工具调用
+								322 text paper_metadata
+							323 container Description: n6->n7, ID: edge8
+							324 container Description: n8, ID: node9
+								325 text Action · 工具调用
+								326 text paper_metadata
+							327 container Description: n6->n8, ID: edge9
+							328 container Description: n9, ID: node10
+								329 text 工具结果
+								330 text paper_metadata
+							331 container Description: n7->n9, ID: edge10
+							332 container Description: n10, ID: node11
+								333 text 工具结果
+								334 text paper_metadata
+							335 container Description: n8->n10, ID: edge11
+							336 container Description: n11, ID: node12
+								337 text Observation · 判断
+								338 text continue
+							339 container Description: n9->n11, ID: edge12
+							340 container Description: n10->n11, ID: edge13
+							341 container Description: n12, ID: node13
+								342 text Thought · 决策
+							343 container Description: n11->n12, ID: edge14
+							344 container Description: n13, ID: node14
+								345 text 跳过调用
+							346 container Description: n12->n13, ID: edge15
+							347 container Description: n14, ID: node15
+								348 text Observation · 判断
+								349 text finish
+							350 container Description: n13->n14, ID: edge16
+							351 container Description: n15, ID: node16
+								352 text 结束
+								353 text task_complete
+							354 container Description: n14->n15, ID: edge17
+				355 button (expanded) keyboard_arrow_down 第1轮 · Thought → Action → Observation, Secondary Actions: Collapse
+					356 text keyboard_arrow_down
+					357 text 第1轮 · Thought → Action → Observation
+				358 text Thought · 决策说明
+				359 text 分别处理两份已给定论文，Action可提出同一工具的独立调用。
+				360 text 下一步：tool · 计划工具：paper_metadata · 路由：rule
+				361 text Action · paper_metadata
+				362 text 调用ID：186e3a24bcda486c96004e100c851804
+				363 container
+					364 text {
+					365 text ... }
+				366 text Action · paper_metadata
+				367 text 调用ID：1dbab5a6ae294ab0acf07bc005824f25
+				368 container
+					369 text {
+					370 text ... }
+				371 text 工具返回 · paper_metadata · 成功
+				372 text 调用ID：186e3a24bcda486c96004e100c851804 · 执行方式：parallel · 耗时：9.949 秒
+				373 container
+					374 text {
+					375 text ... }
+				376 container
+					377 text {
+					378 text ... }
+				379 text 工具返回 · paper_metadata · 成功
+				380 text 调用ID：1dbab5a6ae294ab0acf07bc005824f25 · 执行方式：parallel · 耗时：5.364 秒
+				381 container
+					382 text {
+					383 text ... }
+				384 container
+					385 text {
+					386 text ... }
+				387 text Observation · 结果判断
+				388 text 获取了两篇论文的元数据，但缺少部分信息。
+				389 text 决策：continue · 任务完成：False
+				390 button (expanded) keyboard_arrow_down 第2轮 · Thought → Action → Observation, Secondary Actions: Collapse
+					391 text keyboard_arrow_down
+					392 text 第2轮 · Thought → Action → Observation
+				393 text Thought · 决策说明
+				394 text 并行提取两篇论文的标题、作者、年份、摘要和DOI。
+				395 text 下一步：tool · 计划工具：paper_metadata + paper_metadata · 路由：model
+				396 text Action · paper_metadata
+				397 text 调用ID：86afae22a53743558bb6b92ab7027c24
+				398 container
+					399 text {
+					400 text ... }
+				401 text Action · paper_metadata
+				402 text 调用ID：00c95498e8c840b6ad9c4e1652f2dde1
+				403 container
+					404 text {
+					405 text ... }
+				406 text 工具返回 · paper_metadata · 成功
+				407 text 调用ID：86afae22a53743558bb6b92ab7027c24 · 执行方式：parallel · 耗时：9.024 秒
+				408 container
+					409 text {
+					410 text ... }
+				411 container
+					412 text {
+					413 text ... }
+				414 text 工具返回 · paper_metadata · 成功
+				415 text 调用ID：00c95498e8c840b6ad9c4e1652f2dde1 · 执行方式：parallel · 耗时：4.876 秒
+				416 container
+					417 text {
+					418 text ... }
+				419 container
+					420 text {
+					421 text ... }
+				422 text Observation · 结果判断
+				423 text 获取了两篇论文的元数据，但其中一篇缺少摘要和DOI。
+				424 text 决策：continue · 任务完成：False
+				425 button (expanded) keyboard_arrow_down 第3轮 · Thought → Action → Observation, Secondary Actions: Collapse
+					426 text keyboard_arrow_down
+					427 text 第3轮 · Thought → Action → Observation
+				428 text Thought · 决策说明
+				429 text 从返回的结果来看，已经成功获取了两篇论文的元数据，但其中一篇论文缺少摘要和DOI。接下来需要进一步处理这些信息，以确保所有必要的元数据都已获取。
+				430 text 下一步：answer · 计划工具：无需工具 · 路由：model
+				431 text Action · 已跳过
+				432 text Thought规划直接回答，无需执行工具。
+				433 text Observation · 结果判断
+				434 text 获取了两篇论文的元数据，但其中一篇缺少摘要和DOI。
+				435 text 决策：finish · 任务完成：True
+				436 text 终止原因：task_complete · 任务完成：True
+				437 heading RAG 运行指标, Value: 3, ID: rag
+					438 text RAG 运行指标
+					439 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=b369b823dd7c4e3bafca7994df9e7659&conversation=d7b03beb7409455eb1033c41f54a9654#rag
+				440 text 候选命中率 = 非空检索次数 / 已完成检索次数；仅表示找到文档块，不代表回答正确或 Hit@5。缓存、未执行和检索失败不计入分母。统计包含直接 RAG 问答和 Agent 的知识库工具。
+				441 text RAG 候选命中率
+				442 text 50.0%
+				443 text 平均检索延迟
+				444 text 2.032 秒
+				445 text 平均 RAG 响应延迟
+				446 text 7.204 秒
+				447 text 实际检索 4 次 · 已完成 4 次 · 非空 2 次 · 失败 0 次。延迟统计实际检索请求，含失败；响应延迟含检索和生成，不含用户确认等待。
+				448 button (collapsed) keyboard_arrow_right 知识库管理面板, Secondary Actions: Expand
+					449 text keyboard_arrow_right
+					450 text 知识库管理面板
+				451 heading 检索实验与服务维护, Value: 3, ID: f4ddf962
+					452 text 检索实验与服务维护
+					453 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=b369b823dd7c4e3bafca7994df9e7659&conversation=d7b03beb7409455eb1033c41f54a9654#f4ddf962
+				454 heading 文档 Top-K 检索, Value: 3, ID: top-k
+					455 text 文档 Top-K 检索
+					456 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=b369b823dd7c4e3bafca7994df9e7659&conversation=d7b03beb7409455eb1033c41f54a9654#top-k
+				457 text 此处只检索文档块；可选向量、BM25、RRF 或 RRF + 模型重排。各类分数不可直接比较，也不是命中概率。生成答案请使用上方 RAG 问答。
+				458 container
+					459 combo box (collapsed, settable) Description: 检索方式, Value: RRF + 模型重排, ID: react-aria7189296020-:r1o:, Secondary Actions: Expand
+					460 pop up button (collapsed) Description: Open, ID: react-aria7189296020-:r1k:, Secondary Actions: Expand
+				461 container
+					462 text field (settable) Description: 查询内容（支持中英文）, Value: linear projection flattened patches positional embeddings, ID: :r28:
+				463 stepper (settable, integer) Description: 返回数量 Top-K, Value: 5, ID: :r33:
+				464 button Decrement
+				465 button Increment
+				466 container
+					467 text field (settable) Description: 限定文档 ID（可选，留空检索全部文档）, ID: :r2e:
+				468 button 检索
+					469 text 检索
+				470 text 系统健康检查
+				471 text 按需检查本地LLM服务和现有Chroma索引，不生成回答或写入文档。状态为上次检查快照，不代表推理或检索质量。
+				472 button 检查服务状态
+					473 text 检查服务状态
+				474 text 尚未检查；点击按钮获取当前状态。
+				475 heading 检索分数分布, Value: 3, ID: cf661d5
+					476 text 检索分数分布
+					477 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=b369b823dd7c4e3bafca7994df9e7659&conversation=d7b03beb7409455eb1033c41f54a9654#cf661d5
+				478 text 统计本地请求日志中的实际 RAG 检索：Top-1 为 BGE sigmoid 重排分数，不是命中率或正确概率。空库、检索失败和缓存跳过均单独计数。
+				479 text 请求 5 · 缓存命中 1 · 空结果 2 · 检索失败 0
+				480 text BAAI/bge-reranker-base · 版本 2cfc18c9 · 样本 2 · 均值 0.3395 · 范围 0.1666–0.5124
+				481 container
+					482 button Show data
+					483 button Download as PNG
+					484 button Fullscreen
+					485 container Vega visualization
+						486 image
+							487 container X-axis titled 'Top-1 分数区间' for a discrete scale with 10 values: 0.0–0.1, 0.1–0.2, 0.2–0.3, 0.3–0.4, 0.4–0.5, ending with 0.9–1.0 Y-axis titled '实际检索次数' for a linear scale with values from 0.0 to 1.0 Top-1 分数区间: 0.0–0.1; 实际检索次数: 0; range: 0.0–0.1; count: 0 Top-1 分数区间: 0.1–0.2; 实际检索次数: 1; range: 0.1–0.2; count: 1 Top-1 分数区间: 0.2–0.3; 实际检索次数: 0; range: 0.2–0.3; count: 0 Top-1 分数区间: 0.3–0.4; 实际检索次数: 0; range: 0.3–0.4; count: 0 Top-1 分数区间: 0.4–0.5; 实际检索次数: 0; range: 0.4–0.5; count: 0 Top-1 分数区间: 0.5–0.6; 实际检索次数: 1; range: 0.5–0.6; count: 1 Top-1 分数区间: 0.6–0.7; 实际检索次数: 0; range: 0.6–0.7; count: 0 Top-1 分数区间: 0.7–0.8; 实际检索次数: 0; range: 0.7–0.8; count: 0 Top-1 分数区间: 0.8–0.9; 实际检索次数: 0; range: 0.8–0.9; count: 0 Top-1 分数区间: 0.9–1.0; 实际检索次数: 0; range: 0.9–1.0; count: 0
+								488 axis X-axis titled 'Top-1 分数区间' for a discrete scale with 10 values: 0.0–0.1, 0.1–0.2, 0.2–0.3, 0.3–0.4, 0.4–0.5, ending with 0.9–1.0
+								489 axis Y-axis titled '实际检索次数' for a linear scale with values from 0.0 to 1.0
+								490 container Top-1 分数区间: 0.0–0.1; 实际检索次数: 0; range: 0.0–0.1; count: 0 Top-1 分数区间: 0.1–0.2; 实际检索次数: 1; range: 0.1–0.2; count: 1 Top-1 分数区间: 0.2–0.3; 实际检索次数: 0; range: 0.2–0.3; count: 0 Top-1 分数区间: 0.3–0.4; 实际检索次数: 0; range: 0.3–0.4; count: 0 Top-1 分数区间: 0.4–0.5; 实际检索次数: 0; range: 0.4–0.5; count: 0 Top-1 分数区间: 0.5–0.6; 实际检索次数: 1; range: 0.5–0.6; count: 1 Top-1 分数区间: 0.6–0.7; 实际检索次数: 0; range: 0.6–0.7; count: 0 Top-1 分数区间: 0.7–0.8; 实际检索次数: 0; range: 0.7–0.8; count: 0 Top-1 分数区间: 0.8–0.9; 实际检索次数: 0; range: 0.8–0.9; count: 0 Top-1 分数区间: 0.9–1.0; 实际检索次数: 0; range: 0.9–1.0; count: 0
+									491 bar Top-1 分数区间: 0.0–0.1; 实际检索次数: 0; range: 0.0–0.1; count: 0
+									492 bar Top-1 分数区间: 0.1–0.2; 实际检索次数: 1; range: 0.1–0.2; count: 1
+									493 bar Top-1 分数区间: 0.2–0.3; 实际检索次数: 0; range: 0.2–0.3; count: 0
+									494 bar Top-1 分数区间: 0.3–0.4; 实际检索次数: 0; range: 0.3–0.4; count: 0
+									495 bar Top-1 分数区间: 0.4–0.5; 实际检索次数: 0; range: 0.4–0.5; count: 0
+									496 bar Top-1 分数区间: 0.5–0.6; 实际检索次数: 1; range: 0.5–0.6; count: 1
+									497 bar Top-1 分数区间: 0.6–0.7; 实际检索次数: 0; range: 0.6–0.7; count: 0
+									498 bar Top-1 分数区间: 0.7–0.8; 实际检索次数: 0; range: 0.7–0.8; count: 0
+									499 bar Top-1 分数区间: 0.8–0.9; 实际检索次数: 0; range: 0.8–0.9; count: 0
+									500 bar Top-1 分数区间: 0.9–1.0; 实际检索次数: 0; range: 0.9–1.0; count: 0
+				501 heading 模块开发状态, Value: 3, ID: 8cdbaa23
+					502 text 模块开发状态
+					503 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=b369b823dd7c4e3bafca7994df9e7659&conversation=d7b03beb7409455eb1033c41f54a9654#8cdbaa23
+				504 table
+					505 row
+						506 cell
+							507 text 模块
+						508 cell
+							509 text 状态
+						510 cell
+							511 text 范围
+					512 row
+						513 cell
+							514 text 一：文档处理与检索
+						515 cell
+							516 text 已实现
+						517 cell
+							518 text 批量导入、三种分块、增量索引、向量/BM25/RRF 与模型重排；五组分块及三档检索质量已实际评测
+					519 row
+						520 cell
+							521 text 二：RAG 生成
+						522 cell
+							523 text 已实现
+						524 cell
+							525 text 已实现 Prompt、上下文/引用、本地生成、流式、缓存、降级、请求日志与分数分布，完成参数对照；独立答案质量评测待完成
+					526 row
+						527 cell
+							528 text 三：Agent 决策
+						529 cell
+							530 text 已实现
+						531 cell
+							532 text 有界ReAct、八个本地工具、路由/并行/恢复、会话隔离与窗口/摘要记忆
+					533 row
+						534 cell
+							535 text 四：系统集成与前端
+						536 cell
+							537 text 已实现
+						538 cell
+							539 text 文档/会话管理与回收恢复、RAG/Agent正文流式、引用原文物理页、记忆、公开轨迹、实时指标与健康检查
+					540 row
+						541 cell
+							542 text 五：评测与交付
+						543 cell
+							544 text 人工评分待完成
+						545 cell
+							546 text 已有12篇/60题、检索与Agent实际评测、图表及Bad Case优化；基线120条和优化60条的人工质量评分待评阅
+				547 heading 评阅说明, Value: 3, ID: b961d6c5
+					548 text 评阅说明
+					549 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=b369b823dd7c4e3bafca7994df9e7659&conversation=d7b03beb7409455eb1033c41f54a9654#b961d6c5
+				550 text 功能测试、检索命中和模型自报完成均不能代替人工答案评分。180条实际答案按正确性、完整性和引用准确性评阅。
+
+The focused UI element is 0 AXWebArea 智能科研助理, URL: 192.168.1.12:8501/?visitor=b369b823dd7c4e3bafca7994df9e7659&conversation=d7b03beb7409455eb1033c41f54a9654

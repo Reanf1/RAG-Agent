@@ -72,13 +72,15 @@ if "import_tasks" not in st.session_state:
     st.session_state.import_tasks = []
 if "import_progress" not in st.session_state:
     st.session_state.import_progress = {"completed": 0, "total": 0}
+if "upload_version" not in st.session_state:
+    st.session_state.upload_version = 0
 
 with st.sidebar:
     st.header("文档上传与管理")
     uploaded_files = st.file_uploader(
         "选择多份文档", type=[suffix.lstrip(".") for suffix in LOADERS],
         accept_multiple_files=True, max_upload_size=max_file_size_mb,
-        key="document_uploads",
+        key=f"document_uploads:{st.session_state.upload_version}",
     )
     st.caption(f"支持 PDF、Word、TXT/Markdown，单份最大 {max_file_size_mb} MB。")
     selected_tasks = create_import_tasks([(file.name, file.getvalue()) for file in uploaded_files])
@@ -94,31 +96,36 @@ with st.sidebar:
     )
 
 with st.sidebar:
-    st.subheader("本批导入状态")
-    progress_bar = st.progress(0)
-    status_table = st.empty()
+    import_status = st.empty()
+# 主区域知识库详情表仍需要完整状态名称，侧栏只呈现最终结果。
 status_labels = {"pending": "等待", "loading": "加载中", "chunking": "分块中",
                  "indexing": "向量化与索引中", "success": "成功", "failed": "失败"}
 
 
 def show_import_status():
-    """刷新同一处进度和表格，不将内容单元误标为向量分块。"""
+    """开始导入后才显示进度，结果仅展示已经完成的成功和失败文件。"""
     progress = st.session_state.import_progress
     total = progress["total"]
-    progress_bar.progress(progress["completed"] / total if total else 0,
-                          text=f"已处理 {progress['completed']}/{total} 份")
+    if not total:
+        return
     tasks = st.session_state.import_tasks
-    if tasks:
-        status_table.dataframe([{
-            "文件": t["name"],
-            "状态": "待索引" if t["status"] == "success" and not t.get("indexed", False)
-                    else status_labels[t["status"]],
-            "尝试次数": t["attempts"], "内容单元": len(t["documents"]),
-            "分块数": t.get("chunk_count", 0), "已处理块": t.get("processed_chunks", 0),
-            "本次新增块": t.get("added_chunks", 0),
-            "写入后库中块数": str(t["index_total"]) if "index_total" in t else "—",
-            "耗时（秒）": t["elapsed"], "错误": t["error"],
-        } for t in tasks], hide_index=True, width="stretch")
+    finished = [t for t in tasks if t["status"] == "failed" or
+                (t["status"] == "success" and t.get("indexed", False))]
+    with import_status.container():
+        st.subheader("本批导入状态")
+        st.progress(progress["completed"] / total,
+                    text=f"已处理 {progress['completed']}/{total} 份")
+        if finished:
+            st.dataframe([{"文件": t["name"], "状态": "成功" if t["status"] == "success" else "失败"}
+                          for t in finished], hide_index=True, width="stretch")
+        successes = sum(t["status"] == "success" for t in finished)
+        failures = len(finished) - successes
+        st.caption(f"成功 {successes} 份，失败 {failures} 份。")
+        if failures:
+            with st.expander("失败详情"):
+                for task in finished:
+                    if task["status"] == "failed":
+                        st.caption(f"{task['name']}：{task['error']}")
 
 
 if start_import and not same_selection:
@@ -128,44 +135,45 @@ if start_import or retry_import:
                                      max_file_size_mb, retry_failed=retry_import):
         st.session_state.import_progress = progress
         show_import_status()
-    # 完成后刷新按钮禁用状态，避免页面重跑或重复点击再次导入成功项。
+    # 更换上传组件的key清空选择；失败任务保留，可继续重试。
+    # 重试时若用户另选了新文件，不清掉尚未导入的新选择。
+    if (start_import or same_selection) and any(
+            t["status"] == "success" and t.get("indexed", False) for t in st.session_state.import_tasks):
+        st.session_state.upload_version += 1
     st.rerun()
 
 show_import_status()
-with st.sidebar:
-    tasks = st.session_state.import_tasks
-    if tasks:
-        successes = sum(t["status"] == "success" and t.get("indexed", False) for t in tasks)
-        failures = sum(t["status"] == "failed" for t in tasks)
-        st.caption(f"索引成功 {successes} 份，失败 {failures} 份。已处理块含跳过的重复项，新增块只计本次尝试；进度包含失败项。")
-        if failures:
-            st.warning("请根据错误信息修正文件或本地模型/数据库后重试；已保存原文和已写入块会保留。")
-    else:
-        st.caption("在左侧选择文档后，点击“开始导入”。")
 
 library = None  # 读取失败保持未知，不能显示为正常空库。
 library_error = ""
 with st.sidebar:
     st.subheader("知识库文档")
-    st.caption("文档列表来自本地原文与索引；块数表示当前库中数量，不代表全部预期块均已导入。")
-    st.button("刷新知识库状态", key="refresh_knowledge")  # 点击触发页面重跑，重新读磁盘，不重新入库。
     if "document_notice" in st.session_state:
         st.info(st.session_state.pop("document_notice"))
     try:
-        library = list_documents(raw_dir, index_dir)
+        try:
+            library = list_documents(raw_dir, index_dir)
+        except Exception:
+            # 库读取失败时仍保留刷新入口，便于修复后重新读取。
+            st.button("刷新知识库状态", key="refresh_knowledge")
+            raise
         if not library:
             st.caption("知识库暂无文档。")
         for document in library:
-            st.markdown(f"**{document['name']}**")
-            st.caption(f"{document['doc_id'][:12]}… · {document['chunks']} 块 · "
-                       + ("已向量化 · " if document["chunks"] else "未向量化 · ")
-                       + ("原文已保存" if document["source_available"] else "原文缺失"))
+            details, actions = st.columns([3, 1], vertical_alignment="center")
+            with details:
+                st.markdown(f"**{document['name']}**")
+                st.caption(f"{document['doc_id'][:12]}… · {document['chunks']} 块 · "
+                           + ("已向量化 · " if document["chunks"] else "未向量化 · ")
+                           + ("原文已保存" if document["source_available"] else "原文缺失"))
+            with actions:
+                if st.button("删除", key=f"delete_document:{document['doc_id']}",
+                             help=f"删除{document['name']}", disabled=not document["source_available"]):
+                    st.session_state.delete_pending = document["doc_id"]
+        # 刷新放在文档列表下方，确认删除与回收恢复操作上方。
+        st.button("刷新知识库状态", key="refresh_knowledge")
         if library:
             documents_by_id = {document["doc_id"]: document for document in library}
-            selected_id = st.selectbox("管理文档", list(documents_by_id), key="manage_doc_id",
-                                      format_func=lambda value: f"{documents_by_id[value]['name']} · {value[:8]}")
-            if st.button("删除文档", key="delete_document", disabled=not documents_by_id[selected_id]["source_available"]):
-                st.session_state.delete_pending = selected_id
             if "delete_pending" in st.session_state:
                 pending_id = st.session_state.delete_pending
                 st.warning(f"待删除：{documents_by_id.get(pending_id, {}).get('name', pending_id)}。确认后移除检索块，原文移入本地回收区。此操作影响共享知识库，已有对话保留。")
@@ -727,7 +735,3 @@ st.table(
 )
 st.subheader("评阅说明")
 st.write("功能测试、检索命中和模型自报完成均不能代替人工答案评分。180条实际答案按正确性、完整性和引用准确性评阅。")
-with st.sidebar:
-    st.header("课程资料")
-    st.write("南京农业大学生产实习课程实践")
-    st.write("技术设计与验收：docs/技术设计文档.md")
