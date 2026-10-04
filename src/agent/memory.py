@@ -186,6 +186,19 @@ class MemoryManager:
         classes = {"human": HumanMessage, "ai": AIMessage}
         return [classes[role](content=content, additional_kwargs=json.loads(details)) for role, content, details in rows]
 
+    def get_session_title(self, user_id: str, session_id: str) -> str:
+        """只读取本用户会话标题，允许归档展示，不开放归档会话的问答执行。"""
+        with closing(self._connect()) as connection:
+            self._check_session(connection, user_id, session_id, include_archived=True)
+            question = connection.execute(
+                "SELECT content FROM messages WHERE session_id=? AND role='human' ORDER BY id LIMIT 1",
+                (session_id,)).fetchone()
+            if question:
+                return question[0][:24]
+            rag = connection.execute("SELECT data FROM rag_history WHERE session_id=? ORDER BY id LIMIT 1",
+                                     (session_id,)).fetchone()
+        return (json.loads(rag[0])["question"] if rag else "新会话")[:24]
+
     def append_turn(self, user_id: str, session_id: str, question: str, answer: str, *, details: dict | None = None):
         """事务内追加一整轮，避免覆盖其他线程追加的历史或只保存半轮。"""
         _nonempty(question, "question")

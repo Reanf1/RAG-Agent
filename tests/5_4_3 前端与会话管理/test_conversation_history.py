@@ -74,6 +74,19 @@ class TestConversationHistory(unittest.TestCase):
                 operation("bob", self.a)
         self.assertEqual(self.memory.list_sessions("alice", archived=True), [self.a])
 
+    def test_archive_title_keeps_owner_check_and_supports_agent_rag_empty(self):
+        """归档仅开放本用户标题；完整历史和执行仍要求先恢复。"""
+        self.assertEqual(self.memory.get_session_title("alice", self.a), "新会话")
+        self.memory.append_rag_message("alice", self.a, {"question": "RAG论文问题"})
+        self.assertEqual(self.memory.get_session_title("alice", self.a), "RAG论文问题")
+        self.memory.append_turn("alice", self.a, "Agent论文问题", "答案")
+        self.memory.delete_session("alice", self.a)
+        self.assertEqual(self.memory.get_session_title("alice", self.a), "Agent论文问题")
+        with self.assertRaises(PermissionError):
+            self.memory.get_session_title("bob", self.a)
+        with self.assertRaises(LookupError):
+            self.memory.get_messages("alice", self.a)
+
     def test_old_database_migration_keeps_ids_messages_and_summary(self):
         old = Path(self.directory.name) / "old.sqlite3"
         with sqlite3.connect(old) as connection:

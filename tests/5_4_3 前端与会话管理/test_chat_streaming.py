@@ -30,6 +30,10 @@ class TestStreamingFrontend(unittest.TestCase):
         self.config["paths"]["session_db"] = str(Path(self.directory.name) / "memory.sqlite3")
         self.config["paths"]["vector_index"] = str(Path(self.directory.name) / "index")
         self.config["paths"]["logs"] = str(Path(self.directory.name) / "logs")
+        health_patcher = patch("src.utils.config.check_health", return_value={
+            "llm": {"status": "ok"}, "vector_database": {"status": "ok"}})
+        health_patcher.start()
+        self.addCleanup(health_patcher.stop)
         for target in ("src.utils.config.load_config", "src.generation.rag_pipeline.load_config",
                        "src.generation.cache.load_config", "src.utils.logger.load_config"):
             patcher = patch(target, return_value=self.config)

@@ -204,22 +204,27 @@ class TestHealthCheckPage(unittest.TestCase):
         from streamlit.testing.v1 import AppTest
         return AppTest.from_file(str(Path(__file__).resolve().parents[2] / "src/frontend/app.py"), default_timeout=10).run()
 
-    def test_page_startup_does_not_probe_service_or_create_health_snapshot(self):
+    def test_page_startup_shows_sidebar_status_and_rerun_reuses_snapshot(self):
         app = self.page()
         self.assertFalse(app.exception)
-        self.checker.assert_not_called()
-        self.assertTrue(any("尚未检查" in row.value for row in app.info))
+        self.checker.assert_called_once()
+        self.assertEqual(app.sidebar.subheader[0].value, "系统状态")
+        self.assertTrue(app.sidebar.caption[0].value.startswith("系统时间："))
+        self.assertEqual([row.value for row in app.sidebar.success],
+                         ["LLM服务：正常（qwen2.5:7b）", "向量数据库：正常（Chroma）"])
+        self.assertFalse(any("系统健康检查" in row.value for row in app.markdown))
+        app.run()
+        self.checker.assert_called_once()
 
     def test_manual_check_shows_both_results_and_rerun_does_not_probe_again(self):
         app = self.page()
         app.button(key="check_health").click().run()
         self.assertFalse(app.exception)
         self.assertEqual(len(app.success), 2)
-        self.assertTrue(any("文档块数：0" in c.value for c in app.caption))
         app.run()
-        self.checker.assert_called_once()
-        app.button(key="check_health").click().run()
         self.assertEqual(self.checker.call_count, 2)
+        app.button(key="check_health").click().run()
+        self.assertEqual(self.checker.call_count, 3)
 
     def test_failed_llm_and_missing_index_are_visible_independently(self):
         self.result["status"] = "degraded"

@@ -2,6 +2,7 @@
 
 import sys
 from copy import deepcopy
+from datetime import datetime
 from hashlib import sha256
 from pathlib import Path
 from time import perf_counter
@@ -76,6 +77,26 @@ if "upload_version" not in st.session_state:
     st.session_state.upload_version = 0
 
 with st.sidebar:
+    st.subheader("系统状态")
+    st.caption(f"系统时间：{datetime.fromisoformat(request_time()).strftime('%Y-%m-%d %H:%M:%S')}")
+    # 首次只检查服务和现有索引；普通页面交互复用结果，不启动模型推理。
+    if "health_result" not in st.session_state:
+        st.session_state.health_result = check_health()
+    health = st.session_state.health_result
+    for name, key, selected in (("LLM服务", "llm", config["llm"]["model"]),
+                                ("向量数据库", "vector_database", "Chroma")):
+        component = health[key]
+        if component["status"] == "ok":
+            st.success(f"{name}：正常（{component.get('model', selected)}）")
+        else:
+            text = f"{name}：异常（{component['detail']}）"
+            if component["status"] in {"not_initialized", "model_missing"}:
+                st.warning(text)
+            else:
+                st.error(text)
+    if st.button("刷新状态", key="check_health"):
+        st.session_state.health_result = check_health()
+        st.rerun()
     st.header("文档上传与管理")
     uploaded_files = st.file_uploader(
         "选择多份文档", type=[suffix.lstrip(".") for suffix in LOADERS],
@@ -140,6 +161,7 @@ if start_import or retry_import:
     if (start_import or same_selection) and any(
             t["status"] == "success" and t.get("indexed", False) for t in st.session_state.import_tasks):
         st.session_state.upload_version += 1
+    st.session_state.pop("health_result", None)
     st.rerun()
 
 show_import_status()
@@ -159,26 +181,28 @@ with st.sidebar:
             raise
         if not library:
             st.caption("知识库暂无文档。")
+        confirm_delete = cancel_delete = False
         for document in library:
-            details, actions = st.columns([3, 1], vertical_alignment="center")
+            pending = st.session_state.get("delete_pending") == document["doc_id"]
+            details, actions = st.columns([1, 1] if pending else [3, 1], vertical_alignment="center")
             with details:
                 st.markdown(f"**{document['name']}**")
                 st.caption(f"{document['doc_id'][:12]}… · {document['chunks']} 块 · "
                            + ("已向量化 · " if document["chunks"] else "未向量化 · ")
                            + ("原文已保存" if document["source_available"] else "原文缺失"))
             with actions:
-                if st.button("删除", key=f"delete_document:{document['doc_id']}",
+                if pending:
+                    confirm_delete = st.button("确认删除", key="confirm_delete_document", width="stretch")
+                    cancel_delete = st.button("取消", key="cancel_delete_document", width="stretch")
+                elif st.button("删除", key=f"delete_document:{document['doc_id']}",
                              help=f"删除{document['name']}", disabled=not document["source_available"]):
                     st.session_state.delete_pending = document["doc_id"]
-        # 刷新放在文档列表下方，确认删除与回收恢复操作上方。
+                    st.rerun()
+        # 刷新放在文档列表下方、已归档知识上方。
         st.button("刷新知识库状态", key="refresh_knowledge")
         if library:
-            documents_by_id = {document["doc_id"]: document for document in library}
             if "delete_pending" in st.session_state:
                 pending_id = st.session_state.delete_pending
-                st.warning(f"待删除：{documents_by_id.get(pending_id, {}).get('name', pending_id)}。确认后移除检索块，原文移入本地回收区。此操作影响共享知识库，已有对话保留。")
-                confirm_delete = st.button("确认删除", key="confirm_delete_document")
-                cancel_delete = st.button("取消删除", key="cancel_delete_document")
                 if cancel_delete:
                     st.session_state.pop("delete_pending")
                     st.rerun()
@@ -192,6 +216,7 @@ with st.sidebar:
                     if "rag_cache" in st.session_state:
                         st.session_state.rag_cache.clear()
                     st.session_state.pop("delete_pending")
+                    st.session_state.pop("health_result", None)
                     st.session_state.document_notice = f"已删除 {removed} 个检索块，原文已回收，可在下方恢复。"
                     st.rerun()
         trash_dir = raw_dir / ".trash"
@@ -199,8 +224,14 @@ with st.sidebar:
                           if folder.is_dir() and not folder.is_symlink() and len(folder.name) == 64
                           and all(c in "0123456789abcdef" for c in folder.name)) if trash_dir.is_dir() and not trash_dir.is_symlink() else []
         if archived:
-            restore_id = st.selectbox("回收区文档ID", archived, key="restore_doc_id")
-            if st.button("恢复文档并重建其索引", key="restore_document"):
+            archive_names = {identifier: " / ".join(f.name for f in sorted((trash_dir / identifier).iterdir())
+                             if f.is_file() and not f.is_symlink() and f.suffix.lower() in LOADERS)
+                             for identifier in archived}
+            # 单选框只有选择操作，名称和ID不作为可编辑文本输入。
+            restore_id = st.radio("已归档知识", archived, key="restore_doc_id", width="stretch",
+                                 format_func=lambda identifier: archive_names[identifier],
+                                 captions=[f"ID：{identifier}" for identifier in archived])
+            if st.button("恢复", key="restore_document"):
                 st.session_state.import_tasks = restore_document(raw_dir, restore_id)
                 for progress in batch_build_index(st.session_state.import_tasks, raw_dir, max_file_size_mb):
                     st.session_state.import_progress = progress
@@ -208,6 +239,7 @@ with st.sidebar:
                 if "rag_cache" in st.session_state:
                     st.session_state.rag_cache.clear()
                 st.session_state.document_notice = "原文已恢复，请查看本批导入状态；失败项可重试。"
+                st.session_state.pop("health_result", None)
                 st.rerun()
     except Exception as error:
         library_error = f"文档管理失败：{type(error).__name__}: {error}。原文保留，请修正后重试。"
@@ -679,30 +711,6 @@ if search_submitted:
                     st.caption(f"来源：{filename}；{location}")
                     st.caption(f"文档 ID：{metadata.get('doc_id', '')}；块 ID：{metadata.get('chunk_id', '')}")
                     st.text(document.page_content)
-
-with st.container(border=True):
-    st.markdown("**系统健康检查**")
-    st.caption("按需检查本地LLM服务和现有Chroma索引，不生成回答或写入文档。状态为上次检查快照，不代表推理或检索质量。")
-    if st.button("检查服务状态", key="check_health"):
-        with st.spinner("正在检查本地服务与索引…"):
-            st.session_state.health_result = check_health()
-    if "health_result" in st.session_state:
-        health = st.session_state.health_result
-        st.caption(f"检查时间：{health['checked_at']} · {'两项检查正常' if health['status'] == 'ok' else '存在未就绪或异常组件'}")
-        for name, key in (("LLM服务", "llm"), ("向量数据库", "vector_database")):
-            component = health[key]
-            text = f"{name}：{component['detail']}（检查耗时{component['seconds']:.3f}秒）"
-            if component["status"] == "ok":
-                st.success(text)
-            elif component["status"] in {"not_initialized", "model_missing"}:
-                st.warning(text)
-            else:
-                st.error(text)
-        st.caption(f"配置模型：{health['llm'].get('model', '未报告')}")
-        if health["vector_database"]["chunks"] is not None:
-            st.caption(f"集合：{health['vector_database']['collection']} · 文档块数：{health['vector_database']['chunks']}")
-    else:
-        st.info("尚未检查；点击按钮获取当前状态。")
 
 st.subheader("检索分数分布")
 st.caption("统计本地请求日志中的实际 RAG 检索：Top-1 为 BGE sigmoid 重排分数，不是命中率或正确概率。空库、检索失败和缓存跳过均单独计数。")

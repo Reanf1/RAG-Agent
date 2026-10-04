@@ -298,6 +298,10 @@ class TestAgentMetricsEntryAndPage(unittest.TestCase):
         self.config = deepcopy(load_config())
         self.config["paths"]["logs"] = str(Path(self.directory.name) / "logs")
         self.config["paths"]["session_db"] = str(Path(self.directory.name) / "memory.sqlite3")
+        health_patcher = patch("src.utils.config.check_health", return_value={
+            "llm": {"status": "ok"}, "vector_database": {"status": "ok"}})
+        health_patcher.start()
+        self.addCleanup(health_patcher.stop)
         for module in ("src.utils.config", "src.utils.logger", "src.agent.memory"):
             patcher = patch(module + ".load_config", return_value=self.config)
             patcher.start()
@@ -523,6 +527,11 @@ class TestAgentMetricsEntryAndPage(unittest.TestCase):
         self.assertEqual(app.button(key=f"conversation:{b}").proto.type, "primary")
         memory, user = app.session_state["agent_memory"], app.session_state["agent_user_id"]
         self.assertEqual(memory.list_sessions(user, archived=True), [a])
+        archived = app.radio(key="restore_conversation_select")
+        self.assertEqual(archived.label, "恢复会话")
+        self.assertEqual(archived.options, ["待回收历史"])
+        self.assertEqual(list(archived.proto.captions), [f"ID：{a}"])
+        self.assertEqual(app.button(key="restore_conversation").label, "恢复")
         app.button(key="restore_conversation").click().run()
         self.assertFalse(app.exception)
         self.assertEqual(app.session_state["agent_session_id"], a)

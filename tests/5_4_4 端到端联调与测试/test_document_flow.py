@@ -30,6 +30,8 @@ class TestImportFrontend(unittest.TestCase):
         config["paths"]["logs"] = str(Path(self.directory.name) / "logs")
         self.embeddings = SmallEmbeddings()
         for target, value in (("src.utils.config.load_config", config),
+                              ("src.utils.config.check_health", {"llm": {"status": "ok"},
+                                                               "vector_database": {"status": "ok"}}),
                               ("src.utils.logger.load_config", config),
                               ("src.retrieval.vector_store.load_config", config),
                               ("src.retrieval.hybrid_retriever.load_config", config),
@@ -474,6 +476,10 @@ class TestImportFrontend(unittest.TestCase):
         self.assertEqual(app.sidebar.get("progress")[0].proto.value, 100)
         self.assertEqual(self.delete_button(app, doc_id).label, "删除")
         self.delete_button(app).click().run()
+        self.assertFalse(any(b.key == f"delete_document:{doc_id}" for b in app.sidebar.button))
+        self.assertEqual(app.button(key="confirm_delete_document").label, "确认删除")
+        self.assertEqual(app.button(key="cancel_delete_document").label, "取消")
+        self.assertFalse(any("待删除" in row.value for row in app.sidebar.warning))
         self.assertEqual(VectorStore().count(), 1)
         app.button(key="cancel_delete_document").click().run()
         self.assertTrue((raw / doc_id / "paper.md").is_file())
@@ -487,6 +493,11 @@ class TestImportFrontend(unittest.TestCase):
         self.assertEqual(app.session_state["import_tasks"], [])
         self.assertTrue(app.button(key="start_import").disabled)
         app.session_state["rag_cache"].clear.assert_called_once()
+        archived = app.radio(key="restore_doc_id")
+        self.assertEqual(archived.label, "已归档知识")
+        self.assertEqual(archived.options, ["paper.md"])
+        self.assertEqual(list(archived.proto.captions), [f"ID：{doc_id}"])
+        self.assertEqual(app.button(key="restore_document").label, "恢复")
         app.button(key="restore_document").click().run()
         self.assertFalse(app.exception)
         self.assertEqual(VectorStore().count(), 1)
@@ -494,6 +505,25 @@ class TestImportFrontend(unittest.TestCase):
         self.assertTrue((raw / doc_id / "paper.md").exists())
         self.assertFalse((raw / ".trash" / doc_id).exists())
         app.run()
+        self.assertEqual(VectorStore().count(), 1)
+
+    def test_archive_selection_restores_only_selected_document(self):
+        """归档区选择另一份原文，恢复按钮只重建所选文档。"""
+        from src.frontend.components.documents import list_documents
+        app = self.app
+        raw, index = Path(self.directory.name) / "raw", Path(self.directory.name) / "index"
+        app.file_uploader[0].set_value([("a.txt", b"Adam", "text/plain"),
+                                       ("b.txt", b"Transformer", "text/plain")]).run()
+        app.button(key="start_import").click().run()
+        documents = list_documents(raw, index)
+        for document in documents:
+            self.delete_button(app, document["doc_id"]).click().run()
+            app.button(key="confirm_delete_document").click().run()
+        app.radio(key="restore_doc_id").set_value(documents[1]["doc_id"]).run()
+        app.button(key="restore_document").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual([d["name"] for d in list_documents(raw, index)], ["b.txt"])
+        self.assertTrue((raw / ".trash" / documents[0]["doc_id"]).is_dir())
         self.assertEqual(VectorStore().count(), 1)
 
     def test_delete_only_selected_document_keeps_other_index_and_progress(self):

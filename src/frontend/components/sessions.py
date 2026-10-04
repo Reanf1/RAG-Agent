@@ -96,8 +96,11 @@ def render_sessions(db_path: Path, cancel_request) -> bool:
                     st.rerun()
             archived = memory.list_sessions(user_id, archived=True)
             if archived:
-                restore_id = st.selectbox("会话回收区", archived, key="restore_conversation_select")
-                if st.button("恢复会话", key="restore_conversation"):
+                archive_titles = {identifier: memory.get_session_title(user_id, identifier) for identifier in archived}
+                restore_id = st.radio("恢复会话", archived, key="restore_conversation_select", width="stretch",
+                                      format_func=lambda identifier: archive_titles[identifier],
+                                      captions=[f"ID：{identifier}" for identifier in archived])
+                if st.button("恢复", key="restore_conversation"):
                     memory.restore_session(user_id, restore_id)
                     activate_session(memory, user_id, restore_id, cancel_request)
                     st.rerun()
