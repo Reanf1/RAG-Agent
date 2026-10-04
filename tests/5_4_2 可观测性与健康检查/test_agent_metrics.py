@@ -117,7 +117,7 @@ class TestAgentMetrics(unittest.TestCase):
 
     def test_memory_summary_only_counts_current_calls_and_request_ids_change(self):
         summary = {"memory_summary": {"calls": [{"usage": {"prompt_eval_count": 30, "eval_count": 4}}]}}
-        with patch("src.agent.react_loop._run_react", side_effect=lambda *args: iter(deepcopy(self.events()))):
+        with patch("src.agent.react_loop._run_react", side_effect=lambda *args, **kwargs: iter(deepcopy(self.events()))):
             first = list(run_react("问题", context=summary))
             second = list(run_react("后续问题", context={"memory_summary": {"calls": []}}))
         self.assertEqual(first[-1]["metrics"]["tokens"]["total"], 195)
@@ -302,7 +302,7 @@ class TestAgentMetricsEntryAndPage(unittest.TestCase):
             patcher = patch(module + ".load_config", return_value=self.config)
             patcher.start()
             self.addCleanup(patcher.stop)
-        patcher = patch("src.agent.react_loop._run_react", side_effect=lambda *args: iter(deepcopy(TestAgentMetrics.events())))
+        patcher = patch("src.agent.react_loop._run_react", side_effect=lambda *args, **kwargs: iter(deepcopy(TestAgentMetrics.events())))
         self.core = patcher.start()
         self.addCleanup(patcher.stop)
 
@@ -378,7 +378,7 @@ class TestAgentMetricsEntryAndPage(unittest.TestCase):
         events = TestAgentMetrics.events()
         events[3]["result"] = None
         events[-1].update(task_complete=False, stop_reason="incomplete")
-        self.core.side_effect = lambda *args: iter(deepcopy(events))
+        self.core.side_effect = lambda *args, **kwargs: iter(deepcopy(events))
         app = self.page()
         app.text_input(key="agent_question").set_value("计算")
         app.button(key="run_agent").click().run()
@@ -404,7 +404,7 @@ class TestAgentMetricsEntryAndPage(unittest.TestCase):
         events[4].update(status="error", error="查询超时", error_kind="deadline", pending=True,
                          elapsed_seconds=0.4, attempts=[{"status": "running"}])
         events[-1].update(task_complete=False, stop_reason="tool_timeout")
-        self.core.side_effect = lambda *args: iter(deepcopy(events))
+        self.core.side_effect = lambda *args, **kwargs: iter(deepcopy(events))
         app = self.page()
         app.text_input(key="agent_question").set_value("计算")
         app.button(key="run_agent").click().run()
@@ -426,7 +426,7 @@ class TestAgentMetricsEntryAndPage(unittest.TestCase):
                   {"type": "action_skipped", "iteration": 1, "reason": "无需工具。"},
                   {"type": "observation", "iteration": 1, "observation": "可以回答。", "usage": {"prompt_eval_count": 1, "eval_count": 1}},
                   {"type": "done", "iterations": 1, "task_complete": True, "stop_reason": "task_complete", "full_response": "回答。"}]
-        self.core.side_effect = lambda *args: iter(deepcopy(events))
+        self.core.side_effect = lambda *args, **kwargs: iter(deepcopy(events))
         app = self.page()
         app.text_input(key="agent_question").set_value("解释术语")
         app.button(key="run_agent").click().run()
@@ -486,7 +486,7 @@ class TestAgentMetricsEntryAndPage(unittest.TestCase):
         from streamlit.testing.v1 import AppTest
         events = TestAgentMetrics.events()
         events[-1].update(task_complete=False, stop_reason="incomplete")
-        self.core.side_effect = lambda *args: iter(deepcopy(events))
+        self.core.side_effect = lambda *args, **kwargs: iter(deepcopy(events))
         app = self.page()
         app.text_input(key="agent_question").set_value("未完成请求")
         app.button(key="run_agent").click().run()

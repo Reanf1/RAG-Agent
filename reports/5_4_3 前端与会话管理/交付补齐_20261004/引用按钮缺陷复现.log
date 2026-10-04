@@ -1,0 +1,18 @@
+2026-10-04 15:12:47.186 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+F
+======================================================================
+FAIL: test_pdf_citation_opens_uploaded_physical_page (tests.5_4_3 前端与会话管理.test_chat_streaming.TestStreamingFrontend)
+沿用加载器真实的 .pdf 类型，验证按钮与原文弹窗均可见。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_3 前端与会话管理/test_chat_streaming.py", line 101, in test_pdf_citation_opens_uploaded_physical_page
+    self.assertEqual(len(buttons), 1)
+AssertionError: 0 != 1
+
+----------------------------------------------------------------------
+Ran 1 test in 2.745s
+
+FAILED (failures=1)

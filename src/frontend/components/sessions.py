@@ -25,7 +25,8 @@ def activate_session(memory: MemoryManager, user_id: str, session_id: str, cance
     for question, answer in zip(messages[::2], messages[1::2]):
         details = answer.additional_kwargs
         history.append({"question": question.content, "answer": answer.content,
-                        "complete": details.get("task_complete"), "stop_reason": details.get("stop_reason")})
+                        "complete": details.get("task_complete"), "stop_reason": details.get("stop_reason"),
+                        "event": details.get("event", {})})
     # 旧数据库正文照常显示；没有保存过的完成状态/轨迹不能凭空补齐。
     if messages and messages[-1].additional_kwargs.get("event"):
         st.session_state.agent_last_event = {**messages[-1].additional_kwargs["event"],

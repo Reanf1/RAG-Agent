@@ -141,10 +141,22 @@ class TestRoutingAndParallel(unittest.TestCase):
         self.assertEqual(result["parallel_tools"], ["read_number"])
         choice = json.loads(http.call_args.args[0].data)["format"]["properties"]["parallel_tools"]
         self.assertEqual(choice["maxItems"], 2)
-        self.assertTrue(choice["uniqueItems"])
+        self.assertNotIn("uniqueItems", choice)
+
+    def test_same_tool_two_inputs_are_accepted_without_duplicate_schema(self):
+        plan = {**self.plan, "parallel_tools": ["read_number", "read_number"]}
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(plan)).encode())):
+            self.assertEqual(think("分别读取3和5", self.tools)["parallel_tools"], plan["parallel_tools"])
+        events, http = self.action(plan=plan)
+        self.assertEqual(sorted(self.invocations), [3, 5])
+        self.assertEqual(len(json.loads(http.call_args.args[0].data)["tools"]), 1)
+        self.assertEqual(sum(e["type"] == "tool_result" for e in events), 2)
+        response = {**self.response, "message": {"tool_calls": self.response["message"]["tool_calls"][:1]}}
+        events, _ = self.action(response=response, plan=plan)
+        self.assertEqual(events[-1]["type"], "error")
 
     def test_thought_rejects_empty_duplicate_unknown_or_excessive_batch(self):
-        for names in (None, "read_number", ["read_number", "read_number"], ["unknown"], [1], ["read_number", "unknown", "other"]):
+        for names in (None, "read_number", ["read_number"] * 3, ["unknown"], [1], ["read_number", "unknown", "other"]):
             with self.subTest(names=names), patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(
                     self.packet({**self.plan, "parallel_tools": names})).encode())), self.assertRaises(RuntimeError):
                 think("独立读取", self.tools)

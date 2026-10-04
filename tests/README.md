@@ -4,9 +4,11 @@
 
 5.5.2新增10项指标边界测试，单独运行通过；该阶段共643个用例、17个小节、43个测试文件。既有633项全量回归记录仍作为原日期的历史结果，不把新增指标测试当作系统答案质量成绩。
 
-5.5.3再新增11项Bad Case交接回归，修复前4项失败，修复后通过；当前共**654个用例、18个小节、44个测试文件**。2026-10-04完整654项通过（43.662秒，无失败/错误/跳过），见[本轮日志](../reports/5_5_3%20Bad%20Case分析与优化/完整654项回归测试.log)。测试HTTP为mock，实际模型60题及残留质量问题另见Bad Case报告。
+5.5.3再新增11项Bad Case交接回归，修复前4项失败，修复后通过；该阶段共**654个用例、18个小节、44个测试文件**。2026-10-04完整654项通过（43.662秒，无失败/错误/跳过），见[本轮日志](../reports/5_5_3%20Bad%20Case分析与优化/完整654项回归测试.log)。测试HTTP为mock，实际模型60题及残留质量问题另见Bad Case报告。
 
 目录采用“编号 空格 中文小节名”，例如 `5_1_1 文档加载与批量导入`。测试包的 `__init__.py` 用于标准 `unittest` 递归发现，含空格的路径须加引号。
+
+本轮交付增加正文流式、原文物理页、历史来源和同名独立并行共14项回归；现有**668个用例、18个小节、46个测试文件**，2026-10-04全量通过（59.730秒，无跳过）。[本轮通过日志](../reports/5_5_4%20项目交付/全量668项通过_20261004.log)，首次文案缩进失败记录保留。功能测试与实际模型评测分开报告。
 
 ## 小节与测试文件
 
@@ -22,11 +24,11 @@
 | 5_2_4 日志与可观测性 | 8 | [test_rag_logging.py](5_2_4%20日志与可观测性/test_rag_logging.py) |
 | 5_3_1 Agent核心循环 | 48 | [test_thought.py](5_3_1%20Agent核心循环/test_thought.py)、[test_action.py](5_3_1%20Agent核心循环/test_action.py)、[test_observation.py](5_3_1%20Agent核心循环/test_observation.py)、[test_system_prompt.py](5_3_1%20Agent核心循环/test_system_prompt.py) |
 | 5_3_2 工具集开发 | 87 | [test_research_tools.py](5_3_2%20工具集开发/test_research_tools.py)、[test_comparison_keywords.py](5_3_2%20工具集开发/test_comparison_keywords.py)、[test_summary_time_search.py](5_3_2%20工具集开发/test_summary_time_search.py)、[test_calculator_paper_list.py](5_3_2%20工具集开发/test_calculator_paper_list.py) |
-| 5_3_3 Agent决策优化 | 45 | [test_routing_parallel.py](5_3_3%20Agent决策优化/test_routing_parallel.py)、[test_error_recovery.py](5_3_3%20Agent决策优化/test_error_recovery.py) |
+| 5_3_3 Agent决策优化 | 46 | [test_routing_parallel.py](5_3_3%20Agent决策优化/test_routing_parallel.py)、[test_error_recovery.py](5_3_3%20Agent决策优化/test_error_recovery.py) |
 | 5_3_4 多轮对话记忆管理 | 55 | [test_session_isolation.py](5_3_4%20多轮对话记忆管理/test_session_isolation.py)、[test_history_window.py](5_3_4%20多轮对话记忆管理/test_history_window.py)、[test_conversation_summary.py](5_3_4%20多轮对话记忆管理/test_conversation_summary.py) |
 | 5_4_1 RAG与Agent深度融合 | 28 | [test_source_routing.py](5_4_1%20RAG与Agent深度融合/test_source_routing.py)、[test_memory_context.py](5_4_1%20RAG与Agent深度融合/test_memory_context.py) |
 | 5_4_2 可观测性与健康检查 | 56 | [test_health_check.py](5_4_2%20可观测性与健康检查/test_health_check.py)、[test_agent_metrics.py](5_4_2%20可观测性与健康检查/test_agent_metrics.py) |
-| 5_4_3 前端与会话管理 | 35 | [test_document_management.py](5_4_3%20前端与会话管理/test_document_management.py)、[test_chat_streaming.py](5_4_3%20前端与会话管理/test_chat_streaming.py)、[test_conversation_history.py](5_4_3%20前端与会话管理/test_conversation_history.py) |
+| 5_4_3 前端与会话管理 | 48 | [test_document_management.py](5_4_3%20前端与会话管理/test_document_management.py)、[test_chat_streaming.py](5_4_3%20前端与会话管理/test_chat_streaming.py)、[test_conversation_history.py](5_4_3%20前端与会话管理/test_conversation_history.py)、[test_agent_streaming.py](5_4_3%20前端与会话管理/test_agent_streaming.py)、[test_citation_page.py](5_4_3%20前端与会话管理/test_citation_page.py) |
 | 5_4_4 端到端联调与测试 | 28 | [test_document_flow.py](5_4_4%20端到端联调与测试/test_document_flow.py) |
 | 5_5_2 系统性能评估 | 10 | [test_system_evaluation.py](5_5_2%20系统性能评估/test_system_evaluation.py) |
 | 5_5_3 Bad Case分析与优化 | 11 | [test_bad_case_regression.py](5_5_3%20Bad%20Case分析与优化/test_bad_case_regression.py) |

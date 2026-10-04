@@ -82,6 +82,41 @@ class TestStreamingFrontend(unittest.TestCase):
         self.assertEqual(self.app.session_state["rag_messages"], [])
         self.assertEqual(len(self.app.chat_message), 0)
 
+    def test_pdf_citation_opens_uploaded_physical_page(self):
+        """持久化检索块可以不含file_type，以文件名及物理页定位原文。"""
+        import pymupdf
+        from hashlib import sha256
+        with pymupdf.open() as pdf:
+            for number in range(3):
+                pdf.new_page().insert_text((40, 40), f"Physical page {number + 1}")
+            data = pdf.tobytes()
+        identifier = sha256(data).hexdigest()
+        directory = Path(self.config["paths"]["raw_documents"]) / identifier
+        directory.mkdir(parents=True)
+        (directory / "attention.pdf").write_bytes(data)
+        self.retriever.search.return_value[0][0].metadata.update(doc_id=identifier)
+        self.reply()
+        self.app.chat_input[0].set_value("层数？").run()
+        buttons = [b for b in self.app.button if b.label == "查看引用原文页"]
+        self.assertEqual(len(buttons), 1)
+        buttons[0].click().run()
+        self.assertFalse(self.app.exception)
+        self.assertTrue(any("第3页" in c.value for c in self.app.caption))
+        self.assertTrue(any("attention.pdf" in c.value and "第3页" in c.value for c in self.app.caption))
+
+    def test_agent_history_renders_separate_source_buttons_for_parallel_calls(self):
+        """历史重绘不重新推理，同名调用的相同引用编号不会冲突。"""
+        reference = {"id": 1, "source_file": "attention.pdf", "location": "第3页", "metadata": {"page_number": 3}}
+        event = {"request_id": "saved-request", "context": {"observations": [
+            {"call_id": identifier, "result": {"citations": [reference]}} for identifier in ("first", "second")]}}
+        self.app.session_state["agent_messages"] = [{"question": "两篇论文？", "answer": "已保存答案",
+            "complete": True, "stop_reason": "task_complete", "event": event}]
+        self.app.run()
+        self.assertFalse(self.app.exception)
+        keys = {button.key for button in self.app.button if button.label == "查看attention.pdf · 第3页"}
+        self.assertEqual(keys, {"agent-citation:saved-request:first:1", "agent-citation:saved-request:second:1"})
+        self.opener.assert_not_called()
+
     def test_incomplete_stream_is_visible_error_with_partial_answer(self):
         self.reply(done=False)
         self.app.chat_input[0].set_value("层数？").run()

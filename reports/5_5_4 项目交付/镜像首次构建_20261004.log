@@ -1,0 +1,425 @@
+time="2026-10-04T15:04:55+08:00" level=warning msg="buildx Docker CLI plugin not found: falling back to the classic builder. BuildKit-only build features (multi-arch, secrets, ssh, additional contexts, ...) will not be available"
+ Image rag-agent-verify-app Building 
+ Image rag-agent-verify-app Building 
+Sending build context to Docker daemon  109.1kB
+Step 1/11 : FROM python:3.10.10-slim
+3.10.10-slim: Pulling from library/python
+
+[1A[2K5e42bc20b98e: Pulling fs layer [1B
+[1A[2Kfcdb9667c46b: Pulling fs layer [1B
+[1A[2K8dcaf4f41922: Pulling fs layer [1B
+[1A[2K3fdc970d6941: Pulling fs layer [1B
+[1A[2K93a672802593: Pulling fs layer [1B[2A[2K3fdc970d6941: Download complete [2B[5A[2K5e42bc20b98e: Downloading [===============>                                   ]  1.049MB/3.372MB[5B[5A[2K5e42bc20b98e: Downloading [===============>                                   ]  1.049MB/3.372MB[5B[5A[2K5e42bc20b98e: Downloading [===============>                                   ]  1.049MB/3.372MB[5B[5A[2K5e42bc20b98e: Downloading [===============>                                   ]  1.049MB/3.372MB[5B[5A[2K5e42bc20b98e: Downloading [===============>                                   ]  1.049MB/3.372MB[5B[5A[2K5e42bc20b98e: Downloading [===============>                                   ]  1.049MB/3.372MB[5B[5A[2K5e42bc20b98e: Downloading [===============================>                   ]  2.097MB/3.372MB[5B[5A[2K5e42bc20b98e: Downloading [===============================>                   ]  2.097MB/3.372MB[5B[5A[2K5e42bc20b98e: Downloading [===============================>                   ]  2.097MB/3.372MB[5B[1A[2K93a672802593: Download complete [1B[5A[2K5e42bc20b98e: Downloading [===============================>                   ]  2.097MB/3.372MB[5B[5A[2K5e42bc20b98e: Downloading [===============================>                   ]  2.097MB/3.372MB[5B[5A[2K5e42bc20b98e: Downloading [===============================>                   ]  2.097MB/3.372MB[5B[5A[2K5e42bc20b98e: Downloading [==============================================>    ]  3.146MB/3.372MB[5B[5A[2K5e42bc20b98e: Downloading [==================================================>]  3.372MB/3.372MB[5B[5A[2K5e42bc20b98e: Download complete [5B[4A[2Kfcdb9667c46b: Downloading [=>                                                 ]  1.049MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [====>                                              ]  1.049MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=>                                                 ]  1.049MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [====>                                              ]  1.049MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=>                                                 ]  1.049MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [====>                                              ]  1.049MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=>                                                 ]  1.049MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [====>                                              ]  1.049MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=>                                                 ]  1.049MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [====>                                              ]  1.049MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=>                                                 ]  1.049MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [====>                                              ]  1.049MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=>                                                 ]  1.049MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [====>                                              ]  1.049MB/11.62MB[3B[3A[2K8dcaf4f41922: Downloading [====>                                              ]  1.049MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=>                                                 ]  1.049MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=>                                                 ]  1.049MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [====>                                              ]  1.049MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=>                                                 ]  1.049MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [====>                                              ]  1.049MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=>                                                 ]  1.049MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [====>                                              ]  1.049MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=>                                                 ]  1.049MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [====>                                              ]  1.049MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=>                                                 ]  1.049MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [====>                                              ]  1.049MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=>                                                 ]  1.049MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [====>                                              ]  1.049MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=>                                                 ]  1.049MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=========>                                         ]  2.097MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=>                                                 ]  1.049MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=========>                                         ]  2.097MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=>                                                 ]  1.049MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=========>                                         ]  2.097MB/11.62MB[3B[3A[2K8dcaf4f41922: Downloading [=========>                                         ]  2.097MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=>                                                 ]  1.049MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=>                                                 ]  1.049MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=========>                                         ]  2.097MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=>                                                 ]  1.049MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=========>                                         ]  2.097MB/11.62MB[3B[3A[2K8dcaf4f41922: Downloading [=========>                                         ]  2.097MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [===>                                               ]  2.097MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=========>                                         ]  2.097MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [===>                                               ]  2.097MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===>                                               ]  2.097MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=========>                                         ]  2.097MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [===>                                               ]  2.097MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=========>                                         ]  2.097MB/11.62MB[3B[3A[2K8dcaf4f41922: Downloading [=========>                                         ]  2.097MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [===>                                               ]  2.097MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===>                                               ]  2.097MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=========>                                         ]  2.097MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [===>                                               ]  2.097MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=========>                                         ]  2.097MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [===>                                               ]  2.097MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=========>                                         ]  2.097MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [===>                                               ]  2.097MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=========>                                         ]  2.097MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [===>                                               ]  2.097MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=============>                                     ]  3.146MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [===>                                               ]  2.097MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=============>                                     ]  3.146MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [===>                                               ]  2.097MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=============>                                     ]  3.146MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [===>                                               ]  2.097MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=============>                                     ]  3.146MB/11.62MB[3B[3A[2K8dcaf4f41922: Downloading [=============>                                     ]  3.146MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [===>                                               ]  2.097MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===>                                               ]  2.097MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=============>                                     ]  3.146MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [===>                                               ]  2.097MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=============>                                     ]  3.146MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [===>                                               ]  2.097MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=============>                                     ]  3.146MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [===>                                               ]  2.097MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=============>                                     ]  3.146MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=====>                                             ]  3.146MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=============>                                     ]  3.146MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=====>                                             ]  3.146MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=============>                                     ]  3.146MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=====>                                             ]  3.146MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [==================>                                ]  4.194MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=====>                                             ]  3.146MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [==================>                                ]  4.194MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=====>                                             ]  3.146MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [==================>                                ]  4.194MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=====>                                             ]  3.146MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [==================>                                ]  4.194MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=====>                                             ]  3.146MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [==================>                                ]  4.194MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=====>                                             ]  3.146MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [==================>                                ]  4.194MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=====>                                             ]  3.146MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [==================>                                ]  4.194MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=====>                                             ]  3.146MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [==================>                                ]  4.194MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=====>                                             ]  3.146MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [==================>                                ]  4.194MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=====>                                             ]  3.146MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [==================>                                ]  4.194MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=====>                                             ]  3.146MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [==================>                                ]  4.194MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=====>                                             ]  3.146MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [==================>                                ]  4.194MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=====>                                             ]  3.146MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [==================>                                ]  4.194MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=====>                                             ]  3.146MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [==================>                                ]  4.194MB/11.62MB[3B[3A[2K8dcaf4f41922: Downloading [======================>                            ]  5.243MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=====>                                             ]  3.146MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=====>                                             ]  3.146MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [======================>                            ]  5.243MB/11.62MB[3B[3A[2K8dcaf4f41922: Downloading [======================>                            ]  5.243MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [=====>                                             ]  3.146MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [======>                                            ]  4.194MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [======================>                            ]  5.243MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [======>                                            ]  4.194MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [======================>                            ]  5.243MB/11.62MB[3B[3A[2K8dcaf4f41922: Downloading [======================>                            ]  5.243MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [======>                                            ]  4.194MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [======>                                            ]  4.194MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [======================>                            ]  5.243MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [======>                                            ]  4.194MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [======================>                            ]  5.243MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [======>                                            ]  4.194MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [===========================>                       ]  6.291MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [======>                                            ]  4.194MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [===========================>                       ]  6.291MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [======>                                            ]  4.194MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [===========================>                       ]  6.291MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [======>                                            ]  4.194MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [===========================>                       ]  6.291MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [======>                                            ]  4.194MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [===========================>                       ]  6.291MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [======>                                            ]  4.194MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [===========================>                       ]  6.291MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [======>                                            ]  4.194MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [===========================>                       ]  6.291MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [======>                                            ]  4.194MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [===========================>                       ]  6.291MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [======>                                            ]  4.194MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [===========================>                       ]  6.291MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [======>                                            ]  4.194MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [===========================>                       ]  6.291MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [========>                                          ]  5.243MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [===========================>                       ]  6.291MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [========>                                          ]  5.243MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [===========================>                       ]  6.291MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [========>                                          ]  5.243MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [===============================>                   ]   7.34MB/11.62MB[3B[3A[2K8dcaf4f41922: Downloading [===============================>                   ]   7.34MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [========>                                          ]  5.243MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [========>                                          ]  5.243MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [===============================>                   ]   7.34MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [========>                                          ]  5.243MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [===============================>                   ]   7.34MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [========>                                          ]  5.243MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [===============================>                   ]   7.34MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [========>                                          ]  5.243MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [===============================>                   ]   7.34MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [========>                                          ]  5.243MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [===============================>                   ]   7.34MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [========>                                          ]  5.243MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [===============================>                   ]   7.34MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [========>                                          ]  5.243MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [====================================>              ]  8.389MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [========>                                          ]  5.243MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [====================================>              ]  8.389MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [========>                                          ]  5.243MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [====================================>              ]  8.389MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [========>                                          ]  5.243MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [====================================>              ]  8.389MB/11.62MB[3B[3A[2K8dcaf4f41922: Downloading [====================================>              ]  8.389MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [==========>                                        ]  6.291MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [====================================>              ]  8.389MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [==========>                                        ]  6.291MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [==========>                                        ]  6.291MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [====================================>              ]  8.389MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [==========>                                        ]  6.291MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [========================================>          ]  9.437MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [==========>                                        ]  6.291MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [========================================>          ]  9.437MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [==========>                                        ]  6.291MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [========================================>          ]  9.437MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [==========>                                        ]  6.291MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [========================================>          ]  9.437MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [==========>                                        ]  6.291MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [========================================>          ]  9.437MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [==========>                                        ]  6.291MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [========================================>          ]  9.437MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [==========>                                        ]  6.291MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [========================================>          ]  9.437MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [==========>                                        ]  6.291MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=============================================>     ]  10.49MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [==========>                                        ]  6.291MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=============================================>     ]  10.49MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [============>                                      ]   7.34MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=============================================>     ]  10.49MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [============>                                      ]   7.34MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=============================================>     ]  10.49MB/11.62MB[3B[3A[2K8dcaf4f41922: Downloading [=============================================>     ]  10.49MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [============>                                      ]   7.34MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [============>                                      ]   7.34MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=============================================>     ]  10.49MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [============>                                      ]   7.34MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [=============================================>     ]  10.49MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [============>                                      ]   7.34MB/30.06MB[4B[3A[2K8dcaf4f41922: Downloading [==================================================>]  11.62MB/11.62MB[3B[4A[2Kfcdb9667c46b: Downloading [============>                                      ]   7.34MB/30.06MB[4B[3A[2K8dcaf4f41922: Download complete [3B[4A[2Kfcdb9667c46b: Downloading [============>                                      ]   7.34MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [============>                                      ]   7.34MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [============>                                      ]   7.34MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============>                                     ]  8.389MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============>                                     ]  8.389MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============>                                     ]  8.389MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============>                                     ]  8.389MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============>                                     ]  8.389MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============>                                     ]  8.389MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============>                                     ]  8.389MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============>                                     ]  8.389MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============>                                     ]  8.389MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============>                                   ]  9.437MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============>                                   ]  9.437MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============>                                   ]  9.437MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============>                                   ]  9.437MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============>                                   ]  9.437MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============>                                   ]  9.437MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============>                                   ]  9.437MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============>                                   ]  9.437MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============>                                   ]  9.437MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=================>                                 ]  10.49MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=================>                                 ]  10.49MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=================>                                 ]  10.49MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=================>                                 ]  10.49MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=================>                                 ]  10.49MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=================>                                 ]  10.49MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=================>                                 ]  10.49MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=================>                                 ]  10.49MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=================>                                 ]  10.49MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===================>                               ]  11.53MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===================>                               ]  11.53MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===================>                               ]  11.53MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===================>                               ]  11.53MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===================>                               ]  11.53MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===================>                               ]  11.53MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===================>                               ]  11.53MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===================>                               ]  11.53MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===================>                               ]  11.53MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===================>                               ]  11.53MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===================>                               ]  11.53MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===================>                               ]  11.53MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [====================>                              ]  12.58MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [====================>                              ]  12.58MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [====================>                              ]  12.58MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [====================>                              ]  12.58MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [====================>                              ]  12.58MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [====================>                              ]  12.58MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [====================>                              ]  12.58MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [====================>                              ]  12.58MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [====================>                              ]  12.58MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [====================>                              ]  12.58MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [====================>                              ]  12.58MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [======================>                            ]  13.63MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [======================>                            ]  13.63MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [======================>                            ]  13.63MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [======================>                            ]  13.63MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [======================>                            ]  13.63MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [======================>                            ]  13.63MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [======================>                            ]  13.63MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [======================>                            ]  13.63MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [======================>                            ]  13.63MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [========================>                          ]  14.68MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [========================>                          ]  14.68MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [========================>                          ]  14.68MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [========================>                          ]  14.68MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [========================>                          ]  14.68MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [========================>                          ]  14.68MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [========================>                          ]  14.68MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [========================>                          ]  14.68MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [========================>                          ]  14.68MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [========================>                          ]  14.68MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [========================>                          ]  14.68MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [==========================>                        ]  15.73MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [==========================>                        ]  15.73MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [==========================>                        ]  15.73MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [==========================>                        ]  15.73MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [==========================>                        ]  15.73MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [==========================>                        ]  15.73MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [==========================>                        ]  15.73MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [==========================>                        ]  15.73MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [==========================>                        ]  15.73MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===========================>                       ]  16.78MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===========================>                       ]  16.78MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===========================>                       ]  16.78MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===========================>                       ]  16.78MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===========================>                       ]  16.78MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===========================>                       ]  16.78MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===========================>                       ]  16.78MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============================>                     ]  17.83MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============================>                     ]  17.83MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============================>                     ]  17.83MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============================>                     ]  17.83MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============================>                     ]  17.83MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============================>                     ]  17.83MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============================>                     ]  17.83MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============================>                     ]  17.83MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============================>                     ]  17.83MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============================>                   ]  18.87MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============================>                   ]  18.87MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============================>                   ]  18.87MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============================>                   ]  18.87MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============================>                   ]  18.87MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============================>                   ]  18.87MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============================>                   ]  18.87MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=================================>                 ]  19.92MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=================================>                 ]  19.92MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=================================>                 ]  19.92MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=================================>                 ]  19.92MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=================================>                 ]  19.92MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=================================>                 ]  19.92MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=================================>                 ]  19.92MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [==================================>                ]  20.97MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [==================================>                ]  20.97MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [==================================>                ]  20.97MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [==================================>                ]  20.97MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [==================================>                ]  20.97MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [==================================>                ]  20.97MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [==================================>                ]  20.97MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [====================================>              ]  22.02MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [====================================>              ]  22.02MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [====================================>              ]  22.02MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [====================================>              ]  22.02MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [====================================>              ]  22.02MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [====================================>              ]  22.02MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [======================================>            ]  23.07MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [======================================>            ]  23.07MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [======================================>            ]  23.07MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [======================================>            ]  23.07MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [======================================>            ]  23.07MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [======================================>            ]  23.07MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [======================================>            ]  23.07MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [======================================>            ]  23.07MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [========================================>          ]  24.12MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [========================================>          ]  24.12MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [========================================>          ]  24.12MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [========================================>          ]  24.12MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [========================================>          ]  24.12MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=========================================>         ]  25.17MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=========================================>         ]  25.17MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=========================================>         ]  25.17MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=========================================>         ]  25.17MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=========================================>         ]  25.17MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=========================================>         ]  25.17MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=========================================>         ]  25.17MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===========================================>       ]  26.21MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===========================================>       ]  26.21MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===========================================>       ]  26.21MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===========================================>       ]  26.21MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===========================================>       ]  26.21MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===========================================>       ]  26.21MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===========================================>       ]  26.21MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===========================================>       ]  26.21MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============================================>     ]  27.26MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============================================>     ]  27.26MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============================================>     ]  27.26MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============================================>     ]  27.26MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============================================>     ]  27.26MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [=============================================>     ]  27.26MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============================================>   ]  28.31MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============================================>   ]  28.31MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============================================>   ]  28.31MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============================================>   ]  28.31MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============================================>   ]  28.31MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============================================>   ]  28.31MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [===============================================>   ]  28.31MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [================================================>  ]  29.36MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [================================================>  ]  29.36MB/30.06MB[4B[4A[2Kfcdb9667c46b: Downloading [================================================>  ]  29.36MB/30.06MB[4B[4A[2Kfcdb9667c46b: Download complete [4B[4A[2Kfcdb9667c46b: Extracting 1 s[4B[4A[2Kfcdb9667c46b: Extracting 1 s[4B[4A[2Kfcdb9667c46b: Extracting 1 s[4B[4A[2Kfcdb9667c46b: Extracting 1 s[4B[4A[2Kfcdb9667c46b: Extracting 1 s[4B[1A[2K93a672802593: Pull complete [1B[3A[2K8dcaf4f41922: Extracting 1 s[3B[4A[2Kfcdb9667c46b: Pull complete [4B[2A[2K3fdc970d6941: Pull complete [2B[3A[2K8dcaf4f41922: Pull complete [3B[5A[2K5e42bc20b98e: Pull complete [5BDigest: sha256:7b0a5cefbcdd085faa21533c21549e55a7e66f5aed40f8d1f4de13a017e352cd
+Status: Downloaded newer image for python:3.10.10-slim
+ ---> 7b0a5cefbcdd
+Step 2/11 : ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1     HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 TOKENIZERS_PARALLELISM=false     TZ=Asia/Shanghai
+ ---> Running in 27bd5c58196b
+ ---> Removed intermediate container 27bd5c58196b
+ ---> aa843de11bb4
+Step 3/11 : WORKDIR /app
+ ---> Running in d32b092b1eb1
+ ---> Removed intermediate container d32b092b1eb1
+ ---> 473072d2b812
+Step 4/11 : COPY requirements.txt ./
+ ---> 01d359c3da15
+Step 5/11 : RUN python -m pip install --no-cache-dir -r requirements.txt
+ ---> Running in b8e4aa6975f8
+Collecting streamlit==1.64.0
+  Downloading streamlit-1.64.0-py3-none-any.whl (10.1 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.1/10.1 MB 2.4 MB/s eta 0:00:00
+Collecting PyYAML==6.0.3
+  Downloading pyyaml-6.0.3-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (740 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 740.6/740.6 kB 4.1 MB/s eta 0:00:00
+Collecting PyMuPDF==1.28.2
+  Downloading pymupdf-1.28.2-cp310-abi3-manylinux_2_28_aarch64.whl (25.1 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 25.1/25.1 MB 5.2 MB/s eta 0:00:00
+Collecting langchain-core==0.3.29
+  Downloading langchain_core-0.3.29-py3-none-any.whl (411 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 411.6/411.6 kB 6.5 MB/s eta 0:00:00
+Collecting python-docx==1.1.2
+  Downloading python_docx-1.1.2-py3-none-any.whl (244 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 244.3/244.3 kB 4.2 MB/s eta 0:00:00
+Collecting langchain-text-splitters==0.3.5
+  Downloading langchain_text_splitters-0.3.5-py3-none-any.whl (31 kB)
+Collecting langchain-huggingface==0.1.2
+  Downloading langchain_huggingface-0.1.2-py3-none-any.whl (21 kB)
+Collecting sentence-transformers==3.3.1
+  Downloading sentence_transformers-3.3.1-py3-none-any.whl (268 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 268.8/268.8 kB 3.8 MB/s eta 0:00:00
+Collecting transformers==4.46.3
+  Downloading transformers-4.46.3-py3-none-any.whl (10.0 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.0/10.0 MB 4.3 MB/s eta 0:00:00
+Collecting tokenizers==0.20.3
+  Downloading tokenizers-0.20.3-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (2.9 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.9/2.9 MB 5.0 MB/s eta 0:00:00
+Collecting huggingface-hub==0.26.5
+  Downloading huggingface_hub-0.26.5-py3-none-any.whl (447 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 447.8/447.8 kB 4.0 MB/s eta 0:00:00
+Collecting torch==2.5.1
+  Downloading torch-2.5.1-cp310-cp310-manylinux2014_aarch64.whl (91.9 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 91.9/91.9 MB 4.1 MB/s eta 0:00:00
+Collecting scipy==1.14.1
+  Downloading scipy-1.14.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (35.6 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 35.6/35.6 MB 5.3 MB/s eta 0:00:00
+Collecting langchain-chroma==0.1.4
+  Downloading langchain_chroma-0.1.4-py3-none-any.whl (10 kB)
+Collecting chromadb==0.5.23
+  Downloading chromadb-0.5.23-py3-none-any.whl (628 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 628.3/628.3 kB 5.7 MB/s eta 0:00:00
+Collecting numpy==1.26.4
+  Downloading numpy-1.26.4-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (14.2 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 14.2/14.2 MB 4.9 MB/s eta 0:00:00
+Collecting posthog==3.25.0
+  Downloading posthog-3.25.0-py2.py3-none-any.whl (89 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 89.1/89.1 kB 5.3 MB/s eta 0:00:00
+Collecting rank-bm25==0.2.2
+  Downloading rank_bm25-0.2.2-py3-none-any.whl (8.6 kB)
+Collecting httpx==0.28.1
+  Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 73.5/73.5 kB 73.8 MB/s eta 0:00:00
+Collecting beautifulsoup4==4.12.3
+  Downloading beautifulsoup4-4.12.3-py3-none-any.whl (147 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 147.9/147.9 kB 8.5 MB/s eta 0:00:00
+Collecting typing-extensions<5,>=4.10.0
+  Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 45.6/45.6 kB 9.0 MB/s eta 0:00:00
+Collecting pydeck<1,>=0.8.0b4
+  Downloading pydeck-0.9.3-py2.py3-none-any.whl (11.4 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.4/11.4 MB 5.3 MB/s eta 0:00:00
+Collecting uvicorn<1,>=0.30.0
+  Downloading uvicorn-0.54.0-py3-none-any.whl (87 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 87.4/87.4 kB 4.8 MB/s eta 0:00:00
+Collecting pyarrow!=25.0.0,<26,>=7.0
+  Downloading pyarrow-25.0.1-cp310-cp310-manylinux_2_28_aarch64.whl (46.8 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 46.8/46.8 MB 4.7 MB/s eta 0:00:00
+Collecting pandas<4,>=1.4.0
+  Downloading pandas-2.3.3-cp310-cp310-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl (12.1 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.1/12.1 MB 3.0 MB/s eta 0:00:00
+Collecting starlette<2,>=0.46.0
+  Downloading starlette-1.7.0-py3-none-any.whl (78 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 79.0/79.0 kB 4.0 MB/s eta 0:00:00
+Collecting anyio<5,>=4.0.0
+  Downloading anyio-4.15.1-py3-none-any.whl (132 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 132.1/132.1 kB 2.3 MB/s eta 0:00:00
+Collecting protobuf<8,>=5.26.1
+  Downloading protobuf-7.36.2-cp310-abi3-manylinux2014_aarch64.whl (344 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 344.2/344.2 kB 4.7 MB/s eta 0:00:00
+Collecting packaging>=20
+  Downloading packaging-26.3-py3-none-any.whl (129 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 130.0/130.0 kB 3.5 MB/s eta 0:00:00
+Collecting requests<3,>=2.27
+  Downloading requests-2.34.2-py3-none-any.whl (73 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 73.1/73.1 kB 3.4 MB/s eta 0:00:00
+Collecting itsdangerous<3,>=2.1.2
+  Downloading itsdangerous-2.2.0-py3-none-any.whl (16 kB)
+Collecting python-multipart<1,>=0.0.10
+  Downloading python_multipart-0.0.32-py3-none-any.whl (30 kB)
+Collecting altair!=5.4.0,!=5.4.1,<7,>=5.0.0
+  Downloading altair-6.2.2-py3-none-any.whl (797 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 797.6/797.6 kB 2.4 MB/s eta 0:00:00
+Collecting toml<2,>=0.10.1
+  Downloading toml-0.10.2-py2.py3-none-any.whl (16 kB)
+Collecting watchdog<7,>=2.1.5
+  Downloading watchdog-6.0.0-py3-none-manylinux2014_aarch64.whl (79 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 79.1/79.1 kB 2.2 MB/s eta 0:00:00
+Collecting httptools<1,>=0.6.3
+  Downloading httptools-0.8.0-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (451 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 451.1/451.1 kB 2.0 MB/s eta 0:00:00
+Collecting click<9,>=7.0
+  Downloading click-8.5.0-py3-none-any.whl (125 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 125.3/125.3 kB 2.1 MB/s eta 0:00:00
+Collecting websockets<17,>=12.0.0
+  Downloading websockets-16.1.1-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (187 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 187.3/187.3 kB 1.8 MB/s eta 0:00:00
+Collecting pillow<13,>=7.1.0
+  Downloading pillow-12.3.0-cp310-cp310-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl (6.3 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.3/6.3 MB 1.7 MB/s eta 0:00:00
+Collecting langsmith<0.3,>=0.1.125
+  Downloading langsmith-0.2.11-py3-none-any.whl (326 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 326.9/326.9 kB 2.3 MB/s eta 0:00:00
+Collecting jsonpatch<2.0,>=1.33
+  Downloading jsonpatch-1.33-py2.py3-none-any.whl (12 kB)
+Collecting tenacity!=8.4.0,<10.0.0,>=8.1.0
+  Downloading tenacity-9.1.4-py3-none-any.whl (28 kB)
+Collecting pydantic<3.0.0,>=2.5.2
+  Downloading pydantic-2.13.5-py3-none-any.whl (472 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 472.6/472.6 kB 3.1 MB/s eta 0:00:00
+Collecting packaging>=20
+  Downloading packaging-24.2-py3-none-any.whl (65 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 65.5/65.5 kB 3.8 MB/s eta 0:00:00
+Collecting lxml>=3.1.0
+  Downloading lxml-6.1.3-cp310-cp310-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl (5.1 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.1/5.1 MB 2.9 MB/s eta 0:00:00
+Collecting tqdm
+  Downloading tqdm-4.70.1-py3-none-any.whl (80 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 80.2/80.2 kB 4.6 MB/s eta 0:00:00
+Collecting scikit-learn
+  Downloading scikit_learn-1.7.2-cp310-cp310-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl (9.5 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.5/9.5 MB 3.1 MB/s eta 0:00:00
+Collecting regex!=2019.12.17
+  Downloading regex-2026.9.29-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (793 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 793.1/793.1 kB 3.7 MB/s eta 0:00:00
+Collecting filelock
+  Downloading filelock-4.0.10-py3-none-any.whl (111 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 111.2/111.2 kB 3.2 MB/s eta 0:00:00
+Collecting safetensors>=0.4.1
+  Downloading safetensors-0.8.0-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (502 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 502.8/502.8 kB 3.2 MB/s eta 0:00:00
+Collecting fsspec>=2023.5.0
+  Downloading fsspec-2026.9.0-py3-none-any.whl (221 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 221.7/221.7 kB 1.7 MB/s eta 0:00:00
+Collecting networkx
+  Downloading networkx-3.4.2-py3-none-any.whl (1.7 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.7/1.7 MB 3.9 MB/s eta 0:00:00
+Collecting sympy==1.13.1
+  Downloading sympy-1.13.1-py3-none-any.whl (6.2 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.2/6.2 MB 4.8 MB/s eta 0:00:00
+Collecting jinja2
+  Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 134.9/134.9 kB 5.2 MB/s eta 0:00:00
+Collecting fastapi<1,>=0.95.2
+  Downloading fastapi-0.142.2-py3-none-any.whl (144 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 144.4/144.4 kB 5.8 MB/s eta 0:00:00
+Collecting onnxruntime>=1.14.1
+  Downloading onnxruntime-1.23.2-cp310-cp310-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl (15.2 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 15.2/15.2 MB 5.2 MB/s eta 0:00:00
+Collecting orjson>=3.9.12
+  Downloading orjson-3.12.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (131 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 131.1/131.1 kB 4.4 MB/s eta 0:00:00
+Collecting opentelemetry-api>=1.2.0
+  Downloading opentelemetry_api-1.45.0-py3-none-any.whl (60 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 60.0/60.0 kB 7.3 MB/s eta 0:00:00
+Collecting chroma-hnswlib==0.7.6
+  Downloading chroma_hnswlib-0.7.6-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (2.4 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.4/2.4 MB 4.5 MB/s eta 0:00:00
+Collecting typer>=0.9.0
+  Downloading typer-0.27.2-py3-none-any.whl (123 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 123.1/123.1 kB 7.2 MB/s eta 0:00:00
+Collecting grpcio>=1.58.0
+  Downloading grpcio-1.84.0-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.whl (7.0 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 7.0/7.0 MB 4.8 MB/s eta 0:00:00
+Collecting build>=1.0.3
+  Downloading build-1.6.1-py3-none-any.whl (31 kB)
+Collecting bcrypt>=4.0.1
+  Downloading bcrypt-5.0.0-cp39-abi3-manylinux_2_28_aarch64.whl (276 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 276.1/276.1 kB 5.1 MB/s eta 0:00:00
+Collecting kubernetes>=28.1.0
+  Downloading kubernetes-36.0.3-py2.py3-none-any.whl (4.6 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.6/4.6 MB 3.2 MB/s eta 0:00:00
+Collecting overrides>=7.3.1
+  Downloading overrides-7.7.0-py3-none-any.whl (17 kB)
+Collecting opentelemetry-instrumentation-fastapi>=0.41b0
+  Downloading opentelemetry_instrumentation_fastapi-0.66b0-py3-none-any.whl (14 kB)
+Collecting rich>=10.11.0
+  Downloading rich-15.0.0-py3-none-any.whl (310 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 310.7/310.7 kB 5.7 MB/s eta 0:00:00
+Collecting pypika>=0.48.9
+  Downloading pypika-0.51.1-py2.py3-none-any.whl (60 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 60.6/60.6 kB 14.9 MB/s eta 0:00:00
+Collecting mmh3>=4.0.1
+  Downloading mmh3-5.3.1-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (103 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 103.8/103.8 kB 6.0 MB/s eta 0:00:00
+Collecting opentelemetry-exporter-otlp-proto-grpc>=1.2.0
+  Downloading opentelemetry_exporter_otlp_proto_grpc-1.45.0-py3-none-any.whl (19 kB)
+Collecting importlib-resources
+  Downloading importlib_resources-7.1.0-py3-none-any.whl (37 kB)
+Collecting opentelemetry-sdk>=1.2.0
+  Downloading opentelemetry_sdk-1.45.0-py3-none-any.whl (140 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 140.1/140.1 kB 6.2 MB/s eta 0:00:00
+Collecting monotonic>=1.5
+  Downloading monotonic-1.6-py2.py3-none-any.whl (8.2 kB)
+Collecting python-dateutil>2.1
+  Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 229.9/229.9 kB 5.6 MB/s eta 0:00:00
+Collecting six>=1.5
+  Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+Collecting distro>=1.5.0
+  Downloading distro-1.9.0-py3-none-any.whl (20 kB)
+Collecting backoff>=1.10.0
+  Downloading backoff-2.2.1-py3-none-any.whl (15 kB)
+Collecting httpcore==1.*
+  Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 78.8/78.8 kB 11.7 MB/s eta 0:00:00
+Collecting idna
+  Downloading idna-3.20-py3-none-any.whl (69 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 69.6/69.6 kB 8.3 MB/s eta 0:00:00
+Collecting certifi
+  Downloading certifi-2026.7.22-py3-none-any.whl (136 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 137.0/137.0 kB 1.1 MB/s eta 0:00:00
+Collecting soupsieve>1.2
+  Downloading soupsieve-2.10-py3-none-any.whl (38 kB)
+Collecting h11>=0.16
+  Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+Collecting mpmath<1.4,>=1.1.0
+  Downloading mpmath-1.3.0-py3-none-any.whl (536 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 536.2/536.2 kB 467.5 kB/s eta 0:00:00
+Collecting narwhals>=2.4.0
+  Downloading narwhals-2.26.0-py3-none-any.whl (474 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 474.0/474.0 kB 1.0 MB/s eta 0:00:00
+Collecting jsonschema>=3.0
+  Downloading jsonschema-4.26.0-py3-none-any.whl (90 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 90.6/90.6 kB 2.5 MB/s eta 0:00:00
+Collecting exceptiongroup>=1.0.2
+  Downloading exceptiongroup-1.3.1-py3-none-any.whl (16 kB)
+Collecting tomli>=1.1.0
+  Downloading tomli-2.4.1-py3-none-any.whl (14 kB)
+Collecting pyproject_hooks
+  Downloading pyproject_hooks-1.3.3-py3-none-any.whl (10 kB)
+Collecting annotated-doc>=0.0.2
+  Downloading annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)
+Collecting typing-inspection>=0.4.2
+  Downloading typing_inspection-0.4.4-py3-none-any.whl (14 kB)
+Collecting jsonpointer>=1.9
+  Downloading jsonpointer-3.1.1-py3-none-any.whl (7.7 kB)
+Collecting websocket-client!=0.40.0,!=0.41.*,!=0.42.*,>=0.32.0
+  Downloading websocket_client-1.9.2-py3-none-any.whl (95 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 95.8/95.8 kB 1.4 MB/s eta 0:00:00
+Collecting requests-oauthlib
+  Downloading requests_oauthlib-2.0.0-py2.py3-none-any.whl (24 kB)
+Collecting urllib3!=2.6.0,>=1.24.2
+  Downloading urllib3-2.8.0-py3-none-any.whl (135 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 135.7/135.7 kB 564.9 kB/s eta 0:00:00
+Collecting aiohttp<4.0.0,>=3.13.5
+  Downloading aiohttp-3.14.3-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (1.7 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.7/1.7 MB 1.4 MB/s eta 0:00:00
+Collecting durationpy>=0.7
+  Downloading durationpy-0.11-py3-none-any.whl (4.1 kB)
+Collecting requests-toolbelt<2.0.0,>=1.0.0
+  Downloading requests_toolbelt-1.0.0-py2.py3-none-any.whl (54 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 54.5/54.5 kB 4.9 MB/s eta 0:00:00
+Collecting flatbuffers
+  Downloading flatbuffers-25.12.19-py2.py3-none-any.whl (26 kB)
+Collecting coloredlogs
+  Downloading coloredlogs-15.0.1-py2.py3-none-any.whl (46 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 46.0/46.0 kB 2.0 MB/s eta 0:00:00
+Collecting googleapis-common-protos~=1.57
+  Downloading googleapis_common_protos-1.75.5-py3-none-any.whl (307 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 307.7/307.7 kB 889.8 kB/s eta 0:00:00
+Collecting opentelemetry-exporter-otlp-proto-common==1.45.0
+  Downloading opentelemetry_exporter_otlp_proto_common-1.45.0-py3-none-any.whl (15 kB)
+Collecting opentelemetry-proto==1.45.0
+  Downloading opentelemetry_proto-1.45.0-py3-none-any.whl (72 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 72.5/72.5 kB 1.6 MB/s eta 0:00:00
+Collecting opentelemetry-exporter-otlp-common==0.66b0
+  Downloading opentelemetry_exporter_otlp_common-0.66b0-py3-none-any.whl (12 kB)
+Collecting opentelemetry-instrumentation-asgi==0.66b0
+  Downloading opentelemetry_instrumentation_asgi-0.66b0-py3-none-any.whl (15 kB)
+Collecting opentelemetry-instrumentation==0.66b0
+  Downloading opentelemetry_instrumentation-0.66b0-py3-none-any.whl (36 kB)
+Collecting opentelemetry-util-http==0.66b0
+  Downloading opentelemetry_util_http-0.66b0-py3-none-any.whl (8.4 kB)
+Collecting opentelemetry-semantic-conventions==0.66b0
+  Downloading opentelemetry_semantic_conventions-0.66b0-py3-none-any.whl (206 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 206.3/206.3 kB 1.6 MB/s eta 0:00:00
+Collecting wrapt<3.0.0,>=1.0.0
+  Downloading wrapt-2.5.0-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (232 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 232.7/232.7 kB 1.6 MB/s eta 0:00:00
+Collecting asgiref~=3.0
+  Downloading asgiref-3.12.1-py3-none-any.whl (25 kB)
+Collecting pytz>=2020.1
+  Downloading pytz-2026.5-py2.py3-none-any.whl (506 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 506.3/506.3 kB 627.7 kB/s eta 0:00:00
+Collecting tzdata>=2022.7
+  Downloading tzdata-2026.5-py2.py3-none-any.whl (347 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 348.0/348.0 kB 530.6 kB/s eta 0:00:00
+Collecting annotated-types>=0.6.0
+  Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
+Collecting pydantic-core==2.46.5
+  Downloading pydantic_core-2.46.5-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (2.0 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.0/2.0 MB 1.2 MB/s eta 0:00:00
+Collecting MarkupSafe>=2.0
+  Downloading markupsafe-3.0.4-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (22 kB)
+Collecting charset_normalizer<4,>=2
+  Downloading charset_normalizer-3.5.2-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (260 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 260.9/260.9 kB 832.6 kB/s eta 0:00:00
+Collecting markdown-it-py>=2.2.0
+  Downloading markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 91.7/91.7 kB 843.6 kB/s eta 0:00:00
+Collecting pygments<3.0.0,>=2.13.0
+  Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 1.4 MB/s eta 0:00:00
+Collecting shellingham>=1.3.0
+  Downloading shellingham-1.5.4-py2.py3-none-any.whl (9.8 kB)
+Collecting python-dotenv>=0.13
+  Downloading python_dotenv-1.2.4-py3-none-any.whl (23 kB)
+Collecting uvloop>=0.15.1
+  Downloading uvloop-0.23.0-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (3.8 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.8/3.8 MB 1.7 MB/s eta 0:00:00
+Collecting watchfiles>=0.20
+  Downloading watchfiles-1.3.0-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (454 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 455.0/455.0 kB 1.5 MB/s eta 0:00:00
+Collecting threadpoolctl>=3.1.0
+  Downloading threadpoolctl-3.7.0-py3-none-any.whl (26 kB)
+Collecting joblib>=1.2.0
+  Downloading joblib-1.6.0-py3-none-any.whl (306 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 306.1/306.1 kB 2.4 MB/s eta 0:00:00
+Collecting attrs>=17.3.0
+  Downloading attrs-26.1.0-py3-none-any.whl (67 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 67.5/67.5 kB 2.4 MB/s eta 0:00:00
+Collecting async-timeout<6.0,>=4.0
+  Downloading async_timeout-5.0.1-py3-none-any.whl (6.2 kB)
+Collecting frozenlist>=1.1.1
+  Downloading frozenlist-1.8.0-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (221 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 221.6/221.6 kB 1.2 MB/s eta 0:00:00
+Collecting aiosignal>=1.4.0
+  Downloading aiosignal-1.4.0-py3-none-any.whl (7.5 kB)
+Collecting aiohappyeyeballs>=2.5.0
+  Downloading aiohappyeyeballs-2.7.1-py3-none-any.whl (15 kB)
+Collecting multidict<7.0,>=4.5
+  Downloading multidict-6.9.1-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (298 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 298.8/298.8 kB 1.2 MB/s eta 0:00:00
+Collecting yarl<2.0,>=1.17.0
+  Downloading yarl-1.25.1-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (116 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 116.8/116.8 kB 5.6 MB/s eta 0:00:00
+Collecting propcache>=0.2.0
+  Downloading propcache-0.5.4-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (226 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 226.8/226.8 kB 2.5 MB/s eta 0:00:00
+Collecting cloudpickle>=3.0
+  Downloading cloudpickle-3.1.2-py3-none-any.whl (22 kB)
+Collecting jsonschema-specifications>=2023.03.6
+  Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl (18 kB)
+Collecting referencing>=0.28.4
+  Downloading referencing-0.37.0-py3-none-any.whl (26 kB)
+Collecting rpds-py>=0.25.0
+  Downloading rpds_py-0.30.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (389 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 389.7/389.7 kB 1.1 MB/s eta 0:00:00
+Collecting mdurl~=0.1
+  Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+Collecting humanfriendly>=9.1
+  Downloading humanfriendly-10.0-py2.py3-none-any.whl (86 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 86.8/86.8 kB 1.6 MB/s eta 0:00:00
+Collecting oauthlib>=3.0.0
+  Downloading oauthlib-4.0.0-py3-none-any.whl (159 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 159.7/159.7 kB 1.5 MB/s eta 0:00:00
+Installing collected packages: pytz, mpmath, monotonic, flatbuffers, durationpy, wrapt, websockets, websocket-client, watchdog, uvloop, urllib3, tzdata, typing-extensions, tqdm, tomli, toml, threadpoolctl, tenacity, sympy, soupsieve, six, shellingham, safetensors, rpds-py, regex, PyYAML, python-multipart, python-dotenv, pyproject_hooks, PyMuPDF, pygments, pyarrow, protobuf, propcache, pillow, packaging, overrides, orjson, opentelemetry-util-http, oauthlib, numpy, networkx, narwhals, mmh3, mdurl, MarkupSafe, lxml, jsonpointer, itsdangerous, importlib-resources, idna, humanfriendly, httptools, h11, fsspec, frozenlist, filelock, distro, cloudpickle, click, charset_normalizer, certifi, bcrypt, backoff, attrs, async-timeout, annotated-types, annotated-doc, aiohappyeyeballs, uvicorn, typing-inspection, scipy, requests, referencing, rank-bm25, python-docx, python-dateutil, pypika, pydantic-core, opentelemetry-proto, opentelemetry-api, multidict, markdown-it-py, jsonpatch, joblib, jinja2, httpcore, grpcio, googleapis-common-protos, exceptiongroup, coloredlogs, chroma-hnswlib, build, beautifulsoup4, asgiref, aiosignal, yarl, torch, scikit-learn, rich, requests-toolbelt, requests-oauthlib, pydeck, pydantic, posthog, pandas, opentelemetry-semantic-conventions, opentelemetry-exporter-otlp-proto-common, onnxruntime, jsonschema-specifications, huggingface-hub, anyio, watchfiles, typer, tokenizers, starlette, opentelemetry-sdk, opentelemetry-instrumentation, jsonschema, httpx, aiohttp, transformers, opentelemetry-instrumentation-asgi, opentelemetry-exporter-otlp-common, langsmith, kubernetes, fastapi, altair, streamlit, sentence-transformers, opentelemetry-instrumentation-fastapi, opentelemetry-exporter-otlp-proto-grpc, langchain-core, langchain-text-splitters, langchain-huggingface, chromadb, langchain-chroma
+Successfully installed MarkupSafe-3.0.4 PyMuPDF-1.28.2 PyYAML-6.0.3 aiohappyeyeballs-2.7.1 aiohttp-3.14.3 aiosignal-1.4.0 altair-6.2.2 annotated-doc-0.0.5 annotated-types-0.8.0 anyio-4.15.1 asgiref-3.12.1 async-timeout-5.0.1 attrs-26.1.0 backoff-2.2.1 bcrypt-5.0.0 beautifulsoup4-4.12.3 build-1.6.1 certifi-2026.7.22 charset_normalizer-3.5.2 chroma-hnswlib-0.7.6 chromadb-0.5.23 click-8.5.0 cloudpickle-3.1.2 coloredlogs-15.0.1 distro-1.9.0 durationpy-0.11 exceptiongroup-1.3.1 fastapi-0.142.2 filelock-4.0.10 flatbuffers-25.12.19 frozenlist-1.8.0 fsspec-2026.9.0 googleapis-common-protos-1.75.5 grpcio-1.84.0 h11-0.16.0 httpcore-1.0.9 httptools-0.8.0 httpx-0.28.1 huggingface-hub-0.26.5 humanfriendly-10.0 idna-3.20 importlib-resources-7.1.0 itsdangerous-2.2.0 jinja2-3.1.6 joblib-1.6.0 jsonpatch-1.33 jsonpointer-3.1.1 jsonschema-4.26.0 jsonschema-specifications-2025.9.1 kubernetes-36.0.3 langchain-chroma-0.1.4 langchain-core-0.3.29 langchain-huggingface-0.1.2 langchain-text-splitters-0.3.5 langsmith-0.2.11 lxml-6.1.3 markdown-it-py-4.2.0 mdurl-0.1.2 mmh3-5.3.1 monotonic-1.6 mpmath-1.3.0 multidict-6.9.1 narwhals-2.26.0 networkx-3.4.2 numpy-1.26.4 oauthlib-4.0.0 onnxruntime-1.23.2 opentelemetry-api-1.45.0 opentelemetry-exporter-otlp-common-0.66b0 opentelemetry-exporter-otlp-proto-common-1.45.0 opentelemetry-exporter-otlp-proto-grpc-1.45.0 opentelemetry-instrumentation-0.66b0 opentelemetry-instrumentation-asgi-0.66b0 opentelemetry-instrumentation-fastapi-0.66b0 opentelemetry-proto-1.45.0 opentelemetry-sdk-1.45.0 opentelemetry-semantic-conventions-0.66b0 opentelemetry-util-http-0.66b0 orjson-3.12.0 overrides-7.7.0 packaging-24.2 pandas-2.3.3 pillow-12.3.0 posthog-3.25.0 propcache-0.5.4 protobuf-7.36.2 pyarrow-25.0.1 pydantic-2.13.5 pydantic-core-2.46.5 pydeck-0.9.3 pygments-2.21.0 pypika-0.51.1 pyproject_hooks-1.3.3 python-dateutil-2.9.0.post0 python-docx-1.1.2 python-dotenv-1.2.4 python-multipart-0.0.32 pytz-2026.5 rank-bm25-0.2.2 referencing-0.37.0 regex-2026.9.29 requests-2.34.2 requests-oauthlib-2.0.0 requests-toolbelt-1.0.0 rich-15.0.0 rpds-py-0.30.0 safetensors-0.8.0 scikit-learn-1.7.2 scipy-1.14.1 sentence-transformers-3.3.1 shellingham-1.5.4 six-1.17.0 soupsieve-2.10 starlette-1.7.0 streamlit-1.64.0 sympy-1.13.1 tenacity-9.1.4 threadpoolctl-3.7.0 tokenizers-0.20.3 toml-0.10.2 tomli-2.4.1 torch-2.5.1 tqdm-4.70.1 transformers-4.46.3 typer-0.27.2 typing-extensions-4.16.0 typing-inspection-0.4.4 tzdata-2026.5 urllib3-2.8.0 uvicorn-0.54.0 uvloop-0.23.0 watchdog-6.0.0 watchfiles-1.3.0 websocket-client-1.9.2 websockets-16.1.1 wrapt-2.5.0 yarl-1.25.1
+[91mWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+[0m[91m
+[notice] A new release of pip available: 22.3.1 -> 26.2.1
+[notice] To update, run: pip install --upgrade pip
+[0m ---> Removed intermediate container b8e4aa6975f8
+ ---> 3f5baa6abf79
+Step 6/11 : COPY config.yaml ./
+ ---> e399929838b2
+Step 7/11 : COPY src ./src
+ ---> f85397bf724d
+Step 8/11 : EXPOSE 8501
+ ---> Running in b16dd554a49e
+ ---> Removed intermediate container b16dd554a49e
+ ---> 98cd7e7d2313
+Step 9/11 : HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3     CMD python -c "from urllib.request import urlopen; urlopen('http://127.0.0.1:8501/_stcore/health', timeout=3)"
+ ---> Running in 7d56b624bbb2
+ ---> Removed intermediate container 7d56b624bbb2
+ ---> cc0827cee0a1
+Step 10/11 : CMD ["python", "-m", "streamlit", "run", "src/frontend/app.py", "--server.address=0.0.0.0", "--server.port=8501", "--browser.gatherUsageStats=false"]
+ ---> Running in 65270cf540a6
+ ---> Removed intermediate container 65270cf540a6
+ ---> d0e74203f94e
+Step 11/11 : LABEL com.docker.compose.image.builder=classic
+ ---> Running in 0d109e56bcb2
+ ---> Removed intermediate container 0d109e56bcb2
+ ---> c49a01dc1e34
+Successfully built c49a01dc1e34
+Successfully tagged rag-agent-verify-app:latest
+ Image rag-agent-verify-app Built 
+ Image rag-agent-verify-app Built 

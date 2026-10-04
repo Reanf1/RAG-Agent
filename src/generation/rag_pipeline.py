@@ -5,13 +5,12 @@ import math
 import re
 import json
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlparse
 from urllib.request import ProxyHandler, Request, build_opener
 
 from langchain_core.documents import Document
 
 from src.generation.prompt_template import NO_CONTEXT_TEXT, build_rag_messages
-from src.utils.config import load_config
+from src.utils.config import load_config, ollama_base_url
 from src.utils.messages import messages_to_ollama
 
 # 本机模型直接连接，避免系统 HTTP 代理改变故障类型或转发论文内容。
@@ -82,11 +81,7 @@ def _build_generation_request(question: str, context: dict, options: dict | None
     if context.get("generation_mode") == "low" and not context.get("confirmed"):
         raise ValueError("检索结果相关性低，请先查看候选原文并确认是否继续")
     config = load_config()["llm"]
-    url = urlparse(config["base_url"])
-    if config["provider"] != "ollama" or url.scheme != "http" or url.hostname not in {
-        "localhost", "127.0.0.1", "::1"
-    } or url.username or url.password or url.query or url.fragment:
-        raise ValueError("本项目生成接口只允许本机 Ollama HTTP 服务")
+    ollama_base_url(config)
     sampling = {key: config[key] for key in
                 ("temperature", "top_p", "top_k", "num_ctx", "num_predict", "repeat_penalty")}
     if options:

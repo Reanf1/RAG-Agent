@@ -1,4 +1,4 @@
-# 当前只启动初始化页面；模型与索引服务尚未接入。
+# 单个Streamlit业务应用，本地Ollama负责推理；Chroma与SQLite仍为应用内文件。
 services:
   app:
     build:
@@ -6,3 +6,35 @@ services:
       dockerfile: docker/Dockerfile
     ports:
       - "127.0.0.1:8501:8501"
+    environment:
+      RAG_OLLAMA_BASE_URL: http://ollama:11434
+      STREAMLIT_BROWSER_GATHER_USAGE_STATS: "false"
+    volumes:
+      - ../config.yaml:/app/config.yaml:ro
+      - ../data:/app/data
+      - ../logs:/app/logs
+    depends_on:
+      ollama:
+        condition: service_healthy
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:0.34.0
+    environment:
+      OLLAMA_HOST: 0.0.0.0:11434
+      OLLAMA_NO_CLOUD: "1"
+    volumes:
+      - ../data/models/ollama/models:/root/.ollama/models
+    # 不向宿主机或局域网开放模型端口。
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
+      retries: 6
+    restart: unless-stopped
+
+# 权重和镜像准备后，业务网络仅供两个本地容器通信。
+networks:
+  default:
+    internal: true

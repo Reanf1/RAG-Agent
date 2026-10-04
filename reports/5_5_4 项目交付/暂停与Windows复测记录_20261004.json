@@ -1,0 +1,20 @@
+{
+  "status": "paused",
+  "paused_at": "2026-10-04T16:15:28.992484+08:00",
+  "reason": "用户要求暂停Mac部署和测试，待Windows部署后重新验证；Mac速度不作为最终性能依据。",
+  "stopped_processes": {
+    "parallel_evaluation": 29083,
+    "temporary_streamlit": 98579,
+    "ollama": 94228,
+    "model_runner": 95319
+  },
+  "colima": "rag-agent Stopped",
+  "docker_context": "default",
+  "parallel_completed_rows": 3,
+  "parallel_planned_rows": 12,
+  "routing_completed_requests": 144,
+  "container_business_validation": "未执行；待Windows部署",
+  "mac_performance": "仅保留开发记录，不作为最终Windows性能结论",
+  "pending_function_issue": "时间+关键词前两条仅调用keyword_extract，遗漏current_time；保留实际失败，待恢复时复现并修复，不将模型自报完成当成功。",
+  "human_review_scope": "基线120条及优化后60条；180条待评"
+}

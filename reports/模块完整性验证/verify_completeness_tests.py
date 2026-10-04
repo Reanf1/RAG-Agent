@@ -17,6 +17,7 @@ MODULE_FOUR_CLASSES = {
     "TestStreamingFrontend", "TestConversationHistory", "TestSessionIsolation",
     "TestRAGSearchRouting", "TestAgentMemoryContext", "TestAgentMetrics",
     "TestAgentTraceMetrics", "TestAgentMetricsEntryAndPage",
+    "TestAgentStreaming", "TestCitationPage", "TestContainerLocalAddress",
 }
 
 

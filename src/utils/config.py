@@ -1,6 +1,7 @@
 """读取唯一YAML配置，按需检查本地模型服务和向量数据库。"""
 
 from datetime import datetime
+import os
 from pathlib import Path
 from time import perf_counter
 from urllib.parse import urlparse
@@ -14,7 +15,23 @@ def load_config() -> dict:
     """按模块位置定位项目根目录，返回配置字典。"""
     path = Path(__file__).resolve().parents[2] / "config.yaml"
     with path.open(encoding="utf-8") as config_file:
-        return yaml.safe_load(config_file)
+        config = yaml.safe_load(config_file)
+    # 容器使用同一YAML，仅服务地址按Compose的本地网络覆盖。
+    if os.environ.get("RAG_OLLAMA_BASE_URL"):
+        config["llm"]["base_url"] = os.environ["RAG_OLLAMA_BASE_URL"]
+    return config
+
+
+def ollama_base_url(settings: dict) -> str:
+    """只允许回环服务或容器内固定的本地Ollama服务名，拒绝云端地址。"""
+    url = urlparse(settings["base_url"])
+    hosts = {"localhost", "127.0.0.1", "::1"}
+    if Path("/.dockerenv").is_file():
+        hosts.add("ollama")
+    if (settings["provider"] != "ollama" or url.scheme != "http" or url.hostname not in hosts
+            or url.username or url.password or url.query or url.fragment):
+        raise ValueError("只允许本机 Ollama HTTP 服务或本地容器ollama服务")
+    return settings["base_url"].rstrip("/")
 
 
 def check_health() -> dict:
@@ -29,12 +46,10 @@ def check_health() -> dict:
     try:
         settings = config["llm"]
         llm["model"] = settings["model"]
-        url = urlparse(settings["base_url"])
-        if settings["provider"] != "ollama" or url.scheme != "http" or url.hostname not in {"localhost", "127.0.0.1", "::1"}:
-            raise ValueError("健康检查仅支持本地HTTP Ollama服务")
+        base_url = ollama_base_url(settings)
         # 不使用环境代理、不跟随重定向，避免检查请求离开配置的本地服务。
         with httpx.Client(timeout=3, trust_env=False, follow_redirects=False) as client:
-            response = client.get(settings["base_url"].rstrip("/") + "/api/tags")
+            response = client.get(base_url + "/api/tags")
             response.raise_for_status()
             llm["service_reachable"] = True
             models = response.json()["models"]

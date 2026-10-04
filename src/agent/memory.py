@@ -341,7 +341,8 @@ class MemoryManager:
             connection.execute("DELETE FROM messages WHERE session_id=?", (session_id,))
 
 
-def run_session(question: str, user_id: str, session_id: str, tools=None, *, memory: MemoryManager | None = None):
+def run_session(question: str, user_id: str, session_id: str, tools=None, *, memory: MemoryManager | None = None,
+                stream: bool = False):
     """有记忆的Agent入口：先校验归属，只从当前会话重建历史Context。
 
     不接收外部执行Context，避免误传其他会话的工具结果或恢复状态。
@@ -355,7 +356,8 @@ def run_session(question: str, user_id: str, session_id: str, tools=None, *, mem
     _nonempty(question, "question")
     memory = memory if memory is not None else MemoryManager()
     context = memory.get_context(user_id, session_id)
-    for event in run_react(question, tools, context):
+    events = run_react(question, tools, context, stream=True) if stream else run_react(question, tools, context)
+    for event in events:
         if event["type"] == "done":
             if "metrics" in event:
                 event["metrics"]["response_seconds"] = perf_counter() - started
@@ -365,7 +367,7 @@ def run_session(question: str, user_id: str, session_id: str, tools=None, *, mem
                                details={"task_complete": event["task_complete"],
                                         "stop_reason": event["stop_reason"], "event": snapshot})
         event = {**event, "user_id": user_id, "session_id": session_id}
-        if "metrics" in event:
+        if "metrics" in event and event["type"] != "token":
             event["metrics"]["response_seconds"] = perf_counter() - started  # 包括记忆准备和最终保存。
             try:
                 record_agent_request(question, event)

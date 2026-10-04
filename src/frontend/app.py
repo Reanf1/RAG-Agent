@@ -16,7 +16,7 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 from src.data_loader import LOADERS, create_import_tasks
-from src.frontend.components.documents import list_documents, delete_document, restore_document
+from src.frontend.components.documents import list_documents, delete_document, restore_document, read_pdf_page
 from src.frontend.components.trace import trace_graph
 from src.agent import run_session
 from src.frontend.components.sessions import render_sessions
@@ -33,6 +33,31 @@ from src.utils.config import check_health, load_config
 
 config = load_config()
 app_config = config["app"]
+
+
+@st.dialog("引用原文页", width="large")
+def show_original_page(reference):
+    """直接打开引用对应的真实PDF页，并提供原文下载；不新增HTTP服务。"""
+    try:
+        page = read_pdf_page(project_root / config["paths"]["raw_documents"], reference)
+        st.caption(f"{page['filename']} · 第{page['page_number']}页（物理页码）")
+        st.image(page["image"], width="stretch")
+        st.download_button("下载原始PDF", page["pdf"], file_name=page["filename"], mime="application/pdf")
+    except (OSError, ValueError, KeyError) as error:
+        st.error(f"无法打开引用原文：{error}")
+
+
+def show_agent_sources(event):
+    """本轮和持久化历史共用引用入口，各工具调用分别标识。"""
+    for item in event.get("context", {}).get("observations", []):
+        result = item.get("result")
+        for reference in result.get("citations", []) if isinstance(result, dict) else []:
+            if Path(reference["source_file"]).suffix.lower() == ".pdf" and "page_number" in reference["metadata"]:
+                key = f"agent-citation:{event['request_id']}:{item.get('call_id')}:{reference['id']}"
+                if st.button(f"查看{reference['source_file']} · {reference['location']}", key=key):
+                    show_original_page(reference)
+
+
 raw_dir = project_root / config["paths"]["raw_documents"]
 index_dir = project_root / config["paths"]["vector_index"]
 max_file_size_mb = config["importing"]["max_file_size_mb"]
@@ -219,6 +244,7 @@ with agent_tab:
             st.markdown(previous["answer"])
             if previous["complete"] is False:
                 st.warning(f"任务未完成：{previous['stop_reason']}")
+            show_agent_sources(previous.get("event", {}))
     agent_user_panel = st.empty()
     agent_answer_panel = st.empty()
     with st.form("agent_metrics_form"):
@@ -275,6 +301,10 @@ with rag_tab:
             with st.expander(f"参考文档{reference['id']} · {reference['source_file'] or '来源信息未提供'} · {reference['location']}"):
                 st.caption(f"块 ID：{reference['metadata'].get('chunk_id', '')}；仅展示本轮送入模型的原文证据。")
                 st.text(reference["text"])
+                if Path(reference["source_file"]).suffix.lower() == ".pdf" and "page_number" in reference["metadata"]:
+                    key = f"citation:{message.get('request_id', id(message))}:{reference['id']}"
+                    if st.button("查看引用原文页", key=key):
+                        show_original_page(reference)
 
 
     def generate_message(message, context, retriever, scope, placeholder):
@@ -520,6 +550,7 @@ def show_agent_metrics(event, show_answer=True):
             st.markdown(event["full_response"])
             if not event["task_complete"]:
                 st.warning(f"任务未完成：{event['stop_reason']}")
+            show_agent_sources(event)
 
 
 if agent_submitted:
@@ -531,12 +562,17 @@ if agent_submitted:
             st.markdown(agent_question.strip())
         try:
             for event in run_session(agent_question.strip(), st.session_state.agent_user_id,
-                                     st.session_state.agent_session_id, memory=st.session_state.agent_memory):
+                                     st.session_state.agent_session_id, memory=st.session_state.agent_memory, stream=True):
                 st.session_state.agent_last_event = event
+                if event["type"] == "token":
+                    with agent_answer_panel.container(), st.chat_message("assistant"):
+                        st.markdown(event["answer"])
+                        st.caption("正在生成，完成状态与引用以最终校验结果为准。")
+                    continue
                 if event["type"] == "done":
                     st.session_state.agent_messages.append({"question": agent_question.strip(),
                         "answer": event["full_response"], "complete": event["task_complete"],
-                        "stop_reason": event["stop_reason"]})
+                        "stop_reason": event["stop_reason"], "event": event})
                 show_agent_metrics(event)
                 show_retrieval_metrics()
             if st.session_state.get("agent_last_event", {}).get("type") == "done":
@@ -581,7 +617,7 @@ with st.expander("知识库管理面板"):
 
 st.subheader("检索实验与服务维护")
 st.subheader("文档 Top-K 检索")
-st.caption("此处只检索文档块；可选向量、BM25、RRF 或 RRF + 模型重排。各类分数不可直接比较，也不是命中概率。生成答案请使用下方 RAG 问答。")
+st.caption("此处只检索文档块；可选向量、BM25、RRF 或 RRF + 模型重排。各类分数不可直接比较，也不是命中概率。生成答案请使用上方 RAG 问答。")
 with st.form("vector_search_form"):
     method = st.selectbox("检索方式", ["向量相似度", "BM25 关键词", "RRF 混合检索", "RRF + 模型重排"], key="retrieval_method")
     query = st.text_input("查询内容（支持中英文）", key="vector_query")
@@ -682,15 +718,15 @@ if "rag_log_error" in st.session_state:
 st.subheader("模块开发状态")
 st.table(
     [
-        {"模块": "一：文档处理与检索", "状态": "部分实现", "范围": "已实现批量导入、分块、增量索引、向量/BM25/RRF 与模型重排；三档质量已评测，分块召回对比待完成"},
+        {"模块": "一：文档处理与检索", "状态": "已实现", "范围": "批量导入、三种分块、增量索引、向量/BM25/RRF 与模型重排；五组分块及三档检索质量已实际评测"},
         {"模块": "二：RAG 生成", "状态": "已实现", "范围": "已实现 Prompt、上下文/引用、本地生成、流式、缓存、降级、请求日志与分数分布，完成参数对照；独立答案质量评测待完成"},
         {"模块": "三：Agent 决策", "状态": "已实现", "范围": "有界ReAct、八个本地工具、路由/并行/恢复、会话隔离与窗口/摘要记忆"},
-        {"模块": "四：系统集成与前端", "状态": "部分实现", "范围": "已有文档入库、RAG/Agent问答、会话记忆、决策轨迹、实时指标与健康检查；已支持文档列表、回收删除和恢复；已支持历史会话新建/切换/回收删除与恢复"},
-        {"模块": "五：评测与交付", "状态": "部分实现", "范围": "已有三档检索实测、图表与 Excel；完整系统评测待完成"},
+        {"模块": "四：系统集成与前端", "状态": "已实现", "范围": "文档/会话管理与回收恢复、RAG/Agent正文流式、引用原文物理页、记忆、公开轨迹、实时指标与健康检查"},
+        {"模块": "五：评测与交付", "状态": "人工评分待完成", "范围": "已有12篇/60题、检索与Agent实际评测、图表及Bad Case优化；基线120条和优化60条的人工质量评分待评阅"},
     ]
 )
-st.subheader("下一步")
-st.write("后续继续分块召回对比和 Agent 等课程要求；独立答案质量评测仍保留。")
+st.subheader("评阅说明")
+st.write("功能测试、检索命中和模型自报完成均不能代替人工答案评分。180条实际答案按正确性、完整性和引用准确性评阅。")
 with st.sidebar:
     st.header("课程资料")
     st.write("南京农业大学生产实习课程实践")
