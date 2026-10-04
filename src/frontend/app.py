@@ -170,6 +170,11 @@ library = None  # 读取失败保持未知，不能显示为正常空库。
 library_error = ""
 with st.sidebar:
     st.subheader("知识库文档")
+    # 四字确认文字不换行，按钮保持原“删除”的54×40像素尺寸。
+    st.html("""<style>
+        .st-key-confirm_delete_document button {padding: 0 1px; height: 40px;}
+        .st-key-confirm_delete_document button p {font-size: 12px; white-space: nowrap;}
+    </style>""")
     if "document_notice" in st.session_state:
         st.info(st.session_state.pop("document_notice"))
     try:
@@ -184,7 +189,7 @@ with st.sidebar:
         confirm_delete = cancel_delete = False
         for document in library:
             pending = st.session_state.get("delete_pending") == document["doc_id"]
-            details, actions = st.columns([1, 1] if pending else [3, 1], vertical_alignment="center")
+            details, actions = st.columns([3, 1], vertical_alignment="center")
             with details:
                 st.markdown(f"**{document['name']}**")
                 st.caption(f"{document['doc_id'][:12]}… · {document['chunks']} 块 · "
@@ -192,10 +197,10 @@ with st.sidebar:
                            + ("原文已保存" if document["source_available"] else "原文缺失"))
             with actions:
                 if pending:
-                    confirm_delete = st.button("确认删除", key="confirm_delete_document", width="stretch")
-                    cancel_delete = st.button("取消", key="cancel_delete_document", width="stretch")
+                    confirm_delete = st.button("确认删除", key="confirm_delete_document", width=54)
+                    cancel_delete = st.button("取消", key="cancel_delete_document", width=54)
                 elif st.button("删除", key=f"delete_document:{document['doc_id']}",
-                             help=f"删除{document['name']}", disabled=not document["source_available"]):
+                             help=f"删除{document['name']}", disabled=not document["source_available"], width=54):
                     st.session_state.delete_pending = document["doc_id"]
                     st.rerun()
         # 刷新放在文档列表下方、已归档知识上方。
