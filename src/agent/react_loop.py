@@ -387,6 +387,45 @@ def _partial_observation_answer(raw: str) -> str:
     return ""
 
 
+def _structured_tool_observation(question: str, tools: list[BaseTool], observations: list[dict]) -> dict | None:
+    """明确单一摘要/对比任务保留工具报告，避免再次改写丢失栏目、引用或限制。
+
+    文献列表只是查ID；其他工具或后续分析属于组合任务，仍交给模型观察。
+    """
+    items = [item for item in observations if item.get("name") != "paper_list"]
+    if len(items) != 1 or items[0].get("status") != "success":
+        return None
+    item = items[0]
+    name, evidence = item.get("name"), item.get("result")
+    plan = route_question(question, tools)
+    if (name not in {"paper_summary", "paper_compare"} or not plan or plan.get("tool_name") != name
+            or plan.get("parallel_tools") or re.search(r"为什么|原因|推荐|更好|更优|优劣|然后|再|另外|\b(?:why|better|recommend|then)\b", question, re.I)
+            or not isinstance(evidence, dict) or evidence.get("status") not in {"answered", "insufficient_evidence"}
+            or not evidence.get("citations") or not isinstance(evidence.get("answer"), str) or not evidence["answer"].strip()):
+        return None
+    if name == "paper_summary":
+        if set(evidence.get("sections", {})) != {"background", "method", "results", "conclusion"}:
+            return None
+        missing = evidence.get("missing_fields", [])
+        low = []
+    else:
+        if {row.get("dimension") for row in evidence.get("comparison", [])} != {"方法", "数据集", "实验结果"}:
+            return None
+        missing, low = evidence.get("missing_dimensions", []), evidence.get("low_relevance_dimensions", [])
+    answer = evidence["answer"]
+    notes = [*evidence.get("warnings", [])]
+    if missing:
+        notes.append("资料不足：" + "、".join(missing))
+    if low:
+        notes.append("低相关性维度需核验：" + "、".join(low))
+    for note in dict.fromkeys(notes):
+        if note not in answer:
+            answer += "\n\n" + note
+    return {"type": "observation", "observation": "保留单一任务工具报告的栏目、原文引用和限制说明。",
+            "decision": "finish", "task_complete": evidence["status"] == "answered" and not missing and not low,
+            "answer": answer, "model": None, "usage": {"prompt_eval_count": 0, "eval_count": 0}, "elapsed_seconds": 0.0}
+
+
 def _observe_events(question: str, tools: list[BaseTool] | None = None, context: dict | None = None,
                     messages: list | None = None, *, thought: dict | None = None, stream: bool = False):
     """观察真实结果并决定继续或结束；完成标志与答案必须相互一致。"""
@@ -394,6 +433,14 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
     observations = (context or {}).get("observations", [])
     if not isinstance(observations, list) or any(not isinstance(item, dict) for item in observations):
         raise ValueError("observations必须为工具结果字典列表")
+    started = perf_counter()
+    retained = _structured_tool_observation(question, tools or [], observations)
+    if retained:
+        retained["elapsed_seconds"] = perf_counter() - started
+        if stream:
+            yield {"type": "token", "answer": retained["answer"], "provisional": False}
+        yield retained
+        return
     recovery = (context or {}).get("recovery", {})
     if not isinstance(recovery, dict):
         raise ValueError("recovery必须为恢复状态字典")

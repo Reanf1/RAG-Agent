@@ -10,7 +10,8 @@ import json
 import unittest
 from unittest.mock import patch
 from langchain_core.tools import tool
-from src.agent.react_loop import act, observe, run_react
+from src.agent.react_loop import act, observe, run_react, _observe_events
+from src.agent.tools import AVAILABLE_TOOLS
 from tests.helpers import isolated_agent_logs
 
 
@@ -171,6 +172,68 @@ class TestPaperIdentifiers(unittest.TestCase):
                 events = list(act("根据论文回答", thought, self.tools, context))
             self.assertEqual(events[-1]["type"], "error")
             self.assertEqual(self.invocations, [])
+
+
+class TestStructuredToolRetention(unittest.TestCase):
+    """只对明确单任务采用工具的结构化答案；组合或证据不完整不冒充完成。"""
+    def setUp(self):
+        self.summary = {"status": "answered", "answer": "背景、方法、结果、结论与原文引用",
+                        "sections": {key: {"text": key, "reference_ids": [1]} for key in
+                                     ("background", "method", "results", "conclusion")},
+                        "citations": [{"id": 1, "metadata": {"doc_id": "a" * 64}}], "missing_fields": [], "warnings": []}
+        self.compare = {"status": "answered", "answer": "方法、数据集、实验结果的原文表格",
+                        "comparison": [{"dimension": key, "a": {"id": 1}, "b": {"id": 2}}
+                                       for key in ("方法", "数据集", "实验结果")],
+                        "citations": [{"metadata": {"doc_id": identifier * 64}} for identifier in ("a", "b")],
+                        "missing_dimensions": [], "low_relevance_dimensions": [], "warnings": []}
+
+    def context(self, name, result):
+        return {"observations": [{"name": name, "status": "success", "result": deepcopy(result)}]}
+
+    def test_complete_summary_finishes_without_model_continuation(self):
+        response = {"observation": "继续", "decision": "continue", "task_complete": False, "answer": ""}
+        with patch("src.agent.react_loop.urlopen", return_value=packet(response)) as http:
+            event = observe("生成论文的结构化摘要", AVAILABLE_TOOLS, self.context("paper_summary", self.summary))
+        self.assertEqual((event["decision"], event["task_complete"], event["answer"]), ("finish", True, self.summary["answer"]))
+        self.assertEqual(event["usage"], {"prompt_eval_count": 0, "eval_count": 0})
+        http.assert_not_called()
+
+    def test_comparison_keeps_all_dimensions_and_limitations(self):
+        self.compare["warnings"] = ["结果段未给出精确数值，不能比较优劣。"]
+        response = {"observation": "完成", "decision": "finish", "task_complete": True, "answer": "简短概述丢失维度"}
+        with patch("src.agent.react_loop.urlopen", return_value=packet(response)):
+            event = observe("对比两篇论文的方法、数据集、实验结果", AVAILABLE_TOOLS, self.context("paper_compare", self.compare))
+        self.assertIn(self.compare["answer"], event["answer"])
+        self.assertIn("未给出精确数值", event["answer"])
+
+    def test_missing_dimension_keeps_report_but_is_incomplete(self):
+        self.compare.update(missing_dimensions=["论文B：实验结果"], status="insufficient_evidence")
+        response = {"observation": "资料不足", "decision": "finish", "task_complete": False, "answer": "资料不足"}
+        with patch("src.agent.react_loop.urlopen", return_value=packet(response)):
+            event = observe("对比两篇论文", AVAILABLE_TOOLS, self.context("paper_compare", self.compare))
+        self.assertFalse(event["task_complete"])
+        self.assertIn("论文B：实验结果", event["answer"])
+        self.assertIn(self.compare["answer"], event["answer"])
+
+    def test_combined_task_and_unrelated_tool_do_not_early_finish(self):
+        response = {"observation": "还需查时间", "decision": "continue", "task_complete": False, "answer": ""}
+        for question, extra in (("生成结构化摘要并告诉我当前时间", []),
+                                ("生成结构化摘要", [{"name": "current_time", "status": "success", "result": {}}])):
+            context = self.context("paper_summary", self.summary)
+            context["observations"] += extra
+            with patch("src.agent.react_loop.urlopen", return_value=packet(response)) as http:
+                event = observe(question, AVAILABLE_TOOLS, context)
+            self.assertEqual(event["decision"], "continue")
+            http.assert_called_once()
+
+    def test_streaming_summary_after_list_has_same_final_answer(self):
+        context = self.context("paper_summary", self.summary)
+        context["observations"].insert(0, {"name": "paper_list", "status": "success", "result": {"papers": []}})
+        with patch("src.agent.react_loop.urlopen") as http:
+            events = list(_observe_events("生成结构化摘要", AVAILABLE_TOOLS, context, stream=True))
+        self.assertEqual(events[-1]["answer"], self.summary["answer"])
+        self.assertEqual(events[0]["type"], "token")
+        http.assert_not_called()
 
 
 if __name__ == "__main__":

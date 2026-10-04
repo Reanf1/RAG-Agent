@@ -1,0 +1,53 @@
+...............FFFE
+======================================================================
+ERROR: test_streaming_summary_after_list_has_same_final_answer (test_bad_case_regression.TestStructuredToolRetention)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/agent/react_loop.py", line 450, in _observe_events
+    raise ValueError("Observation流已断开，未收到完成标记")
+ValueError: Observation流已断开，未收到完成标记
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_bad_case_regression.py", line 233, in test_streaming_summary_after_list_has_same_final_answer
+    events = list(_observe_events("生成结构化摘要", AVAILABLE_TOOLS, context, stream=True))
+  File "/Users/rean/github/RAG+Agent/src/agent/react_loop.py", line 494, in _observe_events
+    raise RuntimeError(f"Observation失败：{failure['message']}。{failure['retry_advice']}") from error
+RuntimeError: Observation失败：Observation流已断开，未收到完成标记。检查本地配置和接口数据，修正后重新提交问题。
+
+======================================================================
+FAIL: test_comparison_keeps_all_dimensions_and_limitations (test_bad_case_regression.TestStructuredToolRetention)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_bad_case_regression.py", line 206, in test_comparison_keeps_all_dimensions_and_limitations
+    self.assertIn(self.compare["answer"], event["answer"])
+AssertionError: '方法、数据集、实验结果的原文表格' not found in '简短概述丢失维度'
+
+======================================================================
+FAIL: test_complete_summary_finishes_without_model_continuation (test_bad_case_regression.TestStructuredToolRetention)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_bad_case_regression.py", line 197, in test_complete_summary_finishes_without_model_continuation
+    self.assertEqual((event["decision"], event["task_complete"], event["answer"]), ("finish", True, self.summary["answer"]))
+AssertionError: Tuples differ: ('continue', False, '') != ('finish', True, '背景、方法、结果、结论与原文引用')
+
+First differing element 0:
+'continue'
+'finish'
+
+- ('continue', False, '')
++ ('finish', True, '背景、方法、结果、结论与原文引用')
+
+======================================================================
+FAIL: test_missing_dimension_keeps_report_but_is_incomplete (test_bad_case_regression.TestStructuredToolRetention)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_bad_case_regression.py", line 215, in test_missing_dimension_keeps_report_but_is_incomplete
+    self.assertIn("论文B：实验结果", event["answer"])
+AssertionError: '论文B：实验结果' not found in '资料不足'
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.209s
+
+FAILED (failures=3, errors=1)
