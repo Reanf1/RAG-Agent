@@ -1,0 +1,40 @@
+Agent 1/1 F001 default：43.51秒，1轮，6433已知Token，task_complete
+Agent 1/1 F001 no_rules：33.05秒，1轮，10318已知Token，task_complete
+{
+  "default": {
+    "label": "默认规则路由+ReAct",
+    "rule_routing": true,
+    "questions": 1,
+    "tool_selection_accuracy": 1,
+    "iterations_mean": 1,
+    "latency_mean_seconds": 43.51343562500551,
+    "task_complete_rate": 1,
+    "tokens_total": 6433,
+    "tokens_mean_known_requests": 6433,
+    "token_complete_requests": 1,
+    "token_unknown_requests": 0,
+    "input_tokens_known": 6267,
+    "output_tokens_known": 166,
+    "stop_reasons": {
+      "task_complete": 1
+    }
+  },
+  "no_rules": {
+    "label": "关闭规则路由的ReAct",
+    "rule_routing": false,
+    "questions": 1,
+    "tool_selection_accuracy": 1,
+    "iterations_mean": 1,
+    "latency_mean_seconds": 33.05199858399283,
+    "task_complete_rate": 1,
+    "tokens_total": 10318,
+    "tokens_mean_known_requests": 10318,
+    "token_complete_requests": 1,
+    "token_unknown_requests": 0,
+    "input_tokens_known": 10066,
+    "output_tokens_known": 252,
+    "stop_reasons": {
+      "task_complete": 1
+    }
+  }
+}

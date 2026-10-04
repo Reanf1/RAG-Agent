@@ -1,0 +1,63 @@
+{
+  "locked_at": "2026-10-03T23:32:49.679701+08:00",
+  "questions": 60,
+  "profile": "default",
+  "seed": 20261003,
+  "changes": [
+    "真实列表ID解析及缺ID时先列表",
+    "单次完整RAG回答保留已验证的引用文本"
+  ],
+  "metrics": [
+    "原5.5.2定义的工具选择准确率、轮次、耗时、真实Token",
+    "无效必填论文ID调用数",
+    "repeated_calls终止数",
+    "单次完整RAG回答是否逐字保留"
+  ],
+  "limits": "同一开发评测集；引用保留是结构指标，不是人工引用准确性或事实正确性；人工评分待填",
+  "baseline_sha256": {
+    "Agent两组结果_20261003.json": "9ecac9c33c84991b99bfb31a232a8e970895892a0c15775c04b651e9536da652",
+    "Agent两组结果_20261003.calls.jsonl": "2f1724e1031c67ab2270e26be3ff363aefc0000058ebeb9d3295f9d289233fc8",
+    "检索五组结果_20261003.json": "24b12c8abe0a8b48876ef4e04ddaa1b7846ffa7af06fac962bcee31043364445"
+  },
+  "inputs_sha256": {
+    "reports/评测集.json": "51e282a8edb0f1e20e636b3a7c749fa3c4b0a9bb90572b353e6420d935d1acf6",
+    "reports/5_5_1 评测集构建/论文清单.json": "70bd8d162d8ca61b8da47d078e954c2aee8917a48c1d999408f37a83d9cc661f",
+    "data/raw/evaluation_vision_transformers/corpus.json": "442677c1ae2036497540d7ea556b4abc675511bea60a8a8d471ffd8b1640ec0e",
+    "config.yaml": "38fa7ae5e2e2136d6f206d03ad2b52686a3e06218f1830cd2bb3702332f31655"
+  },
+  "source_before": {
+    "src/__init__.py": "4eff7d4ca3dac42df51b1c3af47dca63bd2ce497ae566c8711223c15ccfab2b4",
+    "src/agent/__init__.py": "2ce20f266dfd2f68d0c4cbcb47894436933c8029a8b01064e9c4ad9af29294d9",
+    "src/agent/memory.py": "4495c83f0bdccdb402c0e4b18d555125ca17d1b360f601176062692add5a5ae1",
+    "src/agent/react_loop.py": "cb4ad85bc6d5c59ff23d2b446d94015e63dd8f08f427753ea1cab07e00af8b8a",
+    "src/agent/router.py": "45e3bdd064cd41a34d4b7c4365a03801b7ba01795e78595b98c488ebd1285b6e",
+    "src/agent/tools.py": "27b113e06ac83dac4ab3434628f18ce2e0a11ded820d82757ca5880a03e30739",
+    "src/chunking/__init__.py": "58fd2877d632643b56b0b0612baa0490e41da5ca47ea815a21bdbbe50a4e3cbf",
+    "src/chunking/fixed_chunk.py": "3eba644bd15a827731aedaa246d21146a7353fea34e4d282e5f13414d37ed85d",
+    "src/chunking/recursive_chunk.py": "1a69839236ae5b9777ee8db52826be99df037f35846f6507516d5605c758a275",
+    "src/chunking/semantic_chunk.py": "dd58437f9a6b2d1482f794ec95e53989d87c7af39c696b5230fb54d07e2d93e4",
+    "src/data_loader/__init__.py": "976503d38753d92ba7090e8d97bba3a0ca6529982b8671d3770e2fd624234369",
+    "src/data_loader/docx_loader.py": "a4e8c69cb289855a6b6d5a69a840fe5dbd4abf9152dfe9d203bfaa1e1febb35d",
+    "src/data_loader/pdf_loader.py": "8f0551302c217740005cb9c476d3135c23eccd619dfe5d76f329ca708663329f",
+    "src/data_loader/text_loader.py": "ee23c076850491e7ca8b6b07de2a64734e4af41c06de65b96b8f076ce9a91477",
+    "src/frontend/__init__.py": "97c19dc7c9063934076460cb7134e8adad9ae2f723ae464b0a6f5d811dbfe936",
+    "src/frontend/app.py": "364e7ea5f29811a46e59d422846a69651baedc203acc034b09173c03cbd6c364",
+    "src/frontend/components/documents.py": "b36204f4604a625d7b017136e748471368fdc669ad62ae77e89dc9b12854ba21",
+    "src/frontend/components/sessions.py": "153831118e958e51755058015e052f8c4aef29c9408d64d93603e59ffaf932de",
+    "src/frontend/components/trace.py": "5db8751eccd80dfd774ca40a06a5034dedbf1de222b677de6014e631320a4fb2",
+    "src/generation/__init__.py": "fa92e01f4ecaefcc243a6e741c068fd1e99a208edf122757477c052eb29e8e7e",
+    "src/generation/cache.py": "83158570251cfce63e10d7c91577a1f2704ef16bac2876b4e679170c2f32d743",
+    "src/generation/prompt_template.py": "14307d646b2eba2f5c07025f9e54af7b778448aeb8957f8467490754fbc0db41",
+    "src/generation/rag_pipeline.py": "f8f29122cef799d907dad56fd8276e981e47d950731cc77f19ef406829a5010b",
+    "src/generation/streaming.py": "a3d3247e1dbb2296757f23f27476997f0916e3e4cddc3127433de684602b9911",
+    "src/retrieval/__init__.py": "1c06b17aa89c59f50655993328e63eb7afdb5e0f2348f663941064a977bbeb27",
+    "src/retrieval/bm25_retriever.py": "36a734e2e1968931d282afd8082445356ae36ca6c33dd68f8f5265bf7ae3ca2e",
+    "src/retrieval/hybrid_retriever.py": "f188205a071fadba465bdcaae60b315a80645574bc2c66704b3e8a5e380c16ab",
+    "src/retrieval/reranker.py": "aed7935e62a7d67577cab29a58d1573b22f41c60e1045741e3f116c8edcb075c",
+    "src/retrieval/vector_store.py": "88a27a73dea278641b5a2cd22c3a3acc68fe62322764d7812364ae4154bd94e0",
+    "src/utils/__init__.py": "5400eb325512c113952b4137673a981259a8500d6824d392c2dd6c1904ee660a",
+    "src/utils/config.py": "47dea0389fe63d31f7ccff184880d0c0043eae8cb2c9907c9e2dbd7438096912",
+    "src/utils/logger.py": "1d5e5d0e4bf8754a85b826f8d658a93ab528028d99c680512457fea8d4ac7b62",
+    "src/utils/messages.py": "ff85b1bd80fe680d4b3e1767164c80602a2d7aca18687655cb7ce799fbad0441"
+  }
+}

@@ -1,0 +1,18 @@
+索引准备完成：1694块，92.49秒
+检索 1/1：F001 五组完成
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/reports/5_5_2 系统性能评估/evaluate_system.py", line 269, in <module>
+    main()
+  File "/Users/rean/github/RAG+Agent/reports/5_5_2 系统性能评估/evaluate_system.py", line 186, in main
+    report["profiles"] = {key: {"label": value[0], "candidate_k": value[1], "rerank": value[2],
+  File "/Users/rean/github/RAG+Agent/reports/5_5_2 系统性能评估/evaluate_system.py", line 187, in <dictcomp>
+    **summarize_retrieval([r for r in report["rows"] if r["profile"] == key])} for key, value in PROFILES.items()}
+  File "/Users/rean/github/RAG+Agent/reports/5_5_2 系统性能评估/evaluate_system.py", line 72, in summarize_retrieval
+    "by_language": {key: {metric: statistics.mean(r[metric] for r in rows if r["language"] == key)
+  File "/Users/rean/github/RAG+Agent/reports/5_5_2 系统性能评估/evaluate_system.py", line 72, in <dictcomp>
+    "by_language": {key: {metric: statistics.mean(r[metric] for r in rows if r["language"] == key)
+  File "/Users/rean/github/RAG+Agent/reports/5_5_2 系统性能评估/evaluate_system.py", line 72, in <dictcomp>
+    "by_language": {key: {metric: statistics.mean(r[metric] for r in rows if r["language"] == key)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/statistics.py", line 328, in mean
+    raise StatisticsError('mean requires at least one data point')
+statistics.StatisticsError: mean requires at least one data point

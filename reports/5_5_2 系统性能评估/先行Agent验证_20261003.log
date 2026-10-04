@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/reports/5_5_2 系统性能评估/evaluate_system.py", line 269, in <module>
+    main()
+  File "/Users/rean/github/RAG+Agent/reports/5_5_2 系统性能评估/evaluate_system.py", line 202, in main
+    with rag_pipeline.urlopen(request, timeout=300) as response:
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/urllib/request.py", line 525, in open
+    response = meth(req, response)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/urllib/request.py", line 634, in http_response
+    response = self.parent.error(
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/urllib/request.py", line 563, in error
+    return self._call_chain(*args)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/urllib/request.py", line 496, in _call_chain
+    result = func(*args)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/urllib/request.py", line 643, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 500: Internal Server Error

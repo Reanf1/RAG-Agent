@@ -1,0 +1,115 @@
+test_incomplete_decision_is_not_turned_into_success (test_bad_case_regression.TestCitationRetention) ... ERROR
+test_insufficient_evidence_cannot_be_marked_complete (test_bad_case_regression.TestCitationRetention) ... ERROR
+test_missing_citations_or_fallback_keeps_observation_answer (test_bad_case_regression.TestCitationRetention) ... ERROR
+test_multi_tool_or_multi_step_never_substitutes_single_answer (test_bad_case_regression.TestCitationRetention) ... ERROR
+test_partial_or_different_question_keeps_observation_answer (test_bad_case_regression.TestCitationRetention) ... ERROR
+test_real_f001_preserves_source_filename_and_physical_pages (test_bad_case_regression.TestCitationRetention) ... ERROR
+test_exact_filename_and_stem_resolve_only_from_successful_list (test_bad_case_regression.TestPaperIdentifiers) ... FAIL
+test_failed_list_does_not_authorize_alias_resolution (test_bad_case_regression.TestPaperIdentifiers) ... ok
+test_missing_ids_plan_lists_before_comparing (test_bad_case_regression.TestPaperIdentifiers) ... FAIL
+test_real_identifiers_are_not_replaced (test_bad_case_regression.TestPaperIdentifiers) ... ok
+test_unknown_or_ambiguous_alias_is_not_guessed (test_bad_case_regression.TestPaperIdentifiers) ... ok
+
+======================================================================
+ERROR: test_incomplete_decision_is_not_turned_into_success (test_bad_case_regression.TestCitationRetention)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_bad_case_regression.py", line 28, in setUp
+    self.fixture = json.loads((ROOT / "reports/5_5_3 Bad Case分析与优化/F001引用丢失复现样例.json").read_text())
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/pathlib.py", line 1134, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/rean/github/RAG+Agent/reports/5_5_3 Bad Case分析与优化/F001引用丢失复现样例.json'
+
+======================================================================
+ERROR: test_insufficient_evidence_cannot_be_marked_complete (test_bad_case_regression.TestCitationRetention)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_bad_case_regression.py", line 28, in setUp
+    self.fixture = json.loads((ROOT / "reports/5_5_3 Bad Case分析与优化/F001引用丢失复现样例.json").read_text())
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/pathlib.py", line 1134, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/rean/github/RAG+Agent/reports/5_5_3 Bad Case分析与优化/F001引用丢失复现样例.json'
+
+======================================================================
+ERROR: test_missing_citations_or_fallback_keeps_observation_answer (test_bad_case_regression.TestCitationRetention)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_bad_case_regression.py", line 28, in setUp
+    self.fixture = json.loads((ROOT / "reports/5_5_3 Bad Case分析与优化/F001引用丢失复现样例.json").read_text())
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/pathlib.py", line 1134, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/rean/github/RAG+Agent/reports/5_5_3 Bad Case分析与优化/F001引用丢失复现样例.json'
+
+======================================================================
+ERROR: test_multi_tool_or_multi_step_never_substitutes_single_answer (test_bad_case_regression.TestCitationRetention)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_bad_case_regression.py", line 28, in setUp
+    self.fixture = json.loads((ROOT / "reports/5_5_3 Bad Case分析与优化/F001引用丢失复现样例.json").read_text())
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/pathlib.py", line 1134, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/rean/github/RAG+Agent/reports/5_5_3 Bad Case分析与优化/F001引用丢失复现样例.json'
+
+======================================================================
+ERROR: test_partial_or_different_question_keeps_observation_answer (test_bad_case_regression.TestCitationRetention)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_bad_case_regression.py", line 28, in setUp
+    self.fixture = json.loads((ROOT / "reports/5_5_3 Bad Case分析与优化/F001引用丢失复现样例.json").read_text())
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/pathlib.py", line 1134, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/rean/github/RAG+Agent/reports/5_5_3 Bad Case分析与优化/F001引用丢失复现样例.json'
+
+======================================================================
+ERROR: test_real_f001_preserves_source_filename_and_physical_pages (test_bad_case_regression.TestCitationRetention)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_bad_case_regression.py", line 28, in setUp
+    self.fixture = json.loads((ROOT / "reports/5_5_3 Bad Case分析与优化/F001引用丢失复现样例.json").read_text())
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/pathlib.py", line 1134, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/rean/github/RAG+Agent/reports/5_5_3 Bad Case分析与优化/F001引用丢失复现样例.json'
+
+======================================================================
+FAIL: test_exact_filename_and_stem_resolve_only_from_successful_list (test_bad_case_regression.TestPaperIdentifiers)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_bad_case_regression.py", line 107, in test_exact_filename_and_stem_resolve_only_from_successful_list
+    self.assertEqual(self.invocations, [tuple(self.ids)])
+AssertionError: Lists differ: [] != [('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa[91 chars]bb')]
+
+Second list contains 1 additional elements.
+First extra element 0:
+('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb')
+
+- []
++ [('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
++   'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb')]
+
+======================================================================
+FAIL: test_missing_ids_plan_lists_before_comparing (test_bad_case_regression.TestPaperIdentifiers)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_bad_case_regression.py", line 137, in test_missing_ids_plan_lists_before_comparing
+    self.assertEqual(events[0]["tool_name"], "paper_list")
+AssertionError: 'paper_compare' != 'paper_list'
+- paper_compare
++ paper_list
+
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.083s
+
+FAILED (failures=2, errors=6)

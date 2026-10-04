@@ -1,0 +1,104 @@
+{
+  "question": "ViT论文在模型规模实验中使用了哪三个训练数据集？",
+  "tool_result": {
+    "type": "tool_result",
+    "name": "knowledge_base_search",
+    "call_id": "f4a8a381f09640628b92fa631579a8f5",
+    "args": {
+      "question": "ViT论文在模型规模实验中使用了哪三个训练数据集？"
+    },
+    "result": {
+      "answer": "## 回答\nViT论文在模型规模实验中使用了三个训练数据集：ImageNet、ImageNet-21k和JFT-300M。[参考文档4：vit.pdf；第4页（物理页码）]和[参考文档5：vit.pdf；第6页（物理页码）]中提到了这些数据集。\n\n## 参考来源\n- [参考文档4] vit.pdf；第4页（物理页码）\n- [参考文档5] vit.pdf；第6页（物理页码）",
+      "citations": [
+        {
+          "id": 4,
+          "source_file": "vit.pdf",
+          "location": "第4页（物理页码）",
+          "text": "\na lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show\nthat self-supervised ViT holds promise for the future.\n4.1\nSETUP\nDatasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes\nand 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with\n21k classes and 14M images (Deng et al., 2009), and JFT (Sun et al., 2017) with 18k classes and",
+          "metadata": {
+            "chunk_id": "abe2f1d08bd659d3bfb96dc5918c09824c6db2b3b3ef1255557393dabfe91510",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "page_number": 4,
+            "source_file": "vit.pdf"
+          },
+          "truncated": false,
+          "score": 0.9065942764282227
+        },
+        {
+          "id": 5,
+          "source_file": "vit.pdf",
+          "location": "第6页（物理页码）",
+          "text": "\nexperiments.\nFirst, we pre-train ViT models on datasets of increasing size: ImageNet, ImageNet-21k, and JFT-\n300M. To boost the performance on the smaller datasets, we optimize three basic regularization\nparameters – weight decay, dropout, and label smoothing. Figure 3 shows the results after ﬁne-\ntuning to ImageNet (results on other datasets are shown in Table 5)^{2}. When pre-trained on the\nsmallest dataset, ImageNet, ViT-Large models underperform compared to ViT-Base models, despite",
+          "metadata": {
+            "chunk_id": "9b0b9c2680b6373faf4ec7710b687d77e099716d0d23d863a2bbadc88b0c9a32",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "page_number": 6,
+            "source_file": "vit.pdf"
+          },
+          "truncated": false,
+          "score": 0.8930768370628357
+        }
+      ],
+      "invalid_citation_ids": [],
+      "missing_citations": false,
+      "warnings": [],
+      "generation_mode": "grounded",
+      "notice": "",
+      "raw_answer": "## 回答\nViT论文在模型规模实验中使用了三个训练数据集：ImageNet、ImageNet-21k和JFT-300M。[参考文档4]和[参考文档5]中提到了这些数据集。\n\n## 参考来源\n[参考文档4, 参考文档5]",
+      "model": "qwen2.5:7b",
+      "options": {
+        "temperature": 0.1,
+        "top_p": 0.9,
+        "top_k": 40,
+        "num_ctx": 8192,
+        "num_predict": 512,
+        "repeat_penalty": 1.0
+      },
+      "done_reason": "stop",
+      "usage": {
+        "prompt_eval_count": 1294,
+        "eval_count": 74,
+        "total_duration": 9056342625,
+        "load_duration": 1246875,
+        "prompt_eval_duration": 5674604000,
+        "eval_duration": 3374062000
+      },
+      "status": "answered",
+      "doc_id": null,
+      "sources": [
+        "vit.pdf",
+        "t2t_vit.pdf"
+      ],
+      "top_score": 0.9744760990142822,
+      "retrieval_seconds": 0.8729388750070939,
+      "elapsed_seconds": 9.931878125004005,
+      "retrieval": {
+        "request_id": "da3c59d1c4df4c1bba89a7811bfe21af",
+        "status": "success",
+        "returned_chunks": 5
+      }
+    },
+    "status": "success",
+    "error": "",
+    "error_kind": null,
+    "attempts": [
+      {
+        "attempt": 1,
+        "status": "success",
+        "error": "",
+        "error_kind": null,
+        "elapsed_seconds": 9.933668583995313
+      }
+    ],
+    "execution_mode": "serial",
+    "elapsed_seconds": 9.933904499994242,
+    "iteration": 1
+  },
+  "observation": {
+    "observation": "已从知识库中找到ViT论文关于模型规模实验使用的训练数据集信息。",
+    "decision": "finish",
+    "task_complete": true,
+    "answer": "ViT论文在模型规模实验中使用了三个训练数据集：ImageNet、ImageNet-21k和JFT-300M。这些数据集在论文的第4页和第6页中被提及。"
+  },
+  "provenance": "原始metrics.trace保留决策，最终answer取同一请求row.answer"
+}

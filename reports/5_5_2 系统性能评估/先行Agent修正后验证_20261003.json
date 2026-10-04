@@ -1,0 +1,799 @@
+{
+  "started_at": "2026-10-03T19:13:04.511732+08:00",
+  "status": "completed",
+  "stage": "agent",
+  "environment": {
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "python": "3.10.10",
+    "torch_threads": 4
+  },
+  "inputs": {
+    "dataset_sha256": "51e282a8edb0f1e20e636b3a7c749fa3c4b0a9bb90572b353e6420d935d1acf6",
+    "manifest_sha256": "70bd8d162d8ca61b8da47d078e954c2aee8917a48c1d999408f37a83d9cc661f",
+    "corpus_sha256": "442677c1ae2036497540d7ea556b4abc675511bea60a8a8d471ffd8b1640ec0e",
+    "config_sha256": "38fa7ae5e2e2136d6f206d03ad2b52686a3e06218f1830cd2bb3702332f31655"
+  },
+  "business_config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://localhost:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 8192,
+      "num_predict": 512,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 6000,
+      "max_prompt_chars": 12000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "max_parallel_calls": 2,
+      "tool_timeout_seconds": 300,
+      "max_tool_retries": 1,
+      "max_repeated_calls": 2,
+      "online_search_enabled": false
+    },
+    "memory": {
+      "max_history_tokens": 2000,
+      "tokenizer_path": "data/models/qwen2.5-tokenizer/tokenizer.json",
+      "summary_trigger_turns": 10,
+      "summary_keep_recent_turns": 4,
+      "summary_max_tokens": 400
+    },
+    "paths": {
+      "raw_documents": "data/raw",
+      "vector_index": "data/index",
+      "logs": "logs",
+      "session_db": "data/sessions/memory.sqlite3"
+    }
+  },
+  "experiment_config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://localhost:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 8192,
+      "num_predict": 512,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 6000,
+      "max_prompt_chars": 12000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "max_parallel_calls": 2,
+      "tool_timeout_seconds": 300,
+      "max_tool_retries": 1,
+      "max_repeated_calls": 2,
+      "online_search_enabled": false
+    },
+    "memory": {
+      "max_history_tokens": 2000,
+      "tokenizer_path": "data/models/qwen2.5-tokenizer/tokenizer.json",
+      "summary_trigger_turns": 10,
+      "summary_keep_recent_turns": 4,
+      "summary_max_tokens": 400
+    },
+    "paths": {
+      "raw_documents": "/private/tmp/rag-evaluation-pilot-20261003/raw",
+      "vector_index": "/private/tmp/rag-evaluation-pilot-20261003/index",
+      "logs": "/private/tmp/rag-evaluation-pilot-20261003/logs",
+      "session_db": "/private/tmp/rag-evaluation-pilot-20261003/sessions.sqlite3"
+    }
+  },
+  "question_count": 1,
+  "profiles": {
+    "default": {
+      "label": "默认规则路由+ReAct",
+      "rule_routing": true,
+      "questions": 1,
+      "tool_selection_accuracy": 1,
+      "iterations_mean": 1,
+      "latency_mean_seconds": 43.51343562500551,
+      "task_complete_rate": 1,
+      "tokens_total": 6433,
+      "tokens_mean_known_requests": 6433,
+      "token_complete_requests": 1,
+      "token_unknown_requests": 0,
+      "input_tokens_known": 6267,
+      "output_tokens_known": 166,
+      "stop_reasons": {
+        "task_complete": 1
+      }
+    },
+    "no_rules": {
+      "label": "关闭规则路由的ReAct",
+      "rule_routing": false,
+      "questions": 1,
+      "tool_selection_accuracy": 1,
+      "iterations_mean": 1,
+      "latency_mean_seconds": 33.05199858399283,
+      "task_complete_rate": 1,
+      "tokens_total": 10318,
+      "tokens_mean_known_requests": 10318,
+      "token_complete_requests": 1,
+      "token_unknown_requests": 0,
+      "input_tokens_known": 10066,
+      "output_tokens_known": 252,
+      "stop_reasons": {
+        "task_complete": 1
+      }
+    }
+  },
+  "rows": [
+    {
+      "id": "F001",
+      "profile": "default",
+      "category": "fact",
+      "language": "zh",
+      "answer": "ViT论文在模型规模实验中使用了三个训练数据集：ImageNet、ImageNet-21k和JFT-300M。这些数据集在论文的第4页和第6页中被提及。",
+      "task_complete": true,
+      "stop_reason": "task_complete",
+      "iterations": 1,
+      "seconds": 43.51343562500551,
+      "model_calls": 2,
+      "tokens": {
+        "input_known": 6267,
+        "output_known": 166,
+        "total": 6433,
+        "unknown_calls": 0,
+        "source": "actual_ollama_responses"
+      },
+      "tool_calls": [
+        {
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "ViT论文在模型规模实验中使用了哪三个训练数据集？"
+          },
+          "iteration": 1
+        }
+      ],
+      "tool_selection_correct": true,
+      "event_types": [
+        "thought",
+        "tool_call",
+        "tool_result",
+        "observation",
+        "done"
+      ],
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0014723339991178364
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "eeceda30bff5412aa1c97f3d41973cdb"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0002761249925242737
+          },
+          {
+            "id": "eeceda30bff5412aa1c97f3d41973cdb",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "eeceda30bff5412aa1c97f3d41973cdb"
+            ],
+            "input": 1294,
+            "output": 74,
+            "incomplete": false,
+            "seconds": 16.837666709005134
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 4973,
+            "output": 92,
+            "incomplete": false,
+            "seconds": 26.649055250003585
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0014723339991178364,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "eeceda30bff5412aa1c97f3d41973cdb",
+            "args": {
+              "question": "ViT论文在模型规模实验中使用了哪三个训练数据集？"
+            },
+            "elapsed_seconds": 0.0002761249925242737,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "eeceda30bff5412aa1c97f3d41973cdb",
+            "args": {
+              "question": "ViT论文在模型规模实验中使用了哪三个训练数据集？"
+            },
+            "result": {
+              "answer": "## 回答\nViT论文在模型规模实验中使用了三个训练数据集：ImageNet、ImageNet-21k和JFT-300M。[参考文档4：vit.pdf；第4页（物理页码）]和[参考文档5：vit.pdf；第6页（物理页码）]中提到了这些数据集。\n\n## 参考来源\n- [参考文档4] vit.pdf；第4页（物理页码）\n- [参考文档5] vit.pdf；第6页（物理页码）",
+              "citations": [
+                {
+                  "id": 4,
+                  "source_file": "vit.pdf",
+                  "location": "第4页（物理页码）",
+                  "text": "\na lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show\nthat self-supervised ViT holds promise for the future.\n4.1\nSETUP\nDatasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes\nand 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with\n21k classes and 14M images (Deng et al., 2009), and JFT (Sun et al., 2017) with 18k classes and",
+                  "metadata": {
+                    "chunk_id": "abe2f1d08bd659d3bfb96dc5918c09824c6db2b3b3ef1255557393dabfe91510",
+                    "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                    "page_number": 4,
+                    "source_file": "vit.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.9065942764282227
+                },
+                {
+                  "id": 5,
+                  "source_file": "vit.pdf",
+                  "location": "第6页（物理页码）",
+                  "text": "\nexperiments.\nFirst, we pre-train ViT models on datasets of increasing size: ImageNet, ImageNet-21k, and JFT-\n300M. To boost the performance on the smaller datasets, we optimize three basic regularization\nparameters – weight decay, dropout, and label smoothing. Figure 3 shows the results after ﬁne-\ntuning to ImageNet (results on other datasets are shown in Table 5)^{2}. When pre-trained on the\nsmallest dataset, ImageNet, ViT-Large models underperform compared to ViT-Base models, despite",
+                  "metadata": {
+                    "chunk_id": "9b0b9c2680b6373faf4ec7710b687d77e099716d0d23d863a2bbadc88b0c9a32",
+                    "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                    "page_number": 6,
+                    "source_file": "vit.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.8930768370628357
+                }
+              ],
+              "invalid_citation_ids": [],
+              "missing_citations": false,
+              "warnings": [],
+              "generation_mode": "grounded",
+              "notice": "",
+              "raw_answer": "## 回答\nViT论文在模型规模实验中使用了三个训练数据集：ImageNet、ImageNet-21k和JFT-300M。[参考文档4]和[参考文档5]中提到了这些数据集。\n\n## 参考来源\n[参考文档4, 参考文档5]",
+              "model": "qwen2.5:7b",
+              "options": {
+                "temperature": 0.1,
+                "top_p": 0.9,
+                "top_k": 40,
+                "num_ctx": 8192,
+                "num_predict": 512,
+                "repeat_penalty": 1.0
+              },
+              "done_reason": "stop",
+              "usage": {
+                "prompt_eval_count": 1294,
+                "eval_count": 74,
+                "total_duration": 12557775333,
+                "load_duration": 3630410125,
+                "prompt_eval_duration": 5434342000,
+                "eval_duration": 3477831000
+              },
+              "status": "answered",
+              "doc_id": null,
+              "sources": [
+                "vit.pdf",
+                "t2t_vit.pdf"
+              ],
+              "top_score": 0.9744760990142822,
+              "retrieval_seconds": 4.271493291991646,
+              "elapsed_seconds": 16.8352460419992,
+              "retrieval": {
+                "request_id": "9830b1ce0fed42d882d365cf17a89813",
+                "status": "success",
+                "returned_chunks": 5
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 16.837426250000135
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 16.837666709005134,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 26.649055250003585,
+            "observation": "已从知识库中找到ViT论文关于模型规模实验使用的训练数据集信息。",
+            "decision": "finish",
+            "task_complete": true,
+            "iteration": 1
+          },
+          {
+            "type": "done",
+            "task_complete": true,
+            "stop_reason": "task_complete",
+            "full_response": "ViT论文在模型规模实验中使用了三个训练数据集：ImageNet、ImageNet-21k和JFT-300M。这些数据集在论文的第4页和第6页中被提及。",
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "eeceda30bff5412aa1c97f3d41973cdb",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 16.837666709005134,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 1,
+          "successes": 1,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": 1.0,
+          "mean_seconds": 16.837666709005134,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 16.837666709005134
+            }
+          ]
+        },
+        "tokens": {
+          "input": 6267,
+          "output": 166,
+          "total": 6433,
+          "known_total": 6433,
+          "unknown_calls": 0
+        },
+        "response_seconds": 43.513318750003236,
+        "retrievals": [
+          {
+            "call_id": "eeceda30bff5412aa1c97f3d41973cdb",
+            "request_id": "9830b1ce0fed42d882d365cf17a89813",
+            "status": "success",
+            "returned_chunks": 5,
+            "seconds": 4.271493291991646
+          }
+        ]
+      }
+    },
+    {
+      "id": "F001",
+      "profile": "no_rules",
+      "category": "fact",
+      "language": "zh",
+      "answer": "ViT论文在模型规模实验中使用了三个训练数据集：ImageNet、ImageNet-21k和JFT-300M。这些数据集在文档4和文档5中被提及。",
+      "task_complete": true,
+      "stop_reason": "task_complete",
+      "iterations": 1,
+      "seconds": 33.05199858399283,
+      "model_calls": 4,
+      "tokens": {
+        "input_known": 10066,
+        "output_known": 252,
+        "total": 10318,
+        "unknown_calls": 0,
+        "source": "actual_ollama_responses"
+      },
+      "tool_calls": [
+        {
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "ViT论文在模型规模实验中使用了哪三个训练数据集？"
+          },
+          "iteration": 1
+        }
+      ],
+      "tool_selection_correct": true,
+      "event_types": [
+        "thought",
+        "tool_call",
+        "tool_result",
+        "observation",
+        "done"
+      ],
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2256,
+            "output": 48,
+            "incomplete": false,
+            "seconds": 4.5733214170031715
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "3438ad062ff34c8d87ad878c05513951"
+            ],
+            "input": 1522,
+            "output": 36,
+            "incomplete": false,
+            "seconds": 5.008304750008392
+          },
+          {
+            "id": "3438ad062ff34c8d87ad878c05513951",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "3438ad062ff34c8d87ad878c05513951"
+            ],
+            "input": 1294,
+            "output": 74,
+            "incomplete": false,
+            "seconds": 5.726320875008241
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 4994,
+            "output": 94,
+            "incomplete": false,
+            "seconds": 17.72485354100354
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "查询知识库以获取ViT论文中模型规模实验使用的训练数据集信息。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [
+              "knowledge_base_search"
+            ],
+            "elapsed_seconds": 4.5733214170031715,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "3438ad062ff34c8d87ad878c05513951",
+            "args": {
+              "question": "ViT论文在模型规模实验中使用了哪三个训练数据集？"
+            },
+            "elapsed_seconds": 5.008304750008392,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "3438ad062ff34c8d87ad878c05513951",
+            "args": {
+              "question": "ViT论文在模型规模实验中使用了哪三个训练数据集？"
+            },
+            "result": {
+              "answer": "## 回答\nViT论文在模型规模实验中使用了三个训练数据集：ImageNet、ImageNet-21k和JFT-300M。[参考文档4：vit.pdf；第4页（物理页码）]和[参考文档5：vit.pdf；第6页（物理页码）]中提到了这些数据集。\n\n## 参考来源\n- [参考文档4] vit.pdf；第4页（物理页码）\n- [参考文档5] vit.pdf；第6页（物理页码）",
+              "citations": [
+                {
+                  "id": 4,
+                  "source_file": "vit.pdf",
+                  "location": "第4页（物理页码）",
+                  "text": "\na lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show\nthat self-supervised ViT holds promise for the future.\n4.1\nSETUP\nDatasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes\nand 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with\n21k classes and 14M images (Deng et al., 2009), and JFT (Sun et al., 2017) with 18k classes and",
+                  "metadata": {
+                    "chunk_id": "abe2f1d08bd659d3bfb96dc5918c09824c6db2b3b3ef1255557393dabfe91510",
+                    "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                    "page_number": 4,
+                    "source_file": "vit.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.9065942764282227
+                },
+                {
+                  "id": 5,
+                  "source_file": "vit.pdf",
+                  "location": "第6页（物理页码）",
+                  "text": "\nexperiments.\nFirst, we pre-train ViT models on datasets of increasing size: ImageNet, ImageNet-21k, and JFT-\n300M. To boost the performance on the smaller datasets, we optimize three basic regularization\nparameters – weight decay, dropout, and label smoothing. Figure 3 shows the results after ﬁne-\ntuning to ImageNet (results on other datasets are shown in Table 5)^{2}. When pre-trained on the\nsmallest dataset, ImageNet, ViT-Large models underperform compared to ViT-Base models, despite",
+                  "metadata": {
+                    "chunk_id": "9b0b9c2680b6373faf4ec7710b687d77e099716d0d23d863a2bbadc88b0c9a32",
+                    "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                    "page_number": 6,
+                    "source_file": "vit.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.8930768370628357
+                }
+              ],
+              "invalid_citation_ids": [],
+              "missing_citations": false,
+              "warnings": [],
+              "generation_mode": "grounded",
+              "notice": "",
+              "raw_answer": "## 回答\nViT论文在模型规模实验中使用了三个训练数据集：ImageNet、ImageNet-21k和JFT-300M。[参考文档4]和[参考文档5]中提到了这些数据集。\n\n## 参考来源\n[参考文档4, 参考文档5]",
+              "model": "qwen2.5:7b",
+              "options": {
+                "temperature": 0.1,
+                "top_p": 0.9,
+                "top_k": 40,
+                "num_ctx": 8192,
+                "num_predict": 512,
+                "repeat_penalty": 1.0
+              },
+              "done_reason": "stop",
+              "usage": {
+                "prompt_eval_count": 1294,
+                "eval_count": 74,
+                "total_duration": 3486447000,
+                "load_duration": 734166,
+                "prompt_eval_duration": 54972000,
+                "eval_duration": 3394911000
+              },
+              "status": "answered",
+              "doc_id": null,
+              "sources": [
+                "vit.pdf",
+                "t2t_vit.pdf"
+              ],
+              "top_score": 0.9744760990142822,
+              "retrieval_seconds": 2.2347830409999005,
+              "elapsed_seconds": 5.7236985829949845,
+              "retrieval": {
+                "request_id": "328f45d4f3644d62b5379121a28c777f",
+                "status": "success",
+                "returned_chunks": 5
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 5.7261853749951115
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 5.726320875008241,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 17.72485354100354,
+            "observation": "已从知识库中找到ViT论文在模型规模实验中使用的训练数据集信息。",
+            "decision": "finish",
+            "task_complete": true,
+            "iteration": 1
+          },
+          {
+            "type": "done",
+            "task_complete": true,
+            "stop_reason": "task_complete",
+            "full_response": "ViT论文在模型规模实验中使用了三个训练数据集：ImageNet、ImageNet-21k和JFT-300M。这些数据集在文档4和文档5中被提及。",
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "3438ad062ff34c8d87ad878c05513951",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 5.726320875008241,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 1,
+          "successes": 1,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": 1.0,
+          "mean_seconds": 5.726320875008241,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 5.726320875008241
+            }
+          ]
+        },
+        "tokens": {
+          "input": 10066,
+          "output": 252,
+          "total": 10318,
+          "known_total": 10318,
+          "unknown_calls": 0
+        },
+        "response_seconds": 33.051860249994206,
+        "retrievals": [
+          {
+            "call_id": "3438ad062ff34c8d87ad878c05513951",
+            "request_id": "328f45d4f3644d62b5379121a28c777f",
+            "status": "success",
+            "returned_chunks": 5,
+            "seconds": 2.2347830409999005
+          }
+        ]
+      }
+    }
+  ],
+  "human_scoring": "pending_independent_review",
+  "annotation": "论文+物理页；非完整chunk金标准；ViT来源与开发集重叠",
+  "model_tags": {
+    "models": [
+      {
+        "name": "qwen2.5:7b",
+        "model": "qwen2.5:7b",
+        "modified_at": "2026-09-29T18:09:48.516927965+08:00",
+        "size": 4683087332,
+        "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen2",
+          "families": [
+            "qwen2"
+          ],
+          "parameter_size": "7.6B",
+          "quantization_level": "Q4_K_M",
+          "context_length": 32768,
+          "embedding_length": 3584
+        },
+        "capabilities": [
+          "completion",
+          "tools"
+        ]
+      }
+    ]
+  },
+  "server": {
+    "version": "0.34.0"
+  },
+  "warmup_response": {
+    "model": "qwen2.5:7b",
+    "created_at": "2026-10-03T11:13:08.783808Z",
+    "message": {
+      "role": "assistant",
+      "content": "好"
+    },
+    "done": true,
+    "done_reason": "stop",
+    "total_duration": 4194252250,
+    "load_duration": 3862779000,
+    "prompt_eval_count": 33,
+    "prompt_eval_cached_count": 0,
+    "prompt_eval_duration": 281900000,
+    "eval_count": 2,
+    "eval_duration": 45643000
+  },
+  "warmup_seconds": 4.195660375000443,
+  "completed_at": "2026-10-03T19:14:25.353592+08:00"
+}

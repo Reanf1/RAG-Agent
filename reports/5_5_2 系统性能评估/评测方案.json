@@ -1,0 +1,90 @@
+{
+  "locked_at": "2026-10-03T19:11:02.339036+08:00",
+  "dataset_sha256": "51e282a8edb0f1e20e636b3a7c749fa3c4b0a9bb90572b353e6420d935d1acf6",
+  "question_count": 60,
+  "retrieval_profiles": {
+    "vector": {
+      "method": "vector",
+      "top_k": 5
+    },
+    "hybrid": {
+      "method": "hybrid",
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "top_k": 5
+    },
+    "rerank20": {
+      "method": "hybrid_rerank",
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "top_k": 5
+    },
+    "rerank10": {
+      "method": "hybrid_rerank",
+      "candidate_k": 10,
+      "rrf_k": 60,
+      "top_k": 5
+    },
+    "rerank40": {
+      "method": "hybrid_rerank",
+      "candidate_k": 40,
+      "rrf_k": 60,
+      "top_k": 5
+    }
+  },
+  "agent_profiles": {
+    "default": {
+      "rule_routing": true,
+      "max_iterations": 8
+    },
+    "no_rules": {
+      "rule_routing": false,
+      "max_iterations": 8
+    }
+  },
+  "retrieval_metrics": {
+    "unit": "(doc_id,PDF物理页)",
+    "Hit@5": "前5块覆盖至少一个标注页；不代表多来源题完整",
+    "MRR@5": "前5块首个命中标注页的原始块排名倒数，未命中记0",
+    "Recall@5": "前5块覆盖不同标注页数/该题不同标注页总数；同页去重",
+    "跨页块": "metadata.page_number到page_end闭区间",
+    "论文覆盖率@5": "前5块命中的不同标注论文数/该题标注论文数",
+    "多论文全部命中@5": "所有标注论文至少有一个标注页命中",
+    "gold_limit": "页级标注未穷尽；同页不能自动证明片段语义相关，替代有效证据可能未标注"
+  },
+  "tool_selection": {
+    "definition": "60题按实际Action调用名称路径判定，不按模型自报任务完成；调用错误仍保留",
+    "accepted": "全部题允许knowledge_base_search；对比题也允许真实doc_id覆盖所需论文的paper_compare；paper_list可作前置步骤；无工具或其他工具为错误",
+    "boundary": "这是工具选择准确率，不等于参数语义正确率、工具执行成功率或答案正确率"
+  },
+  "latency": "独立单轮用户请求起点至Agent.done的实际秒数；包含检索、推理、工具和日志；不含索引/服务启动/预热，非浏览器传输或多轮会话基准",
+  "tokens": "汇总每次真实Ollama响应的prompt_eval_count和eval_count；失败缺失保持未知；不按字符估算，不重复计事件快照",
+  "order": "检索题目固定种子打乱，五组顺序轮换；Agent两组逐题交错，不并行跑基准，知识库缓存不使用",
+  "human_quality": {
+    "status": "等待独立评阅人填写",
+    "scale": "0-4整数；每题分别评正确性、完整性、引用准确性；空白不是0分",
+    "correctness": {
+      "0": "无法回答或核心事实错误",
+      "1": "多数核心事实错误，少量正确",
+      "2": "部分正确但有实质错误或无依据推断",
+      "3": "核心事实正确，仅有轻微错误",
+      "4": "全部关键事实正确，推断边界明确"
+    },
+    "completeness": {
+      "0": "未覆盖任何必要评分要点",
+      "1": "只覆盖少量要点",
+      "2": "约一半要点或遗漏重要一项",
+      "3": "覆盖大部分要点，有轻微遗漏",
+      "4": "覆盖全部必要要点并回应问题限制"
+    },
+    "citation_accuracy": {
+      "0": "无有效引用或来源/位置虚构",
+      "1": "少量引用有效，多数不支持对应陈述",
+      "2": "部分引用支持，存在关键错误或多来源遗漏",
+      "3": "主要陈述可追溯，少量引用不精确",
+      "4": "全部必要陈述有正确论文/页码证据，跨论文覆盖完整"
+    },
+    "review_record": "评阅人、评分日期、三项整数分数、理由；助手审阅与自动页匹配不得填入人工分数"
+  },
+  "model_sampling": "正式Agent两组所有实际模型请求均显式设seed=20261003；其余默认采样参数一致。单遍实验，不声称方差或独立多次重复。"
+}

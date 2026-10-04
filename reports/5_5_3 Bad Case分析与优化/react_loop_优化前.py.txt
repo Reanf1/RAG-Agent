@@ -208,22 +208,6 @@ function.arguments为参数对象。不是Markdown代码块或自定义JSON文�
 无法填写必要参数时说明缺少什么；此时不得构造调用，程序会明确结束并提示补充。"""
 
 
-def _paper_aliases(context: dict | None) -> dict:
-    """只从成功的文献列表解析唯一文件名/文件干名，不做模糊匹配或推测指纹。"""
-    candidates = {}
-    for item in (context or {}).get("observations", []):
-        if item.get("name") != "paper_list" or item.get("status") != "success":
-            continue
-        result = item.get("result", {})
-        for paper in result.get("papers", []) if isinstance(result, dict) else []:
-            identifier, filename = paper.get("doc_id"), paper.get("source_file")
-            if not isinstance(identifier, str) or not re.fullmatch(r"[0-9a-f]{64}", identifier) or not isinstance(filename, str):
-                continue
-            for alias in (filename.casefold(), filename.rsplit(".", 1)[0].casefold()):
-                candidates.setdefault(alias, set()).add(identifier)
-    return {alias: next(iter(ids)) for alias, ids in candidates.items() if len(ids) == 1}
-
-
 def act(question: str, thought: dict, tools: list[BaseTool], context: dict | None = None,
         *, call_counts: dict | None = None):
     """一次Function Calling→单调用或独立批次；执行器负责有界超时重试。
@@ -284,13 +268,6 @@ def act(question: str, thought: dict, tools: list[BaseTool], context: dict | Non
             call = call.get("function") if isinstance(call, dict) else None
             if not isinstance(call, dict) or call.get("name") not in names or not isinstance(call.get("arguments"), dict):
                 raise ValueError("Action工具名称或参数格式错误")
-            # 模型可能在列表后仍传文件名；仅将真实列表中的唯一别名转为已上传ID。
-            fields = ("paper_a_id", "paper_b_id") if call["name"] == "paper_compare" else ("doc_id",) if call["name"] in {"paper_metadata", "paper_summary"} else ()
-            aliases = _paper_aliases(context) if fields else {}
-            for field in fields:
-                value = call["arguments"].get(field)
-                if isinstance(value, str) and value.casefold() in aliases:
-                    call["arguments"][field] = aliases[value.casefold()]
             identifier = call["arguments"].get("doc_id")
             if call["name"] == "knowledge_base_search" and identifier is not None and (
                     not isinstance(identifier, str) or identifier not in known_ids):
@@ -415,16 +392,6 @@ def observe(question: str, tools: list[BaseTool] | None = None, context: dict | 
             raise ValueError("最后一次工具调用失败，不能将原任务标记为成功")
         if any(isinstance(item.get("result"), dict) and item["result"].get("status") in {"needs_confirmation", "insufficient_evidence"} for item in latest) and decision["task_complete"]:
             raise ValueError("工具资料不足或候选尚待用户确认，不能将原任务标记为成功")
-        if decision["decision"] == "finish" and decision["task_complete"] and len(observations) == 1:
-            item = observations[0]
-            evidence = item.get("result", {})
-            # 仅单次RAG完整回答原问题时直通已溯源文本，避免二次改写丢失引用。
-            # 多工具、子问题、降级和资料不足仍使用Observation，不自动补造引用。
-            if (item.get("name") == "knowledge_base_search" and item.get("status") == "success"
-                    and item.get("args", {}).get("question") == question and isinstance(evidence, dict)
-                    and evidence.get("status") == "answered" and evidence.get("generation_mode") == "grounded"
-                    and evidence.get("citations") and isinstance(evidence.get("answer"), str) and evidence["answer"].strip()):
-                decision["answer"] = evidence["answer"]
         return {"type": "observation", **decision, "model": result["model"],
                 "usage": {key: result.get(key) for key in ("prompt_eval_count", "eval_count")},
                 "elapsed_seconds": perf_counter() - started}
@@ -460,12 +427,6 @@ def _run_react(question: str, tools: list[BaseTool] | None = None, context: dict
             available = [item for item in tools if item.name not in blocked and (not external_only or item.name == "web_search")]
             routed = route_question(question, available, state) if iteration == 1 else None
             thought = routed if routed is not None else think(question, available, state)
-            required_ids = 2 if thought.get("tool_name") == "paper_compare" else 1 if thought.get("tool_name") in {"paper_metadata", "paper_summary"} else 0
-            known_ids = set(re.findall(r"(?<![A-Za-z0-9])[0-9a-f]{64}(?![A-Za-z0-9])", question + json.dumps(state, ensure_ascii=False)))
-            if required_ids and len(known_ids) < required_ids and any(item.name == "paper_list" for item in available):
-                # 保留规划的真实模型用量；先获取ID，不能直接把论文名称交给必填ID工具。
-                thought = {**thought, "thought": "先获取已上传文献的真实ID，再执行论文工具。",
-                           "tool_name": "paper_list", "parallel_tools": [], "next_step": "tool"}
             yield {"type": "thought", **deepcopy(thought), "iteration": iteration}
             if thought.get("unavailable_tool") == "web_search":
                 # 无可用联网工具时不再让模型猜测最新事实，也不启动本地检索。

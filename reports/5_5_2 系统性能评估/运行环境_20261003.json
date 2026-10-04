@@ -1,0 +1,40 @@
+{
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "python": "3.10.10",
+  "packages": {
+    "torch": "2.5.1",
+    "sentence-transformers": "3.3.1",
+    "transformers": "4.46.3",
+    "chromadb": "0.5.23",
+    "rank-bm25": "0.2.2",
+    "langchain-core": "0.3.29",
+    "langchain-chroma": "0.1.4",
+    "PyMuPDF": "1.28.2"
+  },
+  "active_models": {
+    "models": [
+      {
+        "name": "qwen2.5:7b",
+        "model": "qwen2.5:7b",
+        "size": 5119263374,
+        "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen2",
+          "families": [
+            "qwen2"
+          ],
+          "parameter_size": "7.6B",
+          "quantization_level": "Q4_K_M"
+        },
+        "expires_at": "2026-10-03T19:28:02.65368+08:00",
+        "size_vram": 5119263374,
+        "context_length": 8192
+      }
+    ]
+  },
+  "embedding_device": "CPU/FP32，4线程",
+  "llm_device": "Ollama Metal（服务日志确认Apple M4）",
+  "sampling": "seed=20261003；仅采样种子在评测进程中覆盖，业务YAML不变"
+}
