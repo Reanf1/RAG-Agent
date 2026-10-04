@@ -177,6 +177,27 @@ class TestResearchTools(unittest.TestCase):
         self.assertEqual(payload["format"]["properties"]["doi"]["enum"], [None, "10.1234/demo.2024", "10.5678/other"])
         self.assertEqual(payload["options"]["num_predict"], self.config["llm"]["num_predict"])
 
+    def test_metadata_inline_abstract_punctuation_keeps_original_body(self):
+        # 模拟DETR版式的同行摘要，来源位置仍取加载器的真实行号。
+        rows = [{"text": text, "location": f"行{i}", "metadata": {}}
+                for i, text in enumerate(["Abstract. We present an end-to-end detector.",
+                                          "It uses a transformer.", "1 Introduction", "Not abstract."], 1)]
+        empty = {"title": None, "authors": [], "year": None, "doi": None}
+        for heading in ("Abstract. ", "Abstract: ", "Abstract—", "摘要："):
+            rows[0]["text"] = heading + "We present an end-to-end detector."
+            with patch("src.agent.tools._metadata_lines", return_value=(rows, False)):
+                result, _ = self.metadata({**self.response, "message": {"content": json.dumps(empty)}})
+            self.assertEqual(result["abstract"], "We present an end-to-end detector.\nIt uses a transformer.")
+            self.assertEqual(result["evidence"]["abstract"][0]["location"], "行1")
+            self.assertNotIn("abstract", result["missing_fields"])
+
+    def test_metadata_abstract_word_inside_sentence_is_not_a_heading(self):
+        rows = [{"text": "This abstract discusses AI.", "location": "行1", "metadata": {}}]
+        empty = {"title": None, "authors": [], "year": None, "doi": None}
+        with patch("src.agent.tools._metadata_lines", return_value=(rows, False)):
+            result, _ = self.metadata({**self.response, "message": {"content": json.dumps(empty)}})
+        self.assertIsNone(result["abstract"])
+
     def test_metadata_missing_fields_are_null_not_guessed_from_filename(self):
         selection = {"title": None, "authors": [], "year": None, "doi": None}
         result, _ = self.metadata({**self.response, "message": {"content": json.dumps(selection)}})

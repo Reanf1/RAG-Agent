@@ -225,7 +225,8 @@ def paper_metadata(doc_id: str) -> dict:
     boundary_found = False
     for row in lines:
         if not active:
-            heading = re.fullmatch(r"(?:Abstract|摘要)(?:\s*[:：]\s*(.*)|\s*)", row["text"], flags=re.I)
+            # 学术论文也使用“Abstract. 正文”或破折号同行标题，只识别行首明确边界。
+            heading = re.fullmatch(r"(?:Abstract|摘要)(?:\s*[.:：。—–]\s*(.*)|\s*)", row["text"], flags=re.I)
             if heading:
                 active = True
                 if heading.group(1):
@@ -536,7 +537,7 @@ def paper_summary(doc_id: str) -> dict:
         raise ValueError("论文没有可用文本，不能生成摘要；扫描件请先进行OCR")
     # 开头通常含摘要；将结论标题及后续两块提前，避免长论文只读到前几页。
     abstract_start = next((index for index, chunk in enumerate(chunks[:5])
-                           if re.search(r"(?mi)^\s*(?:abstract|摘要)\s*(?:$|[：:])", chunk.page_content)), 0)
+                           if re.search(r"(?mi)^\s*(?:abstract|摘要)\s*(?:$|[.:：。—–])", chunk.page_content)), 0)
     order = list(range(abstract_start, min(abstract_start + 5, len(chunks))))
     heading = r"(?mi)^\s*(?:#{1,6}\s*)?(?:\d+(?:\.\d+)*[.)]?\s*)?(?:conclusions?|concluding remarks|结论|总结)(?:\s*$|[：:])"
     for index, chunk in enumerate(chunks):
