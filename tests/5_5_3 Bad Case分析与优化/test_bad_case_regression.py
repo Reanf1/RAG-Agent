@@ -93,6 +93,12 @@ class TestPaperIdentifiers(unittest.TestCase):
                                {"doc_id": self.ids[1], "source_file": "dino.pdf"}]}
 
         self.tools = [paper_compare, paper_list]
+        @tool
+        def knowledge_base_search(question: str, doc_id: str | None = None) -> dict:
+            """记录检索过滤，确保使用文献列表中的真实指纹。"""
+            self.invocations.append(doc_id)
+            return {"status": "answered"}
+        self.tools.append(knowledge_base_search)
         self.context = {"observations": [{"name": "paper_list", "status": "success", "result": paper_list.invoke({})}]}
         self.invocations.clear()
         self.thought = {"thought": "对比论文。", "next_step": "tool", "tool_name": "paper_compare"}
@@ -136,6 +142,35 @@ class TestPaperIdentifiers(unittest.TestCase):
             events = list(run_react("对比ViT和DINO", self.tools))
         self.assertEqual(events[0]["tool_name"], "paper_list")
         self.assertEqual(self.invocations, ["list"])
+
+    def test_knowledge_filename_resolves_from_real_list_and_keeps_filter(self):
+        thought = {"next_step": "tool", "tool_name": "knowledge_base_search"}
+        with patch("src.agent.react_loop.urlopen", return_value=packet(name="knowledge_base_search",
+                   args={"question": "ViT的位置嵌入？", "doc_id": "vit.pdf"})):
+            events = list(act("根据vit.pdf回答", thought, self.tools, self.context))
+        self.assertEqual(self.invocations, [self.ids[0]])
+        self.assertEqual(events[0]["args"]["doc_id"], self.ids[0])
+
+    def test_knowledge_filename_with_history_lists_before_action(self):
+        thought = {"next_step": "tool", "tool_name": "knowledge_base_search"}
+        decision = {"type": "observation", "observation": "已取得列表", "decision": "finish",
+                    "task_complete": False, "answer": "待检索"}
+        with isolated_agent_logs(), patch("src.agent.react_loop.think", return_value=thought), \
+                patch("src.agent.react_loop.urlopen", return_value=packet(name="paper_list", args={})), \
+                patch("src.agent.react_loop.observe", return_value=decision):
+            events = list(run_react("根据已上传的vit.pdf回答", self.tools,
+                                   {"history": [{"role": "user", "content": "以前的问题"}]}))
+        self.assertEqual(events[0]["tool_name"], "paper_list")
+        self.assertEqual(self.invocations, ["list"])
+
+    def test_knowledge_unknown_or_failed_list_cannot_authorize_filename(self):
+        thought = {"next_step": "tool", "tool_name": "knowledge_base_search"}
+        for alias, context in (("missing.pdf", self.context), ("vit.pdf", {"observations": []})):
+            with patch("src.agent.react_loop.urlopen", return_value=packet(name="knowledge_base_search",
+                       args={"question": "问题", "doc_id": alias})):
+                events = list(act("根据论文回答", thought, self.tools, context))
+            self.assertEqual(events[-1]["type"], "error")
+            self.assertEqual(self.invocations, [])
 
 
 if __name__ == "__main__":

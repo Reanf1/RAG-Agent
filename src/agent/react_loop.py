@@ -281,7 +281,7 @@ def act(question: str, thought: dict, tools: list[BaseTool], context: dict | Non
             if not isinstance(call, dict) or call.get("name") not in names or not isinstance(call.get("arguments"), dict):
                 raise ValueError("Action工具名称或参数格式错误")
             # 模型可能在列表后仍传文件名；仅将真实列表中的唯一别名转为已上传ID。
-            fields = ("paper_a_id", "paper_b_id") if call["name"] == "paper_compare" else ("doc_id",) if call["name"] in {"paper_metadata", "paper_summary"} else ()
+            fields = ("paper_a_id", "paper_b_id") if call["name"] == "paper_compare" else ("doc_id",) if call["name"] in {"paper_metadata", "paper_summary", "knowledge_base_search"} else ()
             aliases = _paper_aliases(context) if fields else {}
             for field in fields:
                 value = call["arguments"].get(field)
@@ -530,7 +530,12 @@ def _run_react(question: str, tools: list[BaseTool] | None = None, context: dict
             thought = routed if routed is not None else think(question, available, state)
             required_ids = 2 if thought.get("tool_name") == "paper_compare" else 1 if thought.get("tool_name") in {"paper_metadata", "paper_summary"} else 0
             known_ids = set(re.findall(r"(?<![A-Za-z0-9])[0-9a-f]{64}(?![A-Za-z0-9])", question + json.dumps(state, ensure_ascii=False)))
-            if required_ids and len(known_ids) < required_ids and any(item.name == "paper_list" for item in available):
+            # 有历史时仍先核对文件名，不能绕过文档过滤或把模型猜测的ID当作真实指纹。
+            needs_filename = ("knowledge_base_search" in [thought.get("tool_name"), *thought.get("parallel_tools", [])]
+                              and re.search(r"\.(?:pdf|docx|txt|md)(?=$|[^A-Za-z0-9])", question, re.I)
+                              and not any(item.get("name") == "paper_list" and item.get("status") == "success"
+                                          for item in state["observations"]))
+            if ((required_ids and len(known_ids) < required_ids) or needs_filename) and any(item.name == "paper_list" for item in available):
                 # 保留规划的真实模型用量；先获取ID，不能直接把论文名称交给必填ID工具。
                 thought = {**thought, "thought": "先获取已上传文献的真实ID，再执行论文工具。",
                            "tool_name": "paper_list", "parallel_tools": [], "next_step": "tool"}

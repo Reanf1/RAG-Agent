@@ -1,0 +1,31 @@
+........FF....
+======================================================================
+FAIL: test_knowledge_filename_resolves_from_real_list_and_keeps_filter (test_bad_case_regression.TestPaperIdentifiers)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_bad_case_regression.py", line 151, in test_knowledge_filename_resolves_from_real_list_and_keeps_filter
+    self.assertEqual(self.invocations, [self.ids[0]])
+AssertionError: Lists differ: [] != ['aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa']
+
+Second list contains 1 additional elements.
+First extra element 0:
+'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+
+- []
++ ['aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa']
+
+======================================================================
+FAIL: test_knowledge_filename_with_history_lists_before_action (test_bad_case_regression.TestPaperIdentifiers)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_bad_case_regression.py", line 163, in test_knowledge_filename_with_history_lists_before_action
+    self.assertEqual(events[0]["tool_name"], "paper_list")
+AssertionError: 'knowledge_base_search' != 'paper_list'
+- knowledge_base_search
++ paper_list
+
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.157s
+
+FAILED (failures=2)
