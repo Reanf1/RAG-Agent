@@ -62,6 +62,11 @@ def knowledge_base_search(question: str, doc_id: str | None = None) -> dict:
     使用向量+BM25+RRF+模型重排和模块二生成引擎。低相关性返回待确认候选，不生成答案；
     空知识库返回带明确提示的纯模型回答，不是论文证据。不能用于联网查询。
     """
+    return _knowledge_base_search(question, doc_id)
+
+
+def _knowledge_base_search(question: str, doc_id: str | None = None, *, cache=None, session_id: str | None = None) -> dict:
+    """真实RAG实现；缓存只由Python会话入口绑定，不向模型暴露会话或缓存参数。"""
     from src.generation.rag_pipeline import generate_answer, prepare_rag_context
     from src.retrieval.hybrid_retriever import HybridRetriever
 
@@ -75,11 +80,30 @@ def knowledge_base_search(question: str, doc_id: str | None = None) -> dict:
     config = load_config()
     started = perf_counter()
     request_id = uuid4().hex
-    message = {"question": question, "request_id": request_id, "session_id": "agent-tool:" + request_id,
+    message = {"question": question, "request_id": request_id, "session_id": session_id or "agent-tool:" + request_id,
                "started_at": request_time(), "request_info": {"llm": config["llm"], "retrieval": config["retrieval"],
                "prompt_version": PROMPT_VERSION, "entrypoint": "knowledge_base_search"}, "generation_attempted": False}
     result, status = None, "error"
+    scope, cache_store = None, None
+    cache_warnings = []
     try:
+        # 依赖前文的短追问不复用答案；先由Agent补全问题或明确指定论文再检索。
+        if cache is not None and not re.search(r"刚才|之前|上一|前面|上述|它|这(?:篇|份|个|些)|本文|该(?:论文|文档)|\b(?:it|this|that|previous|above)\b", question, re.I):
+            from src.generation.cache import cache_scope
+            from src.retrieval.vector_store import VectorStore
+            cache_store = VectorStore()
+            scope = cache_scope(cache_store) + ":" + str(doc_id)
+            with cache.lock:
+                try:
+                    result = cache.lookup(question, scope)
+                except (OSError, ValueError, RuntimeError) as error:
+                    cache_warnings.append(f"缓存查询失败，本次重新检索：{error}")
+            if result is not None:
+                status = "completed"
+                result.update(retrieval_seconds=0.0, elapsed_seconds=perf_counter() - started,
+                              retrieval={"request_id": request_id, "status": "cache", "returned_chunks": 0})
+                message.update(result, retrieval_status="cache")
+                return result
         message["retrieval_status"] = "error"
         results = HybridRetriever().search(question, doc_id=doc_id, rerank=True)
         message["retrieved_documents"] = [{"rank": rank, "text": document.page_content,
@@ -109,6 +133,8 @@ def knowledge_base_search(question: str, doc_id: str | None = None) -> dict:
         result.update(retrieval_seconds=message["retrieval_seconds"], elapsed_seconds=perf_counter() - started,
                       retrieval={"request_id": request_id, "status": message["retrieval_status"],
                                  "returned_chunks": len(results)})
+        if cache_warnings:
+            result.setdefault("warnings", []).extend(cache_warnings)
         message.update(result)
         return result
     except Exception as error:
@@ -122,6 +148,14 @@ def knowledge_base_search(question: str, doc_id: str | None = None) -> dict:
         except (OSError, ValueError) as error:
             if result is not None:
                 result.setdefault("warnings", []).append(f"RAG日志保存失败：{type(error).__name__}: {error}")
+        if scope is not None and status == "completed" and not result.get("cache", {}).get("hit"):
+            # 生成期间知识库发生变化时不保存跨版本答案；引用/结束/警告检查复用模块二。
+            try:
+                if scope == cache_scope(cache_store) + ":" + str(doc_id):
+                    with cache.lock:
+                        cache.put(question, {"type": "done", **result}, scope)
+            except (OSError, ValueError, RuntimeError) as error:
+                result.setdefault("warnings", []).append(f"答案已生成，但缓存保存失败：{error}")
 
 
 METADATA_SYSTEM_PROMPT = """你是科研论文元信息提取器。只依据提供的原文提取本篇论文的四个字段。
@@ -752,9 +786,15 @@ AVAILABLE_TOOLS = [knowledge_base_search, paper_metadata, paper_compare, keyword
                    calculator, paper_list]
 
 
-def get_available_tools() -> list[BaseTool]:
+def get_available_tools(*, cache=None, session_id: str | None = None) -> list[BaseTool]:
     """每次运行读取联网开关，避免导入时固定配置；不修改全局本地工具列表。"""
-    return [*AVAILABLE_TOOLS, web_search] if load_config()["agent"]["online_search_enabled"] is True else list(AVAILABLE_TOOLS)
+    tools = [*AVAILABLE_TOOLS, web_search] if load_config()["agent"]["online_search_enabled"] is True else list(AVAILABLE_TOOLS)
+    if cache is not None:
+        def search(question: str, doc_id: str | None = None) -> dict:
+            return _knowledge_base_search(question, doc_id, cache=cache, session_id=session_id)
+        search.__doc__ = knowledge_base_search.description
+        tools[0] = tool("knowledge_base_search")(search)
+    return tools
 
 
 def _error_kind(exception: Exception) -> str:

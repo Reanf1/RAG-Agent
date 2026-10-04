@@ -19,6 +19,8 @@ from src.data_loader import LOADERS, create_import_tasks
 from src.frontend.components.documents import list_documents, delete_document, restore_document, read_pdf_page, read_document_content
 from src.frontend.components.trace import execution_rows, conversation_statistics
 from src.agent import run_session
+from src.agent.tools import get_available_tools
+from src.generation.cache import SemanticCache
 from src.frontend.components.sessions import render_sessions
 from src.retrieval.bm25_retriever import BM25Retriever
 from src.retrieval.hybrid_retriever import HybridRetriever
@@ -299,6 +301,10 @@ def show_turn_footer(message):
         st.error(message.get("error") or message["event"]["error"])
     if message.get("event", {}).get("log_error"):
         st.warning(message["event"]["log_error"])
+    for item in message.get("event", {}).get("context", {}).get("observations", []):
+        payload = item.get("result")
+        if isinstance(payload, dict) and payload.get("cache", {}).get("hit"):
+            st.caption(f"RAG缓存命中：{payload['cache']['mode']} · 已跳过本次检索和RAG生成")
     show_agent_sources(message.get("event", {}))
 
 
@@ -338,6 +344,11 @@ def show_statistics():
 with chat_tab:
     if "agent_messages" not in st.session_state:
         st.session_state.agent_messages = []
+    # 缓存仅属于当前用户/会话；切换会话或配置后重新创建，不缓存整个Agent对话。
+    cache_owner = (st.session_state.get("agent_user_id"), st.session_state.get("agent_session_id"), config["generation"]["cache"])
+    if st.session_state.get("agent_cache_owner") != cache_owner:
+        st.session_state.agent_cache_owner = deepcopy(cache_owner)
+        st.session_state.agent_rag_cache = SemanticCache()
     # 固定高度消息区内部滚动；新增消息和流式增量自动滚到最新内容。
     history_panel = st.container(height=460, border=True, key="agent_chat_history", autoscroll=True)
     with history_panel:
@@ -370,6 +381,8 @@ with chat_tab:
                     try:
                         for event in run_session(question, st.session_state.agent_user_id,
                                                  st.session_state.agent_session_id,
+                                                 tools=get_available_tools(cache=st.session_state.agent_rag_cache,
+                                                                           session_id=st.session_state.agent_session_id),
                                                  memory=st.session_state.agent_memory, stream=True):
                             if event["type"] == "token":
                                 incoming["answer"] = event["answer"]

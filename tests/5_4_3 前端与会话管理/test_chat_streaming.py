@@ -106,6 +106,15 @@ class TestStreamingFrontend(unittest.TestCase):
         self.assertEqual(next(m.value for m in self.app.metric if m.label == '对话次数'), '0')
         self.assertFalse(self.app.chat_message)
 
+    def test_rag_cache_is_bound_to_current_session_and_passed_to_agent(self):
+        cache = self.app.session_state["agent_rag_cache"]
+        self.send("缓存入口检查")
+        self.assertIs(self.app.session_state["agent_rag_cache"], cache)
+        tools = self.core.call_args.args[1]
+        self.assertIn("knowledge_base_search", [t.name for t in tools])
+        self.app.button(key="new_conversation").click().run()
+        self.assertIsNot(self.app.session_state["agent_rag_cache"], cache)
+
     def test_agent_history_renders_separate_source_buttons_for_parallel_calls(self):
         reference = {'id': 1, 'source_file': 'attention.pdf', 'location': '第3页', 'metadata': {'page_number': 3}}
         event = {'request_id': 'saved-request', 'context': {'observations': [

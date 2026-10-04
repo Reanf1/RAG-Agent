@@ -5,6 +5,7 @@ import hashlib
 import json
 import math
 import re
+from threading import Lock
 
 from src.generation.prompt_template import PROMPT_VERSION, build_rag_messages
 from src.retrieval.vector_store import VectorStore, get_embeddings
@@ -48,6 +49,8 @@ class SemanticCache:
         if type(capacity) is not int or capacity <= 0:
             raise ValueError("缓存容量必须为正整数")
         self.entries, self.scope = [], None
+        # 同一Agent并行批次可能同时访问本会话缓存，读写短区间由工具入口加锁。
+        self.lock = Lock()
 
     def clear(self):
         """清空答案/问题向量；不影响知识库及原文件。"""
