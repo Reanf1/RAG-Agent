@@ -1,0 +1,110 @@
+- button "keyboard_double_arrow_left":
+  - generic: keyboard_double_arrow_left
+- heading "系统状态" [level=2]
+- paragraph: 系统时间：2026-10-04 19:20:28
+- status:
+  - paragraph: LLM服务：正常（qwen2.5:7b）
+- status:
+  - paragraph: 向量数据库：正常（Chroma）
+- button "刷新状态" [active]:
+  - paragraph: 刷新状态
+- heading "文档上传与管理" [level=2]
+- paragraph: 上传文档
+- region "上传文档":
+  - button "file upload"
+  - button "upload Upload":
+    - generic: upload
+    - paragraph: Upload
+  - generic: 20MB per file • PDF, DOCX, TXT, MD, MARKDOWN
+- paragraph: 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+- button "开始导入" [disabled]:
+  - generic "开始导入":
+    - paragraph: 开始导入
+- button "重试失败项" [disabled]:
+  - generic "重试失败项":
+    - paragraph: 重试失败项
+- heading "对话历史管理" [level=2]
+- button "新建会话":
+  - paragraph: 新建会话
+- paragraph: 最近
+- button "对比论文实验结果":
+  - paragraph: 对比论文实验结果
+- button "分析ViT论文的方法":
+  - paragraph: 分析ViT论文的方法
+- button "删除当前会话":
+  - paragraph: 删除当前会话
+- paragraph: 恢复会话
+- radiogroup "恢复会话":
+  - radio "待恢复的科研会话" [checked]
+  - paragraph: 待恢复的科研会话
+  - paragraph: ID：32bac57b
+- button "恢复":
+  - paragraph: 恢复
+- banner:
+  - button "Deploy":
+    - generic: Deploy
+  - button "Main menu":
+- heading "智能科研助理" [level=1]:
+  - text: 智能科研助理
+  - link "Link to heading":
+    - /url: "#2d7dc4e4"
+- paragraph: 基于 RAG + Agent 的论文知识库问答系统
+- tablist:
+  - tab "单轮对话" [selected]:
+    - paragraph: 单轮对话
+  - tab "多轮对话":
+    - paragraph: 多轮对话
+  - tab "检索文档":
+    - paragraph: 检索文档
+  - tab "知识库":
+    - paragraph: 知识库
+- tabpanel "单轮对话":
+  - paragraph: 每个问题独立回答，结合知识库文献给出引用；历史记录用于查看。
+  - paragraph: 清空只移除当前会话的单轮对话记录与答案缓存。
+  - button "清空当前对话":
+    - paragraph: 清空当前对话
+  - textbox "询问已上传论文（支持中英文）"
+  - button "Send message" [disabled]:
+  - heading "RAG 运行指标" [level=3]:
+    - text: RAG 运行指标
+    - link "Link to heading":
+      - /url: "#rag"
+  - paragraph: 候选命中率 = 非空检索次数 / 已完成检索次数；仅表示找到文档块，不代表回答正确或 Hit@5。缓存、未执行和检索失败不计入分母。统计包含直接 RAG 问答和 Agent 的知识库工具。
+  - paragraph: RAG 候选命中率
+  - paragraph: 暂无样本
+  - paragraph: 平均检索延迟
+  - paragraph: 暂无样本
+  - paragraph: 平均 RAG 响应延迟
+  - paragraph: 暂无样本
+  - paragraph: 实际检索 0 次 · 已完成 0 次 · 非空 0 次 · 失败 0 次。延迟统计实际检索请求，含失败；响应延迟含检索和生成，不含用户确认等待。
+
+{
+  "titles": [
+    {
+      "font": "20px",
+      "title": "系统状态"
+    },
+    {
+      "font": "20px",
+      "title": "文档上传与管理"
+    },
+    {
+      "font": "20px",
+      "title": "对话历史管理"
+    }
+  ],
+  "buttons": [
+    {
+      "text": "开始导入",
+      "width": 82,
+      "x": 20,
+      "y": 609.59375
+    },
+    {
+      "text": "重试失败项",
+      "width": 96,
+      "x": 118,
+      "y": 609.59375
+    }
+  ]
+}

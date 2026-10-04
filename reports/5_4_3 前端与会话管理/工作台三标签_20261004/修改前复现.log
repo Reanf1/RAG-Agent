@@ -1,0 +1,26 @@
+2026-10-04 18:58:58.455 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+F
+======================================================================
+FAIL: test_workbench_tabs_keep_features_in_their_sections (tests.5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+三类工作区分别承载独立问答、记忆对话和文档检索。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_4 端到端联调与测试/test_document_flow.py", line 61, in test_workbench_tabs_keep_features_in_their_sections
+    self.assertEqual([tab.label for tab in app.tabs], ["单轮对话", "多轮对话", "检索文档"])
+AssertionError: Lists differ: ['Agent 科研助理', 'RAG 流式问答'] != ['单轮对话', '多轮对话', '检索文档']
+
+First differing element 0:
+'Agent 科研助理'
+'单轮对话'
+
+Second list contains 1 additional elements.
+First extra element 2:
+'检索文档'
+
+- ['Agent 科研助理', 'RAG 流式问答']
++ ['单轮对话', '多轮对话', '检索文档']
+
+----------------------------------------------------------------------
+Ran 1 test in 0.853s
+
+FAILED (failures=1)

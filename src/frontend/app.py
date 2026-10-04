@@ -17,7 +17,7 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 from src.data_loader import LOADERS, create_import_tasks
-from src.frontend.components.documents import list_documents, delete_document, restore_document, read_pdf_page
+from src.frontend.components.documents import list_documents, delete_document, restore_document, read_pdf_page, read_document_content
 from src.frontend.components.trace import trace_graph
 from src.agent import run_session
 from src.frontend.components.sessions import render_sessions
@@ -34,6 +34,17 @@ from src.utils.config import check_health, load_config
 
 config = load_config()
 app_config = config["app"]
+
+
+def display_ids(value, field=""):
+    """仅缩短结构化展示中的ID，保留真实记录与工具参数。"""
+    if isinstance(value, dict):
+        return {key: display_ids(item, key) for key, item in value.items()}
+    if isinstance(value, list):
+        return [display_ids(item, field) for item in value]
+    if isinstance(value, str) and (field == "id" or field.endswith(("_id", "_ids"))):
+        return value[:8]
+    return value
 
 
 @st.dialog("引用原文页", width="large")
@@ -66,7 +77,6 @@ max_file_size_mb = config["importing"]["max_file_size_mb"]
 st.set_page_config(page_title=app_config["name"], layout="wide")
 st.title(app_config["name"])
 st.caption(app_config["description"])
-st.info("上传文档后增量写入本地知识库；下方 RAG 问答使用混合检索与模型重排，本地模型逐步输出答案并补全文献引用。")
 
 # 导入状态仅存于当前页面会话，原始文件成功加载后保存到本地。
 if "import_tasks" not in st.session_state:
@@ -77,7 +87,7 @@ if "upload_version" not in st.session_state:
     st.session_state.upload_version = 0
 
 with st.sidebar:
-    st.subheader("系统状态")
+    st.header("系统状态")
     st.caption(f"系统时间：{datetime.fromisoformat(request_time()).strftime('%Y-%m-%d %H:%M:%S')}")
     # 首次只检查服务和现有索引；普通页面交互复用结果，不启动模型推理。
     if "health_result" not in st.session_state:
@@ -99,7 +109,7 @@ with st.sidebar:
         st.rerun()
     st.header("文档上传与管理")
     uploaded_files = st.file_uploader(
-        "选择多份文档", type=[suffix.lstrip(".") for suffix in LOADERS],
+        "上传文档", type=[suffix.lstrip(".") for suffix in LOADERS],
         accept_multiple_files=True, max_upload_size=max_file_size_mb,
         key=f"document_uploads:{st.session_state.upload_version}",
     )
@@ -109,12 +119,14 @@ with st.sidebar:
     unfinished = any(t["status"] in {"pending", "loading", "chunking", "indexing"}
                      or (t["status"] == "success" and not t.get("indexed", False))
                      for t in st.session_state.import_tasks)
-    start_import = st.button("开始导入", key="start_import",
-                             disabled=not selected_tasks or (same_selection and not unfinished))
-    retry_import = st.button(
-        "重试失败项", key="retry_import",
-        disabled=not any(t["status"] == "failed" for t in st.session_state.import_tasks),
-    )
+    # 横向容器不会像columns在窄窗口自动叠成两行。
+    with st.container(horizontal=True, gap="small"):
+        start_import = st.button("开始导入", key="start_import",
+                                 disabled=not selected_tasks or (same_selection and not unfinished))
+        retry_import = st.button(
+            "重试失败项", key="retry_import",
+            disabled=not any(t["status"] == "failed" for t in st.session_state.import_tasks),
+        )
 
 with st.sidebar:
     import_status = st.empty()
@@ -166,89 +178,6 @@ if start_import or retry_import:
 
 show_import_status()
 
-library = None  # 读取失败保持未知，不能显示为正常空库。
-library_error = ""
-with st.sidebar:
-    st.subheader("知识库文档")
-    # 四字确认文字不换行，按钮保持原“删除”的54×40像素尺寸。
-    st.html("""<style>
-        .st-key-confirm_delete_document button {padding: 0 1px; height: 40px;}
-        .st-key-confirm_delete_document button p {font-size: 12px; white-space: nowrap;}
-    </style>""")
-    if "document_notice" in st.session_state:
-        st.info(st.session_state.pop("document_notice"))
-    try:
-        try:
-            library = list_documents(raw_dir, index_dir)
-        except Exception:
-            # 库读取失败时仍保留刷新入口，便于修复后重新读取。
-            st.button("刷新知识库状态", key="refresh_knowledge")
-            raise
-        if not library:
-            st.caption("知识库暂无文档。")
-        confirm_delete = cancel_delete = False
-        for document in library:
-            pending = st.session_state.get("delete_pending") == document["doc_id"]
-            details, actions = st.columns([3, 1], vertical_alignment="center")
-            with details:
-                st.markdown(f"**{document['name']}**")
-                st.caption(f"{document['doc_id'][:12]}… · {document['chunks']} 块 · "
-                           + ("已向量化 · " if document["chunks"] else "未向量化 · ")
-                           + ("原文已保存" if document["source_available"] else "原文缺失"))
-            with actions:
-                if pending:
-                    confirm_delete = st.button("确认删除", key="confirm_delete_document", width=54)
-                    cancel_delete = st.button("取消", key="cancel_delete_document", width=54)
-                elif st.button("删除", key=f"delete_document:{document['doc_id']}",
-                             help=f"删除{document['name']}", disabled=not document["source_available"], width=54):
-                    st.session_state.delete_pending = document["doc_id"]
-                    st.rerun()
-        # 刷新放在文档列表下方、已归档知识上方。
-        st.button("刷新知识库状态", key="refresh_knowledge")
-        if library:
-            if "delete_pending" in st.session_state:
-                pending_id = st.session_state.delete_pending
-                if cancel_delete:
-                    st.session_state.pop("delete_pending")
-                    st.rerun()
-                if confirm_delete:
-                    removed = delete_document(raw_dir, index_dir, pending_id)
-                    # 删除后不能复用“已索引成功”的上传任务；重新上传应重新入库。
-                    st.session_state.import_tasks = [t for t in st.session_state.import_tasks if sha256(t["data"]).hexdigest() != pending_id]
-                    st.session_state.import_progress = {
-                        "completed": sum(t["status"] in {"success", "failed"} for t in st.session_state.import_tasks),
-                        "total": len(st.session_state.import_tasks)}
-                    if "rag_cache" in st.session_state:
-                        st.session_state.rag_cache.clear()
-                    st.session_state.pop("delete_pending")
-                    st.session_state.pop("health_result", None)
-                    st.session_state.document_notice = f"已删除 {removed} 个检索块，原文已回收，可在下方恢复。"
-                    st.rerun()
-        trash_dir = raw_dir / ".trash"
-        archived = sorted(folder.name for folder in trash_dir.iterdir()
-                          if folder.is_dir() and not folder.is_symlink() and len(folder.name) == 64
-                          and all(c in "0123456789abcdef" for c in folder.name)) if trash_dir.is_dir() and not trash_dir.is_symlink() else []
-        if archived:
-            archive_names = {identifier: " / ".join(f.name for f in sorted((trash_dir / identifier).iterdir())
-                             if f.is_file() and not f.is_symlink() and f.suffix.lower() in LOADERS)
-                             for identifier in archived}
-            # 单选框只有选择操作，名称和ID不作为可编辑文本输入。
-            restore_id = st.radio("已归档知识", archived, key="restore_doc_id", width="stretch",
-                                 format_func=lambda identifier: archive_names[identifier],
-                                 captions=[f"ID：{identifier}" for identifier in archived])
-            if st.button("恢复", key="restore_document"):
-                st.session_state.import_tasks = restore_document(raw_dir, restore_id)
-                for progress in batch_build_index(st.session_state.import_tasks, raw_dir, max_file_size_mb):
-                    st.session_state.import_progress = progress
-                    show_import_status()
-                if "rag_cache" in st.session_state:
-                    st.session_state.rag_cache.clear()
-                st.session_state.document_notice = "原文已恢复，请查看本批导入状态；失败项可重试。"
-                st.session_state.pop("health_result", None)
-                st.rerun()
-    except Exception as error:
-        library_error = f"文档管理失败：{type(error).__name__}: {error}。原文保留，请修正后重试。"
-        st.error(library_error)
 
 def save_request(message, status):
     """日志故障明确提示，不能把已完成回答改成生成失败。"""
@@ -275,11 +204,131 @@ def save_rag_message(message):
         st.rerun()  # 更新侧栏会话标题，重绘已有答案，不重新生成。
 
 
-st.subheader("科研对话")
-agent_tab, rag_tab = st.tabs(["Agent 科研助理", "RAG 流式问答"])
-with agent_tab:
-    st.subheader("Agent 科研助理")
-    st.caption("本页独立会话接入历史记忆；每个阶段完成即刷新实际 Token、工具成功率/耗时和决策轨迹。Action负责选择工具，内部用量单列；并行批次共享的Action只统计一次。左侧可新建、切换、删除或恢复历史会话。")
+# 单轮RAG不使用历史推理，多轮Agent使用已有会话记忆；检索独立展示。
+single_tab, multi_tab, retrieval_tab, knowledge_tab = st.tabs(["单轮对话", "多轮对话", "检索文档", "知识库"])
+library = None  # 读取失败保持未知，不能显示为正常空库。
+library_error = ""
+with knowledge_tab:
+    document_list, document_content = st.columns([2, 3], gap="medium")
+    with document_list:
+        st.subheader("知识库文档")
+        # 四字确认文字不换行，按钮保持原“删除”的54×40像素尺寸。
+        st.html("""<style>
+            [class*="st-key-delete_document-"] button,
+            .st-key-cancel_delete_document button,
+            .st-key-confirm_delete_document button {padding: 0 1px; height: 40px;}
+            [class*="st-key-delete_document-"] button p {white-space: nowrap;}
+            [class*="st-key-knowledge_document-"] button div[title],
+            [class*="st-key-knowledge_document-"] button p {white-space: normal; overflow-wrap: anywhere;}
+            .st-key-confirm_delete_document button p {font-size: 12px; white-space: nowrap;}
+        </style>""")
+        if "document_notice" in st.session_state:
+            st.info(st.session_state.pop("document_notice"))
+        try:
+            try:
+                library = list_documents(raw_dir, index_dir)
+            except Exception:
+                # 库读取失败时仍保留刷新入口，便于修复后重新读取。
+                st.button("刷新知识库状态", key="refresh_knowledge")
+                raise
+            if not library:
+                st.caption("知识库暂无文档。")
+            identifiers = [document["doc_id"] for document in library]
+            if st.session_state.get("knowledge_document_id") not in identifiers:
+                st.session_state.knowledge_document_id = identifiers[0] if identifiers else None
+            confirm_delete = cancel_delete = False
+            for document in library:
+                pending = st.session_state.get("delete_pending") == document["doc_id"]
+                # 为操作列留出空间，文件名换行显示，按钮保持54×40像素。
+                details, actions = st.columns([2, 1], gap="small", vertical_alignment="center")
+                with details:
+                    selected = st.session_state.knowledge_document_id == document["doc_id"]
+                    if st.button(document["name"], key=f"knowledge_document:{document['doc_id']}",
+                                 type="primary" if selected else "secondary", width="stretch"):
+                        st.session_state.knowledge_document_id = document["doc_id"]
+                        st.rerun()
+                with actions:
+                    if pending:
+                        confirm_delete = st.button("确认删除", key="confirm_delete_document", width=54)
+                        cancel_delete = st.button("取消", key="cancel_delete_document", width=54)
+                    elif st.button("删除", key=f"delete_document:{document['doc_id']}",
+                                 help=f"删除{document['name']}", disabled=not document["source_available"], width=54):
+                        st.session_state.delete_pending = document["doc_id"]
+                        st.rerun()
+                st.caption(f"ID：{document['doc_id'][:8]}")
+            # 刷新放在文档列表下方、已归档知识上方。
+            st.button("刷新知识库状态", key="refresh_knowledge")
+            if library:
+                if "delete_pending" in st.session_state:
+                    pending_id = st.session_state.delete_pending
+                    if cancel_delete:
+                        st.session_state.pop("delete_pending")
+                        st.rerun()
+                    if confirm_delete:
+                        removed = delete_document(raw_dir, index_dir, pending_id)
+                        # 删除后不能复用“已索引成功”的上传任务；重新上传应重新入库。
+                        st.session_state.import_tasks = [t for t in st.session_state.import_tasks if sha256(t["data"]).hexdigest() != pending_id]
+                        st.session_state.import_progress = {
+                            "completed": sum(t["status"] in {"success", "failed"} for t in st.session_state.import_tasks),
+                            "total": len(st.session_state.import_tasks)}
+                        if "rag_cache" in st.session_state:
+                            st.session_state.rag_cache.clear()
+                        st.session_state.pop("delete_pending")
+                        st.session_state.pop("health_result", None)
+                        st.session_state.document_notice = f"已删除 {removed} 个检索块，原文已回收，可在下方恢复。"
+                        st.rerun()
+            trash_dir = raw_dir / ".trash"
+            archived = sorted(folder.name for folder in trash_dir.iterdir()
+                              if folder.is_dir() and not folder.is_symlink() and len(folder.name) == 64
+                              and all(c in "0123456789abcdef" for c in folder.name)) if trash_dir.is_dir() and not trash_dir.is_symlink() else []
+            if archived:
+                archive_names = {identifier: " / ".join(f.name for f in sorted((trash_dir / identifier).iterdir())
+                                 if f.is_file() and not f.is_symlink() and f.suffix.lower() in LOADERS)
+                                 for identifier in archived}
+                # 单选框只有选择操作，名称和ID不作为可编辑文本输入。
+                restore_id = st.radio("已归档知识", archived, key="restore_doc_id", width="stretch",
+                                     format_func=lambda identifier: archive_names[identifier],
+                                     captions=[f"ID：{identifier[:8]}" for identifier in archived])
+                if st.button("恢复", key="restore_document"):
+                    st.session_state.import_tasks = restore_document(raw_dir, restore_id)
+                    for progress in batch_build_index(st.session_state.import_tasks, raw_dir, max_file_size_mb):
+                        st.session_state.import_progress = progress
+                        show_import_status()
+                    if "rag_cache" in st.session_state:
+                        st.session_state.rag_cache.clear()
+                    st.session_state.knowledge_document_id = restore_id
+                    st.session_state.document_notice = "原文已恢复，请查看本批导入状态；失败项可重试。"
+                    st.session_state.pop("health_result", None)
+                    st.rerun()
+        except Exception as error:
+            library_error = f"文档管理失败：{type(error).__name__}: {error}。原文保留，请修正后重试。"
+            st.error(library_error)
+    with document_content:
+        selected_document = next((document for document in library or []
+                                  if document["doc_id"] == st.session_state.get("knowledge_document_id")), None)
+        if selected_document:
+            st.subheader(selected_document["name"])
+            st.caption(f"{selected_document['chunks']} 个索引块 · "
+                       + ("已向量化" if selected_document["chunks"] else "未向量化"))
+            try:
+                with st.container(height=600, border=True, key="knowledge_content"):
+                    for part in read_document_content(raw_dir, selected_document["doc_id"]):
+                        metadata = part.metadata
+                        if "page_number" in metadata:
+                            end = metadata.get("page_end", metadata["page_number"])
+                            pages = str(metadata["page_number"]) if end == metadata["page_number"] else f"{metadata['page_number']}–{end}"
+                            st.caption(f"原文第 {pages} 页" + (" · 表格" if metadata.get("content_type") == "table" else ""))
+                        elif "table_index" in metadata:
+                            st.caption(f"原文表格 {metadata['table_index']}")
+                        st.markdown(part.page_content)
+            except Exception as error:
+                st.error(f"无法读取原文：{type(error).__name__}: {error}")
+        elif library is not None:
+            st.info("请在左侧上传文档，导入后在此选择文件查看内容。")
+
+
+with multi_tab:
+    st.caption("支持连续追问，结合当前会话历史调用科研工具并回答。")
     if "agent_messages" not in st.session_state:
         st.session_state.agent_messages = []
     for previous in st.session_state.agent_messages:
@@ -297,14 +346,13 @@ with agent_tab:
         agent_submitted = st.form_submit_button("运行 Agent", key="run_agent", disabled=not session_ready)
 
 
-with rag_tab:
-    st.subheader("RAG 流式问答")
-    st.caption("每个问题先匹配当前会话答案缓存；未命中再独立检索并由本地 Ollama 生成。历史和引用保存在当前会话，只用于展示，不作为RAG多轮推理上下文。引用对应实际文件和位置，原文证据可展开查看。")
+with single_tab:
+    st.caption("每个问题独立回答，结合知识库文献给出引用；历史记录用于查看。")
     if "rag_messages" not in st.session_state:
         st.session_state.rag_messages = []
     if "rag_cache" not in st.session_state or st.session_state.rag_cache.settings != config["generation"]["cache"]:
         st.session_state.rag_cache = SemanticCache()
-    st.caption("清空会删除当前会话的RAG历史和答案缓存，Agent历史、知识库和请求日志保留。")
+    st.caption("清空只移除当前会话的单轮对话记录与答案缓存。")
     if st.button("清空当前对话", key="clear_rag_chat", disabled=not session_ready):
         try:
             st.session_state.agent_memory.clear_rag_messages(st.session_state.agent_user_id, st.session_state.rag_session_id)
@@ -344,7 +392,7 @@ with rag_tab:
             st.warning(warning)
         for reference in message["citations"]:
             with st.expander(f"参考文档{reference['id']} · {reference['source_file'] or '来源信息未提供'} · {reference['location']}"):
-                st.caption(f"块 ID：{reference['metadata'].get('chunk_id', '')}；仅展示本轮送入模型的原文证据。")
+                st.caption(f"块 ID：{reference['metadata'].get('chunk_id', '')[:8]}；仅展示本轮送入模型的原文证据。")
                 st.text(reference["text"])
                 if Path(reference["source_file"]).suffix.lower() == ".pdf" and "page_number" in reference["metadata"]:
                     key = f"citation:{message.get('request_id', id(message))}:{reference['id']}"
@@ -483,11 +531,13 @@ with rag_tab:
                 save_rag_message(message)
 
 
-st.subheader("Agent 决策轨迹与运行指标")
-agent_metrics_panel = st.empty()
-st.subheader("RAG 运行指标")
-st.caption("候选命中率 = 非空检索次数 / 已完成检索次数；仅表示找到文档块，不代表回答正确或 Hit@5。缓存、未执行和检索失败不计入分母。统计包含直接 RAG 问答和 Agent 的知识库工具。")
-rag_metrics_panel = st.empty()
+with multi_tab:
+    st.subheader("Agent 决策轨迹与运行指标")
+    agent_metrics_panel = st.empty()
+with single_tab:
+    st.subheader("RAG 运行指标")
+    st.caption("候选命中率 = 非空检索次数 / 已完成检索次数；仅表示找到文档块，不代表回答正确或 Hit@5。缓存、未执行和检索失败不计入分母。统计包含直接 RAG 问答和 Agent 的知识库工具。")
+    rag_metrics_panel = st.empty()
 
 
 def show_retrieval_metrics():
@@ -517,10 +567,10 @@ def show_agent_metrics(event, show_answer=True):
         columns = st.columns(2)
         columns[0].metric("本次 Agent Token", str(tokens["total"]) if tokens["total"] is not None else "未知")
         columns[1].metric("Agent 响应耗时", f"{metrics['response_seconds']:.3f} 秒")
-        st.caption(f"阶段：{event['type']} · 请求：{event['request_id']} · 已报告 Token：{tokens['known_total']} · 用量未完整报告：{tokens['unknown_calls']} 项")
+        st.caption(f"阶段：{event['type']} · 请求：{event['request_id'][:8]} · 已报告 Token：{tokens['known_total']} · 用量未完整报告：{tokens['unknown_calls']} 项")
         if metrics["calls"]:
             st.dataframe([{"阶段": c["phase"], "轮次": c["iteration"], "工具": c["tool"],
-                           "调用标识": ", ".join(c.get("tool_call_ids", [])) or c["id"], "输入 Token": str(c["input"]) if c["input"] is not None else "未知",
+                           "调用标识": ", ".join(identifier[:8] for identifier in c.get("tool_call_ids", [])) or c["id"][:8], "输入 Token": str(c["input"]) if c["input"] is not None else "未知",
                            "输出 Token": str(c["output"]) if c["output"] is not None else "未知",
                            "用量完整": "否" if c["incomplete"] or c["input"] is None or c["output"] is None else "是"}
                           for c in metrics["calls"]], hide_index=True, width="stretch")
@@ -537,7 +587,7 @@ def show_agent_metrics(event, show_answer=True):
                    f"成功 {tools.get('successes', 0)} · 失败 {tools.get('failures', 0)} · 待返回 {tools.get('pending', 0)}。"
                    "成功指工具执行成功，不能代替任务完成或答案正确；重试按最终调用状态计一次，并行耗时可重叠。")
         if metrics.get("tool_calls"):
-            st.dataframe([{"工具": c["name"], "轮次": c["iteration"], "调用ID": c["call_id"],
+            st.dataframe([{"工具": c["name"], "轮次": c["iteration"], "调用ID": c["call_id"][:8],
                            "状态": {"pending": "待返回", "success": "成功", "error": "失败"}[c["status"]],
                            "耗时（秒）": c["seconds"], "尝试次数": c["attempts"],
                            "执行方式": c["execution_mode"] or "未报告"}
@@ -563,20 +613,20 @@ def show_agent_metrics(event, show_answer=True):
                         st.caption(f"下一步：{step.get('next_step', '未报告')} · 计划工具：{' + '.join(planned) or '无需工具'} · 路由：{step.get('route', 'model')}")
                     elif kind == "tool_call":
                         st.markdown(f"**Action · {step['name']}**")
-                        st.caption(f"调用ID：{step['call_id']}")
-                        st.json(step.get("args", {}), expanded=False)
+                        st.caption(f"调用ID：{step['call_id'][:8]}")
+                        st.json(display_ids(step.get("args", {})), expanded=False)
                     elif kind == "tool_result":
                         st.markdown(f"**工具返回 · {step['name']} · {'成功' if step['status'] == 'success' else '失败'}**")
                         seconds = step.get("elapsed_seconds")
-                        st.caption(f"调用ID：{step['call_id']} · 执行方式：{step.get('execution_mode', '未报告')} · 耗时："
+                        st.caption(f"调用ID：{step['call_id'][:8]} · 执行方式：{step.get('execution_mode', '未报告')} · 耗时："
                                    + (f"{seconds:.3f} 秒" if type(seconds) in (int, float) else "未知"))
                         if step.get("error"):
                             st.warning(step["error"])
                         if step.get("pending"):
                             st.warning("等待已超时，后台工具可能仍在运行；迟到结果不会用于本次回答。")
-                        st.json(step.get("result"), expanded=False)
+                        st.json(display_ids(step.get("result")), expanded=False)
                         if step.get("attempts"):
-                            st.json({"实际尝试记录": step["attempts"]}, expanded=False)
+                            st.json(display_ids({"实际尝试记录": step["attempts"]}), expanded=False)
                     elif kind == "observation":
                         st.markdown("**Observation · 结果判断**")
                         st.write(step.get("observation", "未报告观察说明"))
@@ -598,153 +648,152 @@ def show_agent_metrics(event, show_answer=True):
             show_agent_sources(event)
 
 
-if agent_submitted:
-    if not agent_question.strip():
-        st.warning("请输入 Agent 问题。")
-    else:
-        st.session_state.pop("agent_last_event", None)
-        with agent_user_panel.container(), st.chat_message("user"):
-            st.markdown(agent_question.strip())
-        try:
-            for event in run_session(agent_question.strip(), st.session_state.agent_user_id,
-                                     st.session_state.agent_session_id, memory=st.session_state.agent_memory, stream=True):
-                st.session_state.agent_last_event = event
-                if event["type"] == "token":
-                    with agent_answer_panel.container(), st.chat_message("assistant"):
-                        st.markdown(event["answer"])
-                        st.caption("正在生成，完成状态与引用以最终校验结果为准。")
-                    continue
-                if event["type"] == "done":
-                    st.session_state.agent_messages.append({"question": agent_question.strip(),
-                        "answer": event["full_response"], "complete": event["task_complete"],
-                        "stop_reason": event["stop_reason"], "event": event})
-                show_agent_metrics(event)
-                show_retrieval_metrics()
-            if st.session_state.get("agent_last_event", {}).get("type") == "done":
-                st.rerun()  # 完整问答已经入库，刷新标题与历史即可。
-        except Exception as error:
-            st.error(f"Agent 运行失败：{type(error).__name__}: {error}。请检查本地服务后重试。")
-elif "agent_last_event" in st.session_state:
-    show_agent_metrics(st.session_state.agent_last_event, show_answer=False)
-
-st.divider()
-with st.expander("知识库管理面板"):
-    st.caption("共享知识库按文档内容指纹汇总，回收文档不计入活动列表。已向量化仅表示当前有索引块，"
-               "不保证完整入库；导入结果/预期块数/错误仅来自当前页面批次，刷新后未知时显示“—”。")
-    if library is None:
-        st.error(library_error or "知识库状态读取失败，请修正后刷新。")
-    else:
-        summary = st.columns(3)
-        summary[0].metric("知识库文档数", len(library))
-        summary[1].metric("已向量化文档数", sum(document["chunks"] > 0 for document in library))
-        summary[2].metric("知识库索引块数", sum(document["chunks"] for document in library))
-        if not library:
-            st.info("知识库暂无文档，请在左侧上传并开始导入。")
+with multi_tab:
+    if agent_submitted:
+        if not agent_question.strip():
+            st.warning("请输入 Agent 问题。")
         else:
-            # 磁盘/Chroma为当前状态；本页批次仅补充最近处理结果，二者不能互相冒充。
-            batches = {}
-            for task in st.session_state.import_tasks:
-                batches.setdefault(sha256(task["data"]).hexdigest(), []).append(task)
-            rows = []
-            for document in library:
-                batch = batches.get(document["doc_id"], [])
-                # 同内容不同文件名只算一份文献，合并批次结果，不能隐藏其中一次失败。
-                states = ["待索引" if task["status"] == "success" and not task.get("indexed", False)
-                          else status_labels[task["status"]] for task in batch]
-                rows.append({"文件名": document["name"], "文档 ID": document["doc_id"],
-                             "原文状态": "已保存" if document["source_available"] else "缺失",
-                             "向量化状态": "已向量化" if document["chunks"] else "未向量化",
-                             "索引块数": document["chunks"], "导入结果（本页）": " / ".join(dict.fromkeys(states)) or "—",
-                             "本次预期块数": " / ".join(dict.fromkeys(str(task["chunk_count"]) for task in batch
-                                                                     if task.get("chunk_count"))) or "—",
-                             "错误（本页）": " / ".join(dict.fromkeys(task["error"] for task in batch if task["error"])) or "—"})
-            st.dataframe(rows, hide_index=True, width="stretch")
+            st.session_state.pop("agent_last_event", None)
+            with agent_user_panel.container(), st.chat_message("user"):
+                st.markdown(agent_question.strip())
+            try:
+                for event in run_session(agent_question.strip(), st.session_state.agent_user_id,
+                                         st.session_state.agent_session_id, memory=st.session_state.agent_memory, stream=True):
+                    st.session_state.agent_last_event = event
+                    if event["type"] == "token":
+                        with agent_answer_panel.container(), st.chat_message("assistant"):
+                            st.markdown(event["answer"])
+                            st.caption("正在生成，完成状态与引用以最终校验结果为准。")
+                        continue
+                    if event["type"] == "done":
+                        st.session_state.agent_messages.append({"question": agent_question.strip(),
+                            "answer": event["full_response"], "complete": event["task_complete"],
+                            "stop_reason": event["stop_reason"], "event": event})
+                    show_agent_metrics(event)
+                    show_retrieval_metrics()
+                if st.session_state.get("agent_last_event", {}).get("type") == "done":
+                    st.rerun()  # 完整问答已经入库，刷新标题与历史即可。
+            except Exception as error:
+                st.error(f"Agent 运行失败：{type(error).__name__}: {error}。请检查本地服务后重试。")
+    elif "agent_last_event" in st.session_state:
+        show_agent_metrics(st.session_state.agent_last_event, show_answer=False)
 
-st.subheader("检索实验与服务维护")
-st.subheader("文档 Top-K 检索")
-st.caption("此处只检索文档块；可选向量、BM25、RRF 或 RRF + 模型重排。各类分数不可直接比较，也不是命中概率。生成答案请使用上方 RAG 问答。")
-with st.form("vector_search_form"):
-    method = st.selectbox("检索方式", ["向量相似度", "BM25 关键词", "RRF 混合检索", "RRF + 模型重排"], key="retrieval_method")
-    query = st.text_input("查询内容（支持中英文）", key="vector_query")
-    top_k = st.number_input("返回数量 Top-K", min_value=1,
-                            value=config["retrieval"]["top_k"], step=1, key="vector_top_k")
-    doc_id = st.text_input("限定文档 ID（可选，留空检索全部文档）", key="vector_doc_id")
-    search_submitted = st.form_submit_button("检索", key="vector_search")
-
-if search_submitted:
-    if not query.strip():
-        st.warning("请输入查询内容。")
-    else:
-        try:
-            # BM25 每次提交从当前正文重建小规模内存索引，无需加载 M3E。
-            with st.spinner("正在检索本地知识库…"):
-                if method in ("RRF 混合检索", "RRF + 模型重排"):
-                    retriever = HybridRetriever()
-                elif method == "BM25 关键词":
-                    retriever = BM25Retriever()
-                else:
-                    retriever = VectorStore()
-                if method == "RRF + 模型重排":
-                    results = retriever.search(query, k=top_k, doc_id=doc_id.strip() or None, rerank=True)
-                else:
-                    results = retriever.search(query, k=top_k, doc_id=doc_id.strip() or None)
-        except Exception as error:
-            st.error(f"检索失败：{type(error).__name__}: {error}。请根据错误信息检查配置后重新检索。")
+with knowledge_tab:
+    with st.expander("知识库管理面板"):
+        st.caption("共享知识库按文档内容指纹汇总，回收文档不计入活动列表。已向量化仅表示当前有索引块，"
+                   "不保证完整入库；导入结果/预期块数/错误仅来自当前页面批次，刷新后未知时显示“—”。")
+        if library is None:
+            st.error(library_error or "知识库状态读取失败，请修正后刷新。")
         else:
-            if not results:
-                st.info("没有可检索的文档块或关键词无匹配，请先导入文档并检查关键词；如填写了文档 ID，请检查是否正确。")
-            st.caption(f"返回 {len(results)} 个文档块（Top-K={top_k}）。")
-            for rank, (document, score) in enumerate(results, 1):
-                metadata = document.metadata
-                filename = metadata.get("source_file", "未知文件")
-                score_label = {"向量相似度": "余弦相似度", "BM25 关键词": "BM25 分数",
-                               "RRF 混合检索": "RRF 分数", "RRF + 模型重排": "模型相关性分数"}[method]
-                with st.expander(f"{rank}. {filename} · {score_label} {score:.4f}", expanded=True):
-                    # PDF 使用物理页码；Word/文本使用各自位置，不能伪造页码。
-                    if "page_number" in metadata:
-                        location = f"物理页码：{metadata['page_number']}"
-                        if metadata.get("page_end", metadata["page_number"]) != metadata["page_number"]:
-                            location += f"–{metadata['page_end']}"
-                    elif "paragraph_index" in metadata:
-                        location = f"段落：{metadata['paragraph_index']}"
-                    elif "table_index" in metadata:
-                        location = f"表格：{metadata['table_index']}"
-                    elif "line_start" in metadata:
-                        location = f"行范围：{metadata['line_start']}–{metadata['line_end']}"
+            summary = st.columns(3)
+            summary[0].metric("知识库文档数", len(library))
+            summary[1].metric("已向量化文档数", sum(document["chunks"] > 0 for document in library))
+            summary[2].metric("知识库索引块数", sum(document["chunks"] for document in library))
+            if not library:
+                st.info("知识库暂无文档，请在左侧上传并开始导入。")
+            else:
+                # 磁盘/Chroma为当前状态；本页批次仅补充最近处理结果，二者不能互相冒充。
+                batches = {}
+                for task in st.session_state.import_tasks:
+                    batches.setdefault(sha256(task["data"]).hexdigest(), []).append(task)
+                rows = []
+                for document in library:
+                    batch = batches.get(document["doc_id"], [])
+                    # 同内容不同文件名只算一份文献，合并批次结果，不能隐藏其中一次失败。
+                    states = ["待索引" if task["status"] == "success" and not task.get("indexed", False)
+                              else status_labels[task["status"]] for task in batch]
+                    rows.append({"文件名": document["name"], "文档 ID": document["doc_id"][:8],
+                                 "原文状态": "已保存" if document["source_available"] else "缺失",
+                                 "向量化状态": "已向量化" if document["chunks"] else "未向量化",
+                                 "索引块数": document["chunks"], "导入结果（本页）": " / ".join(dict.fromkeys(states)) or "—",
+                                 "本次预期块数": " / ".join(dict.fromkeys(str(task["chunk_count"]) for task in batch
+                                                                         if task.get("chunk_count"))) or "—",
+                                 "错误（本页）": " / ".join(dict.fromkeys(task["error"] for task in batch if task["error"])) or "—"})
+                st.dataframe(rows, hide_index=True, width="stretch")
+
+with retrieval_tab:
+    st.subheader("文档 Top-K 检索")
+    st.caption("此处只检索文档块；可选向量、BM25、RRF 或 RRF + 模型重排。各类分数不可直接比较，也不是命中概率。生成答案请切换到单轮对话或多轮对话。")
+    with st.form("vector_search_form"):
+        method = st.selectbox("检索方式", ["向量相似度", "BM25 关键词", "RRF 混合检索", "RRF + 模型重排"], key="retrieval_method")
+        query = st.text_input("查询内容（支持中英文）", key="vector_query")
+        top_k = st.number_input("返回数量 Top-K", min_value=1,
+                                value=config["retrieval"]["top_k"], step=1, key="vector_top_k")
+        doc_id = st.text_input("限定文档 ID（可选，支持前8位）", key="vector_doc_id")
+        search_submitted = st.form_submit_button("检索", key="vector_search")
+
+    if search_submitted:
+        if not query.strip():
+            st.warning("请输入查询内容。")
+        else:
+            try:
+                # 简写仅用于界面输入；唯一匹配后以完整ID查询，冲突时明确提示。
+                selected_id = doc_id.strip() or None
+                if selected_id and len(selected_id) == 8:
+                    if library is None:
+                        raise ValueError("知识库状态读取失败，无法匹配简写文档ID")
+                    matches = [document["doc_id"] for document in library if document["doc_id"].startswith(selected_id)]
+                    if len(matches) > 1:
+                        raise ValueError("前8位ID对应多份文档，请使用完整ID")
+                    if matches:
+                        selected_id = matches[0]
+                # BM25 每次提交从当前正文重建小规模内存索引，无需加载 M3E。
+                with st.spinner("正在检索本地知识库…"):
+                    if method in ("RRF 混合检索", "RRF + 模型重排"):
+                        retriever = HybridRetriever()
+                    elif method == "BM25 关键词":
+                        retriever = BM25Retriever()
                     else:
-                        location = "位置未记录"
-                    st.caption(f"来源：{filename}；{location}")
-                    st.caption(f"文档 ID：{metadata.get('doc_id', '')}；块 ID：{metadata.get('chunk_id', '')}")
-                    st.text(document.page_content)
+                        retriever = VectorStore()
+                    if method == "RRF + 模型重排":
+                        results = retriever.search(query, k=top_k, doc_id=selected_id, rerank=True)
+                    else:
+                        results = retriever.search(query, k=top_k, doc_id=selected_id)
+            except Exception as error:
+                st.error(f"检索失败：{type(error).__name__}: {error}。请根据错误信息检查配置后重新检索。")
+            else:
+                if not results:
+                    st.info("没有可检索的文档块或关键词无匹配，请先导入文档并检查关键词；如填写了文档 ID，请检查是否正确。")
+                st.caption(f"返回 {len(results)} 个文档块（Top-K={top_k}）。")
+                for rank, (document, score) in enumerate(results, 1):
+                    metadata = document.metadata
+                    filename = metadata.get("source_file", "未知文件")
+                    score_label = {"向量相似度": "余弦相似度", "BM25 关键词": "BM25 分数",
+                                   "RRF 混合检索": "RRF 分数", "RRF + 模型重排": "模型相关性分数"}[method]
+                    with st.expander(f"{rank}. {filename} · {score_label} {score:.4f}", expanded=True):
+                        # PDF 使用物理页码；Word/文本使用各自位置，不能伪造页码。
+                        if "page_number" in metadata:
+                            location = f"物理页码：{metadata['page_number']}"
+                            if metadata.get("page_end", metadata["page_number"]) != metadata["page_number"]:
+                                location += f"–{metadata['page_end']}"
+                        elif "paragraph_index" in metadata:
+                            location = f"段落：{metadata['paragraph_index']}"
+                        elif "table_index" in metadata:
+                            location = f"表格：{metadata['table_index']}"
+                        elif "line_start" in metadata:
+                            location = f"行范围：{metadata['line_start']}–{metadata['line_end']}"
+                        else:
+                            location = "位置未记录"
+                        st.caption(f"来源：{filename}；{location}")
+                        st.caption(f"文档 ID：{metadata.get('doc_id', '')[:8]}；块 ID：{metadata.get('chunk_id', '')[:8]}")
+                        st.text(document.page_content)
 
-st.subheader("检索分数分布")
-st.caption("统计本地请求日志中的实际 RAG 检索：Top-1 为 BGE sigmoid 重排分数，不是命中率或正确概率。空库、检索失败和缓存跳过均单独计数。")
-try:
-    statistics = retrieval_score_distribution()
-    st.caption(f"请求 {statistics['requests']} · 缓存命中 {statistics['cache_hits']} · "
-               f"空结果 {statistics['empty_retrievals']} · 检索失败 {statistics['failed_retrievals']}")
-    if statistics["invalid_lines"]:
-        st.warning(f"日志中有 {statistics['invalid_lines']} 行损坏或格式不符，统计已跳过并保留原文件。")
-    for group in statistics["distributions"]:
-        st.caption(f"{group['model']} · 版本 {group['revision'][:8]} · 样本 {group['count']} · "
-                   f"均值 {group['mean']:.4f} · 范围 {group['min']:.4f}–{group['max']:.4f}")
-        st.bar_chart(group["bins"], x="range", y="count", x_label="Top-1 分数区间", y_label="实际检索次数")
-    if not statistics["distributions"]:
-        st.info("尚无可统计的有结果 RAG 检索。提交问题并完成实际检索后显示分布。")
-except (OSError, ValueError) as error:
-    st.warning(f"无法读取检索统计：{type(error).__name__}: {error}。请检查本地日志目录。")
-if "rag_log_error" in st.session_state:
-    st.warning(st.session_state.pop("rag_log_error"))
-
-st.subheader("模块开发状态")
-st.table(
-    [
-        {"模块": "一：文档处理与检索", "状态": "已实现", "范围": "批量导入、三种分块、增量索引、向量/BM25/RRF 与模型重排；五组分块及三档检索质量已实际评测"},
-        {"模块": "二：RAG 生成", "状态": "已实现", "范围": "已实现 Prompt、上下文/引用、本地生成、流式、缓存、降级、请求日志与分数分布，完成参数对照；独立答案质量评测待完成"},
-        {"模块": "三：Agent 决策", "状态": "已实现", "范围": "有界ReAct、八个本地工具、路由/并行/恢复、会话隔离与窗口/摘要记忆"},
-        {"模块": "四：系统集成与前端", "状态": "已实现", "范围": "文档/会话管理与回收恢复、RAG/Agent正文流式、引用原文物理页、记忆、公开轨迹、实时指标与健康检查"},
-        {"模块": "五：评测与交付", "状态": "人工评分待完成", "范围": "已有12篇/60题、检索与Agent实际评测、图表及Bad Case优化；基线120条和优化60条的人工质量评分待评阅"},
-    ]
-)
-st.subheader("评阅说明")
-st.write("功能测试、检索命中和模型自报完成均不能代替人工答案评分。180条实际答案按正确性、完整性和引用准确性评阅。")
+    st.subheader("检索分数分布")
+    st.caption("统计本地请求日志中的实际 RAG 检索：Top-1 为 BGE sigmoid 重排分数，不是命中率或正确概率。空库、检索失败和缓存跳过均单独计数。")
+    try:
+        statistics = retrieval_score_distribution()
+        st.caption(f"请求 {statistics['requests']} · 缓存命中 {statistics['cache_hits']} · "
+                   f"空结果 {statistics['empty_retrievals']} · 检索失败 {statistics['failed_retrievals']}")
+        if statistics["invalid_lines"]:
+            st.warning(f"日志中有 {statistics['invalid_lines']} 行损坏或格式不符，统计已跳过并保留原文件。")
+        for group in statistics["distributions"]:
+            st.caption(f"{group['model']} · 版本 {group['revision'][:8]} · 样本 {group['count']} · "
+                       f"均值 {group['mean']:.4f} · 范围 {group['min']:.4f}–{group['max']:.4f}")
+            st.bar_chart(group["bins"], x="range", y="count", x_label="Top-1 分数区间", y_label="实际检索次数")
+        if not statistics["distributions"]:
+            st.info("尚无可统计的有结果 RAG 检索。提交问题并完成实际检索后显示分布。")
+    except (OSError, ValueError) as error:
+        st.warning(f"无法读取检索统计：{type(error).__name__}: {error}。请检查本地日志目录。")
+with single_tab:
+    if "rag_log_error" in st.session_state:
+        st.warning(st.session_state.pop("rag_log_error"))

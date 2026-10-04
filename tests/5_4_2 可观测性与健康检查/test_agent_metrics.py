@@ -439,6 +439,31 @@ class TestAgentMetricsEntryAndPage(unittest.TestCase):
         self.assertTrue(any("Action · 已跳过" in m.value for m in app.markdown))
 
 
+    def test_display_ids_are_short_without_changing_saved_events(self):
+        """轨迹/JSON仅显示前八位，持久化的调用和参数仍为完整ID。"""
+        identifier = "12345678" + "a" * 24
+        events = deepcopy(TestAgentMetrics.events())
+        for event in events:
+            if event.get("call_id") == "a":
+                event["call_id"] = identifier
+            if event["type"] == "tool_call" and event["name"] == "calculator":
+                event["args"] = {"doc_id": identifier}
+                event["message"].tool_calls[0]["id"] = identifier
+            if event["type"] == "tool_result" and event["name"] == "calculator":
+                event["result"].update(doc_ids=[identifier], metadata={"chunk_id": identifier})
+        self.core.side_effect = lambda *args, **kwargs: iter(deepcopy(events))
+        app = self.page()
+        app.text_input(key="agent_question").set_value("计算")
+        app.button(key="run_agent").click().run()
+        self.assertFalse(app.exception)
+        self.assertTrue(any(c.value.startswith("调用ID：12345678") for c in app.caption))
+        self.assertNotIn(identifier, json.dumps([item.value for item in app.json]))
+        self.assertIn("12345678", json.dumps([item.value for item in app.json]))
+        saved = self.logs()[-1]["metrics"]
+        self.assertEqual(saved["tool_calls"][0]["call_id"], identifier)
+        self.assertTrue(any(step.get("args", {}).get("doc_id") == identifier for step in saved["trace"]))
+        self.assertEqual(events[1]["args"]["doc_id"], identifier)
+
     def test_central_chat_and_graph_survive_rerun_without_duplicate(self):
         """中央展示真实问答，底部按调用ID画图；页面重跑不重复生成或追加历史。"""
         app = self.page()
@@ -535,7 +560,7 @@ class TestAgentMetricsEntryAndPage(unittest.TestCase):
         archived = app.radio(key="restore_conversation_select")
         self.assertEqual(archived.label, "恢复会话")
         self.assertEqual(archived.options, ["待回收历史"])
-        self.assertEqual(list(archived.proto.captions), [f"ID：{a}"])
+        self.assertEqual(list(archived.proto.captions), [f"ID：{a[:8]}"])
         self.assertEqual(app.button(key="restore_conversation").label, "恢复")
         app.button(key="restore_conversation").click().run()
         self.assertFalse(app.exception)

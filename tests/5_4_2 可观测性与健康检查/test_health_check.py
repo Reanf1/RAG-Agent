@@ -208,7 +208,7 @@ class TestHealthCheckPage(unittest.TestCase):
         app = self.page()
         self.assertFalse(app.exception)
         self.checker.assert_called_once()
-        self.assertEqual(app.sidebar.subheader[0].value, "系统状态")
+        self.assertEqual(app.sidebar.header[0].value, "系统状态")
         self.assertTrue(app.sidebar.caption[0].value.startswith("系统时间："))
         self.assertEqual([row.value for row in app.sidebar.success],
                          ["LLM服务：正常（qwen2.5:7b）", "向量数据库：正常（Chroma）"])

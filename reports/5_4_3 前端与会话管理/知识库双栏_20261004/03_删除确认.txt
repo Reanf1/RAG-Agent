@@ -1,0 +1,98 @@
+- heading "系统状态" [level=3]
+- paragraph: 系统时间：2026-10-04 19:12:06
+- status:
+  - paragraph: LLM服务：正常（qwen2.5:7b）
+- status:
+  - paragraph: 向量数据库：正常（Chroma）
+- button "刷新状态":
+  - paragraph: 刷新状态
+- heading "文档上传与管理" [level=2]
+- paragraph: 选择多份文档
+- region "选择多份文档":
+  - button "file upload"
+  - button "upload Upload":
+    - generic: upload
+    - paragraph: Upload
+  - generic: 20MB per file • PDF, DOCX, TXT, MD, MARKDOWN
+- paragraph: 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+- button "开始导入" [disabled]:
+  - paragraph: 开始导入
+- button "重试失败项" [disabled]:
+  - paragraph: 重试失败项
+- heading "对话历史管理" [level=3]
+- button "新建会话":
+  - paragraph: 新建会话
+- paragraph: 最近
+- button "对比论文实验结果":
+  - paragraph: 对比论文实验结果
+- button "分析ViT论文的方法":
+  - paragraph: 分析ViT论文的方法
+- button "删除当前会话":
+  - paragraph: 删除当前会话
+- paragraph: 恢复会话
+- radiogroup "恢复会话":
+  - radio "待恢复的科研会话" [checked]
+  - paragraph: 待恢复的科研会话
+  - paragraph: ID：32bac57bc3294ef7b8cd599eb166ecb4
+- button "恢复":
+  - paragraph: 恢复
+- banner:
+  - button "Deploy":
+    - generic: Deploy
+  - button "Main menu":
+- heading "智能科研助理" [level=1]:
+  - text: 智能科研助理
+  - link "Link to heading":
+    - /url: "#2d7dc4e4"
+- paragraph: 基于 RAG + Agent 的论文知识库问答系统
+- tablist:
+  - tab "单轮对话":
+    - paragraph: 单轮对话
+  - tab "多轮对话":
+    - paragraph: 多轮对话
+  - tab "检索文档":
+    - paragraph: 检索文档
+  - tab "知识库" [selected]:
+    - paragraph: 知识库
+- tabpanel "知识库":
+  - heading "知识库文档" [level=3]:
+    - text: 知识库文档
+    - link "Link to heading":
+      - /url: "#14437afa"
+  - button "文档A_界面验证.md":
+    - generic "文档A_界面验证.md":
+      - paragraph: 文档A_界面验证.md
+  - button "删除":
+    - paragraph: 删除
+  - paragraph: ID：56c49192e4481dbb73649039bdba39c4a17a5cfb70bd0b5f554702e8f13c20c9
+  - button "文档B_切换验证.txt":
+    - generic "文档B_切换验证.txt":
+      - paragraph: 文档B_切换验证.txt
+  - button "确认删除":
+    - generic "确认删除":
+      - paragraph: 确认删除
+  - button "取消":
+    - generic "取消":
+      - paragraph: 取消
+  - paragraph: ID：47e18bdbfa17cf8a73530cc5fae415163801379ae23a78bf94d0e1e2caca9877
+  - button "刷新知识库状态":
+    - generic "刷新知识库状态":
+      - paragraph: 刷新知识库状态
+  - paragraph: 已归档知识
+  - radiogroup "已归档知识":
+    - radio "已归档论文.txt" [checked]
+    - paragraph: 已归档论文.txt
+    - paragraph: ID：3764afa90110c737a60e0ee0a3571cce645a18f35d1c110dce582c776afbbb4c
+  - button "恢复":
+    - generic "恢复":
+      - paragraph: 恢复
+  - heading "文档B_切换验证.txt" [level=3]:
+    - text: 文档B_切换验证.txt
+    - link "Link to heading":
+      - /url: "#b-txt"
+  - paragraph: 1 个索引块 · 已向量化
+  - paragraph: 文档 B
+  - paragraph: 这是另一份界面测试文件。 选择它后，右侧应显示这份原文，并替换文档 A 的内容。
+  - generic "keyboard_arrow_right 知识库管理面板":
+    - generic: keyboard_arrow_right
+    - paragraph: 知识库管理面板

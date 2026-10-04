@@ -4,7 +4,7 @@ from hashlib import sha256
 from pathlib import Path
 import re
 
-from src.data_loader import LOADERS, create_import_tasks
+from src.data_loader import LOADERS, create_import_tasks, load_document
 from src.retrieval.vector_store import VectorStore
 
 
@@ -36,6 +36,20 @@ def _document_directory(raw_dir: Path, doc_id: str) -> Path:
     if directory.is_symlink():
         raise ValueError("文档目录不能是符号链接")
     return directory
+
+
+def read_document_content(raw_dir: Path, doc_id: str):
+    """读取已保存原文的完整解析内容，不读取检索块、不重新向量化。"""
+    directory = _document_directory(raw_dir, doc_id)
+    files = [path for path in sorted(directory.iterdir())
+             if path.is_file() and not path.is_symlink() and path.suffix.lower() in LOADERS] if directory.is_dir() else []
+    if not files:
+        raise FileNotFoundError("原文缺失，请重新上传或恢复文档")
+    # 同内容不同名称共用一个ID；验证指纹后只解析一份，避免重复展示。
+    path = files[0]
+    if sha256(path.read_bytes()).hexdigest() != doc_id:
+        raise ValueError("原文内容已改变，与文档ID不一致，请重新上传")
+    return load_document(path)
 
 
 def delete_document(raw_dir: Path, index_dir: Path, doc_id: str) -> int:

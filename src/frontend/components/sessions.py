@@ -40,7 +40,7 @@ def activate_session(memory: MemoryManager, user_id: str, session_id: str, cance
 def render_sessions(db_path: Path, cancel_request) -> bool:
     """管理当前本机访客的会话；随机地址标识用于演示隔离，不是登录认证。"""
     with st.sidebar:
-        st.subheader("对话历史管理")
+        st.header("对话历史管理")
         try:
             if "agent_user_id" not in st.session_state:
                 visitor = st.query_params.get("visitor", "")
@@ -102,7 +102,7 @@ def render_sessions(db_path: Path, cancel_request) -> bool:
                 archive_titles = {identifier: memory.get_session_title(user_id, identifier) for identifier in archived}
                 restore_id = st.radio("恢复会话", archived, key="restore_conversation_select", width="stretch",
                                       format_func=lambda identifier: archive_titles[identifier],
-                                      captions=[f"ID：{identifier}" for identifier in archived])
+                                      captions=[f"ID：{identifier[:8]}" for identifier in archived])
                 if st.button("恢复", key="restore_conversation"):
                     memory.restore_session(user_id, restore_id)
                     activate_session(memory, user_id, restore_id, cancel_request)
