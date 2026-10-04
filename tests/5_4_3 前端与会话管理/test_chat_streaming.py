@@ -1,449 +1,187 @@
-"""5.4.3 前端与会话管理：TestStreamingFrontend。"""
+"""科研对话前端：真实会话存储、模拟阶段/流式事件，不启动模型。"""
 
 import sys
 from pathlib import Path
-
-# 从其他目录直接运行测试文件时，也能定位 src 和共用样例。
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from copy import deepcopy
-import json
 import tempfile
 import unittest
 from unittest.mock import patch
-from langchain_core.documents import Document
-from src.utils.logger import read_rag_requests, retrieval_score_distribution
-from tests.helpers import StreamingResponse
+from langchain_core.messages import AIMessage
 
 
 class TestStreamingFrontend(unittest.TestCase):
-    """实际操作 Streamlit 聊天组件；NDJSON 样例隔离模型，不证明生成质量。"""
-
     def setUp(self):
         from src.utils.config import load_config
         from streamlit.testing.v1 import AppTest
-        self.config = load_config()
         self.directory = tempfile.TemporaryDirectory()
         self.addCleanup(self.directory.cleanup)
-        self.config["paths"]["raw_documents"] = str(Path(self.directory.name) / "raw")
-        self.config["paths"]["session_db"] = str(Path(self.directory.name) / "memory.sqlite3")
-        self.config["paths"]["vector_index"] = str(Path(self.directory.name) / "index")
-        self.config["paths"]["logs"] = str(Path(self.directory.name) / "logs")
-        health_patcher = patch("src.utils.config.check_health", return_value={
-            "llm": {"status": "ok"}, "vector_database": {"status": "ok"}})
-        health_patcher.start()
-        self.addCleanup(health_patcher.stop)
-        for target in ("src.utils.config.load_config", "src.generation.rag_pipeline.load_config",
-                       "src.generation.cache.load_config", "src.utils.logger.load_config"):
-            patcher = patch(target, return_value=self.config)
+        self.config = load_config()
+        for name, path in [('raw_documents', 'raw'), ('vector_index', 'index'), ('logs', 'logs'), ('session_db', 'sessions.sqlite3')]:
+            self.config['paths'][name] = str(Path(self.directory.name) / path)
+        for module in ['src.utils.config', 'src.utils.logger', 'src.agent.memory']:
+            patcher = patch(module + '.load_config', return_value=self.config)
             patcher.start()
             self.addCleanup(patcher.stop)
-        patcher = patch("src.retrieval.hybrid_retriever.HybridRetriever")
-        self.retriever = patcher.start().return_value
+        patcher = patch('src.utils.config.check_health', return_value={'llm': {'status': 'ok'}, 'vector_database': {'status': 'ok'}})
+        patcher.start()
         self.addCleanup(patcher.stop)
-        patcher = patch("src.generation.cache.get_embeddings")
-        self.cache_embedding = patcher.start().return_value
-        self.cache_embedding.embed_query.return_value = [1.0, 0.0]
+        patcher = patch('src.agent.react_loop._run_react', side_effect=lambda *a, **kw: iter(deepcopy(self.events())))
+        self.core = patcher.start()
         self.addCleanup(patcher.stop)
-        self.retriever.search.return_value = [(Document(page_content="编码器有6层。", metadata={
-            "source_file": "attention.pdf", "page_number": 3, "chunk_id": "功能样例块"}), 0.8)]
-        patcher = patch("src.generation.streaming.urlopen")
-        self.opener = patcher.start()
-        self.addCleanup(patcher.stop)
-        self.app = AppTest.from_file(str(Path(__file__).resolve().parents[2] / "src/frontend/app.py"),
-                                    default_timeout=10).run()
+        self.app = AppTest.from_file(str(ROOT / 'src/frontend/app.py'), default_timeout=10).run()
 
-    def reply(self, *, done=True):
-        packets = [{"message": {"content": chunk}, "done": False}
-                   for chunk in ("编码器有6层。", "[参", "考文档1", "]")]
-        if done:
-            packets.append({"model": "qwen2.5:7b", "done": True, "message": {"content": ""},
-                            "done_reason": "stop", "prompt_eval_count": 400, "eval_count": 20})
-        self.opener.return_value = StreamingResponse(packets)
+    @staticmethod
+    def events():
+        native = AIMessage(content='', tool_calls=[{'id': 'call-full-identifier', 'name': 'calculator', 'args': {}}])
+        return [
+            {'type': 'thought', 'iteration': 1, 'usage': {'prompt_eval_count': 10, 'eval_count': 2}, 'elapsed_seconds': .1},
+            {'type': 'tool_call', 'iteration': 1, 'call_id': 'call-full-identifier', 'name': 'calculator', 'message': native,
+             'usage': {'prompt_eval_count': 2, 'eval_count': 1}, 'elapsed_seconds': .1},
+            {'type': 'tool_result', 'iteration': 1, 'call_id': 'call-full-identifier', 'name': 'calculator', 'status': 'success',
+             'result': {'usage': {'prompt_eval_count': 5, 'eval_count': 3}}, 'elapsed_seconds': .2},
+            {'type': 'observation', 'iteration': 1, 'usage': {'prompt_eval_count': 4, 'eval_count': 2}, 'elapsed_seconds': .2},
+            {'type': 'token', 'answer': '逐步', 'provisional': True},
+            {'type': 'token', 'answer': '逐步输出的回答。', 'provisional': True},
+            {'type': 'done', 'iterations': 1, 'task_complete': True, 'stop_reason': 'task_complete', 'full_response': '逐步输出的回答。'}]
 
-    def test_page_start_is_lazy_and_chat_shows_sources_and_actual_usage(self):
-        self.retriever.search.assert_not_called()
-        self.opener.assert_not_called()
-        self.reply()
-        self.app.chat_input(key="rag_question").set_value("层数？").run()
+    def send(self, question):
+        self.app.chat_input[0].set_value(question).run()
         self.assertFalse(self.app.exception)
-        self.retriever.search.assert_called_once_with("层数？", k=5, rerank=True)
-        message = self.app.session_state["rag_messages"][0]
-        self.assertTrue(message["complete"])
-        self.assertIn("attention.pdf；第3页", message["answer"])
-        self.assertEqual(self.app.text[0].value, "编码器有6层。")
-        self.assertTrue(any("输入 Token 400 · 输出 Token 20" in item.value for item in self.app.caption))
 
-    def test_history_rerun_does_not_generate_again_and_clear_removes_it(self):
-        self.reply()
-        self.app.chat_input[0].set_value("层数？").run()
+    def test_three_tabs_and_inline_chat_input_replace_single_rag(self):
+        self.assertEqual([t.label for t in self.app.tabs], ['科研对话', '文档检索', '知识库'])
+        self.assertEqual(len(self.app.chat_input), 1)
+        self.assertFalse(any(b.key == 'run_agent' for b in self.app.button))
+        self.assertFalse(any(m.label in {'本次 Agent Token', 'Agent 响应耗时'} for m in self.app.metric))
+        self.core.assert_not_called()
+
+    def test_two_turns_clear_input_keep_history_and_accumulate_once(self):
+        self.send('第一次计算')
+        self.assertIsNone(self.app.chat_input[0].value)
+        self.assertTrue(any('本次 Token：29' in c.value and 'Agent响应耗时：' in c.value for c in self.app.caption))
+        self.send('继续计算')
+        self.assertEqual(len(self.app.chat_message), 4)
+        self.assertEqual(len(self.app.session_state['agent_messages']), 2)
+        self.assertEqual(next(m.value for m in self.app.metric if m.label == '累计Token'), '58')
+        self.assertEqual(next(m.value for m in self.app.metric if m.label == '对话次数'), '2')
+        self.assertEqual(len(self.app.tabs[0].dataframe), 2)
+        for table in self.app.tabs[0].dataframe:
+            self.assertEqual(list(table.value.columns), ['阶段', '轮次', '工具', '输入Token', '输出Token', '耗时', '状态'])
+        self.assertFalse(self.app.get('graphviz_chart'))
         self.app.run()
-        self.assertFalse(self.app.exception)
-        self.assertEqual(self.opener.call_count, 1)
-        self.assertEqual(len(self.app.chat_message), 2)
-        self.app.button(key="clear_rag_chat").click().run()
-        self.assertEqual(self.app.session_state["rag_messages"], [])
-        self.assertEqual(len(self.app.chat_message), 0)
+        self.assertEqual(self.core.call_count, 2)
+        self.assertEqual(next(m.value for m in self.app.metric if m.label == '累计Token'), '58')
 
-    def test_pdf_citation_opens_uploaded_physical_page(self):
-        """持久化检索块可以不含file_type，以文件名及物理页定位原文。"""
-        import pymupdf
-        from hashlib import sha256
-        with pymupdf.open() as pdf:
-            for number in range(3):
-                pdf.new_page().insert_text((40, 40), f"Physical page {number + 1}")
-            data = pdf.tobytes()
-        identifier = sha256(data).hexdigest()
-        directory = Path(self.config["paths"]["raw_documents"]) / identifier
-        directory.mkdir(parents=True)
-        (directory / "attention.pdf").write_bytes(data)
-        self.retriever.search.return_value[0][0].metadata.update(doc_id=identifier)
-        self.reply()
-        self.app.chat_input[0].set_value("层数？").run()
-        buttons = [b for b in self.app.button if b.label == "查看引用原文页"]
-        self.assertEqual(len(buttons), 1)
-        buttons[0].click().run()
-        self.assertFalse(self.app.exception)
-        self.assertTrue(any("第3页" in c.value for c in self.app.caption))
-        self.assertTrue(any("attention.pdf" in c.value and "第3页" in c.value for c in self.app.caption))
+    def test_stream_exception_preserves_partial_answer_and_failed_round(self):
+        def broken(*args, **kwargs):
+            for event in self.events()[:-1]:
+                yield event
+            raise RuntimeError('模拟流中断')
+        self.core.side_effect = broken
+        self.send('中断样例')
+        self.assertTrue(any('模拟流中断' in e.value for e in self.app.error))
+        self.assertIn('逐步输出', self.app.session_state['agent_messages'][0]['answer'])
+        self.assertEqual(next(m.value for m in self.app.metric if m.label == '任务完成率'), '0.0%')
+        self.assertIn('失败', list(self.app.tabs[0].dataframe[0].value['状态']))
+        self.app.button(key='new_conversation').click().run()
+        self.assertEqual(next(m.value for m in self.app.metric if m.label == '对话次数'), '0')
+        memory, user = self.app.session_state['agent_memory'], self.app.session_state['agent_user_id']
+        old = next(s for s in memory.list_sessions(user) if memory.get_messages(user, s))
+        self.app.button(key=f'conversation:{old}').click().run()
+        self.assertTrue(any('模拟流中断' in e.value for e in self.app.error))
+        self.assertEqual(len(self.app.chat_message), 2)
+        self.core.assert_called_once()
+
+    def test_unknown_usage_stays_unknown_and_new_session_resets_statistics(self):
+        events = self.events()
+        events[0].pop('usage')
+        self.core.side_effect = lambda *a, **kw: iter(deepcopy(events))
+        self.send('未知用量')
+        self.assertTrue(any('本次 Token：未知' in c.value for c in self.app.caption))
+        self.assertEqual(next(m.value for m in self.app.metric if m.label == '累计Token'), '未知')
+        self.app.button(key='new_conversation').click().run()
+        self.assertEqual(next(m.value for m in self.app.metric if m.label == '对话次数'), '0')
+        self.assertFalse(self.app.chat_message)
 
     def test_agent_history_renders_separate_source_buttons_for_parallel_calls(self):
-        """历史重绘不重新推理，同名调用的相同引用编号不会冲突。"""
-        reference = {"id": 1, "source_file": "attention.pdf", "location": "第3页", "metadata": {"page_number": 3}}
-        event = {"request_id": "saved-request", "context": {"observations": [
-            {"call_id": identifier, "result": {"citations": [reference]}} for identifier in ("first", "second")]}}
-        self.app.session_state["agent_messages"] = [{"question": "两篇论文？", "answer": "已保存答案",
-            "complete": True, "stop_reason": "task_complete", "event": event}]
+        reference = {'id': 1, 'source_file': 'attention.pdf', 'location': '第3页', 'metadata': {'page_number': 3}}
+        event = {'request_id': 'saved-request', 'context': {'observations': [
+            {'call_id': identifier, 'result': {'citations': [reference]}} for identifier in ('first', 'second')]}}
+        self.app.session_state['agent_messages'] = [{'question': '两篇论文？', 'answer': '已保存答案',
+            'complete': True, 'stop_reason': 'task_complete', 'event': event}]
         self.app.run()
         self.assertFalse(self.app.exception)
-        keys = {button.key for button in self.app.button if button.label == "查看attention.pdf · 第3页"}
-        self.assertEqual(keys, {"agent-citation:saved-request:first:1", "agent-citation:saved-request:second:1"})
-        self.opener.assert_not_called()
-
-    def test_incomplete_stream_is_visible_error_with_partial_answer(self):
-        self.reply(done=False)
-        self.app.chat_input[0].set_value("层数？").run()
-        self.assertFalse(self.app.exception)
-        message = self.app.session_state["rag_messages"][0]
-        self.assertFalse(message["complete"])
-        self.assertIn("未收到完成标记", message["error"])
-        self.assertIn("编码器有6层", message["answer"])
-        self.assertTrue(any("回答未完成" in item.value for item in self.app.error))
-        self.assertFalse(any("服务已结束" in item.value for item in self.app.caption))
-
-    def test_empty_library_notice_and_retrieval_failure_never_hide_errors(self):
-        self.retriever.search.return_value = []
-        self.reply()
-        self.app.chat_input[0].set_value("层数？").run()
-        self.assertTrue(any("以下回答没有文献依据" in item.value for item in self.app.info))
-        self.assertIn("无效引用", self.app.session_state["rag_messages"][0]["answer"])
-        self.retriever.search.side_effect = RuntimeError("本地模型不可用")
-        self.app.chat_input[0].set_value("另一个问题").run()
-        self.assertFalse(self.app.exception)
-        self.assertIn("本地模型不可用", self.app.session_state["rag_messages"][-1]["error"])
-        self.assertEqual(self.opener.call_count, 1)
-
-    def test_repeated_and_similar_questions_skip_retrieval_and_model_and_keep_sources(self):
-        self.reply()
-        self.app.chat_input[0].set_value("层数？").run()
-        first = self.app.session_state["rag_messages"][0]
-        self.cache_embedding.embed_query.reset_mock()
-        self.app.chat_input[0].set_value("层数？").run()
-        self.cache_embedding.embed_query.assert_not_called()
-        self.app.chat_input[0].set_value("编码器有几层？").run()
-        self.assertFalse(self.app.exception)
-        self.assertEqual(self.opener.call_count, 1)
-        self.assertEqual(self.retriever.search.call_count, 1)
-        messages = self.app.session_state["rag_messages"]
-        self.assertEqual(messages[1]["cache"]["mode"], "exact")
-        self.assertEqual(messages[2]["cache"]["mode"], "semantic")
-        self.assertEqual(messages[2]["citations"], first["citations"])
-        self.assertEqual(messages[2]["usage"]["eval_count"], 0)
-        self.assertTrue(any("缓存已返回" in item.value for item in self.app.caption))
-
-    def test_knowledge_change_and_clear_invalidate_cache(self):
-        self.reply()
-        self.app.chat_input[0].set_value("层数？").run()
-        self.retriever.vector_store.list_chunks.return_value = [Document(page_content="新文献")]
-        self.reply()
-        self.app.chat_input[0].set_value("层数？").run()
-        self.assertEqual(self.opener.call_count, 2)
-        self.app.button(key="clear_rag_chat").click().run()
-        self.assertFalse(self.app.session_state["rag_cache"].entries)
-        self.reply()
-        self.app.chat_input[0].set_value("层数？").run()
-        self.assertEqual(self.opener.call_count, 3)
-
-    def test_interrupted_answer_is_not_cached_and_retry_calls_model(self):
-        self.reply(done=False)
-        self.app.chat_input[0].set_value("层数？").run()
-        self.assertFalse(self.app.session_state["rag_cache"].entries)
-        self.reply()
-        self.app.chat_input[0].set_value("层数？").run()
-        self.assertEqual(self.opener.call_count, 2)
-        self.assertTrue(self.app.session_state["rag_messages"][-1]["complete"])
-
-    def test_changed_generation_settings_do_not_reuse_old_answer(self):
-        self.reply()
-        self.app.chat_input[0].set_value("层数？").run()
-        self.config["llm"]["temperature"] = 0.2
-        self.reply()
-        self.app.chat_input[0].set_value("层数？").run()
-        self.assertEqual(self.opener.call_count, 2)
-        self.assertEqual(json.loads(self.opener.call_args.args[0].data)["options"]["temperature"], 0.2)
-
-    def test_cache_write_failure_keeps_completed_answer_and_gives_notice(self):
-        self.cache_embedding.embed_query.side_effect = RuntimeError("缓存向量化失败")
-        self.reply()
-        self.app.chat_input[0].set_value("层数？").run()
-        message = self.app.session_state["rag_messages"][-1]
-        self.assertTrue(message["complete"])
-        self.assertNotIn("error", message)
-        self.assertTrue(any("缓存未写入" in item.value for item in self.app.warning))
-
-    def test_knowledge_changed_during_generation_does_not_store_stale_answer(self):
-        self.retriever.vector_store.list_chunks.side_effect = [[], [Document(page_content="新加入")]]
-        self.reply()
-        self.app.chat_input[0].set_value("层数？").run()
-        self.assertTrue(self.app.session_state["rag_messages"][-1]["complete"])
-        self.assertFalse(self.app.session_state["rag_cache"].entries)
+        keys = {b.key for b in self.app.button if b.label == '查看attention.pdf · 第3页'}
+        self.assertEqual(keys, {'agent-citation:saved-request:first:1', 'agent-citation:saved-request:second:1'})
+        self.core.assert_not_called()
 
 
-    def test_low_relevance_waits_for_confirmation_then_generates_once(self):
-        document = self.retriever.search.return_value[0][0]
-        self.retriever.search.return_value = [(document, 0.02)]
-        self.app.chat_input[0].set_value("层数？").run()
-        self.assertFalse(self.app.exception)
-        self.opener.assert_not_called()
-        self.assertEqual(self.app.session_state["rag_messages"], [])
-        self.assertIn("编码器有6层", self.app.text[0].value)
-        self.assertTrue(any("相关性低" in item.value for item in self.app.warning))
-        self.app.run()
-        self.opener.assert_not_called()
-        self.reply()
-        self.app.button(key="confirm_low_relevance").click().run()
-        self.assertFalse(self.app.exception)
-        message = self.app.session_state["rag_messages"][-1]
-        self.assertTrue(message["complete"])
-        self.assertEqual(message["generation_mode"], "low")
-        self.assertIn("相关性低", message["answer"])
-        self.assertEqual(message["citations"][0]["source_file"], "attention.pdf")
-        self.assertFalse(self.app.session_state["rag_cache"].entries)
-        self.app.run()
-        self.assertEqual(self.opener.call_count, 1)
-        self.app.chat_input[0].set_value("层数？").run()
-        self.assertIn("rag_pending", self.app.session_state)
-        self.assertEqual(self.opener.call_count, 1)
+class TestConversationStatistics(unittest.TestCase):
+    """核验累计口径、未知历史和并行共享用量，避免UI重复记账。"""
+    def snapshot(self):
+        from src.utils.logger import update_agent_metrics
+        metrics = {}
+        for event in TestStreamingFrontend.events()[:4]:
+            metrics = update_agent_metrics(metrics, event)
+        metrics['response_seconds'] = 2.0
+        return {'type': 'done', 'iterations': 1, 'task_complete': True, 'metrics': metrics}
 
-    def test_cancel_and_clear_remove_pending_request_without_generation(self):
-        self.retriever.search.return_value = [(self.retriever.search.return_value[0][0], 0.01)]
-        self.app.chat_input[0].set_value("层数？").run()
-        self.app.button(key="cancel_low_relevance").click().run()
-        self.assertNotIn("rag_pending", self.app.session_state)
-        self.assertEqual(self.app.session_state["rag_messages"], [])
-        self.app.chat_input[0].set_value("层数？").run()
-        self.app.button(key="clear_rag_chat").click().run()
-        self.assertNotIn("rag_pending", self.app.session_state)
-        self.opener.assert_not_called()
+    def test_totals_rates_and_unknown_legacy_samples(self):
+        from src.frontend.components.trace import conversation_statistics
+        first = self.snapshot()
+        first['metrics']['retrievals'] = [{'status': 'success', 'returned_chunks': 5, 'seconds': .1}]
+        second = deepcopy(first)
+        second['metrics']['response_seconds'] = 4
+        second['metrics']['tool_calls'][0]['status'] = 'error'
+        second['metrics']['retrievals'] = [{'status': 'empty', 'returned_chunks': 0, 'seconds': .3}]
+        messages = [{'complete': True, 'event': first}, {'complete': False, 'event': second}]
+        stats = conversation_statistics(messages)
+        self.assertEqual((stats['requests'], stats['tokens'], stats['seconds'], stats['mean_seconds']), (2, 58, 6, 3))
+        self.assertEqual((stats['tool_successes'], stats['tool_failures'], stats['tool_rate']), (1, 1, .5))
+        self.assertEqual(stats['retrieval_hit_rate'], .5)
+        self.assertAlmostEqual(stats['mean_retrieval_seconds'], .2)
+        messages.append({'complete': None, 'event': {}})
+        unknown = conversation_statistics(messages)
+        self.assertIsNone(unknown['tokens'])
+        self.assertIsNone(unknown['seconds'])
+        self.assertEqual((unknown['known_tokens'], unknown['completed_requests']), (58, 2))
+        self.assertEqual(unknown['mean_seconds'], 3)
+        self.assertEqual(conversation_statistics([])['requests'], 0)
 
-    def test_changed_knowledge_or_configuration_cannot_confirm_stale_context(self):
-        self.retriever.search.return_value = [(self.retriever.search.return_value[0][0], 0.01)]
-        for change in ("knowledge", "config"):
-            self.app.chat_input[0].set_value("层数？").run()
-            if change == "knowledge":
-                self.retriever.vector_store.list_chunks.return_value = [Document(page_content="新文献")]
-            else:
-                self.config["generation"]["low_relevance_threshold"] = 0.2
-            self.app.button(key="confirm_low_relevance").click().run()
-            self.assertFalse(self.app.exception)
-            message = self.app.session_state["rag_messages"][-1]
-            self.assertFalse(message["complete"])
-            self.assertIn("已改变", message["error"])
-        self.opener.assert_not_called()
+    def test_shared_action_does_not_assign_tokens_twice_and_pending_is_visible(self):
+        from src.utils.logger import update_agent_metrics
+        from src.frontend.components.trace import execution_rows
+        native = AIMessage(content='', tool_calls=[{'id': i, 'name': 'calculator', 'args': {}} for i in ('a', 'b')])
+        metrics = {}
+        for i in ('a', 'b'):
+            metrics = update_agent_metrics(metrics, {'type': 'tool_call', 'iteration': 1, 'call_id': i,
+                'name': 'calculator', 'message': native, 'usage': {'prompt_eval_count': 3, 'eval_count': 2}})
+        pending = execution_rows({'metrics': metrics})
+        self.assertEqual(sum(row['阶段'] == 'Action（共享）' for row in pending), 1)
+        self.assertEqual(sum(row['状态'] == '执行中' for row in pending), 2)
+        metrics = update_agent_metrics(metrics, {'type': 'tool_result', 'iteration': 1, 'call_id': 'a',
+            'name': 'calculator', 'status': 'error', 'result': {}, 'elapsed_seconds': .4})
+        rows = execution_rows({'type': 'done', 'iterations': 1, 'task_complete': False, 'metrics': metrics})
+        failed = next(row for row in rows if row['阶段'] == '工具内部')
+        self.assertEqual((failed['状态'], failed['耗时'], failed['输入Token']), ('失败', '0.400 秒', '未知'))
+        self.assertEqual(rows[-1]['阶段'], '任务结束')
+        self.assertEqual(rows[-1]['状态'], '失败')
+        self.assertNotIn('执行中', [row['状态'] for row in rows])
+        self.assertEqual(metrics['tokens']['known_total'], 5)
 
-    def test_new_question_replaces_pending_low_relevance_question(self):
-        document = self.retriever.search.return_value[0][0]
-        self.retriever.search.return_value = [(document, 0.01)]
-        self.app.chat_input[0].set_value("旧问题").run()
-        self.retriever.search.return_value = [(document, 0.8)]
-        self.reply()
-        self.app.chat_input[0].set_value("新问题").run()
-        self.assertNotIn("rag_pending", self.app.session_state)
-        self.assertEqual(self.app.session_state["rag_messages"][0]["question"], "新问题")
-        self.assertEqual(self.opener.call_count, 1)
-
-    def test_empty_notice_and_error_advice_survive_history_rerun(self):
-        self.retriever.search.return_value = []
-        self.reply()
-        self.app.chat_input[0].set_value("概念？").run()
-        self.app.run()
-        self.assertTrue(any("纯模型回答" in item.value for item in self.app.info))
-        self.assertTrue(self.app.session_state["rag_messages"][0]["answer"].startswith("当前知识库中未找到相关文档。"))
-        self.opener.side_effect = TimeoutError("mock timeout")
-        self.app.chat_input[0].set_value("重试问题").run()
-        self.app.run()
-        message = self.app.session_state["rag_messages"][-1]
-        self.assertFalse(message["complete"])
-        self.assertIn("超时", message["error"])
-        self.assertTrue(any("缩短问题" in item.value for item in self.app.info))
-        self.assertFalse(self.app.session_state["rag_cache"].entries)
-        self.assertEqual(self.opener.call_count, 2)
+    def test_skipped_action_precedes_observation(self):
+        from src.utils.logger import update_agent_metrics
+        from src.frontend.components.trace import execution_rows
+        metrics = {}
+        for event in [{'type': 'thought', 'iteration': 1}, {'type': 'action_skipped', 'iteration': 1},
+                      {'type': 'observation', 'iteration': 1}]:
+            metrics = update_agent_metrics(metrics, event)
+        self.assertEqual([row['阶段'] for row in execution_rows({'metrics': metrics})],
+                         ['Thought', 'Action（跳过）', 'Observation'])
 
 
-    def test_request_log_keeps_full_topk_separate_from_truncated_context(self):
-        text = "长原文。" * 1800
-        first = Document(page_content=text, metadata={"source_file": "长论文.pdf", "page_number": 5, "chunk_id": "long"})
-        second = Document(page_content="其他候选原文。", metadata={"source_file": "论文B.pdf", "page_number": 2, "chunk_id": "other"})
-        self.retriever.search.return_value = [(first, 0.8), (second, 0.2)]
-        self.reply()
-        self.app.chat_input[0].set_value("层数？").run()
-        records, invalid = read_rag_requests()
-        self.assertEqual((len(records), invalid), (1, 0))
-        record = records[0]
-        self.assertEqual(record["status"], "completed")
-        self.assertEqual(record["retrieval"]["documents"][0]["text"], text)
-        self.assertEqual(len(record["retrieval"]["documents"]), 2)
-        self.assertTrue(record["context"]["truncated"])
-        self.assertLess(len(record["context"]["references"][0]["text"]), len(text))
-        self.assertEqual(record["retrieval"]["top1_score"], 0.8)
-        self.assertEqual(record["tokens"]["total"], 420)
-        self.assertEqual(record["answer"], self.app.session_state["rag_messages"][0]["answer"])
-        self.assertGreater(record["timing"]["generation_seconds"], 0)
-        self.assertTrue(any("样本 1" in item.value for item in self.app.caption))
-        self.assertEqual(len(self.app.get("vega_lite_chart")), 1)
-        self.app.run()
-        self.assertEqual(len(read_rag_requests()[0]), 1)
-
-    def test_cache_hit_logs_zero_current_tokens_and_no_new_retrieval_score(self):
-        self.reply()
-        self.app.chat_input[0].set_value("层数？").run()
-        self.app.chat_input[0].set_value("层数？").run()
-        records, invalid = read_rag_requests()
-        self.assertEqual((len(records), invalid), (2, 0))
-        cached = next(row for row in records if row["cache"]["hit"])
-        self.assertEqual(cached["tokens"]["total"], 0)
-        self.assertEqual(cached["original_usage"]["eval_count"], 20)
-        self.assertEqual(cached["retrieval"]["status"], "skipped_cache")
-        self.assertIsNone(cached["retrieval"]["top1_score"])
-        self.assertEqual(cached["retrieval"]["documents"], [])
-        self.assertEqual(cached["citations"][0]["source_file"], "attention.pdf")
-        summary = retrieval_score_distribution()
-        self.assertEqual(summary["cache_hits"], 1)
-        self.assertEqual(summary["distributions"][0]["count"], 1)
-
-    def test_pending_confirmation_updates_one_log_and_one_score_sample(self):
-        self.retriever.search.return_value = [(self.retriever.search.return_value[0][0], 0.01)]
-        self.app.chat_input[0].set_value("层数？").run()
-        before = read_rag_requests()[0][0]
-        self.assertEqual(before["status"], "awaiting_confirmation")
-        self.assertEqual(before["tokens"]["total"], 0)
-        self.reply()
-        self.app.button(key="confirm_low_relevance").click().run()
-        records, _ = read_rag_requests()
-        self.assertEqual(len(records), 1)
-        self.assertEqual(records[0]["request_id"], before["request_id"])
-        self.assertEqual(records[0]["status"], "completed")
-        self.assertTrue(records[0]["context"]["confirmed"])
-        self.assertEqual(records[0]["tokens"]["total"], 420)
-        self.assertEqual(retrieval_score_distribution()["distributions"][0]["count"], 1)
-
-    def test_cancel_supersede_and_clear_keep_request_records(self):
-        self.retriever.search.return_value = [(self.retriever.search.return_value[0][0], 0.01)]
-        self.app.chat_input[0].set_value("旧问题").run()
-        self.app.chat_input[0].set_value("新问题").run()
-        self.app.button(key="cancel_low_relevance").click().run()
-        self.app.chat_input[0].set_value("清空前问题").run()
-        self.app.button(key="clear_rag_chat").click().run()
-        records, _ = read_rag_requests()
-        self.assertEqual(len(records), 3)
-        self.assertEqual([row["status"] for row in records], ["superseded", "cancelled", "cancelled"])
-        self.assertTrue(all(row["tokens"]["total"] == 0 for row in records))
-        self.assertEqual(retrieval_score_distribution()["distributions"][0]["count"], 3)
-        self.opener.assert_not_called()
-
-    def test_partial_failure_and_retrieval_failure_log_different_token_states(self):
-        self.reply(done=False)
-        self.app.chat_input[0].set_value("部分回答").run()
-        record = read_rag_requests()[0][0]
-        self.assertEqual(record["status"], "error")
-        self.assertIn("编码器有6层", record["raw_answer"])
-        self.assertIn("未收到完成标记", record["error"])
-        self.assertEqual(record["tokens"]["source"], "unavailable")
-        self.assertIsNone(record["tokens"]["total"])
-        self.retriever.search.side_effect = RuntimeError("检索失败样例")
-        self.app.chat_input[0].set_value("检索失败").run()
-        latest = read_rag_requests()[0][-1]
-        self.assertEqual(latest["retrieval"]["status"], "error")
-        self.assertEqual(latest["tokens"]["total"], 0)
-        self.assertGreater(latest["timing"]["retrieval_seconds"], 0)
-        self.assertEqual(retrieval_score_distribution()["failed_retrievals"], 1)
-        self.assertEqual(self.opener.call_count, 1)
-
-    def test_logging_failure_warns_without_losing_completed_answer(self):
-        self.reply()
-        with patch("src.utils.logger.record_rag_request", side_effect=OSError("日志目录不可写")):
-            self.app.chat_input[0].set_value("层数？").run()
-        self.assertFalse(self.app.exception)
-        message = self.app.session_state["rag_messages"][0]
-        self.assertTrue(message["complete"])
-        self.assertNotIn("error", message)
-        self.assertTrue(any("请求日志未保存" in item.value for item in self.app.warning))
-        self.assertTrue(self.app.session_state["rag_cache"].entries)
-
-
-    def test_sessions_restore_rag_citations_after_switch_and_refresh(self):
-        from streamlit.testing.v1 import AppTest
-        self.reply()
-        app = self.app
-        a = app.session_state["rag_session_id"]
-        app.chat_input(key="rag_question").set_value("会话A层数？").run()
-        self.assertEqual(app.button(key=f"conversation:{a}").label, "会话A层数？")
-        stored = deepcopy(app.session_state["rag_messages"][0])
-        app.button(key="new_conversation").click().run()
-        self.assertEqual(app.session_state["rag_messages"], [])
-        self.assertFalse(app.session_state["rag_cache"].entries)
-        self.reply()
-        app.chat_input(key="rag_question").set_value("会话B层数？").run()
-        app.button(key=f"conversation:{a}").click().run()
-        self.assertEqual(app.session_state["rag_messages"], [stored])
-        self.assertEqual(len(app.chat_message), 2)
-        refreshed = AppTest.from_file(str(Path(__file__).resolve().parents[2] / "src/frontend/app.py"), default_timeout=10)
-        refreshed.query_params.update(app.query_params)
-        refreshed.run()
-        self.assertFalse(refreshed.exception)
-        self.assertEqual(refreshed.session_state["rag_messages"], [stored])
-        self.assertEqual(refreshed.text[0].value, "编码器有6层。")
-        self.assertEqual(self.opener.call_count, 2)
-        refreshed.button(key="clear_rag_chat").click().run()
-        self.assertEqual(refreshed.session_state["agent_memory"].get_rag_messages(refreshed.session_state["agent_user_id"], a), [])
-
-    def test_switch_cancels_low_relevance_request_without_generating(self):
-        self.retriever.search.return_value[0] = (self.retriever.search.return_value[0][0], 0.05)
-        self.app.chat_input(key="rag_question").set_value("低相关问题").run()
-        self.assertIn("rag_pending", self.app.session_state)
-        a = self.app.session_state["rag_session_id"]
-        self.app.button(key="new_conversation").click().run()
-        self.assertFalse(self.app.exception)
-        self.assertNotIn("rag_pending", self.app.session_state)
-        self.assertEqual(self.app.session_state["rag_messages"], [])
-        self.app.button(key=f"conversation:{a}").click().run()
-        self.assertNotIn("rag_pending", self.app.session_state)
-        records, _ = read_rag_requests()
-        self.assertEqual(records[-1]["status"], "cancelled")
-        self.opener.assert_not_called()
-
-    def test_history_write_failure_is_visible_and_partial_text_is_kept(self):
-        self.reply(done=False)
-        with patch("src.agent.memory.MemoryManager.append_rag_message", side_effect=OSError("磁盘已满")):
-            self.app.chat_input(key="rag_question").set_value("保存失败问题").run()
-        self.assertFalse(self.app.exception)
-        self.assertTrue(any("磁盘已满" in w.value for w in self.app.warning))
-        self.assertTrue(self.app.session_state["rag_messages"][0]["answer"])
-        self.assertFalse(self.app.session_state["rag_messages"][0]["complete"])
-        self.assertEqual(self.app.session_state["agent_memory"].get_rag_messages(
-            self.app.session_state["agent_user_id"], self.app.session_state["rag_session_id"]), [])
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

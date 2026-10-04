@@ -1,4 +1,4 @@
-"""批量导入、文档检索与本地 RAG 流式问答页面。"""
+"""科研多轮对话、文档检索与知识库管理页面。"""
 
 import sys
 from copy import deepcopy
@@ -6,7 +6,6 @@ from datetime import datetime
 from hashlib import sha256
 from pathlib import Path
 from time import perf_counter
-from uuid import uuid4
 
 import streamlit as st
 
@@ -18,33 +17,17 @@ if str(project_root) not in sys.path:
 
 from src.data_loader import LOADERS, create_import_tasks
 from src.frontend.components.documents import list_documents, delete_document, restore_document, read_pdf_page, read_document_content
-from src.frontend.components.trace import trace_graph
+from src.frontend.components.trace import execution_rows, conversation_statistics
 from src.agent import run_session
 from src.frontend.components.sessions import render_sessions
-from src.generation.cache import SemanticCache, cache_scope
-from src.generation.prompt_template import PROMPT_VERSION
-from src.generation.rag_pipeline import prepare_rag_context
-from src.generation.streaming import stream_answer
 from src.retrieval.bm25_retriever import BM25Retriever
 from src.retrieval.hybrid_retriever import HybridRetriever
-from src.utils.logger import (record_rag_request, request_time, retrieval_score_distribution,
-                              retrieval_request_metrics)
+from src.utils.logger import request_time, retrieval_score_distribution
 from src.retrieval.vector_store import VectorStore, batch_build_index
 from src.utils.config import check_health, load_config
 
 config = load_config()
 app_config = config["app"]
-
-
-def display_ids(value, field=""):
-    """仅缩短结构化展示中的ID，保留真实记录与工具参数。"""
-    if isinstance(value, dict):
-        return {key: display_ids(item, key) for key, item in value.items()}
-    if isinstance(value, list):
-        return [display_ids(item, field) for item in value]
-    if isinstance(value, str) and (field == "id" or field.endswith(("_id", "_ids"))):
-        return value[:8]
-    return value
 
 
 @st.dialog("引用原文页", width="large")
@@ -179,33 +162,10 @@ if start_import or retry_import:
 show_import_status()
 
 
-def save_request(message, status):
-    """日志故障明确提示，不能把已完成回答改成生成失败。"""
-    try:
-        record_rag_request(message, status)
-        message.pop("log_error", None)
-    except (OSError, ValueError, TypeError) as error:
-        message["log_error"] = f"请求日志未保存：{type(error).__name__}: {error}"
-        st.session_state.rag_log_error = message["log_error"]  # 清空或替换请求后也能看见故障。
+session_ready = render_sessions(project_root / config["paths"]["session_db"])
 
-
-session_ready = render_sessions(project_root / config["paths"]["session_db"], save_request)
-
-
-def save_rag_message(message):
-    """完成/错误回答持久化，保存失败明确提示；不重新生成答案。"""
-    st.session_state.rag_messages.append(message)
-    try:
-        st.session_state.agent_memory.append_rag_message(st.session_state.agent_user_id,
-                                                       st.session_state.rag_session_id, message)
-    except Exception as error:
-        st.warning(f"RAG历史未保存：{type(error).__name__}: {error}。本页答案仍保留，请检查会话数据库。")
-    else:
-        st.rerun()  # 更新侧栏会话标题，重绘已有答案，不重新生成。
-
-
-# 单轮RAG不使用历史推理，多轮Agent使用已有会话记忆；检索独立展示。
-single_tab, multi_tab, retrieval_tab, knowledge_tab = st.tabs(["单轮对话", "多轮对话", "检索文档", "知识库"])
+# 统一科研对话入口，Agent按需要调用模块二RAG工具。
+chat_tab, retrieval_tab, knowledge_tab = st.tabs(["科研对话", "文档检索", "知识库"])
 library = None  # 读取失败保持未知，不能显示为正常空库。
 library_error = ""
 with knowledge_tab:
@@ -271,8 +231,6 @@ with knowledge_tab:
                         st.session_state.import_progress = {
                             "completed": sum(t["status"] in {"success", "failed"} for t in st.session_state.import_tasks),
                             "total": len(st.session_state.import_tasks)}
-                        if "rag_cache" in st.session_state:
-                            st.session_state.rag_cache.clear()
                         st.session_state.pop("delete_pending")
                         st.session_state.pop("health_result", None)
                         st.session_state.document_notice = f"已删除 {removed} 个检索块，原文已回收，可在下方恢复。"
@@ -294,8 +252,6 @@ with knowledge_tab:
                     for progress in batch_build_index(st.session_state.import_tasks, raw_dir, max_file_size_mb):
                         st.session_state.import_progress = progress
                         show_import_status()
-                    if "rag_cache" in st.session_state:
-                        st.session_state.rag_cache.clear()
                     st.session_state.knowledge_document_id = restore_id
                     st.session_state.document_notice = "原文已恢复，请查看本批导入状态；失败项可重试。"
                     st.session_state.pop("health_result", None)
@@ -327,356 +283,130 @@ with knowledge_tab:
             st.info("请在左侧上传文档，导入后在此选择文件查看内容。")
 
 
-with multi_tab:
-    st.caption("支持连续追问，结合当前会话历史调用科研工具并回答。")
+def show_turn_footer(message):
+    """每轮消息附真实最终用量与耗时，旧历史缺失指标时明确显示未知。"""
+    metrics = message.get("event", {}).get("metrics", {})
+    tokens = metrics.get("tokens", {}).get("total")
+    seconds = metrics.get("response_seconds")
+    usage = str(tokens) if tokens is not None else "未知"
+    elapsed = f"{seconds:.3f} 秒" if seconds is not None else "未知"
+    st.caption(f"本次 Token：{usage} · Agent响应耗时：{elapsed}")
+    if message.get("complete") is False:
+        st.warning(f"任务未完成：{message.get('stop_reason', '未知')}")
+    if message.get("error") or message.get("event", {}).get("error"):
+        st.error(message.get("error") or message["event"]["error"])
+    if message.get("event", {}).get("log_error"):
+        st.warning(message["event"]["log_error"])
+    show_agent_sources(message.get("event", {}))
+
+
+def show_execution_table(event, question, expanded=True):
+    """输入框下只显示逐轮七列表格，完整轨迹仍保存在原始事件和日志中。"""
+    rows = execution_rows(event)
+    with st.expander(question[:60], expanded=expanded):
+        if rows:
+            st.dataframe(rows, hide_index=True, width="stretch")
+        else:
+            st.caption("该轮尚未记录阶段指标。")
+
+
+def show_statistics():
+    """统计当前会话全部请求；失败工具和未返回工具分别计数。"""
+    stats = conversation_statistics(st.session_state.agent_messages)
+    st.subheader("状态统计")
+    st.caption("当前会话累计；工具成功率只统计已返回调用，未报告的用量不计为零。")
+    columns = st.columns(4)
+    columns[0].metric("对话次数", stats["requests"])
+    columns[1].metric("累计Token", str(stats["tokens"]) if stats["tokens"] is not None else "未知")
+    columns[2].metric("累计响应耗时", f"{stats['seconds']:.3f} 秒" if stats["seconds"] is not None and stats["requests"] else ("未知" if stats["requests"] else "暂无样本"))
+    columns[3].metric("平均响应耗时", f"{stats['mean_seconds']:.3f} 秒" if stats["mean_seconds"] is not None else "暂无样本")
+    columns = st.columns(4)
+    columns[0].metric("任务完成率", f"{stats['successes'] / stats['completed_requests']:.1%}" if stats["completed_requests"] else "暂无样本")
+    columns[1].metric("工具调用次数", stats["tool_calls"])
+    columns[2].metric("工具调用成功率", f"{stats['tool_rate']:.1%}" if stats["tool_rate"] is not None else "暂无已返回调用")
+    columns[3].metric("平均推理轮次", f"{stats['mean_rounds']:.2f}" if stats["mean_rounds"] is not None else "未知")
+    hit_rate = f"{stats['retrieval_hit_rate']:.1%}" if stats["retrieval_hit_rate"] is not None else "未知"
+    retrieval_seconds = f"{stats['mean_retrieval_seconds']:.3f} 秒" if stats["mean_retrieval_seconds"] is not None else "未知"
+    tool_seconds = f"{stats['mean_tool_seconds']:.3f} 秒" if stats["mean_tool_seconds"] is not None else "未知"
+    st.caption(f"RAG检索 {stats['retrieval_count']} 次 · 候选命中率 {hit_rate} · 平均检索耗时 {retrieval_seconds} · 平均工具耗时 {tool_seconds}。")
+    st.caption(f"工具成功 {stats['tool_successes']} · 失败 {stats['tool_failures']} · 待返回 {stats['tool_pending']}；"
+               f"已报告Token {stats['known_tokens']} · 用量未知 {stats['unknown_tokens']} 次。")
+
+
+with chat_tab:
     if "agent_messages" not in st.session_state:
         st.session_state.agent_messages = []
-    for previous in st.session_state.agent_messages:
-        with st.chat_message("user"):
-            st.markdown(previous["question"])
-        with st.chat_message("assistant"):
-            st.markdown(previous["answer"])
-            if previous["complete"] is False:
-                st.warning(f"任务未完成：{previous['stop_reason']}")
-            show_agent_sources(previous.get("event", {}))
-    agent_user_panel = st.empty()
-    agent_answer_panel = st.empty()
-    with st.form("agent_metrics_form"):
-        agent_question = st.text_input("向 Agent 提问", key="agent_question")
-        agent_submitted = st.form_submit_button("运行 Agent", key="run_agent", disabled=not session_ready)
-
-
-with single_tab:
-    st.caption("每个问题独立回答，结合知识库文献给出引用；历史记录用于查看。")
-    if "rag_messages" not in st.session_state:
-        st.session_state.rag_messages = []
-    if "rag_cache" not in st.session_state or st.session_state.rag_cache.settings != config["generation"]["cache"]:
-        st.session_state.rag_cache = SemanticCache()
-    st.caption("清空只移除当前会话的单轮对话记录与答案缓存。")
-    if st.button("清空当前对话", key="clear_rag_chat", disabled=not session_ready):
-        try:
-            st.session_state.agent_memory.clear_rag_messages(st.session_state.agent_user_id, st.session_state.rag_session_id)
-        except Exception as error:
-            st.error(f"RAG历史清空失败：{type(error).__name__}: {error}。历史和缓存保留，可修复后重试。")
-        else:
-            if "rag_pending" in st.session_state:
-                save_request(st.session_state.rag_pending["message"], "cancelled")
-            st.session_state.rag_messages = []
-            st.session_state.rag_cache.clear()
-            st.session_state.pop("rag_pending", None)
-            st.rerun()
-
-
-    def show_answer_details(message):
-        """历史与本轮共用完成状态、实际用量和原文证据展示。"""
-        if message.get("error"):
-            st.error(f"回答未完成：{message['error']}。已保留部分文本。")
-            st.info(message.get("retry_advice", "请检查本地服务或配置后重新提交问题。"))
-        elif message.get("complete"):
-            usage = message["usage"]
-            status = "缓存已返回" if message.get("cache", {}).get("hit") else "服务已结束"
-            st.caption(f"{status} · 检索 {message['retrieval_seconds']:.2f} 秒 · "
-                       f"总耗时 {message['elapsed_seconds']:.2f} 秒 · "
-                       f"输入 Token {usage['prompt_eval_count']} · 输出 Token {usage['eval_count']}")
-            if message.get("cache", {}).get("hit"):
-                hit = message["cache"]
-                match = "相同问题" if hit["mode"] == "exact" else f"语义相似度 {hit['similarity']:.4f}"
-                st.info(f"缓存命中（{match}），本次未调用检索、重排或生成模型。原问题：{hit['question']}")
-        if message.get("generation_mode") == "empty":
-            st.info("当前知识库中未找到相关文档；以下回答没有文献依据，为纯模型回答。")
-        elif message.get("notice"):
-            st.info(message["notice"])
-        if message.get("log_error"):
-            st.warning(message["log_error"])
-        for warning in message.get("warnings", []):
-            st.warning(warning)
-        for reference in message["citations"]:
-            with st.expander(f"参考文档{reference['id']} · {reference['source_file'] or '来源信息未提供'} · {reference['location']}"):
-                st.caption(f"块 ID：{reference['metadata'].get('chunk_id', '')[:8]}；仅展示本轮送入模型的原文证据。")
-                st.text(reference["text"])
-                if Path(reference["source_file"]).suffix.lower() == ".pdf" and "page_number" in reference["metadata"]:
-                    key = f"citation:{message.get('request_id', id(message))}:{reference['id']}"
-                    if st.button("查看引用原文页", key=key):
-                        show_original_page(reference)
-
-
-    def generate_message(message, context, retriever, scope, placeholder):
-        """正常回答和确认后的回答共用流式处理；未完成与低相关性答案不写缓存。"""
-        placeholder.markdown("正在等待本地模型输出…")
-        message["context"] = context
-        message["generation_attempted"] = True
-        started = perf_counter()
-        try:
-            for event in stream_answer(message["question"], context):
-                if event["type"] == "token":
-                    message["answer"], message["citations"] = event["answer"], event["citations"]
-                    placeholder.markdown(event["answer"] + " ▌")
-                else:
-                    message.update(event)
-                    message["complete"] = event["type"] == "done"
-        finally:
-            message["generation_seconds"] = perf_counter() - started
-        if not message["complete"] and not message.get("message"):
-            raise RuntimeError("生成流未返回完成标记")
-        if message.get("type") == "error":
-            message["error"] = message["message"]
-        elif message["complete"] and context["generation_mode"] == "grounded":
-            # 生成期间文献改变时不写入旧答案；缓存故障不影响已完成回答。
-            try:
-                if cache_scope(retriever.vector_store) == scope:
-                    st.session_state.rag_cache.put(message["question"], event, scope)
-            except Exception as error:
-                message["warnings"].append(f"本次答案已完成，但缓存未写入：{type(error).__name__}: {error}")
-
-
-    for message in st.session_state.rag_messages:
-        with st.chat_message("user"):
-            st.write(message["question"])
-        with st.chat_message("assistant"):
-            st.markdown(message["answer"])
-            show_answer_details(message)
-
-    question = st.chat_input("询问已上传论文（支持中英文）", key="rag_question", disabled=not session_ready)
-    if question and question.strip():
-        # 新问题取代旧的待确认请求，避免后来误点生成旧问题。
-        if "rag_pending" in st.session_state:
-            save_request(st.session_state.rag_pending["message"], "superseded")
-        st.session_state.pop("rag_pending", None)
-        message = {"question": question, "answer": "", "citations": [], "warnings": [], "complete": False,
-                   "request_id": uuid4().hex, "session_id": st.session_state.rag_session_id,
-                   "started_at": request_time(), "request_info": {"llm": deepcopy(config["llm"]),
-                   "retrieval": deepcopy(config["retrieval"]), "prompt_version": PROMPT_VERSION}}
-        started = perf_counter()
-        save_request(message, "started")
-        with st.chat_message("user"):
-            st.write(question)
-        with st.chat_message("assistant"):
-            answer_placeholder = st.empty()
-            try:
-                retriever = HybridRetriever()
-                scope = cache_scope(retriever.vector_store)
-                cached = st.session_state.rag_cache.lookup(question, scope)
-                if cached:
-                    message.update(cached, complete=True, retrieval_seconds=0.0)
-                    message["retrieval_status"] = "skipped_cache"
-                else:
-                    with st.spinner("正在检索本地文献…"):
-                        search_started = perf_counter()
-                        message["retrieval_status"] = "error"
-                        try:
-                            results = retriever.search(question, k=config["retrieval"]["top_k"], rerank=True)
-                            message["retrieved_documents"] = [
-                                {"rank": rank, "text": doc.page_content, "metadata": deepcopy(doc.metadata), "score": score}
-                                for rank, (doc, score) in enumerate(results, 1)]
-                            message["retrieval_status"] = "success" if results else "empty"
-                            context = prepare_rag_context(question, results)
-                        finally:
-                            message["retrieval_seconds"] = perf_counter() - search_started
-                    message["context"], message["generation_mode"] = context, context["generation_mode"]
-                    message["elapsed_seconds"] = perf_counter() - started
-                    save_request(message, "awaiting_confirmation" if context["generation_mode"] == "low" else "retrieved")
-                    if context["generation_mode"] == "low":
-                        st.session_state.rag_pending = {"message": message, "context": context, "scope": scope}
-                    else:
-                        if context["generation_mode"] == "empty":
-                            st.info("当前知识库中未找到相关文档；以下回答没有文献依据，将使用纯模型生成。")
-                        generate_message(message, context, retriever, scope, answer_placeholder)
-            except Exception as error:
-                message["error"] = f"{type(error).__name__}: {error}"
-            message["elapsed_seconds"] = perf_counter() - started
-            answer_placeholder.markdown(message["answer"])
-            if "rag_pending" not in st.session_state:
-                save_request(message, "completed" if message["complete"] else "error")
-                show_answer_details(message)
-            elif message.get("log_error"):
-                st.warning(message["log_error"])
-        if "rag_pending" not in st.session_state:
-            save_rag_message(message)
-
-    if "rag_pending" in st.session_state:
-        pending = st.session_state.rag_pending
-        context = pending["context"]
-        st.warning(f"检索结果相关性低：最高重排分数 {context['top_score']:.4f} < {context['threshold']}。"
-                   "请查看候选原文并确认是否使用；分数不是命中概率，确认也不代表原文能回答问题。")
-        st.write(f"待确认问题：{pending['message']['question']}")
-        for reference in context["references"]:
-            with st.expander(f"候选{reference['id']} · {reference['source_file'] or '来源信息未提供'} · {reference['location']}", expanded=True):
-                st.text(reference["text"])
-        confirm = st.button("使用这些内容继续生成", key="confirm_low_relevance")
-        cancel = st.button("取消本次回答", key="cancel_low_relevance")
-        if confirm or cancel:
-            st.session_state.pop("rag_pending")
-            if cancel:
-                save_request(pending["message"], "cancelled")
-                if pending["message"].get("log_error"):
-                    st.warning(pending["message"]["log_error"])
-                st.info("已取消本次回答。可以上传更相关的文献或重新描述问题。")
-            else:
-                message = pending["message"]
-                started = perf_counter()
+    # 固定高度消息区内部滚动；新增消息和流式增量自动滚到最新内容。
+    history_panel = st.container(height=460, border=True, key="agent_chat_history", autoscroll=True)
+    with history_panel:
+        for index, previous in enumerate(st.session_state.agent_messages):
+            with st.container(border=True, key=f"agent_turn_{index}"):
+                with st.chat_message("user"):
+                    st.markdown(previous["question"])
                 with st.chat_message("assistant"):
-                    placeholder = st.empty()
+                    st.markdown(previous["answer"])
+                    show_turn_footer(previous)
+    # 原生消息输入框自动清空已提交文字；将内置发送图标显示为“发送”。
+    st.html("""<style>
+        [class*="st-key-agent_question-"] [data-testid="stChatInputSubmitButton"] {width: 64px;}
+        [class*="st-key-agent_question-"] [data-testid="stChatInputSubmitButton"] svg {display: none;}
+        [class*="st-key-agent_question-"] [data-testid="stChatInputSubmitButton"]::after {content: '发送'; font-size: 14px;}
+    </style>""")
+    agent_question = st.chat_input("输入消息…", key=f"agent_question:{st.session_state.get('agent_session_id', 'unavailable')}", disabled=not session_ready)
+    execution_panel = st.empty()
+    statistics_panel = st.empty()
+    if agent_question and agent_question.strip():
+        question = agent_question.strip()
+        incoming = {"question": question, "answer": "", "complete": False, "event": {}}
+        started = perf_counter()
+        with history_panel, st.container(border=True):
+            with st.chat_message("user"):
+                st.markdown(question)
+            with st.chat_message("assistant"):
+                answer_panel = st.empty()
+                with st.spinner("正在处理…"):
                     try:
-                        retriever = HybridRetriever()
-                        # 确认期间库或配置改变时，要求重提问题，不能使用过期原文。
-                        if cache_scope(retriever.vector_store) != pending["scope"]:
-                            raise ValueError("知识库或配置已改变，请重新提交问题并确认新的候选内容")
-                        generate_message(message, {**context, "confirmed": True}, retriever, pending["scope"], placeholder)
+                        for event in run_session(question, st.session_state.agent_user_id,
+                                                 st.session_state.agent_session_id,
+                                                 memory=st.session_state.agent_memory, stream=True):
+                            if event["type"] == "token":
+                                incoming["answer"] = event["answer"]
+                                answer_panel.markdown(incoming["answer"] + " ▌")
+                                continue
+                            incoming["event"] = event
+                            with execution_panel.container():
+                                show_execution_table(event, question)
+                            if event["type"] == "done":
+                                incoming.update(answer=event["full_response"], complete=event["task_complete"],
+                                                stop_reason=event["stop_reason"])
+                                answer_panel.markdown(incoming["answer"])
+                        if incoming["event"].get("type") != "done":
+                            raise RuntimeError("生成流未返回完成标记，已保留部分文本")
                     except Exception as error:
-                        message["error"] = str(error)
-                    message["elapsed_seconds"] += perf_counter() - started  # 不计用户阅读等待时间。
-                    placeholder.markdown(message["answer"])
-                    save_request(message, "completed" if message["complete"] else "error")
-                    show_answer_details(message)
-                save_rag_message(message)
-
-
-with multi_tab:
-    st.subheader("Agent 决策轨迹与运行指标")
-    agent_metrics_panel = st.empty()
-with single_tab:
-    st.subheader("RAG 运行指标")
-    st.caption("候选命中率 = 非空检索次数 / 已完成检索次数；仅表示找到文档块，不代表回答正确或 Hit@5。缓存、未执行和检索失败不计入分母。统计包含直接 RAG 问答和 Agent 的知识库工具。")
-    rag_metrics_panel = st.empty()
-
-
-def show_retrieval_metrics():
-    """模型和工具事件完成后刷新日志统计，不启动额外检索或模型请求。"""
-    with rag_metrics_panel.container():
-        try:
-            stats = retrieval_request_metrics()
-            columns = st.columns(3)
-            columns[0].metric("RAG 候选命中率", f"{stats['hit_rate']:.1%}" if stats["hit_rate"] is not None else "暂无样本")
-            columns[1].metric("平均检索延迟", f"{stats['retrieval_seconds']:.3f} 秒" if stats["retrieval_seconds"] is not None else "暂无样本")
-            columns[2].metric("平均 RAG 响应延迟", f"{stats['response_seconds']:.3f} 秒" if stats["response_seconds"] is not None else "暂无样本")
-            st.caption(f"实际检索 {stats['attempts']} 次 · 已完成 {stats['completed']} 次 · 非空 {stats['hits']} 次 · 失败 {stats['failed']} 次。延迟统计实际检索请求，含失败；响应延迟含检索和生成，不含用户确认等待。")
-            if stats["invalid_lines"]:
-                st.warning(f"统计跳过 {stats['invalid_lines']} 行损坏日志，原文件保留。")
-        except (OSError, ValueError) as error:
-            st.warning(f"无法读取 RAG 运行指标：{error}")
-
-
-show_retrieval_metrics()
-def show_agent_metrics(event, show_answer=True):
-    """保留最近一次请求的快照；页面重跑只重绘，不重新调用Agent。"""
-    metrics = event["metrics"]
-    tokens = metrics["tokens"]
-    with agent_metrics_panel.container():
-        if event.get("history_replayed"):
-            st.caption("历史请求快照：加载保存时的公开轨迹与指标，未重新执行Agent。")
-        columns = st.columns(2)
-        columns[0].metric("本次 Agent Token", str(tokens["total"]) if tokens["total"] is not None else "未知")
-        columns[1].metric("Agent 响应耗时", f"{metrics['response_seconds']:.3f} 秒")
-        st.caption(f"阶段：{event['type']} · 请求：{event['request_id'][:8]} · 已报告 Token：{tokens['known_total']} · 用量未完整报告：{tokens['unknown_calls']} 项")
-        if metrics["calls"]:
-            st.dataframe([{"阶段": c["phase"], "轮次": c["iteration"], "工具": c["tool"],
-                           "调用标识": ", ".join(identifier[:8] for identifier in c.get("tool_call_ids", [])) or c["id"][:8], "输入 Token": str(c["input"]) if c["input"] is not None else "未知",
-                           "输出 Token": str(c["output"]) if c["output"] is not None else "未知",
-                           "用量完整": "否" if c["incomplete"] or c["input"] is None or c["output"] is None else "是"}
-                          for c in metrics["calls"]], hide_index=True, width="stretch")
-        for retrieval in metrics.get("retrievals", []):
-            seconds = retrieval["seconds"]
-            st.caption(f"本次 RAG 工具：{retrieval.get('status', '未报告')} · 返回块 {retrieval.get('returned_chunks', '未知')} · 检索耗时 "
-                       + (f"{seconds:.3f} 秒" if seconds is not None else "未知"))
-        tools = metrics.get("tools", {})
-        columns = st.columns(2)
-        rate, mean = tools.get("success_rate"), tools.get("mean_seconds")
-        columns[0].metric("本次工具调用成功率", f"{rate:.1%}" if rate is not None else "暂无已返回调用")
-        columns[1].metric("平均工具耗时", f"{mean:.3f} 秒" if mean is not None else "暂无耗时")
-        st.caption(f"已计划 {tools.get('started', 0)} · 已返回 {tools.get('completed', 0)} · "
-                   f"成功 {tools.get('successes', 0)} · 失败 {tools.get('failures', 0)} · 待返回 {tools.get('pending', 0)}。"
-                   "成功指工具执行成功，不能代替任务完成或答案正确；重试按最终调用状态计一次，并行耗时可重叠。")
-        if metrics.get("tool_calls"):
-            st.dataframe([{"工具": c["name"], "轮次": c["iteration"], "调用ID": c["call_id"][:8],
-                           "状态": {"pending": "待返回", "success": "成功", "error": "失败"}[c["status"]],
-                           "耗时（秒）": c["seconds"], "尝试次数": c["attempts"],
-                           "执行方式": c["execution_mode"] or "未报告"}
-                          for c in metrics["tool_calls"]], hide_index=True, width="stretch")
-            st.dataframe([{"工具": c["name"], "已返回": c["completed"], "成功": c["successes"],
-                           "失败": c["failures"], "待返回": c["pending"],
-                           "成功率": f"{c['success_rate']:.1%}" if c["success_rate"] is not None else "暂无样本",
-                           "平均耗时（秒）": c["mean_seconds"]}
-                          for c in tools["by_tool"]], hide_index=True, width="stretch")
-        st.markdown("**Agent 决策轨迹**")
-        st.caption("展示公开决策说明与真实工具事件；分支表示同轮调用，执行方式以工具记录为准。")
-        if metrics.get("trace"):
-            st.graphviz_chart(trace_graph(metrics["trace"]), width="stretch")
-        for iteration in dict.fromkeys(t["iteration"] for t in metrics.get("trace", [])):
-            with st.expander(f"第{iteration}轮 · Thought → Action → Observation" if iteration else "请求准备与终止",
-                             expanded=True):
-                for step in (t for t in metrics["trace"] if t["iteration"] == iteration):
-                    kind = step["type"]
-                    if kind == "thought":
-                        st.markdown("**Thought · 决策说明**")
-                        st.write(step.get("thought", "未报告决策说明"))
-                        planned = step.get("parallel_tools") or ([step["tool_name"]] if step.get("tool_name") else [])
-                        st.caption(f"下一步：{step.get('next_step', '未报告')} · 计划工具：{' + '.join(planned) or '无需工具'} · 路由：{step.get('route', 'model')}")
-                    elif kind == "tool_call":
-                        st.markdown(f"**Action · {step['name']}**")
-                        st.caption(f"调用ID：{step['call_id'][:8]}")
-                        st.json(display_ids(step.get("args", {})), expanded=False)
-                    elif kind == "tool_result":
-                        st.markdown(f"**工具返回 · {step['name']} · {'成功' if step['status'] == 'success' else '失败'}**")
-                        seconds = step.get("elapsed_seconds")
-                        st.caption(f"调用ID：{step['call_id'][:8]} · 执行方式：{step.get('execution_mode', '未报告')} · 耗时："
-                                   + (f"{seconds:.3f} 秒" if type(seconds) in (int, float) else "未知"))
-                        if step.get("error"):
-                            st.warning(step["error"])
-                        if step.get("pending"):
-                            st.warning("等待已超时，后台工具可能仍在运行；迟到结果不会用于本次回答。")
-                        st.json(display_ids(step.get("result")), expanded=False)
-                        if step.get("attempts"):
-                            st.json(display_ids({"实际尝试记录": step["attempts"]}), expanded=False)
-                    elif kind == "observation":
-                        st.markdown("**Observation · 结果判断**")
-                        st.write(step.get("observation", "未报告观察说明"))
-                        st.caption(f"决策：{step.get('decision')} · 任务完成：{step.get('task_complete')}")
-                    elif kind in {"action_skipped", "recovery", "error"}:
-                        st.markdown({"action_skipped": "**Action · 已跳过**", "recovery": "**错误恢复**", "error": "**阶段错误**"}[kind])
-                        st.write(step.get("reason") or step.get("message", "未报告说明"))
-                        if kind == "recovery":
-                            st.json({"失败工具": step.get("failed_tools", []), "可选替代": step.get("available_alternatives", [])}, expanded=False)
-                    elif kind == "done":
-                        st.caption(f"终止原因：{step.get('stop_reason')} · 任务完成：{step.get('task_complete')}")
-        if event.get("log_error"):
-            st.warning(event["log_error"])
-    if show_answer and event["type"] == "done":
-        with agent_answer_panel.container(), st.chat_message("assistant"):
-            st.markdown(event["full_response"])
-            if not event["task_complete"]:
-                st.warning(f"任务未完成：{event['stop_reason']}")
-            show_agent_sources(event)
-
-
-with multi_tab:
-    if agent_submitted:
-        if not agent_question.strip():
-            st.warning("请输入 Agent 问题。")
-        else:
-            st.session_state.pop("agent_last_event", None)
-            with agent_user_panel.container(), st.chat_message("user"):
-                st.markdown(agent_question.strip())
-            try:
-                for event in run_session(agent_question.strip(), st.session_state.agent_user_id,
-                                         st.session_state.agent_session_id, memory=st.session_state.agent_memory, stream=True):
-                    st.session_state.agent_last_event = event
-                    if event["type"] == "token":
-                        with agent_answer_panel.container(), st.chat_message("assistant"):
-                            st.markdown(event["answer"])
-                            st.caption("正在生成，完成状态与引用以最终校验结果为准。")
-                        continue
-                    if event["type"] == "done":
-                        st.session_state.agent_messages.append({"question": agent_question.strip(),
-                            "answer": event["full_response"], "complete": event["task_complete"],
-                            "stop_reason": event["stop_reason"], "event": event})
-                    show_agent_metrics(event)
-                    show_retrieval_metrics()
-                if st.session_state.get("agent_last_event", {}).get("type") == "done":
-                    st.rerun()  # 完整问答已经入库，刷新标题与历史即可。
-            except Exception as error:
-                st.error(f"Agent 运行失败：{type(error).__name__}: {error}。请检查本地服务后重试。")
-    elif "agent_last_event" in st.session_state:
-        show_agent_metrics(st.session_state.agent_last_event, show_answer=False)
+                        incoming.update(error=f"Agent运行失败：{type(error).__name__}: {error}。请检查本地服务后重试。",
+                                        stop_reason="stream_error", complete=False)
+                        failure = deepcopy(incoming["event"])
+                        failure.update(type="done", task_complete=False, stop_reason="stream_error", error=incoming["error"])
+                        failure.setdefault("metrics", {})["response_seconds"] = perf_counter() - started
+                        incoming["event"] = failure
+                        # 异常流没有由run_session保存完整轮次，显式保留问题与部分回答。
+                        try:
+                            st.session_state.agent_memory.append_turn(st.session_state.agent_user_id,
+                                st.session_state.agent_session_id, question, incoming["answer"] or incoming["error"],
+                                details={"task_complete": False, "stop_reason": "stream_error", "event": failure})
+                        except Exception as save_error:
+                            incoming["error"] += f"；历史保存失败：{save_error}"
+                answer_panel.markdown(incoming["answer"] or incoming.get("error", ""))
+                show_turn_footer(incoming)
+        st.session_state.agent_messages.append(incoming)
+        st.session_state.agent_last_event = incoming["event"]
+        st.rerun()  # 重绘已完成消息、侧栏标题和累计统计，不再次请求模型。
+    with execution_panel.container():
+        for index, message in enumerate(st.session_state.agent_messages):
+            show_execution_table(message.get("event", {}), message["question"],
+                                 expanded=index == len(st.session_state.agent_messages) - 1)
+    with statistics_panel.container():
+        show_statistics()
 
 with knowledge_tab:
     with st.expander("知识库管理面板"):
@@ -713,7 +443,7 @@ with knowledge_tab:
 
 with retrieval_tab:
     st.subheader("文档 Top-K 检索")
-    st.caption("此处只检索文档块；可选向量、BM25、RRF 或 RRF + 模型重排。各类分数不可直接比较，也不是命中概率。生成答案请切换到单轮对话或多轮对话。")
+    st.caption("此处只检索文档块；可选向量、BM25、RRF 或 RRF + 模型重排。各类分数不可直接比较，也不是命中概率。生成答案请切换到科研对话。")
     with st.form("vector_search_form"):
         method = st.selectbox("检索方式", ["向量相似度", "BM25 关键词", "RRF 混合检索", "RRF + 模型重排"], key="retrieval_method")
         query = st.text_input("查询内容（支持中英文）", key="vector_query")
@@ -794,6 +524,3 @@ with retrieval_tab:
             st.info("尚无可统计的有结果 RAG 检索。提交问题并完成实际检索后显示分布。")
     except (OSError, ValueError) as error:
         st.warning(f"无法读取检索统计：{type(error).__name__}: {error}。请检查本地日志目录。")
-with single_tab:
-    if "rag_log_error" in st.session_state:
-        st.warning(st.session_state.pop("rag_log_error"))

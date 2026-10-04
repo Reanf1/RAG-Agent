@@ -10,6 +10,8 @@
 
 本轮交付增加正文流式、原文物理页、历史来源和同名独立并行共14项回归；现有**668个用例、18个小节、46个测试文件**，2026-10-04全量通过（59.730秒，无跳过）。[本轮通过日志](../reports/5_5_4%20项目交付/全量668项通过_20261004.log)，首次文案缩进失败记录保留。功能测试与实际模型评测分开报告。
 
+本次科研对话改版移除独立单轮RAG的UI测试，补入消息框、累计统计与异常历史测试；5.4.3当前35项通过，连同指标/文档流程及模块二保留能力，共172项不同测试通过。上述668项为此前完整回归记录，本轮未宣称全量重新运行，见[本轮验证](../reports/5_4_3%20前端与会话管理/科研对话改版_20261004/验证说明.md)。下表其余数量为历史归档口径。
+
 ## 小节与测试文件
 
 | 小节 | 用例数 | 测试文件 |
@@ -28,7 +30,7 @@
 | 5_3_4 多轮对话记忆管理 | 55 | [test_session_isolation.py](5_3_4%20多轮对话记忆管理/test_session_isolation.py)、[test_history_window.py](5_3_4%20多轮对话记忆管理/test_history_window.py)、[test_conversation_summary.py](5_3_4%20多轮对话记忆管理/test_conversation_summary.py) |
 | 5_4_1 RAG与Agent深度融合 | 28 | [test_source_routing.py](5_4_1%20RAG与Agent深度融合/test_source_routing.py)、[test_memory_context.py](5_4_1%20RAG与Agent深度融合/test_memory_context.py) |
 | 5_4_2 可观测性与健康检查 | 56 | [test_health_check.py](5_4_2%20可观测性与健康检查/test_health_check.py)、[test_agent_metrics.py](5_4_2%20可观测性与健康检查/test_agent_metrics.py) |
-| 5_4_3 前端与会话管理 | 48 | [test_document_management.py](5_4_3%20前端与会话管理/test_document_management.py)、[test_chat_streaming.py](5_4_3%20前端与会话管理/test_chat_streaming.py)、[test_conversation_history.py](5_4_3%20前端与会话管理/test_conversation_history.py)、[test_agent_streaming.py](5_4_3%20前端与会话管理/test_agent_streaming.py)、[test_citation_page.py](5_4_3%20前端与会话管理/test_citation_page.py) |
+| 5_4_3 前端与会话管理 | 35 | [test_document_management.py](5_4_3%20前端与会话管理/test_document_management.py)、[test_chat_streaming.py](5_4_3%20前端与会话管理/test_chat_streaming.py)、[test_conversation_history.py](5_4_3%20前端与会话管理/test_conversation_history.py)、[test_agent_streaming.py](5_4_3%20前端与会话管理/test_agent_streaming.py)、[test_citation_page.py](5_4_3%20前端与会话管理/test_citation_page.py) |
 | 5_4_4 端到端联调与测试 | 28 | [test_document_flow.py](5_4_4%20端到端联调与测试/test_document_flow.py) |
 | 5_5_2 系统性能评估 | 10 | [test_system_evaluation.py](5_5_2%20系统性能评估/test_system_evaluation.py) |
 | 5_5_3 Bad Case分析与优化 | 11 | [test_bad_case_regression.py](5_5_3%20Bad%20Case分析与优化/test_bad_case_regression.py) |

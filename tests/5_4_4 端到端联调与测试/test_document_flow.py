@@ -58,17 +58,15 @@ class TestImportFrontend(unittest.TestCase):
         self.assertFalse(app.exception)
         self.assertEqual(app.title[0].value, "智能科研助理")
         self.assertTrue(any(c.value == "基于 RAG + Agent 的论文知识库问答系统" for c in app.caption))
-        self.assertEqual([tab.label for tab in app.tabs], ["单轮对话", "多轮对话", "检索文档", "知识库"])
-        single, multi, retrieval, knowledge = app.tabs
-        self.assertEqual(single.chat_input(key="rag_question").key, "rag_question")
-        self.assertFalse(any(b.key == "run_agent" for b in single.button))
-        self.assertEqual(multi.button(key="run_agent").label, "运行 Agent")
-        self.assertFalse(multi.chat_input)
-        self.assertEqual(retrieval.button(key="vector_search").label, "检索")
+        self.assertEqual([tab.label for tab in app.tabs], ["科研对话", "文档检索", "知识库"])
+        chat, retrieval, knowledge = app.tabs
+        self.assertEqual(len(chat.chat_input), 1)
+        self.assertFalse(app.text_input(key="vector_query").value)
         self.assertTrue(any(e.label == "知识库管理面板" for e in knowledge.expander))
         self.assertTrue(any(s.value == "检索分数分布" for s in retrieval.subheader))
-        self.assertTrue(any(s.value == "Agent 决策轨迹与运行指标" for s in multi.subheader))
-        self.assertTrue(any(s.value == "RAG 运行指标" for s in single.subheader))
+        self.assertTrue(any(s.value == "状态统计" for s in chat.subheader))
+        self.assertFalse(app.get("graphviz_chart"))
+        self.assertFalse(any((b.key or "") in {"run_agent", "clear_rag_chat"} for b in app.button))
         self.assertFalse(any(s.value in {"科研对话", "模块开发状态", "评阅说明"} for s in app.subheader))
         self.assertFalse(any("上传文档后增量写入本地知识库；下方 RAG 问答" in i.value for i in app.info))
 
@@ -85,24 +83,24 @@ class TestImportFrontend(unittest.TestCase):
         self.assertFalse(any(s.value == "知识库文档" for s in app.sidebar.subheader))
         self.assertFalse(any((button.key or "").startswith("delete_document:") for button in app.sidebar.button))
         self.assertEqual(app.button(key=f"knowledge_document:{a}").label, "a.md")
-        self.assertTrue(any(c.value == f"ID：{a[:8]}" for c in app.tabs[3].caption))
+        self.assertTrue(any(c.value == f"ID：{a[:8]}" for c in app.tabs[2].caption))
         self.assertEqual(app.session_state["knowledge_document_id"], a)
-        self.assertIn(first.decode(), [m.value for m in app.tabs[3].markdown])
-        self.assertNotIn(second.decode(), [m.value for m in app.tabs[3].markdown])
+        self.assertIn(first.decode(), [m.value for m in app.tabs[2].markdown])
+        self.assertNotIn(second.decode(), [m.value for m in app.tabs[2].markdown])
         app.button(key=f"knowledge_document:{b}").click().run()
         self.assertFalse(app.exception)
         self.assertEqual(app.session_state["knowledge_document_id"], b)
-        self.assertIn(second.decode(), [m.value for m in app.tabs[3].markdown])
-        self.assertNotIn(first.decode(), [m.value for m in app.tabs[3].markdown])
+        self.assertIn(second.decode(), [m.value for m in app.tabs[2].markdown])
+        self.assertNotIn(first.decode(), [m.value for m in app.tabs[2].markdown])
         app.button(key=f"delete_document:{b}").click().run()
         app.button(key="confirm_delete_document").click().run()
         self.assertFalse(app.exception)
         self.assertEqual(app.session_state["knowledge_document_id"], a)
-        self.assertNotIn(second.decode(), [m.value for m in app.tabs[3].markdown])
+        self.assertNotIn(second.decode(), [m.value for m in app.tabs[2].markdown])
         app.button(key="restore_document").click().run()
         self.assertFalse(app.exception)
         self.assertEqual(app.session_state["knowledge_document_id"], b)
-        self.assertIn(second.decode(), [m.value for m in app.tabs[3].markdown])
+        self.assertIn(second.decode(), [m.value for m in app.tabs[2].markdown])
 
     def test_sidebar_titles_and_upload_label_are_consistent(self):
         """三个侧栏标题同用header，上传组件更名但保持批量能力。"""
@@ -127,8 +125,8 @@ class TestImportFrontend(unittest.TestCase):
         app.text_input(key="vector_doc_id").set_value(identifier[:8])
         app.button(key="vector_search").click().run()
         self.assertFalse(app.exception)
-        self.assertEqual([t.value for t in app.tabs[2].text], [body.decode()])
-        self.assertTrue(any(c.value.startswith(f"文档 ID：{identifier[:8]}；块 ID：") for c in app.tabs[2].caption))
+        self.assertEqual([t.value for t in app.tabs[1].text], [body.decode()])
+        self.assertTrue(any(c.value.startswith(f"文档 ID：{identifier[:8]}；块 ID：") for c in app.tabs[1].caption))
         self.assertEqual(self.knowledge_rows(app).iloc[0]["文档 ID"], identifier[:8])
         other = identifier[:8] + ("a" if identifier[8:] != "a" * 56 else "b") * 56
         VectorStore().add_chunks([Document(page_content="Transformer other paper", metadata={
@@ -136,11 +134,11 @@ class TestImportFrontend(unittest.TestCase):
         with patch("src.retrieval.bm25_retriever.BM25Retriever.search") as search:
             app.button(key="vector_search").click().run()
             search.assert_not_called()
-        self.assertTrue(any("前8位ID对应多份文档" in e.value for e in app.tabs[2].error))
+        self.assertTrue(any("前8位ID对应多份文档" in e.value for e in app.tabs[1].error))
         app.text_input(key="vector_doc_id").set_value(identifier)
         app.button(key="vector_search").click().run()
-        self.assertFalse(app.tabs[2].error)
-        self.assertEqual([t.value for t in app.tabs[2].text], [body.decode()])
+        self.assertFalse(app.tabs[1].error)
+        self.assertEqual([t.value for t in app.tabs[1].text], [body.decode()])
 
     def test_batch_upload_progress_state_and_rerun(self):
         """实际操作上传/按钮，核验混合结果、完整进度和重跑不重复执行。"""
@@ -342,11 +340,11 @@ class TestImportFrontend(unittest.TestCase):
             with self.subTest(target=target), patch(target, side_effect=error):
                 app.button(key="vector_search").click().run()
             self.assertFalse(app.exception)
-            self.assertTrue(any(str(error) in element.value for element in app.tabs[2].error))
+            self.assertTrue(any(str(error) in element.value for element in app.tabs[1].error))
             self.assertFalse(any("没有可检索的文档块" in element.value for element in app.info))
         app.button(key="vector_search").click().run()
         self.assertFalse(app.exception)
-        self.assertFalse(app.tabs[2].error)
+        self.assertFalse(app.tabs[1].error)
         self.assertEqual([element.value for element in app.text], ["神经网络"])
 
     def test_bm25_search_without_model_and_with_document_filter(self):
@@ -403,11 +401,11 @@ class TestImportFrontend(unittest.TestCase):
         with patch("src.retrieval.vector_store.VectorStore.list_chunks", side_effect=RuntimeError("语料读取失败")):
             app.button(key="vector_search").click().run()
         self.assertFalse(app.exception)
-        self.assertTrue(any("语料读取失败" in element.value for element in app.tabs[2].error))
+        self.assertTrue(any("语料读取失败" in element.value for element in app.tabs[1].error))
         self.assertFalse(app.text)
         app.button(key="vector_search").click().run()
         self.assertFalse(app.exception)
-        self.assertFalse(app.tabs[2].error)
+        self.assertFalse(app.tabs[1].error)
         self.assertEqual([element.value for element in app.text], ["Adam"])
         self.assertEqual(self.embeddings.query_calls, [])
 
@@ -442,17 +440,17 @@ class TestImportFrontend(unittest.TestCase):
             app.button(key="vector_search").click().run()
             model.assert_not_called()
         self.assertFalse(app.exception)
-        self.assertFalse(app.tabs[2].error)
+        self.assertFalse(app.tabs[1].error)
         self.assertFalse(app.text)
         VectorStore().add_chunks([Document(page_content="BERT", metadata={
             "chunk_id": "b", "doc_id": "b", "source_file": "论文.txt", "line_start": 1, "line_end": 1})])
         with patch("src.retrieval.vector_store.get_embeddings", side_effect=FileNotFoundError("本地模型不存在")):
             app.button(key="vector_search").click().run()
         self.assertFalse(app.exception)
-        self.assertTrue(any("本地模型不存在" in element.value for element in app.tabs[2].error))
+        self.assertTrue(any("本地模型不存在" in element.value for element in app.tabs[1].error))
         self.assertFalse(app.text)
         app.button(key="vector_search").click().run()
-        self.assertFalse(app.tabs[2].error)
+        self.assertFalse(app.tabs[1].error)
         self.assertEqual([element.value for element in app.text], ["BERT"])
 
     def test_rrf_search_after_upload_and_database_recovery(self):
@@ -468,10 +466,10 @@ class TestImportFrontend(unittest.TestCase):
         with patch("src.retrieval.vector_store.VectorStore.list_chunks", side_effect=RuntimeError("语料读取失败")):
             app.button(key="vector_search").click().run()
         self.assertFalse(app.exception)
-        self.assertTrue(any("语料读取失败" in element.value for element in app.tabs[2].error))
+        self.assertTrue(any("语料读取失败" in element.value for element in app.tabs[1].error))
         self.assertFalse(app.text)
         app.button(key="vector_search").click().run()
-        self.assertFalse(app.tabs[2].error)
+        self.assertFalse(app.tabs[1].error)
         self.assertEqual([element.value for element in app.text], ["Reranker"])
         VectorStore().delete_document(doc_id)
         app.text_input(key="vector_doc_id").set_value(doc_id)
@@ -514,19 +512,19 @@ class TestImportFrontend(unittest.TestCase):
             app.text_input(key="vector_query").set_value("BERT")
             app.button(key="vector_search").click().run()
             model.assert_not_called()
-        self.assertFalse(app.tabs[2].error)
+        self.assertFalse(app.tabs[1].error)
         VectorStore().add_chunks([Document(page_content="BERT", metadata={
             "chunk_id": "b", "doc_id": "b", "source_file": "论文.txt", "line_start": 1, "line_end": 1})])
         for message in ("重排模型不存在", "重排推理失败"):
             with patch("src.retrieval.reranker.get_reranker", side_effect=RuntimeError(message)):
                 app.button(key="vector_search").click().run()
             self.assertFalse(app.exception)
-            self.assertTrue(any(message in element.value for element in app.tabs[2].error))
+            self.assertTrue(any(message in element.value for element in app.tabs[1].error))
             self.assertFalse(app.text)
         with patch("src.retrieval.reranker.get_reranker") as model:
             model.return_value.predict.return_value = [0.8]
             app.button(key="vector_search").click().run()
-        self.assertFalse(app.tabs[2].error)
+        self.assertFalse(app.tabs[1].error)
         self.assertEqual([element.value for element in app.text], ["BERT"])
 
     def test_model_reranking_uploaded_document_filter_and_delete(self):
@@ -554,7 +552,7 @@ class TestImportFrontend(unittest.TestCase):
         self.assertEqual(self.embeddings.document_calls, [["BERT"], ["Reranker"]])
 
 
-    def test_layout_library_delete_cancel_restore_and_cache(self):
+    def test_layout_library_delete_cancel_restore(self):
         """真实页面上传、取消删除、删除和恢复均核验原文及Chroma。"""
         from src.frontend.components.documents import list_documents
         app = self.app
@@ -562,18 +560,17 @@ class TestImportFrontend(unittest.TestCase):
         app.file_uploader[0].set_value([("paper.md", b"Transformer uses six layers.", "text/markdown")]).run()
         app.button(key="start_import").click().run()
         doc_id = list_documents(raw, index)[0]["doc_id"]
-        self.assertEqual([tab.label for tab in app.tabs], ["单轮对话", "多轮对话", "检索文档", "知识库"])
+        self.assertEqual([tab.label for tab in app.tabs], ["科研对话", "文档检索", "知识库"])
         self.assertEqual(app.sidebar.get("progress")[0].proto.value, 100)
         self.assertEqual(self.delete_button(app, doc_id).label, "删除")
         self.delete_button(app).click().run()
-        self.assertFalse(any(b.key == f"delete_document:{doc_id}" for b in app.tabs[3].button))
+        self.assertFalse(any(b.key == f"delete_document:{doc_id}" for b in app.tabs[2].button))
         self.assertEqual(app.button(key="confirm_delete_document").label, "确认删除")
         self.assertEqual(app.button(key="cancel_delete_document").label, "取消")
-        self.assertFalse(any("待删除" in row.value for row in app.tabs[3].warning))
+        self.assertFalse(any("待删除" in row.value for row in app.tabs[2].warning))
         self.assertEqual(VectorStore().count(), 1)
         app.button(key="cancel_delete_document").click().run()
         self.assertTrue((raw / doc_id / "paper.md").is_file())
-        app.session_state["rag_cache"].clear = unittest.mock.Mock()
         self.delete_button(app).click().run()
         app.button(key="confirm_delete_document").click().run()
         self.assertFalse(app.exception)
@@ -582,7 +579,6 @@ class TestImportFrontend(unittest.TestCase):
         self.assertEqual((raw / ".trash" / doc_id / "paper.md").read_bytes(), b"Transformer uses six layers.")
         self.assertEqual(app.session_state["import_tasks"], [])
         self.assertTrue(app.button(key="start_import").disabled)
-        app.session_state["rag_cache"].clear.assert_called_once()
         archived = app.radio(key="restore_doc_id")
         self.assertEqual(archived.label, "已归档知识")
         self.assertEqual(archived.options, ["paper.md"])
@@ -628,7 +624,7 @@ class TestImportFrontend(unittest.TestCase):
         self.assertEqual(VectorStore().count(), 1)
         self.assertEqual(VectorStore().list_chunks()[0].page_content, "Transformer")
         self.assertEqual(app.session_state["import_progress"], {"completed": 1, "total": 1})
-        self.assertEqual(sum((b.key or "").startswith("delete_document:") for b in app.tabs[3].button), 1)
+        self.assertEqual(sum((b.key or "").startswith("delete_document:") for b in app.tabs[2].button), 1)
         app.selectbox(key="retrieval_method").set_value("BM25 关键词")
         app.text_input(key="vector_query").set_value("Adam")
         app.button(key="vector_search").click().run()

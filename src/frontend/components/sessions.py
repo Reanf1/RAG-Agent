@@ -9,17 +9,10 @@ import streamlit as st
 from src.agent.memory import MemoryManager
 
 
-def activate_session(memory: MemoryManager, user_id: str, session_id: str, cancel_request):
-    """先校验归属并读取历史，再切换，避免把旧缓存/候选内容送入新会话。"""
+def activate_session(memory: MemoryManager, user_id: str, session_id: str):
+    """先校验归属并读取历史，再切换消息与指标。"""
     messages = memory.get_messages(user_id, session_id)
-    rag_messages = memory.get_rag_messages(user_id, session_id)
-    if "rag_pending" in st.session_state:
-        cancel_request(st.session_state.rag_pending["message"], "cancelled")
-    st.session_state.pop("rag_pending", None)
-    if "rag_cache" in st.session_state:
-        st.session_state.rag_cache.clear()
     st.session_state.pop("agent_last_event", None)
-    st.session_state.agent_question = ""  # 显式通知浏览器清空表单，避免保留另一会话的未提交草稿。
     st.session_state.pop("delete_session_pending", None)
     history = []
     for question, answer in zip(messages[::2], messages[1::2]):
@@ -32,12 +25,11 @@ def activate_session(memory: MemoryManager, user_id: str, session_id: str, cance
         st.session_state.agent_last_event = {**messages[-1].additional_kwargs["event"],
                                              "full_response": messages[-1].content, "history_replayed": True}
     st.session_state.agent_messages = history
-    st.session_state.rag_messages = rag_messages
-    st.session_state.agent_session_id = st.session_state.rag_session_id = session_id
+    st.session_state.agent_session_id = session_id
     st.query_params["conversation"] = session_id
 
 
-def render_sessions(db_path: Path, cancel_request) -> bool:
+def render_sessions(db_path: Path) -> bool:
     """管理当前本机访客的会话；随机地址标识用于演示隔离，不是登录认证。"""
     with st.sidebar:
         st.header("对话历史管理")
@@ -54,9 +46,9 @@ def render_sessions(db_path: Path, cancel_request) -> bool:
             requested = st.query_params.get("conversation") or st.session_state.get("agent_session_id")
             current = requested if requested in sessions else (sessions[-1] if sessions else memory.create_session(user_id))
             if current != st.session_state.get("agent_session_id"):
-                activate_session(memory, user_id, current, cancel_request)
+                activate_session(memory, user_id, current)
             if st.button("新建会话", key="new_conversation"):
-                activate_session(memory, user_id, memory.create_session(user_id), cancel_request)
+                activate_session(memory, user_id, memory.create_session(user_id))
                 st.rerun()
             sessions = memory.list_sessions(user_id)
             labels = {}
@@ -82,14 +74,14 @@ def render_sessions(db_path: Path, cancel_request) -> bool:
                     if st.button(labels[identifier], key=f"conversation:{identifier}",
                                  type="primary" if identifier == current else "secondary", width="stretch"):
                         if identifier != current:
-                            activate_session(memory, user_id, identifier, cancel_request)
+                            activate_session(memory, user_id, identifier)
                             st.rerun()
             if st.session_state.get("delete_session_pending") == current:
                 confirm, cancel = st.columns(2)
                 if confirm.button("确认删除", key="confirm_delete_conversation"):
                     memory.delete_session(user_id, current)
                     remaining = memory.list_sessions(user_id)
-                    activate_session(memory, user_id, remaining[-1] if remaining else memory.create_session(user_id), cancel_request)
+                    activate_session(memory, user_id, remaining[-1] if remaining else memory.create_session(user_id))
                     st.rerun()
                 if cancel.button("取消", key="cancel_delete_conversation"):
                     st.session_state.pop("delete_session_pending")
@@ -105,7 +97,7 @@ def render_sessions(db_path: Path, cancel_request) -> bool:
                                       captions=[f"ID：{identifier[:8]}" for identifier in archived])
                 if st.button("恢复", key="restore_conversation"):
                     memory.restore_session(user_id, restore_id)
-                    activate_session(memory, user_id, restore_id, cancel_request)
+                    activate_session(memory, user_id, restore_id)
                     st.rerun()
             return True
         except Exception as error:
