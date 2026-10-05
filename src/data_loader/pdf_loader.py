@@ -221,15 +221,21 @@ def load_pdf(file_path: str | Path) -> list[Document]:
         raise ValueError(f"PDF 加载器不支持此文件格式：{path.suffix}")
 
     documents, fragments = [], []
-    # 上下文管理器确保加载成功或发生异常时都会关闭 PDF 文件。
-    with pymupdf.open(path) as pdf:
+    data = path.read_bytes()
+    try:
+        # 解析字节副本，不让MuPDF持有上传临时文件句柄；指纹与解析使用同一份内容。
+        pdf = pymupdf.open(stream=data, filetype="pdf")
+    except pymupdf.FileDataError as error:
+        raise pymupdf.FileDataError(f"PDF 文件损坏或不是有效的 PDF：{path.name}") from error
+    # 上下文管理器确保加载成功或发生异常时都会关闭解析资源。
+    with pdf:
         if not pdf.is_pdf:
             raise ValueError(f"文件内容不是 PDF：{path.name}")
         if pdf.needs_pass:
             raise ValueError(f"PDF 需要密码，请先解密后导入：{path.name}")
 
         # 同一文件的所有页共用内容指纹，重复加载时保持文档标识稳定。
-        doc_id = hashlib.sha256(path.read_bytes()).hexdigest()
+        doc_id = hashlib.sha256(data).hexdigest()
         common = {"source": str(path), "source_file": path.name, "file_type": ".pdf",
                   "doc_id": doc_id, "total_pages": len(pdf)}
         for page in pdf:

@@ -1,0 +1,47 @@
+test_corrupt_pdf_reports_file_error_without_temporary_path (__main__.TestPDFLoader)
+W06损坏内容应明确是PDF文件问题，原始解析异常通过cause保留。 ... FAIL
+test_pdf_parser_uses_bytes_and_does_not_hold_source_file_handle (__main__.TestPDFLoader)
+用真实解析器核对字节加载，避免Windows文件句柄影响临时目录清理。 ... FAIL
+
+======================================================================
+FAIL: test_corrupt_pdf_reports_file_error_without_temporary_path (__main__.TestPDFLoader)
+W06损坏内容应明确是PDF文件问题，原始解析异常通过cause保留。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/pymupdf/__init__.py", line 3013, in __init__
+    doc = mupdf.fz_open_document_with_stream_and_dir(suffix, fz_stream, archive.this)
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/pymupdf/mupdf.py", line 53426, in fz_open_document_with_stream_and_dir
+    return _mupdf.fz_open_document_with_stream_and_dir(magic, stream, dir)
+pymupdf.mupdf.FzErrorFormat: code=7: no objects found
+
+The above exception was the direct cause of the following exception:
+
+pymupdf.FileDataError: Failed to open file '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpsfmnpvj0/论文.PDF' as type PDF.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_1_1 文档加载与批量导入/test_pdf_loader.py", line 64, in test_corrupt_pdf_reports_file_error_without_temporary_path
+    with self.assertRaisesRegex(pymupdf.FileDataError, "PDF 文件损坏或不是有效的 PDF") as raised:
+AssertionError: "PDF 文件损坏或不是有效的 PDF" does not match "Failed to open file '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpsfmnpvj0/论文.PDF' as type PDF."
+
+======================================================================
+FAIL: test_pdf_parser_uses_bytes_and_does_not_hold_source_file_handle (__main__.TestPDFLoader)
+用真实解析器核对字节加载，避免Windows文件句柄影响临时目录清理。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_1_1 文档加载与批量导入/test_pdf_loader.py", line 75, in test_pdf_parser_uses_bytes_and_does_not_hold_source_file_handle
+    opener.assert_called_once_with(stream=data, filetype="pdf")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 941, in assert_called_once_with
+    return self.assert_called_with(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 929, in assert_called_with
+    raise AssertionError(_error_message()) from cause
+AssertionError: expected call not found.
+Expected: open(stream=b'%PDF-1.7\n%\xc2\xb5\xc2\xb6\n% Written by MuPDF 1.28.2\n\n1 0 obj\n<</Type/Catalog/Pages 2 0 R/Info<</Producer(MuPDF 1.28.2)>>>>\nendobj\n\n2 0 obj\n<</Type/Pages/Count 1/Kids[4 0 R]>>\nendobj\n\n3 0 obj\n<</Font<</china-s 5 0 R>>>>\nendobj\n\n4 0 obj\n<</Type/Page/MediaBox[0 0 595 842]/Rotate 0/Resources 3 0 R/Parent 2 0 R/Contents[8 0 R]>>\nendobj\n\n5 0 obj\n<</Type/Font/Subtype/Type0/BaseFont/Heiti/Encoding/UniGB-UTF16-H/DescendantFonts[6 0 R]>>\nendobj\n\n6 0 obj\n<</Type/Font/Subtype/CIDFontType0/BaseFont/Heiti/CIDSystemInfo<</Registry(Adobe)/Ordering(GB1)/Supplement 5>>/FontDescriptor 7 0 R>>\nendobj\n\n7 0 obj\n<</Type/FontDescriptor/FontName(Heiti)/FontBBox[-200 -200 1200 1200]/Flags 4/ItalicAngle 0/Ascent 1000/Descent -200/StemV 80>>\nendobj\n\n8 0 obj\n<</Length 59>>\nstream\n\nq\nBT\n1 0 0 1 72 770 Tm\n/china-s 11 Tf [<6b636587>]TJ\nET\nQ\n\nendstream\nendobj\n\nxref\n0 9\n0000000000 65535 f \n0000000042 00000 n \n0000000120 00000 n \n0000000172 00000 n \n0000000216 00000 n \n0000000323 00000 n \n0000000429 00000 n \n0000000578 00000 n \n0000000721 00000 n \n\ntrailer\n<</Size 9/Root 1 0 R/ID[<C2A6C2980229C2884AC3A1C386C3B2C2><BB59C0AD0A11A1957255526C1B810336>]>>\nstartxref\n829\n%%EOF\n', filetype='pdf')
+Actual: open(PosixPath('/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpkgavbme1/论文.PDF'))
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.027s
+
+FAILED (failures=2)
+Consider using the pymupdf_layout package for a greatly improved page layout analysis.

@@ -11,6 +11,7 @@ import hashlib
 import os
 import tempfile
 import unittest
+from unittest.mock import patch
 import pymupdf
 from langchain_core.documents import Document
 from src.data_loader.pdf_loader import load_pdf
@@ -56,6 +57,23 @@ class TestPDFLoader(unittest.TestCase):
         self.write_pdf(["摘要"])
         documents = load_pdf(os.path.relpath(self.path))
         self.assertEqual(documents[0].metadata["source"], str(self.path.resolve()))
+
+    def test_corrupt_pdf_reports_file_error_without_temporary_path(self):
+        """W06损坏内容应明确是PDF文件问题，原始解析异常通过cause保留。"""
+        self.path.write_bytes(b"This is not a PDF")
+        with self.assertRaisesRegex(pymupdf.FileDataError, "PDF 文件损坏或不是有效的 PDF") as raised:
+            load_pdf(self.path)
+        self.assertIsInstance(raised.exception.__cause__, pymupdf.FileDataError)
+        self.assertNotIn(str(self.path.parent), str(raised.exception))
+
+    def test_pdf_parser_uses_bytes_and_does_not_hold_source_file_handle(self):
+        """用真实解析器核对字节加载，避免Windows文件句柄影响临时目录清理。"""
+        self.write_pdf(["正文"])
+        data = self.path.read_bytes()
+        with patch("src.data_loader.pdf_loader.pymupdf.open", wraps=pymupdf.open) as opener:
+            documents = load_pdf(self.path)
+        opener.assert_called_once_with(stream=data, filetype="pdf")
+        self.assertEqual(documents[0].page_content, "正文")
 
     def test_document_id_is_stable_and_shared(self):
         """重复导入与文件副本共用内容标识，各页不会随机生成不同 ID。"""

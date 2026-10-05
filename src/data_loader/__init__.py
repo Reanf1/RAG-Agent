@@ -1,6 +1,7 @@
 """模块一：文档格式分发、批量导入与状态追踪。"""
 
 import hashlib
+import logging
 import tempfile
 import time
 from pathlib import Path
@@ -89,6 +90,8 @@ def batch_import(tasks: list[dict], raw_dir: str | Path,
             task.update(status="success", documents=documents, path=str(destination))
         except Exception as error:
             # 在批量边界隔离解析/保存错误，继续处理剩余文档。
+            # 服务端终端保留完整异常链，便于区分解析错误和临时目录清理错误。
+            logging.getLogger(__name__).exception("文档导入失败：%s", task["name"])
             task.update(status="failed", error=f"{type(error).__name__}: {error}")
         task["elapsed"] = round(time.perf_counter() - start, 3)
         yield {"completed": index + 1, "total": total}
