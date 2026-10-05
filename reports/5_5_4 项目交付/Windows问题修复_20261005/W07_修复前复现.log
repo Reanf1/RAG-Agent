@@ -1,0 +1,30 @@
+test_retrieved_text_without_citation_is_not_rewritten_as_empty_library (__main__.TestObservationAndLoop)
+复现W07：无有效引用不等于检索无文档，保留真实工具状态。 ... FAIL
+test_single_rag_preserves_citations_after_action_shortens_question (__main__.TestObservationAndLoop)
+单一RAG任务的查询改写不能导致Observation再次生成和丢失引用。 ... FAIL
+
+======================================================================
+FAIL: test_retrieved_text_without_citation_is_not_rewritten_as_empty_library (__main__.TestObservationAndLoop)
+复现W07：无有效引用不等于检索无文档，保留真实工具状态。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_1 Agent核心循环/test_observation.py", line 164, in test_retrieved_text_without_citation_is_not_rewritten_as_empty_library
+    self.assertIn("WINCHECK20261005", result["answer"])
+AssertionError: 'WINCHECK20261005' not found in '当前知识库中未找到相关文档。'
+
+======================================================================
+FAIL: test_single_rag_preserves_citations_after_action_shortens_question (__main__.TestObservationAndLoop)
+单一RAG任务的查询改写不能导致Observation再次生成和丢失引用。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_1 Agent核心循环/test_observation.py", line 176, in test_single_rag_preserves_citations_after_action_shortens_question
+    self.assertEqual(result["answer"], context["observations"][0]["result"]["answer"])
+AssertionError: '结果为17。' != '代号WINCHECK[参考文档1：说明.txt；行1–3]。'
+- 结果为17。
++ 代号WINCHECK[参考文档1：说明.txt；行1–3]。
+
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.026s
+
+FAILED (failures=2)

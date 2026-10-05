@@ -1,0 +1,167 @@
+test_answer_plan_skips_model_and_tool_execution (test_action.TestAction) ... ok
+test_closing_after_call_event_does_not_execute_tool (test_action.TestAction) ... ok
+test_current_document_filter_cannot_be_omitted_by_action (test_action.TestAction)
+最新问题的单个完整ID必须成为检索过滤，不扩展为全库查询。 ... ok
+test_current_paper_id_overrides_model_choice_from_old_history (test_action.TestAction)
+复现W09：最新问题指定ViT，模型Action却填了历史DETR的真实ID。 ... ok
+test_empty_multiple_wrong_name_and_non_dict_arguments_do_not_execute (test_action.TestAction) ... ok
+test_execution_keeps_selected_tool_when_caller_changes_registry_after_call_event (test_action.TestAction) ... ok
+test_executor_rejects_unknown_duplicate_and_non_dict_arguments (test_action.TestAction) ... ok
+test_filename_only_rule_search_passes_question_without_model_or_invented_id (test_action.TestAction) ... ok
+test_filename_preflight_uses_declared_empty_paper_list_arguments (test_action.TestAction)
+复现W01：模型曾把文件名塞入无参数文献列表的query字段。 ... ok
+test_invalid_thought_and_duplicate_tools_do_not_call_model (test_action.TestAction) ... ok
+test_native_call_executes_selected_tool_and_correlates_messages (test_action.TestAction) ... ok
+test_network_failure_and_cloud_configuration_do_not_execute (test_action.TestAction) ... ok
+test_no_argument_and_optional_default_tools_execute (test_action.TestAction) ... ok
+test_only_selected_tool_is_exposed_even_when_other_tools_are_available (test_action.TestAction) ... ok
+test_partial_response_service_errors_and_malformed_json_do_not_execute (test_action.TestAction) ... ok
+test_provided_fingerprint_in_question_or_tool_context_keeps_document_filter (test_action.TestAction) ... ok
+test_required_type_and_extra_argument_errors_are_tool_results_without_side_effects (test_action.TestAction) ... ok
+test_structured_results_and_mutating_tools_preserve_original_parameters (test_action.TestAction) ... ok
+test_tool_exception_is_preserved_and_not_retried (test_action.TestAction) ... ok
+test_unprovided_or_invalid_fingerprint_never_executes_tool (test_action.TestAction) ... ok
+test_closing_loop_and_mutating_events_do_not_execute_or_change_state (test_observation.TestObservationAndLoop) ... ok
+test_continue_stops_at_limit_without_extra_model_or_tool_calls (test_observation.TestObservationAndLoop) ... ok
+test_direct_answer_finishes_without_tool_calling_request (test_observation.TestObservationAndLoop) ... ok
+test_empty_library_notice_survives_observation_rewriting (test_observation.TestObservationAndLoop)
+复现W05：工具已声明空库，Observation却只返回纯模型正文。 ... ok
+test_failed_tool_cannot_be_marked_successful (test_observation.TestObservationAndLoop) ... ok
+test_invalid_limits_and_context_stop_before_model_calls (test_observation.TestObservationAndLoop) ... ok
+test_missing_information_can_finish_without_claiming_completion (test_observation.TestObservationAndLoop) ... ok
+test_model_errors_stop_in_each_stage_and_preserve_actual_results (test_observation.TestObservationAndLoop) ... ok
+test_observation_rejects_inconsistent_decisions (test_observation.TestObservationAndLoop) ... ok
+test_observation_rejects_partial_malformed_and_service_responses (test_observation.TestObservationAndLoop) ... ok
+test_observation_unknown_usage_and_boundary_description (test_observation.TestObservationAndLoop) ... ok
+test_observation_validates_state_before_call_and_never_uses_cloud (test_observation.TestObservationAndLoop) ... ok
+test_retrieved_text_without_citation_is_not_rewritten_as_empty_library (test_observation.TestObservationAndLoop)
+复现W07：无有效引用不等于检索无文档，保留真实工具状态。 ... ok
+test_single_rag_preserves_citations_after_action_shortens_question (test_observation.TestObservationAndLoop)
+单一RAG任务的查询改写不能导致Observation再次生成和丢失引用。 ... ok
+test_tool_error_can_continue_to_a_real_alternative (test_observation.TestObservationAndLoop) ... ok
+test_tool_failure_is_observed_and_stops_honestly (test_observation.TestObservationAndLoop) ... ok
+test_two_real_tools_feed_next_round_and_native_observation_messages (test_observation.TestObservationAndLoop) ... ok
+test_all_stages_preserve_actual_tool_description_and_parameter_constraints (test_system_prompt.TestAgentSystemPrompt) ... ok
+test_empty_registry_constrains_model_plan_to_answer (test_system_prompt.TestAgentSystemPrompt) ... ok
+test_empty_registry_is_explicit_and_does_not_add_planned_production_tools (test_system_prompt.TestAgentSystemPrompt) ... ok
+test_unknown_stage_is_rejected_without_model_or_tool_execution (test_system_prompt.TestAgentSystemPrompt) ... ok
+test_user_documents_observations_and_thought_cannot_replace_system_rules (test_system_prompt.TestAgentSystemPrompt) ... ok
+test_cloud_and_invalid_addresses_are_rejected_before_network (test_thought.TestThought) ... ok
+test_direct_answer_plan_with_no_tools_does_not_generate_answer (test_thought.TestThought) ... ok
+test_dynamic_instructions_do_not_change_system_message (test_thought.TestThought) ... ok
+test_input_errors_do_not_call_model (test_thought.TestThought) ... ok
+test_invalid_json_and_content_shape_are_explicit_errors (test_thought.TestThought) ... ok
+test_invalid_plan_fields_and_tool_decisions_are_rejected (test_thought.TestThought) ... ok
+test_local_model_failure_is_not_retried (test_thought.TestThought) ... ok
+test_message_roles_tools_schema_and_current_state_are_preserved (test_thought.TestThought) ... ok
+test_no_tools_cannot_select_tool_and_boundary_length_is_valid (test_thought.TestThought) ... ok
+test_plan_only_selects_registered_tool_and_uses_llm_config (test_thought.TestThought) ... ok
+test_unfinished_length_stops_service_errors_and_bad_shapes_are_rejected (test_thought.TestThought) ... ok
+test_unknown_usage_is_not_estimated (test_thought.TestThought) ... ok
+
+----------------------------------------------------------------------
+Ran 54 tests in 1.065s
+
+OK
+test_all_stages_receive_same_history_summary_and_rag_references (test_memory_context.TestAgentMemoryContext) ... ok
+test_direct_message_history_is_usable_by_react_and_done_is_json_ready (test_memory_context.TestAgentMemoryContext) ... ok
+test_invalid_context_stops_before_model_and_tool_io (test_memory_context.TestAgentMemoryContext) ... ok
+test_invalid_history_roles_and_intermediate_calls_are_not_archived (test_memory_context.TestAgentMemoryContext) ... ok
+test_langchain_and_native_role_history_normalize_to_same_snapshot (test_memory_context.TestAgentMemoryContext) ... ok
+test_native_messages_keep_roles_tool_name_and_argument_copy (test_memory_context.TestAgentMemoryContext) ... ok
+test_plain_dict_and_multimodal_native_messages_are_rejected (test_memory_context.TestAgentMemoryContext) ... ok
+test_rag_and_agent_native_requests_use_identical_message_conversion (test_memory_context.TestAgentMemoryContext) ... ok
+test_reopened_memory_context_keeps_budget_and_other_users_out (test_memory_context.TestAgentMemoryContext) ... ok
+test_two_round_public_entry_uses_memory_for_calculator_action (test_memory_context.TestAgentMemoryContext) ... ok
+test_disabled_latest_request_finishes_incomplete_without_tools (test_source_routing.TestRAGSearchRouting) ... ok
+test_disabled_latest_request_with_history_still_skips_all_io (test_source_routing.TestRAGSearchRouting) ... ok
+test_disabled_search_never_routes_latest_query_to_local_rag (test_source_routing.TestRAGSearchRouting) ... ok
+test_disabled_search_policy_uses_actual_registry (test_source_routing.TestRAGSearchRouting) ... ok
+test_enabled_search_policy_reports_availability (test_source_routing.TestRAGSearchRouting) ... ok
+test_enabled_search_runs_real_parser_without_touching_rag (test_source_routing.TestRAGSearchRouting) ... ok
+test_existing_context_and_negation_are_not_overridden (test_source_routing.TestRAGSearchRouting) ... ok
+test_existing_local_and_general_concept_routes_still_work (test_source_routing.TestRAGSearchRouting) ... ok
+test_explicit_current_document_and_tool_route_despite_old_history (test_source_routing.TestRAGSearchRouting)
+复现W09/W10：不能把新指定文档或强制检索替换为旧答案。 ... ok
+test_explicit_registered_tool_is_not_replaced_by_freshness (test_source_routing.TestRAGSearchRouting) ... ok
+test_external_search_phrases_route_when_enabled (test_source_routing.TestRAGSearchRouting) ... ok
+test_grounded_rag_without_valid_citations_is_not_completed (test_source_routing.TestRAGSearchRouting) ... ok
+test_latest_external_papers_route_to_enabled_search (test_source_routing.TestRAGSearchRouting) ... ok
+test_local_scope_beats_freshness_words (test_source_routing.TestRAGSearchRouting) ... ok
+test_missing_tools_do_not_create_fake_routes (test_source_routing.TestRAGSearchRouting) ... ok
+test_mixed_local_and_external_sources_need_model_planning (test_source_routing.TestRAGSearchRouting) ... ok
+test_rag_action_observation_keeps_actual_sources_and_calls_retrieval_once (test_source_routing.TestRAGSearchRouting) ... ok
+test_search_failure_cannot_recover_via_local_old_papers (test_source_routing.TestRAGSearchRouting) ... ok
+test_source_policy_is_present_in_all_stages (test_source_routing.TestRAGSearchRouting) ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 0.842s
+
+OK
+test_blank_answer_is_rejected (test_citations.TestCitations) ... ok
+test_code_examples_and_escaped_markers_are_not_evidence (test_citations.TestCitations) ... ok
+test_context_is_not_modified_by_resolution_or_returned_evidence (test_citations.TestCitations) ... ok
+test_context_references_follow_sorting_and_budget (test_citations.TestCitations) ... ok
+test_cross_page_table_location_is_kept (test_citations.TestCitations) ... ok
+test_empty_context_cannot_resolve_a_document (test_citations.TestCitations) ... ok
+test_inline_pdf_location_and_authoritative_footer (test_citations.TestCitations) ... ok
+test_markdown_characters_in_filename_are_escaped (test_citations.TestCitations) ... ok
+test_missing_source_information_is_flagged (test_citations.TestCitations) ... ok
+test_model_supplied_link_is_not_a_source_link (test_citations.TestCitations) ... ok
+test_real_multi_format_loaders_and_chunks_keep_traceable_positions (test_citations.TestCitations) ... <frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+ok
+test_reference_metadata_is_an_independent_snapshot (test_citations.TestCitations) ... ok
+test_truncated_evidence_does_not_include_unseen_tail (test_citations.TestCitations) ... ok
+test_uncited_answer_does_not_add_retrieved_sources (test_citations.TestCitations) ... ok
+test_unknown_ids_are_marked_and_never_assigned_sources (test_citations.TestCitations) ... ok
+test_used_order_repeated_citations_and_unused_blocks (test_citations.TestCitations) ... ok
+test_word_and_text_do_not_get_invented_pdf_pages (test_citations.TestCitations) ... ok
+test_config_and_question_validation (test_context.TestContextBuilding) ... ok
+test_empty_and_whitespace_results_use_existing_empty_prompt (test_context.TestContextBuilding) ... ok
+test_exact_limit_keeps_full_block_and_drops_lower_rank (test_context.TestContextBuilding) ... ok
+test_full_text_and_sources_are_preserved (test_context.TestContextBuilding) ... ok
+test_inputs_remain_unchanged_after_sorting_and_truncation (test_context.TestContextBuilding) ... ok
+test_missing_metadata_does_not_invent_source_or_page (test_context.TestContextBuilding) ... ok
+test_nonfinite_scores_are_rejected (test_context.TestContextBuilding) ... ok
+test_oversized_header_is_skipped_without_broken_reference_number (test_context.TestContextBuilding) ... ok
+test_question_length_reduces_available_context (test_context.TestContextBuilding) ... ok
+test_real_location_fields_for_each_format (test_context.TestContextBuilding) ... ok
+test_score_order_ties_and_negative_scores (test_context.TestContextBuilding) ... ok
+test_separator_and_all_headers_count_toward_limit (test_context.TestContextBuilding) ... ok
+test_system_prompt_changes_are_included_in_budget (test_context.TestContextBuilding) ... ok
+test_too_small_budget_does_not_report_false_empty_knowledge_base (test_context.TestContextBuilding) ... ok
+test_truncation_prefers_late_sentence_or_paragraph_boundary (test_context.TestContextBuilding) ... ok
+test_unbroken_unicode_text_is_cut_with_visible_marker (test_context.TestContextBuilding) ... ok
+test_complete_answer_passes_and_footer_does_not_fill_facts (test_generation.TestGenerationEvaluation) ... ok
+test_english_source_footer_is_not_a_body_citation (test_generation.TestGenerationEvaluation) ... ok
+test_equal_weight_summary_with_two_seeds (test_generation.TestGenerationEvaluation) ... ok
+test_incomplete_output_is_not_a_pass (test_generation.TestGenerationEvaluation) ... ok
+test_missing_expected_and_invalid_citations_fail (test_generation.TestGenerationEvaluation) ... ok
+test_template_no_document_notice_counts_as_refusal (test_generation.TestGenerationEvaluation) ... ok
+test_blank_or_unfinished_response_is_rejected (test_generation.TestLocalGeneration) ... ok
+test_cloud_and_non_http_configuration_is_rejected (test_generation.TestLocalGeneration) ... ok
+test_config_reaches_native_ollama_and_citations (test_generation.TestLocalGeneration) ... ok
+test_empty_fallback_is_explicit_even_when_model_omits_notice (test_generation.TestLocalGeneration) ... ok
+test_empty_question_does_not_call_network (test_generation.TestLocalGeneration) ... ok
+test_experiment_options_do_not_mutate_config (test_generation.TestLocalGeneration) ... ok
+test_http_failure_has_specific_advice_and_original_cause (test_generation.TestLocalGeneration) ... ok
+test_invalid_sampling_is_rejected_before_network (test_generation.TestLocalGeneration) ... ok
+test_length_stop_is_preserved_for_evaluation (test_generation.TestLocalGeneration) ... ok
+test_network_failure_is_explicit_without_fallback (test_generation.TestLocalGeneration) ... ok
+test_blank_question_is_rejected (test_prompt.TestRAGPrompt) ... ok
+test_braces_formula_and_markdown_are_not_reformatted (test_prompt.TestRAGPrompt) ... ok
+test_calls_do_not_share_context_or_mutate_previous_messages (test_prompt.TestRAGPrompt) ... ok
+test_dynamic_text_cannot_create_system_messages (test_prompt.TestRAGPrompt) ... ok
+test_empty_context_has_explicit_notice (test_prompt.TestRAGPrompt) ... ok
+test_four_parts_and_message_roles (test_prompt.TestRAGPrompt) ... ok
+test_long_context_and_whitespace_are_preserved (test_prompt.TestRAGPrompt) ... ok
+test_template_variables_match_retrieval_context_contract (test_prompt.TestRAGPrompt) ... ok
+
+----------------------------------------------------------------------
+Ran 57 tests in 0.174s
+
+OK
+Consider using the pymupdf_layout package for a greatly improved page layout analysis.
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

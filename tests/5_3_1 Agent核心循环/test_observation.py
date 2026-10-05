@@ -15,6 +15,7 @@ from unittest.mock import patch
 from urllib.error import URLError
 from langchain_core.tools import tool
 from src.agent.react_loop import observe, run_react
+from src.agent.tools import knowledge_base_search
 from src.utils.config import load_config
 from tests.helpers import isolated_agent_logs
 
@@ -147,6 +148,34 @@ class TestObservationAndLoop(unittest.TestCase):
             result = observe("请根据知识库解释位置编码", [], context)
         self.assertTrue(result["answer"].startswith(notice))
         self.assertEqual(result["answer"].count(notice), 1)
+
+    def test_retrieved_text_without_citation_is_not_rewritten_as_empty_library(self):
+        """复现W07：无有效引用不等于检索无文档，保留真实工具状态。"""
+        question = "根据知识库文档" + "a" * 64 + "回答复测代号是什么？"
+        context = {"observations": [{"name": "knowledge_base_search", "status": "success",
+            "args": {"question": "复测代号是什么？"}, "result": {
+                "generation_mode": "grounded", "status": "insufficient_evidence", "citations": [],
+                "sources": ["说明.txt"], "answer": "复测代号是WINCHECK20261005。",
+                "warnings": ["回答未提供有效文献引用，不能作为已溯源答案。"]}}]}
+        decision = {**self.finished, "task_complete": False, "answer": "当前知识库中未找到相关文档。"}
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(decision)).encode())) as http:
+            result = observe(question, [knowledge_base_search], context)
+        self.assertFalse(result["task_complete"])
+        self.assertIn("WINCHECK20261005", result["answer"])
+        self.assertIn("未提供有效文献引用", result["answer"])
+        self.assertNotIn("未找到相关文档", result["answer"])
+        http.assert_not_called()
+
+    def test_single_rag_preserves_citations_after_action_shortens_question(self):
+        """单一RAG任务的查询改写不能导致Observation再次生成和丢失引用。"""
+        context = {"observations": [{"name": "knowledge_base_search", "status": "success",
+            "args": {"question": "代号？"}, "result": {"generation_mode": "grounded", "status": "answered",
+                "citations": [{"id": 1}], "answer": "代号WINCHECK[参考文档1：说明.txt；行1–3]。"}}]}
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(self.finished)).encode())) as http:
+            result = observe("请根据知识库查询代号，并引用文档名和行号", [knowledge_base_search], context)
+        self.assertEqual(result["answer"], context["observations"][0]["result"]["answer"])
+        self.assertTrue(result["task_complete"])
+        http.assert_not_called()
 
     def test_tool_failure_is_observed_and_stops_honestly(self):
         failed = {"observation": "除数为零，工具失败。", "decision": "finish",

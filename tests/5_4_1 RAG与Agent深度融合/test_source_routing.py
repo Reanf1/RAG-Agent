@@ -142,7 +142,7 @@ class TestRAGSearchRouting(unittest.TestCase):
             retriever.return_value.search.return_value = [(document, 0.95)]
             events = list(run_react("这篇论文的实验结果？"))
         retriever.return_value.search.assert_called_once_with("这篇论文的实验结果？", doc_id=None, rerank=True)
-        self.assertEqual(model.call_count, 1)  # 明确RAG意图直接传原问题，仅Observation调用Agent模型。
+        self.assertEqual(model.call_count, 0)  # 明确单个RAG任务保留工具答案，不二次生成引用。
         result = next(event["result"] for event in events if event["type"] == "tool_result")
         self.assertEqual(result["citations"][0]["location"], "第3页（物理页码）")
         self.assertEqual(events[-1]["context"]["observations"][0]["result"]["citations"], result["citations"])

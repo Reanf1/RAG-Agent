@@ -424,7 +424,7 @@ def _partial_observation_answer(raw: str) -> str:
 
 
 def _structured_tool_observation(question: str, tools: list[BaseTool], observations: list[dict]) -> dict | None:
-    """明确单一摘要/对比任务保留工具报告，避免再次改写丢失栏目、引用或限制。
+    """明确单一论文任务保留工具报告，避免再次改写丢失栏目、引用或限制。
 
     文献列表只是查ID；其他工具或后续分析属于组合任务，仍交给模型观察。
     """
@@ -434,6 +434,21 @@ def _structured_tool_observation(question: str, tools: list[BaseTool], observati
     item = items[0]
     name, evidence = item.get("name"), item.get("result")
     plan = route_question(question, tools)
+    if (name == "knowledge_base_search" and plan and plan.get("tool_name") == name
+            and not plan.get("parallel_tools") and not re.search(r"然后|另外|\bthen\b", question, re.I)
+            and isinstance(evidence, dict) and evidence.get("status") in {"answered", "insufficient_evidence"}
+            and isinstance(evidence.get("answer"), str) and evidence["answer"].strip()):
+        # 单个RAG结果已生成答案。保留引用校验后的原文和警告，无引用不能误述为空库。
+        answer = evidence["answer"]
+        for note in dict.fromkeys(evidence.get("warnings", [])):
+            if note not in answer:
+                answer += "\n\n" + note
+        complete = bool(evidence["status"] == "answered" and not evidence.get("invalid_citation_ids")
+                        and (evidence.get("generation_mode") == "empty" or evidence.get("citations"))
+                        and evidence.get("done_reason", "stop") == "stop")
+        return {"type": "observation", "observation": "保留RAG工具答案、引用及实际检索状态。",
+                "decision": "finish", "task_complete": complete, "answer": answer, "model": None,
+                "usage": {"prompt_eval_count": 0, "eval_count": 0}, "elapsed_seconds": 0.0}
     if (name not in {"paper_summary", "paper_compare"} or not plan or plan.get("tool_name") != name
             or plan.get("parallel_tools") or re.search(r"为什么|原因|推荐|更好|更优|优劣|然后|再|另外|\b(?:why|better|recommend|then)\b", question, re.I)
             or not isinstance(evidence, dict) or evidence.get("status") not in {"answered", "insufficient_evidence"}
