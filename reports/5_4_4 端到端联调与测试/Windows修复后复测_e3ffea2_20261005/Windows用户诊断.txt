@@ -1,0 +1,122 @@
+来源：用户本轮Windows PowerShell输出。版本e3ffea2。
+
+1. Ollama运行状态
+NAME          ID              SIZE      PROCESSOR    CONTEXT    UNTIL
+qwen2.5:7b    845dbda0ea48    5.1 GB    100% GPU     8192       4 minutes from now
+
+2. 独立向量查询（完整异常栈）
+PS E:\工作\RAG-Agent> .\.venv\Scripts\python.exe -c "from src.retrieval.vector_store import VectorStore; print(VectorStore().search('复测代号是什么？'))"
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "E:\工作\RAG-Agent\src\retrieval\vector_store.py", line 123, in search
+    results = self._store.similarity_search_with_score(query, k=min(k, count), filter=where)
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\langchain_chroma\vectorstores.py", line 680, in similarity_search_with_score
+    results = self.__query_collection(
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\langchain_core\utils\utils.py", line 53, in wrapper
+    return func(*args, **kwargs)
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\langchain_chroma\vectorstores.py", line 379, in __query_collection
+    return self._collection.query(
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\api\models\Collection.py", line 221, in query
+    query_results = self._client._query(
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\telemetry\opentelemetry\__init__.py", line 150, in wrapper
+    return f(*args, **kwargs)
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\tenacity\__init__.py", line 331, in wrapped_f
+    return copy(f, *args, **kw)
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\tenacity\__init__.py", line 470, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\tenacity\__init__.py", line 371, in iter
+    result = action(retry_state)
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\tenacity\__init__.py", line 393, in <lambda>
+    self._add_action_func(lambda rs: rs.outcome.result())
+  File "C:\Users\asus\AppData\Local\Programs\Python\Python310\lib\concurrent\futures\_base.py", line 451, in result
+    return self.__get_result()
+  File "C:\Users\asus\AppData\Local\Programs\Python\Python310\lib\concurrent\futures\_base.py", line 403, in __get_result
+    raise self._exception
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\tenacity\__init__.py", line 473, in __call__
+    result = fn(*args, **kwargs)
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\api\segment.py", line 103, in wrapper
+    return self._rate_limit_enforcer.rate_limit(func)(*args, **kwargs)
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\rate_limit\simple_rate_limit\__init__.py", line 23, in wrapper
+    return func(*args, **kwargs)
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\api\segment.py", line 801, in _query
+    return self._executor.knn(
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\execution\executor\local.py", line 135, in knn
+    knns = self._vector_segment(plan.scan.collection).query_vectors(query)
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\execution\executor\local.py", line 205, in _vector_segment
+    return self._manager.get_segment(collection.id, VectorReader)
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\telemetry\opentelemetry\__init__.py", line 150, in wrapper
+    return f(*args, **kwargs)
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\segment\impl\manager\local.py", line 217, in get_segment
+    instance = self._instance(segment)
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\segment\impl\manager\local.py", line 246, in _instance
+    instance = cls(self._system, segment)
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\segment\impl\vector\local_persistent_hnsw.py", line 128, in __init__
+    self._init_index(self._dimensionality)
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\telemetry\opentelemetry\__init__.py", line 150, in wrapper
+    return f(*args, **kwargs)
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\segment\impl\vector\local_persistent_hnsw.py", line 208, in _init_index
+    index.load_index(
+RuntimeError: Cannot open header file
+
+3. 持久化头文件列表
+PS E:\工作\RAG-Agent> Get-ChildItem .\data\index -Recurse -Filter header.bin | Select-Object FullName,Length
+FullName                                                                     Length
+--------                                                                     ------
+E:\工作\RAG-Agent\data\index\351df94e-8c15-475f-aa4d-52628dbe00a1\header.bin    100
+
+4. 用户贴出的损坏PDF异常链（两次内容相同，以下保留一次）
+Consider using the pymupdf_layout package for a greatly improved page layout analysis.
+文档导入失败：Windows复测_损坏.pdf
+Traceback (most recent call last):
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\pymupdf\__init__.py", line 2981, in __init__
+    doc = mupdf.fz_open_document_with_stream_and_dir(filetype if filetype else '', fz_stream, archive.this)
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\pymupdf\mupdf.py", line 53426, in fz_open_document_with_stream_and_dir
+    return _mupdf.fz_open_document_with_stream_and_dir(magic, stream, dir)
+pymupdf.mupdf.FzErrorFormat: code=7: no objects found
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "E:\工作\RAG-Agent\src\data_loader\pdf_loader.py", line 227, in load_pdf
+    pdf = pymupdf.open(stream=data, filetype="pdf")
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\pymupdf\__init__.py", line 2984, in __init__
+    raise FileDataError('Failed to open stream') from e
+pymupdf.FileDataError: Failed to open stream
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "E:\工作\RAG-Agent\src\data_loader\__init__.py", line 72, in batch_import
+    documents = load_document(temporary_path)
+  File "E:\工作\RAG-Agent\src\data_loader\__init__.py", line 23, in load_document
+    return LOADERS[suffix](file_path)
+  File "E:\工作\RAG-Agent\src\data_loader\pdf_loader.py", line 229, in load_pdf
+    raise pymupdf.FileDataError(f"PDF 文件损坏或不是有效的 PDF：{path.name}") from error
+pymupdf.FileDataError: PDF 文件损坏或不是有效的 PDF：Windows复测_损坏.pdf
+
+说明：该PDF链对应损坏测试文件，是预期加载失败，非向量读取异常。
+
+
+2026-10-05 用户提供的英文路径副本查询对照（结果节选）
+来源：用户在Windows项目根目录执行后发来的终端输出。为控制体积，省略PDF的formula_layout及其余大段metadata；以下首条内容和分数保留。未将此结果当作TXT问答或正式检索指标通过。
+
+执行命令：
+$probe = Join-Path $env:TEMP ('rag-index-probe-' + [guid]::NewGuid().ToString('N')); Copy-Item .\data\index $probe -Recurse
+.\.venv\Scripts\python.exe -c "import sys; from src.retrieval.vector_store import VectorStore; print(VectorStore(persist_directory=sys.argv[1]).search('复测代号是什么？'))" "$probe"
+
+结果：查询正常返回列表，未再出现Cannot open header file；共5条Document及分数。
+首条source_file：Windows复测_说明.md
+首条chunk_id：103c8673a98b1824781776d046f4eb28de0fca617e44ff13e042e63bde4411e3
+首条line_start：1；line_end：6
+首条page_content：
+# 科研助理Markdown复测
+
+Markdown标记是WINMD20261005。
+
+- 引用必须对应本地文件和行号。
+- 对比两篇论文时保留方法、数据集、实验结果。
+
+首条分数：0.726981031729412
+其余结果来自Windows验收_ViT.pdf。最后一条chunk_id：edfa9c56293b800c62a26d396014d660d2488ca8d13a17711d726364062981ff，page_number：19，分数：0.6887636184692383。
+
+诊断：同一索引英文目录副本可加载并查询，原目录路径访问兼容性为主要原因判断；复制也改变位置及权限，未精准证明底层编码原因。建议停服务后迁移索引到永久英文目录，修改paths.vector_index并重启；保留原索引，不必重建或下载模型。正式页面与RAG流程尚未完成迁移后复测。

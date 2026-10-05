@@ -1,0 +1,95 @@
+- log
+- log
+- button "keyboard_double_arrow_left":
+  - generic: keyboard_double_arrow_left
+- heading "系统状态" [level=2]
+- paragraph: 系统时间：2026-10-05 22:13:38
+- status:
+  - paragraph: LLM服务：正常（qwen2.5:7b）
+- status:
+  - paragraph: 向量数据库：正常（Chroma）
+- button "刷新状态":
+  - paragraph: 刷新状态
+- heading "文档上传与管理" [level=2]
+- paragraph: 上传文档
+- region "上传文档":
+  - button "file upload"
+  - button "upload Upload":
+    - generic: upload
+    - paragraph: Upload
+  - generic: 20MB per file • PDF, DOCX, TXT, MD, MARKDOWN
+- paragraph: 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+- button "开始导入" [disabled]:
+  - generic "开始导入":
+    - paragraph: 开始导入
+- button "重试失败项" [active]:
+  - generic "重试失败项":
+    - paragraph: 重试失败项
+- heading "本批导入状态" [level=3]
+- paragraph: 已处理 1/1 份
+- progressbar "progress"
+- button "Show/hide columns":
+- button "Download as CSV":
+- button "Search":
+- button "Fullscreen":
+- paragraph: 成功 1 份，失败 1 份。
+- generic "keyboard_arrow_down 失败详情":
+  - generic: keyboard_arrow_down
+  - paragraph: 失败详情
+- paragraph: "Windows复测_损坏.pdf：FileDataError: PDF 文件损坏或不是有效的 PDF：Windows复测_损坏.pdf"
+- heading "对话历史管理" [level=2]
+- button "新建会话":
+  - paragraph: 新建会话
+- paragraph: 最近
+- button "新会话":
+  - paragraph: 新会话
+- button "删除当前会话":
+  - paragraph: 删除当前会话
+- banner:
+  - button "Main menu":
+- heading "智能科研助理" [level=1]:
+  - text: 智能科研助理
+  - link "Link to heading":
+    - /url: "#2d7dc4e4"
+- paragraph: 基于 RAG + Agent 的论文知识库问答系统
+- tablist:
+  - tab "科研对话":
+    - paragraph: 科研对话
+  - tab "文档检索" [selected]:
+    - paragraph: 文档检索
+  - tab "知识库":
+    - paragraph: 知识库
+- text: 发送
+- tabpanel "文档检索":
+  - heading "文档 Top-K 检索" [level=3]:
+    - text: 文档 Top-K 检索
+    - link "Link to heading":
+      - /url: "#top-k"
+  - paragraph: 检索方式
+  - combobox "检索方式": BM25 关键词
+  - button "Open":
+  - paragraph: Top-k
+  - spinbutton "Top-k": "5"
+  - button "Decrement":
+  - button "Increment":
+  - paragraph: 文档ID
+  - button "Help for 文档ID":
+  - textbox "文档ID":
+    - /placeholder: ""
+    - text: cb990ff1e44de00ba328e34169099d3f4704470d7d34fa9b71a586471d715baa
+  - paragraph: 查询内容
+  - textbox "查询内容":
+    - /placeholder: ""
+    - text: 复测代号是什么？
+  - button "检索":
+    - paragraph: 检索
+  - heading "检索分数分布" [level=3]:
+    - text: 检索分数分布
+    - link "Link to heading":
+      - /url: "#cf661d5"
+  - paragraph: 请求 22 · 缓存命中 1 · 空结果 3 · 检索失败 3
+  - paragraph: BAAI/bge-reranker-base · 版本 2cfc18c9 · 样本 14 · 均值 0.3586 · 范围 0.0000–0.9991
+  - button "Show data":
+  - button "Download as PNG":
+  - button "Fullscreen":
+  - generic "Vega visualization":

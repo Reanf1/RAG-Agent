@@ -1,0 +1,53 @@
+{
+  "revision": "e3ffea2",
+  "date": "2026-10-05",
+  "overall_passed": false,
+  "issues": [
+    {
+      "id": "W12",
+      "status": "英文副本查询通过，正式页面迁移待复测",
+      "problem": "Chroma持久化HNSW加载报Cannot open header file",
+      "evidence": [
+        "09_TXT向量检索.txt",
+        "32_RRF重排检索结果.txt",
+        "36_RRF混合检索结果.txt",
+        "Windows用户诊断.txt"
+      ]
+    },
+    {
+      "id": "W13",
+      "status": "未修复",
+      "problem": "KB失败后关键词或历史答案被标任务完成，缺少本次有效来源",
+      "evidence": [
+        "10_完整ID_TXT当前状态.txt",
+        "10_完整ID_TXT当前状态_AX.txt"
+      ]
+    },
+    {
+      "id": "W14",
+      "status": "未修复",
+      "problem": "查询失败时向量健康仍显示正常",
+      "evidence": [
+        "09_TXT向量检索.txt"
+      ]
+    },
+    {
+      "id": "W15",
+      "status": "未修复",
+      "problem": "完整ID元信息问题首轮误路由至KB",
+      "evidence": [
+        "18_DETR元信息终态.txt",
+        "18_DETR元信息终态_AX.txt"
+      ]
+    },
+    {
+      "id": "W16",
+      "status": "待服务端原始响应",
+      "problem": "对比失败恢复第3轮Action调用数量错误终止",
+      "evidence": [
+        "44_论文对比终态.txt",
+        "44_论文对比终态_AX.txt"
+      ]
+    }
+  ]
+}

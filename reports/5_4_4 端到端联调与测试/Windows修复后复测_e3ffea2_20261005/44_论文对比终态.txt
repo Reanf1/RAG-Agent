@@ -1,0 +1,123 @@
+- log
+- log
+- heading "系统状态" [level=2]
+- paragraph: 系统时间：2026-10-05 22:17:57
+- status:
+  - paragraph: LLM服务：正常（qwen2.5:7b）
+- status:
+  - paragraph: 向量数据库：正常（Chroma）
+- button "刷新状态":
+  - paragraph: 刷新状态
+- heading "文档上传与管理" [level=2]
+- paragraph: 上传文档
+- region "上传文档":
+  - button "file upload"
+  - button "upload Upload":
+    - generic: upload
+    - paragraph: Upload
+  - generic: 20MB per file • PDF, DOCX, TXT, MD, MARKDOWN
+- paragraph: 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+- button "开始导入" [disabled]:
+  - generic "开始导入":
+    - paragraph: 开始导入
+- button "重试失败项":
+  - generic "重试失败项":
+    - paragraph: 重试失败项
+- heading "本批导入状态" [level=3]
+- paragraph: 已处理 1/1 份
+- progressbar "progress"
+- button "Show/hide columns":
+- button "Download as CSV":
+- button "Search":
+- button "Fullscreen":
+- paragraph: 成功 1 份，失败 1 份。
+- generic "keyboard_arrow_down 失败详情":
+  - generic: keyboard_arrow_down
+  - paragraph: 失败详情
+- paragraph: "Windows复测_损坏.pdf：FileDataError: PDF 文件损坏或不是有效的 PDF：Windows复测_损坏.pdf"
+- heading "对话历史管理" [level=2]
+- button "新建会话":
+  - paragraph: 新建会话
+- paragraph: 最近
+- button "请使用knowledge_base_search":
+  - paragraph: 请使用knowledge_base_search
+- button "删除当前会话":
+  - paragraph: 删除当前会话
+- banner:
+  - button "Main menu":
+- heading "智能科研助理" [level=1]:
+  - text: 智能科研助理
+  - link "Link to heading":
+    - /url: "#2d7dc4e4"
+- paragraph: 基于 RAG + Agent 的论文知识库问答系统
+- tablist:
+  - tab "科研对话" [selected]:
+    - paragraph: 科研对话
+  - tab "文档检索":
+    - paragraph: 文档检索
+  - tab "知识库":
+    - paragraph: 知识库
+- tabpanel "科研对话":
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请使用knowledge_base_search查询不存在_复测_20261005.txt：复测代号是什么？
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: 无法从文献列表唯一匹配问题中的文件名；请提供准确文件名或知识库中的完整文档ID。
+    - paragraph: 本次 Token：0 · Agent响应耗时：0.933 秒
+    - alert:
+      - paragraph: 任务未完成：incomplete
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请调用paper_compare对比论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6和论文ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c3079f448a2ad的方法、数据集、实验结果，缺少实验数字时明确说明。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: Action调用数量错误；请检查工具支持情况或补充必要参数。检查本地配置和接口数据，修正后重新提交问题。
+    - paragraph: 本次 Token：未知 · Agent响应耗时：88.433 秒
+    - alert:
+      - paragraph: 任务未完成：error
+    - button "查看Windows验收_ViT.pdf · 第1页（物理页码）":
+      - paragraph: 查看Windows验收_ViT.pdf · 第1页（物理页码）
+    - button "查看Windows验收_ViT.pdf · 第2页（物理页码）":
+      - paragraph: 查看Windows验收_ViT.pdf · 第2页（物理页码）
+    - button "查看Windows验收_ViT.pdf · 第9页（物理页码）":
+      - paragraph: 查看Windows验收_ViT.pdf · 第9页（物理页码）
+    - button "查看Windows复测_DETR节选.pdf · 第1页（物理页码）":
+      - paragraph: 查看Windows复测_DETR节选.pdf · 第1页（物理页码）
+    - button "查看Windows复测_DETR节选.pdf · 第2页（物理页码）":
+      - paragraph: 查看Windows复测_DETR节选.pdf · 第2页（物理页码）
+  - textbox "输入消息…" [active]
+  - button "Send message" [disabled]: 发送
+  - generic "keyboard_arrow_right 请使用knowledge_base_search查询不存在_复测_20261005.txt：复测代号是什么？":
+    - generic: keyboard_arrow_right
+    - paragraph: 请使用knowledge_base_search查询不存在_复测_20261005.txt：复测代号是什么？
+  - generic "keyboard_arrow_down 请调用paper_compare对比论文8ce7b83971a14508ca711a27c875c9b6914c4f67":
+    - generic: keyboard_arrow_down
+    - paragraph: 请调用paper_compare对比论文8ce7b83971a14508ca711a27c875c9b6914c4f67
+  - button "Show/hide columns":
+  - button "Download as CSV":
+  - button "Search":
+  - button "Fullscreen":
+  - heading "状态统计" [level=3]:
+    - text: 状态统计
+    - link "Link to heading":
+      - /url: "#f3abdead"
+  - paragraph: 当前会话累计；工具成功率只统计已返回调用，未报告的用量不计为零。
+  - paragraph: 对话次数
+  - paragraph: "2"
+  - paragraph: 累计Token
+  - paragraph: 未知
+  - paragraph: 累计响应耗时
+  - paragraph: 89.366 秒
+  - paragraph: 平均响应耗时
+  - paragraph: 44.683 秒
+  - paragraph: 任务完成率
+  - paragraph: 0.0%
+  - paragraph: 工具调用次数
+  - paragraph: "4"
+  - paragraph: 工具调用成功率
+  - paragraph: 75.0%
+  - paragraph: 平均推理轮次
+  - paragraph: "2.50"
+  - paragraph: RAG检索 0 次 · 候选命中率 未知 · 平均检索耗时 未知 · 平均工具耗时 7.143 秒。
+  - paragraph: 工具成功 3 · 失败 1 · 待返回 0；已报告Token 24871 · 用量未知 1 次。

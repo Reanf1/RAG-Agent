@@ -6,7 +6,7 @@
 
 ## 实现说明
 
-[历史Windows验收](Windows浏览器验收_20261004/Windows浏览器验收报告.md) · [2026-10-05 Windows复测](Windows浏览器复测_20261005/Windows浏览器复测报告.md)（本轮仍有任务／引用／降级缺陷，整体未通过）。
+[历史Windows验收](Windows浏览器验收_20261004/Windows浏览器验收报告.md) · [2026-10-05旧版本复测](Windows浏览器复测_20261005/Windows浏览器复测报告.md) · [e3ffea2修复后复测](Windows修复后复测_e3ffea2_20261005/Windows修复后复测报告.md)（部分修复场景通过，HNSW查询故障与Agent恢复问题使整体仍未通过）。
 
 ## 运行脚本
 

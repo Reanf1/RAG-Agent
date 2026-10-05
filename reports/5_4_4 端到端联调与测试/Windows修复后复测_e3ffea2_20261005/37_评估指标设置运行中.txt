@@ -1,0 +1,187 @@
+- heading "系统状态" [level=2]
+- paragraph: 系统时间：2026-10-05 22:16:05
+- status:
+  - paragraph: LLM服务：正常（qwen2.5:7b）
+- status:
+  - paragraph: 向量数据库：正常（Chroma）
+- button "刷新状态":
+  - paragraph: 刷新状态
+- heading "文档上传与管理" [level=2]
+- paragraph: 上传文档
+- region "上传文档":
+  - button "file upload"
+  - button "upload Upload":
+    - generic: upload
+    - paragraph: Upload
+  - generic: 20MB per file • PDF, DOCX, TXT, MD, MARKDOWN
+- paragraph: 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+- button "开始导入" [disabled]:
+  - generic "开始导入":
+    - paragraph: 开始导入
+- button "重试失败项" [disabled]:
+  - generic "重试失败项":
+    - paragraph: 重试失败项
+- heading "对话历史管理" [level=2]
+- button "新建会话":
+  - paragraph: 新建会话
+- paragraph: 最近
+- button "请使用knowledge_base_search":
+  - paragraph: 请使用knowledge_base_search
+- button "请针对论文8ce7b83971a14508ca7":
+  - paragraph: 请针对论文8ce7b83971a14508ca7
+- button "请记住：本会话的研究代号是TESTB202610":
+  - paragraph: 请记住：本会话的研究代号是TESTB202610
+- button "计算3.14乘以2.56。":
+  - paragraph: 计算3.14乘以2.56。
+- button "删除当前会话":
+  - paragraph: 删除当前会话
+- banner:
+  - button "Main menu":
+- heading "智能科研助理" [level=1]:
+  - text: 智能科研助理
+  - link "Link to heading":
+    - /url: "#2d7dc4e4"
+- paragraph: 基于 RAG + Agent 的论文知识库问答系统
+- tablist:
+  - tab "科研对话" [selected]:
+    - paragraph: 科研对话
+  - tab "文档检索":
+    - paragraph: 文档检索
+  - tab "知识库":
+    - paragraph: 知识库
+- tabpanel "科研对话":
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请使用knowledge_base_search查询Windows复测_说明.txt：复测代号是什么？请注明来源。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: 检测到重复调用同一工具和参数（最多2轮），已强制终止以避免死循环。请补充资料或缩小问题范围后重试。
+    - paragraph: 本次 Token：未知 · Agent响应耗时：60.178 秒
+    - alert:
+      - paragraph: 任务未完成：repeated_calls
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请调用knowledge_base_search查询文档cb990ff1e44de00ba328e34169099d3f4704470d7d34fa9b71a586471d715baa：复测代号是什么？请注明来源。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: 复测代号是WINCHECK20261005，相关信息来源于文件《Windows复测_说明.txt》。
+    - paragraph: 本次 Token：未知 · Agent响应耗时：24.742 秒
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请读取论文ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c3079f448a2ad的标题、作者、年份、摘要、DOI，摘要请完整输出。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph:
+      - text: 论文《End-to-End Object Detection with Transformers》的标题为End-to-End Object Detection with Transformers，作者为Nicolas Carion, Francisco Massa, Gabriel Synnaeve, Nicolas Usunier, Alexander Kirillov, Sergey Zagoruyko，发表于2020年。摘要内容为：我们提出了一种新的方法，将目标检测视为直接的集合预测问题。我们的方法简化了检测管道，有效地消除了许多手工设计组件（如非最大抑制程序或锚生成）的需要，这些组件明确地编码了我们对任务的先验知识。新框架的主要成分，称为DEtection TRansformer或DETR，是一种基于集合的全局损失，通过二分匹配强制唯一预测，以及一个变压器编码-解码器架构。给定一组固定的已学习对象查询，DETR会推理对象之间的关系以及全局图像上下文，以并行直接输出最终的预测集。该新模型在概念上简单，不需要专门的库，与其他现代检测器不同。DETR在具有挑战性的COCO目标检测数据集上展示了与广泛认可且高度优化的Faster R-CNN基线相当的准确性和运行时性能。此外，DETR可以很容易地泛化以统一生成全景分割。训练代码和预训练模型可在
+      - link "https://github.com/facebookresearch/detr":
+        - /url: https://github.com/facebookresearch/detr
+      - text: 获取。
+    - paragraph: DOI：原文未提供。
+    - paragraph: 本次 Token：未知 · Agent响应耗时：40.239 秒
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请针对论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6生成结构化摘要，包含背景、方法、结果、结论，并保留来源引用。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - heading "背景" [level=3]:
+      - text: 背景
+      - link "Link to heading":
+        - /url: "#5b37aad5"
+    - paragraph: 传统的卷积神经网络（CNN）在计算机视觉中占主导地位，而基于自注意力的Transformer架构在自然语言处理中取得了巨大成功。 [参考文档1：Windows验收_ViT.pdf；第1页（物理页码）][参考文档3：Windows验收_ViT.pdf；第1页（物理页码）]
+    - heading "方法" [level=3]:
+      - text: 方法
+      - link "Link to heading":
+        - /url: "#e9526722"
+    - paragraph: 研究直接将Transformer应用于图像识别，将图像分割成补丁，并将补丁的线性嵌入序列输入标准的Transformer编码器。 [参考文档9：Windows验收_ViT.pdf；第1页（物理页码）][参考文档10：Windows验收_ViT.pdf；第1页（物理页码）]
+    - heading "结果" [level=3]:
+      - text: 结果
+      - link "Link to heading":
+        - /url: "#3cee4b07"
+    - paragraph: Vision Transformer在大规模预训练后，在多个图像分类基准上达到了与最先进的卷积网络相当或更好的性能，同时训练所需的计算资源较少。 [参考文档2：Windows验收_ViT.pdf；第1页（物理页码）][参考文档11：Windows验收_ViT.pdf；第2页（物理页码）]
+    - heading "结论" [level=3]:
+      - text: 结论
+      - link "Link to heading":
+        - /url: "#9a525965"
+    - paragraph: 尽管初始结果令人鼓舞，但Vision Transformer仍面临在其他计算机视觉任务中的应用挑战，以及继续探索自监督预训练方法和进一步扩展模型规模。 [参考文档7：Windows验收_ViT.pdf；第9页（物理页码）][参考文档8：Windows验收_ViT.pdf；第9页（物理页码）]
+    - heading "参考来源" [level=2]:
+      - text: 参考来源
+      - link "Link to heading":
+        - /url: "#4f4c5596"
+    - list:
+      - listitem: "[参考文档1] Windows验收_ViT.pdf；第1页（物理页码）"
+      - listitem: "[参考文档3] Windows验收_ViT.pdf；第1页（物理页码）"
+      - listitem: "[参考文档9] Windows验收_ViT.pdf；第1页（物理页码）"
+      - listitem: "[参考文档10] Windows验收_ViT.pdf；第1页（物理页码）"
+      - listitem: "[参考文档2] Windows验收_ViT.pdf；第1页（物理页码）"
+      - listitem: "[参考文档11] Windows验收_ViT.pdf；第2页（物理页码）"
+      - listitem: "[参考文档7] Windows验收_ViT.pdf；第9页（物理页码）"
+      - listitem: "[参考文档8] Windows验收_ViT.pdf；第9页（物理页码）"
+    - paragraph: 原文已按预算选取并截断；摘要仅依据返回的可见原文，并非全文精读。
+    - paragraph: 本次 Token：4208 · Agent响应耗时：18.940 秒
+    - button "查看Windows验收_ViT.pdf · 第1页（物理页码）":
+      - paragraph: 查看Windows验收_ViT.pdf · 第1页（物理页码）
+    - button "查看Windows验收_ViT.pdf · 第2页（物理页码）":
+      - paragraph: 查看Windows验收_ViT.pdf · 第2页（物理页码）
+    - button "查看Windows验收_ViT.pdf · 第9页（物理页码）":
+      - paragraph: 查看Windows验收_ViT.pdf · 第9页（物理页码）
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请记住本会话的实验设置：文档采用固定512字符分块。只需简短确认。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: 确认实验设置：文档采用固定512字符分块。
+    - paragraph: 本次 Token：7258 · Agent响应耗时：9.565 秒
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请记住本会话检索设置为Top-k=5，重排候选20个。只需简短确认。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: 确认检索设置为Top-k=5，重排候选20个。
+    - paragraph: 本次 Token：7423 · Agent响应耗时：7.734 秒
+  - textbox "输入消息…" [active]
+  - button "Send message" [disabled]: 发送
+  - generic "keyboard_arrow_right 请使用knowledge_base_search查询Windows复测_说明.txt：复测代号是什么？请注明来源。":
+    - generic: keyboard_arrow_right
+    - paragraph: 请使用knowledge_base_search查询Windows复测_说明.txt：复测代号是什么？请注明来源。
+  - generic "keyboard_arrow_right 请调用knowledge_base_search查询文档cb990ff1e44de00ba328e34169099d3f":
+    - generic: keyboard_arrow_right
+    - paragraph: 请调用knowledge_base_search查询文档cb990ff1e44de00ba328e34169099d3f
+  - generic "keyboard_arrow_right 请读取论文ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c307":
+    - generic: keyboard_arrow_right
+    - paragraph: 请读取论文ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c307
+  - generic "keyboard_arrow_right 请针对论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c":
+    - generic: keyboard_arrow_right
+    - paragraph: 请针对论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c
+  - generic "keyboard_arrow_right 请记住本会话的实验设置：文档采用固定512字符分块。只需简短确认。":
+    - generic: keyboard_arrow_right
+    - paragraph: 请记住本会话的实验设置：文档采用固定512字符分块。只需简短确认。
+  - generic "keyboard_arrow_down 请记住本会话检索设置为Top-k=5，重排候选20个。只需简短确认。":
+    - generic: keyboard_arrow_down
+    - paragraph: 请记住本会话检索设置为Top-k=5，重排候选20个。只需简短确认。
+  - button "Show/hide columns":
+  - button "Download as CSV":
+  - button "Search":
+  - button "Fullscreen":
+  - heading "状态统计" [level=3]:
+    - text: 状态统计
+    - link "Link to heading":
+      - /url: "#f3abdead"
+  - paragraph: 当前会话累计；工具成功率只统计已返回调用，未报告的用量不计为零。
+  - paragraph: 对话次数
+  - paragraph: "6"
+  - paragraph: 累计Token
+  - paragraph: 未知
+  - paragraph: 累计响应耗时
+  - paragraph: 161.398 秒
+  - paragraph: 平均响应耗时
+  - paragraph: 26.900 秒
+  - paragraph: 任务完成率
+  - paragraph: 83.3%
+  - paragraph: 工具调用次数
+  - paragraph: "9"
+  - paragraph: 工具调用成功率
+  - paragraph: 66.7%
+  - paragraph: 平均推理轮次
+  - paragraph: "2.00"
+  - paragraph: RAG检索 0 次 · 候选命中率 未知 · 平均检索耗时 未知 · 平均工具耗时 3.962 秒。
+  - paragraph: 工具成功 6 · 失败 3 · 待返回 0；已报告Token 81281 · 用量未知 3 次。
