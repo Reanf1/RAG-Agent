@@ -13,6 +13,7 @@ import json
 import tempfile
 import unittest
 from unittest.mock import MagicMock, patch
+from langchain_core.tools import tool
 from src.agent.react_loop import build_agent_messages, run_react
 from src.agent.tools import knowledge_base_search
 from src.agent.tools import get_available_tools, web_search
@@ -110,6 +111,44 @@ class TestRAGSearchRouting(unittest.TestCase):
                 self.assertIsNotNone(plan)
                 self.assertEqual(plan["tool_name"], "knowledge_base_search")
                 self.assertEqual(plan["next_step"], "tool")
+
+    def filename_tools(self, papers):
+        """可控工具结果测试预检契约，不运行真实模型或写入知识库。"""
+        self.search_calls = []
+        @tool
+        def paper_list() -> dict:
+            """返回给定真实列表样例。"""
+            return {"papers": papers}
+        @tool
+        def knowledge_base_search(question: str, doc_id: str | None = None) -> dict:
+            """记录实际目标，返回已完成任务样例。"""
+            self.search_calls.append((question, doc_id))
+            return {"answer": "真实测试工具结果", "status": "answered", "generation_mode": "grounded", "citations": [{"id": 1}]}
+        return [paper_list, knowledge_base_search]
+
+    def test_filename_preflight_continues_to_requested_knowledge_tool(self):
+        identifier = "a" * 64
+        tools = self.filename_tools([{"doc_id": identifier, "source_file": "论文.pdf"}])
+        action = self.packet(calls=[{"function": {"name": "knowledge_base_search", "arguments": {
+            "question": "方法是什么？", "doc_id": identifier}}}])
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(action).encode())) as http:
+            events = list(run_react("请使用knowledge_base_search查询论文.pdf：方法是什么？", tools))
+        self.assertTrue(events[-1]["task_complete"])
+        self.assertEqual(self.search_calls, [("方法是什么？", identifier)])
+        self.assertEqual([e["name"] for e in events if e["type"] == "tool_result"], ["paper_list", "knowledge_base_search"])
+        self.assertEqual(http.call_count, 1)
+
+    def test_missing_or_ambiguous_filename_does_not_search_other_documents(self):
+        for papers in ([{"doc_id": "a" * 64, "source_file": "另一篇.pdf"}],
+                       [{"doc_id": code * 64, "source_file": "论文.pdf"} for code in ("a", "b")]):
+            tools = self.filename_tools(papers)
+            with self.subTest(papers=papers), patch("src.agent.react_loop.urlopen") as http:
+                events = list(run_react("请查询论文.pdf的方法", tools))
+            self.assertFalse(events[-1]["task_complete"])
+            self.assertEqual(events[-1]["stop_reason"], "incomplete")
+            self.assertIn("唯一匹配", events[-1]["full_response"])
+            self.assertEqual(self.search_calls, [])
+            http.assert_not_called()
 
     def test_source_policy_is_present_in_all_stages(self):
         for stage in ("thought", "action", "observation"):

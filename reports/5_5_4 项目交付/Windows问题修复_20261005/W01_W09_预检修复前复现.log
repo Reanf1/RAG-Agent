@@ -1,0 +1,26 @@
+test_filename_preflight_continues_to_requested_knowledge_tool (__main__.TestRAGSearchRouting) ... FAIL
+test_missing_or_ambiguous_filename_does_not_search_other_documents (__main__.TestRAGSearchRouting) ... FAIL
+
+======================================================================
+FAIL: test_filename_preflight_continues_to_requested_knowledge_tool (__main__.TestRAGSearchRouting)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_1 RAG与Agent深度融合/test_source_routing.py", line 136, in test_filename_preflight_continues_to_requested_knowledge_tool
+    self.assertTrue(events[-1]["task_complete"])
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_missing_or_ambiguous_filename_does_not_search_other_documents (__main__.TestRAGSearchRouting)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_1 RAG与Agent深度融合/test_source_routing.py", line 148, in test_missing_or_ambiguous_filename_does_not_search_other_documents
+    self.assertEqual(events[-1]["stop_reason"], "incomplete")
+AssertionError: 'error' != 'incomplete'
+- error
++ incomplete
+
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.026s
+
+FAILED (failures=2)

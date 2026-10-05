@@ -429,11 +429,16 @@ def _structured_tool_observation(question: str, tools: list[BaseTool], observati
     文献列表只是查ID；其他工具或后续分析属于组合任务，仍交给模型观察。
     """
     items = [item for item in observations if item.get("name") != "paper_list" or item.get("status") != "success"]
+    plan = route_question(question, tools)
+    if observations and not items and plan and plan.get("next_step") == "tool" and plan.get("tool_name") != "paper_list":
+        # 文献列表只是先查ID；不能将这一步当成用户要求的检索/摘要/对比已完成。
+        return {"type": "observation", "observation": "文献列表已返回，继续执行指定的论文任务。",
+                "decision": "continue", "task_complete": False, "answer": "", "model": None,
+                "usage": {"prompt_eval_count": 0, "eval_count": 0}, "elapsed_seconds": 0.0}
     if len(items) != 1 or items[0].get("status") != "success":
         return None
     item = items[0]
     name, evidence = item.get("name"), item.get("result")
-    plan = route_question(question, tools)
     if (name == "knowledge_base_search" and plan and plan.get("tool_name") == name
             and not plan.get("parallel_tools") and not re.search(r"然后|另外|\bthen\b", question, re.I)
             and isinstance(evidence, dict) and evidence.get("status") in {"answered", "insufficient_evidence"}
@@ -663,6 +668,10 @@ def _run_react(question: str, tools: list[BaseTool] | None = None, context: dict
         for iteration in range(1, limit + 1):
             available = [item for item in tools if item.name not in blocked and (not external_only or item.name == "web_search")]
             routed = route_question(question, available, state) if iteration == 1 else None
+            if iteration > 1 and state["observations"] and all(
+                    item.get("name") == "paper_list" and item.get("status") == "success" for item in state["observations"]):
+                # 唯一已完成步骤是预检时，重新落实当前明确任务，防止模型改答文献列表。
+                routed = route_question(question, available)
             if iteration == 1 and state.get("confirmed_rag_args"):
                 routed = {"type": "thought", "thought": "使用用户已确认的候选原文回答。", "next_step": "tool",
                           "tool_name": "knowledge_base_search", "parallel_tools": [], "route": "confirmation",
@@ -678,6 +687,20 @@ def _run_react(question: str, tools: list[BaseTool] | None = None, context: dict
                               and re.search(r"\.(?:pdf|docx|txt|md)(?=$|[^A-Za-z0-9])", question, re.I)
                               and not any(item.get("name") == "paper_list" and item.get("status") == "success"
                                           for item in state["observations"]))
+            checked_list = any(item.get("name") == "paper_list" and item.get("status") == "success"
+                               for item in state["observations"])
+            if (checked_list and not _known_paper_ids(question, None) and
+                    re.search(r"\.(?:pdf|docx|txt|md)(?=$|[^A-Za-z0-9])", question, re.I)):
+                matched = {identifier for alias, identifier in _paper_aliases(state).items()
+                           if re.search(r"\.(?:pdf|docx|txt|md)$", alias) and alias in question.casefold()}
+                if len(matched) < max(1, required_ids):
+                    answer = "无法从文献列表唯一匹配问题中的文件名；请提供准确文件名或知识库中的完整文档ID。"
+                    reason = "incomplete"
+                    yield {"type": "action_skipped", "reason": answer, "iteration": iteration}
+                    yield {"type": "observation", "observation": answer, "decision": "finish",
+                           "task_complete": False, "answer": answer, "model": None,
+                           "usage": {"prompt_eval_count": 0, "eval_count": 0}, "iteration": iteration}
+                    break
             if ((required_ids and len(known_ids) < required_ids) or needs_filename) and any(item.name == "paper_list" for item in available):
                 # 保留规划的真实模型用量；先获取ID，不能直接把论文名称交给必填ID工具。
                 thought = {**thought, "thought": "先获取已上传文献的真实ID，再执行论文工具。",
