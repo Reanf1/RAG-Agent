@@ -105,6 +105,33 @@ class TestAction(unittest.TestCase):
         http.assert_not_called()
         self.assertEqual(events[0]["usage"], {"prompt_eval_count": 0, "eval_count": 0})
 
+    def test_current_paper_id_overrides_model_choice_from_old_history(self):
+        """复现W09：最新问题指定ViT，模型Action却填了历史DETR的真实ID。"""
+        @tool
+        def paper_summary(doc_id: str) -> dict:
+            """记录摘要工具实际收到的目标。"""
+            self.invocations.append(doc_id)
+            return {"doc_id": doc_id}
+
+        current, previous = "a" * 64, "b" * 64
+        response = deepcopy(self.response)
+        response["message"]["tool_calls"] = [{"function": {
+            "name": "paper_summary", "arguments": {"doc_id": previous}}}]
+        context = {"history": [{"role": "human", "content": "总结论文" + previous}]}
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(response).encode())):
+            events = list(act("针对论文" + current + "生成结构化摘要",
+                              {**self.thought, "tool_name": "paper_summary"}, [paper_summary], context))
+        self.assertEqual(self.invocations, [current])
+        self.assertEqual(events[0]["args"]["doc_id"], current)
+
+    def test_current_document_filter_cannot_be_omitted_by_action(self):
+        """最新问题的单个完整ID必须成为检索过滤，不扩展为全库查询。"""
+        identifier = "c" * 64
+        question = "查询知识库文档" + identifier + "的代号"
+        events, _ = self.knowledge_action({"question": "代号是什么？"}, question,
+                                         {"history": [{"role": "ai", "content": "另一篇论文使用1D编码"}]})
+        self.assertEqual(events[0]["args"]["doc_id"], identifier)
+
     def knowledge_action(self, args, question="已上传attention.pdf的编码器有多少层？", context=None, route=None):
         """模拟模型返回参数，真实执行小工具核验Action契约，不作为RAG质量证据。"""
         @tool

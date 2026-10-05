@@ -96,9 +96,11 @@ def build_agent_messages(question: str, tools: list[BaseTool], context: dict | N
     system += ("联网搜索当前可用；仅在外部信息任务中使用。\n" if "web_search" in names else
                "联网搜索当前不可用；需要最新外部事实而缺少证据时说明限制，task_complete=false。\n")
     system += "仅可使用以上工具；空列表表示当前没有可用工具。\n\n" + prompts[stage]
-    state = {"question": question, "context": context}
+    state = {"context": context}
     if thought is not None:
         state["thought"] = thought
+    # 最新任务放在历史数据之后，防止模型将history末尾的旧问题当成本轮问题。
+    state["question"] = question
     return [SystemMessage(content=system),
             HumanMessage(content=json.dumps(state, ensure_ascii=False, allow_nan=False))]
 
@@ -310,6 +312,17 @@ def act(question: str, thought: dict, tools: list[BaseTool], context: dict | Non
                 value = call["arguments"].get(field)
                 if isinstance(value, str) and value.casefold() in aliases:
                     call["arguments"][field] = aliases[value.casefold()]
+            current_ids = _known_paper_ids(question, None)
+            # 文件名也只绑定本轮提到、且真实列表中唯一对应的文件，不采用旧问题目标。
+            current_ids.update(value for alias, value in aliases.items()
+                               if re.search(r"\.(?:pdf|docx|txt|md)$", alias) and alias in question.casefold())
+            if fields == ("doc_id",) and len(current_ids) == 1 and not batch:
+                # 用户本轮明确指定的单文档ID就是工具目标，历史中的合法ID不能替代它。
+                call["arguments"]["doc_id"] = next(iter(current_ids))
+            if fields == ("paper_a_id", "paper_b_id") and len(current_ids) == 2 and (
+                    not all(isinstance(call["arguments"].get(field), str) for field in fields)
+                    or {call["arguments"].get(field) for field in fields} != current_ids):
+                raise ValueError("论文对比参数必须对应用户本轮指定的两篇论文")
             identifier = call["arguments"].get("doc_id")
             if call["name"] == "knowledge_base_search" and identifier is not None and (
                     not isinstance(identifier, str) or identifier not in known_ids):
@@ -624,7 +637,10 @@ def _run_react(question: str, tools: list[BaseTool] | None = None, context: dict
             required_ids = 2 if thought.get("tool_name") == "paper_compare" else 1 if thought.get("tool_name") in {"paper_metadata", "paper_summary"} else 0
             known_ids = _known_paper_ids(question, state)
             # 有历史时仍先核对文件名，不能绕过文档过滤或把模型猜测的ID当作真实指纹。
-            needs_filename = (thought.get("route") != "confirmation" and "knowledge_base_search" in [thought.get("tool_name"), *thought.get("parallel_tools", [])]
+            needs_filename = (thought.get("route") != "confirmation" and
+                              any(name in {"knowledge_base_search", "paper_summary", "paper_metadata", "paper_compare"}
+                                  for name in [thought.get("tool_name"), *thought.get("parallel_tools", [])])
+                              and not _known_paper_ids(question, None)
                               and re.search(r"\.(?:pdf|docx|txt|md)(?=$|[^A-Za-z0-9])", question, re.I)
                               and not any(item.get("name") == "paper_list" and item.get("status") == "success"
                                           for item in state["observations"]))

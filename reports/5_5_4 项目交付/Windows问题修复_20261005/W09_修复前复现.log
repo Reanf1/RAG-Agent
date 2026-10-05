@@ -1,0 +1,58 @@
+test_current_paper_id_overrides_model_choice_from_old_history (__main__.TestAction)
+复现W09：最新问题指定ViT，模型Action却填了历史DETR的真实ID。 ... FAIL
+test_current_document_filter_cannot_be_omitted_by_action (__main__.TestAction)
+最新问题的单个完整ID必须成为检索过滤，不扩展为全库查询。 ... ERROR
+
+======================================================================
+ERROR: test_current_document_filter_cannot_be_omitted_by_action (__main__.TestAction)
+最新问题的单个完整ID必须成为检索过滤，不扩展为全库查询。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_1 Agent核心循环/test_action.py", line 133, in test_current_document_filter_cannot_be_omitted_by_action
+    self.assertEqual(events[0]["args"]["doc_id"], identifier)
+KeyError: 'doc_id'
+
+======================================================================
+FAIL: test_current_paper_id_overrides_model_choice_from_old_history (__main__.TestAction)
+复现W09：最新问题指定ViT，模型Action却填了历史DETR的真实ID。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_1 Agent核心循环/test_action.py", line 124, in test_current_paper_id_overrides_model_choice_from_old_history
+    self.assertEqual(self.invocations, [current])
+AssertionError: Lists differ: ['bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'] != ['aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa']
+
+First differing element 0:
+'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
+'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+
+- ['bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb']
++ ['aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa']
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.030s
+
+FAILED (failures=1, errors=1)
+test_explicit_current_document_and_tool_route_despite_old_history (__main__.TestRAGSearchRouting)
+复现W09/W10：不能把新指定文档或强制检索替换为旧答案。 ... 
+======================================================================
+FAIL: test_explicit_current_document_and_tool_route_despite_old_history (__main__.TestRAGSearchRouting) (question='请根据知识库文档aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa回答复测代号是什么？')
+复现W09/W10：不能把新指定文档或强制检索替换为旧答案。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_1 RAG与Agent深度融合/test_source_routing.py", line 110, in test_explicit_current_document_and_tool_route_despite_old_history
+    self.assertIsNotNone(plan)
+AssertionError: unexpectedly None
+
+======================================================================
+FAIL: test_explicit_current_document_and_tool_route_despite_old_history (__main__.TestRAGSearchRouting) (question='必须实际调用knowledge_base_search查询ViT的位置编码')
+复现W09/W10：不能把新指定文档或强制检索替换为旧答案。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_1 RAG与Agent深度融合/test_source_routing.py", line 110, in test_explicit_current_document_and_tool_route_despite_old_history
+    self.assertIsNotNone(plan)
+AssertionError: unexpectedly None
+
+----------------------------------------------------------------------
+Ran 1 test in 0.011s
+
+FAILED (failures=2)

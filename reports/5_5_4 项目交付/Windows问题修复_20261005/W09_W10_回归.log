@@ -1,0 +1,146 @@
+test_answer_plan_skips_model_and_tool_execution (test_action.TestAction) ... ok
+test_closing_after_call_event_does_not_execute_tool (test_action.TestAction) ... ok
+test_current_document_filter_cannot_be_omitted_by_action (test_action.TestAction)
+最新问题的单个完整ID必须成为检索过滤，不扩展为全库查询。 ... ok
+test_current_paper_id_overrides_model_choice_from_old_history (test_action.TestAction)
+复现W09：最新问题指定ViT，模型Action却填了历史DETR的真实ID。 ... ok
+test_empty_multiple_wrong_name_and_non_dict_arguments_do_not_execute (test_action.TestAction) ... ok
+test_execution_keeps_selected_tool_when_caller_changes_registry_after_call_event (test_action.TestAction) ... ok
+test_executor_rejects_unknown_duplicate_and_non_dict_arguments (test_action.TestAction) ... ok
+test_filename_only_rule_search_passes_question_without_model_or_invented_id (test_action.TestAction) ... ok
+test_filename_preflight_uses_declared_empty_paper_list_arguments (test_action.TestAction)
+复现W01：模型曾把文件名塞入无参数文献列表的query字段。 ... ok
+test_invalid_thought_and_duplicate_tools_do_not_call_model (test_action.TestAction) ... ok
+test_native_call_executes_selected_tool_and_correlates_messages (test_action.TestAction) ... ok
+test_network_failure_and_cloud_configuration_do_not_execute (test_action.TestAction) ... ok
+test_no_argument_and_optional_default_tools_execute (test_action.TestAction) ... ok
+test_only_selected_tool_is_exposed_even_when_other_tools_are_available (test_action.TestAction) ... ok
+test_partial_response_service_errors_and_malformed_json_do_not_execute (test_action.TestAction) ... ok
+test_provided_fingerprint_in_question_or_tool_context_keeps_document_filter (test_action.TestAction) ... ok
+test_required_type_and_extra_argument_errors_are_tool_results_without_side_effects (test_action.TestAction) ... ok
+test_structured_results_and_mutating_tools_preserve_original_parameters (test_action.TestAction) ... ok
+test_tool_exception_is_preserved_and_not_retried (test_action.TestAction) ... ok
+test_unprovided_or_invalid_fingerprint_never_executes_tool (test_action.TestAction) ... ok
+test_closing_loop_and_mutating_events_do_not_execute_or_change_state (test_observation.TestObservationAndLoop) ... ok
+test_continue_stops_at_limit_without_extra_model_or_tool_calls (test_observation.TestObservationAndLoop) ... ok
+test_direct_answer_finishes_without_tool_calling_request (test_observation.TestObservationAndLoop) ... ok
+test_failed_tool_cannot_be_marked_successful (test_observation.TestObservationAndLoop) ... ok
+test_invalid_limits_and_context_stop_before_model_calls (test_observation.TestObservationAndLoop) ... ok
+test_missing_information_can_finish_without_claiming_completion (test_observation.TestObservationAndLoop) ... ok
+test_model_errors_stop_in_each_stage_and_preserve_actual_results (test_observation.TestObservationAndLoop) ... ok
+test_observation_rejects_inconsistent_decisions (test_observation.TestObservationAndLoop) ... ok
+test_observation_rejects_partial_malformed_and_service_responses (test_observation.TestObservationAndLoop) ... ok
+test_observation_unknown_usage_and_boundary_description (test_observation.TestObservationAndLoop) ... ok
+test_observation_validates_state_before_call_and_never_uses_cloud (test_observation.TestObservationAndLoop) ... ok
+test_tool_error_can_continue_to_a_real_alternative (test_observation.TestObservationAndLoop) ... ok
+test_tool_failure_is_observed_and_stops_honestly (test_observation.TestObservationAndLoop) ... ok
+test_two_real_tools_feed_next_round_and_native_observation_messages (test_observation.TestObservationAndLoop) ... ok
+test_all_stages_preserve_actual_tool_description_and_parameter_constraints (test_system_prompt.TestAgentSystemPrompt) ... ok
+test_empty_registry_constrains_model_plan_to_answer (test_system_prompt.TestAgentSystemPrompt) ... ok
+test_empty_registry_is_explicit_and_does_not_add_planned_production_tools (test_system_prompt.TestAgentSystemPrompt) ... ok
+test_unknown_stage_is_rejected_without_model_or_tool_execution (test_system_prompt.TestAgentSystemPrompt) ... ok
+test_user_documents_observations_and_thought_cannot_replace_system_rules (test_system_prompt.TestAgentSystemPrompt) ... ok
+test_cloud_and_invalid_addresses_are_rejected_before_network (test_thought.TestThought) ... ok
+test_direct_answer_plan_with_no_tools_does_not_generate_answer (test_thought.TestThought) ... ok
+test_dynamic_instructions_do_not_change_system_message (test_thought.TestThought) ... ok
+test_input_errors_do_not_call_model (test_thought.TestThought) ... ok
+test_invalid_json_and_content_shape_are_explicit_errors (test_thought.TestThought) ... ok
+test_invalid_plan_fields_and_tool_decisions_are_rejected (test_thought.TestThought) ... ok
+test_local_model_failure_is_not_retried (test_thought.TestThought) ... ok
+test_message_roles_tools_schema_and_current_state_are_preserved (test_thought.TestThought) ... ok
+test_no_tools_cannot_select_tool_and_boundary_length_is_valid (test_thought.TestThought) ... ok
+test_plan_only_selects_registered_tool_and_uses_llm_config (test_thought.TestThought) ... ok
+test_unfinished_length_stops_service_errors_and_bad_shapes_are_rejected (test_thought.TestThought) ... ok
+test_unknown_usage_is_not_estimated (test_thought.TestThought) ... ok
+
+----------------------------------------------------------------------
+Ran 51 tests in 1.026s
+
+OK
+test_agent_deadline_stops_without_observation_model_or_next_round (test_error_recovery.TestErrorRecovery) ... ok
+test_all_alternatives_fail_and_stop_without_reusing_failed_tools (test_error_recovery.TestErrorRecovery) ... ok
+test_alternating_cycle_is_also_stopped (test_error_recovery.TestErrorRecovery) ... ok
+test_closing_batch_does_not_wait_or_allow_late_retry (test_error_recovery.TestErrorRecovery) ... ok
+test_completed_timeout_retries_once_and_preserves_both_attempts (test_error_recovery.TestErrorRecovery) ... ok
+test_deadline_returns_before_worker_exits_and_ignores_late_result (test_error_recovery.TestErrorRecovery) ... ok
+test_different_arguments_and_separate_requests_are_not_a_cycle (test_error_recovery.TestErrorRecovery) ... ok
+test_execution_error_forces_alternative_planning_and_preserves_failed_result (test_error_recovery.TestErrorRecovery) ... ok
+test_exhausted_timeout_can_use_alternative (test_error_recovery.TestErrorRecovery) ... ok
+test_exhausted_timeout_returns_real_error_without_third_attempt (test_error_recovery.TestErrorRecovery) ... ok
+test_failed_tool_cannot_be_reselected_in_recovery_round (test_error_recovery.TestErrorRecovery) ... ok
+test_input_error_does_not_force_unrelated_alternative (test_error_recovery.TestErrorRecovery) ... ok
+test_invalid_recovery_limits_stop_before_model_or_tools (test_error_recovery.TestErrorRecovery) ... ok
+test_late_timeout_does_not_start_background_retry (test_error_recovery.TestErrorRecovery) ... ok
+test_no_alternative_reports_failure_and_does_not_invent_tools (test_error_recovery.TestErrorRecovery) ... ok
+test_no_suitable_alternative_finishes_incomplete_without_a_tool (test_error_recovery.TestErrorRecovery) ... ok
+test_non_timeout_input_or_execution_error_is_not_retried (test_error_recovery.TestErrorRecovery) ... ok
+test_parallel_timeout_preserves_success_and_shared_deadline (test_error_recovery.TestErrorRecovery) ... ok
+test_recovery_cannot_exceed_last_iteration (test_error_recovery.TestErrorRecovery) ... ok
+test_retry_can_be_disabled (test_error_recovery.TestErrorRecovery) ... ok
+test_same_call_is_stopped_before_third_execution (test_error_recovery.TestErrorRecovery) ... ok
+test_unrecovered_answer_cannot_claim_completion (test_error_recovery.TestErrorRecovery) ... ok
+test_wrapped_timeout_is_classified_without_guessing_from_text (test_error_recovery.TestErrorRecovery) ... ok
+test_ambiguous_dependent_negated_and_existing_state_fall_back (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_answer_plan_finishes_or_reports_insufficient_information_without_empty_loop (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_batch_cannot_omit_selected_tool_or_mismatch_primary_name (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_batch_limit_duplicate_ids_and_invalid_config_are_rejected (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_batch_supports_different_selected_tools_only (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_calculator_rule_requires_actual_registered_tool (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_clear_question_types_route_only_to_registered_tools_without_model (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_closing_during_batch_call_events_starts_no_tools (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_error_or_confirmation_anywhere_in_current_batch_cannot_complete (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_explicit_tool_does_not_hide_second_semantic_intent (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_explicit_tool_names_and_two_papers_use_same_tool_batch (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_general_concept_routes_to_answer_but_paper_question_uses_knowledge (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_individual_failure_preserves_other_independent_result (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_invalid_batch_protocol_rejected_before_any_execution (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_loop_observes_entire_batch_and_preserves_native_input_order (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_missing_or_disabled_tools_fall_back_without_fake_registry (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_native_batch_has_one_ai_message_two_linked_results_and_one_usage (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_rule_only_applies_to_first_round (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_rule_path_skips_thought_model_but_keeps_action_and_observation (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_same_tool_two_inputs_are_accepted_without_duplicate_schema (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_serial_path_and_single_call_keep_true_results_and_order (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_thought_accepts_independent_names_list_and_schema_limit (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_thought_rejects_empty_duplicate_unknown_or_excessive_batch (test_routing_parallel.TestRoutingAndParallel) ... ok
+test_two_threads_reach_barrier_and_return_stable_order (test_routing_parallel.TestRoutingAndParallel) ... ok
+
+----------------------------------------------------------------------
+Ran 47 tests in 0.687s
+
+OK
+test_all_stages_receive_same_history_summary_and_rag_references (test_memory_context.TestAgentMemoryContext) ... ok
+test_direct_message_history_is_usable_by_react_and_done_is_json_ready (test_memory_context.TestAgentMemoryContext) ... ok
+test_invalid_context_stops_before_model_and_tool_io (test_memory_context.TestAgentMemoryContext) ... ok
+test_invalid_history_roles_and_intermediate_calls_are_not_archived (test_memory_context.TestAgentMemoryContext) ... ok
+test_langchain_and_native_role_history_normalize_to_same_snapshot (test_memory_context.TestAgentMemoryContext) ... ok
+test_native_messages_keep_roles_tool_name_and_argument_copy (test_memory_context.TestAgentMemoryContext) ... ok
+test_plain_dict_and_multimodal_native_messages_are_rejected (test_memory_context.TestAgentMemoryContext) ... ok
+test_rag_and_agent_native_requests_use_identical_message_conversion (test_memory_context.TestAgentMemoryContext) ... ok
+test_reopened_memory_context_keeps_budget_and_other_users_out (test_memory_context.TestAgentMemoryContext) ... ok
+test_two_round_public_entry_uses_memory_for_calculator_action (test_memory_context.TestAgentMemoryContext) ... ok
+test_disabled_latest_request_finishes_incomplete_without_tools (test_source_routing.TestRAGSearchRouting) ... ok
+test_disabled_latest_request_with_history_still_skips_all_io (test_source_routing.TestRAGSearchRouting) ... ok
+test_disabled_search_never_routes_latest_query_to_local_rag (test_source_routing.TestRAGSearchRouting) ... ok
+test_disabled_search_policy_uses_actual_registry (test_source_routing.TestRAGSearchRouting) ... ok
+test_enabled_search_policy_reports_availability (test_source_routing.TestRAGSearchRouting) ... ok
+test_enabled_search_runs_real_parser_without_touching_rag (test_source_routing.TestRAGSearchRouting) ... ok
+test_existing_context_and_negation_are_not_overridden (test_source_routing.TestRAGSearchRouting) ... ok
+test_existing_local_and_general_concept_routes_still_work (test_source_routing.TestRAGSearchRouting) ... ok
+test_explicit_current_document_and_tool_route_despite_old_history (test_source_routing.TestRAGSearchRouting)
+复现W09/W10：不能把新指定文档或强制检索替换为旧答案。 ... ok
+test_explicit_registered_tool_is_not_replaced_by_freshness (test_source_routing.TestRAGSearchRouting) ... ok
+test_external_search_phrases_route_when_enabled (test_source_routing.TestRAGSearchRouting) ... ok
+test_grounded_rag_without_valid_citations_is_not_completed (test_source_routing.TestRAGSearchRouting) ... ok
+test_latest_external_papers_route_to_enabled_search (test_source_routing.TestRAGSearchRouting) ... ok
+test_local_scope_beats_freshness_words (test_source_routing.TestRAGSearchRouting) ... ok
+test_missing_tools_do_not_create_fake_routes (test_source_routing.TestRAGSearchRouting) ... ok
+test_mixed_local_and_external_sources_need_model_planning (test_source_routing.TestRAGSearchRouting) ... ok
+test_rag_action_observation_keeps_actual_sources_and_calls_retrieval_once (test_source_routing.TestRAGSearchRouting) ... ok
+test_search_failure_cannot_recover_via_local_old_papers (test_source_routing.TestRAGSearchRouting) ... ok
+test_source_policy_is_present_in_all_stages (test_source_routing.TestRAGSearchRouting) ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 0.824s
+
+OK

@@ -100,6 +100,17 @@ class TestRAGSearchRouting(unittest.TestCase):
         self.assertIsNone(route_question("最新论文有哪些？", get_available_tools(), {"history": [{"role": "human", "content": "论文主题"}]}))
         self.assertIsNone(route_question("不要联网，说明知识库中的最新结果", get_available_tools()))
 
+    def test_explicit_current_document_and_tool_route_despite_old_history(self):
+        """复现W09/W10：不能把新指定文档或强制检索替换为旧答案。"""
+        context = {"history": [{"role": "ai", "content": "旧ViT答案"}]}
+        for question in ("请根据知识库文档" + "a" * 64 + "回答复测代号是什么？",
+                         "必须实际调用knowledge_base_search查询ViT的位置编码"):
+            with self.subTest(question=question):
+                plan = route_question(question, get_available_tools(), context)
+                self.assertIsNotNone(plan)
+                self.assertEqual(plan["tool_name"], "knowledge_base_search")
+                self.assertEqual(plan["next_step"], "tool")
+
     def test_source_policy_is_present_in_all_stages(self):
         for stage in ("thought", "action", "observation"):
             system = build_agent_messages("问题", get_available_tools(), stage=stage)[0].content

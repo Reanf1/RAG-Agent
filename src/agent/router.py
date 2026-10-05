@@ -49,7 +49,7 @@ def route_question(question: str, tools: list[BaseTool], context: dict | None = 
     local = bool(re.search(r"知识库|本地|已上传|已入库|上传的|这篇|本篇|本文|该论文|指定论文|\b[0-9a-f]{64}\b|\b(?:this|uploaded) (?:paper|document)s?\b", question, re.I))
     fresh = bool(re.search(r"最新|最近|近期|实时|今年|\b(?:latest|recent|current advances)\b", question, re.I))
     web = bool(re.search(patterns["web_search"], question, re.I))
-    if has_state and not web and re.search(r"代号|会话|对话|历史|\b(?:conversation|history)\b", question, re.I):
+    if has_state and not local and not explicit and not web and re.search(r"代号|会话|对话|历史|\b(?:conversation|history)\b", question, re.I):
         return None  # “最近的代号”是历史追问，不是需要联网核验的近期资讯。
     if local and (web or fresh) and re.search(r"同时|以及|另外|并(?:且|联网)|\b(?:and|also)\b", question, re.I):
         return None  # 本地证据与外部进展的组合任务交给ReAct，不跳过其中一种来源。
@@ -63,7 +63,11 @@ def route_question(question: str, tools: list[BaseTool], context: dict | None = 
                 "next_step": "answer", "tool_name": None, "parallel_tools": [], "unavailable_tool": "web_search",
                 "route": "unavailable", "model": None, "usage": {"prompt_eval_count": 0, "eval_count": 0},
                 "elapsed_seconds": perf_counter() - started}
-    if has_state:
+    # 旧对话只用于补全追问，不能覆盖最新问题中明确的工具/文档目标。
+    # 本轮已经执行过工具时仍由模型判断后续步骤，避免重复路由已完成任务。
+    has_execution = context and any(context.get(key) for key in ("observations", "last_observation", "context"))
+    current_target = bool(explicit or re.search(r"(?<![A-Za-z0-9])[0-9a-f]{64}(?![A-Za-z0-9])|\.(?:pdf|docx|txt|md)(?=$|[^A-Za-z0-9])", question, re.I))
+    if has_state and (has_execution or not current_target):
         return None
     if len(hits) > 1:
         return None  # 多种意图交给模型判断是否独立，不能只做其中一项。
