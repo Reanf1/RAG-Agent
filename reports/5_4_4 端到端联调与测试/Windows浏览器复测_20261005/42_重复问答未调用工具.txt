@@ -1,0 +1,111 @@
+- heading "系统状态" [level=2]
+- paragraph: 系统时间：2026-10-05 18:00:56
+- status:
+  - paragraph: LLM服务：正常（qwen2.5:7b）
+- status:
+  - paragraph: 向量数据库：正常（Chroma）
+- button "刷新状态":
+  - paragraph: 刷新状态
+- heading "文档上传与管理" [level=2]
+- paragraph: 上传文档
+- region "上传文档":
+  - button "file upload"
+  - button "upload Upload":
+    - generic: upload
+    - paragraph: Upload
+  - generic: 20MB per file • PDF, DOCX, TXT, MD, MARKDOWN
+- paragraph: 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+- button "开始导入" [disabled]:
+  - generic "开始导入":
+    - paragraph: 开始导入
+- button "重试失败项" [disabled]:
+  - generic "重试失败项":
+    - paragraph: 重试失败项
+- heading "本批导入状态" [level=3]
+- paragraph: 已处理 1/1 份
+- progressbar "progress"
+- button "Show/hide columns":
+- button "Download as CSV":
+- button "Search":
+- button "Fullscreen":
+- paragraph: 成功 1 份，失败 0 份。
+- heading "对话历史管理" [level=2]
+- button "新建会话":
+  - paragraph: 新建会话
+- paragraph: 最近
+- button "请根据知识库文档8ce7b83971a14508":
+  - paragraph: 请根据知识库文档8ce7b83971a14508
+- button "请根据知识库文档cb990ff1e44de00b":
+  - paragraph: 请根据知识库文档cb990ff1e44de00b
+- button "请使用knowledge_base_search":
+  - paragraph: 请使用knowledge_base_search
+- button "请根据知识库解释Transformer的位置编码":
+  - paragraph: 请根据知识库解释Transformer的位置编码
+- button "删除当前会话":
+  - paragraph: 删除当前会话
+- banner:
+  - button "Main menu":
+- heading "智能科研助理" [level=1]:
+  - text: 智能科研助理
+  - link "Link to heading":
+    - /url: "#2d7dc4e4"
+- paragraph: 基于 RAG + Agent 的论文知识库问答系统
+- tablist:
+  - tab "科研对话" [selected]:
+    - paragraph: 科研对话
+  - tab "文档检索":
+    - paragraph: 文档检索
+  - tab "知识库":
+    - paragraph: 知识库
+- tabpanel "科研对话":
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请根据知识库文档8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6回答：ViT uses standard learnable 1D or 2D position embeddings? 请按论文原文回答并标注文档名和页码。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: ViT 使用标准可学习的一维（1D）位置嵌入。文档中提到，作者没有观察到使用更高级的二维（2D）感知位置嵌入相比标准1D位置嵌入能带来显著的性能提升 [参考文档1：Windows验收_ViT.pdf；第3页（物理页码）]。
+    - paragraph: 本次 Token：7806 · Agent响应耗时：20.186 秒
+    - button "查看Windows验收_ViT.pdf · 第3页（物理页码）":
+      - paragraph: 查看Windows验收_ViT.pdf · 第3页（物理页码）
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请根据知识库文档8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6回答：ViT uses standard learnable 1D or 2D position embeddings? 请按论文原文回答并标注文档名和页码。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: 根据文档Windows验收_ViT.pdf第3页，ViT使用标准可学习的一维（1D）位置嵌入。
+    - paragraph: 本次 Token：5279 · Agent响应耗时：7.814 秒
+  - textbox "输入消息…" [active]
+  - button "Send message" [disabled]: 发送
+  - generic "keyboard_arrow_right 请根据知识库文档8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1c":
+    - generic: keyboard_arrow_right
+    - paragraph: 请根据知识库文档8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1c
+  - generic "keyboard_arrow_down 请根据知识库文档8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1c":
+    - generic: keyboard_arrow_down
+    - paragraph: 请根据知识库文档8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1c
+  - button "Show/hide columns":
+  - button "Download as CSV":
+  - button "Search":
+  - button "Fullscreen":
+  - heading "状态统计" [level=3]:
+    - text: 状态统计
+    - link "Link to heading":
+      - /url: "#f3abdead"
+  - paragraph: 当前会话累计；工具成功率只统计已返回调用，未报告的用量不计为零。
+  - paragraph: 对话次数
+  - paragraph: "2"
+  - paragraph: 累计Token
+  - paragraph: "13085"
+  - paragraph: 累计响应耗时
+  - paragraph: 28.000 秒
+  - paragraph: 平均响应耗时
+  - paragraph: 14.000 秒
+  - paragraph: 任务完成率
+  - paragraph: 100.0%
+  - paragraph: 工具调用次数
+  - paragraph: "1"
+  - paragraph: 工具调用成功率
+  - paragraph: 100.0%
+  - paragraph: 平均推理轮次
+  - paragraph: "1.00"
+  - paragraph: RAG检索 1 次 · 候选命中率 100.0% · 平均检索耗时 3.751 秒 · 平均工具耗时 8.417 秒。
+  - paragraph: 工具成功 1 · 失败 0 · 待返回 0；已报告Token 13085 · 用量未知 0 次。

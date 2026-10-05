@@ -1,0 +1,452 @@
+[
+  {
+    "time": "2026-10-05T09:47:10.169Z",
+    "name": "01_初始页面",
+    "note": "新访客页面；LLM与Chroma正常",
+    "url": "http://192.168.1.12:8501/?visitor=a39d41130e4f4bda87d4cabd2b7c54f4&conversation=5da44edf50004660805ceac91718ba88"
+  },
+  {
+    "time": "2026-10-05T09:47:18.958Z",
+    "name": "02_初始空知识库",
+    "note": "初始活动文档0，五份旧验收资料在归档；后续仅恢复公开ViT用于复测，见11。",
+    "url": "http://192.168.1.12:8501/?visitor=a39d41130e4f4bda87d4cabd2b7c54f4&conversation=5da44edf50004660805ceac91718ba88"
+  },
+  {
+    "time": "2026-10-05T09:47:48.235Z",
+    "name": "03_空库运行中",
+    "note": "输入已清空，转圈与工具阶段指标显示；真实模型执行中",
+    "url": "http://192.168.1.12:8501/?visitor=a39d41130e4f4bda87d4cabd2b7c54f4&conversation=5da44edf50004660805ceac91718ba88"
+  },
+  {
+    "time": "2026-10-05T09:48:24.082Z",
+    "name": "04_空库缺少降级提示_问题",
+    "note": "检索候选命中率0%，最终答案没有“当前知识库中未找到相关文档”或纯模型依据提示；页面任务完成率100%。5722 Token，26.479秒。",
+    "url": "http://192.168.1.12:8501/?visitor=a39d41130e4f4bda87d4cabd2b7c54f4&conversation=5da44edf50004660805ceac91718ba88"
+  },
+  {
+    "time": "2026-10-05T09:48:48.861Z",
+    "name": "05_批量选择待导入",
+    "note": "5份输入已选择，开始导入前未显示本批状态",
+    "url": "http://192.168.1.12:8501/?visitor=a39d41130e4f4bda87d4cabd2b7c54f4&conversation=4e688d333427430281a4db7fae1719eb"
+  },
+  {
+    "time": "2026-10-05T09:48:59.612Z",
+    "name": "06_批量导入运行中",
+    "note": "显示进度0/5，成功0失败0；尚未完成",
+    "url": "http://192.168.1.12:8501/?visitor=a39d41130e4f4bda87d4cabd2b7c54f4&conversation=4e688d333427430281a4db7fae1719eb"
+  },
+  {
+    "time": "2026-10-05T09:49:42.022Z",
+    "name": "T01_自动化定位修正",
+    "note": "失败详情在DOM中为generic，按AX按钮名称构造Playwright按钮定位无匹配；改按可见文字点击，不计为应用失败。"
+  },
+  {
+    "time": "2026-10-05T09:49:42.442Z",
+    "name": "07_批量导入完成",
+    "note": "4成功1预期失败，选择区清空；损坏PDF有明确解析错误",
+    "url": "http://192.168.1.12:8501/?visitor=a39d41130e4f4bda87d4cabd2b7c54f4&conversation=4e688d333427430281a4db7fae1719eb"
+  },
+  {
+    "time": "2026-10-05T09:49:42.984Z",
+    "name": "08_访客B计算器",
+    "note": "8.0384，4104 Token，6.819秒；与A记录隔离",
+    "url": "http://192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=cfcec7a4cb57477d81d50358e8b6ed50"
+  },
+  {
+    "time": "2026-10-05T09:50:01.166Z",
+    "name": "09_重试与知识库",
+    "note": "重试仅1/1；库4文档17块，损坏PDF失败提示为WinError267目录名称无效，需记录错误提示可理解性。",
+    "url": "http://192.168.1.12:8501/?visitor=a39d41130e4f4bda87d4cabd2b7c54f4&conversation=4e688d333427430281a4db7fae1719eb"
+  },
+  {
+    "time": "2026-10-05T09:50:14.651Z",
+    "name": "T02_单选控件自动化",
+    "note": "radio.check报告未切换；读取后确认为仍选TXT，改按可见ViT文件名点击标签。"
+  },
+  {
+    "time": "2026-10-05T09:50:15.209Z",
+    "name": "10_计算追问记忆",
+    "note": "结果16.0768，6629 Token，10.196秒；B累计两轮10733 Token",
+    "url": "http://192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=cfcec7a4cb57477d81d50358e8b6ed50"
+  },
+  {
+    "time": "2026-10-05T09:51:26.795Z",
+    "name": "11_归档ViT恢复完成",
+    "note": "恢复167块，全库5份184块，原4份17块保留",
+    "url": "http://192.168.1.12:8501/?visitor=a39d41130e4f4bda87d4cabd2b7c54f4&conversation=4e688d333427430281a4db7fae1719eb"
+  },
+  {
+    "time": "2026-10-05T09:52:13.130Z",
+    "name": "12_A文件名RAG运行",
+    "note": "A按文件名提问终态：paper_list两次失败，重复调用保护终止，未执行RAG。",
+    "url": "http://192.168.1.12:8501/?visitor=a39d41130e4f4bda87d4cabd2b7c54f4&conversation=4e688d333427430281a4db7fae1719eb"
+  },
+  {
+    "time": "2026-10-05T09:52:13.433Z",
+    "name": "13_B组合工具运行",
+    "note": "B组合工具终态：当前时间与关键词提取同轮成功；与A请求时间重叠，不是运行中截图。",
+    "url": "http://192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=1a63500481ce4265a0522fb2bd03ed07"
+  },
+  {
+    "time": "2026-10-05T09:55:38.432514+00:00",
+    "time_basis": "原始DOM证据文件最后修改时间；不是服务器执行时间",
+    "name": "14_文献列表单独复核",
+    "note": "快照文件原样保留；记录脚本重新绑定时索引遗漏，按已有DOM/AX/截图补齐关联。",
+    "url": "http://192.168.1.12:8501/?visitor=a39d41130e4f4bda87d4cabd2b7c54f4&conversation=4e688d333427430281a4db7fae1719eb",
+    "index_reconstructed": true
+  },
+  {
+    "time": "2026-10-05T09:55:38.709648+00:00",
+    "time_basis": "原始DOM证据文件最后修改时间；不是服务器执行时间",
+    "name": "15_真实ID中文RAG",
+    "note": "快照文件原样保留；记录脚本重新绑定时索引遗漏，按已有DOM/AX/截图补齐关联。",
+    "url": "http://192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=1a63500481ce4265a0522fb2bd03ed07",
+    "index_reconstructed": true
+  },
+  {
+    "time": "2026-10-05T09:55:55.297583+00:00",
+    "time_basis": "原始DOM证据文件最后修改时间；不是服务器执行时间",
+    "name": "14_文献列表终态",
+    "note": "快照文件原样保留；记录脚本重新绑定时索引遗漏，按已有DOM/AX/截图补齐关联。",
+    "url": "http://192.168.1.12:8501/?visitor=a39d41130e4f4bda87d4cabd2b7c54f4&conversation=4e688d333427430281a4db7fae1719eb",
+    "index_reconstructed": true
+  },
+  {
+    "time": "2026-10-05T09:55:55.585052+00:00",
+    "time_basis": "原始DOM证据文件最后修改时间；不是服务器执行时间",
+    "name": "15_真实ID中文RAG终态",
+    "note": "快照文件原样保留；记录脚本重新绑定时索引遗漏，按已有DOM/AX/截图补齐关联。",
+    "url": "http://192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=1a63500481ce4265a0522fb2bd03ed07",
+    "index_reconstructed": true
+  },
+  {
+    "time": "2026-10-05T09:56:16.272550+00:00",
+    "time_basis": "原始DOM证据文件最后修改时间；不是服务器执行时间",
+    "name": "16_短ID向量检索",
+    "note": "快照文件原样保留；记录脚本重新绑定时索引遗漏，按已有DOM/AX/截图补齐关联。",
+    "url": "http://192.168.1.12:8501/?visitor=31587d19524e459a9bf46651be0e8d45&conversation=c625f83c5f81499f899da4aec8dd1a71",
+    "index_reconstructed": true
+  },
+  {
+    "time": "2026-10-05T09:56:36.238012+00:00",
+    "time_basis": "原始DOM证据文件最后修改时间；不是服务器执行时间",
+    "name": "17_BM25检索",
+    "note": "快照文件原样保留；记录脚本重新绑定时索引遗漏，按已有DOM/AX/截图补齐关联。",
+    "url": "http://192.168.1.12:8501/?visitor=31587d19524e459a9bf46651be0e8d45&conversation=c625f83c5f81499f899da4aec8dd1a71",
+    "index_reconstructed": true
+  },
+  {
+    "time": "2026-10-05T09:56:44.682114+00:00",
+    "time_basis": "原始DOM证据文件最后修改时间；不是服务器执行时间",
+    "name": "18_DETR摘要流式中",
+    "note": "快照文件原样保留；记录脚本重新绑定时索引遗漏，按已有DOM/AX/截图补齐关联。",
+    "url": "http://192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=1a63500481ce4265a0522fb2bd03ed07",
+    "index_reconstructed": true
+  },
+  {
+    "time": "2026-10-05T09:56:45.167769+00:00",
+    "time_basis": "原始DOM证据文件最后修改时间；不是服务器执行时间",
+    "name": "19_RRF检索",
+    "note": "快照文件原样保留；记录脚本重新绑定时索引遗漏，按已有DOM/AX/截图补齐关联。",
+    "url": "http://192.168.1.12:8501/?visitor=31587d19524e459a9bf46651be0e8d45&conversation=c625f83c5f81499f899da4aec8dd1a71",
+    "index_reconstructed": true
+  },
+  {
+    "time": "2026-10-05T09:57:05.960270+00:00",
+    "time_basis": "原始DOM证据文件最后修改时间；不是服务器执行时间",
+    "name": "20_模型重排检索",
+    "note": "快照文件原样保留；记录脚本重新绑定时索引遗漏，按已有DOM/AX/截图补齐关联。",
+    "url": "http://192.168.1.12:8501/?visitor=31587d19524e459a9bf46651be0e8d45&conversation=c625f83c5f81499f899da4aec8dd1a71",
+    "index_reconstructed": true
+  },
+  {
+    "time": "2026-10-05T09:57:19.597862+00:00",
+    "time_basis": "原始DOM证据文件最后修改时间；不是服务器执行时间",
+    "name": "21_自然文件名RAG终态",
+    "note": "快照文件原样保留；记录脚本重新绑定时索引遗漏，按已有DOM/AX/截图补齐关联。",
+    "url": "http://192.168.1.12:8501/?visitor=a39d41130e4f4bda87d4cabd2b7c54f4&conversation=4e688d333427430281a4db7fae1719eb",
+    "index_reconstructed": true
+  },
+  {
+    "time": "2026-10-05T09:57:19.871196+00:00",
+    "time_basis": "原始DOM证据文件最后修改时间；不是服务器执行时间",
+    "name": "22_DETR元信息终态",
+    "note": "快照文件原样保留；记录脚本重新绑定时索引遗漏，按已有DOM/AX/截图补齐关联。",
+    "url": "http://192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=1a63500481ce4265a0522fb2bd03ed07",
+    "index_reconstructed": true
+  },
+  {
+    "time": "2026-10-05T09:57:30.641357+00:00",
+    "time_basis": "原始DOM证据文件最后修改时间；不是服务器执行时间",
+    "name": "23_ViT第21页原文",
+    "note": "快照文件原样保留；记录脚本重新绑定时索引遗漏，按已有DOM/AX/截图补齐关联。",
+    "url": "http://192.168.1.12:8501/?visitor=a39d41130e4f4bda87d4cabd2b7c54f4&conversation=4e688d333427430281a4db7fae1719eb",
+    "index_reconstructed": true
+  },
+  {
+    "time": "2026-10-05T09:57:38.758956+00:00",
+    "time_basis": "原始DOM证据文件最后修改时间；不是服务器执行时间",
+    "name": "24_英文主方法检索",
+    "note": "快照文件原样保留；记录脚本重新绑定时索引遗漏，按已有DOM/AX/截图补齐关联。",
+    "url": "http://192.168.1.12:8501/?visitor=31587d19524e459a9bf46651be0e8d45&conversation=c625f83c5f81499f899da4aec8dd1a71",
+    "index_reconstructed": true
+  },
+  {
+    "time": "2026-10-05T09:57:48.838649+00:00",
+    "time_basis": "原始DOM证据文件最后修改时间；不是服务器执行时间",
+    "name": "25_结构化摘要当前",
+    "note": "快照文件原样保留；记录脚本重新绑定时索引遗漏，按已有DOM/AX/截图补齐关联。",
+    "url": "http://192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=1a63500481ce4265a0522fb2bd03ed07",
+    "index_reconstructed": true
+  },
+  {
+    "time": "2026-10-05T09:57:59.423891+00:00",
+    "time_basis": "原始DOM证据文件最后修改时间；不是服务器执行时间",
+    "name": "25_ViT摘要误用DETR终态",
+    "note": "快照文件原样保留；记录脚本重新绑定时索引遗漏，按已有DOM/AX/截图补齐关联。",
+    "url": "http://192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=1a63500481ce4265a0522fb2bd03ed07",
+    "index_reconstructed": true
+  },
+  {
+    "time": "2026-10-05T09:57:59.886561+00:00",
+    "time_basis": "原始DOM证据文件最后修改时间；不是服务器执行时间",
+    "name": "26_空查询校验",
+    "note": "快照文件原样保留；记录脚本重新绑定时索引遗漏，按已有DOM/AX/截图补齐关联。",
+    "url": "http://192.168.1.12:8501/?visitor=31587d19524e459a9bf46651be0e8d45&conversation=c625f83c5f81499f899da4aec8dd1a71",
+    "index_reconstructed": true
+  },
+  {
+    "time": "2026-10-05T09:58:10.059758+00:00",
+    "time_basis": "原始DOM证据文件最后修改时间；不是服务器执行时间",
+    "name": "27_新问题误返旧答案",
+    "note": "快照文件原样保留；记录脚本重新绑定时索引遗漏，按已有DOM/AX/截图补齐关联。",
+    "url": "http://192.168.1.12:8501/?visitor=a39d41130e4f4bda87d4cabd2b7c54f4&conversation=4e688d333427430281a4db7fae1719eb",
+    "index_reconstructed": true
+  },
+  {
+    "time": "2026-10-05T09:58:11.120688+00:00",
+    "time_basis": "原始DOM证据文件最后修改时间；不是服务器执行时间",
+    "name": "28_非法文档ID",
+    "note": "快照文件原样保留；记录脚本重新绑定时索引遗漏，按已有DOM/AX/截图补齐关联。",
+    "url": "http://192.168.1.12:8501/?visitor=31587d19524e459a9bf46651be0e8d45&conversation=c625f83c5f81499f899da4aec8dd1a71",
+    "index_reconstructed": true
+  },
+  {
+    "time": "2026-10-05T09:58:25.193195+00:00",
+    "time_basis": "原始DOM证据文件最后修改时间；不是服务器执行时间",
+    "name": "29_文档删除确认布局",
+    "note": "快照文件原样保留；记录脚本重新绑定时索引遗漏，按已有DOM/AX/截图补齐关联。",
+    "url": "http://192.168.1.12:8501/?visitor=31587d19524e459a9bf46651be0e8d45&conversation=c625f83c5f81499f899da4aec8dd1a71",
+    "index_reconstructed": true
+  },
+  {
+    "time": "2026-10-05T09:58:35.529731+00:00",
+    "time_basis": "原始DOM证据文件最后修改时间；不是服务器执行时间",
+    "name": "29_文档删除确认终态",
+    "note": "快照文件原样保留；记录脚本重新绑定时索引遗漏，按已有DOM/AX/截图补齐关联。",
+    "url": "http://192.168.1.12:8501/?visitor=31587d19524e459a9bf46651be0e8d45&conversation=c625f83c5f81499f899da4aec8dd1a71",
+    "index_reconstructed": true
+  },
+  {
+    "time": "2026-10-05T09:58:47.821999+00:00",
+    "time_basis": "原始DOM证据文件最后修改时间；不是服务器执行时间",
+    "name": "30_新会话ViT摘要终态",
+    "note": "快照文件原样保留；记录脚本重新绑定时索引遗漏，按已有DOM/AX/截图补齐关联。",
+    "url": "http://192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=0eae3a23e21a476db92b8b23f145a56f",
+    "index_reconstructed": true
+  },
+  {
+    "time": "2026-10-05T09:59:20.557Z",
+    "name": "31_新会话中文RAG仍无溯源",
+    "note": "独立空白新会话复核：原文候选命中但grounded回答失败；再次错误称无文档。",
+    "url": "http://192.168.1.12:8501/?visitor=a39d41130e4f4bda87d4cabd2b7c54f4&conversation=81a1d74d9ef84b84a34bc03ba03e5749"
+  },
+  {
+    "time": "2026-10-05T09:59:20.866Z",
+    "name": "32_MD回收终态",
+    "note": "MD回收后4份183块，原文进入已归档知识。",
+    "url": "http://192.168.1.12:8501/?visitor=31587d19524e459a9bf46651be0e8d45&conversation=c625f83c5f81499f899da4aec8dd1a71"
+  },
+  {
+    "time": "2026-10-05T09:59:36.304Z",
+    "name": "33_MD恢复终态",
+    "note": "MD恢复后5份184块，原有四份索引不变。",
+    "url": "http://192.168.1.12:8501/?visitor=31587d19524e459a9bf46651be0e8d45&conversation=c625f83c5f81499f899da4aec8dd1a71"
+  },
+  {
+    "time": "2026-10-05T09:59:44.933Z",
+    "name": "34_超大文件拒绝",
+    "note": "21MiB纯文本在上传组件被20MB上限拒绝，开始导入禁用，未构建索引。",
+    "url": "http://192.168.1.12:8501/?visitor=31587d19524e459a9bf46651be0e8d45&conversation=c625f83c5f81499f899da4aec8dd1a71"
+  },
+  {
+    "time": "2026-10-05T10:00:02.531Z",
+    "name": "35_论文对比终态",
+    "note": "三维表格、引用、低相关声明保留并标incomplete；ViT方法摘录背景、数字条件截断、未明确DETR具体数字缺失。",
+    "url": "http://192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=0eae3a23e21a476db92b8b23f145a56f"
+  },
+  {
+    "time": "2026-10-05T10:00:15.825Z",
+    "name": "36_会话删除确认",
+    "note": "删除当前会话变为行内确认删除和取消，无旧说明段落。",
+    "url": "http://192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=0eae3a23e21a476db92b8b23f145a56f"
+  },
+  {
+    "time": "2026-10-05T10:00:24.249Z",
+    "name": "37_低相关等待确认",
+    "note": "模型分数0.0000，展示TXT原文，1次检索、未生成，任务incomplete。",
+    "url": "http://192.168.1.12:8501/?visitor=31587d19524e459a9bf46651be0e8d45&conversation=c625f83c5f81499f899da4aec8dd1a71"
+  },
+  {
+    "time": "2026-10-05T10:00:25.062Z",
+    "name": "38_切换会话取消待删",
+    "note": "切换至计算器会话后仅有删除当前会话按钮，计算两轮历史与指标恢复。",
+    "url": "http://192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=cfcec7a4cb57477d81d50358e8b6ed50"
+  },
+  {
+    "time": "2026-10-05T10:00:35.933Z",
+    "name": "39_取消候选终态",
+    "note": "取消后确认/取消按钮移除；历史候选原文保留可阅读；Token和检索数未增加。",
+    "url": "http://192.168.1.12:8501/?visitor=31587d19524e459a9bf46651be0e8d45&conversation=c625f83c5f81499f899da4aec8dd1a71"
+  },
+  {
+    "time": "2026-10-05T10:00:47.112Z",
+    "name": "40_新会话ViT引用正确",
+    "note": "混合中英文真实ID问题返回1D，正确物理第3页引用，7806Token20.186秒。",
+    "url": "http://192.168.1.12:8501/?visitor=a39d41130e4f4bda87d4cabd2b7c54f4&conversation=09f19c58050a460c8e98a1fdc821327a"
+  },
+  {
+    "time": "2026-10-05T10:01:11.978Z",
+    "name": "41_会话回收终态",
+    "note": "摘要对比测试会话回收，自动切换到仍活动的TESTB会话；回收列表含标题与8位会话ID。",
+    "url": "http://192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=1a63500481ce4265a0522fb2bd03ed07"
+  },
+  {
+    "time": "2026-10-05T10:01:28.833Z",
+    "name": "42_重复问答未调用工具",
+    "note": "相同ViT问题第二次从历史直接回答，0新增工具；不能据此认定缓存命中，原文查看按钮未保留。",
+    "url": "http://192.168.1.12:8501/?visitor=a39d41130e4f4bda87d4cabd2b7c54f4&conversation=09f19c58050a460c8e98a1fdc821327a"
+  },
+  {
+    "time": "2026-10-05T10:01:46.399Z",
+    "name": "43_会话恢复终态",
+    "note": "恢复同一0eae3a23会话，摘要/对比及引用/轨迹/指标恢复，未重新生成。",
+    "url": "http://192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=0eae3a23e21a476db92b8b23f145a56f"
+  },
+  {
+    "time": "2026-10-05T10:01:58.177Z",
+    "name": "44_确认候选终态",
+    "note": "确认后复用候选，RAG检索仍2次；保留低相关声明、不编造配方数字，incomplete。",
+    "url": "http://192.168.1.12:8501/?visitor=31587d19524e459a9bf46651be0e8d45&conversation=c625f83c5f81499f899da4aec8dd1a71"
+  },
+  {
+    "time": "2026-10-05T10:02:14.110Z",
+    "name": "45_显式工具请求被历史替代",
+    "note": "用户明确必须实际调用knowledge_base_search，Agent仍0新增工具直接复述旧答案，不能验证缓存。",
+    "url": "http://192.168.1.12:8501/?visitor=a39d41130e4f4bda87d4cabd2b7c54f4&conversation=09f19c58050a460c8e98a1fdc821327a"
+  },
+  {
+    "time": "2026-10-05T10:02:27.102Z",
+    "name": "46_联网关闭",
+    "note": "禁用联网明确提示无法核验，任务incomplete，不调用本地RAG替代最新事实。",
+    "url": "http://192.168.1.12:8501/?visitor=31587d19524e459a9bf46651be0e8d45&conversation=c625f83c5f81499f899da4aec8dd1a71"
+  },
+  {
+    "time": "2026-10-05T10:04:41.217Z",
+    "name": "47_访客A隔离问代号",
+    "note": "A空白会话问研究代号，核对不泄露B的TESTB标记。",
+    "url": "http://192.168.1.12:8501/?visitor=a39d41130e4f4bda87d4cabd2b7c54f4&conversation=5950789337bd4a0da687d2e112dfe2b2"
+  },
+  {
+    "time": "2026-10-05T10:05:22.764Z",
+    "name": "48_刷新历史恢复",
+    "note": "C刷新后同访客同会话恢复4条消息、低相关确认记录与统计；无新生成。",
+    "url": "http://192.168.1.12:8501/?visitor=31587d19524e459a9bf46651be0e8d45&conversation=c625f83c5f81499f899da4aec8dd1a71"
+  },
+  {
+    "time": "2026-10-05T10:05:40.317Z",
+    "name": "49_刷新系统状态",
+    "note": "本轮结束前重新检查LLM与Chroma，刷新请求结果以完整状态为准。",
+    "url": "http://192.168.1.12:8501/?visitor=31587d19524e459a9bf46651be0e8d45&conversation=c625f83c5f81499f899da4aec8dd1a71"
+  },
+  {
+    "time": "2026-10-05T10:05:40.692Z",
+    "name": "50_长对话10轮",
+    "note": "达到10轮；每一轮问答均仍可在滚动历史查看，下一请求观察摘要。",
+    "url": "http://192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=1a63500481ce4265a0522fb2bd03ed07"
+  },
+  {
+    "time": "2026-10-05T10:06:08.926Z",
+    "name": "51_第11轮摘要与追问",
+    "note": "第11轮追问最初研究代号，检查记忆摘要阶段、结果和完整历史。",
+    "url": "http://192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=1a63500481ce4265a0522fb2bd03ed07"
+  },
+  {
+    "time": "2026-10-05T10:06:56.139Z",
+    "name": "52_长对话刷新恢复",
+    "note": "刷新后11轮完整消息、早期代号正确答案及记忆摘要阶段保留。",
+    "url": "http://192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=1a63500481ce4265a0522fb2bd03ed07"
+  },
+  {
+    "time": "2026-10-05T10:06:56.749Z",
+    "name": "53_最终知识库状态",
+    "note": "测试结束时共享知识库5份184块，MD已恢复，超限文件未入库。",
+    "url": "http://192.168.1.12:8501/?visitor=31587d19524e459a9bf46651be0e8d45&conversation=c625f83c5f81499f899da4aec8dd1a71"
+  },
+  {
+    "time": "2026-10-05T10:07:57.133Z",
+    "name": "54_刷新后代号追问",
+    "note": "第12轮刷新后早期代号追问；记录结果和Token，无新工具。",
+    "url": "http://192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=1a63500481ce4265a0522fb2bd03ed07"
+  },
+  {
+    "time": "2026-10-05T10:09:10.992668+00:00",
+    "name": "T03_初始化页面定位",
+    "note": "C初始化期间只有系统标题，点击文档检索无匹配；随后页面就绪点击成功，不计应用失败。"
+  },
+  {
+    "time": "2026-10-05T10:09:10.992668+00:00",
+    "name": "T04_记录脚本定位缺失",
+    "note": "修正说明时find未检查缺失索引，脚本报Cannot set properties of undefined；原页面未受影响，后续上传动作尚未执行，修正后单独执行。"
+  },
+  {
+    "time": "2026-10-05T10:09:10.992668+00:00",
+    "name": "T05_证据索引补齐",
+    "note": "重新绑定记录函数引用旧events数组，遗漏部分索引但DOM/AX/截图已保存；按原文件mtime及AX URL恢复索引，明确时间来源，未覆盖原始截图或伪造结果。",
+    "restored_names": [
+      "14_文献列表单独复核",
+      "14_文献列表终态",
+      "15_真实ID中文RAG",
+      "15_真实ID中文RAG终态",
+      "16_短ID向量检索",
+      "17_BM25检索",
+      "18_DETR摘要流式中",
+      "19_RRF检索",
+      "20_模型重排检索",
+      "21_自然文件名RAG终态",
+      "22_DETR元信息终态",
+      "23_ViT第21页原文",
+      "24_英文主方法检索",
+      "25_ViT摘要误用DETR终态",
+      "25_结构化摘要当前",
+      "26_空查询校验",
+      "27_新问题误返旧答案",
+      "28_非法文档ID",
+      "29_文档删除确认布局",
+      "29_文档删除确认终态",
+      "30_新会话ViT摘要终态"
+    ]
+  },
+  {
+    "time": "2026-10-05T10:09:28.958Z",
+    "name": "55_重复导入终态",
+    "note": "重复上传同SHA TXT，导入成功并清空选择器，知识库仍5份184块，无重复增块。",
+    "url": "http://192.168.1.12:8501/?visitor=31587d19524e459a9bf46651be0e8d45&conversation=c625f83c5f81499f899da4aec8dd1a71"
+  },
+  {
+    "time": "2026-10-05T10:10:25.770Z",
+    "name": "56_删除按钮尺寸复核",
+    "note": "原删除/确认删除/取消实际DOM尺寸比较，随后取消，不删资料。",
+    "url": "http://192.168.1.12:8501/?visitor=31587d19524e459a9bf46651be0e8d45&conversation=c625f83c5f81499f899da4aec8dd1a71"
+  }
+]

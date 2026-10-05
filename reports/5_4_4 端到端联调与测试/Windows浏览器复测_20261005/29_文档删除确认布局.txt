@@ -1,0 +1,132 @@
+- log
+- log
+- heading "系统状态" [level=2]
+- paragraph: 系统时间：2026-10-05 17:58:22
+- status:
+  - paragraph: LLM服务：正常（qwen2.5:7b）
+- status:
+  - paragraph: 向量数据库：正常（Chroma）
+- button "刷新状态":
+  - paragraph: 刷新状态
+- heading "文档上传与管理" [level=2]
+- paragraph: 上传文档
+- region "上传文档":
+  - button "file upload"
+  - button "upload Upload":
+    - generic: upload
+    - paragraph: Upload
+  - generic: 20MB per file • PDF, DOCX, TXT, MD, MARKDOWN
+- paragraph: 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+- button "开始导入" [disabled]:
+  - generic "开始导入":
+    - paragraph: 开始导入
+- button "重试失败项" [disabled]:
+  - generic "重试失败项":
+    - paragraph: 重试失败项
+- heading "对话历史管理" [level=2]
+- button "新建会话":
+  - paragraph: 新建会话
+- paragraph: 最近
+- button "新会话":
+  - paragraph: 新会话
+- button "删除当前会话":
+  - paragraph: 删除当前会话
+- banner:
+  - button "Main menu":
+- heading "智能科研助理" [level=1]:
+  - text: 智能科研助理
+  - link "Link to heading":
+    - /url: "#2d7dc4e4"
+- paragraph: 基于 RAG + Agent 的论文知识库问答系统
+- tablist:
+  - tab "科研对话":
+    - paragraph: 科研对话
+  - tab "文档检索":
+    - paragraph: 文档检索
+  - tab "知识库" [selected]:
+    - paragraph: 知识库
+- text: 发送
+- tabpanel "知识库":
+  - heading "知识库文档" [level=3]:
+    - text: 知识库文档
+    - link "Link to heading":
+      - /url: "#14437afa"
+  - button "Windows复测_DETR节选.pdf":
+    - generic "Windows复测_DETR节选.pdf":
+      - paragraph: Windows复测_DETR节选.pdf
+  - button "删除":
+    - paragraph: 删除
+  - paragraph: ID：ef1a2a0c
+  - button "Windows复测_说明.docx":
+    - generic "Windows复测_说明.docx":
+      - paragraph: Windows复测_说明.docx
+  - button "删除":
+    - paragraph: 删除
+  - paragraph: ID：b308ae66
+  - button "Windows复测_说明.md":
+    - generic "Windows复测_说明.md":
+      - paragraph: Windows复测_说明.md
+  - button "删除" [active]:
+    - paragraph: 删除
+  - paragraph: ID：6455abc0
+  - button "Windows复测_说明.txt":
+    - generic "Windows复测_说明.txt":
+      - paragraph: Windows复测_说明.txt
+  - button "删除":
+    - paragraph: 删除
+  - paragraph: ID：cb990ff1
+  - button "Windows验收_ViT.pdf":
+    - generic "Windows验收_ViT.pdf":
+      - paragraph: Windows验收_ViT.pdf
+  - button "删除":
+    - paragraph: 删除
+  - paragraph: ID：8ce7b839
+  - button "刷新知识库状态":
+    - generic "刷新知识库状态":
+      - paragraph: 刷新知识库状态
+  - paragraph: 已归档知识
+  - radiogroup "已归档知识":
+    - radio "Windows验收_说明.txt" [checked]
+    - paragraph: Windows验收_说明.txt
+    - paragraph: ID：0b027726
+    - radio "Windows验收_说明.md"
+    - paragraph: Windows验收_说明.md
+    - paragraph: ID：6326740a
+    - radio "Windows验收_说明.docx"
+    - paragraph: Windows验收_说明.docx
+    - paragraph: ID：b308ae66
+    - radio "Windows验收_DETR节选.pdf"
+    - paragraph: Windows验收_DETR节选.pdf
+    - paragraph: ID：ef1a2a0c
+  - button "恢复":
+    - generic "恢复":
+      - paragraph: 恢复
+  - heading "Windows复测_DETR节选.pdf" [level=3]:
+    - text: Windows复测_DETR节选.pdf
+    - link "Link to heading":
+      - /url: "#windows-detr-pdf"
+  - paragraph: 13 个索引块 · 已向量化
+  - paragraph: 原文第 1 页
+  - paragraph:
+    - text: "arXiv:2005.12872v3 [cs.CV] 28 May 2020 End-to-End Object Detection with Transformers Nicolas Carion^{⋆}, Francisco Massa^{⋆}, Gabriel Synnaeve, Nicolas Usunier, Alexander Kirillov, and Sergey Zagoruyko Facebook AI Abstract. We present a new method that views object detection as a direct set prediction problem. Our approach streamlines the detection pipeline, eﬀectively removing the need for many hand-designed compo- nents like a non-maximum suppression procedure or anchor generation that explicitly encode our prior knowledge about the task. The main ingredients of the new framework, called DEtection TRansformer or DETR, are a set-based global loss that forces unique predictions via bi- partite matching, and a transformer encoder-decoder architecture. Given a ﬁxed small set of learned object queries, DETR reasons about the re- lations of the objects and the global image context to directly output the ﬁnal set of predictions in parallel. The new model is conceptually simple and does not require a specialized library, unlike many other modern detectors. DETR demonstrates accuracy and run-time perfor- mance on par with the well-established and highly-optimized Faster R- CNN baseline on the challenging COCO object detection dataset. More- over, DETR can be easily generalized to produce panoptic segmentation in a uniﬁed manner. We show that it signiﬁcantly outperforms com- petitive baselines. Training code and pretrained models are available at"
+    - link "https://github.com/facebookresearch/detr":
+      - /url: https://github.com/facebookresearch/detr
+    - text: ". 1 Introduction The goal of object detection is to predict a set of bounding boxes and category labels for each object of interest. Modern detectors address this set prediction task in an indirect way, by deﬁning surrogate regression and classiﬁcation prob- lems on a large set of proposals [37,5], anchors [23], or window centers [53,46]. Their performances are signiﬁcantly inﬂuenced by postprocessing steps to col- lapse near-duplicate predictions, by the design of the anchor sets and by the heuristics that assign target boxes to anchors [52]. To simplify these pipelines, we propose a direct set prediction approach to bypass the surrogate tasks. This end-to-end philosophy has led to signiﬁcant advances in complex structured pre- diction tasks such as machine translation or speech recognition, but not yet in object detection: previous attempts [43,16,4,39] either add other forms of prior knowledge, or have not proven to be competitive with strong baselines on chal- lenging benchmarks. This paper aims to bridge this gap. ^{⋆}Equal contribution"
+  - paragraph: 原文第 2 页
+  - paragraph: "2 Carion et al. no object (ø) no object (ø) [图像区域 3：原文第 2 页] [图像区域 1：原文第 2 页] [图像区域 2：原文第 2 页] transformer encoder- CNN decoder set of image features set of box predictions bipartite matching loss Fig. 1: DETR directly predicts (in parallel) the ﬁnal set of detections by combining a common CNN with a transformer architecture. During training, bipartite matching uniquely assigns predictions with ground truth boxes. Prediction with no match should yield a “no object” (∅) class prediction. We streamline the training pipeline by viewing object detection as a direct set prediction problem. We adopt an encoder-decoder architecture based on trans- formers [47], a popular architecture for sequence prediction. The self-attention mechanisms of transformers, which explicitly model all pairwise interactions be- tween elements in a sequence, make these architectures particularly suitable for speciﬁc constraints of set prediction such as removing duplicate predictions. Our DEtection TRansformer (DETR, see Figure 1) predicts all objects at once, and is trained end-to-end with a set loss function which performs bipar- tite matching between predicted and ground-truth objects. DETR simpliﬁes the detection pipeline by dropping multiple hand-designed components that encode prior knowledge, like spatial anchors or non-maximal suppression. Unlike most existing detection methods, DETR doesn’t require any customized layers, and thus can be reproduced easily in any framework that contains standard CNN and transformer classes.^{1}. Compared to most previous work on direct set prediction, the main features of DETR are the conjunction of the bipartite matching loss and transformers with (non-autoregressive) parallel decoding [29,12,10,8]. In contrast, previous work focused on autoregressive decoding with RNNs [43,41,30,36,42]. Our matching loss function uniquely assigns a prediction to a ground truth object, and is invariant to a permutation of predicted objects, so we can emit them in parallel. We evaluate DETR on one of the most popular object detection datasets, COCO [24], against a very competitive Faster R-CNN baseline [37]. Faster R- CNN has undergone many design iterations and its performance was greatly improved since the original publication. Our experiments show that our new model achieves comparable performances. More precisely, DETR demonstrates signiﬁcantly better performance on large objects, a result likely enabled by the non-local computations of the transformer. It obtains, however, lower perfor- mances on small objects. We expect that future work will improve this aspect in the same way the development of FPN [22] did for Faster R-CNN. Training settings for DETR diﬀer from standard object detectors in mul- tiple ways. The new model requires extra-long training schedule and beneﬁts ^{1} In our work we use standard implementations of Transformers [47] and ResNet [15] backbones from standard deep learning libraries."
+  - heading "知识库管理面板" [level=3]:
+    - text: 知识库管理面板
+    - link "Link to heading":
+      - /url: "#d75856ef"
+  - paragraph: 知识库文档数
+  - paragraph: "5"
+  - paragraph: 已向量化文档数
+  - paragraph: "5"
+  - paragraph: 知识库索引块数
+  - paragraph: "184"
+  - button "Show/hide columns":
+  - button "Download as CSV":
+  - button "Search":
+  - button "Fullscreen":
+- tooltip "删除Windows复测_说明.md":
+  - paragraph: 删除Windows复测_说明.md

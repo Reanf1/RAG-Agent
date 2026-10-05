@@ -1,0 +1,326 @@
+Browser tab: 2, Title: "智能科研助理", URL: "http://192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=1a63500481ce4265a0522fb2bd03ed07".
+1 AXWebArea 智能科研助理, URL: 192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=1a63500481ce4265a0522fb2bd03ed07
+	2 container
+		3 container
+			4 container
+				5 heading 系统状态, Value: 2
+					10 text 系统状态
+				11 container
+					12 text 系统时间：2026-10-05 18:07 :02
+				13 container
+					14 text LLM服务：正常（qwen2.5 :7b ）
+				15 text 向量数据库：正常（Chroma）
+				16 button 刷新状态
+					17 text 刷新状态
+				18 heading 文档上传与管理, Value: 2
+					19 text 文档上传与管理
+				20 container 上传文档
+					21 button file upload
+					22 button upload Upload
+						23 text upload
+						24 text Upload
+					25 text 20MB per file
+					26 text  • PDF, DOCX, TXT, MD, MARKDOWN
+				27 text 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+				28 button (disabled) 开始导入
+					29 text 开始导入
+				30 button (disabled) 重试失败项
+					31 text 重试失败项
+				32 heading 对话历史管理, Value: 2
+					33 text 对话历史管理
+				34 button 新建会话
+					35 text 新建会话
+				36 text 最近
+				37 button 请针对论文8ce7b83971a14508ca7
+					38 text 请针对论文8ce7b83971a14508ca7
+				39 button 请记住：本会话的研究代号是TESTB202610
+					40 text 请记住：本会话的研究代号是TESTB202610
+				41 button 计算3.14乘以2.56。
+					42 text 计算3.14乘以2.56。
+				43 button 删除当前会话
+					44 text 删除当前会话
+			6 pop up button (collapsed) Description: Main menu, Secondary Actions: Expand
+			7 container
+				8 heading 智能科研助理, Value: 1, ID: 2d7dc4e4
+					45 text 智能科研助理
+					9 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=1a63500481ce4265a0522fb2bd03ed07#2d7dc4e4
+				46 text 基于 RAG + Agent 的论文知识库问答系统
+				47 tab group react-aria7413083593-:r6:
+					48 tab (selected, settable, boolean) 科研对话, ID: react-aria7413083593-:r6:-tab-0, Value: 1
+科研对话
+					49 tab (selectable, settable, boolean) 文档检索, ID: react-aria7413083593-:r6:-tab-1, Value: 0
+文档检索
+					50 tab (selectable, settable, boolean) 知识库, ID: react-aria7413083593-:r6:-tab-2, Value: 0
+知识库
+				51 container Description: 科研对话, ID: react-aria7413083593-:r6:-tabpanel-0
+					52 container
+						53 text face
+						54 container Chat message from user
+							55 text 请记住：本会话的研究代号是TESTB20261005，后续提问沿用这个代号。
+						56 text smart_toy
+						57 container Chat message from assistant
+							58 text 研究代号TESTB20261005已记录。
+							59 text 本次 Token：4748 · Agent响应耗时：7.910 秒
+						60 text face
+						61 container Chat message from user
+							62 text 请同时调用current_time返回当前时间，并调用keyword_extract提取“Transformer attention image classification”的关键词。
+						63 text smart_toy
+						64 container Chat message from assistant
+							65 container
+								66 text 当前时间为2026-10-05 17:51 :37 （中国标准时间），关键词为Transformer、attention和image classification。
+							67 text 本次 Token：7634 · Agent响应耗时：16.489 秒
+						68 text face
+						69 container Chat message from user
+							70 text 请调用knowledge_base_search查询文档cb990ff1e44de00ba328e34169099d3f4704470d7d34fa9b71a586471d715baa：复测代号是什么？请注明来源。
+						71 text smart_toy
+						72 container Chat message from assistant
+							73 text 复测代号是WINCHECK20261005，但当前知识库中未找到相关文档作为溯源依据。
+							74 text 本次 Token：9074 · Agent响应耗时：23.239 秒
+							75 text 任务未完成：incomplete
+						76 text face
+						77 container Chat message from user
+							78 text 请读取论文ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c3079f448a2ad的标题、作者、年份、摘要、DOI，摘要请完整输出。
+						79 text smart_toy
+						80 container Chat message from assistant
+							81 container
+								82 text 论文标题：End-to-End Object Detection with Transformers 作者：Nicolas Carion, Francisco Massa, Gabriel Synnaeve, Nicolas Usunier, Alexander Kirillov, Sergey Zagoruyko 年份：2020 摘要：我们提出了一种新的方法，将目标检测视为直接的集合预测问题。我们的方法简化了检测管道，有效地消除了许多手设计的组件，如非最大抑制程序或锚生成，这些组件明确地编码了我们对任务的先验知识。新框架的主要成分，称为DEtection TRansformer或DETR，是一种基于集合的全局损失，通过二分匹配强制唯一预测，以及一个变压器编码-解码器架构。给定一组固定的已学习对象查询，DETR会推理对象之间的关系以及全局图像上下文，以并行直接输出最终的预测集。该新模型在概念上简单，不需要专门的库，不像许多其他现代检测器。DETR在具有挑战性的COCO目标检测数据集上与广泛认可且高度优化的Faster R-CNN基线具有相当的准确性和运行时性能。此外，DETR可以很容易地泛化以统一生成全景分割。训练代码和预训练模型可在
+								83 link Description: https://github.com/facebookresearch/detr获取。, Value: github.com/facebookresearch/detr%E8%8E%B7%E5%8F%96%E3%80%82
+							84 text 本次 Token：13426 · Agent响应耗时：32.174 秒
+						85 text face
+						86 container Chat message from user
+							87 text 请针对论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6生成结构化摘要，包含背景、方法、结果、结论，并保留来源引用。
+						88 text smart_toy
+						89 container Chat message from assistant
+							90 container
+								91 heading 背景, Value: 3, ID: 5b37aad5
+									92 text 背景
+									93 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=1a63500481ce4265a0522fb2bd03ed07#5b37aad5
+								94 text 传统的对象检测方法通过定义代理回归和分类问题来间接解决集合预测任务，这依赖于锚点生成和非极大值抑制等手设计组件。 [参考文档1：Windows复测_DETR节选.pdf；第1页（物理页码）][参考文档4：Windows复测_DETR节选.pdf；第1页（物理页码）]
+								95 heading 方法, Value: 3, ID: e9526722
+									96 text 方法
+									97 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=1a63500481ce4265a0522fb2bd03ed07#e9526722
+								98 text DETR（DEtection TRansformer）采用基于变换器的编码器-解码器架构，通过自注意力机制直接预测对象集合，使用二分匹配损失函数进行训练。 [参考文档2：Windows复测_DETR节选.pdf；第1页（物理页码）][参考文档9：Windows复测_DETR节选.pdf；第2页（物理页码）]
+								99 heading 结果, Value: 3, ID: 3cee4b07
+									100 text 结果
+									101 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=1a63500481ce4265a0522fb2bd03ed07#3cee4b07
+								102 text DETR在COCO数据集上的表现与Faster R-CNN相当，但在处理大对象时表现更佳，而在处理小对象时表现较差。 [参考文档3：Windows复测_DETR节选.pdf；第1页（物理页码）][参考文档11：Windows复测_DETR节选.pdf；第2页（物理页码）]
+								103 heading 结论, Value: 3, ID: 9a525965
+									104 text 结论
+									105 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=1a63500481ce4265a0522fb2bd03ed07#9a525965
+								106 text DETR简化了检测管道，通过结合二分匹配损失和变换器架构，提供了一种直接的集合预测方法，未来有望进一步改进。 [参考文档5：Windows复测_DETR节选.pdf；第1页（物理页码）][参考文档10：Windows复测_DETR节选.pdf；第2页（物理页码）]
+								107 heading 参考来源, Value: 2, ID: 4f4c5596
+									108 text 参考来源
+									109 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=1a63500481ce4265a0522fb2bd03ed07#4f4c5596
+								110 content list
+									111 container
+										112 AXListMarker • 
+										113 text [参考文档1] Windows复测_DETR节选.pdf；第1页（物理页码）
+									114 container
+										115 AXListMarker • 
+										116 text [参考文档4] Windows复测_DETR节选.pdf；第1页（物理页码）
+									117 container
+										118 AXListMarker • 
+										119 text [参考文档2] Windows复测_DETR节选.pdf；第1页（物理页码）
+									120 container
+										121 AXListMarker • 
+										122 text [参考文档9] Windows复测_DETR节选.pdf；第2页（物理页码）
+									123 container
+										124 AXListMarker • 
+										125 text [参考文档3] Windows复测_DETR节选.pdf；第1页（物理页码）
+									126 container
+										127 AXListMarker • 
+										128 text [参考文档11] Windows复测_DETR节选.pdf；第2页（物理页码）
+									129 container
+										130 AXListMarker • 
+										131 text [参考文档5] Windows复测_DETR节选.pdf；第1页（物理页码）
+									132 container
+										133 AXListMarker • 
+										134 text [参考文档10] Windows复测_DETR节选.pdf；第2页（物理页码）
+								135 text 原文已按预算选取并截断；摘要仅依据返回的可见原文，并非全文精读。
+							136 text 本次 Token：7287 · Agent响应耗时：18.920 秒
+							137 button 查看Windows复测_DETR节选.pdf · 第1页（物理页码）
+								138 text 查看Windows复测_DETR节选.pdf · 第1页（物理页码）
+							139 button 查看Windows复测_DETR节选.pdf · 第1页（物理页码）
+								140 text 查看Windows复测_DETR节选.pdf · 第1页（物理页码）
+							141 button 查看Windows复测_DETR节选.pdf · 第1页（物理页码）
+								142 text 查看Windows复测_DETR节选.pdf · 第1页（物理页码）
+							143 button 查看Windows复测_DETR节选.pdf · 第2页（物理页码）
+								144 text 查看Windows复测_DETR节选.pdf · 第2页（物理页码）
+							145 button 查看Windows复测_DETR节选.pdf · 第1页（物理页码）
+								146 text 查看Windows复测_DETR节选.pdf · 第1页（物理页码）
+							147 button 查看Windows复测_DETR节选.pdf · 第2页（物理页码）
+								148 text 查看Windows复测_DETR节选.pdf · 第2页（物理页码）
+							149 button 查看Windows复测_DETR节选.pdf · 第1页（物理页码）
+								150 text 查看Windows复测_DETR节选.pdf · 第1页（物理页码）
+							151 button 查看Windows复测_DETR节选.pdf · 第2页（物理页码）
+								152 text 查看Windows复测_DETR节选.pdf · 第2页（物理页码）
+						153 text face
+						154 container Chat message from user
+							155 text 请记住本会话的实验设置：文档采用固定512字符分块。只需简短确认。
+						156 text smart_toy
+						157 container Chat message from assistant
+							158 text 文档分块设置已确认为固定512字符。
+							159 text 本次 Token：7474 · Agent响应耗时：8.490 秒
+						160 text face
+						161 container Chat message from user
+							162 text 请记住本会话检索设置为Top-k=5，重排候选20个。只需简短确认。
+						163 text smart_toy
+						164 container Chat message from assistant
+							165 text 文档分块设置已确认为固定512字符。
+							166 text 本次 Token：7586 · Agent响应耗时：8.833 秒
+						167 text face
+						168 container Chat message from user
+							169 text 请记住本会话评估指标为Hit@5、MRR、Recall。只需简短确认。
+						170 text smart_toy
+						171 container Chat message from assistant
+							172 text 确认本会话的实验设置为文档采用固定512字符分块，检索设置为Top-k=5，重排候选20个。
+							173 text 本次 Token：7714 · Agent响应耗时：8.858 秒
+						174 text face
+						175 container Chat message from user
+							176 text 请记住本会话答案统一使用中文，并保留文档引用。只需简短确认。
+						177 text smart_toy
+						178 container Chat message from assistant
+							179 text 确认本会话的实验设置为文档采用固定512字符分块，检索设置为Top-k=5，重排候选20个，评估指标为Hit@5、MRR、Recall。
+							180 text 本次 Token：7879 · Agent响应耗时：9.393 秒
+						181 text face
+						182 container Chat message from user
+							183 text 请记住本会话要比较纯向量、混合检索、混合加重排三档方案。只需简短确认。
+						184 text smart_toy
+						185 container Chat message from assistant
+							186 text 确认本会话的实验设置为文档采用固定512字符分块，检索设置为Top-k=5，重排候选20个，评估指标为Hit@5、MRR、Recall。
+							187 text 本次 Token：8085 · Agent响应耗时：9.713 秒
+						188 text face
+						189 container Chat message from user
+							190 text 本会话最初约定的研究代号是什么？请只回答那个研究代号，不要回答实验设置。
+						191 text smart_toy
+						192 container Chat message from assistant
+							193 text TESTB20261005
+							194 text 本次 Token：7581 · Agent响应耗时：14.088 秒
+						198 text face
+						199 container Chat message from user
+							200 text 刷新后继续：本会话最初约定的研究代号是什么？请只回答代号。
+						201 text smart_toy
+						202 container Chat message from assistant
+							203 text TESTB20261005
+							204 text 本次 Token：5834 · Agent响应耗时：7.613 秒
+					195 container
+						196 text entry area (settable) 输入消息…
+						197 button (disabled) Send message
+							205 text 发送
+					206 button (collapsed) keyboard_arrow_right 请记住：本会话的研究代号是TESTB20261005，后续提问沿用这个代号。, Secondary Actions: Expand
+						207 text keyboard_arrow_right
+						208 text 请记住：本会话的研究代号是TESTB20261005，后续提问沿用这个代号。
+					209 button (collapsed) keyboard_arrow_right 请同时调用current_time返回当前时间，并调用keyword_extract提取“Transformer att, Secondary Actions: Expand
+						210 text keyboard_arrow_right
+						211 text 请同时调用current_time返回当前时间，并调用keyword_extract提取“Transformer att
+					212 button (collapsed) keyboard_arrow_right 请调用knowledge_base_search查询文档cb990ff1e44de00ba328e34169099d3f, Secondary Actions: Expand
+						213 text keyboard_arrow_right
+						214 text 请调用knowledge_base_search查询文档cb990ff1e44de00ba328e34169099d3f
+					215 button (collapsed) keyboard_arrow_right 请读取论文ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c307, Secondary Actions: Expand
+						216 text keyboard_arrow_right
+						217 text 请读取论文ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c307
+					218 button (collapsed) keyboard_arrow_right 请针对论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c, Secondary Actions: Expand
+						219 text keyboard_arrow_right
+						220 text 请针对论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c
+					221 button (collapsed) keyboard_arrow_right 请记住本会话的实验设置：文档采用固定512字符分块。只需简短确认。, Secondary Actions: Expand
+						222 text keyboard_arrow_right
+						223 text 请记住本会话的实验设置：文档采用固定512字符分块。只需简短确认。
+					224 button (collapsed) keyboard_arrow_right 请记住本会话检索设置为Top-k=5，重排候选20个。只需简短确认。, Secondary Actions: Expand
+						225 text keyboard_arrow_right
+						226 text 请记住本会话检索设置为Top-k=5，重排候选20个。只需简短确认。
+					227 button (collapsed) keyboard_arrow_right 请记住本会话评估指标为Hit@5、MRR、Recall。只需简短确认。, Secondary Actions: Expand
+						228 text keyboard_arrow_right
+						229 text 请记住本会话评估指标为Hit@5、MRR、Recall。只需简短确认。
+					230 button (collapsed) keyboard_arrow_right 请记住本会话答案统一使用中文，并保留文档引用。只需简短确认。, Secondary Actions: Expand
+						231 text keyboard_arrow_right
+						232 text 请记住本会话答案统一使用中文，并保留文档引用。只需简短确认。
+					233 button (collapsed) keyboard_arrow_right 请记住本会话要比较纯向量、混合检索、混合加重排三档方案。只需简短确认。, Secondary Actions: Expand
+						234 text keyboard_arrow_right
+						235 text 请记住本会话要比较纯向量、混合检索、混合加重排三档方案。只需简短确认。
+					236 button (collapsed) keyboard_arrow_right 本会话最初约定的研究代号是什么？请只回答那个研究代号，不要回答实验设置。, Secondary Actions: Expand
+						237 text keyboard_arrow_right
+						238 text 本会话最初约定的研究代号是什么？请只回答那个研究代号，不要回答实验设置。
+					239 container
+						240 button (expanded) keyboard_arrow_down 刷新后继续：本会话最初约定的研究代号是什么？请只回答代号。, Secondary Actions: Collapse
+							241 text keyboard_arrow_down
+							242 text 刷新后继续：本会话最初约定的研究代号是什么？请只回答代号。
+						243 container
+							244 button Show/hide columns
+							245 button Download as CSV
+							246 button Search
+							247 button Fullscreen
+							248 image
+								249 table
+									250 row 阶段 轮次 工具 输入Token 输出Token 耗时 状态
+										251 cell (selectable) 阶段
+										252 cell (selectable) 轮次
+										253 cell (selectable) 工具
+										254 cell (selectable) 输入Token
+										255 cell (selectable) 输出Token
+										256 cell (selectable) 耗时
+										257 cell (selectable) 状态
+									258 container
+										259 row (selectable) Thought 1 — 2861 38 3.601 秒 成功
+											260 cell (selectable) Value: Thought, ID: glide-cell-0-0
+											261 cell (selectable) Value: 1, ID: glide-cell-1-0
+											262 cell (selectable) Value: —, ID: glide-cell-2-0
+											263 cell (selectable) Value: 2861, ID: glide-cell-3-0
+											264 cell (selectable) Value: 38, ID: glide-cell-4-0
+											265 cell (selectable) Value: 3.601 秒, ID: glide-cell-5-0
+											266 cell (selectable) Value: 成功, ID: glide-cell-6-0
+										267 row (selectable) Action（跳过） 1 — — — 未知 成功
+											268 cell (selectable) Value: Action（跳过）, ID: glide-cell-0-1
+											269 cell (selectable) Value: 1, ID: glide-cell-1-1
+											270 cell (selectable) Value: —, ID: glide-cell-2-1
+											271 cell (selectable) Value: —, ID: glide-cell-3-1
+											272 cell (selectable) Value: —, ID: glide-cell-4-1
+											273 cell (selectable) Value: 未知, ID: glide-cell-5-1
+											274 cell (selectable) Value: 成功, ID: glide-cell-6-1
+										275 row (selectable) Observation 1 — 2887 48 3.866 秒 成功
+											276 cell (selectable) Value: Observation, ID: glide-cell-0-2
+											277 cell (selectable) Value: 1, ID: glide-cell-1-2
+											278 cell (selectable) Value: —, ID: glide-cell-2-2
+											279 cell (selectable) Value: 2887, ID: glide-cell-3-2
+											280 cell (selectable) Value: 48, ID: glide-cell-4-2
+											281 cell (selectable) Value: 3.866 秒, ID: glide-cell-5-2
+											282 cell (selectable) Value: 成功, ID: glide-cell-6-2
+										283 row (selectable) 任务结束 1 — — — — 成功
+											284 cell (selectable) Value: 任务结束, ID: glide-cell-0-3
+											285 cell (selectable) Value: 1, ID: glide-cell-1-3
+											286 cell (selectable) Value: —, ID: glide-cell-2-3
+											287 cell (selectable) Value: —, ID: glide-cell-3-3
+											288 cell (selectable) Value: —, ID: glide-cell-4-3
+											289 cell (selectable) Value: —, ID: glide-cell-5-3
+											290 cell (selectable) Value: 成功, ID: glide-cell-6-3
+					291 heading 状态统计, Value: 3, ID: f3abdead
+						292 text 状态统计
+						293 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=3580d6292acd45718a31581f9b722c52&conversation=1a63500481ce4265a0522fb2bd03ed07#f3abdead
+					294 text 当前会话累计；工具成功率只统计已返回调用，未报告的用量不计为零。
+					295 container
+						296 text 对话次数
+						297 text 12
+					298 container
+						299 text 累计Token
+						300 text 94322
+					301 container
+						302 text 累计响应耗时
+						303 text 165.719 秒
+					304 container
+						305 text 平均响应耗时
+						306 text 13.810 秒
+					307 container
+						308 text 任务完成率
+						309 text 91.7%
+					310 container
+						311 text 工具调用次数
+						312 text 5
+					313 container
+						314 text 工具调用成功率
+						315 text 100.0%
+					316 container
+						317 text 平均推理轮次
+						318 text 1.00
+					319 text RAG检索 1 次 · 候选命中率 100.0% · 平均检索耗时 2.554 秒 · 平均工具耗时 5.027 秒。
+					320 text 工具成功 5 · 失败 0 · 待返回 0；已报告Token 94322 · 用量未知 0 次。
+
+The focused UI element is 196 text entry area (settable) 输入消息…

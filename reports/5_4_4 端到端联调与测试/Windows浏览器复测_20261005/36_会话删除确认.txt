@@ -1,0 +1,206 @@
+- button "keyboard_double_arrow_left":
+  - generic: keyboard_double_arrow_left
+- heading "系统状态" [level=2]
+- paragraph: 系统时间：2026-10-05 18:00:00
+- status:
+  - paragraph: LLM服务：正常（qwen2.5:7b）
+- status:
+  - paragraph: 向量数据库：正常（Chroma）
+- button "刷新状态":
+  - paragraph: 刷新状态
+- heading "文档上传与管理" [level=2]
+- paragraph: 上传文档
+- region "上传文档":
+  - button "file upload"
+  - button "upload Upload":
+    - generic: upload
+    - paragraph: Upload
+  - generic: 20MB per file • PDF, DOCX, TXT, MD, MARKDOWN
+- paragraph: 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+- button "开始导入" [disabled]:
+  - generic "开始导入":
+    - paragraph: 开始导入
+- button "重试失败项" [disabled]:
+  - generic "重试失败项":
+    - paragraph: 重试失败项
+- heading "对话历史管理" [level=2]
+- button "新建会话":
+  - paragraph: 新建会话
+- paragraph: 最近
+- button "请针对论文8ce7b83971a14508ca7":
+  - paragraph: 请针对论文8ce7b83971a14508ca7
+- button "请记住：本会话的研究代号是TESTB202610":
+  - paragraph: 请记住：本会话的研究代号是TESTB202610
+- button "计算3.14乘以2.56。":
+  - paragraph: 计算3.14乘以2.56。
+- button "确认删除":
+  - generic "确认删除":
+    - paragraph: 确认删除
+- button "取消":
+  - generic "取消":
+    - paragraph: 取消
+- banner:
+  - button "Main menu":
+- heading "智能科研助理" [level=1]:
+  - text: 智能科研助理
+  - link "Link to heading":
+    - /url: "#2d7dc4e4"
+- paragraph: 基于 RAG + Agent 的论文知识库问答系统
+- tablist:
+  - tab "科研对话" [selected]:
+    - paragraph: 科研对话
+  - tab "文档检索":
+    - paragraph: 文档检索
+  - tab "知识库":
+    - paragraph: 知识库
+- tabpanel "科研对话":
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请针对论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6生成结构化摘要，包含背景、方法、结果、结论，并保留来源引用。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - heading "背景" [level=3]:
+      - text: 背景
+      - link "Link to heading":
+        - /url: "#5b37aad5"
+    - paragraph: 传统的卷积神经网络（CNN）在计算机视觉中占主导地位，而基于自注意力的Transformer架构在自然语言处理中取得了巨大成功。 [参考文档1：Windows验收_ViT.pdf；第1页（物理页码）][参考文档3：Windows验收_ViT.pdf；第1页（物理页码）]
+    - heading "方法" [level=3]:
+      - text: 方法
+      - link "Link to heading":
+        - /url: "#e9526722"
+    - paragraph: 研究者将图像分割成块，将这些块的线性嵌入序列输入标准的Transformer编码器，以直接应用于图像识别任务。 [参考文档9：Windows验收_ViT.pdf；第1页（物理页码）][参考文档10：Windows验收_ViT.pdf；第1页（物理页码）]
+    - heading "结果" [level=3]:
+      - text: 结果
+      - link "Link to heading":
+        - /url: "#3cee4b07"
+    - paragraph: Vision Transformer（ViT）在大规模预训练后，在多个图像分类基准测试中达到了与最先进的卷积网络相当或更好的性能，同时训练所需的计算资源较少。 [参考文档2：Windows验收_ViT.pdf；第1页（物理页码）][参考文档11：Windows验收_ViT.pdf；第2页（物理页码）]
+    - heading "结论" [level=3]:
+      - text: 结论
+      - link "Link to heading":
+        - /url: "#9a525965"
+    - paragraph: 尽管初始结果令人鼓舞，但ViT在其他计算机视觉任务中的应用、自监督预训练方法的探索以及模型的进一步扩展仍然是挑战。 [参考文档7：Windows验收_ViT.pdf；第9页（物理页码）][参考文档8：Windows验收_ViT.pdf；第9页（物理页码）]
+    - heading "参考来源" [level=2]:
+      - text: 参考来源
+      - link "Link to heading":
+        - /url: "#4f4c5596"
+    - list:
+      - listitem: "[参考文档1] Windows验收_ViT.pdf；第1页（物理页码）"
+      - listitem: "[参考文档3] Windows验收_ViT.pdf；第1页（物理页码）"
+      - listitem: "[参考文档9] Windows验收_ViT.pdf；第1页（物理页码）"
+      - listitem: "[参考文档10] Windows验收_ViT.pdf；第1页（物理页码）"
+      - listitem: "[参考文档2] Windows验收_ViT.pdf；第1页（物理页码）"
+      - listitem: "[参考文档11] Windows验收_ViT.pdf；第2页（物理页码）"
+      - listitem: "[参考文档7] Windows验收_ViT.pdf；第9页（物理页码）"
+      - listitem: "[参考文档8] Windows验收_ViT.pdf；第9页（物理页码）"
+    - paragraph: 原文已按预算选取并截断；摘要仅依据返回的可见原文，并非全文精读。
+    - paragraph: 本次 Token：3602 · Agent响应耗时：17.546 秒
+    - button "查看Windows验收_ViT.pdf · 第1页（物理页码）":
+      - paragraph: 查看Windows验收_ViT.pdf · 第1页（物理页码）
+    - button "查看Windows验收_ViT.pdf · 第1页（物理页码）":
+      - paragraph: 查看Windows验收_ViT.pdf · 第1页（物理页码）
+    - button "查看Windows验收_ViT.pdf · 第1页（物理页码）":
+      - paragraph: 查看Windows验收_ViT.pdf · 第1页（物理页码）
+    - button "查看Windows验收_ViT.pdf · 第1页（物理页码）":
+      - paragraph: 查看Windows验收_ViT.pdf · 第1页（物理页码）
+    - button "查看Windows验收_ViT.pdf · 第1页（物理页码）":
+      - paragraph: 查看Windows验收_ViT.pdf · 第1页（物理页码）
+    - button "查看Windows验收_ViT.pdf · 第2页（物理页码）":
+      - paragraph: 查看Windows验收_ViT.pdf · 第2页（物理页码）
+    - button "查看Windows验收_ViT.pdf · 第9页（物理页码）":
+      - paragraph: 查看Windows验收_ViT.pdf · 第9页（物理页码）
+    - button "查看Windows验收_ViT.pdf · 第9页（物理页码）":
+      - paragraph: 查看Windows验收_ViT.pdf · 第9页（物理页码）
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请对比论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6和ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c3079f448a2ad的方法、数据集、实验结果。请用三维表格，明确节选中缺失的实验数字。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - heading "回答" [level=2]:
+      - text: 回答
+      - link "Link to heading":
+        - /url: "#3a622f65"
+    - paragraph: 以下按三个维度并列展示两篇论文的原文证据，不改写实验数字或条件。
+    - table:
+      - rowgroup:
+        - row "维度 论文A 论文B":
+          - columnheader "维度"
+          - columnheader "论文A"
+          - columnheader "论文B"
+      - rowgroup:
+        - row:
+          - cell "方法"
+          - 'cell "原文摘录：{adosovitskiy, neilhoulsby}@google.com arXiv:2010.11929v2 [cs.CV] 3 Jun 2021 ABSTRACT While the Transformer architecture has become the de-facto standard for natural language processing tasks, its applications to computer vision remain limited. In vision, attention is either applied in conjunction with convolutional networks, or used to replace certain components of convolutional networks while keeping their overall structure in place. We show that this reliance on CNNs is not necessary [参考文档11：Windows验收_ViT.pdf；第1页（物理页码）]"'
+          - cell "原文摘录：that explicitly encode our prior knowledge about the task. The main ingredients of the new framework, called DEtection TRansformer or DETR, are a set-based global loss that forces unique predictions via bi- partite matching, and a transformer encoder-decoder architecture. Given a ﬁxed small set of learned object queries, DETR reasons about the re- lations of the objects and the global image context to directly output the ﬁnal set of predictions in parallel. The new model is conceptually [参考文档10：Windows复测_DETR节选.pdf；第1页（物理页码）]"
+        - row:
+          - cell "数据集"
+          - 'cell "原文摘录：303M high-resolution images. We de-duplicate the pre-training datasets w.r.t. the test sets of the downstream tasks following Kolesnikov et al. (2020). We transfer the models trained on these dataset to several benchmark tasks: ImageNet on the original validation labels and the cleaned-up ReaL labels (Beyer et al., 2020), CIFAR-10/100 (Krizhevsky, 2009), Oxford-IIIT Pets (Parkhi et al., 2012), and Oxford Flowers-102 (Nilsback & Zisserman, 2008). For these datasets, pre-processing [参考文档2：Windows验收_ViT.pdf；第4页（物理页码）]"'
+          - cell "原文摘录：loss function uniquely assigns a prediction to a ground truth object, and is invariant to a permutation of predicted objects, so we can emit them in parallel. We evaluate DETR on one of the most popular object detection datasets, COCO [24], against a very competitive Faster R-CNN baseline [37]. Faster R- CNN has undergone many design iterations and its performance was greatly improved since the original publication. Our experiments show that our new [参考文档5：Windows复测_DETR节选.pdf；第2页（物理页码）]"
+        - row:
+          - cell "实验结果"
+          - 'cell "原文摘录：99.45 99.68 Oxford-IIIT-Pets 95.80 93.40 97.11 95.83 97.56 Table 5: Top1 accuracy (in %) of Vision Transformer on various datasets when pre-trained on Im- ageNet, ImageNet-21k or JFT300M. These values correspond to Figure 3 in the main text. Models are ﬁne-tuned at 384 resolution. Note that the ImageNet results are computed without additional techniques (Polyak averaging and 512 resolution images) used to achieve results in Table 2. [表格：原文第 15 页，数据见独立表格内容] [参考文档4：Windows验收_ViT.pdf；第15页（物理页码）]"'
+          - cell "原文摘录：model achieves comparable performances. More precisely, DETR demonstrates signiﬁcantly better performance on large objects, a result likely enabled by the non-local computations of the transformer. It obtains, however, lower perfor- mances on small objects. We expect that future work will improve this aspect in the same way the development of FPN [22] did for Faster R-CNN. [参考文档9：Windows复测_DETR节选.pdf；第2页（物理页码）]"
+    - paragraph: 不同任务、数据集和实验条件的指标不可直接比较优劣；证据选择的语义适用性仍需对照原文核验。
+    - heading "参考来源" [level=2]:
+      - text: 参考来源
+      - link "Link to heading":
+        - /url: "#4f4c5596"
+    - list:
+      - listitem: "[参考文档11] Windows验收_ViT.pdf；第1页（物理页码）"
+      - listitem: "[参考文档10] Windows复测_DETR节选.pdf；第1页（物理页码）"
+      - listitem: "[参考文档2] Windows验收_ViT.pdf；第4页（物理页码）"
+      - listitem: "[参考文档5] Windows复测_DETR节选.pdf；第2页（物理页码）"
+      - listitem: "[参考文档4] Windows验收_ViT.pdf；第15页（物理页码）"
+      - listitem: "[参考文档9] Windows复测_DETR节选.pdf；第2页（物理页码）；正文已截断，仅展示已送入上下文的证据"
+    - paragraph: 部分维度的检索相关性低，相关陈述需对照原文核验：论文A：方法、论文A：实验结果、论文B：方法、论文B：实验结果
+    - paragraph: 单篇原文已按对比预算截断，结论仅依据返回的可见证据。
+    - paragraph: 低相关性维度需核验：论文A：方法、论文A：实验结果、论文B：方法、论文B：实验结果
+    - paragraph: 本次 Token：7320 · Agent响应耗时：44.810 秒
+    - alert:
+      - paragraph: 任务未完成：incomplete
+    - button "查看Windows验收_ViT.pdf · 第1页（物理页码）":
+      - paragraph: 查看Windows验收_ViT.pdf · 第1页（物理页码）
+    - button "查看Windows复测_DETR节选.pdf · 第1页（物理页码）":
+      - paragraph: 查看Windows复测_DETR节选.pdf · 第1页（物理页码）
+    - button "查看Windows验收_ViT.pdf · 第4页（物理页码）":
+      - paragraph: 查看Windows验收_ViT.pdf · 第4页（物理页码）
+    - button "查看Windows复测_DETR节选.pdf · 第2页（物理页码）":
+      - paragraph: 查看Windows复测_DETR节选.pdf · 第2页（物理页码）
+    - button "查看Windows验收_ViT.pdf · 第15页（物理页码）":
+      - paragraph: 查看Windows验收_ViT.pdf · 第15页（物理页码）
+    - button "查看Windows复测_DETR节选.pdf · 第2页（物理页码）":
+      - paragraph: 查看Windows复测_DETR节选.pdf · 第2页（物理页码）
+  - textbox "输入消息…"
+  - button "Send message" [disabled]: 发送
+  - generic "keyboard_arrow_right 请针对论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c":
+    - generic: keyboard_arrow_right
+    - paragraph: 请针对论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c
+  - generic "keyboard_arrow_down 请对比论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c":
+    - generic: keyboard_arrow_down
+    - paragraph: 请对比论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c
+  - button "Show/hide columns":
+  - button "Download as CSV":
+  - button "Search":
+  - button "Fullscreen":
+  - heading "状态统计" [level=3]:
+    - text: 状态统计
+    - link "Link to heading":
+      - /url: "#f3abdead"
+  - paragraph: 当前会话累计；工具成功率只统计已返回调用，未报告的用量不计为零。
+  - paragraph: 对话次数
+  - paragraph: "2"
+  - paragraph: 累计Token
+  - paragraph: "10922"
+  - paragraph: 累计响应耗时
+  - paragraph: 62.356 秒
+  - paragraph: 平均响应耗时
+  - paragraph: 31.178 秒
+  - paragraph: 任务完成率
+  - paragraph: 50.0%
+  - paragraph: 工具调用次数
+  - paragraph: "2"
+  - paragraph: 工具调用成功率
+  - paragraph: 100.0%
+  - paragraph: 平均推理轮次
+  - paragraph: "1.00"
+  - paragraph: RAG检索 0 次 · 候选命中率 未知 · 平均检索耗时 未知 · 平均工具耗时 23.164 秒。
+  - paragraph: 工具成功 2 · 失败 0 · 待返回 0；已报告Token 10922 · 用量未知 0 次。

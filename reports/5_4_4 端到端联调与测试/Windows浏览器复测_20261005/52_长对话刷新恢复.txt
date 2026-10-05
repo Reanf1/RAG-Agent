@@ -1,0 +1,243 @@
+- heading "系统状态" [level=2]
+- paragraph: 系统时间：2026-10-05 18:06:30
+- status:
+  - paragraph: LLM服务：正常（qwen2.5:7b）
+- status:
+  - paragraph: 向量数据库：正常（Chroma）
+- button "刷新状态":
+  - paragraph: 刷新状态
+- heading "文档上传与管理" [level=2]
+- paragraph: 上传文档
+- region "上传文档":
+  - button "file upload"
+  - button "upload Upload":
+    - generic: upload
+    - paragraph: Upload
+  - generic: 20MB per file • PDF, DOCX, TXT, MD, MARKDOWN
+- paragraph: 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+- button "开始导入" [disabled]:
+  - generic "开始导入":
+    - paragraph: 开始导入
+- button "重试失败项" [disabled]:
+  - generic "重试失败项":
+    - paragraph: 重试失败项
+- heading "对话历史管理" [level=2]
+- button "新建会话":
+  - paragraph: 新建会话
+- paragraph: 最近
+- button "请针对论文8ce7b83971a14508ca7":
+  - paragraph: 请针对论文8ce7b83971a14508ca7
+- button "请记住：本会话的研究代号是TESTB202610":
+  - paragraph: 请记住：本会话的研究代号是TESTB202610
+- button "计算3.14乘以2.56。":
+  - paragraph: 计算3.14乘以2.56。
+- button "删除当前会话":
+  - paragraph: 删除当前会话
+- banner:
+  - button "Main menu":
+- heading "智能科研助理" [level=1]:
+  - text: 智能科研助理
+  - link "Link to heading":
+    - /url: "#2d7dc4e4"
+- paragraph: 基于 RAG + Agent 的论文知识库问答系统
+- tablist:
+  - tab "科研对话" [selected]:
+    - paragraph: 科研对话
+  - tab "文档检索":
+    - paragraph: 文档检索
+  - tab "知识库":
+    - paragraph: 知识库
+- tabpanel "科研对话":
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请记住：本会话的研究代号是TESTB20261005，后续提问沿用这个代号。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: 研究代号TESTB20261005已记录。
+    - paragraph: 本次 Token：4748 · Agent响应耗时：7.910 秒
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请同时调用current_time返回当前时间，并调用keyword_extract提取“Transformer attention image classification”的关键词。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: 当前时间为2026-10-05 17:51:37（中国标准时间），关键词为Transformer、attention和image classification。
+    - paragraph: 本次 Token：7634 · Agent响应耗时：16.489 秒
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请调用knowledge_base_search查询文档cb990ff1e44de00ba328e34169099d3f4704470d7d34fa9b71a586471d715baa：复测代号是什么？请注明来源。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: 复测代号是WINCHECK20261005，但当前知识库中未找到相关文档作为溯源依据。
+    - paragraph: 本次 Token：9074 · Agent响应耗时：23.239 秒
+    - alert:
+      - paragraph: 任务未完成：incomplete
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请读取论文ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c3079f448a2ad的标题、作者、年份、摘要、DOI，摘要请完整输出。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph:
+      - text: 论文标题：End-to-End Object Detection with Transformers 作者：Nicolas Carion, Francisco Massa, Gabriel Synnaeve, Nicolas Usunier, Alexander Kirillov, Sergey Zagoruyko 年份：2020 摘要：我们提出了一种新的方法，将目标检测视为直接的集合预测问题。我们的方法简化了检测管道，有效地消除了许多手设计的组件，如非最大抑制程序或锚生成，这些组件明确地编码了我们对任务的先验知识。新框架的主要成分，称为DEtection TRansformer或DETR，是一种基于集合的全局损失，通过二分匹配强制唯一预测，以及一个变压器编码-解码器架构。给定一组固定的已学习对象查询，DETR会推理对象之间的关系以及全局图像上下文，以并行直接输出最终的预测集。该新模型在概念上简单，不需要专门的库，不像许多其他现代检测器。DETR在具有挑战性的COCO目标检测数据集上与广泛认可且高度优化的Faster R-CNN基线具有相当的准确性和运行时性能。此外，DETR可以很容易地泛化以统一生成全景分割。训练代码和预训练模型可在
+      - link "https://github.com/facebookresearch/detr获取。":
+        - /url: https://github.com/facebookresearch/detr%E8%8E%B7%E5%8F%96%E3%80%82
+    - paragraph: 本次 Token：13426 · Agent响应耗时：32.174 秒
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请针对论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6生成结构化摘要，包含背景、方法、结果、结论，并保留来源引用。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - heading "背景" [level=3]:
+      - text: 背景
+      - link "Link to heading":
+        - /url: "#5b37aad5"
+    - paragraph: 传统的对象检测方法通过定义代理回归和分类问题来间接解决集合预测任务，这依赖于锚点生成和非极大值抑制等手设计组件。 [参考文档1：Windows复测_DETR节选.pdf；第1页（物理页码）][参考文档4：Windows复测_DETR节选.pdf；第1页（物理页码）]
+    - heading "方法" [level=3]:
+      - text: 方法
+      - link "Link to heading":
+        - /url: "#e9526722"
+    - paragraph: DETR（DEtection TRansformer）采用基于变换器的编码器-解码器架构，通过自注意力机制直接预测对象集合，使用二分匹配损失函数进行训练。 [参考文档2：Windows复测_DETR节选.pdf；第1页（物理页码）][参考文档9：Windows复测_DETR节选.pdf；第2页（物理页码）]
+    - heading "结果" [level=3]:
+      - text: 结果
+      - link "Link to heading":
+        - /url: "#3cee4b07"
+    - paragraph: DETR在COCO数据集上的表现与Faster R-CNN相当，但在处理大对象时表现更佳，而在处理小对象时表现较差。 [参考文档3：Windows复测_DETR节选.pdf；第1页（物理页码）][参考文档11：Windows复测_DETR节选.pdf；第2页（物理页码）]
+    - heading "结论" [level=3]:
+      - text: 结论
+      - link "Link to heading":
+        - /url: "#9a525965"
+    - paragraph: DETR简化了检测管道，通过结合二分匹配损失和变换器架构，提供了一种直接的集合预测方法，未来有望进一步改进。 [参考文档5：Windows复测_DETR节选.pdf；第1页（物理页码）][参考文档10：Windows复测_DETR节选.pdf；第2页（物理页码）]
+    - heading "参考来源" [level=2]:
+      - text: 参考来源
+      - link "Link to heading":
+        - /url: "#4f4c5596"
+    - list:
+      - listitem: "[参考文档1] Windows复测_DETR节选.pdf；第1页（物理页码）"
+      - listitem: "[参考文档4] Windows复测_DETR节选.pdf；第1页（物理页码）"
+      - listitem: "[参考文档2] Windows复测_DETR节选.pdf；第1页（物理页码）"
+      - listitem: "[参考文档9] Windows复测_DETR节选.pdf；第2页（物理页码）"
+      - listitem: "[参考文档3] Windows复测_DETR节选.pdf；第1页（物理页码）"
+      - listitem: "[参考文档11] Windows复测_DETR节选.pdf；第2页（物理页码）"
+      - listitem: "[参考文档5] Windows复测_DETR节选.pdf；第1页（物理页码）"
+      - listitem: "[参考文档10] Windows复测_DETR节选.pdf；第2页（物理页码）"
+    - paragraph: 原文已按预算选取并截断；摘要仅依据返回的可见原文，并非全文精读。
+    - paragraph: 本次 Token：7287 · Agent响应耗时：18.920 秒
+    - button "查看Windows复测_DETR节选.pdf · 第1页（物理页码）":
+      - paragraph: 查看Windows复测_DETR节选.pdf · 第1页（物理页码）
+    - button "查看Windows复测_DETR节选.pdf · 第1页（物理页码）":
+      - paragraph: 查看Windows复测_DETR节选.pdf · 第1页（物理页码）
+    - button "查看Windows复测_DETR节选.pdf · 第1页（物理页码）":
+      - paragraph: 查看Windows复测_DETR节选.pdf · 第1页（物理页码）
+    - button "查看Windows复测_DETR节选.pdf · 第2页（物理页码）":
+      - paragraph: 查看Windows复测_DETR节选.pdf · 第2页（物理页码）
+    - button "查看Windows复测_DETR节选.pdf · 第1页（物理页码）":
+      - paragraph: 查看Windows复测_DETR节选.pdf · 第1页（物理页码）
+    - button "查看Windows复测_DETR节选.pdf · 第2页（物理页码）":
+      - paragraph: 查看Windows复测_DETR节选.pdf · 第2页（物理页码）
+    - button "查看Windows复测_DETR节选.pdf · 第1页（物理页码）":
+      - paragraph: 查看Windows复测_DETR节选.pdf · 第1页（物理页码）
+    - button "查看Windows复测_DETR节选.pdf · 第2页（物理页码）":
+      - paragraph: 查看Windows复测_DETR节选.pdf · 第2页（物理页码）
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请记住本会话的实验设置：文档采用固定512字符分块。只需简短确认。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: 文档分块设置已确认为固定512字符。
+    - paragraph: 本次 Token：7474 · Agent响应耗时：8.490 秒
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请记住本会话检索设置为Top-k=5，重排候选20个。只需简短确认。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: 文档分块设置已确认为固定512字符。
+    - paragraph: 本次 Token：7586 · Agent响应耗时：8.833 秒
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请记住本会话评估指标为Hit@5、MRR、Recall。只需简短确认。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: 确认本会话的实验设置为文档采用固定512字符分块，检索设置为Top-k=5，重排候选20个。
+    - paragraph: 本次 Token：7714 · Agent响应耗时：8.858 秒
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请记住本会话答案统一使用中文，并保留文档引用。只需简短确认。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: 确认本会话的实验设置为文档采用固定512字符分块，检索设置为Top-k=5，重排候选20个，评估指标为Hit@5、MRR、Recall。
+    - paragraph: 本次 Token：7879 · Agent响应耗时：9.393 秒
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请记住本会话要比较纯向量、混合检索、混合加重排三档方案。只需简短确认。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: 确认本会话的实验设置为文档采用固定512字符分块，检索设置为Top-k=5，重排候选20个，评估指标为Hit@5、MRR、Recall。
+    - paragraph: 本次 Token：8085 · Agent响应耗时：9.713 秒
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 本会话最初约定的研究代号是什么？请只回答那个研究代号，不要回答实验设置。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: TESTB20261005
+    - paragraph: 本次 Token：7581 · Agent响应耗时：14.088 秒
+  - textbox "输入消息…"
+  - button "Send message" [disabled]: 发送
+  - generic "keyboard_arrow_right 请记住：本会话的研究代号是TESTB20261005，后续提问沿用这个代号。":
+    - generic: keyboard_arrow_right
+    - paragraph: 请记住：本会话的研究代号是TESTB20261005，后续提问沿用这个代号。
+  - generic "keyboard_arrow_right 请同时调用current_time返回当前时间，并调用keyword_extract提取“Transformer att":
+    - generic: keyboard_arrow_right
+    - paragraph: 请同时调用current_time返回当前时间，并调用keyword_extract提取“Transformer att
+  - generic "keyboard_arrow_right 请调用knowledge_base_search查询文档cb990ff1e44de00ba328e34169099d3f":
+    - generic: keyboard_arrow_right
+    - paragraph: 请调用knowledge_base_search查询文档cb990ff1e44de00ba328e34169099d3f
+  - generic "keyboard_arrow_right 请读取论文ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c307":
+    - generic: keyboard_arrow_right
+    - paragraph: 请读取论文ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c307
+  - generic "keyboard_arrow_right 请针对论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c":
+    - generic: keyboard_arrow_right
+    - paragraph: 请针对论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c
+  - generic "keyboard_arrow_right 请记住本会话的实验设置：文档采用固定512字符分块。只需简短确认。":
+    - generic: keyboard_arrow_right
+    - paragraph: 请记住本会话的实验设置：文档采用固定512字符分块。只需简短确认。
+  - generic "keyboard_arrow_right 请记住本会话检索设置为Top-k=5，重排候选20个。只需简短确认。":
+    - generic: keyboard_arrow_right
+    - paragraph: 请记住本会话检索设置为Top-k=5，重排候选20个。只需简短确认。
+  - generic "keyboard_arrow_right 请记住本会话评估指标为Hit@5、MRR、Recall。只需简短确认。":
+    - generic: keyboard_arrow_right
+    - paragraph: 请记住本会话评估指标为Hit@5、MRR、Recall。只需简短确认。
+  - generic "keyboard_arrow_right 请记住本会话答案统一使用中文，并保留文档引用。只需简短确认。":
+    - generic: keyboard_arrow_right
+    - paragraph: 请记住本会话答案统一使用中文，并保留文档引用。只需简短确认。
+  - generic "keyboard_arrow_right 请记住本会话要比较纯向量、混合检索、混合加重排三档方案。只需简短确认。":
+    - generic: keyboard_arrow_right
+    - paragraph: 请记住本会话要比较纯向量、混合检索、混合加重排三档方案。只需简短确认。
+  - generic "keyboard_arrow_down 本会话最初约定的研究代号是什么？请只回答那个研究代号，不要回答实验设置。":
+    - generic: keyboard_arrow_down
+    - paragraph: 本会话最初约定的研究代号是什么？请只回答那个研究代号，不要回答实验设置。
+  - button "Show/hide columns":
+  - button "Download as CSV":
+  - button "Search":
+  - button "Fullscreen":
+  - heading "状态统计" [level=3]:
+    - text: 状态统计
+    - link "Link to heading":
+      - /url: "#f3abdead"
+  - paragraph: 当前会话累计；工具成功率只统计已返回调用，未报告的用量不计为零。
+  - paragraph: 对话次数
+  - paragraph: "11"
+  - paragraph: 累计Token
+  - paragraph: "88488"
+  - paragraph: 累计响应耗时
+  - paragraph: 158.106 秒
+  - paragraph: 平均响应耗时
+  - paragraph: 14.373 秒
+  - paragraph: 任务完成率
+  - paragraph: 90.9%
+  - paragraph: 工具调用次数
+  - paragraph: "5"
+  - paragraph: 工具调用成功率
+  - paragraph: 100.0%
+  - paragraph: 平均推理轮次
+  - paragraph: "1.00"
+  - paragraph: RAG检索 1 次 · 候选命中率 100.0% · 平均检索耗时 2.554 秒 · 平均工具耗时 5.027 秒。
+  - paragraph: 工具成功 5 · 失败 0 · 待返回 0；已报告Token 88488 · 用量未知 0 次。

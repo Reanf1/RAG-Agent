@@ -1,0 +1,89 @@
+- heading "系统状态" [level=2]
+- paragraph: 系统时间：2026-10-05 17:46:36
+- status:
+  - paragraph: LLM服务：正常（qwen2.5:7b）
+- status:
+  - paragraph: 向量数据库：正常（Chroma）
+- button "刷新状态":
+  - paragraph: 刷新状态
+- heading "文档上传与管理" [level=2]
+- paragraph: 上传文档
+- region "上传文档":
+  - button "file upload"
+  - button "upload Upload":
+    - generic: upload
+    - paragraph: Upload
+  - generic: 20MB per file • PDF, DOCX, TXT, MD, MARKDOWN
+- paragraph: 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+- button "开始导入" [disabled]:
+  - generic "开始导入":
+    - paragraph: 开始导入
+- button "重试失败项" [disabled]:
+  - generic "重试失败项":
+    - paragraph: 重试失败项
+- heading "对话历史管理" [level=2]
+- button "新建会话":
+  - paragraph: 新建会话
+- paragraph: 最近
+- button "新会话":
+  - paragraph: 新会话
+- button "删除当前会话":
+  - paragraph: 删除当前会话
+- banner:
+  - button "Main menu":
+- heading "智能科研助理" [level=1]:
+  - text: 智能科研助理
+  - link "Link to heading":
+    - /url: "#2d7dc4e4"
+- paragraph: 基于 RAG + Agent 的论文知识库问答系统
+- tablist:
+  - tab "科研对话":
+    - paragraph: 科研对话
+  - tab "文档检索":
+    - paragraph: 文档检索
+  - tab "知识库" [active] [selected]:
+    - paragraph: 知识库
+- text: 发送
+- tabpanel "知识库":
+  - heading "知识库文档" [level=3]:
+    - text: 知识库文档
+    - link "Link to heading":
+      - /url: "#14437afa"
+  - paragraph: 知识库暂无文档。
+  - button "刷新知识库状态":
+    - generic "刷新知识库状态":
+      - paragraph: 刷新知识库状态
+  - paragraph: 已归档知识
+  - radiogroup "已归档知识":
+    - radio "Windows验收_说明.txt" [checked]
+    - paragraph: Windows验收_说明.txt
+    - paragraph: ID：0b027726
+    - radio "Windows验收_说明.md"
+    - paragraph: Windows验收_说明.md
+    - paragraph: ID：6326740a
+    - radio "Windows验收_ViT.pdf"
+    - paragraph: Windows验收_ViT.pdf
+    - paragraph: ID：8ce7b839
+    - radio "Windows验收_说明.docx"
+    - paragraph: Windows验收_说明.docx
+    - paragraph: ID：b308ae66
+    - radio "Windows验收_DETR节选.pdf"
+    - paragraph: Windows验收_DETR节选.pdf
+    - paragraph: ID：ef1a2a0c
+  - button "恢复":
+    - generic "恢复":
+      - paragraph: 恢复
+  - status:
+    - paragraph: 请在左侧上传文档，导入后在此选择文件查看内容。
+  - heading "知识库管理面板" [level=3]:
+    - text: 知识库管理面板
+    - link "Link to heading":
+      - /url: "#d75856ef"
+  - paragraph: 知识库文档数
+  - paragraph: "0"
+  - paragraph: 已向量化文档数
+  - paragraph: "0"
+  - paragraph: 知识库索引块数
+  - paragraph: "0"
+  - status:
+    - paragraph: 知识库暂无文档，请在左侧上传并开始导入。

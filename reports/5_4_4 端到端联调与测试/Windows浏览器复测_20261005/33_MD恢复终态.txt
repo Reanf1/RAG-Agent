@@ -1,0 +1,140 @@
+- log
+- log
+- heading "系统状态" [level=2]
+- paragraph: 系统时间：2026-10-05 17:59:24
+- status:
+  - paragraph: LLM服务：正常（qwen2.5:7b）
+- status:
+  - paragraph: 向量数据库：正常（Chroma）
+- button "刷新状态":
+  - paragraph: 刷新状态
+- heading "文档上传与管理" [level=2]
+- paragraph: 上传文档
+- region "上传文档":
+  - button "file upload"
+  - button "upload Upload":
+    - generic: upload
+    - paragraph: Upload
+  - generic: 20MB per file • PDF, DOCX, TXT, MD, MARKDOWN
+- paragraph: 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+- button "开始导入" [disabled]:
+  - generic "开始导入":
+    - paragraph: 开始导入
+- button "重试失败项" [disabled]:
+  - generic "重试失败项":
+    - paragraph: 重试失败项
+- heading "本批导入状态" [level=3]
+- paragraph: 已处理 1/1 份
+- progressbar "progress"
+- button "Show/hide columns":
+- button "Download as CSV":
+- button "Search":
+- button "Fullscreen":
+- paragraph: 成功 1 份，失败 0 份。
+- heading "对话历史管理" [level=2]
+- button "新建会话":
+  - paragraph: 新建会话
+- paragraph: 最近
+- button "新会话":
+  - paragraph: 新会话
+- button "删除当前会话":
+  - paragraph: 删除当前会话
+- banner:
+  - button "Main menu":
+- heading "智能科研助理" [level=1]:
+  - text: 智能科研助理
+  - link "Link to heading":
+    - /url: "#2d7dc4e4"
+- paragraph: 基于 RAG + Agent 的论文知识库问答系统
+- tablist:
+  - tab "科研对话":
+    - paragraph: 科研对话
+  - tab "文档检索":
+    - paragraph: 文档检索
+  - tab "知识库" [selected]:
+    - paragraph: 知识库
+- text: 发送
+- tabpanel "知识库":
+  - heading "知识库文档" [level=3]:
+    - text: 知识库文档
+    - link "Link to heading":
+      - /url: "#14437afa"
+  - status:
+    - paragraph: 原文已恢复，请查看本批导入状态；失败项可重试。
+  - button "Windows复测_DETR节选.pdf":
+    - generic "Windows复测_DETR节选.pdf":
+      - paragraph: Windows复测_DETR节选.pdf
+  - button "删除":
+    - paragraph: 删除
+  - paragraph: ID：ef1a2a0c
+  - button "Windows复测_说明.docx":
+    - generic "Windows复测_说明.docx":
+      - paragraph: Windows复测_说明.docx
+  - button "删除":
+    - paragraph: 删除
+  - paragraph: ID：b308ae66
+  - button "Windows复测_说明.md":
+    - generic "Windows复测_说明.md":
+      - paragraph: Windows复测_说明.md
+  - button "删除":
+    - paragraph: 删除
+  - paragraph: ID：6455abc0
+  - button "Windows复测_说明.txt":
+    - generic "Windows复测_说明.txt":
+      - paragraph: Windows复测_说明.txt
+  - button "删除":
+    - paragraph: 删除
+  - paragraph: ID：cb990ff1
+  - button "Windows验收_ViT.pdf":
+    - generic "Windows验收_ViT.pdf":
+      - paragraph: Windows验收_ViT.pdf
+  - button "删除":
+    - paragraph: 删除
+  - paragraph: ID：8ce7b839
+  - button "刷新知识库状态":
+    - generic "刷新知识库状态":
+      - paragraph: 刷新知识库状态
+  - paragraph: 已归档知识
+  - radiogroup "已归档知识":
+    - radio "Windows验收_说明.txt" [checked]
+    - paragraph: Windows验收_说明.txt
+    - paragraph: ID：0b027726
+    - radio "Windows验收_说明.md"
+    - paragraph: Windows验收_说明.md
+    - paragraph: ID：6326740a
+    - radio "Windows验收_说明.docx"
+    - paragraph: Windows验收_说明.docx
+    - paragraph: ID：b308ae66
+    - radio "Windows验收_DETR节选.pdf"
+    - paragraph: Windows验收_DETR节选.pdf
+    - paragraph: ID：ef1a2a0c
+  - button "恢复" [active]:
+    - generic "恢复":
+      - paragraph: 恢复
+  - heading "Windows复测_说明.md" [level=3]:
+    - text: Windows复测_说明.md
+    - link "Link to heading":
+      - /url: "#windows-md"
+  - paragraph: 1 个索引块 · 已向量化
+  - heading "科研助理Markdown复测" [level=1]:
+    - text: 科研助理Markdown复测
+    - link "Link to heading":
+      - /url: "#markdown"
+  - paragraph: Markdown标记是WINMD20261005。
+  - list:
+    - listitem: 引用必须对应本地文件和行号。
+    - listitem: 对比两篇论文时保留方法、数据集、实验结果。
+  - heading "知识库管理面板" [level=3]:
+    - text: 知识库管理面板
+    - link "Link to heading":
+      - /url: "#d75856ef"
+  - paragraph: 知识库文档数
+  - paragraph: "5"
+  - paragraph: 已向量化文档数
+  - paragraph: "5"
+  - paragraph: 知识库索引块数
+  - paragraph: "184"
+  - button "Show/hide columns":
+  - button "Download as CSV":
+  - button "Search":
+  - button "Fullscreen":
