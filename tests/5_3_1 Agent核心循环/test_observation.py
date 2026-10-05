@@ -185,6 +185,16 @@ class TestObservationAndLoop(unittest.TestCase):
             result = observe("提取标题、作者、年份、摘要、DOI", [], context)
         self.assertIn("DOI：原文未提供", result["answer"])
 
+    def test_source_url_followed_by_chinese_has_explicit_markdown_boundary(self):
+        """W11只修复原文真实URL的裸链接边界，不猜测未知网址。"""
+        url = "https://github.com/facebookresearch/detr"
+        context = {"observations": [{"name": "paper_metadata", "status": "success",
+            "result": {"abstract": "Code is available at " + url + ".", "missing_fields": []}}]}
+        decision = {**self.finished, "answer": "训练代码可从" + url + "获取。"}
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(decision)).encode())):
+            result = observe("提取论文元信息", [], context)
+        self.assertIn(f"[{url}]({url}) 获取", result["answer"])
+
     def test_tool_failure_is_observed_and_stops_honestly(self):
         failed = {"observation": "除数为零，工具失败。", "decision": "finish",
                   "task_complete": False, "answer": "除零无法计算，请修改除数。"}

@@ -599,6 +599,12 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
         if decision["decision"] == "finish":
             for item in latest:
                 evidence = item.get("result")
+                if item.get("name") == "paper_metadata" and item.get("status") == "success" and isinstance(evidence, dict):
+                    # 只修复原文已给出的真实链接；中文紧邻裸URL会被Markdown自动链接吞入href。
+                    for source_url in re.findall(r"https?://[^\s<>]+", evidence.get("abstract") or ""):
+                        source_url = source_url.rstrip(".,;，；。)]}")
+                        pattern = r"(?<![A-Za-z0-9_\[(`])" + re.escape(source_url) + r"(?=[\u4e00-\u9fff])"
+                        decision["answer"] = re.sub(pattern, lambda _: f"[{source_url}]({source_url}) ", decision["answer"])
                 if (item.get("name") == "paper_metadata" and item.get("status") == "success"
                         and isinstance(evidence, dict) and "doi" in evidence.get("missing_fields", [])
                         and re.search(r"DOI|元信息|元数据|\bmetadata\b", question, re.I)):

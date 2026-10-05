@@ -1,0 +1,16 @@
+test_source_url_followed_by_chinese_has_explicit_markdown_boundary (__main__.TestObservationAndLoop)
+W11只修复原文真实URL的裸链接边界，不猜测未知网址。 ... FAIL
+
+======================================================================
+FAIL: test_source_url_followed_by_chinese_has_explicit_markdown_boundary (__main__.TestObservationAndLoop)
+W11只修复原文真实URL的裸链接边界，不猜测未知网址。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_1 Agent核心循环/test_observation.py", line 196, in test_source_url_followed_by_chinese_has_explicit_markdown_boundary
+    self.assertIn(f"[{url}]({url}) 获取", result["answer"])
+AssertionError: '[https://github.com/facebookresearch/detr](https://github.com/facebookresearch/detr) 获取' not found in '训练代码可从https://github.com/facebookresearch/detr获取。'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.015s
+
+FAILED (failures=1)
