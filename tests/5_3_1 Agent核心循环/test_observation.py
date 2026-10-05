@@ -136,6 +136,18 @@ class TestObservationAndLoop(unittest.TestCase):
         self.assertFalse(events[-1]["task_complete"])
         self.assertIn("无法回答", events[-1]["full_response"])
 
+    def test_empty_library_notice_survives_observation_rewriting(self):
+        """复现W05：工具已声明空库，Observation却只返回纯模型正文。"""
+        notice = "当前知识库中未找到相关文档。以下为纯模型回答，没有知识库文献依据。"
+        context = {"observations": [{"name": "knowledge_base_search", "status": "success",
+            "result": {"generation_mode": "empty", "status": "answered", "notice": notice,
+                       "answer": notice + "\n\n位置编码表示顺序。"}}]}
+        decision = {**self.finished, "answer": "位置编码表示顺序。"}
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(decision)).encode())):
+            result = observe("请根据知识库解释位置编码", [], context)
+        self.assertTrue(result["answer"].startswith(notice))
+        self.assertEqual(result["answer"].count(notice), 1)
+
     def test_tool_failure_is_observed_and_stops_honestly(self):
         failed = {"observation": "除数为零，工具失败。", "decision": "finish",
                   "task_complete": False, "answer": "除零无法计算，请修改除数。"}

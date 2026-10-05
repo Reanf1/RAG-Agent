@@ -1,0 +1,16 @@
+test_empty_library_notice_survives_observation_rewriting (__main__.TestObservationAndLoop)
+复现W05：工具已声明空库，Observation却只返回纯模型正文。 ... FAIL
+
+======================================================================
+FAIL: test_empty_library_notice_survives_observation_rewriting (__main__.TestObservationAndLoop)
+复现W05：工具已声明空库，Observation却只返回纯模型正文。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_1 Agent核心循环/test_observation.py", line 148, in test_empty_library_notice_survives_observation_rewriting
+    self.assertTrue(result["answer"].startswith(notice))
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 1 test in 0.015s
+
+FAILED (failures=1)

@@ -1,0 +1,32 @@
+test_closing_loop_and_mutating_events_do_not_execute_or_change_state (__main__.TestObservationAndLoop) ... ok
+test_continue_stops_at_limit_without_extra_model_or_tool_calls (__main__.TestObservationAndLoop) ... ok
+test_direct_answer_finishes_without_tool_calling_request (__main__.TestObservationAndLoop) ... ok
+test_empty_library_notice_survives_observation_rewriting (__main__.TestObservationAndLoop)
+复现W05：工具已声明空库，Observation却只返回纯模型正文。 ... ok
+test_failed_tool_cannot_be_marked_successful (__main__.TestObservationAndLoop) ... ok
+test_invalid_limits_and_context_stop_before_model_calls (__main__.TestObservationAndLoop) ... ok
+test_missing_information_can_finish_without_claiming_completion (__main__.TestObservationAndLoop) ... ok
+test_model_errors_stop_in_each_stage_and_preserve_actual_results (__main__.TestObservationAndLoop) ... ok
+test_observation_rejects_inconsistent_decisions (__main__.TestObservationAndLoop) ... ok
+test_observation_rejects_partial_malformed_and_service_responses (__main__.TestObservationAndLoop) ... ok
+test_observation_unknown_usage_and_boundary_description (__main__.TestObservationAndLoop) ... ok
+test_observation_validates_state_before_call_and_never_uses_cloud (__main__.TestObservationAndLoop) ... ok
+test_tool_error_can_continue_to_a_real_alternative (__main__.TestObservationAndLoop) ... ok
+test_tool_failure_is_observed_and_stops_honestly (__main__.TestObservationAndLoop) ... ok
+test_two_real_tools_feed_next_round_and_native_observation_messages (__main__.TestObservationAndLoop) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.564s
+
+OK
+test_close_during_stream_closes_network_without_final_event (__main__.TestAgentStreaming) ... ok
+test_disconnect_keeps_partial_but_does_not_complete (__main__.TestAgentStreaming) ... ok
+test_length_cutoff_and_invalid_finish_are_not_success (__main__.TestAgentStreaming) ... ok
+test_partial_parser_does_not_leak_json_or_observation (__main__.TestAgentStreaming) ... ok
+test_stream_tokens_do_not_duplicate_token_cost_or_trace (__main__.TestAgentStreaming) ... ok
+test_tokens_arrive_before_last_packet_and_response_closes (__main__.TestAgentStreaming) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.062s
+
+OK

@@ -584,6 +584,12 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
         if decision["decision"] == "finish":
             for item in latest:
                 evidence = item.get("result")
+                if (item.get("name") == "knowledge_base_search" and item.get("status") == "success"
+                        and isinstance(evidence, dict) and evidence.get("generation_mode") == "empty"):
+                    # 空库是实际检索状态；模型改写答案不能删除无文献依据的说明。
+                    notice = evidence.get("notice") or "当前知识库中未找到相关文档。以下为纯模型回答，没有知识库文献依据。"
+                    if notice not in decision["answer"]:
+                        decision["answer"] = notice + "\n\n" + decision["answer"]
                 if isinstance(evidence, dict) and evidence.get("confirmed") is True and evidence.get("generation_mode") == "low":
                     notice = evidence.get("notice", "检索结果相关性低；已按你的确认使用候选内容，回答依据仍需核实。")
                     if notice not in decision["answer"]:
