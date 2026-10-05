@@ -107,6 +107,43 @@ class TestComparisonAndKeywords(unittest.TestCase):
         self.assertEqual(self.documents, before)
         self.assertEqual([r["source_file"] for r in result["citations"]], ["同名.md", "同名.md"])
 
+    def test_qualitative_excerpt_explicitly_reports_missing_experiment_numbers(self):
+        """W04节选只有定性结果时，不把年份或页码当成实验指标数值。"""
+        self.documents[1].page_content = "DETR method. COCO dataset. Comparable to Faster R-CNN in 2020."
+        result, _, _ = self.compare()
+        self.assertIn("论文B：实验结果数值", result["missing_dimensions"])
+        self.assertIn("未提供可核验的实验指标数值", result["answer"])
+        self.assertEqual(result["status"], "insufficient_evidence")
+
+    def test_truncated_result_does_not_display_isolated_model_scores(self):
+        """上下文截断后不能只列半行数值，丢失模型、数据集和对应列。"""
+        self.config["generation"]["max_context_chars"] = 500
+        self.documents[0].page_content = "99.45 99.68 ImageNet accuracy " * 100
+        result, _, _ = self.compare()
+        row = next(row for row in result["comparison"] if row["dimension"] == "实验结果")
+        self.assertTrue(row["a"]["truncated"])
+        result_line = next(line for line in result["answer"].splitlines() if line.startswith("| 实验结果 |"))
+        self.assertNotIn("99.45", result_line)
+        self.assertIn("不能完整列出数值", result_line)
+
+    def test_method_evidence_keeps_adjacent_actual_architecture_text(self):
+        """孤立背景块补入同原文相邻块，避免本篇方法只剩背景概述。"""
+        from langchain_core.documents import Document
+        current = self.documents[0]
+        current.page_content = "Abstract: Transformers were mostly used in NLP. "
+        current.metadata.update(start_index=0, end_index=len(current.page_content))
+        following_text = "Method: Split images into patches and use a Transformer encoder. BLEU 28.4."
+        following = Document(page_content=following_text,
+            metadata={**current.metadata, "chunk_id": "next-method", "start_index": len(current.page_content),
+                      "end_index": len(current.page_content) + len(following_text)})
+        with patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
+                patch("src.generation.rag_pipeline.urlopen", side_effect=self.comparison_packet):
+            retriever.return_value.search.side_effect = lambda query, **kw: [(self.documents[self.ids.index(kw['doc_id'])], .9)]
+            retriever.return_value.vector_store.list_chunks.side_effect = [[current, following], [self.documents[1]]]
+            result = paper_compare.invoke(dict(zip(("paper_a_id", "paper_b_id"), self.ids)))
+        row = next(row for row in result["comparison"] if row["dimension"] == "方法")
+        self.assertIn("Split images into patches", row["a"]["text"])
+
     def test_comparison_low_relevance_cannot_generate_or_auto_confirm(self):
         result, _, http = self.compare((0.9, 0.01))
         self.assertEqual(result["status"], "needs_confirmation")

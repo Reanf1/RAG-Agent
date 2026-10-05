@@ -1,0 +1,42 @@
+test_qualitative_excerpt_explicitly_reports_missing_experiment_numbers (__main__.TestComparisonAndKeywords)
+W04节选只有定性结果时，不把年份或页码当成实验指标数值。 ... <frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+FAIL
+test_truncated_result_does_not_display_isolated_model_scores (__main__.TestComparisonAndKeywords)
+上下文截断后不能只列半行数值，丢失模型、数据集和对应列。 ... FAIL
+test_method_evidence_keeps_adjacent_actual_architecture_text (__main__.TestComparisonAndKeywords)
+孤立背景块补入同原文相邻块，避免本篇方法只剩背景概述。 ... FAIL
+
+======================================================================
+FAIL: test_qualitative_excerpt_explicitly_reports_missing_experiment_numbers (__main__.TestComparisonAndKeywords)
+W04节选只有定性结果时，不把年份或页码当成实验指标数值。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_2 工具集开发/test_comparison_keywords.py", line 114, in test_qualitative_excerpt_explicitly_reports_missing_experiment_numbers
+    self.assertIn("论文B：实验结果数值", result["missing_dimensions"])
+AssertionError: '论文B：实验结果数值' not found in []
+
+======================================================================
+FAIL: test_truncated_result_does_not_display_isolated_model_scores (__main__.TestComparisonAndKeywords)
+上下文截断后不能只列半行数值，丢失模型、数据集和对应列。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_2 工具集开发/test_comparison_keywords.py", line 126, in test_truncated_result_does_not_display_isolated_model_scores
+    self.assertNotIn("99.45", result_line)
+AssertionError: '99.45' unexpectedly found in '| 实验结果 | 原文摘录：99.45 99.68 ImageNet accuracy 99.45 99.68 ImageNet accuracy 99.45 99.68 ImageNet accuracy 99.45 99.68 ImageNet accuracy 99.45 9 [参考文档1：同名.md；行1–3] | 原文摘录：ViT method Dataset ImageNet Accuracy 88.55% [参考文档2：同名.md；行1–3] |'
+
+======================================================================
+FAIL: test_method_evidence_keeps_adjacent_actual_architecture_text (__main__.TestComparisonAndKeywords)
+孤立背景块补入同原文相邻块，避免本篇方法只剩背景概述。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_2 工具集开发/test_comparison_keywords.py", line 144, in test_method_evidence_keeps_adjacent_actual_architecture_text
+    self.assertIn("Split images into patches", row["a"]["text"])
+AssertionError: 'Split images into patches' not found in 'Abstract: Transformers were mostly used in NLP. '
+
+----------------------------------------------------------------------
+Ran 3 tests in 3.768s
+
+FAILED (failures=3)
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

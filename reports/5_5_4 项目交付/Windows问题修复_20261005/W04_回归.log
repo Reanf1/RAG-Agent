@@ -1,0 +1,108 @@
+test_agent_action_really_executes_both_registered_utility_tools (test_calculator_paper_list.TestCalculatorAndPaperList) ... <frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+ok
+test_calculator_decimal_accuracy_and_precedence (test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_calculator_empty_syntax_length_and_depth_limits (test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_calculator_negative_unary_chinese_and_symbols (test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_calculator_rejects_non_arithmetic_and_unsupported_operators (test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_calculator_zero_division_is_real_input_error (test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_duplicate_content_with_alias_names_is_one_canonical_paper (test_calculator_paper_list.TestCalculatorAndPaperList) ... /Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_empty_library_does_not_create_raw_directory_or_chroma (test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_index_deletion_updates_list_and_preserves_uploaded_source (test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_index_read_error_propagates_instead_of_reporting_empty_library (test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_missing_original_keeps_index_record_with_explicit_status (test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_partial_index_means_has_chunks_not_complete_import (test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_real_index_counts_chunks_without_loading_embedding_or_querying (test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_real_tools_route_correctly_and_paper_fact_queries_still_use_rag (test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_registry_has_eight_unique_local_tools_with_real_schemas (test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_same_name_different_content_keeps_distinct_paper_ids (test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_source_corruption_and_symlink_escape_are_not_fake_empty_lists (test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_unrelated_raw_files_are_not_uploaded_papers (test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_uploaded_not_indexed_paper_has_usable_id_and_name (test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_utility_tools_validate_arguments_without_model_or_network (test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_comparison_balances_budget_and_reports_truncated_evidence (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_comparison_deduplicates_chunks_without_mutating_source (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_comparison_dimension_low_score_is_reported_with_paper_level_threshold (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_comparison_filters_each_paper_and_covers_three_dimensions (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_comparison_low_relevance_cannot_generate_or_auto_confirm (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_comparison_missing_one_paper_citation_is_warned (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_comparison_missing_paper_takes_priority_over_other_paper_low_score (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_comparison_network_failure_is_a_real_error_without_retry (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_comparison_reads_and_scores_opening_chunks_with_real_reranker_contract (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_comparison_rejects_wrong_paper_ids_missing_fields_and_partial_model_choice (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_comparison_same_missing_or_invalid_id_fails_before_retrieval (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_comparison_unindexed_paper_has_no_model_fallback (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_insufficient_comparison_cannot_be_marked_complete (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_keyword_cross_line_phrase_has_real_line_evidence (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_keyword_deduplication_empty_result_and_unknown_usage (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_keyword_document_uses_uploaded_original_and_locations (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_keyword_invalid_expanded_or_embedded_terms_are_rejected (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_keyword_question_preserves_bilingual_terms_and_evidence (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_keyword_rejects_ambiguous_empty_and_invalid_input_before_model (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_keyword_truncation_does_not_accept_terms_outside_input (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_keyword_unfinished_malformed_and_network_response_fails (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_method_evidence_keeps_adjacent_actual_architecture_text (test_comparison_keywords.TestComparisonAndKeywords)
+孤立背景块补入同原文相邻块，避免本篇方法只剩背景概述。 ... ok
+test_new_tools_have_real_registered_parameter_schemas (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_observation_schema_prevents_empty_finish_seen_in_real_keyword_call (test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_qualitative_excerpt_explicitly_reports_missing_experiment_numbers (test_comparison_keywords.TestComparisonAndKeywords)
+W04节选只有定性结果时，不把年份或页码当成实验指标数值。 ... ok
+test_truncated_result_does_not_display_isolated_model_scores (test_comparison_keywords.TestComparisonAndKeywords)
+上下文截断后不能只列半行数值，丢失模型、数据集和对应列。 ... ok
+test_default_agent_can_execute_registered_rag_and_preserve_citations (test_research_tools.TestResearchTools) ... ok
+test_generation_failure_is_real_tool_error_without_retry (test_research_tools.TestResearchTools) ... ok
+test_metadata_abstract_word_inside_sentence_is_not_a_heading (test_research_tools.TestResearchTools) ... ok
+test_metadata_character_budget_preserves_contiguous_prefix (test_research_tools.TestResearchTools) ... ok
+test_metadata_hallucinated_author_year_or_doi_is_rejected (test_research_tools.TestResearchTools) ... ok
+test_metadata_inline_abstract_punctuation_keeps_original_body (test_research_tools.TestResearchTools) ... ok
+test_metadata_missing_fields_are_null_not_guessed_from_filename (test_research_tools.TestResearchTools) ... ok
+test_metadata_rejects_invalid_types_ranges_and_extra_fields (test_research_tools.TestResearchTools) ... ok
+test_metadata_returns_original_fields_and_real_evidence (test_research_tools.TestResearchTools) ... ok
+test_metadata_reuses_pdf_and_word_loaders_with_real_locations (test_research_tools.TestResearchTools) ... ok
+test_metadata_unfinished_or_malformed_model_results_do_not_return_partial_fields (test_research_tools.TestResearchTools) ... ok
+test_metadata_unknown_usage_stays_unknown_and_cloud_is_rejected (test_research_tools.TestResearchTools) ... ok
+test_rag_empty_library_preserves_explicit_fallback_notice (test_research_tools.TestResearchTools) ... ok
+test_rag_filters_by_existing_uploaded_fingerprint (test_research_tools.TestResearchTools) ... ok
+test_rag_logging_failure_warns_without_discarding_actual_answer (test_research_tools.TestResearchTools) ... ok
+test_rag_low_relevance_returns_candidates_without_generation (test_research_tools.TestResearchTools) ... ok
+test_rag_tool_keeps_sources_without_repeating_large_pdf_layout (test_research_tools.TestResearchTools) ... ok
+test_rag_tool_logs_success_confirmation_and_model_error_with_real_usage (test_research_tools.TestResearchTools) ... ok
+test_rag_uses_hybrid_rerank_and_real_module_two_citations (test_research_tools.TestResearchTools) ... ok
+test_rag_validates_question_and_uploaded_document_before_retrieval (test_research_tools.TestResearchTools) ... ok
+test_registry_contains_real_tools_with_schemas (test_research_tools.TestResearchTools) ... ok
+test_unconfirmed_rag_candidates_cannot_be_marked_complete (test_research_tools.TestResearchTools) ... ok
+test_unknown_fingerprint_stale_file_and_outside_symlink_never_call_model (test_research_tools.TestResearchTools) ... ok
+test_current_time_is_real_timezone_aware_and_uses_no_model (test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_current_time_uses_system_timezone_without_hardcoding (test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_default_agent_registers_enabled_search_and_explicit_empty_stays_empty (test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_disabled_search_is_not_registered_and_cannot_call_http (test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_missing_section_is_explicit_and_cannot_complete_task (test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_search_challenge_or_unrecognized_page_is_error (test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_search_distinguishes_legitimate_empty_results (test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_search_empty_query_rejected_before_network (test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_search_http_error_is_not_empty_result (test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_search_parses_top_five_titles_snippets_and_unwraps_redirects (test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_search_registration_reads_current_boolean_switch (test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_search_skips_invalid_links_and_allows_missing_snippet (test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_search_timeout_is_execution_error_without_retry (test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_summary_api_failure_is_tool_error_without_retry (test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_summary_generates_four_sections_with_true_sources_and_usage (test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_summary_omits_author_only_chunks_before_abstract (test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_summary_preserves_pdf_physical_page_and_word_paragraph (test_summary_time_search.TestSummaryTimeSearch) ... Consider using the pymupdf_layout package for a greatly improved page layout analysis.
+warning: The `fitz` API is deprecated and will be removed in future. Use `import pymupdf` instead.
+ok
+test_summary_prioritizes_conclusion_and_reports_truncation (test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_summary_rejects_empty_loaded_content_before_model (test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_summary_rejects_incomplete_or_invalid_model_packets (test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_summary_rejects_malformed_sections_and_fabricated_references (test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_summary_rejects_unknown_or_changed_uploaded_ids_before_model (test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_summary_unknown_tokens_are_not_zero (test_summary_time_search.TestSummaryTimeSearch) ... ok
+
+----------------------------------------------------------------------
+Ran 92 tests in 5.191s
+
+OK
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
