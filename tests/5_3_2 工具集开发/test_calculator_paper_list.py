@@ -235,14 +235,16 @@ class TestCalculatorAndPaperList(unittest.TestCase):
                       "tool_calls": [{"function": {"name": name, "arguments": arguments}}]}}
             observation = {**action, "message": {"content": json.dumps({"observation": "实际工具已返回结果。",
                           "decision": "finish", "task_complete": True, "answer": answer})}}
+            # W01修复后，无参数列表不请求模型生成Action；只模拟实际发生的Observation。
+            packets = [action, observation] if name == "calculator" else [observation]
             with self.subTest(name=name), patch("src.agent.react_loop.urlopen", side_effect=[
-                    BytesIO(json.dumps(action).encode()), BytesIO(json.dumps(observation).encode())]) as http:
+                    BytesIO(json.dumps(packet).encode()) for packet in packets]) as http:
                 events = list(run_react(question))
             result = next(event for event in events if event["type"] == "tool_result")
             self.assertEqual(result["status"], "success")
             self.assertEqual(events[0]["route"], "rule")
             self.assertTrue(events[-1]["task_complete"])
-            self.assertEqual(http.call_count, 2)
+            self.assertEqual(http.call_count, len(packets))
             if name == "calculator":
                 self.assertEqual(result["result"]["result"], answer)
             else:
