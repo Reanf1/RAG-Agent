@@ -63,7 +63,7 @@ def main():
     assert review['expected']==180 and review['reviewed']==0
     assert all(p[k] is None for p in review['summaries'].values() for k in ('correctness_mean','completeness_mean','citation_accuracy_mean'))
     links=[]
-    checkpaths=[ROOT/'README.md',ROOT/'reports/README.md',ROOT/'tests/README.md',ROOT/'docs/课程报告.md',ROOT/'docs/技术设计文档.md',ROOT/'docs/用户使用手册.md',ROOT/'docs/QA/项目交付补齐.md',evidence/'README.md']
+    checkpaths=[ROOT/'README.md',ROOT/'reports/README.md',ROOT/'tests/README.md',ROOT/'docs/课程报告.md',ROOT/'docs/技术设计文档.md',ROOT/'docs/用户使用手册.md',ROOT/'docs/QA/5.5.4 项目交付.md',evidence/'README.md']
     for path in checkpaths:
         for target in re.findall(r'\[[^\]\n]*\]\(([^)\n]+)\)',path.read_text()):
             url=urlparse(target.strip('<>'))

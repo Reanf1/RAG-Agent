@@ -6,12 +6,9 @@ Thought、Action、Observation、有界ReAct及System Prompt验证。
 
 [返回总索引](../README.md) · [技术设计与验收](../../docs/技术设计文档.md)
 
-## 对应说明
+## 实现说明
 
-- [5.3.1 Action工具选择与执行](../../docs/QA/5.3.1%20Action工具选择与执行.md)
-- [5.3.1 Agent的System Prompt结构](../../docs/QA/5.3.1%20Agent的System%20Prompt结构.md)
-- [5.3.1 Observation与循环终止](../../docs/QA/5.3.1%20Observation与循环终止.md)
-- [5.3.1 Thought单轮规划](../../docs/QA/5.3.1%20Thought单轮规划.md)
+[合并QA](../../docs/QA/5.3.1%20Agent核心循环.md)
 
 ## 运行脚本
 
