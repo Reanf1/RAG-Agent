@@ -599,6 +599,13 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
         if decision["decision"] == "finish":
             for item in latest:
                 evidence = item.get("result")
+                if (item.get("name") == "paper_metadata" and item.get("status") == "success"
+                        and isinstance(evidence, dict) and "doi" in evidence.get("missing_fields", [])
+                        and re.search(r"DOI|元信息|元数据|\bmetadata\b", question, re.I)):
+                    # 元信息工具已核验原文缺项；用户请求的DOI不能在最终说明中被省略。
+                    notice = "DOI：原文未提供。"
+                    if notice not in decision["answer"]:
+                        decision["answer"] += "\n\n" + notice
                 if (item.get("name") == "knowledge_base_search" and item.get("status") == "success"
                         and isinstance(evidence, dict) and evidence.get("generation_mode") == "empty"):
                     # 空库是实际检索状态；模型改写答案不能删除无文献依据的说明。

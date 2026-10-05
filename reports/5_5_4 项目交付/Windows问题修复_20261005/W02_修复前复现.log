@@ -1,0 +1,16 @@
+test_requested_missing_doi_is_explicit_in_final_metadata_answer (__main__.TestObservationAndLoop)
+复现W02：工具已返回DOI缺失，最终回答不得省略用户请求的字段。 ... FAIL
+
+======================================================================
+FAIL: test_requested_missing_doi_is_explicit_in_final_metadata_answer (__main__.TestObservationAndLoop)
+复现W02：工具已返回DOI缺失，最终回答不得省略用户请求的字段。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_1 Agent核心循环/test_observation.py", line 186, in test_requested_missing_doi_is_explicit_in_final_metadata_answer
+    self.assertIn("DOI：原文未提供", result["answer"])
+AssertionError: 'DOI：原文未提供' not found in '结果为17。'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.014s
+
+FAILED (failures=1)

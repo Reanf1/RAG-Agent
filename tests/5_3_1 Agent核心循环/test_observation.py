@@ -177,6 +177,14 @@ class TestObservationAndLoop(unittest.TestCase):
         self.assertTrue(result["task_complete"])
         http.assert_not_called()
 
+    def test_requested_missing_doi_is_explicit_in_final_metadata_answer(self):
+        """复现W02：工具已返回DOI缺失，最终回答不得省略用户请求的字段。"""
+        context = {"observations": [{"name": "paper_metadata", "status": "success",
+            "result": {"title": "DETR", "doi": None, "missing_fields": ["doi"]}}]}
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(self.finished)).encode())):
+            result = observe("提取标题、作者、年份、摘要、DOI", [], context)
+        self.assertIn("DOI：原文未提供", result["answer"])
+
     def test_tool_failure_is_observed_and_stops_honestly(self):
         failed = {"observation": "除数为零，工具失败。", "decision": "finish",
                   "task_complete": False, "answer": "除零无法计算，请修改除数。"}
