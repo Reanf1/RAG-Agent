@@ -117,6 +117,19 @@ class TestHybridRetriever(unittest.TestCase):
         self.assertEqual(self.embeddings.query_calls, ["BatchNormalization"])
         self.assertEqual(self.embeddings.document_calls, [[doc.page_content for doc in self.chunks]])
 
+    def test_image_markers_do_not_compete_with_actual_paper_evidence(self):
+        """复现W08：图片区的占位描述曾被模型排在1D位置编码原文之前。"""
+        image = Document(page_content="[图像区域 213：原文第 21 页]\n121\n122", metadata={"chunk_id": "image"})
+        text = Document(page_content="We use standard learnable 1D position embeddings.", metadata={"chunk_id": "text"})
+        with patch.object(self.store, "search", return_value=[(image, 0.9), (text, 0.8)]), \
+                patch.object(BM25Retriever, "search", return_value=[(image, 1.0)]), \
+                patch("src.retrieval.reranker.get_reranker") as model:
+            model.return_value.predict.side_effect = lambda pairs, **kw: [0.5] * len(pairs)
+            found = self.retriever.search("1D还是2D？", k=1, rerank=True)
+        self.assertEqual(found[0][0], text)
+        pairs = model.return_value.predict.call_args.args[0]
+        self.assertEqual([pair[1] for pair in pairs], [text.page_content])
+
     def test_document_filter_and_empty_bm25_route(self):
         """两路共同过滤文档，BM25 无匹配时保留向量路的排名贡献。"""
         found = self.retriever.search("BatchNormalization", doc_id="3")

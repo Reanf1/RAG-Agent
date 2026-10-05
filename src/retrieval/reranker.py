@@ -2,12 +2,22 @@
 
 import math
 import os
+import re
 from functools import lru_cache
 from pathlib import Path
 
 from langchain_core.documents import Document
 
 from src.utils.config import load_config
+
+
+def is_image_placeholder(text: str) -> bool:
+    """只有图像占位描述与序号的块不能成为正文证据；混有正文/公式的块仍保留。"""
+    if "[图像区域" not in text:
+        return False
+    body = re.sub(r"\[图像区域[^\]\n]*\]", "", text)
+    # 只剔除剩余内容全是序号、空白的占位块，不误删公式符号和纯数字表格。
+    return not body.strip() or bool(re.fullmatch(r"[\s\d]+", body))
 
 
 @lru_cache(maxsize=1)

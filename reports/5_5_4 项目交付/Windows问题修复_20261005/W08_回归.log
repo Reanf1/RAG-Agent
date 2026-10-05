@@ -1,0 +1,190 @@
+test_chinese_and_source_preservation (test_bm25.TestBM25Retriever)
+中文单字组合可检索，对应原文、位置和稳定 ID 全部保留。 ... /Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_default_k_override_and_document_filter (test_bm25.TestBM25Retriever)
+继承存储配置 K；文档过滤先于截断，分数仍基于完整语料。 ... ok
+test_empty_and_punctuation_only_corpus (test_bm25.TestBM25Retriever)
+空库和全无词语料不构造 BM25，混入标点块不影响有效块查询。 ... ok
+test_empty_and_unknown_queries_do_not_return_unrelated_documents (test_bm25.TestBM25Retriever)
+无匹配时返回空列表，英文术语按词匹配而非子串匹配。 ... ok
+test_fullwidth_pdf_terms_match_without_changing_original_text (test_bm25.TestBM25Retriever)
+全角英文/数字常见于论文 PDF，词项归一化后可查且原文不变。 ... ok
+test_invalid_k_and_database_errors_are_not_hidden (test_bm25.TestBM25Retriever)
+参数错误与正文读取失败直接上报，不静默回退向量查询。 ... ok
+test_rebuild_after_add_delete_and_reopen (test_bm25.TestBM25Retriever)
+新增/删除后从当前正文重建，重开自动恢复，不重新编码文档。 ... ok
+test_same_content_keeps_separate_document_sources (test_bm25.TestBM25Retriever)
+不同来源的相同正文保留各自 ID，供后续按块融合使用。 ... ok
+test_scores_follow_term_frequency_and_length_normalization (test_bm25.TestBM25Retriever)
+用已知词频、文档频次和长度独立计算 BM25 分数，核验排序。 ... ok
+test_tokenize_chinese_english_and_numbers (test_bm25.TestBM25Retriever)
+沿用上游分词，保留完整英文术语，忽略标点，文档/问题统一小写。 ... ok
+test_zero_and_negative_scores_still_keep_keyword_matches (test_bm25.TestBM25Retriever)
+复现上游 >0 过滤的漏检：单文档负分、两文档零分均应命中。 ... ok
+test_blank_query_and_empty_store_do_not_load_model (test_hybrid_retriever.TestHybridRetriever)
+空问题不调用两路，空库不会初始化 Embedding。 ... ok
+test_both_routes_take_candidates_before_final_top_k (test_hybrid_retriever.TestHybridRetriever)
+最终只取 1 个也先各召回 20 个候选，不提前把两路截为 Top-1。 ... ok
+test_default_k_large_k_and_yaml_smoothing (test_hybrid_retriever.TestHybridRetriever)
+默认 K 与存储一致；更大的 K 扩大召回，平滑常数从 YAML 读取。 ... ok
+test_document_filter_and_empty_bm25_route (test_hybrid_retriever.TestHybridRetriever)
+两路共同过滤文档，BM25 无匹配时保留向量路的排名贡献。 ... ok
+test_image_markers_do_not_compete_with_actual_paper_evidence (test_hybrid_retriever.TestHybridRetriever)
+复现W08：图片区的占位描述曾被模型排在1D位置编码原文之前。 ... ok
+test_invalid_parameters_and_route_errors_do_not_silently_degrade (test_hybrid_retriever.TestHybridRetriever)
+参数错误直接拒绝，两路异常明确上报，不能以半成品冒充混合检索。 ... ok
+test_model_reranking_respects_filter_and_empty_results (test_hybrid_retriever.TestHybridRetriever)
+过滤先应用于两路，单条候选也精排；空结果和空问题不加载模型。 ... ok
+test_model_reranks_fused_candidates_before_final_top_k (test_hybrid_retriever.TestHybridRetriever)
+模型先看到融合 Top-20；候选末项也能经模型升到最终 Top-1。 ... ok
+test_plain_rrf_does_not_load_model_and_model_failure_is_reported (test_hybrid_retriever.TestHybridRetriever)
+不启用精排时不依赖重排权重；启用后失败不得返回未经重排的候选。 ... ok
+test_reused_retriever_reads_current_corpus_after_add_and_delete (test_hybrid_retriever.TestHybridRetriever)
+同一个混合检索实例也读取最新正文，新增和删除后无陈旧 BM25 块。 ... ok
+test_duplicate_within_one_route_counts_only_once (test_hybrid_retriever.TestRRFFusion)
+单路重复不多次加分，保留首次出现的位置，两路贡献仍可叠加。 ... ok
+test_empty_routes_and_zero_smoothing (test_hybrid_retriever.TestRRFFusion)
+单路为空时只使用另一支，双空返回空；k=0 时分母从 1 开始。 ... ok
+test_equal_scores_have_stable_chunk_id_order (test_hybrid_retriever.TestRRFFusion)
+两路交换同分候选的输入顺序，仍按稳定块 ID 打破平分。 ... ok
+test_missing_ids_and_invalid_smoothing_are_rejected (test_hybrid_retriever.TestRRFFusion)
+身份缺失不能退回按正文合并；平滑常数的错误输入明确报错。 ... ok
+test_one_based_rank_formula_and_shared_chunk_bonus (test_hybrid_retriever.TestRRFFusion)
+两路共同命中的块分数累加，第一名贡献为 1/61。 ... ok
+test_raw_score_scale_does_not_affect_fusion (test_hybrid_retriever.TestRRFFusion)
+负分、零分与大数的原始值都不参与 RRF，排名相同则结果相同。 ... ok
+test_same_content_in_different_sources_is_not_merged (test_hybrid_retriever.TestRRFFusion)
+合并键是 chunk_id，正文相同也保留不同文件与页码。 ... ok
+test_failed_loading_is_not_cached_and_can_retry (test_reranker.TestLocalReranker)
+损坏权重错误保留，修复后下次调用重新加载而不是缓存失败。 ... ok
+test_local_loading_and_reuse (test_reranker.TestLocalReranker)
+配置/模型/Tokenizer 均只读本地文件，不执行远程代码，重复调用只加载一次。 ... ok
+test_missing_model_does_not_initialize_remote_client (test_reranker.TestLocalReranker) ... ok
+test_empty_query_or_candidates_do_not_load_model (test_reranker.TestReranker) ... ok
+test_inference_error_is_not_silently_replaced_by_rrf (test_reranker.TestReranker) ... ok
+test_invalid_batch_and_token_length_are_rejected (test_reranker.TestReranker) ... ok
+test_invalid_k_is_rejected_before_loading_model (test_reranker.TestReranker) ... ok
+test_pairs_model_scores_order_and_sources (test_reranker.TestReranker)
+只用模型分数精排，同分保持原候选顺序，正文和来源不修改。 ... ok
+test_score_count_and_nonfinite_values_are_rejected (test_reranker.TestReranker) ... ok
+test_single_candidate_zero_score_and_large_k (test_reranker.TestReranker)
+单候选结果仍为列表，零分保留，K 超出候选数不补齐或重复。 ... ok
+test_empty_annotations_and_duplicate_results_are_errors (test_retrieval_evaluation.TestRetrievalEvaluation) ... ok
+test_multiple_relevant_short_and_empty_results (test_retrieval_evaluation.TestRetrievalEvaluation) ... ok
+test_rank_five_counts_and_rank_six_does_not (test_retrieval_evaluation.TestRetrievalEvaluation) ... ok
+test_sample_ids_and_annotation_membership_are_validated (test_retrieval_evaluation.TestRetrievalEvaluation) ... ok
+test_unequal_groups_and_repeated_timing_are_not_duplicate_queries (test_retrieval_evaluation.TestRetrievalEvaluation) ... ok
+
+----------------------------------------------------------------------
+Ran 43 tests in 3.272s
+
+OK
+test_blank_answer_is_rejected (test_citations.TestCitations) ... ok
+test_code_examples_and_escaped_markers_are_not_evidence (test_citations.TestCitations) ... ok
+test_context_is_not_modified_by_resolution_or_returned_evidence (test_citations.TestCitations) ... ok
+test_context_references_follow_sorting_and_budget (test_citations.TestCitations) ... ok
+test_cross_page_table_location_is_kept (test_citations.TestCitations) ... ok
+test_empty_context_cannot_resolve_a_document (test_citations.TestCitations) ... ok
+test_inline_pdf_location_and_authoritative_footer (test_citations.TestCitations) ... ok
+test_markdown_characters_in_filename_are_escaped (test_citations.TestCitations) ... ok
+test_missing_source_information_is_flagged (test_citations.TestCitations) ... ok
+test_model_supplied_link_is_not_a_source_link (test_citations.TestCitations) ... ok
+test_real_multi_format_loaders_and_chunks_keep_traceable_positions (test_citations.TestCitations) ... <frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+ok
+test_reference_metadata_is_an_independent_snapshot (test_citations.TestCitations) ... ok
+test_truncated_evidence_does_not_include_unseen_tail (test_citations.TestCitations) ... ok
+test_uncited_answer_does_not_add_retrieved_sources (test_citations.TestCitations) ... ok
+test_unknown_ids_are_marked_and_never_assigned_sources (test_citations.TestCitations) ... ok
+test_used_order_repeated_citations_and_unused_blocks (test_citations.TestCitations) ... ok
+test_word_and_text_do_not_get_invented_pdf_pages (test_citations.TestCitations) ... ok
+test_config_and_question_validation (test_context.TestContextBuilding) ... ok
+test_empty_and_whitespace_results_use_existing_empty_prompt (test_context.TestContextBuilding) ... ok
+test_exact_limit_keeps_full_block_and_drops_lower_rank (test_context.TestContextBuilding) ... ok
+test_full_text_and_sources_are_preserved (test_context.TestContextBuilding) ... ok
+test_image_only_placeholder_cannot_become_citation_evidence (test_context.TestContextBuilding)
+旧索引、直接候选入口也过滤图片占位；带正文、公式和表格的块保留。 ... ok
+test_inputs_remain_unchanged_after_sorting_and_truncation (test_context.TestContextBuilding) ... ok
+test_missing_metadata_does_not_invent_source_or_page (test_context.TestContextBuilding) ... ok
+test_nonfinite_scores_are_rejected (test_context.TestContextBuilding) ... ok
+test_oversized_header_is_skipped_without_broken_reference_number (test_context.TestContextBuilding) ... ok
+test_question_length_reduces_available_context (test_context.TestContextBuilding) ... ok
+test_real_location_fields_for_each_format (test_context.TestContextBuilding) ... ok
+test_score_order_ties_and_negative_scores (test_context.TestContextBuilding) ... ok
+test_separator_and_all_headers_count_toward_limit (test_context.TestContextBuilding) ... ok
+test_system_prompt_changes_are_included_in_budget (test_context.TestContextBuilding) ... ok
+test_too_small_budget_does_not_report_false_empty_knowledge_base (test_context.TestContextBuilding) ... ok
+test_truncation_prefers_late_sentence_or_paragraph_boundary (test_context.TestContextBuilding) ... ok
+test_unbroken_unicode_text_is_cut_with_visible_marker (test_context.TestContextBuilding) ... ok
+test_complete_answer_passes_and_footer_does_not_fill_facts (test_generation.TestGenerationEvaluation) ... ok
+test_english_source_footer_is_not_a_body_citation (test_generation.TestGenerationEvaluation) ... ok
+test_equal_weight_summary_with_two_seeds (test_generation.TestGenerationEvaluation) ... ok
+test_incomplete_output_is_not_a_pass (test_generation.TestGenerationEvaluation) ... ok
+test_missing_expected_and_invalid_citations_fail (test_generation.TestGenerationEvaluation) ... ok
+test_template_no_document_notice_counts_as_refusal (test_generation.TestGenerationEvaluation) ... ok
+test_blank_or_unfinished_response_is_rejected (test_generation.TestLocalGeneration) ... ok
+test_cloud_and_non_http_configuration_is_rejected (test_generation.TestLocalGeneration) ... ok
+test_config_reaches_native_ollama_and_citations (test_generation.TestLocalGeneration) ... ok
+test_empty_fallback_is_explicit_even_when_model_omits_notice (test_generation.TestLocalGeneration) ... ok
+test_empty_question_does_not_call_network (test_generation.TestLocalGeneration) ... ok
+test_experiment_options_do_not_mutate_config (test_generation.TestLocalGeneration) ... ok
+test_http_failure_has_specific_advice_and_original_cause (test_generation.TestLocalGeneration) ... ok
+test_invalid_sampling_is_rejected_before_network (test_generation.TestLocalGeneration) ... ok
+test_length_stop_is_preserved_for_evaluation (test_generation.TestLocalGeneration) ... ok
+test_network_failure_is_explicit_without_fallback (test_generation.TestLocalGeneration) ... ok
+test_blank_question_is_rejected (test_prompt.TestRAGPrompt) ... ok
+test_braces_formula_and_markdown_are_not_reformatted (test_prompt.TestRAGPrompt) ... ok
+test_calls_do_not_share_context_or_mutate_previous_messages (test_prompt.TestRAGPrompt) ... ok
+test_dynamic_text_cannot_create_system_messages (test_prompt.TestRAGPrompt) ... ok
+test_empty_context_has_explicit_notice (test_prompt.TestRAGPrompt) ... ok
+test_four_parts_and_message_roles (test_prompt.TestRAGPrompt) ... ok
+test_long_context_and_whitespace_are_preserved (test_prompt.TestRAGPrompt) ... ok
+test_template_variables_match_retrieval_context_contract (test_prompt.TestRAGPrompt) ... ok
+
+----------------------------------------------------------------------
+Ran 58 tests in 0.138s
+
+OK
+Consider using the pymupdf_layout package for a greatly improved page layout analysis.
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+test_cache_and_confirmation_reuse_are_not_new_retrieval_samples (__main__.TestConversationStatistics) ... ok
+test_shared_action_does_not_assign_tokens_twice_and_pending_is_visible (__main__.TestConversationStatistics) ... ok
+test_skipped_action_precedes_observation (__main__.TestConversationStatistics) ... ok
+test_totals_rates_and_unknown_legacy_samples (__main__.TestConversationStatistics) ... ok
+test_agent_history_renders_separate_source_buttons_for_parallel_calls (__main__.TestStreamingFrontend) ... 2026-10-05 19:11:38.955 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+2026-10-05 19:11:39.606 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_low_candidate_confirm_and_cancel_do_not_rely_on_model_permission (__main__.TestStreamingFrontend) ... 2026-10-05 19:11:39.671 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-05 19:11:39.852 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-05 19:11:39.853 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-05 19:11:39.980 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-05 19:11:39.980 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_rag_cache_is_bound_to_current_session_and_passed_to_agent (__main__.TestStreamingFrontend) ... 2026-10-05 19:11:40.544 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_same_document_page_has_one_source_button_per_answer (__main__.TestStreamingFrontend)
+W08同页多块引用只展示一个原文按钮，不合并不同内容ID的同名文档。 ... 2026-10-05 19:11:40.888 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-05 19:11:41.065 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_session_switch_invalidates_pending_candidates (__main__.TestStreamingFrontend) ... 2026-10-05 19:11:41.128 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-05 19:11:41.330 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-05 19:11:41.330 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_stream_exception_preserves_partial_answer_and_failed_round (__main__.TestStreamingFrontend) ... 2026-10-05 19:11:41.460 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_three_tabs_and_inline_chat_input_replace_single_rag (__main__.TestStreamingFrontend) ... 2026-10-05 19:11:41.877 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_two_turns_clear_input_keep_history_and_accumulate_once (__main__.TestStreamingFrontend) ... 2026-10-05 19:11:42.060 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_unknown_usage_stays_unknown_and_new_session_resets_statistics (__main__.TestStreamingFrontend) ... 2026-10-05 19:11:42.487 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 4.156s
+
+OK

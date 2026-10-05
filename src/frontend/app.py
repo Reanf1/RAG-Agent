@@ -51,10 +51,18 @@ def show_original_page(reference):
 
 def show_agent_sources(event):
     """本轮和持久化历史共用引用入口，各工具调用分别标识。"""
+    shown_pages = set()
     for item in event.get("context", {}).get("observations", []):
         result = item.get("result")
         for reference in result.get("citations", []) if isinstance(result, dict) else []:
             if Path(reference["source_file"]).suffix.lower() == ".pdf" and "page_number" in reference["metadata"]:
+                # 不合并引用正文，只将同一内容ID、物理页的原文入口展示一次。
+                metadata = reference["metadata"]
+                identity = metadata.get("doc_id") or (item.get("call_id"), reference["source_file"])
+                page_key = (identity, metadata["page_number"])
+                if page_key in shown_pages:
+                    continue
+                shown_pages.add(page_key)
                 key = f"agent-citation:{event['request_id']}:{item.get('call_id')}:{reference['id']}"
                 if st.button(f"查看{reference['source_file']} · {reference['location']}", key=key):
                     show_original_page(reference)

@@ -10,6 +10,7 @@ from urllib.request import ProxyHandler, Request, build_opener
 from langchain_core.documents import Document
 
 from src.generation.prompt_template import NO_CONTEXT_TEXT, build_rag_messages
+from src.retrieval.reranker import is_image_placeholder
 from src.utils.config import generation_options, load_config, ollama_base_url
 from src.utils.messages import messages_to_ollama
 
@@ -27,8 +28,8 @@ def prepare_rag_context(question: str, results: list[tuple[Document, float]]) ->
     if any(not 0 <= score <= 1 for score in scores):
         raise ValueError("问答降级判断只接受 0~1 的模型重排分数，不能传入 BM25 或 RRF 分数")
     # 字符预算可能排除某些块，判断应依据实际送入模型的原文。
-    top_score = max(reference["score"] for reference in context["references"]) if scores else None
-    mode = "empty" if not scores else "low" if top_score < threshold else "grounded"
+    top_score = max((reference["score"] for reference in context["references"]), default=None)
+    mode = "empty" if top_score is None else "low" if top_score < threshold else "grounded"
     return {**context, "generation_mode": mode, "top_score": top_score, "threshold": threshold,
             "confirmed": False}
 
@@ -168,7 +169,8 @@ def build_context(question: str, results: list[tuple[Document, float]], *, max_c
         budget = min(budget, max_context_chars)
 
     # 空白正文不作为依据；负分仍可排序，不设置未经评测的相关性阈值。
-    candidates = [(document, score) for document, score in results if document.page_content.strip()]
+    candidates = [(document, score) for document, score in results
+                  if document.page_content.strip() and not is_image_placeholder(document.page_content)]
     if not all(math.isfinite(score) for _, score in candidates):
         raise ValueError("检索分数必须为有限数值")
     candidates.sort(key=lambda item: item[1], reverse=True)

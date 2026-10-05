@@ -3,7 +3,7 @@
 from langchain_core.documents import Document
 
 from src.retrieval.bm25_retriever import BM25Retriever
-from src.retrieval.reranker import Reranker
+from src.retrieval.reranker import Reranker, is_image_placeholder
 from src.retrieval.vector_store import VectorStore
 from src.utils.config import load_config
 
@@ -64,6 +64,8 @@ class HybridRetriever:
         # 每次读取当前正文，新增/删除后无需维护第二套语料或缓存失效规则。
         bm25_results = BM25Retriever(self.vector_store).search(query, k=candidate_k, doc_id=doc_id)
         fused = rrf_fusion(vector_results, bm25_results, self.rrf_k)
+        # 加载时保留图片位置供原文查看，检索时不让占位文字挤占Top-20正文候选。
+        fused = [(document, score) for document, score in fused if not is_image_placeholder(document.page_content)]
         if rerank:
             return Reranker().rerank(query, fused[:candidate_k], k=k)
         return fused[:k]

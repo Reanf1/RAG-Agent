@@ -1,0 +1,63 @@
+test_image_markers_do_not_compete_with_actual_paper_evidence (__main__.TestHybridRetriever)
+复现W08：图片区的占位描述曾被模型排在1D位置编码原文之前。 ... /Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/load/serializable.py:194: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  if (k not in self.model_fields or try_neq_default(v, k, self))
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/load/serializable.py:81: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  field = model.model_fields[key]
+FAIL
+
+======================================================================
+FAIL: test_image_markers_do_not_compete_with_actual_paper_evidence (__main__.TestHybridRetriever)
+复现W08：图片区的占位描述曾被模型排在1D位置编码原文之前。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_1_4 混合检索与重排序/test_hybrid_retriever.py", line 129, in test_image_markers_do_not_compete_with_actual_paper_evidence
+    self.assertEqual(found[0][0], text)
+AssertionError: Docum[22 chars]d': 'image'}, page_content='[图像区域 213：原文第 21 页]\n121\n122') != Docum[22 chars]d': 'text'}, page_content='We use standard lea[27 chars]gs.')
+
+----------------------------------------------------------------------
+Ran 1 test in 0.140s
+
+FAILED (failures=1)
+test_image_only_placeholder_cannot_become_citation_evidence (__main__.TestContextBuilding)
+旧索引、直接候选入口也过滤图片占位；带正文、公式和表格的块保留。 ... FAIL
+
+======================================================================
+FAIL: test_image_only_placeholder_cannot_become_citation_evidence (__main__.TestContextBuilding)
+旧索引、直接候选入口也过滤图片占位；带正文、公式和表格的块保留。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_2_1 Prompt工程与生成策略/test_context.py", line 46, in test_image_only_placeholder_cannot_become_citation_evidence
+    self.assertEqual([ref["metadata"]["page_number"] for ref in context["references"]], [2, 3, 4])
+AssertionError: Lists differ: [1, 2, 3, 4] != [2, 3, 4]
+
+First differing element 0:
+1
+2
+
+First list contains 1 additional elements.
+First extra element 3:
+4
+
+- [1, 2, 3, 4]
+?  ---
+
++ [2, 3, 4]
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (failures=1)
+test_same_document_page_has_one_source_button_per_answer (__main__.TestStreamingFrontend)
+W08同页多块引用只展示一个原文按钮，不合并不同内容ID的同名文档。 ... 2026-10-05 19:11:32.392 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+2026-10-05 19:11:33.293 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.289s
+
+OK

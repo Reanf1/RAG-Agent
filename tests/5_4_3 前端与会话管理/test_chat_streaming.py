@@ -127,6 +127,22 @@ class TestStreamingFrontend(unittest.TestCase):
         self.assertEqual(keys, {'agent-citation:saved-request:first:1', 'agent-citation:saved-request:second:1'})
         self.core.assert_not_called()
 
+    def test_same_document_page_has_one_source_button_per_answer(self):
+        """W08同页多块引用只展示一个原文按钮，不合并不同内容ID的同名文档。"""
+        def reference(identifier, number):
+            return {'id': number, 'source_file': 'ViT.pdf', 'location': '第21页',
+                    'metadata': {'doc_id': identifier, 'page_number': 21}}
+        event = {'request_id': 'same-page', 'context': {'observations': [
+            {'call_id': 'first', 'result': {'citations': [reference('a' * 64, 1), reference('a' * 64, 2)]}},
+            {'call_id': 'second', 'result': {'citations': [reference('a' * 64, 1), reference('b' * 64, 2)]}}]}}
+        self.app.session_state['agent_messages'] = [{'question': '位置编码？', 'answer': '已保存答案',
+            'complete': True, 'stop_reason': 'task_complete', 'event': event}]
+        self.app.run()
+        self.assertFalse(self.app.exception)
+        buttons = [b for b in self.app.button if b.label == '查看ViT.pdf · 第21页']
+        self.assertEqual(len(buttons), 2)
+        self.assertEqual({b.key for b in buttons}, {'agent-citation:same-page:first:1', 'agent-citation:same-page:second:2'})
+
     def pending_candidate(self):
         # 明确样例，不作真实模型测试；按钮必须只处理当前会话的候选。
         reference = {"id": 1, "source_file": "review.md", "location": "行1", "text": "需人工核对的候选原文", "score": .01, "metadata": {}}

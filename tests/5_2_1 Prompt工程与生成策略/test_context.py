@@ -36,6 +36,16 @@ class TestContextBuilding(unittest.TestCase):
         self.assertEqual(context["chunk_count"], 4)
         self.assertFalse(context["truncated"])
 
+    def test_image_only_placeholder_cannot_become_citation_evidence(self):
+        """旧索引、直接候选入口也过滤图片占位；带正文、公式和表格的块保留。"""
+        marker = "[图像区域 213：原文第 21 页]\n121\n122"
+        contents = [marker, marker + "\nWe use 1D embeddings.", "x = α + 1", "1 | 2 | 3"]
+        docs = [(Document(page_content=t, metadata={"source_file": "ViT.pdf", "page_number": i + 1}), 1 - i / 10)
+                for i, t in enumerate(contents)]
+        context = build_context("位置编码？", docs)
+        self.assertEqual([ref["metadata"]["page_number"] for ref in context["references"]], [2, 3, 4])
+        self.assertEqual(context["chunk_count"], 3)
+
     def test_full_text_and_sources_are_preserved(self):
         text = "  $x_{i}={a}$\r\n```json\n{\"k\": 5}\n```\n中英 AI 😀\n"
         results = [(Document(page_content=text, metadata={"source_file": "数学.md"}), 0.8),
