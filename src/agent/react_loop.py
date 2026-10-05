@@ -271,6 +271,11 @@ def act(question: str, thought: dict, tools: list[BaseTool], context: dict | Non
             # 参数来自界面已确认的候选，固定本次调用，不能让模型改写已审阅的查询。
             result = {"model": None, "prompt_eval_count": 0, "eval_count": 0,
                       "message": {"tool_calls": [{"function": {"name": names[0], "arguments": deepcopy(context["confirmed_rag_args"])}}]}}
+        elif names == ["paper_list"] and not batch and not selected_tools[0].args:
+            # 文献列表没有参数；由Schema确定空输入，避免模型生成不存在的query字段。
+            # 文件名匹配留给真实列表返回之后，不能给工具偷偷增加查询能力。
+            result = {"model": None, "prompt_eval_count": 0, "eval_count": 0,
+                      "message": {"tool_calls": [{"function": {"name": names[0], "arguments": {}}}]}}
         elif thought.get("route") == "rule" and names == ["knowledge_base_search"] and not batch and not known_ids:
             # 明确单工具意图的唯一必填参数就是原问题，直接传递，避免模型编造可选论文ID。
             # 仍走相同执行器、工具事件与Observation；此Action未调用模型，真实Token为0。

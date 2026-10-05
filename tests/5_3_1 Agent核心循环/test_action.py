@@ -85,6 +85,26 @@ class TestAction(unittest.TestCase):
         http.assert_not_called()
         self.assertEqual(self.invocations, [])
 
+    def test_filename_preflight_uses_declared_empty_paper_list_arguments(self):
+        """复现W01：模型曾把文件名塞入无参数文献列表的query字段。"""
+        @tool
+        def paper_list() -> dict:
+            """列出全部文献，无查询参数。"""
+            self.invocations.append("paper_list")
+            return {"papers": [], "total": 0}
+
+        response = deepcopy(self.response)
+        response["message"]["tool_calls"] = [{"function": {
+            "name": "paper_list", "arguments": {"query": "Windows验收_ViT.pdf"}}}]
+        thought = {**self.thought, "tool_name": "paper_list"}
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(response).encode())) as http:
+            events = list(act("请检索Windows验收_ViT.pdf的位置编码", thought, [paper_list]))
+        self.assertEqual(events[0]["args"], {})
+        self.assertEqual(events[-1]["status"], "success")
+        self.assertEqual(self.invocations, ["paper_list"])
+        http.assert_not_called()
+        self.assertEqual(events[0]["usage"], {"prompt_eval_count": 0, "eval_count": 0})
+
     def knowledge_action(self, args, question="已上传attention.pdf的编码器有多少层？", context=None, route=None):
         """模拟模型返回参数，真实执行小工具核验Action契约，不作为RAG质量证据。"""
         @tool
