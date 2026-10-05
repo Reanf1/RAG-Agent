@@ -10,7 +10,7 @@ from urllib.request import ProxyHandler, Request, build_opener
 from langchain_core.documents import Document
 
 from src.generation.prompt_template import NO_CONTEXT_TEXT, build_rag_messages
-from src.utils.config import load_config, ollama_base_url
+from src.utils.config import generation_options, load_config, ollama_base_url
 from src.utils.messages import messages_to_ollama
 
 # 本机模型直接连接，避免系统 HTTP 代理改变故障类型或转发论文内容。
@@ -82,8 +82,7 @@ def _build_generation_request(question: str, context: dict, options: dict | None
         raise ValueError("检索结果相关性低，请先查看候选原文并确认是否继续")
     config = load_config()["llm"]
     ollama_base_url(config)
-    sampling = {key: config[key] for key in
-                ("temperature", "top_p", "top_k", "num_ctx", "num_predict", "repeat_penalty")}
+    sampling = generation_options(config)
     if options:
         if set(options) - (set(sampling) | {"seed"}):
             raise ValueError("不支持的生成实验参数")
@@ -179,6 +178,9 @@ def build_context(question: str, results: list[tuple[Document, float]], *, max_c
     separator = "\n\n---\n\n"
     truncation_marker = "\n[正文已截断]"
 
+    # 贪心拼接：高相关块优先占预算，预算不足时保留自然句边界内的前缀。
+    # 来源标题与截断提示同样占字符预算，references只收实际进入Prompt的证据；
+    # 因此答案编号不会指向被舍弃的块，字符预算也不会被引用头部额外撑大。
     for document, score in candidates:
         metadata = document.metadata
         filename = metadata.get("source_file") or "来源信息未提供"

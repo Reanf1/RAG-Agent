@@ -24,6 +24,27 @@ def _log_directory() -> Path:
     return directory if directory.is_absolute() else Path(__file__).resolve().parents[2] / directory
 
 
+def _append_record(prefix: str, record: dict) -> None:
+    """RAG与Agent共用按日JSONL写入；一份快照占一行，旧日志只追加。
+
+    先序列化再加锁：非法数据不会创建文件，锁只保护目录和文件操作。
+    若上次进程中断留下半行，先补换行，将损坏记录与新记录隔开；
+    读取器随后可跳过损坏行，同时保留原始内容供排查。
+    """
+    line = json.dumps(record, ensure_ascii=False, allow_nan=False).encode("utf-8") + b"\n"
+    directory = _log_directory()
+    # 仅保护同一Streamlit进程中的线程，不宣称提供跨进程文件锁。
+    with _LOG_LOCK:
+        directory.mkdir(parents=True, exist_ok=True)
+        with (directory / f"{prefix}_{record['timestamp'][:10]}.jsonl").open("ab+") as output:
+            output.seek(0, 2)
+            if output.tell():
+                output.seek(-1, 2)
+                if output.read(1) != b"\n":
+                    output.write(b"\n")
+            output.write(line)
+
+
 def record_rag_request(message: dict, status: str) -> dict:
     """追加完整请求快照；同一编号的开始、检索和结束记录可相互关联。
 
@@ -63,18 +84,7 @@ def record_rag_request(message: dict, status: str) -> dict:
         "error": message.get("error"), "error_detail": message.get("error_detail"),
         "retry_advice": message.get("retry_advice"),
     }
-    line = json.dumps(record, ensure_ascii=False, allow_nan=False).encode("utf-8") + b"\n"
-    directory = _log_directory()
-    with _LOG_LOCK:
-        directory.mkdir(parents=True, exist_ok=True)
-        # 按日追加，不删除旧记录；单个 Streamlit 进程内的会话线程共享此锁。
-        with (directory / f"rag_{timestamp[:10]}.jsonl").open("ab+") as output:
-            output.seek(0, 2)
-            if output.tell():
-                output.seek(-1, 2)
-                if output.read(1) != b"\n":
-                    output.write(b"\n")  # 隔开意外断电留下的半行，保留它供诊断。
-            output.write(line)
+    _append_record("rag", record)
     return record
 
 
@@ -216,17 +226,7 @@ def record_agent_request(question: str, event: dict) -> None:
               "user_id": event["user_id"], "session_id": event["session_id"], "question": question,
               "event": event["type"], "iteration": event.get("iteration"), "metrics": event["metrics"],
               "stop_reason": event.get("stop_reason"), "task_complete": event.get("task_complete")}
-    line = json.dumps(record, ensure_ascii=False, allow_nan=False).encode("utf-8") + b"\n"
-    with _LOG_LOCK:
-        directory = _log_directory()
-        directory.mkdir(parents=True, exist_ok=True)
-        with (directory / f"agent_{timestamp[:10]}.jsonl").open("ab+") as output:
-            output.seek(0, 2)
-            if output.tell():
-                output.seek(-1, 2)
-                if output.read(1) != b"\n":
-                    output.write(b"\n")
-            output.write(line)
+    _append_record("agent", record)
 
 
 def retrieval_score_distribution() -> dict:

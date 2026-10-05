@@ -460,8 +460,8 @@ class TestAgentMetricsEntryAndPage(unittest.TestCase):
         self.assertTrue(any(step.get("args", {}).get("doc_id") == identifier for step in saved["trace"]))
         self.assertEqual(events[1]["args"]["doc_id"], identifier)
 
-    def test_central_chat_and_graph_survive_rerun_without_duplicate(self):
-        """中央展示真实问答，底部按调用ID画图；页面重跑不重复生成或追加历史。"""
+    def test_central_chat_survives_rerun_without_duplicate_or_graph(self):
+        """中央展示真实问答且无轨迹图；页面重跑不重复生成或追加历史。"""
         app = self.page()
         app.chat_input[0].set_value("计算").run()
         self.assertFalse(app.exception)

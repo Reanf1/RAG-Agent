@@ -1,4 +1,10 @@
-"""手写有上限的Thought→Action→Observation循环，工具与模型均使用真实返回值。"""
+"""手写有上限的Thought→Action→Observation循环。
+
+Thought只规划，Action校验参数后执行，Observation判断继续或结束。
+三个阶段通过事件交给前端，通过Context传递可序列化的工具事实；
+AIMessage/ToolMessage仅用于本轮模型消息，不直接存进Context。
+run_react在事件外附加指标，避免将记账数据送入下一轮模型窗口。
+"""
 
 from copy import deepcopy
 from collections import Counter
@@ -15,7 +21,7 @@ from langchain_core.utils.function_calling import convert_to_openai_tool
 from src.agent.tools import get_available_tools
 from src.agent.router import execute_calls, parallel_limit, recovery_limits, route_question
 from src.generation.rag_pipeline import generation_error, urlopen
-from src.utils.config import load_config, ollama_base_url
+from src.utils.config import generation_options, load_config, ollama_base_url
 from src.utils.messages import messages_to_ollama, normalize_context
 from src.utils.logger import update_agent_metrics
 
@@ -106,8 +112,7 @@ def _model_request(messages: list, **fields) -> Request:
     """三个阶段共用本机配置；把关联消息转换为Ollama原生工具消息。"""
     config = load_config()["llm"]
     base_url = ollama_base_url(config)
-    sampling = {key: config[key] for key in
-                ("temperature", "top_p", "top_k", "num_ctx", "num_predict", "repeat_penalty")}
+    sampling = generation_options(config)
     payload = {"model": config["model"], "stream": False, "options": sampling, **fields,
                "messages": messages_to_ollama(messages)}
     return Request(base_url + "/api/chat",
@@ -118,8 +123,8 @@ def _model_request(messages: list, **fields) -> Request:
 def think(question: str, tools: list[BaseTool] | None = None, context: dict | None = None) -> dict:
     """调用一次本机模型并校验下一步计划；只规划，不 invoke 任何工具。
 
-    Context 可包含检索上下文与 observations 列表。工具来自调用方的实际注册列表，
-    目前不默认注册尚未实现的科研工具；输出计划留给后续 Action 阶段使用。
+    Context可包含检索上下文与observations列表。只允许调用方传入的真实工具；
+    未传工具时按空列表规划直接回答，输出计划留给后续Action阶段使用。
     """
     tools = tools if tools is not None else []
     messages = build_thought_messages(question, tools, context)
@@ -220,6 +225,16 @@ def _paper_aliases(context: dict | None) -> dict:
     return {alias: next(iter(ids)) for alias, ids in candidates.items() if len(ids) == 1}
 
 
+def _known_paper_ids(question: str, context: dict | None) -> set[str]:
+    """仅提取已有输入中的完整指纹；8位显示ID不能成为模型工具参数。
+
+    Action参数核验与ReAct的文献列表预检共用同一规则，防止两个阶段
+    对“已知ID”作不同判断；相邻的字母数字排除更长字符串中的假匹配。
+    """
+    source = question + json.dumps(context or {}, ensure_ascii=False)
+    return set(re.findall(r"(?<![A-Za-z0-9])[0-9a-f]{64}(?![A-Za-z0-9])", source))
+
+
 def act(question: str, thought: dict, tools: list[BaseTool], context: dict | None = None,
         *, call_counts: dict | None = None):
     """一次Function Calling→单调用或独立批次；执行器负责有界超时重试。
@@ -250,8 +265,7 @@ def act(question: str, thought: dict, tools: list[BaseTool], context: dict | Non
         if batch and thought.get("tool_name") != names[0]:
             raise ValueError("Thought主要工具必须与批次第一个工具一致")
         selected_tools = [registry[name] for name in dict.fromkeys(names)]
-        known_ids = set(re.findall(r"(?<![A-Za-z0-9])[0-9a-f]{64}(?![A-Za-z0-9])",
-                                   question + json.dumps(context or {}, ensure_ascii=False)))
+        known_ids = _known_paper_ids(question, context)
         started = perf_counter()
         if thought.get("route") == "confirmation" and names == ["knowledge_base_search"] and not batch:
             # 参数来自界面已确认的候选，固定本次调用，不能让模型改写已审阅的查询。
@@ -603,7 +617,7 @@ def _run_react(question: str, tools: list[BaseTool] | None = None, context: dict
                           "model": None, "usage": {"prompt_eval_count": 0, "eval_count": 0}}
             thought = routed if routed is not None else think(question, available, state)
             required_ids = 2 if thought.get("tool_name") == "paper_compare" else 1 if thought.get("tool_name") in {"paper_metadata", "paper_summary"} else 0
-            known_ids = set(re.findall(r"(?<![A-Za-z0-9])[0-9a-f]{64}(?![A-Za-z0-9])", question + json.dumps(state, ensure_ascii=False)))
+            known_ids = _known_paper_ids(question, state)
             # 有历史时仍先核对文件名，不能绕过文档过滤或把模型猜测的ID当作真实指纹。
             needs_filename = (thought.get("route") != "confirmation" and "knowledge_base_search" in [thought.get("tool_name"), *thought.get("parallel_tools", [])]
                               and re.search(r"\.(?:pdf|docx|txt|md)(?=$|[^A-Za-z0-9])", question, re.I)

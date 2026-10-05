@@ -34,6 +34,30 @@ def ollama_base_url(settings: dict) -> str:
     return settings["base_url"].rstrip("/")
 
 
+def generation_options(settings: dict) -> dict:
+    """从LLM配置提取Ollama采样参数，返回可独立修改的新字典。
+
+    检索的top_k表示文档数量，LLM的top_k表示采样候选词数量；
+    这里只读取llm配置，防止两个同名参数混用。实验和摘要可修改返回值，
+    不会改变原配置；参数值的校验仍由原有生成入口负责。
+    """
+    return {key: settings[key] for key in
+            ("temperature", "top_p", "top_k", "num_ctx", "num_predict", "repeat_penalty")}
+
+
+def chroma_metadata(config: dict) -> dict:
+    """建库和健康检查共用的集合约定，不创建客户端或加载模型。
+
+    模型名称与固定版本确定向量空间，HNSW参数确定索引配置。
+    已有集合不会被Chroma自动覆盖，因此两个入口都必须核对这些字段。
+    """
+    retrieval = config["retrieval"]
+    return {"embedding_model": config["embedding"]["model"],
+            "embedding_revision": config["embedding"]["revision"],
+            "hnsw:space": "cosine", "hnsw:search_ef": retrieval["search_ef"],
+            "hnsw:num_threads": retrieval["index_threads"]}
+
+
 def check_health() -> dict:
     """返回两个组件的独立状态；不生成回答、加载Embedding或写入文档块。
 
@@ -83,9 +107,7 @@ def check_health() -> dict:
             client = chromadb.PersistentClient(path=str(directory.resolve()), settings=Settings(anonymized_telemetry=False))
             client.heartbeat()
             collection = client.get_collection(retrieval["collection_name"], embedding_function=None)
-            expected = {"embedding_model": config["embedding"]["model"],
-                        "embedding_revision": config["embedding"]["revision"], "hnsw:space": "cosine",
-                        "hnsw:search_ef": retrieval["search_ef"], "hnsw:num_threads": retrieval["index_threads"]}
+            expected = chroma_metadata(config)
             if any((collection.metadata or {}).get(key) != value for key, value in expected.items()):
                 raise ValueError("已有索引的模型版本或索引参数与配置不一致")
             database.update(status="ok", chunks=collection.count(), detail="Chroma心跳、集合配置及块数读取正常；未执行向量检索。")

@@ -11,7 +11,7 @@ from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
 from langchain_huggingface import HuggingFaceEmbeddings
 
-from src.utils.config import load_config
+from src.utils.config import chroma_metadata, load_config
 
 
 @lru_cache(maxsize=1)
@@ -46,11 +46,7 @@ class VectorStore:
         if not directory.is_absolute():
             directory = project_root / directory
         self.top_k = retrieval["top_k"]
-        expected = {"embedding_model": config["embedding"]["model"],
-                    "embedding_revision": config["embedding"]["revision"],
-                    "hnsw:space": "cosine",
-                    "hnsw:search_ef": retrieval["search_ef"],
-                    "hnsw:num_threads": retrieval["index_threads"]}
+        expected = chroma_metadata(config)
         self._store = Chroma(
             collection_name=retrieval["collection_name"],
             embedding_function=embeddings,
@@ -73,7 +69,12 @@ class VectorStore:
         return self._store._collection.count()
 
     def add_chunks(self, chunks: list[Document]) -> int:
-        """按稳定 chunk_id 去重，仅编码新块；返回实际新增数量。"""
+        """按稳定chunk_id去重，仅编码新块；返回实际新增数量。
+
+        先合并本批重复ID，再逐批查询数据库中已存在的ID，最后仅写缺失块。
+        因此重复上传或失败重试不会重新编码已成功写入的块。写入不是整批
+        文档级事务：后续批次失败时保留之前批次，重试从缺失块继续。
+        """
         unique = {}
         for chunk in chunks:
             for key in ("chunk_id", "doc_id"):

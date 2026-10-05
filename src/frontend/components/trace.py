@@ -1,46 +1,12 @@
 """整理公开 Agent 事件的展示与统计，不增加模型请求。"""
 
-import json
-
-
-def trace_graph(trace: list[dict]) -> str:
-    """同轮工具从 Thought 分支，结果按调用ID连接并汇入 Observation。"""
-    lines = ['digraph agent {', 'rankdir=LR;', 'node [shape=box, fontname="Arial"];']
-    labels = {"thought": "Thought · 决策", "tool_call": "Action · 工具调用",
-              "tool_result": "工具结果", "observation": "Observation · 判断",
-              "done": "结束", "error": "错误", "recovery": "错误恢复", "action_skipped": "跳过调用"}
-    previous = thought = None
-    calls, results = {}, []
-    for index, step in enumerate(trace):
-        node = f"n{index}"
-        kind = step["type"]
-        label = labels.get(kind, kind)
-        if step.get("name"):
-            label += "\n" + str(step["name"])
-        if kind == "observation":
-            label += "\n" + str(step.get("decision", "未报告"))
-        if kind == "done":
-            label += "\n" + str(step.get("stop_reason", "未报告"))
-        lines.append(f'{node} [label={json.dumps(label, ensure_ascii=False)}];')
-        parents = [previous] if previous else []
-        if kind == "thought":
-            thought, calls, results = node, {}, []
-        elif kind == "tool_call":
-            parents = [thought] if thought else parents
-            calls[step["call_id"]] = node
-        elif kind == "tool_result":
-            parents = [calls[step["call_id"]]] if step["call_id"] in calls else parents
-            results.append(node)
-        elif kind == "observation" and results:
-            parents = results
-        for parent in parents:
-            lines.append(f'{parent} -> {node};')
-        previous = node
-    return '\n'.join(lines + ['}'])
-
-
 def execution_rows(event: dict) -> list[dict]:
-    """把已有阶段用量与工具结果合为七列，未知用量不冒充零。"""
+    """将已有阶段指标与工具状态按call_id关联，返回前端七列表格。
+
+    同一批Action的模型用量只记一次，各工具内部用量分别显示；尚未返回
+    的工具没有用量行，另补“执行中”行。最后按轮次、阶段排序，不依赖
+    并行工具的返回顺序。这里只整理快照，不运行工具或发起模型请求。
+    """
     metrics = event.get("metrics", {})
     tools = {call["call_id"]: call for call in metrics.get("tool_calls", [])}
     # 最终未取得工具结果也标失败；原始pending记录仍保留，统计不假冒已返回。

@@ -11,7 +11,12 @@ from src.utils.config import load_config
 def rrf_fusion(vector_results: list[tuple[Document, float]],
                bm25_results: list[tuple[Document, float]],
                rrf_k: int = 60) -> list[tuple[Document, float]]:
-    """返回全部融合候选；只使用排名，原始分数不参与计算。"""
+    """返回全部融合候选，分数为各召回分支的1/(rrf_k+排名)之和。
+
+    向量相似度与BM25分数的尺度不同，不能直接相加；RRF只取从1开始的
+    排名。同一chunk_id在单个分支只贡献一次，在两个分支命中则累加。
+    rrf_k越大，名次之间的差距越平缓；此参数与最终返回文档数k无关。
+    """
     if type(rrf_k) is not int or rrf_k < 0:
         raise ValueError("rrf_k 必须为非负整数")
     scores, documents = {}, {}

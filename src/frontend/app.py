@@ -1,4 +1,9 @@
-"""科研多轮对话、文档检索与知识库管理页面。"""
+"""科研多轮对话、文档检索与知识库管理页面。
+
+Streamlit交互会从头重跑本文件；已完成消息、上传进度和待确认候选保存在
+session_state中。只有提交上传或问题的分支执行业务请求，普通重绘读取
+已有快照。知识库跨会话共享，聊天记忆及RAG缓存按用户/会话隔离。
+"""
 
 import sys
 from copy import deepcopy
@@ -133,9 +138,6 @@ with st.sidebar:
 
 with st.sidebar:
     import_status = st.empty()
-# 主区域知识库详情表仍需要完整状态名称，侧栏只呈现最终结果。
-status_labels = {"pending": "等待", "loading": "加载中", "chunking": "分块中",
-                 "indexing": "向量化与索引中", "success": "成功", "failed": "失败"}
 
 
 def show_import_status():

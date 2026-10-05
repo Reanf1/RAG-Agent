@@ -138,21 +138,5 @@ class TestDocumentManagement(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             read_document_content(self.raw, self.doc_id)
 
-    def test_graph_parallel_ids_and_join(self):
-        from src.frontend.components.trace import trace_graph
-        graph = trace_graph([
-            {"type": "thought"},
-            {"type": "tool_call", "name": 'a"tool', "call_id": "a"},
-            {"type": "tool_call", "name": "b", "call_id": "b"},
-            {"type": "tool_result", "name": "b", "call_id": "b"},
-            {"type": "tool_result", "name": "a", "call_id": "a"},
-            {"type": "observation", "decision": "continue"},
-            {"type": "thought"}, {"type": "done", "stop_reason": "max_iterations"}])
-        for edge in ("n0 -> n1", "n0 -> n2", "n2 -> n3", "n1 -> n4", "n3 -> n5", "n4 -> n5", "n5 -> n6"):
-            self.assertIn(edge, graph)
-        self.assertIn('a\\"tool', graph)
-        self.assertNotIn("n1 -> n2", graph)
-
-
 if __name__ == "__main__":
     unittest.main()

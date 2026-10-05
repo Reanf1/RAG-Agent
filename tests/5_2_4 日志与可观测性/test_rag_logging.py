@@ -13,7 +13,7 @@ import json
 import tempfile
 import unittest
 from unittest.mock import patch
-from src.utils.logger import read_rag_requests, record_rag_request, retrieval_score_distribution
+from src.utils.logger import read_rag_requests, record_agent_request, record_rag_request, retrieval_score_distribution
 
 
 class TestRAGLogging(unittest.TestCase):
@@ -131,6 +131,27 @@ class TestRAGLogging(unittest.TestCase):
         records, invalid = read_rag_requests()
         self.assertEqual((len(records), invalid), (32, 0))
         self.assertEqual(retrieval_score_distribution()["distributions"][0]["count"], 32)
+
+    def test_agent_corrupted_tail_preserves_new_record_and_rejects_invalid_data(self):
+        """共用写入器后，Agent也必须隔开断电半行，非法快照不能损坏文件。"""
+        event = {"request_id": "agent-1", "user_id": "alice", "session_id": "session-1",
+                 "type": "done", "metrics": {"tokens": {"total": 20}}}
+        before = deepcopy(event)
+        record_agent_request("中文问题\n第二行", event)
+        path = next(Path(self.directory.name).glob("agent_*.jsonl"))
+        with path.open("ab") as output:
+            output.write(b'{"broken":')
+        record_agent_request("新问题", {**event, "request_id": "agent-2"})
+        lines = path.read_bytes().splitlines()
+        self.assertEqual(len(lines), 3)
+        self.assertEqual(lines[1], b'{"broken":')
+        self.assertEqual(json.loads(lines[0])["question"], "中文问题\n第二行")
+        self.assertEqual(json.loads(lines[2])["request_id"], "agent-2")
+        saved = path.read_bytes()
+        with self.assertRaises(ValueError):
+            record_agent_request("非法指标", {**event, "metrics": {"seconds": float("nan")}})
+        self.assertEqual(path.read_bytes(), saved)
+        self.assertEqual(event, before)
 
     def test_serialization_failure_does_not_damage_previous_records(self):
         record_rag_request(self.message, "completed")

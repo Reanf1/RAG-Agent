@@ -73,7 +73,12 @@ class SemanticCache:
         return tuple(value / norm for value in vector)
 
     def lookup(self, question: str, scope: str) -> dict | None:
-        """命中返回独立答案快照，本次 LLM 用量为零，原始用量单独保留。"""
+        """命中返回独立答案快照，否则返回None，由调用方重新检索。
+
+        顺序为范围校验→问题精确匹配→关键约束一致→向量相似度匹配。
+        精确匹配无需编码；语义匹配在单位向量上计算点积，即余弦相似度。
+        返回值深拷贝后将本次LLM用量置零，原始用量另存，不修改缓存条目。
+        """
         question = question.strip()
         if not question:
             raise ValueError("缓存问题不能为空")
@@ -84,8 +89,10 @@ class SemanticCache:
                 best, similarity, mode = entry, 1.0, "exact"
                 break
         if best is None:
+            # 本次问题的数字、实体和否定约束不随条目改变，只解析一次。
+            constraints = _constraints(question)
             eligible = [entry for entry in self.entries if entry["vector"] is not None
-                        and _constraints(entry["question"]) == _constraints(question)]
+                        and _constraints(entry["question"]) == constraints]
             if not eligible or len(question) > 256:
                 return None
             vector = self._vector(question)

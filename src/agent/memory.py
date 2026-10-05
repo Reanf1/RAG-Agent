@@ -12,7 +12,7 @@ from uuid import uuid4
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from tokenizers import Tokenizer
 
-from src.utils.config import load_config
+from src.utils.config import generation_options, load_config
 from src.utils.messages import normalize_context
 
 
@@ -72,8 +72,7 @@ def _summarize(summary: str, history: list[dict], max_tokens: int, input_budget:
     if count_history_tokens([{"role": m.type, "content": m.content} for m in messages]) > input_budget:
         raise ValueError("旧对话单轮超过摘要输入预算，保留原文并回退历史窗口")
     config = load_config()["llm"]
-    options = {key: config[key] for key in
-               ("temperature", "top_p", "top_k", "num_ctx", "num_predict", "repeat_penalty")}
+    options = generation_options(config)
     options["num_predict"] = max_tokens + 128  # JSON封装需要额外生成空间。
     schema = {"type": "object", "properties": {"summary": {"type": "string", "minLength": 1}},
               "required": ["summary"], "additionalProperties": False}
@@ -268,7 +267,13 @@ class MemoryManager:
                                (session_id, content, through_id))
 
     def get_context(self, user_id: str, session_id: str) -> dict:
-        """超轮次阈值更新旧对话摘要，再按完整问答对裁剪摘要+最近历史。"""
+        """返回当前会话可发送给Agent的summary/history及其预算信息。
+
+        先读取消息与已摘要边界；超阈值时将旧问答分批压缩，保留最近问答。
+        保存摘要时核对边界，生成后再次读取数据库，防止并发更新被旧结果覆盖。
+        最后按Token预算删除最早的完整问答对，只裁剪本轮Context，磁盘原文
+        始终保留。摘要调用失败则保留旧摘要并退回窗口，失败用量标为未知。
+        """
         rows, (summary, through_id) = self._read_memory(user_id, session_id)  # 归属校验优先于模型调用。
         config = load_config()
         settings = config["memory"]
