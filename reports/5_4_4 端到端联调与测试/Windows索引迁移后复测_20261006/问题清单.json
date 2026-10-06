@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-06",
+  "revision": "e3ffea2（此前用户确认，本轮未重读远端Git）",
+  "overall_passed": false,
+  "application_tests_rerun": false,
+  "issues": [
+    {
+      "id": "W12",
+      "status": "原头文件错误在本轮场景恢复",
+      "problem": "原中文目录索引头文件访问错误；迁移后全库及ViT过滤查询可用",
+      "evidence": [
+        "06_全库向量检索.txt",
+        "10_ViT英文重排.txt",
+        "15_ViT_RAG状态.txt"
+      ]
+    },
+    {
+      "id": "W17",
+      "status": "新增，待Windows独立诊断",
+      "problem": "TXT过滤向量Top-5及Top-1均出现contigious 2D array异常；源码已经限制k至匹配块数",
+      "evidence": [
+        "04_TXT向量检索终态.txt",
+        "05_TXT_Top1对照.txt",
+        "07_TXT原文及库状态.txt"
+      ]
+    },
+    {
+      "id": "W18",
+      "status": "新增，跨语言质量未通过",
+      "problem": "中文位置编码问题漏第3页关键正文，英文同主题可召回",
+      "evidence": [
+        "08_ViT_RRF检索.txt",
+        "09_ViT中文重排.txt",
+        "10_ViT英文重排.txt"
+      ]
+    },
+    {
+      "id": "W13",
+      "status": "未修复，本轮对比场景复现",
+      "problem": "paper_compare内部失败后转单篇摘要；最终只有概述引导句与ViT按钮，未交付对比却计为完成",
+      "evidence": [
+        "20_论文对比结果.txt",
+        "20_论文对比结果_AX.txt"
+      ]
+    },
+    {
+      "id": "W14",
+      "status": "未修复",
+      "problem": "TXT过滤查询失败时侧栏仍显示向量数据库正常",
+      "evidence": [
+        "04_TXT向量检索终态.txt"
+      ]
+    },
+    {
+      "id": "W16",
+      "status": "旧Action数量错误本轮未复现同一形式，不能关闭",
+      "problem": "本轮对比工具内部失败，具体异常待日志；不能直接归因为TXT相同错误",
+      "evidence": [
+        "20_论文对比结果.txt",
+        "20_论文对比结果_AX.txt"
+      ]
+    },
+    {
+      "id": "W15",
+      "status": "本轮未测，保留旧结论",
+      "problem": "旧完整ID元信息误路由问题，本轮未验证",
+      "evidence": []
+    }
+  ]
+}

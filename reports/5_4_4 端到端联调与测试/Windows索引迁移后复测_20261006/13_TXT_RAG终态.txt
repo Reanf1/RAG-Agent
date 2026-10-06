@@ -1,0 +1,75 @@
+- log
+- log
+- heading "系统状态" [level=2]
+- paragraph: 系统时间：2026-10-06 14:06:17
+- status:
+  - paragraph: LLM服务：正常（qwen2.5:7b）
+- status:
+  - paragraph: 向量数据库：正常（Chroma）
+- button "刷新状态":
+  - paragraph: 刷新状态
+- heading "文档上传与管理" [level=2]
+- paragraph: 上传文档
+- region "上传文档":
+  - button "file upload"
+  - button "upload Upload":
+    - generic: upload
+    - paragraph: Upload
+  - generic: 20MB per file • PDF, DOCX, TXT, MD, MARKDOWN
+- paragraph: 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+- button "开始导入" [disabled]:
+  - generic "开始导入":
+    - paragraph: 开始导入
+- button "重试失败项" [disabled]:
+  - generic "重试失败项":
+    - paragraph: 重试失败项
+- heading "对话历史管理" [level=2]
+- button "新建会话":
+  - paragraph: 新建会话
+- paragraph: 最近
+- button "新会话":
+  - paragraph: 新会话
+- button "请使用knowledge_base_search":
+  - paragraph: 请使用knowledge_base_search
+- button "请针对论文8ce7b83971a14508ca7":
+  - paragraph: 请针对论文8ce7b83971a14508ca7
+- button "请记住：本会话的研究代号是TESTB202610":
+  - paragraph: 请记住：本会话的研究代号是TESTB202610
+- button "计算3.14乘以2.56。":
+  - paragraph: 计算3.14乘以2.56。
+- button "删除当前会话":
+  - paragraph: 删除当前会话
+- banner:
+  - img "Running...":
+  - button "Stop"
+  - button "Main menu":
+- heading "智能科研助理" [level=1]:
+  - text: 智能科研助理
+  - link "Link to heading":
+    - /url: "#2d7dc4e4"
+- paragraph: 基于 RAG + Agent 的论文知识库问答系统
+- tablist:
+  - tab "科研对话" [selected]:
+    - paragraph: 科研对话
+  - tab "文档检索":
+    - paragraph: 文档检索
+  - tab "知识库":
+    - paragraph: 知识库
+- tabpanel "科研对话":
+  - generic: face
+  - generic "Chat message from user":
+    - paragraph: 请使用knowledge_base_search查询Windows复测_说明.txt：复测代号是什么？请注明来源。
+  - generic: smart_toy
+  - generic "Chat message from assistant":
+    - paragraph: ▌
+    - status:
+      - paragraph: 正在处理…
+  - textbox "输入消息…" [active]
+  - button "Send message" [disabled]: 发送
+  - generic "keyboard_arrow_down 请使用knowledge_base_search查询Windows复测_说明.txt：复测代号是什么？请注明来源。":
+    - generic: keyboard_arrow_down
+    - paragraph: 请使用knowledge_base_search查询Windows复测_说明.txt：复测代号是什么？请注明来源。
+  - button "Show/hide columns":
+  - button "Download as CSV":
+  - button "Search":
+  - button "Fullscreen":

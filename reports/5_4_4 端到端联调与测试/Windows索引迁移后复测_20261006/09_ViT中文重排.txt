@@ -1,0 +1,118 @@
+- log
+- log
+- heading "系统状态" [level=2]
+- paragraph: 系统时间：2026-10-06 14:05:27
+- status:
+  - paragraph: LLM服务：正常（qwen2.5:7b）
+- status:
+  - paragraph: 向量数据库：正常（Chroma）
+- button "刷新状态":
+  - paragraph: 刷新状态
+- heading "文档上传与管理" [level=2]
+- paragraph: 上传文档
+- region "上传文档":
+  - button "file upload"
+  - button "upload Upload":
+    - generic: upload
+    - paragraph: Upload
+  - generic: 20MB per file • PDF, DOCX, TXT, MD, MARKDOWN
+- paragraph: 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+- button "开始导入" [disabled]:
+  - generic "开始导入":
+    - paragraph: 开始导入
+- button "重试失败项" [disabled]:
+  - generic "重试失败项":
+    - paragraph: 重试失败项
+- heading "对话历史管理" [level=2]
+- button "新建会话":
+  - paragraph: 新建会话
+- paragraph: 最近
+- button "请使用knowledge_base_search":
+  - paragraph: 请使用knowledge_base_search
+- button "请针对论文8ce7b83971a14508ca7":
+  - paragraph: 请针对论文8ce7b83971a14508ca7
+- button "请记住：本会话的研究代号是TESTB202610":
+  - paragraph: 请记住：本会话的研究代号是TESTB202610
+- button "计算3.14乘以2.56。":
+  - paragraph: 计算3.14乘以2.56。
+- button "删除当前会话":
+  - paragraph: 删除当前会话
+- banner:
+  - button "Main menu":
+- heading "智能科研助理" [level=1]:
+  - text: 智能科研助理
+  - link "Link to heading":
+    - /url: "#2d7dc4e4"
+- paragraph: 基于 RAG + Agent 的论文知识库问答系统
+- tablist:
+  - tab "科研对话":
+    - paragraph: 科研对话
+  - tab "文档检索" [selected]:
+    - paragraph: 文档检索
+  - tab "知识库":
+    - paragraph: 知识库
+- text: 发送
+- tabpanel "文档检索":
+  - heading "文档 Top-K 检索" [level=3]:
+    - text: 文档 Top-K 检索
+    - link "Link to heading":
+      - /url: "#top-k"
+  - paragraph: 检索方式
+  - combobox "检索方式": RRF + 模型重排
+  - button "Open":
+  - paragraph: Top-k
+  - spinbutton "Top-k": "5"
+  - button "Decrement":
+  - button "Increment":
+  - paragraph: 文档ID
+  - button "Help for 文档ID":
+  - textbox "文档ID":
+    - /placeholder: ""
+    - text: 8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6
+  - paragraph: 查询内容
+  - textbox "查询内容":
+    - /placeholder: ""
+    - text: ViT如何使用位置编码？
+  - button "检索" [active]:
+    - paragraph: 检索
+  - paragraph: 返回 5 个文档块（Top-K=5）。
+  - generic "keyboard_arrow_down 1. Windows验收_ViT.pdf · 模型相关性分数 0.2887":
+    - generic: keyboard_arrow_down
+    - paragraph: 1. Windows验收_ViT.pdf · 模型相关性分数 0.2887
+  - paragraph: 来源：Windows验收_ViT.pdf；物理页码：9
+  - paragraph: 文档 ID：8ce7b839；块 ID：f0472597
+  - generic: "10 15 20 1 2 3 4 5 6 7 Network depth (layer) Input patch column Figure 7: Left: Filters of the initial linear embedding of RGB values of ViT-L/32. Center: Sim- ilarity of position embeddings of ViT-L/32. Tiles show the cosine similarity between the position embedding of the patch with the indicated row and column and the position embeddings of all other patches. Right: Size of attended area by head and network depth. Each dot shows the mean attention"
+  - generic "keyboard_arrow_down 2. Windows验收_ViT.pdf · 模型相关性分数 0.1060":
+    - generic: keyboard_arrow_down
+    - paragraph: 2. Windows验收_ViT.pdf · 模型相关性分数 0.1060
+  - paragraph: 来源：Windows验收_ViT.pdf；物理页码：18
+  - paragraph: 文档 ID：8ce7b839；块 ID：8c8caa8c
+  - generic: beginning of each layer; (3) add a learned positional embeddings to the inputs at the beginning of each layer (shared between layers). Table 8 summarizes the results from this ablation study on a ViT-B/16 model. As we can see, while there is a large gap between the performances of the model with no positional embedding and mod- els with positional embedding, there is little to no difference between different ways of encoding
+  - generic "keyboard_arrow_down 3. Windows验收_ViT.pdf · 模型相关性分数 0.0933":
+    - generic: keyboard_arrow_down
+    - paragraph: 3. Windows验收_ViT.pdf · 模型相关性分数 0.0933
+  - paragraph: 来源：Windows验收_ViT.pdf；物理页码：20
+  - paragraph: 文档 ID：8ce7b839；块 ID：655ac0da
+  - generic: attention and although the sequence length that self-attention operates on is smaller in axial case, there is a extra MLP per Axial-ViT block. For the AxialResNet, although it looks reasonable in terms of accuracy/compute trade-off (Figure 13, left), the naive implementation is extremely slow on TPUs (Figure 13, right). D.7 ATTENTION DISTANCE To understand how ViT uses self-attention to integrate information across the image, we analyzed
+  - generic "keyboard_arrow_down 4. Windows验收_ViT.pdf · 模型相关性分数 0.0267":
+    - generic: keyboard_arrow_down
+    - paragraph: 4. Windows验收_ViT.pdf · 模型相关性分数 0.0267
+  - paragraph: 来源：Windows验收_ViT.pdf；物理页码：14
+  - paragraph: 文档 ID：8ce7b839；块 ID：5568f534
+  - generic: et al., 2020)). When transferring ViT models to another dataset, we remove the whole head (two linear layers) and replace it by a single, zero-initialized linear layer outputting the number of classes required by the target dataset. We found this to be a little more robust than simply re-initializing the very last layer. For VTAB we follow the protocol in Kolesnikov et al. (2020), and use the same hyperparameter
+  - generic "keyboard_arrow_down 5. Windows验收_ViT.pdf · 模型相关性分数 0.0170":
+    - generic: keyboard_arrow_down
+    - paragraph: 5. Windows验收_ViT.pdf · 模型相关性分数 0.0170
+  - paragraph: 来源：Windows验收_ViT.pdf；物理页码：8
+  - paragraph: 文档 ID：8ce7b839；块 ID：40c9b212
+  - generic: for details on computational costs). Detailed results per model are provided in Table 6 in the Ap- pendix. A few patterns can be observed. First, Vision Transformers dominate ResNets on the performance/compute trade-off. ViT uses approximately 2 −4× less compute to attain the same performance (average over 5 datasets). Second, hybrids slightly outperform ViT at small compu- tational budgets, but the difference vanishes for larger models. This result is somewhat surprising,
+  - heading "检索分数分布" [level=3]:
+    - text: 检索分数分布
+    - link "Link to heading":
+      - /url: "#cf661d5"
+  - paragraph: 请求 22 · 缓存命中 1 · 空结果 3 · 检索失败 3
+  - paragraph: BAAI/bge-reranker-base · 版本 2cfc18c9 · 样本 14 · 均值 0.3586 · 范围 0.0000–0.9991
+  - button "Show data":
+  - button "Download as PNG":
+  - button "Fullscreen":
+  - generic "Vega visualization":

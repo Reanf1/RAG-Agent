@@ -8,6 +8,8 @@
 
 [历史Windows验收](Windows浏览器验收_20261004/Windows浏览器验收报告.md) · [2026-10-05旧版本复测](Windows浏览器复测_20261005/Windows浏览器复测报告.md) · [e3ffea2修复后复测](Windows修复后复测_e3ffea2_20261005/Windows修复后复测报告.md)（部分修复场景通过，HNSW查询故障与Agent恢复问题使整体仍未通过）。
 
+[2026-10-06索引迁移后复测](Windows索引迁移后复测_20261006/Windows索引迁移后复测报告.md)：全库／ViT向量链路、真实RAG、引用与exact缓存恢复；TXT过滤、中文召回与对比完成判定仍失败，保留独立的新证据。
+
 ## 运行脚本
 
 - [verify_concurrent_evidence.py](verify_concurrent_evidence.py)：只读复核并发证据

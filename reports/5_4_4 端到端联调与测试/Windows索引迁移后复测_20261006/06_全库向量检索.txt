@@ -1,0 +1,115 @@
+- heading "系统状态" [level=2]
+- paragraph: 系统时间：2026-10-06 14:04:34
+- status:
+  - paragraph: LLM服务：正常（qwen2.5:7b）
+- status:
+  - paragraph: 向量数据库：正常（Chroma）
+- button "刷新状态":
+  - paragraph: 刷新状态
+- heading "文档上传与管理" [level=2]
+- paragraph: 上传文档
+- region "上传文档":
+  - button "file upload"
+  - button "upload Upload":
+    - generic: upload
+    - paragraph: Upload
+  - generic: 20MB per file • PDF, DOCX, TXT, MD, MARKDOWN
+- paragraph: 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+- button "开始导入" [disabled]:
+  - generic "开始导入":
+    - paragraph: 开始导入
+- button "重试失败项" [disabled]:
+  - generic "重试失败项":
+    - paragraph: 重试失败项
+- heading "对话历史管理" [level=2]
+- button "新建会话":
+  - paragraph: 新建会话
+- paragraph: 最近
+- button "请使用knowledge_base_search":
+  - paragraph: 请使用knowledge_base_search
+- button "请针对论文8ce7b83971a14508ca7":
+  - paragraph: 请针对论文8ce7b83971a14508ca7
+- button "请记住：本会话的研究代号是TESTB202610":
+  - paragraph: 请记住：本会话的研究代号是TESTB202610
+- button "计算3.14乘以2.56。":
+  - paragraph: 计算3.14乘以2.56。
+- button "删除当前会话":
+  - paragraph: 删除当前会话
+- banner:
+  - button "Main menu":
+- heading "智能科研助理" [level=1]:
+  - text: 智能科研助理
+  - link "Link to heading":
+    - /url: "#2d7dc4e4"
+- paragraph: 基于 RAG + Agent 的论文知识库问答系统
+- tablist:
+  - tab "科研对话":
+    - paragraph: 科研对话
+  - tab "文档检索" [selected]:
+    - paragraph: 文档检索
+  - tab "知识库":
+    - paragraph: 知识库
+- text: 发送
+- tabpanel "文档检索":
+  - heading "文档 Top-K 检索" [level=3]:
+    - text: 文档 Top-K 检索
+    - link "Link to heading":
+      - /url: "#top-k"
+  - paragraph: 检索方式
+  - combobox "检索方式": 向量相似度
+  - button "Open":
+  - paragraph: Top-k
+  - spinbutton "Top-k": "5"
+  - button "Decrement":
+  - button "Increment":
+  - paragraph: 文档ID
+  - button "Help for 文档ID":
+  - textbox "文档ID":
+    - /placeholder: ""
+  - paragraph: 查询内容
+  - textbox "查询内容":
+    - /placeholder: ""
+    - text: 复测代号是什么？
+  - button "检索" [active]:
+    - paragraph: 检索
+  - paragraph: 返回 5 个文档块（Top-K=5）。
+  - generic "keyboard_arrow_down 1. Windows复测_说明.md · 余弦相似度 0.7270":
+    - generic: keyboard_arrow_down
+    - paragraph: 1. Windows复测_说明.md · 余弦相似度 0.7270
+  - paragraph: 来源：Windows复测_说明.md；行范围：1–6
+  - paragraph: 文档 ID：6455abc0；块 ID：103c8673
+  - generic: "# 科研助理Markdown复测 Markdown标记是WINMD20261005。 - 引用必须对应本地文件和行号。 - 对比两篇论文时保留方法、数据集、实验结果。"
+  - generic "keyboard_arrow_down 2. Windows验收_ViT.pdf · 余弦相似度 0.7020":
+    - generic: keyboard_arrow_down
+    - paragraph: 2. Windows验收_ViT.pdf · 余弦相似度 0.7020
+  - paragraph: 来源：Windows验收_ViT.pdf；物理页码：13
+  - paragraph: 文档 ID：8ce7b839；块 ID：b776ec37
+  - generic: remaining data. For ﬁnal results we train on the entire training set and evaluate on the respective test data. For ﬁne-tuning ResNets and hybrid models we use the exact same setup, with the only exception of ImageNet where we add another value 0.06 to the learning rate sweep. Additionally, 13
+  - generic "keyboard_arrow_down 3. Windows验收_ViT.pdf · 余弦相似度 0.6986":
+    - generic: keyboard_arrow_down
+    - paragraph: 3. Windows验收_ViT.pdf · 余弦相似度 0.6986
+  - paragraph: 来源：Windows验收_ViT.pdf；物理页码：12
+  - paragraph: 文档 ID：8ce7b839；块 ID：3219431f
+  - generic: "Published as a conference paper at ICLR 2021 Hugo Touvron, Andrea Vedaldi, Matthijs Douze, and Herve Jegou. Fixing the train-test resolution discrepancy. In NeurIPS. 2019. Hugo Touvron, Andrea Vedaldi, Matthijs Douze, and Herve Jegou. Fixing the train-test resolution discrepancy: Fixefﬁcientnet. arXiv preprint arXiv:2003.08237, 2020. Michael Tschannen, Josip Djolonga, Marvin Ritter, Aravindh Mahendran, Neil Houlsby, Sylvain"
+  - generic "keyboard_arrow_down 4. Windows验收_ViT.pdf · 余弦相似度 0.6907":
+    - generic: keyboard_arrow_down
+    - paragraph: 4. Windows验收_ViT.pdf · 余弦相似度 0.6907
+  - paragraph: 来源：Windows验收_ViT.pdf；物理页码：14
+  - paragraph: 文档 ID：8ce7b839；块 ID：9bc01b0a
+  - generic: "patch representations. We trained our self-supervised model for 1M steps (ca. 14 epochs) with batch size 4096 on JFT. We use Adam, with a base learning rate of 2·10^{−}^{4}, warmup of 10k steps and cosine learning rate decay. As prediction targets for pretraining we tried the following settings: 1) predicting only the mean, 3bit color (i.e., 1 prediction of 512 colors), 2) predicting a 4 × 4 downsized version of the 16 × 16"
+  - generic "keyboard_arrow_down 5. Windows验收_ViT.pdf · 余弦相似度 0.6888":
+    - generic: keyboard_arrow_down
+    - paragraph: 5. Windows验收_ViT.pdf · 余弦相似度 0.6888
+  - paragraph: 来源：Windows验收_ViT.pdf；物理页码：19
+  - paragraph: 文档 ID：8ce7b839；块 ID：edfa9c56
+  - generic: 2020b) in terms of accuracy, however, our implementation, similar to the open-source implementation, is very slow on TPUs. Therefore, we were not able to use it for extensive large-scale experiments. These may be unlocked by a carefully optimized implementation. 19
+  - heading "检索分数分布" [level=3]:
+    - text: 检索分数分布
+    - link "Link to heading":
+      - /url: "#cf661d5"
+  - paragraph: 请求 22 · 缓存命中 1 · 空结果 3 · 检索失败 3
+  - paragraph: BAAI/bge-reranker-base · 版本 2cfc18c9 · 样本 14 · 均值 0.3586 · 范围 0.0000–0.9991
+  - button "Show data":
+  - button "Download as PNG":
+  - button "Fullscreen":
+  - generic "Vega visualization":
