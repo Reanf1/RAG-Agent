@@ -40,6 +40,15 @@ class TestBM25Retriever(unittest.TestCase):
         self.store.add_chunks(self.chunks)
         self.retriever = BM25Retriever(self.store)
 
+    def test_chinese_academic_query_matches_english_position_terms(self):
+        """英文论文的位置编码可以通过中英学术术语匹配，原文不修改。"""
+        original = Document(page_content="Positional embeddings retain spatial order.", metadata={
+            "chunk_id": "position", "doc_id": "position", "source_file": "位置.pdf", "page_number": 3})
+        self.store.add_chunks([original])
+        self.retriever.rebuild()
+        found = self.retriever.search("位置编码如何保留顺序？")
+        self.assertEqual(found[0][0], original)
+
     def test_tokenize_chinese_english_and_numbers(self):
         """沿用上游分词，保留完整英文术语，忽略标点，文档/问题统一小写。"""
         self.assertEqual(tokenize("BatchNormalization 注意力，BERT-base 2024!"),

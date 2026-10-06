@@ -9,6 +9,21 @@ from rank_bm25 import BM25Okapi
 from src.retrieval.vector_store import VectorStore
 
 
+# 双语论文常用词项映射；只扩展检索词，不生成或修改论文事实。
+ACADEMIC_TERMS = {"位置编码": "positional position encoding embeddings", "位置嵌入": "positional position embeddings",
+                  "自注意力": "self attention", "注意力": "attention", "编码器": "encoder",
+                  "解码器": "decoder", "图像块": "image patches", "数据集": "dataset datasets",
+                  "训练": "training", "预训练": "pretraining pretrained", "准确率": "accuracy",
+                  "损失函数": "loss", "对比学习": "contrastive learning", "自监督": "self supervised"}
+
+
+def expand_academic_query(query: str) -> str:
+    """保留中文原问题，附加实际命中的英文术语，供BM25和BGE共同理解。"""
+    terms = list(dict.fromkeys(term for chinese, english in ACADEMIC_TERMS.items() if chinese in query
+                               for term in english.split()))
+    return query + ("\n" + " ".join(terms) if terms else "")
+
+
 def tokenize(text: str) -> list[str]:
     """英文/数字按词并统一小写，中文按单字；文档与问题使用相同规则。"""
     # 学术 PDF 中常有全角英文/数字，只规范检索词项，保留 Document 原文。
@@ -45,7 +60,7 @@ class BM25Retriever:
         k = self.top_k if k is None else k
         if type(k) is not int or k <= 0:
             raise ValueError("k 必须为正整数")
-        tokens = tokenize(query)
+        tokens = tokenize(expand_academic_query(query))
         if not tokens or self._index is None:
             return []
         query_terms = set(tokens)

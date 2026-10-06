@@ -390,8 +390,14 @@ def paper_compare(paper_a_id: str, paper_b_id: str) -> dict:
     缺少一篇索引时返回insufficient_evidence，低相关性返回needs_confirmation；不联网。
     不同任务、数据集或实验条件的数字不可直接排名，缺失信息明确说明。
     """
+    return _paper_compare(paper_a_id, paper_b_id)
+
+
+def _paper_compare(paper_a_id: str, paper_b_id: str, *, session_id=None, pending=None,
+                   confirmation=None, request_question=None) -> dict:
+    """确认状态仅由Python会话入口绑定，模型只能提交两篇论文ID。"""
     from langchain_core.documents import Document
-    from src.generation.rag_pipeline import build_context, prepare_rag_context, resolve_citations
+    from src.generation.rag_pipeline import build_context, prepare_rag_context
     from src.retrieval.hybrid_retriever import HybridRetriever
     from src.retrieval.reranker import Reranker
 
@@ -399,6 +405,22 @@ def paper_compare(paper_a_id: str, paper_b_id: str) -> dict:
     paths = [_uploaded_paper(identifier) for identifier in (paper_a_id, paper_b_id)]
     if paper_a_id == paper_b_id:
         raise ValueError("论文对比需要两篇不同论文的ID")
+    if confirmation is not None:
+        from src.generation.cache import cache_scope
+        from src.retrieval.vector_store import VectorStore
+        if confirmation["session_id"] != session_id:
+            raise ValueError("候选确认不属于当前会话")
+        if confirmation["args"] != {"paper_a_id": paper_a_id, "paper_b_id": paper_b_id}:
+            raise ValueError("候选确认只适用于已展示的两篇论文")
+        if confirmation["scope"] != cache_scope(VectorStore()):
+            raise ValueError("候选内容或配置已变化，确认已失效，请重新提问")
+        return _finish_paper_compare(deepcopy(confirmation["context"]), deepcopy(confirmation["base"]),
+                                     paths, paper_a_id, paper_b_id, started, confirmed=True)
+    pending_scope = None
+    if pending is not None:
+        from src.generation.cache import cache_scope
+        from src.retrieval.vector_store import VectorStore
+        pending_scope = cache_scope(VectorStore())
     question = f"对比论文A（{paths[0].name}）和论文B（{paths[1].name}）的主方法、实验数据集和实验结果。"
     retriever = HybridRetriever()
     papers, results, missing, low, low_papers = [], [], [], [], []
@@ -462,13 +484,29 @@ def paper_compare(paper_a_id: str, paper_b_id: str) -> dict:
         results.extend((Document(page_content=ref["text"], metadata=ref["metadata"]), ref["score"])
                        for ref in context["references"])
     base = {"papers": papers, "missing_dimensions": missing, "low_relevance_dimensions": low, "low_relevance_papers": low_papers}
+    context = prepare_rag_context(question, results)
     empty_paper = any(not paper["references"] for paper in papers)
     if empty_paper or low_papers:
-        return {**base, "status": "insufficient_evidence" if empty_paper else "needs_confirmation",
-                "answer": "一篇论文没有可用索引证据，请先完成两篇论文入库。" if empty_paper else "检索相关性低，请用户核对候选原文。",
-                "citations": [], "usage": {"prompt_eval_count": 0, "eval_count": 0},
-                "elapsed_seconds": perf_counter() - started}
-    context = prepare_rag_context(question, results)
+        result = {**base, "status": "insufficient_evidence" if empty_paper else "needs_confirmation",
+                  "answer": "一篇论文没有可用索引证据，请先完成两篇论文入库。" if empty_paper else "检索相关性低，请用户核对候选原文。",
+                  "references": _tool_references(context["references"]), "generation_mode": "low" if low_papers else "empty",
+                  "citations": [], "usage": {"prompt_eval_count": 0, "eval_count": 0},
+                  "elapsed_seconds": perf_counter() - started}
+        if not empty_paper and pending is not None and pending_scope == cache_scope(VectorStore()):
+            identifier = uuid4().hex
+            pending[identifier] = {"tool_name": "paper_compare", "question": request_question or question,
+                                   "args": {"paper_a_id": paper_a_id, "paper_b_id": paper_b_id},
+                                   "session_id": session_id, "scope": pending_scope,
+                                   "context": deepcopy(context), "base": deepcopy(base)}
+            result["confirmation_id"] = identifier
+        return result
+    return _finish_paper_compare(context, base, paths, paper_a_id, paper_b_id, started)
+
+
+def _finish_paper_compare(context, base, paths, paper_a_id, paper_b_id, started, *, confirmed=False):
+    """生成和确认共用证据选择及引用校验，确认续跑不重新检索。"""
+    from src.generation.rag_pipeline import resolve_citations
+    papers, missing, low = base["papers"], base["missing_dimensions"], base["low_relevance_dimensions"]
     if {ref["metadata"]["doc_id"] for ref in context["references"]} != {paper_a_id, paper_b_id}:
         raise ValueError("上下文预算未保留两篇论文，请调整预算后重试，不能只用一篇生成对比")
     # 模型只选择证据编号；正文和引用由程序回填，避免自由改写将英德28.4错写为英法28.4。
@@ -551,7 +589,7 @@ def paper_compare(paper_a_id: str, paper_b_id: str) -> dict:
         result["warnings"].append("部分维度的检索相关性低，相关陈述需对照原文核验：" + "、".join(low))
     if any(paper["truncated"] for paper in papers):
         result["warnings"].append("单篇原文已按对比预算截断，结论仅依据返回的可见证据。")
-    return {**result, **base, "status": "answered" if cited == {paper_a_id, paper_b_id} and not missing else "insufficient_evidence",
+    return {**result, **base, "confirmed": confirmed, "status": "answered" if cited == {paper_a_id, paper_b_id} and not missing else "insufficient_evidence",
             "elapsed_seconds": perf_counter() - started}
 
 
@@ -855,11 +893,18 @@ def get_available_tools(*, cache=None, session_id: str | None = None, pending: d
     tools = [*AVAILABLE_TOOLS, web_search] if load_config()["agent"]["online_search_enabled"] is True else list(AVAILABLE_TOOLS)
     if cache is not None or pending is not None or confirmation is not None:
         def search(question: str, doc_id: str | None = None) -> dict:
-            approved = confirmation if confirmation is not None and confirmation["tool_question"] == question and confirmation["doc_id"] == doc_id else None
+            approved = confirmation if confirmation is not None and confirmation.get("tool_name", "knowledge_base_search") == "knowledge_base_search" and confirmation.get("tool_question") == question and confirmation.get("doc_id") == doc_id else None
             return _knowledge_base_search(question, doc_id, cache=cache, session_id=session_id, pending=pending,
                                           confirmation=approved, request_question=request_question)
         search.__doc__ = knowledge_base_search.description
         tools[0] = tool("knowledge_base_search")(search)
+        def compare(paper_a_id: str, paper_b_id: str) -> dict:
+            approved = confirmation if confirmation is not None and confirmation.get("tool_name") == "paper_compare" else None
+            return _paper_compare(paper_a_id, paper_b_id, session_id=session_id, pending=pending,
+                                  confirmation=approved, request_question=request_question)
+        compare.__doc__ = paper_compare.description
+        tools[2] = tool("paper_compare")(compare)
+
     return tools
 
 
@@ -902,5 +947,5 @@ def execute_tool(name: str, args: dict, tools: list[BaseTool], call_id: str | No
     return {"type": "tool_result", "call_id": call_id, "name": name, "args": deepcopy(args),
             "status": status, "result": result, "error": error, "error_kind": kind,
             "elapsed_seconds": perf_counter() - started,
-            "message": ToolMessage(content=error if error else str(result), tool_call_id=call_id,
+            "message": ToolMessage(content=error if error else result if isinstance(result, str) else json.dumps(result, ensure_ascii=False, allow_nan=False), tool_call_id=call_id,
                                    name=name, status=status)}

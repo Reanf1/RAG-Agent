@@ -6,6 +6,8 @@ from functools import lru_cache
 from pathlib import Path
 from time import perf_counter
 
+import numpy as np
+
 from chromadb.config import Settings
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
@@ -117,11 +119,26 @@ class VectorStore:
         if not query.strip():
             return []
         where = {"doc_id": doc_id} if doc_id is not None else None
-        count = len(self._store.get(where=where, include=[])["ids"]) if where else self.count()
+        if where:
+            # 限定一篇论文采用已有向量的精确余弦排名，避开小过滤集的HNSW图异常。
+            stored = self._store.get(where=where, include=["documents", "metadatas", "embeddings"])
+            if not stored["ids"]:
+                return []
+            self._ensure_embeddings()
+            vectors = np.asarray(stored["embeddings"], dtype=float)
+            query_vector = np.asarray(self._store.embeddings.embed_query(query), dtype=float)
+            norms = np.linalg.norm(vectors, axis=1) * np.linalg.norm(query_vector)
+            if np.any(norms == 0):
+                raise ValueError("持久化向量或查询向量为零，无法计算余弦相似度")
+            scores = np.clip(vectors @ query_vector / norms, -1.0, 1.0)
+            ranked = sorted(range(len(scores)), key=lambda i: (-scores[i], stored["ids"][i]))[:k]
+            return [(Document(page_content=stored["documents"][i], metadata=stored["metadatas"][i]),
+                     float(scores[i])) for i in ranked]
+        count = self.count()
         if count == 0:
             return []
         self._ensure_embeddings()
-        results = self._store.similarity_search_with_score(query, k=min(k, count), filter=where)
+        results = self._store.similarity_search_with_score(query, k=min(k, count))
         return [(document, 1 - distance) for document, distance in results]
 
     def delete_document(self, doc_id: str) -> int:

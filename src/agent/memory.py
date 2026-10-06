@@ -4,6 +4,7 @@ from contextlib import closing
 from copy import deepcopy
 from functools import lru_cache
 import json
+import re
 from pathlib import Path
 import sqlite3
 from time import perf_counter
@@ -377,8 +378,13 @@ def run_session(question: str, user_id: str, session_id: str, tools=None, *, mem
     context = memory.get_context(user_id, session_id)
     if confirmed_rag_args is not None:
         # Python界面确认专用，先校验会话归属；模型工具Schema没有这项参数。
-        if set(confirmed_rag_args) != {"question", "doc_id"} or not isinstance(confirmed_rag_args["question"], str) or not confirmed_rag_args["question"].strip():
-            raise ValueError("候选确认需要原查询和文档过滤")
+        is_search = (set(confirmed_rag_args) == {"question", "doc_id"} and
+                     isinstance(confirmed_rag_args["question"], str) and bool(confirmed_rag_args["question"].strip()))
+        is_compare = (set(confirmed_rag_args) == {"paper_a_id", "paper_b_id"} and
+                      all(isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value) for value in confirmed_rag_args.values())
+                      and confirmed_rag_args["paper_a_id"] != confirmed_rag_args["paper_b_id"])
+        if not (is_search or is_compare):
+            raise ValueError("候选确认需要原查询和文档过滤，或两篇不同论文ID")
         context["confirmed_rag_args"] = deepcopy(confirmed_rag_args)
     events = run_react(question, tools, context, stream=True) if stream else run_react(question, tools, context)
     for event in events:

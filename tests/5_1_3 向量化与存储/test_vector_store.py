@@ -61,6 +61,17 @@ class TestVectorStore(unittest.TestCase):
         for (_, score), expected in zip(found, (1, 0, -1)):
             self.assertAlmostEqual(score, expected)
 
+    def test_filtered_search_uses_persisted_vectors_without_hnsw(self):
+        """小文档过滤绕开HNSW图；使用已有向量，不能重算文档或返回其他文档。"""
+        self.store.add_chunks(self.chunks)
+        before = list(self.embeddings.document_calls)
+        with patch.object(self.store._store, "similarity_search_with_score",
+                          side_effect=RuntimeError("Cannot return the results in a contigious 2D array")):
+            found = self.store.search("农业", k=5, doc_id="b")
+        self.assertEqual([doc.metadata["chunk_id"] for doc, _ in found], ["b1"])
+        self.assertAlmostEqual(found[0][1], 1.0)
+        self.assertEqual(self.embeddings.document_calls, before)
+
     def test_document_filter_and_top_k(self):
         self.store.add_chunks(self.chunks)
         self.assertEqual(len(self.store.search("神经网络", k=1)), 1)

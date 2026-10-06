@@ -85,6 +85,17 @@ class TestObservationAndLoop(unittest.TestCase):
             events = list(run_react("先计算3乘4，再把乘积加5。", self.tools, context))
         return events, http
 
+    def test_single_summary_after_failed_comparison_cannot_complete_original_task(self):
+        """W13回归：最后一个摘要成功不代表两篇论文对比已完成。"""
+        from src.agent.tools import paper_compare, paper_summary
+        context = {"observations": [
+            {"name": "paper_compare", "status": "error", "result": None},
+            {"name": "paper_summary", "status": "success", "result": {"answer": "单篇简介"}}]}
+        with patch("src.agent.react_loop.urlopen", return_value=self.http_responses([self.packet(self.finished)])[0]):
+            result = observe("对比两篇论文的方法、数据集和实验结果", [paper_compare, paper_summary], context)
+        self.assertFalse(result["task_complete"])
+        self.assertIn("对比任务尚未完成", result["answer"])
+
     def test_two_real_tools_feed_next_round_and_native_observation_messages(self):
         context = {"source": "原始资料", "observations": []}
         original = deepcopy(context)

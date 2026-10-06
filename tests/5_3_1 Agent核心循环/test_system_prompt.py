@@ -56,6 +56,23 @@ class TestAgentSystemPrompt(unittest.TestCase):
         self.assertEqual(context, original)
         self.assertIn("模型上下文已截断", payload["messages"][1]["content"])
 
+    def test_native_tool_message_is_json_and_can_fit_full_request_budget(self):
+        """执行器返回的原生ToolMessage也必须可裁剪，不能只处理Human Context。"""
+        from src.agent.tools import execute_tool
+        from src.agent.react_loop import _model_request
+        from src.utils.token_budget import request_tokens
+        @tool
+        def large_evidence() -> dict:
+            """返回可复现超预算的受控证据。"""
+            return {"answer": "🧬" * 14000, "references": [{"text": "🧪" * 10000,
+                    "metadata": {"doc_id": "a" * 64}}]}
+        event = execute_tool("large_evidence", {}, [large_evidence])
+        self.assertEqual(json.loads(event["message"].content), event["result"])
+        original = event["message"].content
+        payload = json.loads(_model_request([*build_agent_messages("比较？", []), event["message"]]).data)
+        self.assertLessEqual(request_tokens(payload) + payload["options"]["num_predict"], payload["options"]["num_ctx"])
+        self.assertEqual(event["message"].content, original)
+
     def test_all_stages_preserve_actual_tool_description_and_parameter_constraints(self):
         for stage in ("thought", "action", "observation"):
             with self.subTest(stage=stage):

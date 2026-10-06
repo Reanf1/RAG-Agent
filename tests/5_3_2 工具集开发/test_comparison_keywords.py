@@ -72,6 +72,35 @@ class TestComparisonAndKeywords(unittest.TestCase):
             result = paper_compare.invoke(dict(zip(("paper_a_id", "paper_b_id"), self.ids)))
         return result, retriever, http
 
+    def test_low_comparison_confirmation_reuses_reviewed_candidates(self):
+        """确认只复用本会话、同索引版本的证据；不二次检索更换原文。"""
+        from src.agent.tools import get_available_tools
+        pending, args = {}, dict(zip(("paper_a_id", "paper_b_id"), self.ids))
+        with patch("src.generation.cache.cache_scope", return_value="scope-v1"), \
+                patch("src.retrieval.vector_store.VectorStore"), \
+                patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
+                patch("src.generation.rag_pipeline.urlopen", side_effect=self.comparison_packet) as http:
+            retriever.return_value.search.side_effect = [[(self.documents[i], 0.01)] for i in ([0] * 6 + [1] * 6)]
+            registry = get_available_tools(session_id="session", pending=pending, request_question="对比两篇论文")
+            result = next(t for t in registry if t.name == "paper_compare").invoke(args)
+            self.assertEqual(result["status"], "needs_confirmation")
+            self.assertEqual({ref["metadata"]["doc_id"] for ref in result["references"]}, set(self.ids))
+            approval = pending[result["confirmation_id"]]
+            http.assert_not_called()
+            retriever.reset_mock()
+            registry = get_available_tools(session_id="session", confirmation=approval)
+            confirmed = next(t for t in registry if t.name == "paper_compare").invoke(args)
+            self.assertTrue(confirmed["confirmed"])
+            self.assertEqual(confirmed["status"], "answered")
+            retriever.assert_not_called()
+            registry = get_available_tools(session_id="other", confirmation=approval)
+            with self.assertRaisesRegex(ValueError, "会话"):
+                next(t for t in registry if t.name == "paper_compare").invoke(args)
+            with patch("src.generation.cache.cache_scope", return_value="scope-v2"):
+                registry = get_available_tools(session_id="session", confirmation=approval)
+                with self.assertRaisesRegex(ValueError, "失效"):
+                    next(t for t in registry if t.name == "paper_compare").invoke(args)
+
     def keywords(self, terms, **args):
         response = {**self.response, "message": {"content": json.dumps({"keywords": terms})}}
         with patch("src.generation.rag_pipeline.urlopen", return_value=BytesIO(json.dumps(response).encode())) as http:

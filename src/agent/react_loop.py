@@ -323,7 +323,7 @@ def act(question: str, thought: dict, tools: list[BaseTool], context: dict | Non
         selected_tools = [registry[name] for name in dict.fromkeys(names)]
         known_ids = _known_paper_ids(question, context)
         started = perf_counter()
-        if thought.get("route") == "confirmation" and names == ["knowledge_base_search"] and not batch:
+        if thought.get("route") == "confirmation" and names in (["knowledge_base_search"], ["paper_compare"]) and not batch:
             # 参数来自界面已确认的候选，固定本次调用，不能让模型改写已审阅的查询。
             result = {"model": None, "prompt_eval_count": 0, "eval_count": 0,
                       "message": {"tool_calls": [{"function": {"name": names[0], "arguments": deepcopy(context["confirmed_rag_args"])}}]}}
@@ -360,7 +360,7 @@ def act(question: str, thought: dict, tools: list[BaseTool], context: dict | Non
             if not isinstance(call, dict) or call.get("name") not in names or not isinstance(call.get("arguments"), dict):
                 raise ValueError("Action工具名称或参数格式错误")
             # 模型可能在列表后仍传文件名；仅将真实列表中的唯一别名转为已上传ID。
-            fields = ("paper_a_id", "paper_b_id") if call["name"] == "paper_compare" else ("doc_id",) if call["name"] in {"paper_metadata", "paper_summary", "knowledge_base_search"} else ()
+            fields = ("paper_a_id", "paper_b_id") if call["name"] == "paper_compare" else ("doc_id",) if call["name"] in {"paper_metadata", "paper_summary", "knowledge_base_search", "keyword_extract"} else ()
             aliases = _paper_aliases(context) if fields else {}
             for field in fields:
                 value = call["arguments"].get(field)
@@ -532,7 +532,7 @@ def _structured_tool_observation(question: str, tools: list[BaseTool], observati
         if note not in answer:
             answer += "\n\n" + note
     return {"type": "observation", "observation": "保留单一任务工具报告的栏目、原文引用和限制说明。",
-            "decision": "finish", "task_complete": evidence["status"] == "answered" and not missing and not low,
+            "decision": "finish", "task_complete": evidence["status"] == "answered" and not missing and (not low or evidence.get("confirmed") is True),
             "answer": answer, "model": None, "usage": {"prompt_eval_count": 0, "eval_count": 0}, "elapsed_seconds": 0.0}
 
 
@@ -650,6 +650,18 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
             raise ValueError("最后一次工具调用失败，不能将原任务标记为成功")
         if any(isinstance(item.get("result"), dict) and item["result"].get("status") in {"needs_confirmation", "incomplete", "insufficient_evidence"} for item in latest) and decision["task_complete"]:
             raise ValueError("工具资料不足或候选尚待用户确认，不能将原任务标记为成功")
+        original_plan = route_question(question, tools or [])
+        if original_plan and original_plan.get("tool_name") == "paper_compare" and decision["task_complete"]:
+            comparisons = [item["result"] for item in observations if item.get("name") == "paper_compare"
+                           and item.get("status") == "success" and isinstance(item.get("result"), dict)]
+            complete_comparison = any(result.get("status") == "answered" and not result.get("missing_dimensions")
+                                      and (not result.get("low_relevance_dimensions") or result.get("confirmed") is True)
+                                      and {row.get("dimension") for row in result.get("comparison", [])} == {"方法", "数据集", "实验结果"}
+                                      and len({ref["metadata"]["doc_id"] for ref in result.get("citations", [])}) == 2
+                                      for result in comparisons)
+            if not complete_comparison:
+                decision["task_complete"] = False
+                decision["answer"] += "\n\n原对比任务尚未完成：需要两篇论文的方法、数据集、实验结果及对应引用。"
         if decision["decision"] == "finish" and decision["task_complete"] and len(observations) == 1:
             item = observations[0]
             evidence = item.get("result", {})
@@ -734,14 +746,15 @@ def _run_react(question: str, tools: list[BaseTool] | None = None, context: dict
                 routed = route_question(question, available)
             if iteration == 1 and state.get("confirmed_rag_args"):
                 routed = {"type": "thought", "thought": "使用用户已确认的候选原文回答。", "next_step": "tool",
-                          "tool_name": "knowledge_base_search", "parallel_tools": [], "route": "confirmation",
+                          "tool_name": "paper_compare" if "paper_a_id" in state["confirmed_rag_args"] else "knowledge_base_search",
+                          "parallel_tools": [], "route": "confirmation",
                           "model": None, "usage": {"prompt_eval_count": 0, "eval_count": 0}}
             thought = routed if routed is not None else think(question, available, state)
             required_ids = 2 if thought.get("tool_name") == "paper_compare" else 1 if thought.get("tool_name") in {"paper_metadata", "paper_summary"} else 0
             known_ids = _known_paper_ids(question, state)
             # 有历史时仍先核对文件名，不能绕过文档过滤或把模型猜测的ID当作真实指纹。
             needs_filename = (thought.get("route") != "confirmation" and
-                              any(name in {"knowledge_base_search", "paper_summary", "paper_metadata", "paper_compare"}
+                              any(name in {"knowledge_base_search", "paper_summary", "paper_metadata", "paper_compare", "keyword_extract"}
                                   for name in [thought.get("tool_name"), *thought.get("parallel_tools", [])])
                               and not _known_paper_ids(question, None)
                               and re.search(r"\.(?:pdf|docx|txt|md)(?=$|[^A-Za-z0-9])", question, re.I)

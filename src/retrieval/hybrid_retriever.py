@@ -2,7 +2,7 @@
 
 from langchain_core.documents import Document
 
-from src.retrieval.bm25_retriever import BM25Retriever
+from src.retrieval.bm25_retriever import BM25Retriever, expand_academic_query
 from src.retrieval.reranker import Reranker, is_image_placeholder
 from src.retrieval.vector_store import VectorStore
 from src.utils.config import load_config
@@ -67,5 +67,5 @@ class HybridRetriever:
         # 加载时保留图片位置供原文查看，检索时不让占位文字挤占Top-20正文候选。
         fused = [(document, score) for document, score in fused if not is_image_placeholder(document.page_content)]
         if rerank:
-            return Reranker().rerank(query, fused[:candidate_k], k=k)
+            return Reranker().rerank(expand_academic_query(query), fused[:candidate_k], k=k)
         return fused[:k]

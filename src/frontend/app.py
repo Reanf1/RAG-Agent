@@ -419,7 +419,8 @@ with chat_tab:
                                                                            session_id=st.session_state.agent_session_id,
                                                                            pending=st.session_state.agent_pending_rag,
                                                                            confirmation=approval, request_question=question),
-                                                 confirmed_rag_args={"question": approval["tool_question"], "doc_id": approval["doc_id"]} if approval else None,
+                                                 confirmed_rag_args=(approval["args"] if "args" in approval else
+                                                                     {"question": approval["tool_question"], "doc_id": approval["doc_id"]}) if approval else None,
                                                  memory=st.session_state.agent_memory, stream=True):
                             if event["type"] == "token":
                                 incoming["answer"] = event["answer"]

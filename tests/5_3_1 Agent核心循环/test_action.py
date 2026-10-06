@@ -105,6 +105,28 @@ class TestAction(unittest.TestCase):
         http.assert_not_called()
         self.assertEqual(events[0]["usage"], {"prompt_eval_count": 0, "eval_count": 0})
 
+    def test_keyword_document_filename_preflight_and_alias(self):
+        """文档关键词入口先查列表，再将唯一文件名映射为真实ID。"""
+        from src.agent.react_loop import run_react
+        @tool
+        def paper_list() -> dict:
+            """提供实际上传的文档指纹。"""
+            return {"papers": [{"doc_id": "a" * 64, "source_file": "目标.md"}], "total": 1}
+        @tool
+        def keyword_extract(doc_id: str) -> dict:
+            """核验最终收到的文档ID。"""
+            self.invocations.append(doc_id)
+            return {"keywords": ["测试"]}
+        call = {**self.response, "message": {"tool_calls": [{"function": {
+            "name": "keyword_extract", "arguments": {"doc_id": "目标.md"}}}]}}
+        done = {**self.response, "message": {"content": json.dumps({"observation": "关键词已提取", "decision": "finish",
+                "task_complete": True, "answer": "关键词为测试"})}}
+        with patch("src.agent.react_loop.urlopen", side_effect=[BytesIO(json.dumps(item).encode()) for item in (call, done)]):
+            events = list(run_react("从目标.md提取关键词", [paper_list, keyword_extract]))
+        self.assertEqual([e["name"] for e in events if e["type"] == "tool_call"], ["paper_list", "keyword_extract"])
+        self.assertEqual(self.invocations, ["a" * 64])
+        self.assertTrue(events[-1]["task_complete"])
+
     def test_current_paper_id_overrides_model_choice_from_old_history(self):
         """复现W09：最新问题指定ViT，模型Action却填了历史DETR的真实ID。"""
         @tool
