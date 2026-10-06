@@ -1,0 +1,176 @@
+Browser tab: 2, Title: "智能科研助理", URL: "http://192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=cfad3419354d4d57b5e74cc2325c8447".
+0 AXWebArea 智能科研助理, URL: 192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=cfad3419354d4d57b5e74cc2325c8447
+	1 container
+		4 container
+			5 container
+				6 heading 系统状态, Value: 2
+					7 text 系统状态
+				8 container
+					9 text 系统时间：2026-10-06 17:13 :40
+				10 container
+					11 text LLM服务：可连接，推理未验证（qwen2.5 :7b ）
+				12 text 向量数据库：可读取，检索未验证（Chroma）
+				13 button 刷新状态
+					14 text 刷新状态
+				15 heading 文档上传与管理, Value: 2
+					16 text 文档上传与管理
+				17 container 上传文档
+					18 button file upload
+					19 button upload Upload
+						20 text upload
+						21 text Upload
+					22 text 20MB per file
+					23 text  • PDF, DOCX, TXT, MD, MARKDOWN
+				24 text 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+				25 button (disabled) 开始导入
+					26 text 开始导入
+				27 button (disabled) 重试失败项
+					28 text 重试失败项
+				29 heading 对话历史管理, Value: 2
+					30 text 对话历史管理
+				31 button 新建会话
+					32 text 新建会话
+				33 text 最近
+				34 button 新会话
+					35 text 新会话
+				36 button 删除当前会话
+					37 text 删除当前会话
+			38 container
+				39 button keyboard_double_arrow_right
+				40 pop up button (collapsed) Description: Main menu, Secondary Actions: Expand
+			41 container
+				42 heading 智能科研助理, Value: 1, ID: 2d7dc4e4
+					43 text 智能科研助理
+					44 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=cfad3419354d4d57b5e74cc2325c8447#2d7dc4e4
+				45 text 基于 RAG + Agent 的论文知识库问答系统
+				46 tab group react-aria2800906804-:r6:
+					47 tab (selectable, settable, boolean) 科研对话, ID: react-aria2800906804-:r6:-tab-0, Value: 0
+科研对话
+					48 tab (selected, settable, boolean) 文档检索, ID: react-aria2800906804-:r6:-tab-1, Value: 1
+文档检索
+					49 tab (selectable, settable, boolean) 知识库, ID: react-aria2800906804-:r6:-tab-2, Value: 0
+知识库
+				50 container Description: 文档检索, ID: react-aria2800906804-:r6:-tabpanel-1
+					51 heading 文档 Top-K 检索, Value: 3, ID: top-k
+						52 text 文档 Top-K 检索
+						53 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=cfad3419354d4d57b5e74cc2325c8447#top-k
+					54 container
+						55 combo box (collapsed, settable) Description: 检索方式, Value: RRF + 模型重排, ID: react-aria2800906804-:r1e:, Secondary Actions: Expand
+						56 pop up button (collapsed) Description: Open, ID: react-aria2800906804-:r1a:, Secondary Actions: Expand
+					57 container
+						58 stepper (settable, integer) Description: Top-k, Value: 5, ID: :r1n:
+					59 container
+						60 button Help for 文档ID
+						61 text field (settable) Description: 文档ID, Value: 8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6, ID: :r1t:
+					62 container
+						63 text field (settable) Description: 查询内容, Value: ViT如何使用位置编码？, ID: :r25:
+					64 button 检索
+						65 text 检索
+					66 text 返回 5 个文档块（Top-K=5）。
+					67 text 持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+					68 container
+						69 button (expanded) keyboard_arrow_down 1. Windows验收_ViT.pdf · 模型相关性分数 0.9469, Secondary Actions: Collapse
+							70 text keyboard_arrow_down
+							71 text 1. Windows验收_ViT.pdf · 模型相关性分数 0.9469
+						72 text 来源：Windows验收_ViT.pdf；物理页码：17
+						73 text 文档 ID：8ce7b839；块 ID：7eb48c93
+						74 text 0.64001
+0.64046
+0.64022
+Rel. Pos. Emb.
+0.64032
+N/A
+N/A
+Table 8: Results of the ablation study on positional embeddings with ViT-B/16 model evaluated on
+ImageNet 5-shot linear.
+the difference in performance is fully explained by the requirement for a different learning-rate, see
+Figure 9.
+D.4
+POSITIONAL EMBEDDING
+We ran ablations on different ways of encoding spatial information using positional embedding. We
+tried the following cases:
+					75 container
+						76 button (expanded) keyboard_arrow_down 2. Windows验收_ViT.pdf · 模型相关性分数 0.9242, Secondary Actions: Collapse
+							77 text keyboard_arrow_down
+							78 text 2. Windows验收_ViT.pdf · 模型相关性分数 0.9242
+						79 text 来源：Windows验收_ViT.pdf；物理页码：3
+						80 text 文档 ID：8ce7b839；块 ID：de306f23
+						81 text tached to z^{0}
+_{L}^{. The classiﬁcation head is implemented by a MLP with one hidden layer at pre-training}
+time and by a single linear layer at ﬁne-tuning time.
+Position embeddings are added to the patch embeddings to retain positional information. We use
+standard learnable 1D position embeddings, since we have not observed signiﬁcant performance
+gains from using more advanced 2D-aware position embeddings (Appendix D.4). The resulting
+sequence of embedding vectors serves as input to the encoder.
+					82 container
+						83 button (expanded) keyboard_arrow_down 3. Windows验收_ViT.pdf · 模型相关性分数 0.8843, Secondary Actions: Collapse
+							84 text keyboard_arrow_down
+							85 text 3. Windows验收_ViT.pdf · 模型相关性分数 0.8843
+						86 text 来源：Windows验收_ViT.pdf；物理页码：18
+						87 text 文档 ID：8ce7b839；块 ID：8c8caa8c
+						88 text beginning of each layer; (3) add a learned positional embeddings to the inputs at the beginning of
+each layer (shared between layers).
+Table 8 summarizes the results from this ablation study on a ViT-B/16 model. As we can see, while
+there is a large gap between the performances of the model with no positional embedding and mod-
+els with positional embedding, there is little to no difference between different ways of encoding
+					89 container
+						90 button (expanded) keyboard_arrow_down 4. Windows验收_ViT.pdf · 模型相关性分数 0.8748, Secondary Actions: Collapse
+							91 text keyboard_arrow_down
+							92 text 4. Windows验收_ViT.pdf · 模型相关性分数 0.8748
+						93 text 来源：Windows验收_ViT.pdf；物理页码：9
+						94 text 文档 ID：8ce7b839；块 ID：f0472597
+						95 text 10
+15
+20
+1
+2
+3
+4
+5
+6
+7
+Network depth (layer)
+Input patch column
+Figure 7: Left: Filters of the initial linear embedding of RGB values of ViT-L/32. Center: Sim-
+ilarity of position embeddings of ViT-L/32. Tiles show the cosine similarity between the position
+embedding of the patch with the indicated row and column and the position embeddings of all other
+patches. Right: Size of attended area by head and network depth. Each dot shows the mean attention
+					96 container
+						97 button (expanded) keyboard_arrow_down 5. Windows验收_ViT.pdf · 模型相关性分数 0.8289, Secondary Actions: Collapse
+							98 text keyboard_arrow_down
+							99 text 5. Windows验收_ViT.pdf · 模型相关性分数 0.8289
+						100 text 来源：Windows验收_ViT.pdf；物理页码：17
+						101 text 文档 ID：8ce7b839；块 ID：ff214723
+						102 text X-embedding, and Y -embedding, each with size D/2. Then, based on the coordinate on
+the path in the input, we concatenate the X and Y embedding to get the ﬁnal positional
+embedding for that patch.
+• Relative positional embeddings: Considering the relative distance between patches to en-
+code the spatial information as instead of their absolute position. To do so, we use 1-
+dimensional Relative Attention, in which we deﬁne the relative distance all possible pairs
+					103 heading 检索分数分布, Value: 3, ID: cf661d5
+						104 text 检索分数分布
+						105 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=cfad3419354d4d57b5e74cc2325c8447#cf661d5
+					106 text 请求 27 · 缓存命中 2 · 空结果 3 · 检索失败 5
+					107 text BAAI/bge-reranker-base · 版本 2cfc18c9 · 样本 16 · 均值 0.3606 · 范围 0.0000–0.9991
+					108 container
+						109 button Show data
+						110 button Download as PNG
+						111 button Fullscreen
+						112 container Vega visualization
+							113 image
+								114 container X-axis titled 'Top-1 分数区间' for a discrete scale with 10 values: 0.0–0.1, 0.1–0.2, 0.2–0.3, 0.3–0.4, 0.4–0.5, ending with 0.9–1.0 Y-axis titled '实际检索次数' for a linear scale with values from 0 to 7 Top-1 分数区间: 0.0–0.1; 实际检索次数: 7; range: 0.0–0.1; count: 7 Top-1 分数区间: 0.1–0.2; 实际检索次数: 2; range: 0.1–0.2; count: 2 Top-1 分数区间: 0.2–0.3; 实际检索次数: 0; range: 0.2–0.3; count: 0 Top-1 分数区间: 0.3–0.4; 实际检索次数: 1; range: 0.3–0.4; count: 1 Top-1 分数区间: 0.4–0.5; 实际检索次数: 0; range: 0.4–0.5; count: 0 Top-1 分数区间: 0.5–0.6; 实际检索次数: 2; range: 0.5–0.6; count: 2 Top-1 分数区间: 0.6–0.7; 实际检索次数: 0; range: 0.6–0.7; count: 0 Top-1 分数区间: 0.7–0.8; 实际检索次数: 0; range: 0.7–0.8; count: 0 Top-1 分数区间: 0.8–0.9; 实际检索次数: 0; range: 0.8–0.9; count: 0 Top-1 分数区间: 0.9–1.0; 实际检索次数: 4; range: 0.9–1.0; count: 4
+									115 axis X-axis titled 'Top-1 分数区间' for a discrete scale with 10 values: 0.0–0.1, 0.1–0.2, 0.2–0.3, 0.3–0.4, 0.4–0.5, ending with 0.9–1.0
+									116 axis Y-axis titled '实际检索次数' for a linear scale with values from 0 to 7
+									117 container Top-1 分数区间: 0.0–0.1; 实际检索次数: 7; range: 0.0–0.1; count: 7 Top-1 分数区间: 0.1–0.2; 实际检索次数: 2; range: 0.1–0.2; count: 2 Top-1 分数区间: 0.2–0.3; 实际检索次数: 0; range: 0.2–0.3; count: 0 Top-1 分数区间: 0.3–0.4; 实际检索次数: 1; range: 0.3–0.4; count: 1 Top-1 分数区间: 0.4–0.5; 实际检索次数: 0; range: 0.4–0.5; count: 0 Top-1 分数区间: 0.5–0.6; 实际检索次数: 2; range: 0.5–0.6; count: 2 Top-1 分数区间: 0.6–0.7; 实际检索次数: 0; range: 0.6–0.7; count: 0 Top-1 分数区间: 0.7–0.8; 实际检索次数: 0; range: 0.7–0.8; count: 0 Top-1 分数区间: 0.8–0.9; 实际检索次数: 0; range: 0.8–0.9; count: 0 Top-1 分数区间: 0.9–1.0; 实际检索次数: 4; range: 0.9–1.0; count: 4
+										118 bar Top-1 分数区间: 0.0–0.1; 实际检索次数: 7; range: 0.0–0.1; count: 7
+										119 bar Top-1 分数区间: 0.1–0.2; 实际检索次数: 2; range: 0.1–0.2; count: 2
+										120 bar Top-1 分数区间: 0.2–0.3; 实际检索次数: 0; range: 0.2–0.3; count: 0
+										121 bar Top-1 分数区间: 0.3–0.4; 实际检索次数: 1; range: 0.3–0.4; count: 1
+										122 bar Top-1 分数区间: 0.4–0.5; 实际检索次数: 0; range: 0.4–0.5; count: 0
+										123 bar Top-1 分数区间: 0.5–0.6; 实际检索次数: 2; range: 0.5–0.6; count: 2
+										124 bar Top-1 分数区间: 0.6–0.7; 实际检索次数: 0; range: 0.6–0.7; count: 0
+										125 bar Top-1 分数区间: 0.7–0.8; 实际检索次数: 0; range: 0.7–0.8; count: 0
+										126 bar Top-1 分数区间: 0.8–0.9; 实际检索次数: 0; range: 0.8–0.9; count: 0
+										127 bar Top-1 分数区间: 0.9–1.0; 实际检索次数: 4; range: 0.9–1.0; count: 4
+
+The focused UI element is 64 button 检索

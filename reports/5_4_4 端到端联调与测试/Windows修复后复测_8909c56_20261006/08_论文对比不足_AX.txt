@@ -1,0 +1,220 @@
+Browser tab: 2, Title: "智能科研助理", URL: "http://192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=86b1b13164004b0c9ff6c862ec8e41e1".
+0 AXWebArea 智能科研助理, URL: 192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=86b1b13164004b0c9ff6c862ec8e41e1
+	1 container
+		4 container
+			5 container
+				6 heading 系统状态, Value: 2
+					7 text 系统状态
+				8 container
+					9 text 系统时间：2026-10-06 17:22 :11
+				10 container
+					11 text LLM服务：可连接，推理未验证（qwen2.5 :7b ）
+				12 text 向量数据库：可读取，检索未验证（Chroma）
+				13 button 刷新状态
+					14 text 刷新状态
+				15 heading 文档上传与管理, Value: 2
+					16 text 文档上传与管理
+				17 container 上传文档
+					18 button file upload
+					19 button upload Upload
+						20 text upload
+						21 text Upload
+					22 text 20MB per file
+					23 text  • PDF, DOCX, TXT, MD, MARKDOWN
+				24 text 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+				25 button (disabled) 开始导入
+					26 text 开始导入
+				27 button (disabled) 重试失败项
+					28 text 重试失败项
+				29 heading 对话历史管理, Value: 2
+					30 text 对话历史管理
+				31 button 新建会话
+					32 text 新建会话
+				33 text 最近
+				186 button 请对比已入库论文8ce7b83971a14508
+					187 text 请对比已入库论文8ce7b83971a14508
+				188 button 请根据Windows复测_说明.txt回答：复测
+					189 text 请根据Windows复测_说明.txt回答：复测
+				36 button 删除当前会话
+					37 text 删除当前会话
+			38 container
+				39 button keyboard_double_arrow_right
+				40 pop up button (collapsed) Description: Main menu, Secondary Actions: Expand
+			41 container
+				42 heading 智能科研助理, Value: 1, ID: 2d7dc4e4
+					43 text 智能科研助理
+					44 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=86b1b13164004b0c9ff6c862ec8e41e1#2d7dc4e4
+				45 text 基于 RAG + Agent 的论文知识库问答系统
+				46 tab group react-aria2800906804-:r6:
+					47 tab (selected, settable, boolean) 科研对话, ID: react-aria2800906804-:r6:-tab-0, Value: 1
+科研对话
+					48 tab (selectable, settable, boolean) 文档检索, ID: react-aria2800906804-:r6:-tab-1, Value: 0
+文档检索
+					49 tab (selectable, settable, boolean) 知识库, ID: react-aria2800906804-:r6:-tab-2, Value: 0
+知识库
+				51 container Description: 科研对话, ID: react-aria2800906804-:r6:-tabpanel-0
+					248 container
+						249 text face
+						250 container Chat message from user
+							251 text 请对比已入库论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6和ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c3079f448a2ad的方法、数据集和实验结果，请注明各自来源。
+						252 text smart_toy
+						253 container Chat message from assistant
+							254 container
+								255 heading 回答, Value: 2, ID: 3a622f65
+									256 text 回答
+									257 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=86b1b13164004b0c9ff6c862ec8e41e1#3a622f65
+								258 text 以下按三个维度并列展示两篇论文的原文证据，不改写实验数字或条件。
+								259 table
+									260 row
+										261 cell
+											262 text 维度
+										263 cell
+											264 text 论文A
+										265 cell
+											266 text 论文B
+									267 row
+										268 cell
+											269 text 方法
+										270 cell
+											271 text 原文摘录：inductive bias about the 2D structure of the images is manually injected into the Vision Transformer. 4 EXPERIMENTS We evaluate the representation learning capabilities of ResNet, Vision Transformer (ViT), and the hybrid. To understand the data requirements of each model, we pre-train on datasets of varying size and evaluate many benchmark tasks. When considering the computational cost of pre-training the model, ViT performs very favourably, attaining state of the art on most recognition benchmarks at a lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show that self-supervised ViT holds promise for the future. 4.1 SETUP Datasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes and 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with [参考文档2：Windows验收_ViT.pdf；第4页（物理页码）]
+										272 cell
+											273 text 原文摘录：that explicitly encode our prior knowledge about the task. The main ingredients of the new framework, called DEtection TRansformer or DETR, are a set-based global loss that forces unique predictions via bi- partite matching, and a transformer encoder-decoder architecture. Given a ﬁxed small set of learned object queries, DETR reasons about the re- lations of the objects and the global image context to directly output the ﬁnal set of predictions in parallel. The new model is conceptually simple and does not require a specialized library, unlike many other modern detectors. DETR demonstrates accuracy and run-time perfor- mance on par with the well-established and highly-optimized Faster R- CNN baseline on the challenging COCO object detection dataset. More- over, DETR can be easily generalized to produce panoptic segmentation in a uniﬁed manner. We show that it signiﬁcantly outperforms com- petitive baselines. Training code and pretrained models are available at 
+											274 link Description: https://github.com/facebookresearch/detr, Value: github.com/facebookresearch/detr
+											275 text . 1 Introduction The goal of object detection is to predict a set of bounding boxes and category labels for each object of interest. Modern detectors address this set prediction task in an indirect way, by deﬁning surrogate regression and classiﬁcation prob- lems on a large set of proposals [37,5], anchors [23], or window centers [53,46]. Their performances are signiﬁcantly inﬂuenced by postprocessing steps to col- [参考文档4：Windows复测_DETR节选.pdf；第1页（物理页码）]
+									276 row
+										277 cell
+											278 text 数据集
+										279 cell
+											280 text 原文摘录：inductive bias about the 2D structure of the images is manually injected into the Vision Transformer. 4 EXPERIMENTS We evaluate the representation learning capabilities of ResNet, Vision Transformer (ViT), and the hybrid. To understand the data requirements of each model, we pre-train on datasets of varying size and evaluate many benchmark tasks. When considering the computational cost of pre-training the model, ViT performs very favourably, attaining state of the art on most recognition benchmarks at a lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show that self-supervised ViT holds promise for the future. 4.1 SETUP Datasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes and 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with [参考文档2：Windows验收_ViT.pdf；第4页（物理页码）]
+										281 cell
+											282 text 原文摘录：that explicitly encode our prior knowledge about the task. The main ingredients of the new framework, called DEtection TRansformer or DETR, are a set-based global loss that forces unique predictions via bi- partite matching, and a transformer encoder-decoder architecture. Given a ﬁxed small set of learned object queries, DETR reasons about the re- lations of the objects and the global image context to directly output the ﬁnal set of predictions in parallel. The new model is conceptually simple and does not require a specialized library, unlike many other modern detectors. DETR demonstrates accuracy and run-time perfor- mance on par with the well-established and highly-optimized Faster R- CNN baseline on the challenging COCO object detection dataset. More- over, DETR can be easily generalized to produce panoptic segmentation in a uniﬁed manner. We show that it signiﬁcantly outperforms com- petitive baselines. Training code and pretrained models are available at 
+											283 link Description: https://github.com/facebookresearch/detr, Value: github.com/facebookresearch/detr
+											284 text . 1 Introduction The goal of object detection is to predict a set of bounding boxes and category labels for each object of interest. Modern detectors address this set prediction task in an indirect way, by deﬁning surrogate regression and classiﬁcation prob- lems on a large set of proposals [37,5], anchors [23], or window centers [53,46]. Their performances are signiﬁcantly inﬂuenced by postprocessing steps to col- [参考文档4：Windows复测_DETR节选.pdf；第1页（物理页码）]
+									285 row
+										286 cell
+											287 text 实验结果
+										288 cell
+											289 text 当前返回原文／节选未提供可核验的实验指标数值；请核对完整原文。 [参考文档1：Windows验收_ViT.pdf；第7页（物理页码）]
+										290 cell
+											291 text 当前返回原文／节选未提供可核验的实验指标数值；请核对完整原文。 [参考文档4：Windows复测_DETR节选.pdf；第1页（物理页码）]
+								292 text 不同任务、数据集和实验条件的指标不可直接比较优劣；证据选择的语义适用性仍需对照原文核验。
+								293 heading 参考来源, Value: 2, ID: 4f4c5596
+									294 text 参考来源
+									295 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=86b1b13164004b0c9ff6c862ec8e41e1#4f4c5596
+								296 content list
+									297 container
+										298 AXListMarker • 
+										299 text [参考文档2] Windows验收_ViT.pdf；第4页（物理页码）；正文已截断，仅展示已送入上下文的证据
+									300 container
+										301 AXListMarker • 
+										302 text [参考文档4] Windows复测_DETR节选.pdf；第1页（物理页码）
+									303 container
+										304 AXListMarker • 
+										305 text [参考文档1] Windows验收_ViT.pdf；第7页（物理页码）
+								306 text 持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。 部分维度缺少可用证据，不能视为完整对比。 部分维度的检索相关性低，相关陈述需对照原文核验：论文A：方法、论文B：方法、论文B：实验结果 单篇原文已按对比预算截断，结论仅依据返回的可见证据。 资料不足：论文A：实验结果数值、论文B：实验结果数值 低相关性维度需核验：论文A：方法、论文B：方法、论文B：实验结果
+							307 text 本次 Token：3582 · Agent响应耗时：247.674 秒
+							308 text 任务未完成：incomplete
+							309 button 查看Windows验收_ViT.pdf · 第4页（物理页码）
+								310 text 查看Windows验收_ViT.pdf · 第4页（物理页码）
+							311 button 查看Windows复测_DETR节选.pdf · 第1页（物理页码）
+								312 text 查看Windows复测_DETR节选.pdf · 第1页（物理页码）
+							313 button 查看Windows验收_ViT.pdf · 第7页（物理页码）
+								314 text 查看Windows验收_ViT.pdf · 第7页（物理页码）
+					190 container
+						191 text entry area (settable) 输入消息…
+						192 button (disabled) Send message
+							315 text 发送
+					202 container
+						203 button (expanded) keyboard_arrow_down 请对比已入库论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1c, Secondary Actions: Collapse
+							204 text keyboard_arrow_down
+							205 text 请对比已入库论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1c
+						206 container
+							207 button Show/hide columns
+							208 button Download as CSV
+							209 button Search
+							210 button Fullscreen
+							211 image
+								212 table
+									213 row 阶段 轮次 工具 输入Token 输出Token 耗时 状态
+										214 cell (selectable) 阶段
+										215 cell (selectable) 轮次
+										216 cell (selectable) 工具
+										217 cell (selectable) 输入Token
+										218 cell (selectable) 输出Token
+										219 cell (selectable) 耗时
+										220 cell (selectable) 状态
+									221 container
+										222 row (selectable) Thought 1 — 0 0 0.000 秒 成功
+											223 cell (selectable) Value: Thought, ID: glide-cell-0-0
+											224 cell (selectable) Value: 1, ID: glide-cell-1-0
+											225 cell (selectable) Value: —, ID: glide-cell-2-0
+											226 cell (selectable) Value: 0, ID: glide-cell-3-0
+											227 cell (selectable) Value: 0, ID: glide-cell-4-0
+											228 cell (selectable) Value: 0.000 秒, ID: glide-cell-5-0
+											229 cell (selectable) Value: 成功, ID: glide-cell-6-0
+										230 row (selectable) Action 1 paper_compare 1670 143 9.983 秒 成功
+											231 cell (selectable) Value: Action, ID: glide-cell-0-1
+											232 cell (selectable) Value: 1, ID: glide-cell-1-1
+											233 cell (selectable) Value: paper_compare, ID: glide-cell-2-1
+											234 cell (selectable) Value: 1670, ID: glide-cell-3-1
+											235 cell (selectable) Value: 143, ID: glide-cell-4-1
+											236 cell (selectable) Value: 9.983 秒, ID: glide-cell-5-1
+											237 cell (selectable) Value: 成功, ID: glide-cell-6-1
+										238 row (selectable) 工具内部 1 paper_compare 1731 38 237.514 秒 成功
+											239 cell (selectable) Value: 工具内部, ID: glide-cell-0-2
+											240 cell (selectable) Value: 1, ID: glide-cell-1-2
+											241 cell (selectable) Value: paper_compare, ID: glide-cell-2-2
+											242 cell (selectable) Value: 1731, ID: glide-cell-3-2
+											243 cell (selectable) Value: 38, ID: glide-cell-4-2
+											244 cell (selectable) Value: 237.514 秒, ID: glide-cell-5-2
+											245 cell (selectable) Value: 成功, ID: glide-cell-6-2
+										316 row (selectable) Observation 1 — 0 0 0.000 秒 成功
+											317 cell (selectable) Value: Observation, ID: glide-cell-0-3
+											318 cell (selectable) Value: 1, ID: glide-cell-1-3
+											319 cell (selectable) Value: —, ID: glide-cell-2-3
+											320 cell (selectable) Value: 0, ID: glide-cell-3-3
+											321 cell (selectable) Value: 0, ID: glide-cell-4-3
+											322 cell (selectable) Value: 0.000 秒, ID: glide-cell-5-3
+											323 cell (selectable) Value: 成功, ID: glide-cell-6-3
+										324 row (selectable) 任务结束 1 — — — — 失败
+											325 cell (selectable) Value: 任务结束, ID: glide-cell-0-4
+											326 cell (selectable) Value: 1, ID: glide-cell-1-4
+											327 cell (selectable) Value: —, ID: glide-cell-2-4
+											328 cell (selectable) Value: —, ID: glide-cell-3-4
+											329 cell (selectable) Value: —, ID: glide-cell-4-4
+											330 cell (selectable) Value: —, ID: glide-cell-5-4
+											331 cell (selectable) Value: 失败, ID: glide-cell-6-4
+						246 pop up button (collapsed) 查看公开执行过程, Secondary Actions: Expand
+							247 text 查看公开执行过程
+					332 heading 状态统计, Value: 3, ID: f3abdead
+						333 text 状态统计
+						334 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=86b1b13164004b0c9ff6c862ec8e41e1#f3abdead
+					335 text 当前会话累计；工具成功率只统计已返回调用，未报告的用量不计为零。
+					336 container
+						337 text 对话次数
+						338 text 1
+					339 container
+						340 text 累计Token
+						341 text 3582
+					342 container
+						343 text 累计响应耗时
+						344 text 247.674 秒
+					345 container
+						346 text 平均响应耗时
+						347 text 247.674 秒
+					348 container
+						349 text 任务完成率
+						350 text 0.0%
+					351 container
+						352 text 工具调用次数
+						353 text 1
+					354 container
+						355 text 工具调用成功率
+						356 text 100.0%
+					357 container
+						358 text 平均推理轮次
+						359 text 1.00
+					360 text RAG检索 0 次 · 候选命中率 未知 · 平均检索耗时 未知 · 平均工具耗时 237.514 秒。
+					361 text 工具成功 1 · 失败 0 · 待返回 0；已报告Token 3582 · 用量未知 0 次。
+
+The focused UI element is 191 text entry area (settable) 输入消息…

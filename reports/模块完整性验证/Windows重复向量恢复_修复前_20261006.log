@@ -1,0 +1,55 @@
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+................持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+..持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+F...
+======================================================================
+FAIL: test_repeated_recovery_queries_reuse_document_vectors_only_in_current_instance (__main__.TestVectorStore)
+对比中的六次查询只编码一篇正文一次；新实例仍重新核验和恢复。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_1_3 向量化与存储/test_vector_store.py", line 130, in test_repeated_recovery_queries_reuse_document_vectors_only_in_current_instance
+    self.assertEqual(self.embeddings.document_calls,
+AssertionError: Lists differ: [['神经[15 chars]], ['神经网络论文', '反向向量论文'], ['神经网络论文', '反向向量论文'],[133 chars]论文']] != [['神经[15 chars]], ['农业数据论文']]
+
+First differing element 1:
+['神经网络论文', '反向向量论文']
+['农业数据论文']
+
+First list contains 10 additional elements.
+First extra element 2:
+['神经网络论文', '反向向量论文']
+
+- [['神经网络论文', '反向向量论文'],
++ [['神经网络论文', '反向向量论文'], ['农业数据论文']]
+?                       ++++++++++++
+
+-  ['神经网络论文', '反向向量论文'],
+-  ['神经网络论文', '反向向量论文'],
+-  ['神经网络论文', '反向向量论文'],
+-  ['神经网络论文', '反向向量论文'],
+-  ['神经网络论文', '反向向量论文'],
+-  ['农业数据论文'],
+-  ['农业数据论文'],
+-  ['农业数据论文'],
+-  ['农业数据论文'],
+-  ['农业数据论文'],
+-  ['农业数据论文']]
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.754s
+
+FAILED (failures=1)
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

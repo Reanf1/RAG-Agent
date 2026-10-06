@@ -1,0 +1,185 @@
+Browser tab: 2, Title: "智能科研助理", URL: "http://192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=cfad3419354d4d57b5e74cc2325c8447".
+0 AXWebArea 智能科研助理, URL: 192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=cfad3419354d4d57b5e74cc2325c8447
+	1 container
+		4 container
+			5 container
+				6 heading 系统状态, Value: 2
+					7 text 系统状态
+				8 container
+					9 text 系统时间：2026-10-06 17:16 :27
+				10 container
+					11 text LLM服务：可连接，推理未验证（qwen2.5 :7b ）
+				12 text 向量数据库：可读取，检索未验证（Chroma）
+				13 button 刷新状态
+					14 text 刷新状态
+				15 heading 文档上传与管理, Value: 2
+					16 text 文档上传与管理
+				17 container 上传文档
+					18 button file upload
+					19 button upload Upload
+						20 text upload
+						21 text Upload
+					22 text 20MB per file
+					23 text  • PDF, DOCX, TXT, MD, MARKDOWN
+				24 text 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+				25 button (disabled) 开始导入
+					26 text 开始导入
+				27 button (disabled) 重试失败项
+					28 text 重试失败项
+				29 heading 对话历史管理, Value: 2
+					30 text 对话历史管理
+				31 button 新建会话
+					32 text 新建会话
+				33 text 最近
+				34 button 请根据Windows复测_说明.txt回答：复测
+					35 text 请根据Windows复测_说明.txt回答：复测
+				36 button 删除当前会话
+					37 text 删除当前会话
+			38 container
+				39 button keyboard_double_arrow_right
+				40 pop up button (collapsed) Description: Main menu, Secondary Actions: Expand
+			41 container
+				42 heading 智能科研助理, Value: 1, ID: 2d7dc4e4
+					43 text 智能科研助理
+					44 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=cfad3419354d4d57b5e74cc2325c8447#2d7dc4e4
+				45 text 基于 RAG + Agent 的论文知识库问答系统
+				46 tab group react-aria2800906804-:r6:
+					47 tab (selected, settable, boolean) 科研对话, ID: react-aria2800906804-:r6:-tab-0, Value: 1
+科研对话
+					48 tab (selectable, settable, boolean) 文档检索, ID: react-aria2800906804-:r6:-tab-1, Value: 0
+文档检索
+					49 tab (selectable, settable, boolean) 知识库, ID: react-aria2800906804-:r6:-tab-2, Value: 0
+知识库
+				51 container Description: 科研对话, ID: react-aria2800906804-:r6:-tabpanel-0
+					54 container
+						55 text face
+						56 container Chat message from user
+							57 text 请根据Windows复测_说明.txt回答：复测代号是什么？请注明来源。
+						58 text smart_toy
+						59 container Chat message from assistant
+							60 container
+								61 text 复测代号是WINCHECK20261005。[参考文档1：Windows复测_说明.txt；行1–3]
+								62 heading 参考来源, Value: 2, ID: 4f4c5596
+									63 text 参考来源
+									64 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=cfad3419354d4d57b5e74cc2325c8447#4f4c5596
+								65 content list
+									66 container
+										67 AXListMarker • 
+										68 text [参考文档1] Windows复测_说明.txt；行1–3
+								69 text 持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+							70 text 本次 Token：3053 · Agent响应耗时：21.130 秒
+						76 text face
+						77 container Chat message from user
+							78 text 请根据已入库论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6回答：ViT如何使用位置编码？请用中文简述并注明原文页码。
+						79 text smart_toy
+						80 container Chat message from assistant
+							81 container
+								82 text ViT（Vision Transformer）通过位置编码来捕捉图像中像素的位置信息。具体来说，ViT通过在输入的RGB值的线性嵌入中引入相似性，来编码图像内部的距离。更近的像素倾向于具有更相似的位置嵌入。此外，行列结构也显现出来；同一行/列的像素具有相似的嵌入。对于较大的网格，有时会观察到正弦结构（参考文档4，第8页）。 在模型中，位置嵌入被学习以表示2D图像拓扑结构，这解释了为什么手工构建的2D感知嵌入变体不能取得良好效果（参考文档4，第8页）。 在实验中，通过在每个层的开始添加学习的位置嵌入，可以观察到模型性能的显著提升（参考文档5，第18页）。
+								83 heading 参考来源, Value: 2, ID: 4f4c5596
+									84 text 参考来源
+									85 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=cfad3419354d4d57b5e74cc2325c8447#4f4c5596
+								86 text 无可引用来源 持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。 回答未提供有效文献引用，不能作为已溯源答案。
+							87 text 本次 Token：3560 · Agent响应耗时：57.745 秒
+							88 text 任务未完成：incomplete
+					52 container
+						53 text entry area (settable) 输入消息…
+						75 button (disabled) Send message
+							186 text 发送
+					90 button (collapsed) keyboard_arrow_right 请根据Windows复测_说明.txt回答：复测代号是什么？请注明来源。, Secondary Actions: Expand
+						91 text keyboard_arrow_right
+						92 text 请根据Windows复测_说明.txt回答：复测代号是什么？请注明来源。
+					93 container
+						94 button (expanded) keyboard_arrow_down 请根据已入库论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1c, Secondary Actions: Collapse
+							95 text keyboard_arrow_down
+							96 text 请根据已入库论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1c
+						97 container
+							98 button Show/hide columns
+							99 button Download as CSV
+							100 button Search
+							101 button Fullscreen
+							102 container
+								103 image
+									104 table
+										105 row 阶段 轮次 工具 输入Token 输出Token 耗时 状态
+											106 cell (selectable) 阶段
+											107 cell (selectable) 轮次
+											108 cell (selectable) 工具
+											109 cell (selectable) 输入Token
+											110 cell (selectable) 输出Token
+											111 cell (selectable) 耗时
+											112 cell (selectable) 状态
+										113 container
+											114 row (selectable) Thought 1 — 0 0 0.000 秒 成功
+												115 cell (selectable) Value: Thought, ID: glide-cell-0-0
+												116 cell (selectable) Value: 1, ID: glide-cell-1-0
+												117 cell (selectable) Value: —, ID: glide-cell-2-0
+												118 cell (selectable) Value: 0, ID: glide-cell-3-0
+												119 cell (selectable) Value: 0, ID: glide-cell-4-0
+												120 cell (selectable) Value: 0.000 秒, ID: glide-cell-5-0
+												121 cell (selectable) Value: 成功, ID: glide-cell-6-0
+											122 row (selectable) Action 1 knowledge_base_search 1854 102 7.394 秒 成功
+												123 cell (selectable) Value: Action, ID: glide-cell-0-1
+												124 cell (selectable) Value: 1, ID: glide-cell-1-1
+												125 cell (selectable) Value: knowledge_base_search, ID: glide-cell-2-1
+												126 cell (selectable) Value: 1854, ID: glide-cell-3-1
+												127 cell (selectable) Value: 102, ID: glide-cell-4-1
+												128 cell (selectable) Value: 7.394 秒, ID: glide-cell-5-1
+												129 cell (selectable) Value: 成功, ID: glide-cell-6-1
+											130 row (selectable) 工具内部 1 knowledge_base_search 1407 197 50.182 秒 成功
+												131 cell (selectable) Value: 工具内部, ID: glide-cell-0-2
+												132 cell (selectable) Value: 1, ID: glide-cell-1-2
+												133 cell (selectable) Value: knowledge_base_search, ID: glide-cell-2-2
+												134 cell (selectable) Value: 1407, ID: glide-cell-3-2
+												135 cell (selectable) Value: 197, ID: glide-cell-4-2
+												136 cell (selectable) Value: 50.182 秒, ID: glide-cell-5-2
+												137 cell (selectable) Value: 成功, ID: glide-cell-6-2
+											138 row (selectable) Observation 1 — 0 0 0.000 秒 成功
+												139 cell (selectable) Value: Observation, ID: glide-cell-0-3
+												140 cell (selectable) Value: 1, ID: glide-cell-1-3
+												141 cell (selectable) Value: —, ID: glide-cell-2-3
+												142 cell (selectable) Value: 0, ID: glide-cell-3-3
+												143 cell (selectable) Value: 0, ID: glide-cell-4-3
+												144 cell (selectable) Value: 0.000 秒, ID: glide-cell-5-3
+												145 cell (selectable) Value: 成功, ID: glide-cell-6-3
+											146 row (selectable) 任务结束 1 — — — — 失败
+												147 cell (selectable) Value: 任务结束, ID: glide-cell-0-4
+												148 cell (selectable) Value: 1, ID: glide-cell-1-4
+												149 cell (selectable) Value: —, ID: glide-cell-2-4
+												150 cell (selectable) Value: —, ID: glide-cell-3-4
+												151 cell (selectable) Value: —, ID: glide-cell-4-4
+												152 cell (selectable) Value: —, ID: glide-cell-5-4
+												153 cell (selectable) Value: 失败, ID: glide-cell-6-4
+						154 pop up button (collapsed) 查看公开执行过程, Secondary Actions: Expand
+							155 text 查看公开执行过程
+					156 heading 状态统计, Value: 3, ID: f3abdead
+						157 text 状态统计
+						158 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=cfad3419354d4d57b5e74cc2325c8447#f3abdead
+					159 text 当前会话累计；工具成功率只统计已返回调用，未报告的用量不计为零。
+					160 container
+						161 text 对话次数
+						162 text 2
+					163 container
+						164 text 累计Token
+						165 text 6613
+					166 container
+						167 text 累计响应耗时
+						168 text 78.875 秒
+					169 container
+						170 text 平均响应耗时
+						171 text 39.437 秒
+					172 container
+						173 text 任务完成率
+						174 text 50.0%
+					175 container
+						176 text 工具调用次数
+						177 text 3
+					178 container
+						179 text 工具调用成功率
+						180 text 100.0%
+					181 container
+						182 text 平均推理轮次
+						183 text 1.50
+					184 text RAG检索 2 次 · 候选命中率 100.0% · 平均检索耗时 19.347 秒 · 平均工具耗时 18.303 秒。
+					185 text 工具成功 3 · 失败 0 · 待返回 0；已报告Token 6613 · 用量未知 0 次。
+
+The focused UI element is 154 pop up button (collapsed) 查看公开执行过程, Secondary Actions: Expand

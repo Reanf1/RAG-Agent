@@ -1,0 +1,27 @@
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+...........................
+======================================================================
+FAIL: test_comparison_preserves_vector_recovery_notice_in_answer_and_confirmation (test_comparison_keywords.TestComparisonAndKeywords) (status='answered')
+重建对比Context和低相关确认不能丢掉临时向量恢复限制。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_2 工具集开发/test_comparison_keywords.py", line 150, in test_comparison_preserves_vector_recovery_notice_in_answer_and_confirmation
+    self.assertTrue(any(ref["metadata"].get("retrieval_warning") == notice for ref in refs))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_comparison_preserves_vector_recovery_notice_in_answer_and_confirmation (test_comparison_keywords.TestComparisonAndKeywords) (status='needs_confirmation')
+重建对比Context和低相关确认不能丢掉临时向量恢复限制。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_2 工具集开发/test_comparison_keywords.py", line 148, in test_comparison_preserves_vector_recovery_notice_in_answer_and_confirmation
+    self.assertEqual(result.get("warnings", []).count(notice), 1)
+AssertionError: 0 != 1
+
+----------------------------------------------------------------------
+Ran 28 tests in 6.977s
+
+FAILED (failures=2)
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
