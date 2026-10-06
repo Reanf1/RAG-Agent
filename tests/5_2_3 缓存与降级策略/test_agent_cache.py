@@ -116,6 +116,21 @@ class TestAgentCache(unittest.TestCase):
         self.assertFalse(self.cache.entries)
         self.assertFalse(self.model_calls)
 
+    def test_pending_and_cache_share_start_scope_but_recheck_at_finish(self):
+        """同次请求只计算起止两次范围，结束仍能发现生成期间的语料变化。"""
+        from src.generation.cache import cache_scope
+        with patch("src.generation.cache.cache_scope", wraps=cache_scope) as scope:
+            self.search(pending={})
+            self.assertEqual(scope.call_count, 2)
+        self.cache.clear()
+        def changed_scope(store):
+            value = cache_scope(store)
+            return value if scope.call_count == 1 else "生成期间变更"
+        with patch("src.generation.cache.cache_scope", side_effect=changed_scope) as scope:
+            result = self.search(pending={})
+        self.assertEqual(result["status"], "answered")
+        self.assertFalse(self.cache.entries)
+
     def test_cache_write_failure_preserves_generated_answer(self):
         with patch.object(self.cache, "put", side_effect=RuntimeError("模拟缓存编码失败")):
             result = self.search()

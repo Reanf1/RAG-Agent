@@ -123,7 +123,7 @@ def _knowledge_base_search(question: str, doc_id: str | None = None, *, cache=No
             from src.generation.cache import cache_scope
             from src.retrieval.vector_store import VectorStore
             cache_store = VectorStore()
-            scope = cache_scope(cache_store) + ":" + str(doc_id)
+            scope = (pending_scope if pending_scope is not None else cache_scope(cache_store)) + ":" + str(doc_id)
             with cache.lock:
                 try:
                     result = cache.lookup(question, scope)

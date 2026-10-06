@@ -220,12 +220,15 @@ def update_agent_metrics(metrics: dict, event: dict) -> dict:
 
 
 def record_agent_request(question: str, event: dict) -> None:
-    """会话入口按阶段追加指标快照；页面重跑不再次执行或重复记账。"""
+    """中间记录当前公开步骤及统计，结束保存完整轨迹，避免累计正文反复写入。"""
     timestamp = request_time()
+    metrics = {key: value for key, value in event["metrics"].items() if key != "trace" or event["type"] == "done"}
     record = {"schema_version": 1, "request_id": event["request_id"], "timestamp": timestamp,
               "user_id": event["user_id"], "session_id": event["session_id"], "question": question,
-              "event": event["type"], "iteration": event.get("iteration"), "metrics": event["metrics"],
+              "event": event["type"], "iteration": event.get("iteration"), "metrics": metrics,
               "stop_reason": event.get("stop_reason"), "task_complete": event.get("task_complete")}
+    if event["type"] != "done" and event["metrics"].get("trace"):
+        record["step"] = event["metrics"]["trace"][-1]
     _append_record("agent", record)
 
 

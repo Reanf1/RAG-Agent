@@ -106,6 +106,25 @@ class TestDocumentManagement(unittest.TestCase):
         self.assertIn("90%", parts[1].page_content)
         self.assertEqual(parts[1].metadata["table_index"], 1)
 
+    def test_original_parse_reused_without_sharing_results_or_hiding_changes(self):
+        """重绘复用解析，返回对象独立；原文改变或回收后不得显示缓存旧资料。"""
+        from src.data_loader import load_document
+        from src.frontend.components.documents import read_document_content, delete_document
+        with patch("src.frontend.components.documents.load_document", wraps=load_document) as loader:
+            first = read_document_content(self.raw, self.doc_id)
+            first[0].page_content = "被调用者修改"
+            first[0].metadata["source_file"] = "改名"
+            second = read_document_content(self.raw, self.doc_id)
+            self.assertEqual(second[0].page_content, self.data.decode())
+            self.assertEqual(second[0].metadata["source_file"], "paper.txt")
+            self.assertEqual(loader.call_count, 1)
+            (self.folder / "paper.txt").write_bytes(b"changed")
+            with self.assertRaises(ValueError):
+                read_document_content(self.raw, self.doc_id)
+            delete_document(self.raw, self.index, self.doc_id)
+            with self.assertRaises(FileNotFoundError):
+                read_document_content(self.raw, self.doc_id)
+
     def test_read_pdf_keeps_both_pages(self):
         import pymupdf
         from hashlib import sha256

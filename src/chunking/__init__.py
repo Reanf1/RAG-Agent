@@ -55,6 +55,7 @@ def _build_chunks(documents, split_ranges, strategy, chunk_size, chunk_overlap):
         parent_id = hashlib.sha256(json.dumps(parent_key, ensure_ascii=False).encode("utf-8")).hexdigest()
         # 与 str.splitlines() 一致；CRLF 作为一个换行，换行字符归前一行。
         line_ends = [match.end() for match in re.finditer(r"\r\n|[\n\r\v\f\x1c-\x1e\x85\u2028\u2029]", text)]
+        layout, layout_origin = _layout_ranges(metadata.get("formula_layout"), text), None
         for index, (start, end) in enumerate(ranges):
             content = text[start:end]
             if not content.strip():
@@ -68,6 +69,16 @@ def _build_chunks(documents, split_ranges, strategy, chunk_size, chunk_overlap):
                 "chunk_size": chunk_size, "chunk_overlap": chunk_overlap,
                 "start_index": start, "end_index": end,
             })
+            if layout is not None:
+                # 跨块行保留完整坐标；重复文本保守匹配全部位置，不推测排版对应关系。
+                entries = [entry for entry, positions in layout if
+                           any(left < end and right > start for left, right in positions)
+                           or (not positions and layout_origin is None)]
+                chunk_metadata["formula_layout"] = json.dumps(entries, ensure_ascii=False)
+                if layout_origin is not None and any(not positions for _, positions in layout):
+                    chunk_metadata["formula_layout_origin_chunk_id"] = layout_origin
+                # 不在正文中的表格等坐标留在首块，其他块提供来源指针；原PDF仍完整。
+                layout_origin = layout_origin or chunk_metadata["chunk_id"]
             if "line_start" in metadata:
                 chunk_metadata["line_start"] = metadata["line_start"] + bisect_right(line_ends, start)
                 chunk_metadata["line_end"] = metadata["line_start"] + bisect_right(line_ends, end - 1)
@@ -75,3 +86,20 @@ def _build_chunks(documents, split_ranges, strategy, chunk_size, chunk_overlap):
                 chunk_metadata["chunk_preserved"] = "table"
             chunks.append(Document(page_content=content, metadata=chunk_metadata))
     return chunks
+
+
+def _layout_ranges(raw, text):
+    """一次定位本页布局行；旧格式无法识别时保持原元数据，不能静默丢弃。"""
+    if raw is None:
+        return None
+    try:
+        lines = json.loads(raw)
+    except (TypeError, ValueError):
+        return None
+    if not isinstance(lines, list) or any(not isinstance(line, dict) or not isinstance(line.get("text"), str) for line in lines):
+        return None
+    layout = []
+    for line in lines:
+        positions = [(match.start(), match.end()) for match in re.finditer(re.escape(line["text"]), text)] if line["text"] else []
+        layout.append((line, positions))
+    return layout

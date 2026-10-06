@@ -1,6 +1,8 @@
 """页面文档管理：真实块数、原文回收和重新导入，不调用生成模型。"""
 
 from hashlib import sha256
+from copy import deepcopy
+from functools import lru_cache
 from pathlib import Path
 import re
 import json
@@ -66,7 +68,16 @@ def read_document_content(raw_dir: Path, doc_id: str):
     path = files[0]
     if sha256(path.read_bytes()).hexdigest() != doc_id:
         raise ValueError("原文内容已改变，与文档ID不一致，请重新上传")
-    return load_document(path)
+    return deepcopy(_parse_original(str(path.resolve()), doc_id))
+
+
+@lru_cache(maxsize=8)
+def _parse_original(path: str, doc_id: str):
+    """缓存解析计算，不缓存文件存在性或指纹检查；返回前复制避免页面修改缓存。"""
+    parts = load_document(path)
+    if any(part.metadata["doc_id"] != doc_id for part in parts):
+        raise ValueError("解析期间原文内容已改变，请重新上传")
+    return parts
 
 
 def delete_document(raw_dir: Path, index_dir: Path, doc_id: str) -> int:

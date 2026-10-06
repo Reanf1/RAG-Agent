@@ -2,6 +2,8 @@
 
 import re
 import unicodedata
+from functools import lru_cache
+from threading import Lock
 
 from langchain_core.documents import Document
 from rank_bm25 import BM25Okapi
@@ -31,6 +33,21 @@ def tokenize(text: str) -> list[str]:
     return re.findall(r"[a-zA-Z0-9]+", normalized) + re.findall(r"[\u4e00-\u9fff]", normalized)
 
 
+_corpus_lock = Lock()
+
+
+@lru_cache(maxsize=4)
+def _build_corpus(texts: tuple[str, ...]):
+    """仅复用最多四份正文相同的分词／评分索引，来源始终读取当前数据库。"""
+    positions, corpus = [], []
+    for index, text in enumerate(texts):
+        tokens = tokenize(text)
+        if tokens:
+            positions.append(index)
+            corpus.append(tokens)
+    return positions, [frozenset(tokens) for tokens in corpus], BM25Okapi(corpus) if corpus else None
+
+
 class BM25Retriever:
     """小规模知识库的内存索引；正文/来源仍以持久化 Chroma 为准。"""
 
@@ -41,18 +58,13 @@ class BM25Retriever:
 
     def rebuild(self) -> int:
         """重新读取文档块；新增/删除后调用，不重新向量化，返回可检索块数。"""
-        documents, corpus = [], []
-        for document in self.vector_store.list_chunks():
-            tokens = tokenize(document.page_content)
-            # 纯空白或标点无法检索；全空词表会导致 BM25Okapi 计算异常。
-            if tokens:
-                documents.append(document)
-                corpus.append(tokens)
-        index = BM25Okapi(corpus) if corpus else None
-        self._documents = documents
-        self._terms = [set(tokens) for tokens in corpus]
-        self._index = index
-        return len(documents)
+        documents = self.vector_store.list_chunks()
+        # 用完整有序正文作缓存键，不以块数/时间戳猜版本；同数量替换也会重建。
+        with _corpus_lock:
+            positions, terms, index = _build_corpus(tuple(document.page_content for document in documents))
+        self._documents = [documents[position] for position in positions]
+        self._terms, self._index = terms, index
+        return len(self._documents)
 
     def search(self, query: str, k: int | None = None,
                doc_id: str | None = None) -> list[tuple[Document, float]]:

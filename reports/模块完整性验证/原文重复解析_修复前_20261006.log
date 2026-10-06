@@ -1,0 +1,18 @@
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+F
+======================================================================
+FAIL: test_original_parse_reused_without_sharing_results_or_hiding_changes (__main__.TestDocumentManagement)
+重绘复用解析，返回对象独立；原文改变或回收后不得显示缓存旧资料。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_4_3 前端与会话管理/test_document_management.py", line 120, in test_original_parse_reused_without_sharing_results_or_hiding_changes
+    self.assertEqual(loader.call_count, 1)
+AssertionError: 2 != 1
+
+----------------------------------------------------------------------
+Ran 1 test in 0.829s
+
+FAILED (failures=1)
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

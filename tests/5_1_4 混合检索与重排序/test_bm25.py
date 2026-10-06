@@ -54,6 +54,32 @@ class TestBM25Retriever(unittest.TestCase):
         self.assertEqual(tokenize("BatchNormalization 注意力，BERT-base 2024!"),
                          ["batchnormalization", "bert", "base", "2024", "注", "意", "力"])
 
+    def test_same_corpus_reuses_index_and_same_count_replacement_is_fresh(self):
+        """复用计算而非旧Document：正文同数量替换和仅来源改变也能即时读回。"""
+        from rank_bm25 import BM25Okapi
+        store = VectorStore(Path(self.directory.name) / "reuse", self.embeddings)
+        old = Document(page_content="Initial " + self.directory.name,
+                       metadata={"chunk_id": "reuse", "doc_id": "reuse", "source_file": "old.txt"})
+        store.add_chunks([old])
+        with patch("src.retrieval.bm25_retriever.BM25Okapi", wraps=BM25Okapi) as builder:
+            BM25Retriever(store)
+            second = BM25Retriever(store)
+            self.assertEqual(builder.call_count, 1)
+            self.assertEqual(second.search("Initial")[0][0], old)
+            store.delete_document("reuse")
+            updated = Document(page_content="Replacement " + self.directory.name,
+                               metadata={**old.metadata, "source_file": "new.txt"})
+            store.add_chunks([updated])
+            third = BM25Retriever(store)
+            self.assertEqual(builder.call_count, 2)
+            self.assertEqual(third.search("Initial"), [])
+            self.assertEqual(third.search("Replacement")[0][0], updated)
+            store.delete_document("reuse")
+            updated.metadata["source_file"] = "latest.txt"
+            store.add_chunks([updated])
+            self.assertEqual(BM25Retriever(store).search("Replacement")[0][0].metadata["source_file"], "latest.txt")
+            self.assertEqual(builder.call_count, 2)
+
     def test_scores_follow_term_frequency_and_length_normalization(self):
         """用已知词频、文档频次和长度独立计算 BM25 分数，核验排序。"""
         found = self.retriever.search("BATCHNORMALIZATION", k=10)

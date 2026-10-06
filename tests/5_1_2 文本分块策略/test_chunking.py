@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 import tempfile
+import json
 import unittest
 from unittest.mock import patch
 import pymupdf
@@ -163,7 +164,11 @@ class TestChunking(unittest.TestCase):
             chunks = splitter([document], 20, 2)
             for chunk in chunks:
                 for key, value in metadata.items():
-                    self.assertEqual(chunk.metadata[key], value)
+                    if key != "formula_layout":
+                        self.assertEqual(chunk.metadata[key], value)
+            # 此旧布局的x²与原文x^{2}不一致，无法定位时仍完整保留在首块。
+            self.assertEqual(json.loads(chunks[0].metadata["formula_layout"]), json.loads(metadata["formula_layout"]))
+            self.assertTrue(all(chunk.metadata["formula_layout_origin_chunk_id"] == chunks[0].metadata["chunk_id"] for chunk in chunks[1:]))
             chunks[0].metadata["source_file"] = "改名.pdf"
             self.assertEqual(document.metadata, metadata)
             self.assertNotIn("chunk_id", document.metadata)
@@ -182,6 +187,27 @@ class TestChunking(unittest.TestCase):
         word = [Document(page_content="重复段落", metadata={"doc_id": "word", "block_index": index})
                 for index in (1, 2)]
         self.assertEqual(len({chunk.metadata["chunk_id"] for chunk in split_fixed(word, 8)}), 2)
+
+    def test_layout_is_localized_without_losing_cross_chunk_or_unlocated_lines(self):
+        """布局按字符相交保留，跨块公式、重复文本和不在正文的表格坐标均不丢。"""
+        lines = [{"text": f"公式{i}: x^{{2}} = {i}，附加说明。", "bbox": [1, i, 10, i + 1]} for i in range(20)]
+        unlocated = {"text": "独立表格中的公式", "bbox": [1, 40, 10, 41]}
+        layout = json.dumps(lines + [unlocated], ensure_ascii=False)
+        text = "\n".join(line["text"] for line in lines)
+        document = Document(page_content=text, metadata={"formula_layout": layout, "page_number": 1})
+        for splitter in self.strategies:
+            chunks = splitter([document], 40, 8)
+            actual = [json.loads(chunk.metadata["formula_layout"]) for chunk in chunks]
+            self.assertLess(sum(len(chunk.metadata["formula_layout"]) for chunk in chunks), len(layout) * len(chunks) / 2)
+            self.assertIn(unlocated, actual[0])
+            self.assertFalse(any(unlocated in entries for entries in actual[1:]))
+            self.assertTrue(all(chunk.metadata["formula_layout_origin_chunk_id"] == chunks[0].metadata["chunk_id"] for chunk in chunks[1:]))
+            for chunk, entries in zip(chunks, actual):
+                start, end = chunk.metadata["start_index"], chunk.metadata["end_index"]
+                for line in lines:
+                    offset = text.index(line["text"])
+                    self.assertEqual(line in entries, offset < end and offset + len(line["text"]) > start)
+            self.assertEqual(document.metadata["formula_layout"], layout)
 
     def test_pdf_and_word_tables_remain_whole(self):
         """独立表格不拆，即使超长也保留跨页行信息和保护标记。"""

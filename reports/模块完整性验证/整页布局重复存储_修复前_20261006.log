@@ -1,0 +1,14 @@
+F
+======================================================================
+FAIL: test_layout_is_localized_without_losing_cross_chunk_or_unlocated_lines (__main__.TestChunking)
+布局按字符相交保留，跨块公式、重复文本和不在正文的表格坐标均不丢。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_1_2 文本分块策略/test_chunking.py", line 197, in test_layout_is_localized_without_losing_cross_chunk_or_unlocated_lines
+    self.assertLess(sum(len(chunk.metadata["formula_layout"]) for chunk in chunks), len(layout) * len(chunks) / 2)
+AssertionError: 17192 not less than 8596.0
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=1)
