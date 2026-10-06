@@ -143,6 +143,18 @@ class TestVectorStore(unittest.TestCase):
         self.assertEqual(reopened.search("神经网络", k=1)[0][0], self.chunks[0])
         self.assertEqual(other_embeddings.document_calls, [])
 
+    def test_chroma_receives_alias_without_resolving_it_back(self):
+        """实际客户端保留英文入口；对外目录仍为原索引，便于状态旁注核对。"""
+        self.store.add_chunks(self.chunks)
+        alias = Path(self.directory.name) / "alias"
+        alias.symlink_to(self.directory.name, target_is_directory=True)
+        with patch("src.retrieval.vector_store.chroma_persist_path", return_value=str(alias)) as path:
+            reopened = VectorStore(self.directory.name, SmallEmbeddings())
+        path.assert_called_once_with(Path(self.directory.name).resolve())
+        self.assertEqual(reopened._store._persist_directory, str(alias))
+        self.assertEqual(reopened.directory, self.store.directory)
+        self.assertEqual(reopened.search("神经网络", k=1)[0][0], self.chunks[0])
+
     def test_changed_model_or_index_parameters_are_rejected(self):
         from src.utils.config import load_config
 

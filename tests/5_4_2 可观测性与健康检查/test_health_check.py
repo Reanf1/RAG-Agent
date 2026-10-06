@@ -79,6 +79,16 @@ class TestHealthCheck(unittest.TestCase):
         self.assertEqual(result["vector_database"]["status"], "ok")
         self.assertIn("服务未启动", result["llm"]["detail"])
 
+    def test_health_uses_same_index_alias_as_business_client(self):
+        """不能在中文原路径另开一个Chroma客户端；英文入口指向同一索引。"""
+        alias = Path(self.directory.name) / "alias"
+        alias.symlink_to(self.directory.name, target_is_directory=True)
+        with patch("src.utils.chroma_path.chroma_persist_path", return_value=str(alias)) as path:
+            result = self.check()
+        path.assert_called_once_with(Path(self.directory.name))
+        self.assertEqual(result["vector_database"]["status"], "ok")
+        self.assertEqual(result["vector_database"]["chunks"], 0)
+
     def test_network_timeout_has_friendly_error_and_three_second_limit(self):
         import httpx
         self.get.side_effect = httpx.ReadTimeout("响应超时")

@@ -17,6 +17,7 @@ from langchain_core.embeddings import Embeddings
 from langchain_huggingface import HuggingFaceEmbeddings
 
 from src.utils.config import chroma_metadata, load_config
+from src.utils.chroma_path import chroma_persist_path
 
 
 _embedding_load_lock = Lock()
@@ -68,7 +69,7 @@ class VectorStore:
         self._store = Chroma(
             collection_name=retrieval["collection_name"],
             embedding_function=embeddings,
-            persist_directory=str(directory.resolve()),
+            persist_directory=chroma_persist_path(self.directory),
             client_settings=Settings(is_persistent=True, anonymized_telemetry=False),
             collection_metadata=expected,
         )

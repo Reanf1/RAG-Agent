@@ -104,7 +104,9 @@ def check_health() -> dict:
             # 延迟导入；沿用业务使用的真实Chroma客户端，禁用遥测和默认Embedding。
             import chromadb
             from chromadb.config import Settings
-            client = chromadb.PersistentClient(path=str(directory.resolve()), settings=Settings(anonymized_telemetry=False))
+            from src.utils.chroma_path import chroma_persist_path
+            # 健康检查与业务使用相同入口；仅可能建立junction，不写入索引数据。
+            client = chromadb.PersistentClient(path=chroma_persist_path(directory), settings=Settings(anonymized_telemetry=False))
             client.heartbeat()
             collection = client.get_collection(retrieval["collection_name"], embedding_function=None)
             expected = chroma_metadata(config)
