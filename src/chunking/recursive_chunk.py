@@ -22,8 +22,12 @@ def split_recursive(documents: list[Document], chunk_size: int,
         ranges = []
         previous_start, previous_end = -1, 0
         for content in splitter.split_text(text):
-            # 上游的位置查找在重复段落、大重叠时可能停留原位；至少推进一个字符。
-            start = text.find(content, max(previous_start + 1, previous_end - chunk_overlap))
+            # 起点和终点均须前进；短分隔符不能再次匹配到已覆盖的旧片段。
+            lower = max(previous_start + 1, previous_end - chunk_overlap,
+                        previous_end - len(content) + 1)
+            start = text.find(content, lower)
+            if start < 0:
+                raise ValueError("递归分块无法定位原文，已停止生成错误来源")
             end = start + len(content)
             ranges.append((start, end))
             previous_start, previous_end = start, end

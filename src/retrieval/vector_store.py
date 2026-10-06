@@ -1,6 +1,7 @@
 """本地 M3E 与 Chroma：持久化、增量入库、Top-K 检索及按文档删除。"""
 
 import os
+from hashlib import sha256
 from functools import lru_cache
 from pathlib import Path
 from time import perf_counter
@@ -143,7 +144,7 @@ def batch_build_index(tasks: list[dict], raw_dir: str | Path,
     重试只补缺失块，每个目标任务最多尝试一次，不重建已有索引。
     """
     from src.chunking import split_documents
-    from src.data_loader import batch_import
+    from src.data_loader import batch_import, document_lock
 
     statuses = {"failed"} if retry_failed else {"pending", "loading", "chunking", "indexing"}
     targets = [task for task in tasks if task["status"] in statuses
@@ -156,31 +157,35 @@ def batch_build_index(tasks: list[dict], raw_dir: str | Path,
         task.update(status="loading" if needs_loading else "chunking", error="",
                     indexed=False, chunk_count=0, processed_chunks=0, added_chunks=0)
         try:
-            if needs_loading:
-                # 复用原有格式/大小校验和安全保存，不向页面展示短暂的加载成功。
-                for _ in batch_import([task], raw_dir, max_file_size_mb):
-                    if task["status"] == "loading":
-                        yield {"completed": index, "total": total}
-            else:
-                task["attempts"] += 1
-            if task["status"] != "failed":
-                task["status"] = "chunking"
-                yield {"completed": index, "total": total}
-                chunks = split_documents(task["documents"])
-                if not chunks:
-                    raise ValueError("文档没有可索引的非空正文")
-                task.update(status="indexing", chunk_count=len(chunks))
-                yield {"completed": index, "total": total}
-                # 第一个有效文档才初始化本地模型/数据库，一批复用同一实例。
-                if vector_store is None:
-                    vector_store = VectorStore()
-                for offset in range(0, len(chunks), 500):
-                    batch = chunks[offset:offset + 500]
-                    task["added_chunks"] += vector_store.add_chunks(batch)
-                    task["processed_chunks"] = offset + len(batch)
-                    task["index_total"] = vector_store.count()
+            with document_lock(raw_dir, sha256(task["data"]).hexdigest()):
+                # 已删除的原文不能被旧任务内存中的 Document 重新入库。
+                if not needs_loading and not Path(task["path"]).is_file():
+                    raise FileNotFoundError("原文已删除或缺失，请恢复后重新导入")
+                if needs_loading:
+                    # 复用原有格式/大小校验和安全保存，不向页面展示短暂的加载成功。
+                    for _ in batch_import([task], raw_dir, max_file_size_mb):
+                        if task["status"] == "loading":
+                            yield {"completed": index, "total": total}
+                else:
+                    task["attempts"] += 1
+                if task["status"] != "failed":
+                    task["status"] = "chunking"
                     yield {"completed": index, "total": total}
-                task.update(status="success", indexed=True)
+                    chunks = split_documents(task["documents"])
+                    if not chunks:
+                        raise ValueError("文档没有可索引的非空正文")
+                    task.update(status="indexing", chunk_count=len(chunks))
+                    yield {"completed": index, "total": total}
+                    # 第一个有效文档才初始化本地模型/数据库，一批复用同一实例。
+                    if vector_store is None:
+                        vector_store = VectorStore()
+                    for offset in range(0, len(chunks), 500):
+                        batch = chunks[offset:offset + 500]
+                        task["added_chunks"] += vector_store.add_chunks(batch)
+                        task["processed_chunks"] = offset + len(batch)
+                        task["index_total"] = vector_store.count()
+                        yield {"completed": index, "total": total}
+                    task.update(status="success", indexed=True)
         except Exception as error:
             # 失败只影响当前文档；保留已落盘块，供下一次查重恢复。
             task.update(status="failed", error=f"{type(error).__name__}: {error}")

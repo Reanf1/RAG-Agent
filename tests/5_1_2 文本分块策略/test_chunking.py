@@ -82,6 +82,20 @@ class TestChunking(unittest.TestCase):
                          ["甲段内容。", "\n\n乙段内容。", "\n\n丙段内容。"])
         self.assertEqual("".join(chunk.page_content for chunk in chunks), text)
 
+    def test_recursive_repeated_punctuation_advances_and_covers_source(self):
+        """默认重叠下，短重复分隔符不能回指旧片段或漏掉句号。"""
+        text = "\n\n。\n。。" + "xy" * 400
+        chunks = split_recursive([Document(page_content=text)], 512, 64)
+        covered = set()
+        previous_end = 0
+        for chunk in chunks:
+            start, end = chunk.metadata["start_index"], chunk.metadata["end_index"]
+            self.assertGreater(end, previous_end)
+            self.assertEqual(chunk.page_content, text[start:end])
+            covered.update(range(start, end))
+            previous_end = end
+        self.assertTrue(all(i in covered for i, char in enumerate(text) if not char.isspace()))
+
     def test_recursive_character_fallback(self):
         """没有分隔符的长文本仍能限长并保留重叠。"""
         chunks = split_recursive([Document(page_content="ABCDEFGHIJ")], 4, 1)

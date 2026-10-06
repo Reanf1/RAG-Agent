@@ -59,6 +59,59 @@ class TestBatchIndex(unittest.TestCase):
         self.assertEqual(self.store.list_chunks(), before)
         self.assertEqual(self.embeddings.document_calls, calls)
 
+    def test_delete_waits_for_import_and_removes_its_last_write(self):
+        """阻塞真实入库编码，再并发删除；删除完成后不能留下迟到块。"""
+        from threading import Event, Thread
+        from src.frontend.components.documents import delete_document
+        entered, release, deleted = Event(), Event(), Event()
+        tasks = create_import_tasks([("race.txt", b"Concurrent import")])
+        real_encode = self.embeddings.embed_documents
+
+        def blocked_encode(texts):
+            entered.set()
+            if not release.wait(5):
+                raise TimeoutError("测试未释放编码")
+            return real_encode(texts)
+
+        errors = []
+        def remove():
+            try:
+                delete_document(self.raw_dir, Path(self.directory.name) / "index",
+                                tasks[0]["documents"][0].metadata["doc_id"])
+                deleted.set()
+            except Exception as error:
+                errors.append(error)
+
+        with patch.object(self.embeddings, "embed_documents", side_effect=blocked_encode):
+            worker = Thread(target=self.run_batch, args=(tasks,))
+            worker.start()
+            self.assertTrue(entered.wait(5))
+            remover = Thread(target=remove)
+            remover.start()
+            try:
+                self.assertFalse(deleted.wait(0.1), "删除应等待同文档导入结束")
+            finally:
+                release.set()
+                worker.join(5)
+                remover.join(5)
+        self.assertFalse(worker.is_alive() or remover.is_alive())
+        self.assertEqual(errors, [])
+        self.assertTrue(deleted.is_set())
+        self.assertEqual(self.store.count(), 0)
+        self.assertFalse(Path(tasks[0]["path"]).exists())
+
+    def test_deleted_loaded_task_cannot_resume_old_index(self):
+        """已加载任务被删除后，旧任务重试不能利用内存正文复活索引。"""
+        from src.frontend.components.documents import delete_document
+        tasks = create_import_tasks([("old.txt", b"Old task")])
+        list(batch_import(tasks, self.raw_dir))
+        delete_document(self.raw_dir, Path(self.directory.name) / "index",
+                        tasks[0]["documents"][0].metadata["doc_id"])
+        self.run_batch(tasks)
+        self.assertEqual(tasks[0]["status"], "failed")
+        self.assertIn("原文", tasks[0]["error"])
+        self.assertEqual(self.store.count(), 0)
+
     def test_all_formats_complete_index_and_keep_sources(self):
         """四类真实文件完成整个流程，只有写入索引后才标记成功。"""
         word = WordDocument()

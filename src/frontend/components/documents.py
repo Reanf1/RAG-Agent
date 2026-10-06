@@ -4,7 +4,7 @@ from hashlib import sha256
 from pathlib import Path
 import re
 
-from src.data_loader import LOADERS, create_import_tasks, load_document
+from src.data_loader import LOADERS, create_import_tasks, document_lock, load_document
 from src.retrieval.vector_store import VectorStore
 
 
@@ -54,38 +54,40 @@ def read_document_content(raw_dir: Path, doc_id: str):
 
 def delete_document(raw_dir: Path, index_dir: Path, doc_id: str) -> int:
     """移除检索块并回收原文；索引失败时将原文归回，允许修复后重试。"""
-    source = _document_directory(raw_dir, doc_id)
-    if not source.is_dir():
-        raise FileNotFoundError("原文缺失，无法安全回收；请先补全原文再删除")
-    trash = raw_dir.resolve() / ".trash" / doc_id
-    if trash.parent.is_symlink() or trash.exists():
-        raise ValueError("回收位置异常或已有同ID记录，请先检查回收区")
-    trash.parent.mkdir(parents=True, exist_ok=True)
-    source.rename(trash)
-    try:
-        return VectorStore(index_dir).delete_document(doc_id) if (index_dir / "chroma.sqlite3").is_file() else 0
-    except Exception:
-        trash.rename(source)
-        raise
+    with document_lock(raw_dir, doc_id):
+        source = _document_directory(raw_dir, doc_id)
+        if not source.is_dir():
+            raise FileNotFoundError("原文缺失，无法安全回收；请先补全原文再删除")
+        trash = raw_dir.resolve() / ".trash" / doc_id
+        if trash.parent.is_symlink() or trash.exists():
+            raise ValueError("回收位置异常或已有同ID记录，请先检查回收区")
+        trash.parent.mkdir(parents=True, exist_ok=True)
+        source.rename(trash)
+        try:
+            return VectorStore(index_dir).delete_document(doc_id) if (index_dir / "chroma.sqlite3").is_file() else 0
+        except Exception:
+            trash.rename(source)
+            raise
 
 
 def restore_document(raw_dir: Path, doc_id: str) -> list[dict]:
     """原文归回后交给现有批量导入/索引流程；恢复索引失败仍保留原文。"""
-    destination = _document_directory(raw_dir, doc_id)
-    trash = raw_dir.resolve() / ".trash" / doc_id
-    if trash.parent.is_symlink() or trash.is_symlink() or not trash.is_dir():
-        raise ValueError("回收记录不存在或不是安全目录")
-    if destination.exists():
-        raise FileExistsError("该文档已重新上传，恢复不会覆盖现有原文")
-    files = [(f.name, f.read_bytes()) for f in sorted(trash.iterdir())
-             if f.is_file() and not f.is_symlink() and f.suffix.lower() in LOADERS]
-    if not files:
-        raise ValueError("回收区没有可恢复的原文")
-    if any(sha256(data).hexdigest() != doc_id for _, data in files):
-        raise ValueError("回收原文已改变，内容指纹不一致；请检查后重新上传")
-    tasks = create_import_tasks(files)
-    trash.rename(destination)
-    return tasks
+    with document_lock(raw_dir, doc_id):
+        destination = _document_directory(raw_dir, doc_id)
+        trash = raw_dir.resolve() / ".trash" / doc_id
+        if trash.parent.is_symlink() or trash.is_symlink() or not trash.is_dir():
+            raise ValueError("回收记录不存在或不是安全目录")
+        if destination.exists():
+            raise FileExistsError("该文档已重新上传，恢复不会覆盖现有原文")
+        files = [(f.name, f.read_bytes()) for f in sorted(trash.iterdir())
+                 if f.is_file() and not f.is_symlink() and f.suffix.lower() in LOADERS]
+        if not files:
+            raise ValueError("回收区没有可恢复的原文")
+        if any(sha256(data).hexdigest() != doc_id for _, data in files):
+            raise ValueError("回收原文已改变，内容指纹不一致；请检查后重新上传")
+        tasks = create_import_tasks(files)
+        trash.rename(destination)
+        return tasks
 
 
 def read_pdf_page(raw_dir: Path, reference: dict) -> dict:
