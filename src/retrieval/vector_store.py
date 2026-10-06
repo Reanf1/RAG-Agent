@@ -3,6 +3,7 @@
 import os
 from hashlib import sha256
 from functools import lru_cache
+from threading import Lock
 from pathlib import Path
 from time import perf_counter
 
@@ -17,8 +18,17 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from src.utils.config import chroma_metadata, load_config
 
 
+_embedding_load_lock = Lock()
+
+
+def get_embeddings():
+    """首次加载互斥；等待者复用缓存，构造失败后允许下次重试。"""
+    with _embedding_load_lock:
+        return _load_embeddings()
+
+
 @lru_cache(maxsize=1)
-def get_embeddings() -> HuggingFaceEmbeddings:
+def _load_embeddings() -> HuggingFaceEmbeddings:
     """首次调用才加载唯一配置的本地模型；加载失败直接报错，不转云端。"""
     project_root = Path(__file__).resolve().parents[2]
     config = load_config()["embedding"]
@@ -32,6 +42,9 @@ def get_embeddings() -> HuggingFaceEmbeddings:
         model_kwargs={"device": config["device"], "local_files_only": True, "trust_remote_code": False},
         encode_kwargs={"normalize_embeddings": True, "batch_size": config["batch_size"]},
     )
+
+
+get_embeddings.cache_clear = _load_embeddings.cache_clear
 
 
 class VectorStore:

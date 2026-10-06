@@ -790,7 +790,7 @@ def _run_react(question: str, tools: list[BaseTool] | None = None, context: dict
             if routed and routed["tool_name"] == "web_search":
                 external_only = True  # 明确的单一外部任务不能在搜索失败后用本地旧资料冒充恢复。
                 available = [item for item in available if item.name == "web_search"]
-            messages, failures, pending = [], [], False
+            messages, failures, pending, capacity_blocked = [], [], False, False
             for event in act(question, thought, available, state, call_counts=call_counts):
                 if event["type"] == "error":
                     yield {**event, "iteration": iteration}
@@ -804,10 +804,17 @@ def _run_react(question: str, tools: list[BaseTool] | None = None, context: dict
                     state["observations"].append(deepcopy({key: value for key, value in event.items()
                                                          if key not in ("message", "type")}))
                     pending |= event.get("pending", False)
+                    capacity_blocked |= event.get("error_kind") == "capacity"
                     if event["status"] == "error" and event.get("error_kind") in {"timeout", "execution"}:
                         failures.append(event["name"])
                 yield {**deepcopy(event), "iteration": iteration}
             else:
+                if capacity_blocked:
+                    reason, answer = "resource_busy", "工具执行额度已占满，本次未能启动全部工具；已成功结果已保留，请稍后重试。"
+                    state["last_observation"] = {"observation": answer, "decision": "finish", "task_complete": False}
+                    yield {"type": "observation", **state["last_observation"], "answer": answer,
+                           "model": None, "usage": {"prompt_eval_count": 0, "eval_count": 0}, "iteration": iteration}
+                    break
                 if pending:
                     reason, answer = "tool_timeout", "工具调用超过等待上限，已跳过并结束本次请求；已成功的结果已保留。后台函数可能仍在运行，请稍后重试。"
                     state["last_observation"] = {"observation": answer, "decision": "finish", "task_complete": False}

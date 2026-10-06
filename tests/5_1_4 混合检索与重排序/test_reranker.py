@@ -119,6 +119,23 @@ class TestLocalReranker(unittest.TestCase):
             self.assertEqual(kwargs, {"device": "cpu", "max_length": 512,
                                      "local_files_only": True, "trust_remote_code": False})
 
+    def test_parallel_first_load_constructs_only_once(self):
+        """三线程同时首次调用，构造器只执行一次；失败不锁死后续请求。"""
+        from concurrent.futures import ThreadPoolExecutor
+        from threading import Barrier
+        from time import sleep
+        gate, instance = Barrier(3), object()
+        def construct(*args, **kwargs):
+            sleep(.08)
+            return instance
+        def request():
+            gate.wait(timeout=2)
+            return get_reranker()
+        with patch("sentence_transformers.CrossEncoder", side_effect=construct) as model, ThreadPoolExecutor(3) as pool:
+            futures = [pool.submit(request) for _ in range(3)]
+            self.assertTrue(all(future.result(timeout=3) is instance for future in futures))
+            self.assertEqual(model.call_count, 1)
+
     def test_missing_model_does_not_initialize_remote_client(self):
         self.config["retrieval"]["reranker_local_path"] = str(Path(self.directory.name) / "missing")
         with patch("sentence_transformers.CrossEncoder") as model:

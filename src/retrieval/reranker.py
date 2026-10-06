@@ -4,6 +4,7 @@ import math
 import os
 import re
 from functools import lru_cache
+from threading import Lock
 from pathlib import Path
 
 from langchain_core.documents import Document
@@ -20,8 +21,17 @@ def is_image_placeholder(text: str) -> bool:
     return not body.strip() or bool(re.fullmatch(r"[\s\d]+", body))
 
 
-@lru_cache(maxsize=1)
+_reranker_load_lock = Lock()
+
+
 def get_reranker():
+    """首次加载互斥；等待者复用缓存，构造失败后允许下次重试。"""
+    with _reranker_load_lock:
+        return _load_reranker()
+
+
+@lru_cache(maxsize=1)
+def _load_reranker():
     """首次有候选时才加载本地模型；失败直接报错，不下载或切换方案。"""
     config = load_config()["retrieval"]
     project_root = Path(__file__).resolve().parents[2]
@@ -38,6 +48,9 @@ def get_reranker():
         local_files_only=True, trust_remote_code=False,
         default_activation_function=Sigmoid(),
     )
+
+
+get_reranker.cache_clear = _load_reranker.cache_clear
 
 
 class Reranker:
