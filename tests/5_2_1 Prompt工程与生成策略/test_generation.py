@@ -65,6 +65,13 @@ class TestLocalGeneration(unittest.TestCase):
         self.assertEqual(result["usage"]["eval_count"], 30)
         self.assertEqual(self.context, before)
 
+    def test_token_overflow_is_rejected_before_network(self):
+        """稀有Unicode字符的Token数远大于字符数，最终请求不能照常放行。"""
+        from src.generation.rag_pipeline import _build_generation_request
+        with self.assertRaisesRegex(ValueError, "Token"):
+            _build_generation_request("预算检查？", {"context": "🧬" * 6000, "references": []})
+        self.opener.assert_not_called()
+
     def test_experiment_options_do_not_mutate_config(self):
         options = {"temperature": 0.8, "seed": 17}
         before = deepcopy(self.config)

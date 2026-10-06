@@ -21,7 +21,7 @@ llm:
   num_predict: 512
   repeat_penalty: 1.0
 
-# 上下文策略按字符计；不是模型 Token 上限，接入 LLM 时须核对实际窗口。
+# 先按字符／句界挑选证据；发送前用本地Qwen词表核对完整请求并预留输出Token。
 generation:
   low_relevance_threshold: 0.1  # 仅用于 BGE sigmoid 重排分数；低于此值先确认，不代表命中概率。
   max_context_chars: 6000

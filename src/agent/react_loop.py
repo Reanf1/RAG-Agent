@@ -24,6 +24,7 @@ from src.generation.rag_pipeline import generation_error, urlopen
 from src.utils.config import generation_options, load_config, ollama_base_url
 from src.utils.messages import messages_to_ollama, normalize_context
 from src.utils.logger import update_agent_metrics
+from src.utils.token_budget import check_request_budget, request_tokens
 
 
 AGENT_ROLE_PROMPT = """【角色定义】
@@ -110,6 +111,57 @@ def build_thought_messages(question: str, tools: list[BaseTool], context: dict |
     return build_agent_messages(question, tools, context)
 
 
+def _fit_agent_payload(payload: dict):
+    """仅裁剪发送副本中的旧历史和证据正文；原始Context、参数与引用位置不改写。"""
+    budget = payload["options"]["num_ctx"] - payload["options"]["num_predict"]
+    editable = []
+    for message in payload["messages"]:
+        if message["role"] not in {"user", "tool"}:
+            continue
+        try:
+            value = json.loads(message["content"])
+        except ValueError:
+            continue
+        if isinstance(value, dict) and (message["role"] == "tool" or "context" in value):
+            editable.append((message, value))
+    while request_tokens(payload) > budget:
+        changed = False
+        for message, value in editable:
+            history = value.get("context", {}).get("history", [])
+            if history:
+                # 历史由完整问答组成，一次移除最旧整轮，SQLite原文保留。
+                del history[:2]
+                value["context"]["model_context_truncated"] = True
+                message["content"] = json.dumps(value, ensure_ascii=False, allow_nan=False)
+                changed = True
+                break
+        if changed:
+            continue
+        candidates = []
+        def collect(value):
+            if isinstance(value, list):
+                for item in value:
+                    collect(item)
+            elif isinstance(value, dict):
+                for key, item in value.items():
+                    if key in {"args", "metadata", "question", "thought", "tool_question"}:
+                        continue
+                    if key in {"text", "answer", "raw_answer", "abstract", "summary", "context"} and isinstance(item, str) and len(item) > 128:
+                        candidates.append((len(item), value, key))
+                    else:
+                        collect(item)
+        for _, value in editable:
+            collect(value.get("context", value))
+        if not candidates:
+            break  # 固定提示／问题／参数超限交给最终检查明确拒绝，不静默裁掉任务。
+        _, parent, key = max(candidates, key=lambda item: item[0])
+        parent[key] = parent[key][:len(parent[key]) // 2] + "\n[模型上下文已截断，仅据可见证据回答]"
+        if key == "text":
+            parent["truncated"] = True
+        for message, value in editable:
+            message["content"] = json.dumps(value, ensure_ascii=False, allow_nan=False)
+
+
 def _model_request(messages: list, **fields) -> Request:
     """三个阶段共用本机配置；把关联消息转换为Ollama原生工具消息。"""
     config = load_config()["llm"]
@@ -117,6 +169,8 @@ def _model_request(messages: list, **fields) -> Request:
     sampling = generation_options(config)
     payload = {"model": config["model"], "stream": False, "options": sampling, **fields,
                "messages": messages_to_ollama(messages)}
+    _fit_agent_payload(payload)
+    check_request_budget(payload)
     return Request(base_url + "/api/chat",
                       data=json.dumps(payload, ensure_ascii=False, allow_nan=False).encode("utf-8"),
                       headers={"Content-Type": "application/json"})
@@ -441,7 +495,7 @@ def _structured_tool_observation(question: str, tools: list[BaseTool], observati
     name, evidence = item.get("name"), item.get("result")
     if (name == "knowledge_base_search" and plan and plan.get("tool_name") == name
             and not plan.get("parallel_tools") and not re.search(r"然后|另外|\bthen\b", question, re.I)
-            and isinstance(evidence, dict) and evidence.get("status") in {"answered", "insufficient_evidence"}
+            and isinstance(evidence, dict) and evidence.get("status") in {"answered", "incomplete", "insufficient_evidence"}
             and isinstance(evidence.get("answer"), str) and evidence["answer"].strip()):
         # 单个RAG结果已生成答案。保留引用校验后的原文和警告，无引用不能误述为空库。
         answer = evidence["answer"]
@@ -513,6 +567,12 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
                "task_complete": False, "answer": answer, "model": None,
                "usage": {"prompt_eval_count": 0, "eval_count": 0}, "elapsed_seconds": perf_counter() - started}
         return
+    if messages:
+        model_context = deepcopy(context or {})
+        model_context["observations"] = [{**item, "result": None if item.get("result") is None
+                                         else {"notice": "完整结果见本轮ToolMessage"}}
+                                         for item in observations]
+        prompt = build_agent_messages(question, tools or [], model_context, stage="observation", thought=thought)
     prompt.extend(messages if messages is not None else [])
     schema = {"type": "object", "properties": {
         "observation": {"type": "string", "minLength": 1, "maxLength": 200},
@@ -520,7 +580,7 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
         "task_complete": {"type": "boolean"}, "answer": {"type": "string"}},
         "required": ["observation", "decision", "task_complete", "answer"], "additionalProperties": False}
     if any(item.get("status") == "error" or (isinstance(item.get("result"), dict) and
-           item["result"].get("status") in {"needs_confirmation", "insufficient_evidence"}) for item in latest):
+           item["result"].get("status") in {"needs_confirmation", "incomplete", "insufficient_evidence"}) for item in latest):
         schema["properties"]["task_complete"] = {"const": False}
     # 真实关键词调用出现finish但答案为空；将已有Python约束同步到采样Schema。
     schema["anyOf"] = [
@@ -588,7 +648,7 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
             raise ValueError("结束时必须提供答案或无法完成的说明")
         if any(item.get("status") == "error" for item in latest) and decision["task_complete"]:
             raise ValueError("最后一次工具调用失败，不能将原任务标记为成功")
-        if any(isinstance(item.get("result"), dict) and item["result"].get("status") in {"needs_confirmation", "insufficient_evidence"} for item in latest) and decision["task_complete"]:
+        if any(isinstance(item.get("result"), dict) and item["result"].get("status") in {"needs_confirmation", "incomplete", "insufficient_evidence"} for item in latest) and decision["task_complete"]:
             raise ValueError("工具资料不足或候选尚待用户确认，不能将原任务标记为成功")
         if decision["decision"] == "finish" and decision["task_complete"] and len(observations) == 1:
             item = observations[0]

@@ -40,6 +40,22 @@ class TestAgentSystemPrompt(unittest.TestCase):
 
         self.tools = [format_keyword]
 
+    def test_large_observation_request_fits_without_mutating_original(self):
+        """超窗口工具证据只裁剪发送副本，当前问题、真实ID和原始结果保留。"""
+        from src.agent.react_loop import _model_request
+        from src.utils.token_budget import request_tokens
+        context = {"observations": [{"name": "paper_compare", "status": "success",
+                    "args": {"doc_id": "a" * 64}, "result": {"answer": "🧬" * 14000,
+                    "references": [{"text": "🧪" * 10000, "metadata": {"doc_id": "a" * 64}}]}}]}
+        original = deepcopy(context)
+        payload = json.loads(_model_request(build_agent_messages("比较两篇论文？", [], context)).data)
+        self.assertLessEqual(request_tokens(payload) + payload["options"]["num_predict"], payload["options"]["num_ctx"])
+        state = json.loads(payload["messages"][1]["content"])
+        self.assertEqual(state["question"], "比较两篇论文？")
+        self.assertEqual(state["context"]["observations"][0]["args"]["doc_id"], "a" * 64)
+        self.assertEqual(context, original)
+        self.assertIn("模型上下文已截断", payload["messages"][1]["content"])
+
     def test_all_stages_preserve_actual_tool_description_and_parameter_constraints(self):
         for stage in ("thought", "action", "observation"):
             with self.subTest(stage=stage):

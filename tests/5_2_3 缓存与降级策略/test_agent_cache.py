@@ -94,6 +94,21 @@ class TestAgentCache(unittest.TestCase):
         self.search("刚才那篇论文使用什么输入？")
         self.assertEqual(self.retriever.search.call_count, 4)
 
+    def test_length_stop_is_incomplete_in_tool_and_log_and_never_cached(self):
+        """服务length终止保留部分答案，但工具、日志和缓存均不得认定完成。"""
+        from src.utils.logger import read_rag_requests
+        response = {"model": "mock", "done": True, "done_reason": "length",
+                    "prompt_eval_count": 80, "eval_count": 512,
+                    "message": {"content": "部分内容。[参考文档1]"}}
+        with patch("src.generation.rag_pipeline.urlopen", return_value=BytesIO(json.dumps(response).encode())):
+            result = self.search()
+        self.assertEqual(result["status"], "incomplete")
+        self.assertTrue(result["answer"])
+        self.assertFalse(self.cache.entries)
+        records, _ = read_rag_requests()
+        self.assertEqual(records[-1]["status"], "incomplete")
+        self.assertEqual(records[-1]["done_reason"], "length")
+
     def test_low_relevance_is_not_cached(self):
         self.retriever.search.return_value = [(self.documents[0], .01)]
         self.assertEqual(self.search()["status"], "needs_confirmation")

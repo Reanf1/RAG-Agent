@@ -19,7 +19,8 @@ class TestCitations(unittest.TestCase):
     """校验引用编号和原文映射，不把映射通过等同于语义支持。"""
 
     def setUp(self):
-        self.config = {"generation": {"max_context_chars": 6000, "max_prompt_chars": 12000}}
+        from src.utils.config import load_config
+        self.config = load_config()
         config_patch = patch("src.generation.rag_pipeline.load_config", return_value=self.config)
         config_patch.start()
         self.addCleanup(config_patch.stop)

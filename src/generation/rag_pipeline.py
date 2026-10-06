@@ -13,6 +13,7 @@ from src.generation.prompt_template import NO_CONTEXT_TEXT, build_rag_messages
 from src.retrieval.reranker import is_image_placeholder
 from src.utils.config import generation_options, load_config, ollama_base_url
 from src.utils.messages import messages_to_ollama
+from src.utils.token_budget import check_request_budget, request_tokens
 
 # 本机模型直接连接，避免系统 HTTP 代理改变故障类型或转发论文内容。
 urlopen = build_opener(ProxyHandler({})).open
@@ -102,6 +103,7 @@ def _build_generation_request(question: str, context: dict, options: dict | None
     messages = build_rag_messages(question, context["context"])
     payload = {"model": config["model"], "stream": stream, "options": sampling,
                "messages": messages_to_ollama(messages)}
+    check_request_budget(payload)
     request = Request(config["base_url"].rstrip("/") + "/api/chat",
                       data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
                       headers={"Content-Type": "application/json"}, method="POST")
@@ -146,6 +148,36 @@ def _finish_generation(result: dict, context: dict, sampling: dict) -> dict:
 
 
 def build_context(question: str, results: list[tuple[Document, float]], *, max_context_chars: int | None = None) -> dict:
+    """先沿用字符／句界预算，再按词表核对最终RAG消息；引用始终对应入选前缀。"""
+    config = load_config()["llm"]
+    sampling = generation_options(config)
+    def payload(context):
+        return {"model": config["model"], "options": sampling, "messages": messages_to_ollama(build_rag_messages(question, context))}
+    context = _build_context_chars(question, results, max_context_chars=max_context_chars)
+    # 固定提示和问题本身超限时不能通过删光证据来伪装为空库。
+    check_request_budget(payload(""))
+    budget = sampling["num_ctx"] - sampling["num_predict"]
+    if request_tokens(payload(context["context"])) > budget:
+        low, high, best = 1, context["context_budget_chars"], None
+        while low <= high:
+            middle = (low + high) // 2
+            try:
+                candidate = _build_context_chars(question, results, max_context_chars=middle)
+            except ValueError:
+                low = middle + 1
+                continue
+            if request_tokens(payload(candidate["context"])) <= budget:
+                best, low = candidate, middle + 1
+            else:
+                high = middle - 1
+        if best is None:
+            raise ValueError("Token预算不足以容纳来源与正文，请缩短问题")
+        context = best
+    context["prompt_tokens_estimate"] = check_request_budget(payload(context["context"]))
+    return context
+
+
+def _build_context_chars(question: str, results: list[tuple[Document, float]], *, max_context_chars: int | None = None) -> dict:
     """把同一检索方式的 Document/分数列表组织为参考项目风格的 Context。
 
     分数越高越相关，同分保持输入顺序；只读原 Document。不调用检索或模型。

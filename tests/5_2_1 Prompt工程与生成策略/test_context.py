@@ -20,7 +20,8 @@ class TestContextBuilding(unittest.TestCase):
     """按明确分数与字符预算核验拼接，不把字符数当作模型 Token 数。"""
 
     def setUp(self):
-        self.config = {"generation": {"max_context_chars": 6000, "max_prompt_chars": 12000}}
+        from src.utils.config import load_config
+        self.config = load_config()
         config_patch = patch("src.generation.rag_pipeline.load_config", return_value=self.config)
         config_patch.start()
         self.addCleanup(config_patch.stop)
@@ -161,6 +162,22 @@ class TestContextBuilding(unittest.TestCase):
                 self.assertFalse(result["truncated"])
                 self.assertIn("当前知识库中未找到相关文档。",
                               build_rag_messages("问题", result["context"])[1].content)
+
+    def test_unicode_token_budget_preserves_matching_reference_prefix(self):
+        """实际词表裁剪高Token密度正文，引用只含真实送入的前缀。"""
+        from src.utils.token_budget import request_tokens
+        from src.utils.messages import messages_to_ollama
+        from src.generation.prompt_template import build_rag_messages
+        from src.utils.config import generation_options
+        text = "🧬" * 6000
+        document = Document(page_content=text, metadata={"source_file": "基因.txt", "line_start": 1, "line_end": 1})
+        context = build_context("内容？", [(document, 0.9)])
+        options = generation_options(self.config["llm"])
+        payload = {"options": options, "messages": messages_to_ollama(build_rag_messages("内容？", context["context"]))}
+        self.assertLessEqual(request_tokens(payload) + options["num_predict"], options["num_ctx"])
+        self.assertTrue(context["references"][0]["truncated"])
+        self.assertTrue(text.startswith(context["references"][0]["text"]))
+        self.assertEqual(document.page_content, text)
 
     def test_config_and_question_validation(self):
         for key in ("max_context_chars", "max_prompt_chars"):
