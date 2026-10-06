@@ -74,12 +74,69 @@ class TestResearchTools(unittest.TestCase):
             result = knowledge_base_search.invoke({"question": "模型比较结果是什么？", "doc_id": doc_id})
         return result, retriever, http
 
+    def test_rag_stream_emits_before_tool_finishes_and_saves_only_final_answer(self):
+        """核心RAG真实读取NDJSON，首包在末包之前进入会话事件，最终才保存整轮。"""
+        from threading import Event
+        from src.agent.memory import MemoryManager, run_session
+        released, final_packet = Event(), Event()
+        class Response:
+            def __enter__(self):
+                return self
+            def __exit__(self, *args):
+                return False
+            def __iter__(self):
+                yield json.dumps({"message": {"content": "首段证据"}}).encode() + b"\n"
+                released.wait(timeout=3)
+                final_packet.set()
+                yield json.dumps({**self.response, "message": {"content": "[参考文档1]。"}}).encode() + b"\n"
+        response = Response()
+        response.response = self.response
+        memory = MemoryManager(Path(self.directory.name) / "sessions.sqlite3")
+        session = memory.create_session("user")
+        with patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
+                patch("src.generation.streaming.urlopen", return_value=response), \
+                patch("src.generation.rag_pipeline.generate_answer", side_effect=AssertionError("流式主链不能调用非流式生成")):
+            retriever.return_value.search.return_value = [(self.document, .9)]
+            events = run_session("知识库中模型的比较结果是什么？", "user", session,
+                                 [knowledge_base_search], memory=memory, stream=True)
+            try:
+                first = next(event for event in events if event["type"] == "token")
+                self.assertIn("首段证据", first["answer"])
+                self.assertFalse(final_packet.is_set())
+                self.assertEqual(memory.get_messages("user", session), [])
+                released.set()
+                rest = list(events)
+                self.assertTrue(rest[-1]["task_complete"])
+                self.assertEqual(memory.get_messages("user", session)[-1].content, rest[-1]["full_response"])
+                self.assertIn("研究.md", rest[-1]["full_response"])
+            finally:
+                released.set()
+                events.close()
+
     def test_registry_contains_real_tools_with_schemas(self):
         self.assertEqual([t.name for t in AVAILABLE_TOOLS], ["knowledge_base_search", "paper_metadata", "paper_compare", "keyword_extract", "paper_summary", "current_time", "calculator", "paper_list"])
         self.assertEqual(set(knowledge_base_search.args), {"question", "doc_id"})
         self.assertEqual(set(paper_metadata.args), {"doc_id"})
         self.assertIn("RAG", knowledge_base_search.description)
         self.assertIn("DOI", paper_metadata.description)
+
+    def test_main_rag_stream_disconnect_keeps_partial_and_marks_incomplete(self):
+        """主链未收到done时不能完成或覆盖部分正文，真实会话保存失败状态。"""
+        from src.agent.memory import MemoryManager, run_session
+        response = BytesIO(json.dumps({"message": {"content": "已收到的部分证据"}}).encode() + b"\n")
+        memory = MemoryManager(Path(self.directory.name) / "broken-stream.sqlite3")
+        session = memory.create_session("user")
+        with patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
+                patch("src.generation.streaming.urlopen", return_value=response):
+            retriever.return_value.search.return_value = [(self.document, .9)]
+            events = list(run_session("知识库中模型的比较结果是什么？", "user", session,
+                                      [knowledge_base_search], memory=memory, stream=True))
+        final = events[-1]
+        self.assertFalse(final["task_complete"])
+        self.assertIn("已收到的部分证据", final["full_response"])
+        self.assertIn("未完成", final["full_response"])
+        self.assertFalse(memory.get_messages("user", session)[-1].additional_kwargs["task_complete"])
+        self.assertTrue(response.closed)
 
     def test_rag_uses_hybrid_rerank_and_real_module_two_citations(self):
         result, retriever, http = self.rag([0.9])

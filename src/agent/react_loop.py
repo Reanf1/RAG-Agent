@@ -292,7 +292,7 @@ def _known_paper_ids(question: str, context: dict | None) -> set[str]:
 
 
 def act(question: str, thought: dict, tools: list[BaseTool], context: dict | None = None,
-        *, call_counts: dict | None = None):
+        *, call_counts: dict | None = None, stream: bool = False):
     """一次Function Calling→单调用或独立批次；执行器负责有界超时重试。
 
     事件中的AIMessage/ToolMessage供后续Observation使用。消费到tool_call时尚未执行，
@@ -409,7 +409,7 @@ def act(question: str, thought: dict, tools: list[BaseTool], context: dict | Non
         if call_counts is not None:
             for signature in signatures:
                 call_counts[signature] = call_counts.get(signature, 0) + 1
-        yield from execute_calls(prepared, selected_tools, parallel=batch)
+        yield from execute_calls(prepared, selected_tools, parallel=batch, stream=stream)
     except (OSError, ValueError, RuntimeError) as error:
         yield {"type": "error", **generation_error(error)}
 
@@ -791,7 +791,11 @@ def _run_react(question: str, tools: list[BaseTool] | None = None, context: dict
                 external_only = True  # 明确的单一外部任务不能在搜索失败后用本地旧资料冒充恢复。
                 available = [item for item in available if item.name == "web_search"]
             messages, failures, pending, capacity_blocked = [], [], False, False
-            for event in act(question, thought, available, state, call_counts=call_counts):
+            for event in act(question, thought, available, state, call_counts=call_counts, stream=stream):
+                if event["type"] == "token":
+                    partial_answer = event["answer"]
+                    yield {**event, "iteration": iteration}
+                    continue
                 if event["type"] == "error":
                     yield {**event, "iteration": iteration}
                     answer = f"{event['message']}。{event['retry_advice']}"
@@ -863,6 +867,8 @@ def _run_react(question: str, tools: list[BaseTool] | None = None, context: dict
         failure = generation_error(error)
         yield {"type": "error", **failure, "iteration": iteration}
         answer = (partial_answer + "\n\n回答未完成：" if partial_answer else "") + f"{failure['message']}。{failure['retry_advice']}"
+    if not complete and partial_answer and partial_answer not in answer:
+        answer = partial_answer + "\n\n回答未完成：" + answer
     yield {"type": "done", "task_complete": complete, "stop_reason": reason,
            "full_response": answer, "iterations": iteration, "context": deepcopy(state)}
 

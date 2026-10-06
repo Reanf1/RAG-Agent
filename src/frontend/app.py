@@ -6,6 +6,8 @@ session_state中。只有提交上传或问题的分支执行业务请求，普�
 """
 
 import sys
+import json
+import re
 from copy import deepcopy
 from datetime import datetime
 from hashlib import sha256
@@ -113,7 +115,7 @@ with st.sidebar:
                                 ("向量数据库", "vector_database", "Chroma")):
         component = health[key]
         if component["status"] == "ok":
-            st.success(f"{name}：正常（{component.get('model', selected)}）")
+            st.success(f"{name}：{'可连接，推理未验证' if key == 'llm' else '可读取，检索未验证'}（{component.get('model', selected)}）")
         else:
             text = f"{name}：异常（{component['detail']}）"
             if component["status"] in {"not_initialized", "model_missing"}:
@@ -297,7 +299,7 @@ with knowledge_tab:
         if selected_document:
             st.subheader(selected_document["name"])
             st.caption(f"{selected_document['chunks']} 个索引块 · "
-                       + ("已向量化" if selected_document["chunks"] else "未向量化"))
+                       + selected_document["index_status"])
             try:
                 with st.container(height=600, border=True, key="knowledge_content"):
                     for part in read_document_content(raw_dir, selected_document["doc_id"]):
@@ -337,13 +339,20 @@ def show_turn_footer(message):
 
 
 def show_execution_table(event, question, expanded=True):
-    """输入框下只显示逐轮七列表格，完整轨迹仍保存在原始事件和日志中。"""
+    """保留逐轮七列统计，并展示已有公开计划、参数、结果与观察。"""
     rows = execution_rows(event)
     with st.expander(question[:60], expanded=expanded):
         if rows:
             st.dataframe(rows, hide_index=True, width="stretch")
         else:
             st.caption("该轮尚未记录阶段指标。")
+        if event.get("metrics", {}).get("trace"):
+            with st.popover("查看公开执行过程"):
+                st.caption("工具计划、参数、实际结果和完成判断；来自已有事件。")
+                # 只缩短展示副本中的长指纹；真实参数、日志和会话保持完整ID。
+                display = re.sub(r"(?<![0-9a-f])[0-9a-f]{32,64}(?![0-9a-f])",
+                                 lambda match: match.group()[:8], json.dumps(event["metrics"]["trace"], ensure_ascii=False))
+                st.json(display)
 
 
 def show_statistics():
@@ -468,7 +477,7 @@ with knowledge_tab:
     else:
         summary = st.columns(3)
         summary[0].metric("知识库文档数", len(library))
-        summary[1].metric("已向量化文档数", sum(document["chunks"] > 0 for document in library))
+        summary[1].metric("已向量化文档数", sum(document["index_status"] == "已向量化" for document in library))
         summary[2].metric("知识库索引块数", sum(document["chunks"] for document in library))
         if not library:
             st.info("知识库暂无文档，请在左侧上传并开始导入。")
@@ -476,7 +485,7 @@ with knowledge_tab:
             # 表格仅显示磁盘与Chroma的当前状态，批次失败仍在左侧导入区查看。
             rows = [{"文件名": document["name"], "文档 ID": document["doc_id"][:8],
                      "原文状态": "已保存" if document["source_available"] else "缺失",
-                     "向量化状态": "已向量化" if document["chunks"] else "未向量化",
+                     "向量化状态": document["index_status"],
                      "索引块数": document["chunks"]} for document in library]
             st.dataframe(rows, hide_index=True, width="stretch")
 

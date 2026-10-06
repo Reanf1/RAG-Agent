@@ -453,7 +453,9 @@ class TestAgentMetricsEntryAndPage(unittest.TestCase):
         app = self.page()
         app.chat_input[0].set_value("计算").run()
         self.assertFalse(app.exception)
-        self.assertFalse(app.json)
+        self.assertTrue(app.json)
+        self.assertNotIn(identifier, str(app.json[0].value))
+        self.assertIn(identifier[:8], str(app.json[0].value))
         self.assertTrue(any("calculator" in str(table.value) for table in app.dataframe))
         saved = self.logs()[-1]["metrics"]
         self.assertEqual(saved["tool_calls"][0]["call_id"], identifier)

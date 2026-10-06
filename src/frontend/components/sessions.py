@@ -14,7 +14,10 @@ def activate_session(memory: MemoryManager, user_id: str, session_id: str):
     messages = memory.get_messages(user_id, session_id)
     st.session_state.pop("agent_last_event", None)
     st.session_state.pop("delete_session_pending", None)
-    history = []
+    # 旧RAG记录先回放，不虚构当时未记录的Agent轨迹或完成状态。
+    history = [{"question": item["question"], "answer": item.get("answer", "") or item.get("error", "历史回答未保存"),
+                "complete": None, "stop_reason": "legacy_rag", "event": {}, "legacy_rag": item}
+               for item in memory.get_rag_messages(user_id, session_id)]
     for question, answer in zip(messages[::2], messages[1::2]):
         details = answer.additional_kwargs
         history.append({"question": question.content, "answer": answer.content,
@@ -51,12 +54,7 @@ def render_sessions(db_path: Path) -> bool:
                 activate_session(memory, user_id, memory.create_session(user_id))
                 st.rerun()
             sessions = memory.list_sessions(user_id)
-            labels = {}
-            for identifier in sessions:
-                saved = memory.get_messages(user_id, identifier)
-                rag_saved = memory.get_rag_messages(user_id, identifier)
-                title = saved[0].content if saved else (rag_saved[0]["question"] if rag_saved else "新会话")
-                labels[identifier] = title[:24]
+            labels = {identifier: memory.get_session_title(user_id, identifier) for identifier in sessions}
             # 纯样式通过html写入，不在“最近”和会话之间留下空白块。
             st.html("""<style>
                 .st-key-conversation_history {gap: 0.5rem;}

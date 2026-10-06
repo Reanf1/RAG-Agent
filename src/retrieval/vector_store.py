@@ -1,6 +1,7 @@
 """本地 M3E 与 Chroma：持久化、增量入库、Top-K 检索及按文档删除。"""
 
 import os
+import json
 from hashlib import sha256
 from functools import lru_cache
 from threading import Lock
@@ -61,6 +62,7 @@ class VectorStore:
         directory = Path(persist_directory or config["paths"]["vector_index"])
         if not directory.is_absolute():
             directory = project_root / directory
+        self.directory = directory.resolve()
         self.top_k = retrieval["top_k"]
         expected = chroma_metadata(config)
         self._store = Chroma(
@@ -165,6 +167,16 @@ class VectorStore:
         return count
 
 
+def _write_index_status(task, chunks, vector_store, *, complete):
+    """独立旁注记录预期块，不改原始资料；重开页面可核对实际块ID集合。"""
+    path = Path(task["path"]).parent / ".index_status.json"
+    state = {"index_directory": str(vector_store.directory), "collection": vector_store._store._collection.name,
+             "expected_ids": [chunk.metadata["chunk_id"] for chunk in chunks], "complete": complete}
+    temporary = path.with_suffix(".tmp")
+    temporary.write_text(json.dumps(state, ensure_ascii=False), encoding="utf-8")
+    temporary.replace(path)
+
+
 def batch_build_index(tasks: list[dict], raw_dir: str | Path,
                       max_file_size_mb: int = 20, retry_failed: bool = False,
                       vector_store: VectorStore | None = None):
@@ -209,12 +221,14 @@ def batch_build_index(tasks: list[dict], raw_dir: str | Path,
                     # 第一个有效文档才初始化本地模型/数据库，一批复用同一实例。
                     if vector_store is None:
                         vector_store = VectorStore()
+                    _write_index_status(task, chunks, vector_store, complete=False)
                     for offset in range(0, len(chunks), 500):
                         batch = chunks[offset:offset + 500]
                         task["added_chunks"] += vector_store.add_chunks(batch)
                         task["processed_chunks"] = offset + len(batch)
                         task["index_total"] = vector_store.count()
                         yield {"completed": index, "total": total}
+                    _write_index_status(task, chunks, vector_store, complete=True)
                     task.update(status="success", indexed=True)
         except Exception as error:
             # 失败只影响当前文档；保留已落盘块，供下一次查重恢复。

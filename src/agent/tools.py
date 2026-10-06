@@ -2,6 +2,7 @@
 
 import ast
 from copy import deepcopy
+from contextvars import ContextVar
 from datetime import datetime
 from decimal import Decimal, localcontext
 import hashlib
@@ -20,6 +21,10 @@ from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
 from langchain_core.tools import BaseTool, tool
 
 from src.utils.config import load_config
+
+
+# Python执行器绑定逐包回调，每个工作线程隔离；不进入模型工具参数Schema。
+_rag_stream_sink = ContextVar("rag_stream_sink", default=None)
 
 
 def _uploaded_paper(doc_id: str) -> Path:
@@ -171,7 +176,25 @@ def _knowledge_base_search(question: str, doc_id: str | None = None, *, cache=No
             generation_started = perf_counter()
             message["generation_attempted"] = True
             try:
-                result = generate_answer(question, context)
+                sink = _rag_stream_sink.get()
+                if sink is None:
+                    result = generate_answer(question, context)
+                else:
+                    from src.generation.streaming import stream_answer
+                    result = None
+                    stream = stream_answer(question, context)
+                    try:
+                        for event in stream:
+                            if event["type"] == "token":
+                                sink(event)
+                            elif event["type"] == "error":
+                                raise RuntimeError(event["message"] + "。" + event["retry_advice"])
+                            else:
+                                result = {key: value for key, value in event.items() if key != "type"}
+                    finally:
+                        stream.close()
+                    if result is None:
+                        raise RuntimeError("RAG流未返回完成结果")
             finally:
                 message["generation_seconds"] = perf_counter() - generation_started
             result["citations"] = _tool_references(result["citations"])
@@ -919,7 +942,7 @@ def _error_kind(exception: Exception) -> str:
     return "input" if isinstance(exception, (ValueError, TypeError, FileNotFoundError, ArithmeticError)) else "execution"
 
 
-def execute_tool(name: str, args: dict, tools: list[BaseTool], call_id: str | None = None) -> dict:
+def execute_tool(name: str, args: dict, tools: list[BaseTool], call_id: str | None = None, *, on_token=None) -> dict:
     """参考上游注册表查找与invoke，保留真实结果、错误、耗时和关联消息。
 
     多余字段提前拒绝，必填项/类型由LangChain参数Schema校验；失败不重试。
@@ -940,7 +963,11 @@ def execute_tool(name: str, args: dict, tools: list[BaseTool], call_id: str | No
         if set(args) - set(selected.args):
             raise ValueError("工具参数包含未声明的字段")
         json.dumps(args, allow_nan=False)  # 非有限数值等非法JSON不能进入工具。
-        result = selected.invoke(deepcopy(args))
+        binding = _rag_stream_sink.set(on_token)
+        try:
+            result = selected.invoke(deepcopy(args))
+        finally:
+            _rag_stream_sink.reset(binding)
     except Exception as exception:
         status, error = "error", f"{type(exception).__name__}: {exception}"
         kind = _error_kind(exception)

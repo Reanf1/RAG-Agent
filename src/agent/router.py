@@ -4,7 +4,8 @@ from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeout
 from copy import deepcopy
 import math
 import re
-from threading import Condition, Event
+from queue import Empty, Full, Queue
+from threading import Condition, Event, Lock
 from time import perf_counter
 
 from langchain_core.messages import ToolMessage
@@ -125,14 +126,14 @@ def recovery_limits() -> tuple[float, int, int]:
     return timeout, retries, repeats
 
 
-def _execute_attempts(call, tools, retries, deadline, stopped, attempts):
+def _execute_attempts(call, tools, retries, deadline, stopped, attempts, on_token=None):
     """同一线程串行重试；已返回的TimeoutError才可重试，关闭/到期后不能再启动。"""
     started = perf_counter()
     for attempt in range(retries + 1):
         if attempt and (stopped.is_set() or perf_counter() >= deadline):
             break
         attempts.append({"attempt": attempt + 1, "status": "running"})
-        result = execute_tool(call["name"], call["args"], tools, call["call_id"])
+        result = execute_tool(call["name"], call["args"], tools, call["call_id"], on_token=on_token)
         attempts[-1] = {"attempt": attempt + 1, **{key: result[key] for key in
                         ("status", "error", "error_kind", "elapsed_seconds")}}
         if result["error_kind"] != "timeout":
@@ -141,7 +142,7 @@ def _execute_attempts(call, tools, retries, deadline, stopped, attempts):
             "_finished_at": perf_counter()}
 
 
-def execute_calls(calls: list[dict], tools: list[BaseTool], *, parallel: bool = False):
+def execute_calls(calls: list[dict], tools: list[BaseTool], *, parallel: bool = False, stream: bool = False):
     """有界等待、有限重试，按原调用顺序输出。超时后的迟到结果不会再送入Agent。
 
     同步线程无法被强杀；截止时间后停止等待及后续重试，run_react结束本次请求，
@@ -156,6 +157,30 @@ def execute_calls(calls: list[dict], tools: list[BaseTool], *, parallel: bool = 
     mode = "parallel" if parallel and len(calls) > 1 else "serial"
     timeout, retries, _ = recovery_limits()
     pool, stopped = ThreadPoolExecutor(max_workers=len(calls) if mode == "parallel" else 1), Event()
+    progress = Queue(maxsize=32) if stream else None
+    progress_lock = Lock()
+    def publish(call, event):
+        if stopped.is_set():
+            raise TimeoutError("请求已结束，停止读取后续RAG流包")
+        snapshot = {"type": "token", "answer": event["answer"], "citations": event["citations"],
+                    "name": call["name"], "call_id": call["call_id"], "provisional": True}
+        with progress_lock:
+            try:
+                progress.put_nowait(snapshot)
+            except Full:
+                # 累计快照允许丢最旧项；生产者互斥，慢页面不会阻塞线程或无界积累。
+                try:
+                    progress.get_nowait()
+                except Empty:
+                    pass
+                progress.put_nowait(snapshot)
+    def drain():
+        if progress is not None:
+            while True:
+                try:
+                    yield progress.get_nowait()
+                except Empty:
+                    return
     def submit(call):
         global _active_executions
         started, attempts = perf_counter(), []
@@ -167,7 +192,8 @@ def execute_calls(calls: list[dict], tools: list[BaseTool], *, parallel: bool = 
                 return call, None, started, deadline, attempts
             _active_executions += 1
         try:
-            future = pool.submit(_execute_attempts, call, tools, retries, deadline, stopped, attempts)
+            future = pool.submit(_execute_attempts, call, tools, retries, deadline, stopped, attempts,
+                                 (lambda event: publish(call, event)) if stream else None)
         except BaseException:
             _release_execution(None)
             raise
@@ -187,7 +213,16 @@ def execute_calls(calls: list[dict], tools: list[BaseTool], *, parallel: bool = 
                     break
                 continue
             try:
-                result = future.result(timeout=max(0, deadline - perf_counter()))
+                while True:
+                    yield from drain()
+                    try:
+                        result = future.result(timeout=min(.05, max(0, deadline - perf_counter())) if stream
+                                               else max(0, deadline - perf_counter()))
+                        break
+                    except FutureTimeout:
+                        if not stream or perf_counter() >= deadline:
+                            raise
+                yield from drain()
                 if result.pop("_finished_at") > deadline:
                     raise FutureTimeout  # 原顺序收取结果时，不能接受已超过自身期限的迟到成功。
             except FutureTimeout:

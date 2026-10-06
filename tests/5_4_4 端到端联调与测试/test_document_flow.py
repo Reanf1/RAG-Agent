@@ -726,6 +726,7 @@ class TestImportFrontend(unittest.TestCase):
     def test_knowledge_panel_partial_index_does_not_claim_import_success(self):
         """第二批失败时面板显示实际500块，左侧保留失败详情，重试补全。"""
         import hashlib
+        from streamlit.testing.v1 import AppTest
         app = self.app
         data = b"Paper blocks"
         doc_id = hashlib.sha256(data).hexdigest()
@@ -742,13 +743,16 @@ class TestImportFrontend(unittest.TestCase):
             app.button(key="start_import").click().run()
         row = self.knowledge_rows(app).iloc[0]
         self.assertEqual(row["索引块数"], 500)
-        self.assertEqual(row["向量化状态"], "已向量化")
+        self.assertEqual(row["向量化状态"], "部分入库")
+        restored = AppTest.from_file(str(ROOT / "src/frontend/app.py"), default_timeout=10).run()
+        self.assertEqual(self.knowledge_rows(restored).iloc[0]["向量化状态"], "部分入库")
         task = app.session_state["import_tasks"][0]
         self.assertEqual((task["status"], task["chunk_count"]), ("failed", 501))
         self.assertTrue(any("第二批失败" in c.value for c in app.sidebar.caption))
         with patch("src.chunking.split_documents", return_value=chunks):
             app.button(key="retry_import").click().run()
         self.assertEqual(self.knowledge_rows(app).iloc[0]["索引块数"], 501)
+        self.assertEqual(self.knowledge_rows(app).iloc[0]["向量化状态"], "已向量化")
         self.assertEqual(len(self.embeddings.document_calls[-1]), 1)
 
     def test_knowledge_panel_missing_source_and_external_index_change(self):

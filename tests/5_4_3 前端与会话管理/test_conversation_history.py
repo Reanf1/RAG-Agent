@@ -131,6 +131,31 @@ class TestConversationHistory(unittest.TestCase):
             self.memory.append_rag_message("alice", self.a, {"invalid": object()})
         self.assertEqual(self.memory.get_rag_messages("alice", self.a), [])
 
+    def test_page_replays_legacy_rag_and_agent_without_generation(self):
+        """旧RAG正文进入页面，保持来源记录；重绘不执行工具或生成。"""
+        from streamlit.testing.v1 import AppTest
+        legacy = {"question": "旧RAG问题", "answer": "旧RAG答案", "citations": [{"source_file": "论文.pdf", "location": "第3页"}]}
+        self.memory.append_rag_message("alice", self.a, legacy)
+        self.memory.append_turn("alice", self.a, "Agent问题", "Agent答案")
+        script = f'''from pathlib import Path
+import streamlit as st
+from src.agent.memory import MemoryManager
+from src.frontend.components.sessions import activate_session
+activate_session(MemoryManager(Path({str(self.path)!r})), "alice", {self.a!r})
+for item in st.session_state.agent_messages:
+    st.markdown(item["question"])
+    st.markdown(item["answer"])
+'''
+        with patch("src.agent.react_loop.run_react") as model:
+            page = AppTest.from_string(script).run()
+            page.run()
+            self.assertEqual(len(page.exception), 0)
+            self.assertEqual([element.value for element in page.markdown], ["旧RAG问题", "旧RAG答案", "Agent问题", "Agent答案"])
+            saved = page.session_state["agent_messages"][0]
+            self.assertIsNone(saved["complete"])
+            self.assertEqual(saved["legacy_rag"]["citations"], legacy["citations"])
+            model.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()
