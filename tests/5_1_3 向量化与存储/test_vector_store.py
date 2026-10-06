@@ -78,6 +78,53 @@ class TestVectorStore(unittest.TestCase):
         found = self.store.search("神经网络", doc_id="b")
         self.assertEqual([doc.metadata["chunk_id"] for doc, _ in found], ["b1"])
 
+    def test_missing_hnsw_label_recovers_only_selected_document_without_writing(self):
+        """Windows复测：原文可读但向量Label缺失，只读临时恢复并保留来源与提示。"""
+        self.store.add_chunks(self.chunks)
+        original_get = self.store._store.get
+        before = self.store.list_chunks()
+        def broken_vectors(**kwargs):
+            if "embeddings" in kwargs.get("include", []):
+                raise RuntimeError("Label not found")
+            return original_get(**kwargs)
+        with patch.object(self.store._store, "get", side_effect=broken_vectors), \
+                patch.object(self.store._store, "add_documents", side_effect=AssertionError("不可改写索引")), \
+                patch.object(self.store._store._collection, "delete", side_effect=AssertionError("不可删除原索引")):
+            with self.assertLogs("src.retrieval.vector_store", level="WARNING"):
+                found = self.store.search("神经网络", k=5, doc_id="a")
+            self.assertEqual(self.store.search("问题", doc_id="missing"), [])
+        self.assertEqual([doc.metadata["chunk_id"] for doc, _ in found], ["a1", "a2"])
+        self.assertEqual([score for _, score in found], [1.0, -1.0])
+        self.assertEqual(self.embeddings.document_calls[-1], ["神经网络论文", "反向向量论文"])
+        self.assertIn("未修改原索引", found[0][0].metadata["retrieval_warning"])
+        self.assertEqual(found[0][0].metadata["page_number"], 2)
+        self.assertEqual(self.store.count(), 3)
+        self.assertEqual(self.store.list_chunks(), before)
+
+    def test_unrelated_vector_error_is_not_hidden_by_recovery(self):
+        """只匹配已复现的Label异常，其他读取故障必须保留。"""
+        self.store.add_chunks(self.chunks)
+        with patch.object(self.store._store, "get", side_effect=RuntimeError("数据库读取失败")), \
+                patch.object(self.embeddings, "embed_documents") as encode:
+            with self.assertRaisesRegex(RuntimeError, "数据库读取失败"):
+                self.store.search("神经网络", doc_id="a")
+            encode.assert_not_called()
+
+    def test_recovery_model_failure_is_not_an_empty_result(self):
+        """恢复依赖同版本本地模型，编码失败仍上报，原文和块数保留。"""
+        self.store.add_chunks(self.chunks)
+        original_get = self.store._store.get
+        def broken_vectors(**kwargs):
+            if "embeddings" in kwargs.get("include", []):
+                raise RuntimeError("Label not found")
+            return original_get(**kwargs)
+        with patch.object(self.store._store, "get", side_effect=broken_vectors), \
+                patch.object(self.embeddings, "embed_documents", side_effect=RuntimeError("本地编码失败")):
+            with self.assertRaisesRegex(RuntimeError, "本地编码失败"):
+                self.store.search("神经网络", doc_id="a")
+        self.assertEqual(self.store.count(), 3)
+        self.assertEqual(len(self.store.list_chunks("a")), 2)
+
     def test_default_top_k_and_query_change_without_reembedding_documents(self):
         """默认 K 来自配置；新查询只编码问题，沿用持久化文档向量。"""
         from src.utils.config import load_config

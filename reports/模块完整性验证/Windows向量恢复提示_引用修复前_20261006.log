@@ -1,0 +1,23 @@
+test_vector_recovery_notice_survives_citation_resolution (__main__.TestCitations)
+向量只读恢复不能被答案生成或引用映射静默丢弃。 ... FAIL
+
+======================================================================
+FAIL: test_vector_recovery_notice_survives_citation_resolution (__main__.TestCitations)
+向量只读恢复不能被答案生成或引用映射静默丢弃。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_2_1 Prompt工程与生成策略/test_citations.py", line 58, in test_vector_recovery_notice_survives_citation_resolution
+    self.assertEqual(result["warnings"], [notice])
+AssertionError: Lists differ: [] != ['本次临时计算指定文档向量，未修改原索引。']
+
+Second list contains 1 additional elements.
+First extra element 0:
+'本次临时计算指定文档向量，未修改原索引。'
+
+- []
++ ['本次临时计算指定文档向量，未修改原索引。']
+
+----------------------------------------------------------------------
+Ran 1 test in 0.128s
+
+FAILED (failures=1)

@@ -208,6 +208,10 @@ def _knowledge_base_search(question: str, doc_id: str | None = None, *, cache=No
         result.update(retrieval_seconds=message["retrieval_seconds"], elapsed_seconds=perf_counter() - started,
                       retrieval={"request_id": request_id, "status": message["retrieval_status"],
                                  "returned_chunks": returned_chunks})
+        # 低相关候选尚未生成答案，也需保留向量临时恢复说明供用户审阅。
+        if result["status"] == "needs_confirmation":
+            result["warnings"] = list(dict.fromkeys(ref["metadata"].get("retrieval_warning")
+                                                   for ref in context["references"] if ref["metadata"].get("retrieval_warning")))
         if cache_warnings:
             result.setdefault("warnings", []).extend(cache_warnings)
         message.update(result)

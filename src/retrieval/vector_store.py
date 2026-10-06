@@ -2,6 +2,7 @@
 
 import os
 import json
+import logging
 from hashlib import sha256
 from functools import lru_cache
 from threading import Lock
@@ -137,10 +138,24 @@ class VectorStore:
         where = {"doc_id": doc_id} if doc_id is not None else None
         if where:
             # 限定一篇论文采用已有向量的精确余弦排名，避开小过滤集的HNSW图异常。
-            stored = self._store.get(where=where, include=["documents", "metadatas", "embeddings"])
+            recovery_notice = ""
+            try:
+                stored = self._store.get(where=where, include=["documents", "metadatas", "embeddings"])
+            except RuntimeError as error:
+                if str(error).strip() != "Label not found":
+                    raise
+                # 已复现：正文仍可读但HNSW标签缺失。仅临时重算本篇，不改写原库或扩大范围。
+                stored = self._store.get(where=where, include=["documents", "metadatas"])
+                recovery_notice = ("持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，"
+                                   "未修改原索引；原索引完整性仍待核验。")
             if not stored["ids"]:
                 return []
             self._ensure_embeddings()
+            if recovery_notice:
+                stored["embeddings"] = self._store.embeddings.embed_documents(stored["documents"])
+                stored["metadatas"] = [{**metadata, "retrieval_warning": recovery_notice}
+                                       for metadata in stored["metadatas"]]
+                logging.getLogger(__name__).warning(recovery_notice)
             vectors = np.asarray(stored["embeddings"], dtype=float)
             query_vector = np.asarray(self._store.embeddings.embed_query(query), dtype=float)
             norms = np.linalg.norm(vectors, axis=1) * np.linalg.norm(query_vector)

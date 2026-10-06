@@ -533,6 +533,9 @@ with retrieval_tab:
                 if not results:
                     st.info("没有可检索的文档块或关键词无匹配，请先导入文档并检查关键词；如填写了文档 ID，请检查是否正确。")
                 st.caption(f"返回 {len(results)} 个文档块（Top-K={top_k}）。")
+                for notice in dict.fromkeys(document.metadata["retrieval_warning"] for document, _ in results
+                                            if document.metadata.get("retrieval_warning")):
+                    st.warning(notice)
                 for rank, (document, score) in enumerate(results, 1):
                     metadata = document.metadata
                     filename = metadata.get("source_file", "未知文件")

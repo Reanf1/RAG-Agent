@@ -12,6 +12,7 @@ import unittest
 from unittest.mock import patch
 from langchain_core.documents import Document
 from src.data_loader import batch_import, create_import_tasks, load_document
+from src.chunking import split_documents
 from src.retrieval.vector_store import VectorStore
 from tests.helpers import SmallEmbeddings
 
@@ -318,6 +319,30 @@ class TestImportFrontend(unittest.TestCase):
         self.assertFalse(app.text)
         self.assertTrue(any("没有可检索的文档块" in element.value for element in app.info))
         self.assertEqual(self.embeddings.query_calls, ["神经网络", "农业"])
+
+    def test_filtered_vector_label_recovery_displays_warning_and_real_source(self):
+        """页面实际经Chroma读取Label异常恢复，提示限制并展示原文行号。"""
+        tasks = create_import_tasks([("复测.txt", "农业复测资料\n复测第二行\n复测第三行".encode())])
+        list(batch_import(tasks, Path(self.directory.name) / "raw"))
+        chunks = split_documents(tasks[0]["documents"])
+        store = VectorStore()
+        store.add_chunks(chunks)
+        original_get = type(store._store).get
+        def broken_vectors(instance, **kwargs):
+            if "embeddings" in kwargs.get("include", []):
+                raise RuntimeError("Label not found")
+            return original_get(instance, **kwargs)
+        app = self.app
+        app.text_input(key="vector_query").set_value("农业")
+        app.text_input(key="vector_doc_id").set_value(chunks[0].metadata["doc_id"])
+        with patch.object(type(store._store), "get", new=broken_vectors):
+            app.button(key="vector_search").click().run()
+        self.assertFalse(app.exception)
+        self.assertFalse(app.error)
+        self.assertIn(chunks[0].page_content, [element.value for element in app.text])
+        self.assertIn("来源：复测.txt；行范围：1–3", [element.value for element in app.caption])
+        self.assertTrue(any("未修改原索引" in element.value for element in app.warning))
+        self.assertNotIn("retrieval_warning", store.list_chunks()[0].metadata)
 
     def test_vector_search_blank_input_and_empty_index(self):
         """启动/空问题不初始化模型，空库明确提示且不计算查询向量。"""

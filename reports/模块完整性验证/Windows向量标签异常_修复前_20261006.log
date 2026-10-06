@@ -1,0 +1,46 @@
+test_missing_hnsw_label_recovers_only_selected_document_without_writing (__main__.TestVectorStore)
+Windows复测：原文可读但向量Label缺失，只读临时恢复并保留来源与提示。 ... /Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ERROR
+test_unrelated_vector_error_is_not_hidden_by_recovery (__main__.TestVectorStore)
+只匹配已复现的Label异常，其他读取故障必须保留。 ... ok
+test_recovery_model_failure_is_not_an_empty_result (__main__.TestVectorStore)
+恢复依赖同版本本地模型，编码失败仍上报，原文和块数保留。 ... FAIL
+
+======================================================================
+ERROR: test_missing_hnsw_label_recovers_only_selected_document_without_writing (__main__.TestVectorStore)
+Windows复测：原文可读但向量Label缺失，只读临时恢复并保留来源与提示。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_1_3 向量化与存储/test_vector_store.py", line 94, in test_missing_hnsw_label_recovers_only_selected_document_without_writing
+    found = self.store.search("神经网络", k=5, doc_id="a")
+  File "/Users/rean/github/RAG+Agent/src/retrieval/vector_store.py", line 140, in search
+    stored = self._store.get(where=where, include=["documents", "metadatas", "embeddings"])
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1114, in __call__
+    return self._mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1118, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1179, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "/Users/rean/github/RAG+Agent/tests/5_1_3 向量化与存储/test_vector_store.py", line 88, in broken_vectors
+    raise RuntimeError("Label not found")
+RuntimeError: Label not found
+
+======================================================================
+FAIL: test_recovery_model_failure_is_not_an_empty_result (__main__.TestVectorStore)
+恢复依赖同版本本地模型，编码失败仍上报，原文和块数保留。
+----------------------------------------------------------------------
+RuntimeError: Label not found
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_1_3 向量化与存储/test_vector_store.py", line 123, in test_recovery_model_failure_is_not_an_empty_result
+    with self.assertRaisesRegex(RuntimeError, "本地编码失败"):
+AssertionError: "本地编码失败" does not match "Label not found"
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.215s
+
+FAILED (failures=1, errors=1)
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

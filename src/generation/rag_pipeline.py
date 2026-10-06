@@ -289,7 +289,9 @@ def resolve_citations(answer: str, context: dict) -> dict:
     if not answer.strip():
         raise ValueError("答案不能为空")
     references = {reference["id"]: reference for reference in context["references"]}
-    citations, invalid_ids, warnings, labels = [], [], [], {}
+    warnings = list(dict.fromkeys(ref.get("metadata", {}).get("retrieval_warning")
+                                 for ref in references.values() if ref.get("metadata", {}).get("retrieval_warning")))
+    citations, invalid_ids, labels = [], [], {}
 
     def replace(match):
         """只用本轮元数据渲染来源；未知编号明确标为无效。"""

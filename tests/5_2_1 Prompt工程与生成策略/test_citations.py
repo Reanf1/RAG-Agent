@@ -49,6 +49,15 @@ class TestCitations(unittest.TestCase):
         self.assertEqual(ref["source_file"], "原.pdf")
         self.assertEqual(ref["metadata"]["detail"]["tag"], "原始")
 
+    def test_vector_recovery_notice_survives_citation_resolution(self):
+        """向量只读恢复不能被答案生成或引用映射静默丢弃。"""
+        notice = "本次临时计算指定文档向量，未修改原索引。"
+        self.documents[0].metadata["retrieval_warning"] = notice
+        context = build_context("问题", [(self.documents[0], .9), (self.documents[0], .8)])
+        result = resolve_citations("结论[参考文档1]。", context)
+        self.assertEqual(result["warnings"], [notice])
+        self.assertIn("attention.pdf", result["answer"])
+
     def test_inline_pdf_location_and_authoritative_footer(self):
         answer = "## 回答\n结构如原文所述[参考文档1]。\n\n## 参考来源\n伪造.pdf，第999页"
         resolved = resolve_citations(answer, self.context)

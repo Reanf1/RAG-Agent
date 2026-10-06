@@ -187,6 +187,16 @@ class TestResearchTools(unittest.TestCase):
         self.assertIn("研究.md", result["answer"])
         self.assertIn("日志保存失败", result["warnings"][-1])
 
+    def test_recovered_vector_notice_is_kept_for_answers_and_pending_candidates(self):
+        """正常答案和低相关确认都显示索引恢复提示；低相关仍不启动生成。"""
+        notice = "本次临时计算指定文档向量，未修改原索引。"
+        self.document.metadata["retrieval_warning"] = notice
+        for score in (.9, .01):
+            with self.subTest(score=score):
+                result, _, http = self.rag([score])
+                self.assertEqual(result["warnings"], [notice])
+                self.assertEqual(http.call_count, 1 if score == .9 else 0)
+
     def test_rag_empty_library_preserves_explicit_fallback_notice(self):
         result, _, http = self.rag([], "没有资料，不能说明该论文的结果。")
         self.assertEqual(result["generation_mode"], "empty")

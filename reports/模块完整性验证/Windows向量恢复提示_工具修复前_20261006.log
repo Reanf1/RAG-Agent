@@ -1,0 +1,35 @@
+test_recovered_vector_notice_is_kept_for_answers_and_pending_candidates (__main__.TestResearchTools)
+正常答案和低相关确认都显示索引恢复提示；低相关仍不启动生成。 ... <frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+
+======================================================================
+ERROR: test_recovered_vector_notice_is_kept_for_answers_and_pending_candidates (__main__.TestResearchTools) (score=0.01)
+正常答案和低相关确认都显示索引恢复提示；低相关仍不启动生成。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_2 工具集开发/test_research_tools.py", line 197, in test_recovered_vector_notice_is_kept_for_answers_and_pending_candidates
+    self.assertEqual(result["warnings"], [notice])
+KeyError: 'warnings'
+
+======================================================================
+FAIL: test_recovered_vector_notice_is_kept_for_answers_and_pending_candidates (__main__.TestResearchTools) (score=0.9)
+正常答案和低相关确认都显示索引恢复提示；低相关仍不启动生成。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_2 工具集开发/test_research_tools.py", line 197, in test_recovered_vector_notice_is_kept_for_answers_and_pending_candidates
+    self.assertEqual(result["warnings"], [notice])
+AssertionError: Lists differ: [] != ['本次临时计算指定文档向量，未修改原索引。']
+
+Second list contains 1 additional elements.
+First extra element 0:
+'本次临时计算指定文档向量，未修改原索引。'
+
+- []
++ ['本次临时计算指定文档向量，未修改原索引。']
+
+----------------------------------------------------------------------
+Ran 1 test in 0.445s
+
+FAILED (failures=1, errors=1)
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
