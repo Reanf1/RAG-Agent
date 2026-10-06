@@ -112,6 +112,32 @@ class TestRAGSearchRouting(unittest.TestCase):
                 self.assertEqual(plan["tool_name"], "knowledge_base_search")
                 self.assertEqual(plan["next_step"], "tool")
 
+    def test_named_local_file_content_routes_to_search_with_or_without_history(self):
+        """复现Windows代号问题：TXT文件名本身就是本地资料目标。"""
+        for context in (None, {"history": [{"role": "ai", "content": "另一份文档的旧答案"}]}):
+            for filename in ("Windows复测_说明.txt", "记录.md", "研究.docx", "实验.pdf"):
+                with self.subTest(context=context, filename=filename):
+                    plan = route_question(f"请根据{filename}回答：复测代号是什么？请注明来源。", get_available_tools(), context)
+                    self.assertIsNotNone(plan)
+                    self.assertEqual(plan["tool_name"], "knowledge_base_search")
+        self.assertEqual(route_question("从记录.md提取关键词", get_available_tools())["tool_name"], "keyword_extract")
+        self.assertIsNone(route_question("先查询记录.md，再提取结果的关键词", get_available_tools()))
+
+    def test_windows_named_file_question_lists_then_searches_same_document(self):
+        """走完整循环；列表之后不能重新选择关键词或元数据工具。"""
+        identifier = "c" * 64
+        tools = self.filename_tools([{"doc_id": identifier, "source_file": "Windows复测_说明.txt"}])
+        question = "请根据Windows复测_说明.txt回答：复测代号是什么？请注明来源。"
+        action = self.packet(calls=[{"function": {"name": "knowledge_base_search", "arguments": {"question": question}}}])
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(action).encode())) as http, \
+                patch("src.agent.react_loop.think") as planner:
+            events = list(run_react(question, tools))
+        self.assertEqual([e["name"] for e in events if e["type"] == "tool_call"], ["paper_list", "knowledge_base_search"])
+        self.assertEqual(self.search_calls, [(question, identifier)])
+        self.assertTrue(events[-1]["task_complete"])
+        planner.assert_not_called()
+        self.assertEqual(http.call_count, 1)
+
     def filename_tools(self, papers):
         """可控工具结果测试预检契约，不运行真实模型或写入知识库。"""
         self.search_calls = []

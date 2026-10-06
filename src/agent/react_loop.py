@@ -38,6 +38,8 @@ Context.summary是当前会话旧对话的压缩摘要，只用于理解上下�
 追问会话事实时先检查summary和history；其中明确提供了所问信息，就据此回答，不得误报用户未提供。
 【资料来源决策】
 已上传、知识库、本文或指定doc_id的事实问题，优先knowledge_base_search或相应本地论文工具。
+文档内容中的代号、方法、数据或结果用knowledge_base_search；keyword_extract只用于用户明确要求提取主题关键词，paper_metadata只提取标题、作者、年份、摘要和DOI。
+关键词工具的text与doc_id互斥；元数据字段缺失不代表原文不存在或不能查询内容。
 doc_id只可使用用户或真实工具结果提供的64位SHA-256；文档名、会话ID不是论文ID。
 知识库检索的doc_id可选，没有真实ID时省略该参数，将论文名保留在question中。
 其他论文工具必须有ID；只有论文名时先用paper_list取得真实ID，不编造或推测指纹。
@@ -370,8 +372,10 @@ def act(question: str, thought: dict, tools: list[BaseTool], context: dict | Non
             # 文件名也只绑定本轮提到、且真实列表中唯一对应的文件，不采用旧问题目标。
             current_ids.update(value for alias, value in aliases.items()
                                if re.search(r"\.(?:pdf|docx|txt|md)$", alias) and alias in question.casefold())
-            if fields == ("doc_id",) and len(current_ids) == 1 and not batch:
+            if (fields == ("doc_id",) and len(current_ids) == 1 and not batch
+                    and not (call["name"] == "keyword_extract" and call["arguments"].get("text") is not None)):
                 # 用户本轮明确指定的单文档ID就是工具目标，历史中的合法ID不能替代它。
+                # 关键词已提供text时不能再自动补互斥的doc_id；模型自身冲突仍由工具拒绝。
                 call["arguments"]["doc_id"] = next(iter(current_ids))
             if fields == ("paper_a_id", "paper_b_id") and len(current_ids) == 2 and (
                     not all(isinstance(call["arguments"].get(field), str) for field in fields)

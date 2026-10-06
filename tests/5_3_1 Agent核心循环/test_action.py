@@ -146,6 +146,23 @@ class TestAction(unittest.TestCase):
         self.assertEqual(self.invocations, [current])
         self.assertEqual(events[0]["args"]["doc_id"], current)
 
+    def test_text_keyword_input_is_not_changed_to_conflicting_document_input(self):
+        """关键词处理已给定文本时，即使问题提到ID，也不能自动再补doc_id。"""
+        @tool
+        def keyword_extract(text: str | None = None, doc_id: str | None = None) -> dict:
+            """记录互斥输入，不读取论文。"""
+            self.invocations.append((text, doc_id))
+            if (text is None) == (doc_id is None):
+                raise ValueError("text和doc_id必须且只能提供一个")
+            return {"keywords": ["Transformer"]}
+        response = {**self.response, "message": {"tool_calls": [{"function": {
+            "name": "keyword_extract", "arguments": {"text": "Transformer用于科研"}}}]}}
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(response).encode())):
+            events = list(act("论文" + "a" * 64 + "；请提取给定文本Transformer用于科研的关键词",
+                              {**self.thought, "tool_name": "keyword_extract"}, [keyword_extract]))
+        self.assertEqual(self.invocations, [("Transformer用于科研", None)])
+        self.assertEqual(events[-1]["status"], "success")
+
     def test_current_document_filter_cannot_be_omitted_by_action(self):
         """最新问题的单个完整ID必须成为检索过滤，不扩展为全库查询。"""
         identifier = "c" * 64

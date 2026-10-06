@@ -59,7 +59,8 @@ def route_question(question: str, tools: list[BaseTool], context: dict | None = 
         "web_search": r"(?:联网|上网|网上|网络).{0,8}(?:搜索|查询|查找|检索)|\bsearch (?:the )?(?:web|internet)\b|\bsearch online\b",
     }
     # “本文最新实验”属于本地证据；“最新论文”属于需要外部核验的信息。
-    local = bool(re.search(r"知识库|本地|已上传|已入库|上传的|这篇|本篇|本文|该论文|指定论文|\b[0-9a-f]{64}\b|\b(?:this|uploaded) (?:paper|document)s?\b", question, re.I))
+    # 明确文件名也指定了本地资料，不能因没有“论文/知识库”字样误选其他工具。
+    local = bool(re.search(r"知识库|本地|已上传|已入库|上传的|这篇|本篇|本文|该论文|指定论文|\b[0-9a-f]{64}\b|\.(?:pdf|docx|txt|md)(?=$|[^A-Za-z0-9])|\b(?:this|uploaded) (?:paper|document)s?\b", question, re.I))
     fresh = bool(re.search(r"最新|最近|近期|实时|今年|\b(?:latest|recent|current advances)\b", question, re.I))
     web = bool(re.search(patterns["web_search"], question, re.I))
     if has_state and not local and not explicit and not web and re.search(r"代号|会话|对话|历史|\b(?:conversation|history)\b", question, re.I):
