@@ -196,6 +196,48 @@ class TestObservationAndLoop(unittest.TestCase):
             result = observe("提取标题、作者、年份、摘要、DOI", [], context)
         self.assertIn("DOI：原文未提供", result["answer"])
 
+    def test_failed_rag_followed_by_missing_metadata_is_not_empty_library(self):
+        """f5b26c7真实复测：检索Label失败，元字段缺项不能改写为文档不存在。"""
+        from src.agent.tools import paper_list, paper_metadata
+        context = {"observations": [
+            {"name": "paper_list", "status": "success", "result": {"documents": [{"doc_id": "a" * 64, "source_file": "复测.txt"}]}},
+            {"name": "knowledge_base_search", "status": "error", "error": "RuntimeError: Label not found", "result": None},
+            {"name": "paper_metadata", "status": "success", "result": {
+                "doc_id": "a" * 64, "source_file": "复测.txt", "title": None, "authors": [],
+                "year": None, "abstract": None, "doi": None,
+                "missing_fields": ["title", "authors", "year", "abstract", "doi"]}}],
+            "recovery": {"pending": False, "failed_tools": ["knowledge_base_search"]}}
+        incorrect = {**self.finished, "task_complete": False, "answer": "当前知识库中未找到相关文档。"}
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(incorrect)).encode())) as http:
+            result = observe("请根据复测.txt回答复测代号并注明来源", [paper_list, knowledge_base_search, paper_metadata], context)
+        self.assertFalse(result["task_complete"])
+        self.assertIn("工具执行失败", result["answer"])
+        self.assertIn("Label not found", result["answer"])
+        self.assertNotIn("未找到相关文档", result["answer"])
+        http.assert_not_called()
+
+    def test_successful_retrieval_after_failure_can_still_report_real_empty_result(self):
+        """失败与后续真正空结果不同，不能全面禁止已经核验的空库说明。"""
+        context = {"observations": [
+            {"name": "knowledge_base_search", "status": "error", "error": "暂时失败", "result": None},
+            {"name": "knowledge_base_search", "status": "success", "result": {
+                "generation_mode": "empty", "status": "answered", "answer": "当前知识库中未找到相关文档。"}}]}
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(self.finished)).encode())):
+            result = observe("根据知识库回答复测代号", [knowledge_base_search], context)
+        self.assertTrue(result["task_complete"])
+        self.assertIn("当前知识库中未找到相关文档", result["answer"])
+
+    def test_pending_candidates_preserve_vector_recovery_notice(self):
+        """等候相关性确认时保留恢复限制，不被固定结束语覆盖。"""
+        notice = "本次临时计算指定文档向量，未修改原索引。"
+        context = {"observations": [{"name": "knowledge_base_search", "status": "success", "result": {
+            "status": "needs_confirmation", "references": [{"id": 1}], "warnings": [notice]}}]}
+        with patch("src.agent.react_loop.urlopen") as http:
+            result = observe("根据知识库回答复测代号", [knowledge_base_search], context)
+        self.assertFalse(result["task_complete"])
+        self.assertIn(notice, result["answer"])
+        http.assert_not_called()
+
     def test_source_url_followed_by_chinese_has_explicit_markdown_boundary(self):
         """W11只修复原文真实URL的裸链接边界，不猜测未知网址。"""
         url = "https://github.com/facebookresearch/detr"

@@ -40,6 +40,7 @@ Context.summary是当前会话旧对话的压缩摘要，只用于理解上下�
 已上传、知识库、本文或指定doc_id的事实问题，优先knowledge_base_search或相应本地论文工具。
 文档内容中的代号、方法、数据或结果用knowledge_base_search；keyword_extract只用于用户明确要求提取主题关键词，paper_metadata只提取标题、作者、年份、摘要和DOI。
 关键词工具的text与doc_id互斥；元数据字段缺失不代表原文不存在或不能查询内容。
+检索执行异常不等于检索空结果；没有成功检索证据时不能声称知识库没有相关文档。
 doc_id只可使用用户或真实工具结果提供的64位SHA-256；文档名、会话ID不是论文ID。
 知识库检索的doc_id可选，没有真实ID时省略该参数，将论文名保留在question中。
 其他论文工具必须有ID；只有论文名时先用paper_list取得真实ID，不编造或推测指纹。
@@ -488,6 +489,23 @@ def _structured_tool_observation(question: str, tools: list[BaseTool], observati
     """
     items = [item for item in observations if item.get("name") != "paper_list" or item.get("status") != "success"]
     plan = route_question(question, tools)
+    if (plan and plan.get("tool_name") == "knowledge_base_search" and not plan.get("parallel_tools")
+            and not re.search(r"然后|另外|\bthen\b", question, re.I)):
+        failed = [item for item in items if item.get("name") == "knowledge_base_search" and item.get("status") == "error"]
+        recovered = any(item.get("status") == "success" and isinstance(item.get("result"), dict) and (
+            item.get("name") == "knowledge_base_search" and item["result"].get("status") in {
+                "answered", "incomplete", "insufficient_evidence", "needs_confirmation"}
+            or item.get("name") in {"paper_summary", "paper_compare"} and item["result"].get("answer")
+            and item["result"].get("citations")) for item in items)
+        if failed and not recovered:
+            # 元字段读取成功不代表正文问答已恢复；固定保留真实异常，避免模型误报空库。
+            answer = ("知识库工具执行失败：" + (failed[-1].get("error") or "工具未返回可用结果") + "。\n\n"
+                      "本次未能核验所问的文档内容；执行异常不表示文档不存在，元信息缺项也不能替代正文检索。请恢复检索后重新提问。")
+            if failed[-1].get("partial_answer"):
+                answer = failed[-1]["partial_answer"] + "\n\n回答未完成：" + answer
+            return {"type": "observation", "observation": "正文检索失败且尚无可用的替代证据。",
+                    "decision": "finish", "task_complete": False, "answer": answer, "model": None,
+                    "usage": {"prompt_eval_count": 0, "eval_count": 0}, "elapsed_seconds": 0.0}
     if observations and not items and plan and plan.get("next_step") == "tool" and plan.get("tool_name") != "paper_list":
         # 文献列表只是先查ID；不能将这一步当成用户要求的检索/摘要/对比已完成。
         return {"type": "observation", "observation": "文献列表已返回，继续执行指定的论文任务。",
@@ -565,6 +583,8 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
     if waiting:
         # 用户批准是外部输入，不能让Observation继续重试或把低相关候选当成已批准。
         answer = "检索结果相关性低，请查看候选原文后确认是否使用；尚未调用生成模型。"
+        for notice in dict.fromkeys(note for item in waiting for note in item["result"].get("warnings", [])):
+            answer += "\n\n" + notice
         if stream:
             yield {"type": "token", "answer": answer, "provisional": False}
         yield {"type": "observation", "observation": "等待用户确认候选。", "decision": "finish",
@@ -795,9 +815,11 @@ def _run_react(question: str, tools: list[BaseTool] | None = None, context: dict
                 external_only = True  # 明确的单一外部任务不能在搜索失败后用本地旧资料冒充恢复。
                 available = [item for item in available if item.name == "web_search"]
             messages, failures, pending, capacity_blocked = [], [], False, False
+            tool_partials = {}
             for event in act(question, thought, available, state, call_counts=call_counts, stream=stream):
                 if event["type"] == "token":
                     partial_answer = event["answer"]
+                    tool_partials[event["call_id"]] = event["answer"]
                     yield {**event, "iteration": iteration}
                     continue
                 if event["type"] == "error":
@@ -811,6 +833,9 @@ def _run_react(question: str, tools: list[BaseTool] | None = None, context: dict
                     # 保存实际结果或错误；不要把不可JSON序列化的Message放入Context。
                     state["observations"].append(deepcopy({key: value for key, value in event.items()
                                                          if key not in ("message", "type")}))
+                    if event["status"] == "error" and event.get("call_id") in tool_partials:
+                        # 按调用ID保留断流前的实际正文，失败说明不能覆盖已收到的部分答案。
+                        state["observations"][-1]["partial_answer"] = tool_partials[event["call_id"]]
                     pending |= event.get("pending", False)
                     capacity_blocked |= event.get("error_kind") == "capacity"
                     if event["status"] == "error" and event.get("error_kind") in {"timeout", "execution"}:

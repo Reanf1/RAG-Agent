@@ -1,0 +1,29 @@
+test_failed_rag_followed_by_missing_metadata_is_not_empty_library (__main__.TestObservationAndLoop)
+f5b26c7真实复测：检索Label失败，元字段缺项不能改写为文档不存在。 ... FAIL
+test_successful_retrieval_after_failure_can_still_report_real_empty_result (__main__.TestObservationAndLoop)
+失败与后续真正空结果不同，不能全面禁止已经核验的空库说明。 ... ok
+test_pending_candidates_preserve_vector_recovery_notice (__main__.TestObservationAndLoop)
+等候相关性确认时保留恢复限制，不被固定结束语覆盖。 ... FAIL
+
+======================================================================
+FAIL: test_failed_rag_followed_by_missing_metadata_is_not_empty_library (__main__.TestObservationAndLoop)
+f5b26c7真实复测：检索Label失败，元字段缺项不能改写为文档不存在。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_1 Agent核心循环/test_observation.py", line 214, in test_failed_rag_followed_by_missing_metadata_is_not_empty_library
+    self.assertIn("检索执行失败", result["answer"])
+AssertionError: '检索执行失败' not found in '当前知识库中未找到相关文档。'
+
+======================================================================
+FAIL: test_pending_candidates_preserve_vector_recovery_notice (__main__.TestObservationAndLoop)
+等候相关性确认时保留恢复限制，不被固定结束语覆盖。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_1 Agent核心循环/test_observation.py", line 238, in test_pending_candidates_preserve_vector_recovery_notice
+    self.assertIn(notice, result["answer"])
+AssertionError: '本次临时计算指定文档向量，未修改原索引。' not found in '检索结果相关性低，请查看候选原文后确认是否使用；尚未调用生成模型。'
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.133s
+
+FAILED (failures=2)

@@ -1,6 +1,6 @@
 # 自动化测试
 
-测试按“5_1_1 中文小节名”组织，目录含空格时命令路径加引号。当前740个用例、18个小节、48个测试文件；2026-10-06新增Windows中文索引入口7项、文件名问答与关键词互斥输入3项回归后全量通过，无失败／错误／跳过，见[最新完整日志](../reports/模块完整性验证/Windows内容问答路由修复回归_20261006.log)。此前[737项路径修复日志](../reports/模块完整性验证/Windows中文索引入口修复回归_20261006.log)、[730项独立审查日志](../reports/模块完整性验证/独立审查修复回归_20261006_最终.log)及[逐项结果](../reports/模块完整性验证/独立审查修复回归_20261006_最终.json)仍保留。
+测试按“5_1_1 中文小节名”组织，目录含空格时命令路径加引号。当前749个用例、18个小节、48个测试文件；2026-10-06新增Windows标签读取只读恢复、来源/提示及Agent失败误述9项回归后全量通过，无失败／错误／跳过，见[最新完整日志](../reports/模块完整性验证/Windows标签读取与失败表述修复回归_20261006_最终.log)及[逐项结果](../reports/模块完整性验证/Windows标签读取与失败表述修复回归_20261006_最终.json)。[初轮749项中的断流失败](../reports/模块完整性验证/Windows标签读取与失败表述修复回归_20261006.json)、[740项路由日志](../reports/模块完整性验证/Windows内容问答路由修复回归_20261006.log)、[737项路径日志](../reports/模块完整性验证/Windows中文索引入口修复回归_20261006.log)及[730项独立审查日志](../reports/模块完整性验证/独立审查修复回归_20261006_最终.log)仍保留。
 
 此前代码精简保持688项；2026-10-05新增19项实际缺陷回归至707项，本轮再新增23项，覆盖导入删除竞争、重复片段定位、请求预算、确认续跑、跨请求超时、模型初始化、核心RAG流式、旧历史及性能复用。初轮旧展示断言和新增测试漏导入的原始失败证据保留，见[独立审查修复记录](../reports/5_5_4%20项目交付/独立审查问题修复记录_20261006.md)。2026-10-05原有失败记录仍见[Windows问题修复记录](../reports/5_5_4%20项目交付/Windows问题修复记录_20261005.md)。
 
@@ -10,20 +10,20 @@
 | --- | ---: | --- |
 | 5_1_1 文档加载与批量导入 | 41 | [test_pdf_loader.py](5_1_1%20文档加载与批量导入/test_pdf_loader.py)、[test_docx_loader.py](5_1_1%20文档加载与批量导入/test_docx_loader.py)、[test_text_loader.py](5_1_1%20文档加载与批量导入/test_text_loader.py)、[test_batch_import.py](5_1_1%20文档加载与批量导入/test_batch_import.py) |
 | 5_1_2 文本分块策略 | 40 | [test_chunking.py](5_1_2%20文本分块策略/test_chunking.py)、[test_academic_pdf.py](5_1_2%20文本分块策略/test_academic_pdf.py) |
-| 5_1_3 向量化与存储 | 34 | [test_vector_store.py](5_1_3%20向量化与存储/test_vector_store.py)、[test_embeddings.py](5_1_3%20向量化与存储/test_embeddings.py)、[test_batch_index.py](5_1_3%20向量化与存储/test_batch_index.py) |
+| 5_1_3 向量化与存储 | 43 | [test_vector_store.py](5_1_3%20向量化与存储/test_vector_store.py)、[test_embeddings.py](5_1_3%20向量化与存储/test_embeddings.py)、[test_batch_index.py](5_1_3%20向量化与存储/test_batch_index.py)、[test_chroma_path.py](5_1_3%20向量化与存储/test_chroma_path.py) |
 | 5_1_4 混合检索与重排序 | 46 | [test_bm25.py](5_1_4%20混合检索与重排序/test_bm25.py)、[test_hybrid_retriever.py](5_1_4%20混合检索与重排序/test_hybrid_retriever.py)、[test_reranker.py](5_1_4%20混合检索与重排序/test_reranker.py)、[test_retrieval_evaluation.py](5_1_4%20混合检索与重排序/test_retrieval_evaluation.py) |
-| 5_2_1 Prompt工程与生成策略 | 60 | [test_prompt.py](5_2_1%20Prompt工程与生成策略/test_prompt.py)、[test_context.py](5_2_1%20Prompt工程与生成策略/test_context.py)、[test_citations.py](5_2_1%20Prompt工程与生成策略/test_citations.py)、[test_generation.py](5_2_1%20Prompt工程与生成策略/test_generation.py) |
+| 5_2_1 Prompt工程与生成策略 | 61 | [test_prompt.py](5_2_1%20Prompt工程与生成策略/test_prompt.py)、[test_context.py](5_2_1%20Prompt工程与生成策略/test_context.py)、[test_citations.py](5_2_1%20Prompt工程与生成策略/test_citations.py)、[test_generation.py](5_2_1%20Prompt工程与生成策略/test_generation.py) |
 | 5_2_2 流式输出与引用 | 17 | [test_streaming.py](5_2_2%20流式输出与引用/test_streaming.py) |
 | 5_2_3 缓存与降级策略 | 32 | [test_degradation.py](5_2_3%20缓存与降级策略/test_degradation.py)、[test_cache.py](5_2_3%20缓存与降级策略/test_cache.py)、[test_agent_cache.py](5_2_3%20缓存与降级策略/test_agent_cache.py) |
 | 5_2_4 日志与可观测性 | 9 | [test_rag_logging.py](5_2_4%20日志与可观测性/test_rag_logging.py) |
-| 5_3_1 Agent核心循环 | 60 | [test_thought.py](5_3_1%20Agent核心循环/test_thought.py)、[test_action.py](5_3_1%20Agent核心循环/test_action.py)、[test_observation.py](5_3_1%20Agent核心循环/test_observation.py)、[test_system_prompt.py](5_3_1%20Agent核心循环/test_system_prompt.py) |
-| 5_3_2 工具集开发 | 95 | [test_research_tools.py](5_3_2%20工具集开发/test_research_tools.py)、[test_comparison_keywords.py](5_3_2%20工具集开发/test_comparison_keywords.py)、[test_summary_time_search.py](5_3_2%20工具集开发/test_summary_time_search.py)、[test_calculator_paper_list.py](5_3_2%20工具集开发/test_calculator_paper_list.py) |
+| 5_3_1 Agent核心循环 | 64 | [test_thought.py](5_3_1%20Agent核心循环/test_thought.py)、[test_action.py](5_3_1%20Agent核心循环/test_action.py)、[test_observation.py](5_3_1%20Agent核心循环/test_observation.py)、[test_system_prompt.py](5_3_1%20Agent核心循环/test_system_prompt.py) |
+| 5_3_2 工具集开发 | 96 | [test_research_tools.py](5_3_2%20工具集开发/test_research_tools.py)、[test_comparison_keywords.py](5_3_2%20工具集开发/test_comparison_keywords.py)、[test_summary_time_search.py](5_3_2%20工具集开发/test_summary_time_search.py)、[test_calculator_paper_list.py](5_3_2%20工具集开发/test_calculator_paper_list.py) |
 | 5_3_3 Agent决策优化 | 48 | [test_routing_parallel.py](5_3_3%20Agent决策优化/test_routing_parallel.py)、[test_error_recovery.py](5_3_3%20Agent决策优化/test_error_recovery.py) |
 | 5_3_4 多轮对话记忆管理 | 55 | [test_session_isolation.py](5_3_4%20多轮对话记忆管理/test_session_isolation.py)、[test_history_window.py](5_3_4%20多轮对话记忆管理/test_history_window.py)、[test_conversation_summary.py](5_3_4%20多轮对话记忆管理/test_conversation_summary.py) |
-| 5_4_1 RAG与Agent深度融合 | 31 | [test_source_routing.py](5_4_1%20RAG与Agent深度融合/test_source_routing.py)、[test_memory_context.py](5_4_1%20RAG与Agent深度融合/test_memory_context.py) |
-| 5_4_2 可观测性与健康检查 | 58 | [test_health_check.py](5_4_2%20可观测性与健康检查/test_health_check.py)、[test_agent_metrics.py](5_4_2%20可观测性与健康检查/test_agent_metrics.py) |
+| 5_4_1 RAG与Agent深度融合 | 33 | [test_source_routing.py](5_4_1%20RAG与Agent深度融合/test_source_routing.py)、[test_memory_context.py](5_4_1%20RAG与Agent深度融合/test_memory_context.py) |
+| 5_4_2 可观测性与健康检查 | 59 | [test_health_check.py](5_4_2%20可观测性与健康检查/test_health_check.py)、[test_agent_metrics.py](5_4_2%20可观测性与健康检查/test_agent_metrics.py) |
 | 5_4_3 前端与会话管理 | 41 | [test_document_management.py](5_4_3%20前端与会话管理/test_document_management.py)、[test_chat_streaming.py](5_4_3%20前端与会话管理/test_chat_streaming.py)、[test_conversation_history.py](5_4_3%20前端与会话管理/test_conversation_history.py)、[test_agent_streaming.py](5_4_3%20前端与会话管理/test_agent_streaming.py)、[test_citation_page.py](5_4_3%20前端与会话管理/test_citation_page.py) |
-| 5_4_4 端到端联调与测试 | 34 | [test_document_flow.py](5_4_4%20端到端联调与测试/test_document_flow.py) |
+| 5_4_4 端到端联调与测试 | 35 | [test_document_flow.py](5_4_4%20端到端联调与测试/test_document_flow.py) |
 | 5_5_2 系统性能评估 | 10 | [test_system_evaluation.py](5_5_2%20系统性能评估/test_system_evaluation.py) |
 | 5_5_3 Bad Case分析与优化 | 19 | [test_bad_case_regression.py](5_5_3%20Bad%20Case分析与优化/test_bad_case_regression.py) |
 
