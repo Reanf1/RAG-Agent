@@ -224,6 +224,32 @@ class TestHybridRetriever(unittest.TestCase):
             self.assertEqual(self.retriever.search("  ", rerank=True), [])
             model.assert_not_called()
 
+    def test_output_language_and_citation_suffix_does_not_change_retrieval(self):
+        """同一科研问题附加输出要求时，三路使用同一内容问题，避免核心证据掉出候选。"""
+        question = "ViT如何使用位置编码？"
+        with patch.object(self.store, "search", wraps=self.store.search) as vector, \
+                patch.object(BM25Retriever, "search", autospec=True, wraps=BM25Retriever.search) as bm25, \
+                patch("src.retrieval.reranker.get_reranker") as model:
+            bm25.return_value = []
+            model.return_value.predict.side_effect = lambda pairs, **kw: [.5] * len(pairs)
+            self.retriever.search(question + "请用中文简述并注明原文页码。", doc_id="3", rerank=True)
+        vector.assert_called_once_with(question, k=20, doc_id="3")
+        self.assertEqual(bm25.call_args.args[1], question)
+        self.assertEqual(model.return_value.predict.call_args.args[0][0][0],
+                         question + "\npositional position encoding embeddings")
+
+    def test_output_suffix_cleanup_preserves_content_questions(self):
+        """不删除实体、数字、否定、多问句或语言本身作为研究对象的文字。"""
+        questions = ["中文回答与英文回答的准确率有什么差异？", "请用中文回答是什么意思？",
+                     "ViT是否不用2D位置编码？它的实验结果是什么？"]
+        with patch.object(self.store, "search", return_value=[]) as vector:
+            for question in questions:
+                with self.subTest(question=question):
+                    self.retriever.search(question)
+                    self.assertEqual(vector.call_args.args[0], question)
+            self.retriever.search(questions[-1] + "请注明来源。")
+            self.assertEqual(vector.call_args.args[0], questions[-1])
+
     def test_plain_rrf_does_not_load_model_and_model_failure_is_reported(self):
         """不启用精排时不依赖重排权重；启用后失败不得返回未经重排的候选。"""
         with patch("src.retrieval.reranker.get_reranker", side_effect=RuntimeError("重排推理失败")) as model:

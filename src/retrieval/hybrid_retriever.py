@@ -1,5 +1,7 @@
 """手写 RRF：按排名融合向量与 BM25，稳定块 ID 用于合并来源。"""
 
+import re
+
 from langchain_core.documents import Document
 
 from src.retrieval.bm25_retriever import BM25Retriever, expand_academic_query
@@ -59,6 +61,10 @@ class HybridRetriever:
             raise ValueError("k 必须为正整数")
         if not query.strip():
             return []
+        # 只去掉句末明确的语言/引用输出要求；科研内容和原始生成问题不变。
+        query = re.sub(r"(?<=[？?。.!！])\s*请(?:(?:用|使用)(?:中文|汉语|英文|英语)"
+                       r"(?:简述|简要回答|回答|说明)(?:并(?:注明|标注)(?:原文)?(?:页码|来源))?"
+                       r"|(?:注明|标注)(?:原文)?(?:页码|来源))[。.!！\s]*$", "", query).strip()
         candidate_k = max(self.candidate_k, k)
         vector_results = self.vector_store.search(query, k=candidate_k, doc_id=doc_id)
         # 每次读取当前正文，新增/删除后无需维护第二套语料或缓存失效规则。

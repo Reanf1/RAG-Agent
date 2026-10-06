@@ -61,7 +61,8 @@ class TestContextBuilding(unittest.TestCase):
                          build_rag_messages("问题", context["context"])))
 
     def test_question_length_reduces_available_context(self):
-        self.config["generation"]["max_prompt_chars"] = 1000
+        # 从当前完整模板留出固定正文空间，避免新增规范占满旧的1000字符样例。
+        self.config["generation"]["max_prompt_chars"] = sum(len(m.content) for m in build_rag_messages("方法？")) + 500
         document = Document(page_content="长文献" * 1000, metadata={"source_file": "论文.pdf"})
         short = build_context("方法？", [(document, 0.9)])
         long = build_context("方法？" + "补充背景" * 40, [(document, 0.9)])
@@ -70,7 +71,7 @@ class TestContextBuilding(unittest.TestCase):
         for question, context in (("方法？", short), ("方法？" + "补充背景" * 40, long)):
             actual = sum(len(m.content) for m in build_rag_messages(question, context["context"]))
             self.assertEqual(context["prompt_chars"], actual)
-            self.assertLessEqual(actual, 1000)
+            self.assertLessEqual(actual, self.config["generation"]["max_prompt_chars"])
 
     def test_system_prompt_changes_are_included_in_budget(self):
         before = build_context("问题", [])

@@ -73,7 +73,7 @@ def _tool_model_response(messages: list, schema: dict, name: str) -> dict:
 def _tool_references(references: list[dict]) -> list[dict]:
     """Agent保留正文、稳定ID与来源，版面字符坐标留在原文加载结果，不重复塞入模型窗口。"""
     keys = {"source", "source_file", "file_type", "doc_id", "chunk_id", "page", "page_number",
-            "page_end", "paragraph_index", "table_index", "line_start", "line_end"}
+            "page_end", "paragraph_index", "table_index", "line_start", "line_end", "retrieval_warning"}
     return [{**reference, "metadata": {key: value for key, value in reference["metadata"].items() if key in keys}}
             for reference in references]
 
@@ -518,6 +518,8 @@ def _paper_compare(paper_a_id: str, paper_b_id: str, *, session_id=None, pending
                   "answer": "一篇论文没有可用索引证据，请先完成两篇论文入库。" if empty_paper else "检索相关性低，请用户核对候选原文。",
                   "references": _tool_references(context["references"]), "generation_mode": "low" if low_papers else "empty",
                   "citations": [], "usage": {"prompt_eval_count": 0, "eval_count": 0},
+                  "warnings": list(dict.fromkeys(ref["metadata"]["retrieval_warning"] for ref in context["references"]
+                                                  if ref["metadata"].get("retrieval_warning"))),
                   "elapsed_seconds": perf_counter() - started}
         if not empty_paper and pending is not None and pending_scope == cache_scope(VectorStore()):
             identifier = uuid4().hex

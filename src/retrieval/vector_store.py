@@ -78,6 +78,8 @@ class VectorStore:
         actual = self._store._collection.metadata or {}
         if any(actual.get(key) != value for key, value in expected.items()):
             raise ValueError("已有索引的模型版本或索引参数与配置不一致，请使用新索引目录重建")
+        # 同一请求的多维度检索只保留最近一篇临时向量；不跨实例或写入原索引。
+        self._recovered_vectors = None
 
     def _ensure_embeddings(self):
         """只有向量写入/查询才加载模型，BM25 读取正文无需准备权重。"""
@@ -152,7 +154,13 @@ class VectorStore:
                 return []
             self._ensure_embeddings()
             if recovery_notice:
-                stored["embeddings"] = self._store.embeddings.embed_documents(stored["documents"])
+                # 每次仍读当前正文和来源；同数量替换或块ID变化时不能复用旧向量。
+                signature = (doc_id, tuple(zip(stored["ids"], stored["documents"])))
+                cached = self._recovered_vectors
+                if cached is None or cached[0] != signature:
+                    cached = (signature, self._store.embeddings.embed_documents(stored["documents"]))
+                    self._recovered_vectors = cached
+                stored["embeddings"] = cached[1]
                 stored["metadatas"] = [{**metadata, "retrieval_warning": recovery_notice}
                                        for metadata in stored["metadatas"]]
                 logging.getLogger(__name__).warning(recovery_notice)

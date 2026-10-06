@@ -136,6 +136,22 @@ class TestComparisonAndKeywords(unittest.TestCase):
         self.assertEqual(self.documents, before)
         self.assertEqual([r["source_file"] for r in result["citations"]], ["同名.md", "同名.md"])
 
+    def test_comparison_preserves_vector_recovery_notice_in_answer_and_confirmation(self):
+        """重建对比Context和低相关确认不能丢掉临时向量恢复限制。"""
+        notice = "持久化向量读取失败（Label not found）；本次临时计算，原索引完整性仍待核验。"
+        self.documents[0].metadata["retrieval_warning"] = notice
+        before = deepcopy(self.documents)
+        for scores, status in (((.9, .9), "answered"), ((.01, .9), "needs_confirmation")):
+            with self.subTest(status=status):
+                result, _, http = self.compare(scores)
+                self.assertEqual(result["status"], status)
+                self.assertEqual(result.get("warnings", []).count(notice), 1)
+                refs = result.get("references", result["citations"])
+                self.assertTrue(any(ref["metadata"].get("retrieval_warning") == notice for ref in refs))
+                if status == "needs_confirmation":
+                    http.assert_not_called()
+        self.assertEqual(self.documents, before)
+
     def test_qualitative_excerpt_explicitly_reports_missing_experiment_numbers(self):
         """W04节选只有定性结果时，不把年份或页码当成实验指标数值。"""
         self.documents[1].page_content = "DETR method. COCO dataset. Comparable to Faster R-CNN in 2020."
