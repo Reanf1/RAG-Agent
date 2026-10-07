@@ -2,6 +2,7 @@
 
 import tempfile
 import unittest
+import os
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -62,3 +63,59 @@ class TestChromaPath(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "同一"):
                     chroma_persist_path(directory)
 
+    def test_untrusted_alias_uses_new_verified_entry_without_removing_old(self):
+        """Windows 448只更换当前进程入口；原入口及原索引都保留。"""
+        with tempfile.TemporaryDirectory() as root:
+            directory = Path(root) / "中文索引"
+            directory.mkdir()
+            (directory / "original.bin").write_bytes(b"index")
+            created = []
+            def junction(source, destination):
+                Path(destination).symlink_to(source, target_is_directory=True)
+                created.append(Path(destination))
+            exists = Path.exists
+            def untrusted(path):
+                if created and path == created[0]:
+                    error = OSError("不受信任的装入点")
+                    error.winerror = 448
+                    raise error
+                return exists(path)
+            native = SimpleNamespace(CreateJunction=junction)
+            with patch("src.utils.chroma_path.sys.platform", "win32"), \
+                    patch("src.utils.chroma_path.tempfile.gettempdir", return_value=root), \
+                    patch.dict("sys.modules", {"_winapi": native}):
+                old = Path(chroma_persist_path(directory))
+                with patch.object(Path, "exists", untrusted):
+                    replacement = Path(chroma_persist_path(directory))
+                    self.assertEqual(chroma_persist_path(directory), str(replacement))
+                self.assertNotEqual(old, replacement)
+                self.assertEqual(len(created), 2)
+                self.assertTrue(replacement.samefile(directory))
+                self.assertTrue(Path(os.readlink(old)).samefile(directory))
+                self.assertEqual((replacement / "original.bin").read_bytes(), b"index")
+
+    def test_untrusted_conflicting_target_is_rejected(self):
+        """入口报448仍须核验不跟随的目标字符串，不能换入口后掩盖冲突。"""
+        with tempfile.TemporaryDirectory() as root:
+            directory = Path(root) / "中文索引"
+            error = OSError("不受信任的装入点")
+            error.winerror = 448
+            with patch("src.utils.chroma_path.sys.platform", "win32"), \
+                    patch("src.utils.chroma_path.tempfile.gettempdir", return_value=root), \
+                    patch.object(Path, "exists", side_effect=error), \
+                    patch("src.utils.chroma_path.os.readlink", return_value=str(Path(root) / "other")), \
+                    patch.dict("sys.modules", {"_winapi": SimpleNamespace(CreateJunction=lambda *args: None)}):
+                with self.assertRaisesRegex(ValueError, "同一"):
+                    chroma_persist_path(directory)
+
+    def test_other_path_error_is_not_treated_as_untrusted_mount(self):
+        with tempfile.TemporaryDirectory() as root:
+            error = OSError("权限不足")
+            error.winerror = 5
+            with patch("src.utils.chroma_path.sys.platform", "win32"), \
+                    patch("src.utils.chroma_path.tempfile.gettempdir", return_value=root), \
+                    patch.object(Path, "exists", side_effect=error), \
+                    patch.dict("sys.modules", {"_winapi": SimpleNamespace(CreateJunction=lambda *args: None)}):
+                with self.assertRaises(OSError) as caught:
+                    chroma_persist_path(Path(root) / "中文索引")
+                self.assertIs(caught.exception, error)

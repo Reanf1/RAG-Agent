@@ -106,6 +106,13 @@ class TestRoutingAndParallel(unittest.TestCase):
             self.assertIsNone(route_question(question, AVAILABLE_TOOLS))
         self.assertEqual(route_question("调用keyword_extract提取关键词", AVAILABLE_TOOLS)["tool_name"], "keyword_extract")
 
+    def test_call_compare_results_is_not_a_dependent_use_of_results(self):
+        """Windows现场：调用工具比较实验结果，不能误判为使用前一步结果。"""
+        question = "请调用 paper_compare，对比两篇已入库论文的方法、数据集和实验结果"
+        self.assertEqual(route_question(question, AVAILABLE_TOOLS)["tool_name"], "paper_compare")
+        self.assertIsNone(route_question("用论文摘要结果调用 paper_compare", AVAILABLE_TOOLS))
+        self.assertIsNone(route_question(question + "，然后提取关键词", AVAILABLE_TOOLS))
+
     def test_explicit_tool_names_and_two_papers_use_same_tool_batch(self):
         plan = route_question("请调用paper_metadata，分别读取两篇论文：" + "a" * 64 + "和" + "b" * 64, AVAILABLE_TOOLS)
         self.assertEqual(plan["tool_name"], "paper_metadata")

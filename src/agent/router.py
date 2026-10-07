@@ -45,7 +45,8 @@ def route_question(question: str, tools: list[BaseTool], context: dict | None = 
     if not question.strip():
         raise ValueError("问题不能为空")
     has_state = context and any(context.get(key) for key in ("observations", "last_observation", "context", "history", "messages", "summary"))
-    if re.search(r"先.*(?:再|然后)|根据.*结果|用.*结果|不要|无需|不能|别调用|\b(?:then|after|don't|do not)\b", question, re.I):
+    # “调用工具比较实验结果”是单任务；“用前一步结果”才表示依赖执行。
+    if re.search(r"先.*(?:再|然后)|根据.*结果|(?<!调)用.*结果|不要|无需|不能|别调用|\b(?:then|after|don't|do not)\b", question, re.I):
         return None
     names = {item.name for item in tools}
     explicit = sorted([name for name in names if re.search(r"(?<![A-Za-z0-9_])" + re.escape(name) + r"(?![A-Za-z0-9_])", question)], key=question.index)

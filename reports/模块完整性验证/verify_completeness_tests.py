@@ -3,10 +3,13 @@
 import argparse
 from collections import Counter
 import json
+import os
 from pathlib import Path
 import sys
+import tempfile
 from time import perf_counter
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
@@ -37,13 +40,29 @@ def main():
     args = parser.parse_args()
     if args.output.exists():
         raise FileExistsError("证据文件已存在，请使用新的输出路径")
+    args.output = args.output.resolve()
+    if sys.platform == "win32":
+        # 相对路径样例与TEMP保持同一盘符，Windows不能计算C盘到E盘的relpath。
+        os.chdir(tempfile.gettempdir())
     loader = unittest.TestLoader()
     tests = list(flatten(loader.discover(str(ROOT / "tests"), pattern="test_*.py")))
     if args.scope == "module4":
         tests = [test for test in tests if type(test).__name__ in MODULE_FOUR_CLASSES]
     identities = [test.id() for test in tests]
     started = perf_counter()
-    result = unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite(tests))
+    original_cleanup = tempfile.TemporaryDirectory.cleanup
+    def cleanup_test_directory(directory):
+        """测试结束先释放该临时目录的Chroma句柄，不停止其他索引或忽略删除错误。"""
+        from chromadb.api.client import SharedSystemClient
+        root = Path(directory.name).resolve()
+        for identifier, system in list(SharedSystemClient._identifier_to_system.items()):
+            path = Path(system.settings.persist_directory).resolve()
+            if path.is_relative_to(root):
+                system.stop()
+                SharedSystemClient._identifier_to_system.pop(identifier, None)
+        original_cleanup(directory)
+    with patch.object(tempfile.TemporaryDirectory, "cleanup", cleanup_test_directory):
+        result = unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite(tests))
     report = {
         "scope": args.scope, "elapsed_seconds": perf_counter() - started,
         "run": result.testsRun, "classes": dict(Counter(type(test).__name__ for test in tests)),

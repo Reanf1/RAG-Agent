@@ -206,6 +206,19 @@ class TestStructuredToolRetention(unittest.TestCase):
         self.assertIn(self.compare["answer"], event["answer"])
         self.assertIn("未给出精确数值", event["answer"])
 
+    def test_confirmed_compare_call_preserves_report_without_second_generation(self):
+        """调用＋实验结果曾误入模型观察，真实报告超预算；确认结果应直接保留。"""
+        self.compare.update(confirmed=True, low_relevance_dimensions=["论文A：方法"])
+        self.compare["answer"] = "方法、数据集、定量结果及对应引用。" * 1000
+        question = "请调用 paper_compare，对比两篇已入库论文的方法、数据集和实验结果"
+        with patch("src.agent.react_loop.urlopen", return_value=packet({
+                "observation": "改写", "decision": "finish", "task_complete": True, "answer": "报告被改写"})) as http:
+            event = observe(question, AVAILABLE_TOOLS, self.context("paper_compare", self.compare))
+        self.assertTrue(event["task_complete"])
+        self.assertIn(self.compare["answer"], event["answer"])
+        self.assertIn("低相关性维度需核验", event["answer"])
+        http.assert_not_called()
+
     def test_missing_dimension_keeps_report_but_is_incomplete(self):
         self.compare.update(missing_dimensions=["论文B：实验结果"], status="insufficient_evidence")
         response = {"observation": "资料不足", "decision": "finish", "task_complete": False, "answer": "资料不足"}
