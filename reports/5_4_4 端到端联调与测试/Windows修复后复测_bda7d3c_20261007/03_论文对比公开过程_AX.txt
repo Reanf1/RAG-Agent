@@ -1,0 +1,1878 @@
+Browser tab: 2, Title: "智能科研助理", URL: "http://192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=78297ec5df4549aebca563af6d94c47c".
+1 AXWebArea 智能科研助理, URL: 192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=78297ec5df4549aebca563af6d94c47c
+	2 container
+		3 container
+			4 container
+				5 heading 系统状态, Value: 2
+					6 text 系统状态
+				7 container
+					8 text 系统时间：2026-10-07 11:10 :39
+				9 container
+					10 text LLM服务：可连接，推理未验证（qwen2.5 :7b ）
+				11 text 向量数据库：可读取，检索未验证（Chroma）
+				12 button 刷新状态
+					13 text 刷新状态
+				14 heading 文档上传与管理, Value: 2
+					15 text 文档上传与管理
+				16 container 上传文档
+					17 button file upload
+					18 button upload Upload
+						19 text upload
+						20 text Upload
+					21 text 20MB per file
+					22 text  • PDF, DOCX, TXT, MD, MARKDOWN
+				23 text 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+				24 button (disabled) 开始导入
+					25 text 开始导入
+				26 button (disabled) 重试失败项
+					27 text 重试失败项
+				28 heading 对话历史管理, Value: 2
+					29 text 对话历史管理
+				30 button 新建会话
+					31 text 新建会话
+				32 text 最近
+				184 button 请对比已入库论文8ce7b83971a14508
+					185 text 请对比已入库论文8ce7b83971a14508
+				186 button 请根据已入库论文8ce7b83971a14508
+					187 text 请根据已入库论文8ce7b83971a14508
+				35 button 请对比已入库论文8ce7b83971a14508
+					36 text 请对比已入库论文8ce7b83971a14508
+				37 button 请根据Windows复测_说明.txt回答：复测
+					38 text 请根据Windows复测_说明.txt回答：复测
+				39 button 删除当前会话
+					40 text 删除当前会话
+			41 container
+				42 button keyboard_double_arrow_right
+				43 pop up button (collapsed) Description: Main menu, Secondary Actions: Expand
+			44 container
+				45 heading 智能科研助理, Value: 1, ID: 2d7dc4e4
+					46 text 智能科研助理
+					47 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=78297ec5df4549aebca563af6d94c47c#2d7dc4e4
+				48 text 基于 RAG + Agent 的论文知识库问答系统
+				49 tab group react-aria2378790984-:r6:
+					50 tab (selected, settable, boolean) 科研对话, ID: react-aria2378790984-:r6:-tab-0, Value: 1
+科研对话
+					51 tab (selectable, settable, boolean) 文档检索, ID: react-aria2378790984-:r6:-tab-1, Value: 0
+文档检索
+					52 tab (selectable, settable, boolean) 知识库, ID: react-aria2378790984-:r6:-tab-2, Value: 0
+知识库
+				53 container Description: 科研对话, ID: react-aria2378790984-:r6:-tabpanel-0
+					246 container
+						247 text face
+						248 container Chat message from user
+							249 text 请对比已入库论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6和ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c3079f448a2ad的方法、数据集和实验结果，请注明各自来源。
+						250 text smart_toy
+						251 container Chat message from assistant
+							252 container
+								253 heading 回答, Value: 2, ID: 3a622f65
+									254 text 回答
+									255 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=78297ec5df4549aebca563af6d94c47c#3a622f65
+								256 text 以下按三个维度并列展示两篇论文的原文证据，不改写实验数字或条件。
+								257 table
+									258 row
+										259 cell
+											260 text 维度
+										261 cell
+											262 text 论文A
+										263 cell
+											264 text 论文B
+									265 row
+										266 cell
+											267 text 方法
+										268 cell
+											269 text 原文摘录：inductive bias about the 2D structure of the images is manually injected into the Vision Transformer. 4 EXPERIMENTS We evaluate the representation learning capabilities of ResNet, Vision Transformer (ViT), and the hybrid. To understand the data requirements of each model, we pre-train on datasets of varying size and evaluate many benchmark tasks. When considering the computational cost of pre-training the model, ViT performs very favourably, attaining state of the art on most recognition benchmarks at a lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show that self-supervised ViT holds promise for the future. 4.1 SETUP Datasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes and 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with [参考文档2：Windows验收_ViT.pdf；第4页（物理页码）]
+										270 cell
+											271 text 原文摘录：that explicitly encode our prior knowledge about the task. The main ingredients of the new framework, called DEtection TRansformer or DETR, are a set-based global loss that forces unique predictions via bi- partite matching, and a transformer encoder-decoder architecture. Given a ﬁxed small set of learned object queries, DETR reasons about the re- lations of the objects and the global image context to directly output the ﬁnal set of predictions in parallel. The new model is conceptually simple and does not require a specialized library, unlike many other modern detectors. DETR demonstrates accuracy and run-time perfor- mance on par with the well-established and highly-optimized Faster R- CNN baseline on the challenging COCO object detection dataset. More- over, DETR can be easily generalized to produce panoptic segmentation in a uniﬁed manner. We show that it signiﬁcantly outperforms com- petitive baselines. Training code and pretrained models are available at 
+											272 link Description: https://github.com/facebookresearch/detr, Value: github.com/facebookresearch/detr
+											273 text . 1 Introduction The goal of object detection is to predict a set of bounding boxes and category labels for each object of interest. Modern detectors address this set prediction task in an indirect way, by deﬁning surrogate regression and classiﬁcation prob- lems on a large set of proposals [37,5], anchors [23], or window centers [53,46]. Their performances are signiﬁcantly inﬂuenced by postprocessing steps to col- [参考文档4：Windows复测_DETR节选.pdf；第1页（物理页码）]
+									274 row
+										275 cell
+											276 text 数据集
+										277 cell
+											278 text 原文摘录：inductive bias about the 2D structure of the images is manually injected into the Vision Transformer. 4 EXPERIMENTS We evaluate the representation learning capabilities of ResNet, Vision Transformer (ViT), and the hybrid. To understand the data requirements of each model, we pre-train on datasets of varying size and evaluate many benchmark tasks. When considering the computational cost of pre-training the model, ViT performs very favourably, attaining state of the art on most recognition benchmarks at a lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show that self-supervised ViT holds promise for the future. 4.1 SETUP Datasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes and 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with [参考文档2：Windows验收_ViT.pdf；第4页（物理页码）]
+										279 cell
+											280 text 原文摘录：that explicitly encode our prior knowledge about the task. The main ingredients of the new framework, called DEtection TRansformer or DETR, are a set-based global loss that forces unique predictions via bi- partite matching, and a transformer encoder-decoder architecture. Given a ﬁxed small set of learned object queries, DETR reasons about the re- lations of the objects and the global image context to directly output the ﬁnal set of predictions in parallel. The new model is conceptually simple and does not require a specialized library, unlike many other modern detectors. DETR demonstrates accuracy and run-time perfor- mance on par with the well-established and highly-optimized Faster R- CNN baseline on the challenging COCO object detection dataset. More- over, DETR can be easily generalized to produce panoptic segmentation in a uniﬁed manner. We show that it signiﬁcantly outperforms com- petitive baselines. Training code and pretrained models are available at 
+											281 link Description: https://github.com/facebookresearch/detr, Value: github.com/facebookresearch/detr
+											282 text . 1 Introduction The goal of object detection is to predict a set of bounding boxes and category labels for each object of interest. Modern detectors address this set prediction task in an indirect way, by deﬁning surrogate regression and classiﬁcation prob- lems on a large set of proposals [37,5], anchors [23], or window centers [53,46]. Their performances are signiﬁcantly inﬂuenced by postprocessing steps to col- [参考文档4：Windows复测_DETR节选.pdf；第1页（物理页码）]
+									283 row
+										284 cell
+											285 text 实验结果
+										286 cell
+											287 text 当前返回原文／节选未提供可核验的实验指标数值；请核对完整原文。 [参考文档1：Windows验收_ViT.pdf；第7页（物理页码）]
+										288 cell
+											289 text 当前返回原文／节选未提供可核验的实验指标数值；请核对完整原文。 [参考文档4：Windows复测_DETR节选.pdf；第1页（物理页码）]
+								290 text 不同任务、数据集和实验条件的指标不可直接比较优劣；证据选择的语义适用性仍需对照原文核验。
+								291 heading 参考来源, Value: 2, ID: 4f4c5596
+									292 text 参考来源
+									293 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=78297ec5df4549aebca563af6d94c47c#4f4c5596
+								294 content list
+									295 container
+										296 AXListMarker • 
+										297 text [参考文档2] Windows验收_ViT.pdf；第4页（物理页码）；正文已截断，仅展示已送入上下文的证据
+									298 container
+										299 AXListMarker • 
+										300 text [参考文档4] Windows复测_DETR节选.pdf；第1页（物理页码）
+									301 container
+										302 AXListMarker • 
+										303 text [参考文档1] Windows验收_ViT.pdf；第7页（物理页码）
+								304 text 持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。 部分维度缺少可用证据，不能视为完整对比。 部分维度的检索相关性低，相关陈述需对照原文核验：论文A：方法、论文B：方法、论文B：实验结果 单篇原文已按对比预算截断，结论仅依据返回的可见证据。 资料不足：论文A：实验结果数值、论文B：实验结果数值 低相关性维度需核验：论文A：方法、论文B：方法、论文B：实验结果
+							305 text 本次 Token：3582 · Agent响应耗时：69.180 秒
+							306 text 任务未完成：incomplete
+							307 button 查看Windows验收_ViT.pdf · 第4页（物理页码）
+								308 text 查看Windows验收_ViT.pdf · 第4页（物理页码）
+							309 button 查看Windows复测_DETR节选.pdf · 第1页（物理页码）
+								310 text 查看Windows复测_DETR节选.pdf · 第1页（物理页码）
+							311 button 查看Windows验收_ViT.pdf · 第7页（物理页码）
+								312 text 查看Windows验收_ViT.pdf · 第7页（物理页码）
+					188 container
+						189 text entry area (settable) 输入消息…
+						190 button (disabled) Send message
+							360 text 发送
+					200 container
+						201 button (expanded) keyboard_arrow_down 请对比已入库论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1c, Secondary Actions: Collapse
+							202 text keyboard_arrow_down
+							203 text 请对比已入库论文8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1c
+						204 container
+							205 button Show/hide columns
+							206 button Download as CSV
+							207 button Search
+							208 button Fullscreen
+							209 image
+								210 table
+									211 row 阶段 轮次 工具 输入Token 输出Token 耗时 状态
+										212 cell (selectable) 阶段
+										213 cell (selectable) 轮次
+										214 cell (selectable) 工具
+										215 cell (selectable) 输入Token
+										216 cell (selectable) 输出Token
+										217 cell (selectable) 耗时
+										218 cell (selectable) 状态
+									219 container
+										220 row (selectable) Thought 1 — 0 0 0.000 秒 成功
+											221 cell (selectable) Value: Thought, ID: glide-cell-0-0
+											222 cell (selectable) Value: 1, ID: glide-cell-1-0
+											223 cell (selectable) Value: —, ID: glide-cell-2-0
+											224 cell (selectable) Value: 0, ID: glide-cell-3-0
+											225 cell (selectable) Value: 0, ID: glide-cell-4-0
+											226 cell (selectable) Value: 0.000 秒, ID: glide-cell-5-0
+											227 cell (selectable) Value: 成功, ID: glide-cell-6-0
+										228 row (selectable) Action 1 paper_compare 1670 143 6.143 秒 成功
+											229 cell (selectable) Value: Action, ID: glide-cell-0-1
+											230 cell (selectable) Value: 1, ID: glide-cell-1-1
+											231 cell (selectable) Value: paper_compare, ID: glide-cell-2-1
+											232 cell (selectable) Value: 1670, ID: glide-cell-3-1
+											233 cell (selectable) Value: 143, ID: glide-cell-4-1
+											234 cell (selectable) Value: 6.143 秒, ID: glide-cell-5-1
+											235 cell (selectable) Value: 成功, ID: glide-cell-6-1
+										236 row (selectable) 工具内部 1 paper_compare 1731 38 62.871 秒 成功
+											237 cell (selectable) Value: 工具内部, ID: glide-cell-0-2
+											238 cell (selectable) Value: 1, ID: glide-cell-1-2
+											239 cell (selectable) Value: paper_compare, ID: glide-cell-2-2
+											240 cell (selectable) Value: 1731, ID: glide-cell-3-2
+											241 cell (selectable) Value: 38, ID: glide-cell-4-2
+											242 cell (selectable) Value: 62.871 秒, ID: glide-cell-5-2
+											243 cell (selectable) Value: 成功, ID: glide-cell-6-2
+										314 row (selectable) Observation 1 — 0 0 0.000 秒 成功
+											315 cell (selectable) Value: Observation, ID: glide-cell-0-3
+											316 cell (selectable) Value: 1, ID: glide-cell-1-3
+											317 cell (selectable) Value: —, ID: glide-cell-2-3
+											318 cell (selectable) Value: 0, ID: glide-cell-3-3
+											319 cell (selectable) Value: 0, ID: glide-cell-4-3
+											320 cell (selectable) Value: 0.000 秒, ID: glide-cell-5-3
+											321 cell (selectable) Value: 成功, ID: glide-cell-6-3
+										322 row (selectable) 任务结束 1 — — — — 失败
+											323 cell (selectable) Value: 任务结束, ID: glide-cell-0-4
+											324 cell (selectable) Value: 1, ID: glide-cell-1-4
+											325 cell (selectable) Value: —, ID: glide-cell-2-4
+											326 cell (selectable) Value: —, ID: glide-cell-3-4
+											327 cell (selectable) Value: —, ID: glide-cell-4-4
+											328 cell (selectable) Value: —, ID: glide-cell-5-4
+											329 cell (selectable) Value: 失败, ID: glide-cell-6-4
+						244 pop up button (expanded) 查看公开执行过程, Secondary Actions: Collapse
+							245 text 查看公开执行过程
+					330 heading 状态统计, Value: 3, ID: f3abdead
+						331 text 状态统计
+						332 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=a228c1eb6cfd45d4a90d59167a8e045f&conversation=78297ec5df4549aebca563af6d94c47c#f3abdead
+					333 text 当前会话累计；工具成功率只统计已返回调用，未报告的用量不计为零。
+					334 container
+						335 text 对话次数
+						336 text 1
+					337 container
+						338 text 累计Token
+						339 text 3582
+					340 container
+						341 text 累计响应耗时
+						342 text 69.180 秒
+					343 container
+						344 text 平均响应耗时
+						345 text 69.180 秒
+					346 container
+						347 text 任务完成率
+						348 text 0.0%
+					349 container
+						350 text 工具调用次数
+						351 text 1
+					352 container
+						353 text 工具调用成功率
+						354 text 100.0%
+					355 container
+						356 text 平均推理轮次
+						357 text 1.00
+					358 text RAG检索 0 次 · 候选命中率 未知 · 平均检索耗时 未知 · 平均工具耗时 62.871 秒。
+					359 text 工具成功 1 · 失败 0 · 待返回 0；已报告Token 3582 · 用量未知 0 次。
+		361 container 查看公开执行过程
+			362 text 工具计划、参数、实际结果和完成判断；来自已有事件。
+			363 container
+				364 container (showing 0-500 of 555 items)
+					365 text [
+					366 container
+						367 text 0 :
+					368 text {
+					369 container
+						370 text " type "
+					371 text :
+					372 container
+						373 text " thought "
+					374 container
+						375 text " thought "
+					376 text :
+					377 container
+						378 text " 明确工具意图，跳过模型规划，交由Action生成参数。 "
+					379 container
+						380 text " next_step "
+					381 text :
+					382 container
+						383 text " tool "
+					384 container
+						385 text " tool_name "
+					386 text :
+					387 container
+						388 text " paper_compare "
+					389 container
+						390 image
+						391 text " parallel_tools "
+						392 text :
+						393 text [
+					394 text ]
+					395 container
+						396 text " route "
+					397 text :
+					398 container
+						399 text " rule "
+					400 container
+						401 text " elapsed_seconds "
+					402 text :
+					403 text 0.0004040000003442401
+					404 container
+						405 text " iteration "
+					406 text :
+					407 text 1
+					408 text }
+					409 container
+						410 text 1 :
+					411 text {
+					412 container
+						413 text " type "
+					414 text :
+					415 container
+						416 text " tool_call "
+					417 container
+						418 text " name "
+					419 text :
+					420 container
+						421 text " paper_compare "
+					422 container
+						423 text " call_id "
+					424 text :
+					425 container
+						426 text " 76fef344 "
+					427 container
+						428 text " args " :
+					429 text {
+					430 container
+						431 text " paper_a_id "
+					432 text :
+					433 container
+						434 text " 8ce7b839 "
+					435 container
+						436 text " paper_b_id "
+					437 text :
+					438 container
+						439 text " ef1a2a0c "
+					440 text }
+					441 container
+						442 text " elapsed_seconds "
+					443 text :
+					444 text 6.142624399999477
+					445 container
+						446 text " iteration "
+					447 text :
+					448 text 1
+					449 text }
+					450 container
+						451 text 2 :
+					452 text {
+					453 container
+						454 text " type "
+					455 text :
+					456 container
+						457 text " tool_result "
+					458 container
+						459 text " name "
+					460 text :
+					461 container
+						462 text " paper_compare "
+					463 container
+						464 text " call_id "
+					465 text :
+					466 container
+						467 text " 76fef344 "
+					468 container
+						469 text " args " :
+					470 text {
+					471 container
+						472 text " paper_a_id "
+					473 text :
+					474 container
+						475 text " 8ce7b839 "
+					476 container
+						477 text " paper_b_id "
+					478 text :
+					479 container
+						480 text " ef1a2a0c "
+					481 text }
+					482 container
+						483 text " result " :
+					484 text {
+					485 container
+						486 text " answer "
+					487 text :
+					488 container
+						489 text " ## 回答\n以下按三个维度并列展示两篇论文的原文证据，不改写实验数字或条件。\n| 维度 | 论文A | 论文B |\n| --- | --- | --- |\n| 方法 | 原文摘录：inductive bias about the 2D structure of the images is manually injected into the Vision Transformer. 4 EXPERIMENTS We evaluate the representation learning capabilities of ResNet, Vision Transformer \\(ViT\\), and the hybrid. To understand the data requirements of each model, we pre-train on datasets of varying size and evaluate many benchmark tasks. When considering the computational cost of pre-training the model, ViT performs very favourably, attaining state of the art on most recognition benchmarks at a lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show that self-supervised ViT holds promise for the future. 4.1 SETUP Datasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes and 1.3M images \\(we refer to it as ImageNet in what follows\\), its superset ImageNet-21k with [参考文档2：Windows验收\\_ViT.pdf；第4页（物理页码）] | 原文摘录：that explicitly encode our prior knowledge about the task. The main ingredients of the new framework, called DEtection TRansformer or DETR, are a set-based global loss that forces unique predictions via bi- partite matching, and a transformer encoder-decoder architecture. Given a ﬁxed small set of learned object queries, DETR reasons about the re- lations of the objects and the global image context to directly output the ﬁnal set of predictions in parallel. The new model is conceptually simple and does not require a specialized library, unlike many other modern detectors. DETR demonstrates accuracy and run-time perfor- mance on par with the well-established and highly-optimized Faster R- CNN baseline on the challenging COCO object detection dataset. More- over, DETR can be easily generalized to produce panoptic segmentation in a uniﬁed manner. We show that it signiﬁcantly outperforms com- petitive baselines. Training code and pretrained models are available at https://github.com/facebookresearch/detr. 1 Introduction The goal of object detection is to predict a set of bounding boxes and category labels for each object of interest. Modern detectors address this set prediction task in an indirect way, by deﬁning surrogate regression and classiﬁcation prob- lems on a large set of proposals \\[37,5\\], anchors \\[23\\], or window centers \\[53,46\\]. Their performances are signiﬁcantly inﬂuenced by postprocessing steps to col- [参考文档4：Windows复测\\_DETR节选.pdf；第1页（物理页码）] |\n| 数据集 | 原文摘录：inductive bias about the 2D structure of the images is manually injected into the Vision Transformer. 4 EXPERIMENTS We evaluate the representation learning capabilities of ResNet, Vision Transformer \\(ViT\\), and the hybrid. To understand the data requirements of each model, we pre-train on datasets of varying size and evaluate many benchmark tasks. When considering the computational cost of pre-training the model, ViT performs very favourably, attaining state of the art on most recognition benchmarks at a lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show that self-supervised ViT holds promise for the future. 4.1 SETUP Datasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes and 1.3M images \\(we refer to it as ImageNet in what follows\\), its superset ImageNet-21k with [参考文档2：Windows验收\\_ViT.pdf；第4页（物理页码）] | 原文摘录：that explicitly encode our prior knowledge about the task. The main ingredients of the new framework, called DEtection TRansformer or DETR, are a set-based global loss that forces unique predictions via bi- partite matching, and a transformer encoder-decoder architecture. Given a ﬁxed small set of learned object queries, DETR reasons about the re- lations of the objects and the global image context to directly output the ﬁnal set of predictions in parallel. The new model is conceptually simple and does not require a specialized library, unlike many other modern detectors. DETR demonstrates accuracy and run-time perfor- mance on par with the well-established and highly-optimized Faster R- CNN baseline on the challenging COCO object detection dataset. More- over, DETR can be easily generalized to produce panoptic segmentation in a uniﬁed manner. We show that it signiﬁcantly outperforms com- petitive baselines. Training code and pretrained models are available at https://github.com/facebookresearch/detr. 1 Introduction The goal of object detection is to predict a set of bounding boxes and category labels for each object of interest. Modern detectors address this set prediction task in an indirect way, by deﬁning surrogate regression and classiﬁcation prob- lems on a large set of proposals \\[37,5\\], anchors \\[23\\], or window centers \\[53,46\\]. Their performances are signiﬁcantly inﬂuenced by postprocessing steps to col- [参考文档4：Windows复测\\_DETR节选.pdf；第1页（物理页码）] |\n| 实验结果 | 当前返回原文／节选未提供可核验的实验指标数值；请核对完整原文。 [参考文档1：Windows验收\\_ViT.pdf；第7页（物理页码）] | 当前返回原文／节选未提供可核验的实验指标数值；请核对完整原文。 [参考文档4：Windows复测\\_DETR节选.pdf；第1页（物理页码）] |\n\n不同任务、数据集和实验条件的指标不可直接比较优劣；证据选择的语义适用性仍需对照原文核验。\n\n## 参考来源\n- [参考文档2] Windows验收\\_ViT.pdf；第4页（物理页码）；正文已截断，仅展示已送入上下文的证据\n- [参考文档4] Windows复测\\_DETR节选.pdf；第1页（物理页码）\n- [参考文档1] Windows验收\\_ViT.pdf；第7页（物理页码） "
+					490 container
+						491 text " citations " :
+					492 text [
+					493 container
+						494 text 0 :
+					495 text {
+					496 container
+						497 text " id "
+					498 text :
+					499 text 2
+					500 container
+						501 text " source_file "
+					502 text :
+					503 container
+						504 text " Windows验收_ViT.pdf "
+					505 container
+						506 text " location "
+					507 text :
+					508 container
+						509 text " 第4页（物理页码） "
+					510 container
+						511 text " text "
+					512 text :
+					513 container
+						514 text " \ninductive bias about the 2D structure of the images is manually injected into the Vision Transformer.\n4\nEXPERIMENTS\nWe evaluate the representation learning capabilities of ResNet, Vision Transformer (ViT), and the\nhybrid. To understand the data requirements of each model, we pre-train on datasets of varying size\nand evaluate many benchmark tasks. When considering the computational cost of pre-training the\nmodel, ViT performs very favourably, attaining state of the art on most recognition benchmarks at\na lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show\nthat self-supervised ViT holds promise for the future.\n4.1\nSETUP\nDatasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes\nand 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with "
+					515 container
+						516 text " metadata " :
+					517 text {
+					518 container
+						519 text " chunk_id "
+					520 text :
+					521 container
+						522 text " abe2f1d0 "
+					523 container
+						524 text " doc_id "
+					525 text :
+					526 container
+						527 text " 8ce7b839 "
+					528 container
+						529 text " file_type "
+					530 text :
+					531 container
+						532 text " .pdf "
+					533 container
+						534 text " page "
+					535 text :
+					536 text 3
+					537 container
+						538 text " page_number "
+					539 text :
+					540 text 4
+					541 container
+						542 text " source "
+					543 text :
+					544 container
+						545 text " E:\\工作\\RAG-Agent\\data\\raw\\8ce7b839\\Windows验收_ViT.pdf "
+					546 container
+						547 text " source_file "
+					548 text :
+					549 container
+						550 text " Windows验收_ViT.pdf "
+					551 container
+						552 text " retrieval_warning "
+					553 text :
+					554 container
+						555 text " 持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。 "
+					556 text }
+					557 container
+						558 text " truncated "
+					559 text :
+					560 text true
+					561 container
+						562 text " score "
+					563 text :
+					564 text 0.5689737796783447
+					565 text }
+					566 container
+						567 text 1 :
+					568 text {
+					569 container
+						570 text " id "
+					571 text :
+					572 text 4
+					573 container
+						574 text " source_file "
+					575 text :
+					576 container
+						577 text " Windows复测_DETR节选.pdf "
+					578 container
+						579 text " location "
+					580 text :
+					581 container
+						582 text " 第1页（物理页码） "
+					583 container
+						584 text " text "
+					585 text :
+					586 container
+						587 text " \nthat explicitly encode our prior knowledge about the task. The main\ningredients of the new framework, called DEtection TRansformer or\nDETR, are a set-based global loss that forces unique predictions via bi-\npartite matching, and a transformer encoder-decoder architecture. Given\na ﬁxed small set of learned object queries, DETR reasons about the re-\nlations of the objects and the global image context to directly output\nthe ﬁnal set of predictions in parallel. The new model is conceptually\nsimple and does not require a specialized library, unlike many other\nmodern detectors. DETR demonstrates accuracy and run-time perfor-\nmance on par with the well-established and highly-optimized Faster R-\nCNN baseline on the challenging COCO object detection dataset. More-\nover, DETR can be easily generalized to produce panoptic segmentation\nin a uniﬁed manner. We show that it signiﬁcantly outperforms com-\npetitive baselines. Training code and pretrained models are available at\nhttps://github.com/facebookresearch/detr.\n1\nIntroduction\nThe goal of object detection is to predict a set of bounding boxes and category\nlabels for each object of interest. Modern detectors address this set prediction\ntask in an indirect way, by deﬁning surrogate regression and classiﬁcation prob-\nlems on a large set of proposals [37,5], anchors [23], or window centers [53,46].\nTheir performances are signiﬁcantly inﬂuenced by postprocessing steps to col- "
+					588 container
+						589 text " metadata " :
+					590 text {
+					591 container
+						592 text " chunk_id "
+					593 text :
+					594 container
+						595 text " 131bf755 "
+					596 container
+						597 text " doc_id "
+					598 text :
+					599 container
+						600 text " ef1a2a0c "
+					601 container
+						602 text " file_type "
+					603 text :
+					604 container
+						605 text " .pdf "
+					606 container
+						607 text " page "
+					608 text :
+					609 text 0
+					610 container
+						611 text " page_number "
+					612 text :
+					613 text 1
+					614 container
+						615 text " source "
+					616 text :
+					617 container
+						618 text " E:\\工作\\RAG-Agent\\data\\raw\\ef1a2a0c\\Windows复测_DETR节选.pdf "
+					619 container
+						620 text " source_file "
+					621 text :
+					622 container
+						623 text " Windows复测_DETR节选.pdf "
+					624 container
+						625 text " retrieval_warning "
+					626 text :
+					627 container
+						628 text " 持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。 "
+					629 text }
+					630 container
+						631 text " truncated "
+					632 text :
+					633 text false
+					634 container
+						635 text " score "
+					636 text :
+					637 text 0.13700783252716064
+					638 text }
+					639 container
+						640 text 2 :
+					641 text {
+					642 container
+						643 text " id "
+					644 text :
+					645 text 1
+					646 container
+						647 text " source_file "
+					648 text :
+					649 container
+						650 text " Windows验收_ViT.pdf "
+					651 container
+						652 text " location "
+					653 text :
+					654 container
+						655 text " 第7页（物理页码） "
+					656 container
+						657 text " text "
+					658 text :
+					659 container
+						660 text " Published as a conference paper at ICLR 2021\n90\nImageNet Top1 Accuracy [%]\n85\n80\nBiT\nViT-L/32\n75\nViT-B/32\nViT-L/16\nViT-B/16\nViT-H/14\n70\nImageNet\nImageNet-21k\nJFT-300M\nPre-training dataset\nFigure 3:\nTransfer to ImageNet.\nWhile\nlarge ViT models perform worse than BiT\nResNets (shaded area) when pre-trained on\nsmall datasets, they shine when pre-trained on\nlarger datasets. Similarly, larger ViT variants\novertake smaller ones as the dataset grows.\nAverage-5\n95\nTransfer accuracy [%]\nLinear 5-shot ImageNet Top1 [%]\n70\n60\n50\n40\nViT-L/16\nViT-B/32\nResNet50x1 (BiT)\nViT-L/32\nViT-b/32\nResNet152x2 (BiT)\n30\n10 M\n30 M\n100 M\n300 M\nNumber of JFT pre-training samples\nFigure 4: Linear few-shot evaluation on Ima-\ngeNet versus pre-training size. ResNets per-\nform better with smaller pre-training datasets\nbut plateau sooner than ViT, which performs\nbetter with larger pre-training. ViT-b is ViT-B\nwith all hidden dimensions halved.\nImageNet\n90\n85\n80\nTransformer (ViT) "
+					661 container
+						662 text " metadata " :
+					663 text {
+					664 container
+						665 text " chunk_id "
+					666 text :
+					667 container
+						668 text " 216400db "
+					669 container
+						670 text " doc_id "
+					671 text :
+					672 container
+						673 text " 8ce7b839 "
+					674 container
+						675 text " file_type "
+					676 text :
+					677 container
+						678 text " .pdf "
+					679 container
+						680 text " page "
+					681 text :
+					682 text 6
+					683 container
+						684 text " page_number "
+					685 text :
+					686 text 7
+					687 container
+						688 text " source "
+					689 text :
+					690 container
+						691 text " E:\\工作\\RAG-Agent\\data\\raw\\8ce7b839\\Windows验收_ViT.pdf "
+					692 container
+						693 text " source_file "
+					694 text :
+					695 container
+						696 text " Windows验收_ViT.pdf "
+					697 text }
+					698 container
+						699 text " truncated "
+					700 text :
+					701 text false
+					702 container
+						703 text " score "
+					704 text :
+					705 text 0.5730944275856018
+					706 text } ]
+					707 container
+						708 image
+						709 text " invalid_citation_ids "
+						710 text :
+						711 text [
+					712 text ]
+					713 container
+						714 text " missing_citations "
+					715 text :
+					716 text false
+					717 container
+						718 text " warnings " :
+					719 text [
+					720 container
+						721 text 0 :
+					722 container
+						723 text " 持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。 "
+					724 container
+						725 text 1 :
+					726 container
+						727 text " 部分维度缺少可用证据，不能视为完整对比。 "
+					728 container
+						729 text 2 :
+					730 container
+						731 text " 部分维度的检索相关性低，相关陈述需对照原文核验：论文A：方法、论文B：方法、论文B：实验结果 "
+					732 container
+						733 text 3 :
+					734 container
+						735 text " 单篇原文已按对比预算截断，结论仅依据返回的可见证据。 "
+					736 text ]
+					737 container
+						738 text " comparison " :
+					739 text [
+					740 container
+						741 text 0 :
+					742 text {
+					743 container
+						744 text " dimension "
+					745 text :
+					746 container
+						747 text " 方法 "
+					748 container
+						749 text " a " :
+					750 text {
+					751 container
+						752 text " id "
+					753 text :
+					754 text 2
+					755 container
+						756 text " source_file "
+					757 text :
+					758 container
+						759 text " Windows验收_ViT.pdf "
+					760 container
+						761 text " location "
+					762 text :
+					763 container
+						764 text " 第4页（物理页码） "
+					765 container
+						766 text " text "
+					767 text :
+					768 container
+						769 text " \ninductive bias about the 2D structure of the images is manually injected into the Vision Transformer.\n4\nEXPERIMENTS\nWe evaluate the representation learning capabilities of ResNet, Vision Transformer (ViT), and the\nhybrid. To understand the data requirements of each model, we pre-train on datasets of varying size\nand evaluate many benchmark tasks. When considering the computational cost of pre-training the\nmodel, ViT performs very favourably, attaining state of the art on most recognition benchmarks at\na lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show\nthat self-supervised ViT holds promise for the future.\n4.1\nSETUP\nDatasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes\nand 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with "
+					770 container
+						771 text " metadata " :
+					772 text {
+					773 container
+						774 text " chunk_id "
+					775 text :
+					776 container
+						777 text " abe2f1d0 "
+					778 container
+						779 text " doc_id "
+					780 text :
+					781 container
+						782 text " 8ce7b839 "
+					783 container
+						784 text " file_type "
+					785 text :
+					786 container
+						787 text " .pdf "
+					788 container
+						789 text " page "
+					790 text :
+					791 text 3
+					792 container
+						793 text " page_number "
+					794 text :
+					795 text 4
+					796 container
+						797 text " source "
+					798 text :
+					799 container
+						800 text " E:\\工作\\RAG-Agent\\data\\raw\\8ce7b839\\Windows验收_ViT.pdf "
+					801 container
+						802 text " source_file "
+					803 text :
+					804 container
+						805 text " Windows验收_ViT.pdf "
+					806 container
+						807 text " retrieval_warning "
+					808 text :
+					809 container
+						810 text " 持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。 "
+					811 text }
+					812 container
+						813 text " truncated "
+					814 text :
+					815 text true
+					816 container
+						817 text " score "
+					818 text :
+					819 text 0.5689737796783447
+					820 text }
+					821 container
+						822 text " b " :
+					823 text {
+					824 container
+						825 text " id "
+					826 text :
+					827 text 4
+					828 container
+						829 text " source_file "
+					830 text :
+					831 container
+						832 text " Windows复测_DETR节选.pdf "
+					833 container
+						834 text " location "
+					835 text :
+					836 container
+						837 text " 第1页（物理页码） "
+					838 container
+						839 text " text "
+					840 text :
+					841 container
+						842 text " \nthat explicitly encode our prior knowledge about the task. The main\ningredients of the new framework, called DEtection TRansformer or\nDETR, are a set-based global loss that forces unique predictions via bi-\npartite matching, and a transformer encoder-decoder architecture. Given\na ﬁxed small set of learned object queries, DETR reasons about the re-\nlations of the objects and the global image context to directly output\nthe ﬁnal set of predictions in parallel. The new model is conceptually\nsimple and does not require a specialized library, unlike many other\nmodern detectors. DETR demonstrates accuracy and run-time perfor-\nmance on par with the well-established and highly-optimized Faster R-\nCNN baseline on the challenging COCO object detection dataset. More-\nover, DETR can be easily generalized to produce panoptic segmentation\nin a uniﬁed manner. We show that it signiﬁcantly outperforms com-\npetitive baselines. Training code and pretrained models are available at\nhttps://github.com/facebookresearch/detr.\n1\nIntroduction\nThe goal of object detection is to predict a set of bounding boxes and category\nlabels for each object of interest. Modern detectors address this set prediction\ntask in an indirect way, by deﬁning surrogate regression and classiﬁcation prob-\nlems on a large set of proposals [37,5], anchors [23], or window centers [53,46].\nTheir performances are signiﬁcantly inﬂuenced by postprocessing steps to col- "
+					843 container
+						844 text " metadata " :
+					845 text {
+					846 container
+						847 text " chunk_id "
+					848 text :
+					849 container
+						850 text " 131bf755 "
+					851 container
+						852 text " doc_id "
+					853 text :
+					854 container
+						855 text " ef1a2a0c "
+					856 container
+						857 text " file_type "
+					858 text :
+					859 container
+						860 text " .pdf "
+					861 container
+						862 text " page "
+					863 text :
+					864 text 0
+					865 container
+						866 text " page_number "
+					867 text :
+					868 text 1
+					869 container
+						870 text " source "
+					871 text :
+					872 container
+						873 text " E:\\工作\\RAG-Agent\\data\\raw\\ef1a2a0c\\Windows复测_DETR节选.pdf "
+					874 container
+						875 text " source_file "
+					876 text :
+					877 container
+						878 text " Windows复测_DETR节选.pdf "
+					879 container
+						880 text " retrieval_warning "
+					881 text :
+					882 container
+						883 text " 持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。 "
+					884 text }
+					885 container
+						886 text " truncated "
+					887 text :
+					888 text false
+					889 container
+						890 text " score "
+					891 text :
+					892 text 0.13700783252716064
+					893 text } }
+					894 container
+						895 text 1 :
+					896 text {
+					897 container
+						898 text " dimension "
+					899 text :
+					900 container
+						901 text " 数据集 "
+					902 container
+						903 text " a " :
+					904 text {
+					905 container
+						906 text " id "
+					907 text :
+					908 text 2
+					909 container
+						910 text " source_file "
+					911 text :
+					912 container
+						913 text " Windows验收_ViT.pdf "
+					914 container
+						915 text " location "
+					916 text :
+					917 container
+						918 text " 第4页（物理页码） "
+					919 container
+						920 text " text "
+					921 text :
+					922 container
+						923 text " \ninductive bias about the 2D structure of the images is manually injected into the Vision Transformer.\n4\nEXPERIMENTS\nWe evaluate the representation learning capabilities of ResNet, Vision Transformer (ViT), and the\nhybrid. To understand the data requirements of each model, we pre-train on datasets of varying size\nand evaluate many benchmark tasks. When considering the computational cost of pre-training the\nmodel, ViT performs very favourably, attaining state of the art on most recognition benchmarks at\na lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show\nthat self-supervised ViT holds promise for the future.\n4.1\nSETUP\nDatasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes\nand 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with "
+					924 container
+						925 text " metadata " :
+					926 text {
+					927 container
+						928 text " chunk_id "
+					929 text :
+					930 container
+						931 text " abe2f1d0 "
+					932 container
+						933 text " doc_id "
+					934 text :
+					935 container
+						936 text " 8ce7b839 "
+					937 container
+						938 text " file_type "
+					939 text :
+					940 container
+						941 text " .pdf "
+					942 container
+						943 text " page "
+					944 text :
+					945 text 3
+					946 container
+						947 text " page_number "
+					948 text :
+					949 text 4
+					950 container
+						951 text " source "
+					952 text :
+					953 container
+						954 text " E:\\工作\\RAG-Agent\\data\\raw\\8ce7b839\\Windows验收_ViT.pdf "
+					955 container
+						956 text " source_file "
+					957 text :
+					958 container
+						959 text " Windows验收_ViT.pdf "
+					960 container
+						961 text " retrieval_warning "
+					962 text :
+					963 container
+						964 text " 持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。 "
+					965 text }
+					966 container
+						967 text " truncated "
+					968 text :
+					969 text true
+					970 container
+						971 text " score "
+					972 text :
+					973 text 0.5689737796783447
+					974 text }
+					975 container
+						976 text " b " :
+					977 text {
+					978 container
+						979 text " id "
+					980 text :
+					981 text 4
+					982 container
+						983 text " source_file "
+					984 text :
+					985 container
+						986 text " Windows复测_DETR节选.pdf "
+					987 container
+						988 text " location "
+					989 text :
+					990 container
+						991 text " 第1页（物理页码） "
+					992 container
+						993 text " text "
+					994 text :
+					995 container
+						996 text " \nthat explicitly encode our prior knowledge about the task. The main\ningredients of the new framework, called DEtection TRansformer or\nDETR, are a set-based global loss that forces unique predictions via bi-\npartite matching, and a transformer encoder-decoder architecture. Given\na ﬁxed small set of learned object queries, DETR reasons about the re-\nlations of the objects and the global image context to directly output\nthe ﬁnal set of predictions in parallel. The new model is conceptually\nsimple and does not require a specialized library, unlike many other\nmodern detectors. DETR demonstrates accuracy and run-time perfor-\nmance on par with the well-established and highly-optimized Faster R-\nCNN baseline on the challenging COCO object detection dataset. More-\nover, DETR can be easily generalized to produce panoptic segmentation\nin a uniﬁed manner. We show that it signiﬁcantly outperforms com-\npetitive baselines. Training code and pretrained models are available at\nhttps://github.com/facebookresearch/detr.\n1\nIntroduction\nThe goal of object detection is to predict a set of bounding boxes and category\nlabels for each object of interest. Modern detectors address this set prediction\ntask in an indirect way, by deﬁning surrogate regression and classiﬁcation prob-\nlems on a large set of proposals [37,5], anchors [23], or window centers [53,46].\nTheir performances are signiﬁcantly inﬂuenced by postprocessing steps to col- "
+					997 container
+						998 text " metadata " :
+					999 text {
+					1000 container
+						1001 text " chunk_id "
+					1002 text :
+					1003 container
+						1004 text " 131bf755 "
+					1005 container
+						1006 text " doc_id "
+					1007 text :
+					1008 container
+						1009 text " ef1a2a0c "
+					1010 container
+						1011 text " file_type "
+					1012 text :
+					1013 container
+						1014 text " .pdf "
+					1015 container
+						1016 text " page "
+					1017 text :
+					1018 text 0
+					1019 container
+						1020 text " page_number "
+					1021 text :
+					1022 text 1
+					1023 container
+						1024 text " source "
+					1025 text :
+					1026 container
+						1027 text " E:\\工作\\RAG-Agent\\data\\raw\\ef1a2a0c\\Windows复测_DETR节选.pdf "
+					1028 container
+						1029 text " source_file "
+					1030 text :
+					1031 container
+						1032 text " Windows复测_DETR节选.pdf "
+					1033 container
+						1034 text " retrieval_warning "
+					1035 text :
+					1036 container
+						1037 text " 持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。 "
+					1038 text }
+					1039 container
+						1040 text " truncated "
+					1041 text :
+					1042 text false
+					1043 container
+						1044 text " score "
+					1045 text :
+					1046 text 0.13700783252716064
+					1047 text } }
+					1048 container
+						1049 text 2 :
+					1050 text {
+					1051 container
+						1052 text " dimension "
+					1053 text :
+					1054 container
+						1055 text " 实验结果 "
+					1056 container
+						1057 text " a " :
+					1058 text {
+					1059 container
+						1060 text " id "
+					1061 text :
+					1062 text 1
+					1063 container
+						1064 text " source_file "
+					1065 text :
+					1066 container
+						1067 text " Windows验收_ViT.pdf "
+					1068 container
+						1069 text " location "
+					1070 text :
+					1071 container
+						1072 text " 第7页（物理页码） "
+					1073 container
+						1074 text " text "
+					1075 text :
+					1076 container
+						1077 text " Published as a conference paper at ICLR 2021\n90\nImageNet Top1 Accuracy [%]\n85\n80\nBiT\nViT-L/32\n75\nViT-B/32\nViT-L/16\nViT-B/16\nViT-H/14\n70\nImageNet\nImageNet-21k\nJFT-300M\nPre-training dataset\nFigure 3:\nTransfer to ImageNet.\nWhile\nlarge ViT models perform worse than BiT\nResNets (shaded area) when pre-trained on\nsmall datasets, they shine when pre-trained on\nlarger datasets. Similarly, larger ViT variants\novertake smaller ones as the dataset grows.\nAverage-5\n95\nTransfer accuracy [%]\nLinear 5-shot ImageNet Top1 [%]\n70\n60\n50\n40\nViT-L/16\nViT-B/32\nResNet50x1 (BiT)\nViT-L/32\nViT-b/32\nResNet152x2 (BiT)\n30\n10 M\n30 M\n100 M\n300 M\nNumber of JFT pre-training samples\nFigure 4: Linear few-shot evaluation on Ima-\ngeNet versus pre-training size. ResNets per-\nform better with smaller pre-training datasets\nbut plateau sooner than ViT, which performs\nbetter with larger pre-training. ViT-b is ViT-B\nwith all hidden dimensions halved.\nImageNet\n90\n85\n80\nTransformer (ViT) "
+					1078 container
+						1079 text " metadata " :
+					1080 text {
+					1081 container
+						1082 text " chunk_id "
+					1083 text :
+					1084 container
+						1085 text " 216400db "
+					1086 container
+						1087 text " doc_id "
+					1088 text :
+					1089 container
+						1090 text " 8ce7b839 "
+					1091 container
+						1092 text " file_type "
+					1093 text :
+					1094 container
+						1095 text " .pdf "
+					1096 container
+						1097 text " page "
+					1098 text :
+					1099 text 6
+					1100 container
+						1101 text " page_number "
+					1102 text :
+					1103 text 7
+					1104 container
+						1105 text " source "
+					1106 text :
+					1107 container
+						1108 text " E:\\工作\\RAG-Agent\\data\\raw\\8ce7b839\\Windows验收_ViT.pdf "
+					1109 container
+						1110 text " source_file "
+					1111 text :
+					1112 container
+						1113 text " Windows验收_ViT.pdf "
+					1114 text }
+					1115 container
+						1116 text " truncated "
+					1117 text :
+					1118 text false
+					1119 container
+						1120 text " score "
+					1121 text :
+					1122 text 0.5730944275856018
+					1123 text }
+					1124 container
+						1125 text " b " :
+					1126 text {
+					1127 container
+						1128 text " id "
+					1129 text :
+					1130 text 4
+					1131 container
+						1132 text " source_file "
+					1133 text :
+					1134 container
+						1135 text " Windows复测_DETR节选.pdf "
+					1136 container
+						1137 text " location "
+					1138 text :
+					1139 container
+						1140 text " 第1页（物理页码） "
+					1141 container
+						1142 text " text "
+					1143 text :
+					1144 container
+						1145 text " \nthat explicitly encode our prior knowledge about the task. The main\ningredients of the new framework, called DEtection TRansformer or\nDETR, are a set-based global loss that forces unique predictions via bi-\npartite matching, and a transformer encoder-decoder architecture. Given\na ﬁxed small set of learned object queries, DETR reasons about the re-\nlations of the objects and the global image context to directly output\nthe ﬁnal set of predictions in parallel. The new model is conceptually\nsimple and does not require a specialized library, unlike many other\nmodern detectors. DETR demonstrates accuracy and run-time perfor-\nmance on par with the well-established and highly-optimized Faster R-\nCNN baseline on the challenging COCO object detection dataset. More-\nover, DETR can be easily generalized to produce panoptic segmentation\nin a uniﬁed manner. We show that it signiﬁcantly outperforms com-\npetitive baselines. Training code and pretrained models are available at\nhttps://github.com/facebookresearch/detr.\n1\nIntroduction\nThe goal of object detection is to predict a set of bounding boxes and category\nlabels for each object of interest. Modern detectors address this set prediction\ntask in an indirect way, by deﬁning surrogate regression and classiﬁcation prob-\nlems on a large set of proposals [37,5], anchors [23], or window centers [53,46].\nTheir performances are signiﬁcantly inﬂuenced by postprocessing steps to col- "
+					1146 container
+						1147 text " metadata " :
+					1148 text {
+					1149 container
+						1150 text " chunk_id "
+					1151 text :
+					1152 container
+						1153 text " 131bf755 "
+					1154 container
+						1155 text " doc_id "
+					1156 text :
+					1157 container
+						1158 text " ef1a2a0c "
+					1159 container
+						1160 text " file_type "
+					1161 text :
+					1162 container
+						1163 text " .pdf "
+					1164 container
+						1165 text " page "
+					1166 text :
+					1167 text 0
+					1168 container
+						1169 text " page_number "
+					1170 text :
+					1171 text 1
+					1172 container
+						1173 text " source "
+					1174 text :
+					1175 container
+						1176 text " E:\\工作\\RAG-Agent\\data\\raw\\ef1a2a0c\\Windows复测_DETR节选.pdf "
+					1177 container
+						1178 text " source_file "
+					1179 text :
+					1180 container
+						1181 text " Windows复测_DETR节选.pdf "
+					1182 container
+						1183 text " retrieval_warning "
+					1184 text :
+					1185 container
+						1186 text " 持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。 "
+					1187 text }
+					1188 container
+						1189 text " truncated "
+					1190 text :
+					1191 text false
+					1192 container
+						1193 text " score "
+					1194 text :
+					1195 text 0.13700783252716064
+					1196 text } } ]
+					1197 container
+						1198 text " model "
+					1199 text :
+					1200 container
+						1201 text " qwen2.5:7b "
+					1202 container
+						1203 text " done_reason "
+					1204 text :
+					1205 container
+						1206 text " stop "
+					1207 container
+						1208 text " model_calls " :
+					1209 text [
+					1210 container
+						1211 text 0 :
+					1212 text {
+					1213 container
+						1214 text " paper "
+					1215 text :
+					1216 container
+						1217 text " A "
+					1218 container
+						1219 text " model "
+					1220 text :
+					1221 container
+						1222 text " qwen2.5:7b "
+					1223 container
+						1224 text " choice " :
+					1225 text {
+					1226 container
+						1227 text " method "
+					1228 text :
+					1229 text 2
+					1230 container
+						1231 text " datasets "
+					1232 text :
+					1233 text 2
+					1234 container
+						1235 text " results "
+					1236 text :
+					1237 text 1
+					1238 text }
+					1239 container
+						1240 text " usage " :
+					1241 text {
+					1242 container
+						1243 text " prompt_eval_count "
+					1244 text :
+					1245 text 938
+					1246 container
+						1247 text " eval_count "
+					1248 text :
+					1249 text 19
+					1250 text } }
+					1251 container
+						1252 text 1 :
+					1253 text {
+					1254 container
+						1255 text " paper "
+					1256 text :
+					1257 container
+						1258 text " B "
+					1259 container
+						1260 text " model "
+					1261 text :
+					1262 container
+						1263 text " qwen2.5:7b "
+					1264 container
+						1265 text " choice " :
+					1266 text {
+					1267 container
+						1268 text " method "
+					1269 text :
+					1270 text 4
+					1271 container
+						1272 text " datasets "
+					1273 text :
+					1274 text 4
+					1275 container
+						1276 text " results "
+					1277 text :
+					1278 text 4
+					1279 text }
+					1280 container
+						1281 text " usage " :
+					1282 text {
+					1283 container
+						1284 text " prompt_eval_count "
+					1285 text :
+					1286 text 793
+					1287 container
+						1288 text " eval_count "
+					1289 text :
+					1290 text 19
+					1291 text } } ]
+					1292 container
+						1293 text " usage " :
+					1294 text {
+					1295 container
+						1296 text " prompt_eval_count "
+					1297 text :
+					1298 text 1731
+					1299 container
+						1300 text " eval_count "
+					1301 text :
+					1302 text 38
+					1303 text }
+					1304 container
+						1305 text " papers " :
+					1306 text [
+					1307 container
+						1308 text 0 :
+					1309 text {
+					1310 container
+						1311 text " label "
+					1312 text :
+					1313 container
+						1314 text " A "
+					1315 container
+						1316 text " doc_id "
+					1317 text :
+					1318 container
+						1319 text " 8ce7b839 "
+					1320 container
+						1321 text " source_file "
+					1322 text :
+					1323 container
+						1324 text " Windows验收_ViT.pdf "
+					1325 container
+						1326 text " coverage " :
+					1327 text {
+					1328 container
+						1329 text " 方法 " :
+					1330 text {
+					1331 container
+						1332 text " generation_mode "
+					1333 text :
+					1334 container
+						1335 text " low "
+					1336 container
+						1337 text " top_score "
+					1338 text :
+					1339 text 0.07252442836761475
+					1340 text }
+					1341 container
+						1342 text " 数据集 " :
+					1343 text {
+					1344 container
+						1345 text " generation_mode "
+					1346 text :
+					1347 container
+						1348 text " grounded "
+					1349 container
+						1350 text " top_score "
+					1351 text :
+					1352 text 0.5689737796783447
+					1353 text }
+					1354 container
+						1355 text " 实验结果 " :
+					1356 text {
+					1357 container
+						1358 text " generation_mode "
+					1359 text :
+					1360 container
+						1361 text " grounded "
+					1362 container
+						1363 text " top_score "
+					1364 text :
+					1365 text 0.5730944275856018
+					1366 text } }
+					1367 container
+						1368 text " top_score "
+					1369 text :
+					1370 text 0.5730944275856018
+					1371 container
+						1372 text " references " :
+					1373 text [
+					1374 container
+						1375 text 0 :
+					1376 text {
+					1377 container
+						1378 text " id "
+					1379 text :
+					1380 text 1
+					1381 container
+						1382 text " source_file "
+					1383 text :
+					1384 container
+						1385 text " Windows验收_ViT.pdf "
+					1386 container
+						1387 text " location "
+					1388 text :
+					1389 container
+						1390 text " 第1页（物理页码） "
+					1391 container
+						1392 text " text "
+					1393 text :
+					1394 container
+						1395 text " ABSTRACT\nWhile the Transformer architecture has become the de-facto standard for natural\nlanguage processing tasks, its applications to computer vision remain limited. In\nvision, attention is either applied in conjunction with convolutional networks, or\nused to replace certain components of convolutional networks while keeping their\noverall structure in place. We show that this reliance on CNNs is not necessary\nand a pure transformer applied directly to sequences of image patches can perform\nvery well on image classiﬁcation tasks. When pre-trained on large amounts of\ndata and transferred to multiple mid-sized or small image recognition benchmarks\n(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent\nresults compared to state-of-the-art convolutional networks while requiring sub-\nstantially fewer computational resources to train.^{1}\n1\nINTRODUCTION "
+					1396 container
+						1397 text " metadata " :
+					1398 text {
+					1399 container
+						1400 text " chunk_id "
+					1401 text :
+					1402 container
+						1403 text " 8ae84e98 "
+					1404 container
+						1405 text " doc_id "
+					1406 text :
+					1407 container
+						1408 text " 8ce7b839 "
+					1409 container
+						1410 text " file_type "
+					1411 text :
+					1412 container
+						1413 text " .pdf "
+					1414 container
+						1415 text " page "
+					1416 text :
+					1417 text 0
+					1418 container
+						1419 text " page_number "
+					1420 text :
+					1421 text 1
+					1422 container
+						1423 text " source "
+					1424 text :
+					1425 container
+						1426 text " E:\\工作\\RAG-Agent\\data\\raw\\8ce7b839\\Windows验收_ViT.pdf "
+					1427 container
+						1428 text " source_file "
+					1429 text :
+					1430 container
+						1431 text " Windows验收_ViT.pdf "
+					1432 text }
+					1433 container
+						1434 text " truncated "
+					1435 text :
+					1436 text true
+					1437 container
+						1438 text " score "
+					1439 text :
+					1440 text 0.019274597987532616
+					1441 text }
+					1442 container
+						1443 text 1 :
+					1444 text {
+					1445 container
+						1446 text " id "
+					1447 text :
+					1448 text 2
+					1449 container
+						1450 text " source_file "
+					1451 text :
+					1452 container
+						1453 text " Windows验收_ViT.pdf "
+					1454 container
+						1455 text " location "
+					1456 text :
+					1457 container
+						1458 text " 第7页（物理页码） "
+					1459 container
+						1460 text " text "
+					1461 text :
+					1462 container
+						1463 text " Published as a conference paper at ICLR 2021\n90\nImageNet Top1 Accuracy [%]\n85\n80\nBiT\nViT-L/32\n75\nViT-B/32\nViT-L/16\nViT-B/16\nViT-H/14\n70\nImageNet\nImageNet-21k\nJFT-300M\nPre-training dataset\nFigure 3:\nTransfer to ImageNet.\nWhile\nlarge ViT models perform worse than BiT\nResNets (shaded area) when pre-trained on\nsmall datasets, they shine when pre-trained on\nlarger datasets. Similarly, larger ViT variants\novertake smaller ones as the dataset grows.\nAverage-5\n95\nTransfer accuracy [%]\nLinear 5-shot ImageNet Top1 [%]\n70\n60\n50\n40\nViT-L/16\nViT-B/32\nResNet50x1 (BiT)\nViT-L/32\nViT-b/32\nResNet152x2 (BiT)\n30\n10 M\n30 M\n100 M\n300 M\nNumber of JFT pre-training samples\nFigure 4: Linear few-shot evaluation on Ima-\ngeNet versus pre-training size. ResNets per-\nform better with smaller pre-training datasets\nbut plateau sooner than ViT, which performs\nbetter with larger pre-training. ViT-b is ViT-B\nwith all hidden dimensions halved.\nImageNet\n90\n85\n80\nTransformer (ViT) "
+					1464 container
+						1465 text " metadata " :
+					1466 text {
+					1467 container
+						1468 text " chunk_id "
+					1469 text :
+					1470 container
+						1471 text " 216400db "
+					1472 container
+						1473 text " doc_id "
+					1474 text :
+					1475 container
+						1476 text " 8ce7b839 "
+					1477 container
+						1478 text " file_type "
+					1479 text :
+					1480 container
+						1481 text " .pdf "
+					1482 container
+						1483 text " page "
+					1484 text :
+					1485 text 6
+					1486 container
+						1487 text " page_number "
+					1488 text :
+					1489 text 7
+					1490 container
+						1491 text " source "
+					1492 text :
+					1493 container
+						1494 text " E:\\工作\\RAG-Agent\\data\\raw\\8ce7b839\\Windows验收_ViT.pdf "
+					1495 container
+						1496 text " source_file "
+					1497 text :
+					1498 container
+						1499 text " Windows验收_ViT.pdf "
+					1500 text }
+					1501 container
+						1502 text " truncated "
+					1503 text :
+					1504 text false
+					1505 container
+						1506 text " score "
+					1507 text :
+					1508 text 0.5730944275856018
+					1509 text }
+					1510 container
+						1511 text 2 :
+					1512 text {
+					1513 container
+						1514 text " id "
+					1515 text :
+					1516 text 3
+					1517 container
+						1518 text " source_file "
+					1519 text :
+					1520 container
+						1521 text " Windows验收_ViT.pdf "
+					1522 container
+						1523 text " location "
+					1524 text :
+					1525 container
+						1526 text " 第4页（物理页码） "
+					1527 container
+						1528 text " text "
+					1529 text :
+					1530 container
+						1531 text " \ninductive bias about the 2D structure of the images is manually injected into the Vision Transformer.\n4\nEXPERIMENTS\nWe evaluate the representation learning capabilities of ResNet, Vision Transformer (ViT), and the\nhybrid. To understand the data requirements of each model, we pre-train on datasets of varying size\nand evaluate many benchmark tasks. When considering the computational cost of pre-training the\nmodel, ViT performs very favourably, attaining state of the art on most recognition benchmarks at\na lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show\nthat self-supervised ViT holds promise for the future.\n4.1\nSETUP\nDatasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes\nand 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with "
+					1532 container
+						1533 text " metadata " :
+					1534 text {
+					1535 container
+						1536 text " chunk_id "
+					1537 text :
+					1538 container
+						1539 text " abe2f1d0 "
+					1540 container
+						1541 text " doc_id "
+					1542 text :
+					1543 container
+						1544 text " 8ce7b839 "
+					1545 container
+						1546 text " file_type "
+					1547 text :
+					1548 container
+						1549 text " .pdf "
+					1550 container
+						1551 text " page "
+					1552 text :
+					1553 text 3
+					1554 container
+						1555 text " page_number "
+					1556 text :
+					1557 text 4
+					1558 container
+						1559 text " source "
+					1560 text :
+					1561 container
+						1562 text " E:\\工作\\RAG-Agent\\data\\raw\\8ce7b839\\Windows验收_ViT.pdf "
+					1563 container
+						1564 text " source_file "
+					1565 text :
+					1566 container
+						1567 text " Windows验收_ViT.pdf "
+					1568 container
+						1569 text " retrieval_warning "
+					1570 text :
+					1571 container
+						1572 text " 持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。 "
+					1573 text }
+					1574 container
+						1575 text " truncated "
+					1576 text :
+					1577 text true
+					1578 container
+						1579 text " score "
+					1580 text :
+					1581 text 0.5689737796783447
+					1582 text }
+					1583 container
+						1584 text 3 :
+					1585 text {
+					1586 container
+						1587 text " id "
+					1588 text :
+					1589 text 4
+					1590 container
+						1591 text " source_file "
+					1592 text :
+					1593 container
+						1594 text " Windows验收_ViT.pdf "
+					1595 container
+						1596 text " location "
+					1597 text :
+					1598 container
+						1599 text " 第5页（物理页码） "
+					1600 container
+						1601 text " text "
+					1602 text :
+					1603 container
+						1604 text " \n300M wi "
+					1605 container
+						1606 text " metadata " :
+					1607 text {
+					1608 container
+						1609 text " chunk_id "
+					1610 text :
+					1611 container
+						1612 text " da1f4c9e "
+					1613 container
+						1614 text " doc_id "
+					1615 text :
+					1616 container
+						1617 text " 8ce7b839 "
+					1618 container
+						1619 text " file_type "
+					1620 text :
+					1621 container
+						1622 text " .pdf "
+					1623 container
+						1624 text " page "
+					1625 text :
+					1626 text 4
+					1627 container
+						1628 text " page_number "
+					1629 text :
+					1630 text 5
+					1631 container
+						1632 text " source "
+					1633 text :
+					1634 container
+						1635 text " E:\\工作\\RAG-Agent\\data\\raw\\8ce7b839\\Windows验收_ViT.pdf "
+					1636 container
+						1637 text " source_file "
+					1638 text :
+					1639 container
+						1640 text " Windows验收_ViT.pdf "
+					1641 container
+						1642 text " retrieval_warning "
+					1643 text :
+					1644 container
+						1645 text " 持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。 "
+					1646 text }
+					1647 container
+						1648 text " truncated "
+					1649 text :
+					1650 text true
+					1651 container
+						1652 text " score "
+					1653 text :
+					1654 text 0.5318978428840637
+					1655 text } ]
+					1656 container
+						1657 text " truncated "
+					1658 text :
+					1659 text true
+					1660 text }
+					1661 container
+						1662 text 1 :
+					1663 text {
+					1664 container
+						1665 text " label "
+					1666 text :
+					1667 container
+						1668 text " B "
+					1669 container
+						1670 text " doc_id "
+					1671 text :
+					1672 container
+						1673 text " ef1a2a0c "
+					1674 container
+						1675 text " source_file "
+					1676 text :
+					1677 container
+						1678 text " Windows复测_DETR节选.pdf "
+					1679 container
+						1680 text " coverage " :
+					1681 text {
+					1682 container
+						1683 text " 方法 " :
+					1684 text {
+					1685 container
+						1686 text " generation_mode "
+					1687 text :
+					1688 container
+						1689 text " low "
+					1690 container
+						1691 text " top_score "
+					1692 text :
+					1693 text 0.028458906337618828
+					1694 text }
+					1695 container
+						1696 text " 数据集 " :
+					1697 text {
+					1698 container
+						1699 text " generation_mode "
+					1700 text :
+					1701 container
+						1702 text " grounded "
+					1703 container
+						1704 text " top_score "
+					1705 text :
+					1706 text 0.13700783252716064
+					1707 text }
+					1708 container
+						1709 text " 实验结果 " :
+					1710 text {
+					1711 container
+						1712 text " generation_mode "
+					1713 text :
+					1714 container
+						1715 text " low "
+					1716 container
+						1717 text " top_score "
+					1718 text :
+					1719 text 0.02162744291126728
+					1720 text } }
+					1721 container
+						1722 text " top_score "
+					1723 text :
+					1724 text 0.13700783252716064
+					1725 container
+						1726 text " references " :
+					1727 text [
+					1728 container
+						1729 text 0 :
+					1730 text {
+					1731 container
+						1732 text " id "
+					1733 text :
+					1734 text 1
+					1735 container
+						1736 text " source_file "
+					1737 text :
+					1738 container
+						1739 text " Windows复测_DETR节选.pdf "
+					1740 container
+						1741 text " location "
+					1742 text :
+					1743 container
+						1744 text " 第1页（物理页码） "
+					1745 container
+						1746 text " text "
+					1747 text :
+					1748 container
+						1749 text " Abstract. We present a new method that views object detection as a\ndirect set prediction problem. Our approach streamlines the detection\npipeline, eﬀectively removing the need for many hand-designed compo-\nnents like a non-maximum suppression procedure or anchor generation\nthat explicitly encode our prior knowledge about the task. The main\ningredients of the new framework, called DEtection TRansformer or\nDETR, are a set-based global loss that forces unique predictions via bi-\npartite matching, and a transformer encoder-decoder architecture. Given\na ﬁxed small set of learned object queries, DETR reasons about the re-\nlations of the objects and the global image context to directly output\nthe ﬁnal set of predictions in parallel. The new model is conceptually "
+					1750 container
+						1751 text " metadata " :
+					1752 text {
+					1753 container
+						1754 text " chunk_id "
+					1755 text :
+					1756 container
+						1757 text " 09c941dd "
+					1758 container
+						1759 text " doc_id "
+					1760 text :
+					1761 container
+						1762 text " ef1a2a0c "
+					1763 container
+						1764 text " file_type "
+					1765 text :
+					1766 container
+						1767 text " .pdf "
+					1768 container
+						1769 text " page "
+					1770 text :
+					1771 text 0
+					1772 container
+						1773 text " page_number "
+					1774 text :
+					1775 text 1
+					1776 container
+						1777 text " source "
+					1778 text :
+					1779 container
+						1780 text " E:\\工作\\RAG-Agent\\data\\raw\\ef1a2a0c\\Windows复测_DETR节选.pdf "
+					1781 container
+						1782 text " source_file "
+					1783 text :
+					1784 container
+						1785 text " Windows复测_DETR节选.pdf "
+					1786 text }
+					1787 container
+						1788 text " truncated "
+					1789 text :
+					1790 text false
+					1791 container
+						1792 text " score "
+					1793 text :
+					1794 text 0.026163101196289062
+					1795 text }
+					1796 container
+						1797 text 1 :
+					1798 text {
+					1799 container
+						1800 text " id "
+					1801 text :
+					1802 text 2
+					1803 container
+						1804 text " source_file "
+					1805 text :
+					1806 container
+						1807 text " Windows复测_DETR节选.pdf "
+					1808 container
+						1809 text " location "
+					1810 text :
+					1811 container
+						1812 text " 第1页（物理页码） "
+					1813 container
+						1814 text " text "
+					1815 text :
+					1816 container
+						1817 text " Abstract. We present a new method that views object detection as a\ndirect set prediction problem. "
+					1818 container
+						1819 text " metadata " :
+					1820 text {
+					1821 container
+						1822 text " chunk_id "
+					1823 text :
+					1824 container
+						1825 text " bd1440ef "
+					1826 container
+						1827 text " doc_id "
+					1828 text :
+					1829 container
+						1830 text " ef1a2a0c "
+					1831 container
+						1832 text " file_type "
+					1833 text :
+					1834 container
+						1835 text " .pdf "
+					1836 container
+						1837 text " page "
+					1838 text :
+					1839 text 0
+					1840 container
+						1841 text " page_number "
+					1842 text :
+					1843 text 1
+					1844 container
+						1845 text " source "
+					1846 text :
+					1847 container
+						1848 text " E:\\工作\\RAG-Agent\\data\\raw\\ef1a2a0c\\Windows复测_DETR节选.pdf "
+					1849 container
+						1850 text " source_file "
+					1851 text :
+					1852 container
+						1853 text " Windows复测_DETR节选.pdf "
+					1854 text }
+					1855 container
+						1856 text " truncated "
+					1857 text :
+					1858 text true
+					1859 container
+						1860 text " score "
+					1861 text :
+					1862 text 0.0036027077585458755
+					1863 text }
+					1864 container
+						1865 text 2 :
+					1866 text {
+					1867 container
+						1868 text " id "
+					1869 text :
+					1870 text 3
+					1871 container
+						1872 text " source_file "
+					1873 text :
+					1874 container
+						1875 text " Windows复测_DETR节选.pdf "
+					1876 container
+						1877 text " location "
+					1878 text :
+					1879 container
+						1880 text " 第1页（物理页码） "
+					1881 container
+						1882 text " text "
+					1883 text :
+					1884 container
+						1885 text " \nthat explicitly encode our prior knowledge about the task. The main\ningredients of the new framework, called DEtection TRansformer or\nDETR, are a set-based global loss that forces unique predictions via bi-\npartite matching, and a transformer encoder-decoder architecture. Given\na ﬁxed small set of learned object queries, DETR reasons about the re-\nlations of the objects and the global image context to directly output\nthe ﬁnal set of predictions in parallel. The new model is conceptually\nsimple and does not require a specialized library, unlike many other\nmodern detectors. DETR demonstrates accuracy and run-time perfor-\nmance on par with the well-established and highly-optimized Faster R-\nCNN baseline on the challenging COCO object detection dataset. More-\nover, DETR can be easily generalized to produce panoptic segmentation\nin a uniﬁed manner. We show that it signiﬁcantly outperforms com-\npetitive baselines. Training code and pretrained models are available at\nhttps://github.com/facebookresearch/detr.\n1\nIntroduction\nThe goal of object detection is to predict a set of bounding boxes and category\nlabels for each object of interest. Modern detectors address this set prediction\ntask in an indirect way, by deﬁning surrogate regression and classiﬁcation prob-\nlems on a large set of proposals [37,5], anchors [23], or window centers [53,46].\nTheir performances are signiﬁcantly inﬂuenced by postprocessing steps to col- "
+					1886 container
+						1887 text " metadata " :
+					1888 text {
+					1889 container
+						1890 text " chunk_id "
+					1891 text :
+					1892 container
+						1893 text " 131bf755 "
+					1894 container
+						1895 text " doc_id "
+					1896 text :
+					1897 container
+						1898 text " ef1a2a0c "
+					1899 container
+						1900 text " file_type "
+					1901 text :
+					1902 container
+						1903 text " .pdf "
+					1904 container
+						1905 text " page "
+					1906 text :
+					1907 text 0
+					1908 container
+						1909 text " page_number "
+					1910 text :
+					1911 text 1
+					1912 container
+						1913 text " source "
+					1914 text :
+					1915 container
+						1916 text " E:\\工作\\RAG-Agent\\data\\raw\\ef1a2a0c\\Windows复测_DETR节选.pdf "
+					1917 container
+						1918 text " source_file "
+					1919 text :
+					1920 container
+						1921 text " Windows复测_DETR节选.pdf "
+					1922 container
+						1923 text " retrieval_warning "
+					1924 text :
+					1925 container
+						1926 text " 持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。 "
+					1927 text }
+					1928 container
+						1929 text " truncated "
+					1930 text :
+					1931 text false
+					1932 container
+						1933 text " score "
+					1934 text :
+					1935 text 0.13700783252716064
+					1936 text }
+					1937 container
+						1938 text 3 :
+					1939 text {
+					1940 container
+						1941 text " id "
+					1942 text :
+					1943 text 4
+					1944 container
+						1945 text " source_file "
+					1946 text :
+					1947 container
+						1948 text " Windows复测_DETR节选.pdf "
+					1949 container
+						1950 text " location "
+					1951 text :
+					1952 container
+						1953 text " 第1页（物理页码） "
+					1954 container
+						1955 text " text "
+					1956 text :
+					1957 container
+						1958 text " \nhttps://github.com/facebookresearch/detr.\n1\nIntroduction\nThe goal of object detection is to predict a set of bounding boxes and category\nlabels for each object of interest. Modern detectors address this set prediction\ntask in an indirect way, by deﬁning surrogate regression and classiﬁcation prob-\nlems on a large set of proposals [37,5], anchors [23], or window centers [53,46]. "
+					1959 container
+						1960 text " metadata " :
+					1961 text {
+					1962 container
+						1963 text " chunk_id "
+					1964 text :
+					1965 container
+						1966 text " 9035a679 "
+					1967 container
+						1968 text " doc_id "
+					1969 text :
+					1970 container
+						1971 text " ef1a2a0c "
+					1972 container
+						1973 text " file_type "
+					1974 text :
+					1975 container
+						1976 text " .pdf "
+					1977 container
+						1978 text " page "
+					1979 text :
+					1980 text 0
+					1981 container
+						1982 text " page_number "
+					1983 text :
+					1984 text 1
+					1985 container
+						1986 text " source "
+					1987 text :
+					1988 container
+						1989 text " E:\\工作\\RAG-Agent\\data\\raw\\ef1a2a0c\\Windows复测_DETR节选.pdf "
+					1990 container
+						1991 text " source_file "
+					1992 text :
+					1993 container
+						1994 text " Windows复测_DETR节选.pdf "
+					1995 container
+						1996 text " retrieval_warning "
+					1997 text :
+					1998 container
+						1999 text " 持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。 "
+					2000 text }
+					2001 container
+						2002 text " truncated "
+					2003 text :
+					2004 text true
+					2005 container
+						2006 text " score "
+					2007 text :
+					2008 text 0.10808754712343216
+					2009 text } ]
+					2010 container
+						2011 text " truncated "
+					2012 text :
+					2013 text true
+					2014 text } ]
+
+The focused UI element is 244 pop up button (expanded) 查看公开执行过程, Secondary Actions: Collapse
