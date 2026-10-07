@@ -151,12 +151,18 @@ def _knowledge_base_search(question: str, doc_id: str | None = None, *, cache=No
             message["retrieved_documents"] = deepcopy(confirmation["retrieved_documents"])
             returned_chunks = 0
         else:
-            results = HybridRetriever().search(question, doc_id=doc_id, rerank=True)
+            retriever = HybridRetriever()
+            results = retriever.search(question, doc_id=doc_id, rerank=True)
             returned_chunks = len(results)
             message["retrieved_documents"] = [{"rank": rank, "text": document.page_content,
                                               "metadata": deepcopy(document.metadata), "score": score}
                                              for rank, (document, score) in enumerate(results, 1)]
             message["retrieval_status"] = "success" if results else "empty"
+            from src.generation.rag_pipeline import focus_answer_evidence
+            if re.search(r"(?:如何|怎样|怎么).*?(?:使用|实现|工作)|\bhow\b.*?\b(?:use|work|implement)\w*", question, re.I):
+                chunks = retriever.vector_store.list_chunks(doc_id=doc_id)
+                expanded = [(_expand_paper_evidence(doc, chunks), score) for doc, score in results]
+                results = focus_answer_evidence(question, expanded, chunks=chunks)
             context = prepare_rag_context(question, results)
         message.update(context=context, generation_mode=context["generation_mode"],
                        retrieval_seconds=0.0 if confirmation is not None else perf_counter() - started)
@@ -409,6 +415,43 @@ def _expand_paper_evidence(document, chunks, *, include_previous=True):
     return result
 
 
+def _has_quantitative_result(text):
+    """指标、数值和结果陈述须在同一句；图轴或缺少表头的数字尾块不能冒充结果。"""
+    metric = r"\b(?:BLEU|accuracy|m?AP|F1|IoU|Recall|precision|perplexity|loss)\b|准确率|精度|召回率|损失"
+    for sentence in re.split(r"[.!?](?:\s+|$)|[。！？]\s*", text):
+        if not re.search(metric, sentence, re.I) or not re.search(r"\d+\.\d+|\d+\s*%|(?:" + metric + r")\s*[:=：]?\s*\d+", sentence, re.I):
+            continue
+        narrative = re.search(r"achiev\w*|reach\w*|obtain\w*|attain\w*|score\w*|outperform\w*|达到|取得", sentence, re.I)
+        dataset = re.search(r"\bon\b|dataset|benchmark|\bWMT\b|数据集|任务", sentence, re.I)
+        fields = re.search(r"\b(?:method|model)\b|方法|模型", sentence, re.I)
+        if dataset and (narrative or fields):
+            return True
+    return False
+
+
+def _quantitative_excerpt(document, chunks):
+    """从同原文连续邻块选完整结果句，并保留紧邻的训练条件；不补写表头或数字。"""
+    doc = _expand_paper_evidence(document, chunks)
+    text = doc.page_content
+    spans = list(re.finditer(r".*?(?:[.!?](?:\s+|$)|[。！？]\s*|$)", text, re.S))
+    matches = [i for i, match in enumerate(spans) if _has_quantitative_result(match.group())]
+    if not matches:
+        return None
+    first, last = matches[0], matches[-1]
+    if first and re.search(r"pre.train|训练|our model", spans[first - 1].group(), re.I):
+        first -= 1
+    start, end = spans[first].start(), spans[last].end()
+    doc.page_content = text[start:end]
+    if type(doc.metadata.get("start_index")) is int:
+        doc.metadata.update(start_index=doc.metadata["start_index"] + start,
+                            end_index=doc.metadata["start_index"] + end, evidence_excerpt=True)
+    if "line_start" in doc.metadata:
+        line = doc.metadata["line_start"]
+        doc.metadata.update(line_start=line + text[:start].count("\n"),
+                            line_end=line + text[:end].rstrip("\n").count("\n"))
+    return doc
+
+
 @tool
 def paper_compare(paper_a_id: str, paper_b_id: str) -> dict:
     """接受两篇已上传并入库论文的SHA-256 ID，对比方法、数据集、实验结果，返回原文引用。
@@ -457,15 +500,24 @@ def _paper_compare(paper_a_id: str, paper_b_id: str, *, session_id=None, pending
                "实验结果": ("What accuracy, BLEU or other quantitative scores does the proposed model achieve?", "论文模型在各实验数据集上取得哪些准确率、BLEU或其他指标数值？")}
     budget = load_config()["generation"]["max_context_chars"] // 2
     for label, identifier, path in zip(("A", "B"), (paper_a_id, paper_b_id), paths):
+        chunks = sorted(retriever.vector_store.list_chunks(doc_id=identifier),
+                        key=lambda doc: (doc.metadata.get("page_number", 1), doc.metadata.get("start_index", 0)))
         selected, coverage, dimension_keys = {}, {}, {}
         for dimension, variants in queries.items():
             candidates = {}
             for query in variants:
-                for document, score in retriever.search(query, k=2, doc_id=identifier, rerank=True):
+                # 实验结果先查看已融合、精排的Top-20，避免Top-2图轴挤掉较低排名的数字证据。
+                for document, score in retriever.search(query, k=20 if dimension == "实验结果" else 2,
+                                                        doc_id=identifier, rerank=True):
                     key = document.metadata["chunk_id"]
                     if key not in candidates or score > candidates[key][1]:
                         candidates[key] = (document, score)
-            found = sorted(candidates.values(), key=lambda pair: pair[1], reverse=True)[:2]
+            ranked = sorted(candidates.values(), key=lambda pair: pair[1], reverse=True)
+            numeric = []
+            if dimension == "实验结果":
+                numeric = [(excerpt, score) for doc, score in ranked
+                           if (excerpt := _quantitative_excerpt(doc, chunks)) is not None]
+            found = (numeric or ranked)[:2]
             dimension_keys[dimension] = [document.metadata["chunk_id"] for document, _ in found]
             checked = prepare_rag_context(variants[0], found)
             coverage[dimension] = {"generation_mode": checked["generation_mode"], "top_score": checked["top_score"]}
@@ -478,8 +530,6 @@ def _paper_compare(paper_a_id: str, paper_b_id: str, *, session_id=None, pending
                 if key not in selected or score > selected[key][1]:
                     selected[key] = (document, score)
         # 摘要交代本篇贡献；为摘要单独留预算，避免结果高分块淹没方法，或将引用中的前人方法当成主方法。
-        chunks = sorted(retriever.vector_store.list_chunks(doc_id=identifier),
-                        key=lambda doc: (doc.metadata.get("page_number", 1), doc.metadata.get("start_index", 0)))
         first_page = [doc for doc in chunks if doc.metadata.get("page_number", 1) == 1]
         start = next((i for i, doc in enumerate(first_page) if re.search(r"\bAbstract\b|摘要", doc.page_content, re.I)), 0)
         opening = [_expand_paper_evidence(doc, chunks) for doc in first_page[start:start + 2]]
@@ -489,6 +539,16 @@ def _paper_compare(paper_a_id: str, paper_b_id: str, *, session_id=None, pending
                 # 开头的作者/邮箱不占方法证据预算；同页位置不变，正文仅选实际摘要及相邻内容。
                 doc.page_content = doc.page_content[heading.start():]
                 doc.metadata["start_index"] = doc.metadata.get("start_index", 0) + heading.start()
+                boundary = re.search(r"\n\s*(?:\d+\s*\n\s*)?(?:INTRODUCTION|引言)\b", doc.page_content, re.I)
+                if boundary:
+                    doc.page_content = doc.page_content[:boundary.start()]
+                doc.metadata.update(end_index=doc.metadata["start_index"] + len(doc.page_content), evidence_excerpt=True)
+                doc.metadata["comparison_method"] = True
+        # 同页摘要只保留最早的连续块，不能再把摘要后的Introduction背景当成第二段主方法。
+        abstracts = [doc for doc in opening if doc.metadata.get("comparison_method")]
+        if abstracts:
+            opening = abstracts[:1]
+            dimension_keys["方法"] = []  # 摘要已保留本篇贡献，剩余预算交给数据集和完整结果。
         novel = [doc for doc in opening if doc.metadata["chunk_id"] not in selected]
         opening_scores = {doc.metadata["chunk_id"]: (doc, score) for doc, score in
                           # 输入占位分数不参与精排，输出全部为实际BGE模型分数。
@@ -508,7 +568,9 @@ def _paper_compare(paper_a_id: str, paper_b_id: str, *, session_id=None, pending
         body_budget = budget - budget // 3
         bodies = []
         for group in groups:
-            expanded = [(_expand_paper_evidence(doc, chunks), score) for doc, score in group]
+            # 已有完整数值的块直接使用，不能用无关前缀耗光预算后拒绝整个结果。
+            expanded = [(deepcopy(doc) if _has_quantitative_result(doc.page_content)
+                         else _expand_paper_evidence(doc, chunks), score) for doc, score in group]
             body = build_context(question, expanded, max_context_chars=body_budget // len(groups))
             displaced = set()
             for ref in body["references"]:
@@ -565,6 +627,7 @@ def _finish_paper_compare(context, base, paths, paper_a_id, paper_b_id, started,
         raise ValueError("上下文预算未保留两篇论文，请调整预算后重试，不能只用一篇生成对比")
     # 模型只选择证据编号；正文和引用由程序回填，避免自由改写将英德28.4错写为英法28.4。
     selection, calls = {}, []
+    partial_ids = {ref["metadata"]["chunk_id"] for paper in papers for ref in paper["references"] if ref["truncated"]}
     prompt = ("你负责本篇论文证据选择。为method（本篇主方法）、datasets（实验数据集）、results（实验结果与指标）"
               "分别选择最直接的参考文档编号。主方法选本篇具体输入表示、架构和训练方法，"
               "仅有研究背景、作者或邮箱不算方法证据；实验结果须保留指标、模型和数据集对应条件。"
@@ -573,6 +636,15 @@ def _finish_paper_compare(context, base, paths, paper_a_id, paper_b_id, started,
     for label, identifier, path in zip(("a", "b"), (paper_a_id, paper_b_id), paths):
         refs = [ref for ref in context["references"] if ref["metadata"]["doc_id"] == identifier]
         properties = {key: {"enum": [*[ref["id"] for ref in refs], None]} for key in ("method", "datasets", "results")}
+        methods = [ref["id"] for ref in refs if ref["metadata"].get("comparison_method")]
+        if methods:
+            properties["method"]["enum"] = [*methods, None]
+        complete_results = [ref["id"] for ref in refs if not ref["truncated"]
+                            and ref["metadata"]["chunk_id"] not in partial_ids
+                            and _has_quantitative_result(ref["text"])]
+        if complete_results:
+            # 已有完整数值时，约束模型只从这些编号选择，避免仍选高分图轴或截断的表头。
+            properties["results"]["enum"] = [*complete_results, None]
         schema = {"type": "object", "properties": properties, "required": list(properties), "additionalProperties": False}
         messages = [SystemMessage(content=prompt), HumanMessage(content=json.dumps({
             "source_file": path.name, "references": [{"id": ref["id"], "text": ref["text"]} for ref in refs]
@@ -589,7 +661,6 @@ def _finish_paper_compare(context, base, paths, paper_a_id, paper_b_id, started,
         calls.append({"paper": label.upper(), "model": response["model"], "choice": choice,
                       "usage": {key: response.get(key) for key in ("prompt_eval_count", "eval_count")}})
     references = {ref["id"]: ref for ref in context["references"]}
-    partial_ids = {ref["metadata"]["chunk_id"] for paper in papers for ref in paper["references"] if ref["truncated"]}
     for ref in references.values():
         ref["truncated"] |= ref["metadata"]["chunk_id"] in partial_ids
     lines = ["## 回答", "以下按三个维度并列展示两篇论文的原文证据，不改写实验数字或条件。",
@@ -612,9 +683,7 @@ def _finish_paper_compare(context, base, paths, paper_a_id, paper_b_id, started,
                         missing.append(f"论文{label.upper()}：实验结果完整证据")
                         cells.append(f"原文证据已截断，不能完整列出数值及对应模型／数据集；请核对原文。 [参考文档{reference_id}]")
                         continue
-                    metric = re.search(r"\b(?:BLEU|accuracy|m?AP|F1|IoU|Recall|precision|perplexity|loss)\b|准确率|精度|召回率|损失", ref["text"], re.I)
-                    number = re.search(r"\d+\.\d+|\d+\s*%|(?:BLEU|accuracy|m?AP|F1|IoU|Recall|precision|perplexity|loss|准确率|精度|召回率|损失)\s*[:=：]?\s*\d+", ref["text"], re.I)
-                    if not metric or not number:
+                    if not _has_quantitative_result(ref["text"]):
                         missing.append(f"论文{label.upper()}：实验结果数值")
                         cells.append(f"当前返回原文／节选未提供可核验的实验指标数值；请核对完整原文。 [参考文档{reference_id}]")
                         continue

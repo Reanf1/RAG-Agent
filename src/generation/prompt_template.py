@@ -4,7 +4,7 @@ from langchain_core.messages import BaseMessage
 from langchain_core.prompts import ChatPromptTemplate
 
 
-PROMPT_VERSION = "rag-v6"
+PROMPT_VERSION = "rag-v7"  # 证据聚焦策略改变后，不复用旧版宽上下文答案。
 NO_CONTEXT_TEXT = "当前知识库中未找到相关文档。"
 
 # 沿用参考项目的角色、参考文档、Markdown 与来源要求，补充科研事实约束。

@@ -19,6 +19,67 @@ from src.utils.token_budget import check_request_budget, request_tokens
 urlopen = build_opener(ProxyHandler({})).open
 
 
+def focus_answer_evidence(question: str, results: list[tuple[Document, float]], *, chunks=()) -> list[tuple[Document, float]]:
+    """单一的使用／实现问题按连续双句精排，减少相邻对象混入；宽泛问题保留原块。"""
+    if not re.search(r"(?:如何|怎样|怎么).*?(?:使用|实现|工作)|\bhow\b.*?\b(?:use|work|implement)\w*", question, re.I):
+        return results
+    if re.search(r"附录|消融|对比|比较|appendix|ablation|compar", question, re.I):
+        return results
+    from src.retrieval.bm25_retriever import expand_academic_query
+    from src.retrieval.reranker import Reranker
+    candidates, unchanged = [], []
+    for document, score in results:
+        text, metadata = document.page_content, document.metadata
+        # 表格保留整行列关系；没有原文偏移的资料不能伪造摘录位置。
+        if metadata.get("content_type") == "table" or type(metadata.get("start_index")) is not int:
+            unchanged.append((document, score))
+            continue
+        boundaries = [0] + [match.end() for match in re.finditer(r"[.!?](?:\s+|$)|[。！？]\s*", text)]
+        if boundaries[-1] < len(text):
+            boundaries.append(len(text))
+        if len(boundaries) <= 3:
+            unchanged.append((document, score))
+            continue
+        for index in range(len(boundaries) - 2):
+            start, end = boundaries[index], boundaries[index + 2]
+            # 不改写原文；展示、引用和实际发给模型的区间完全一致。
+            excerpt = deepcopy(document)
+            excerpt.page_content = text[start:end]
+            excerpt.metadata.update(start_index=metadata["start_index"] + start,
+                                    end_index=metadata["start_index"] + end, evidence_excerpt=True)
+            if "line_start" in metadata:
+                excerpt.metadata.update(line_start=metadata["line_start"] + text[:start].count("\n"),
+                                        line_end=metadata["line_start"] + text[:end].rstrip("\n").count("\n"))
+            candidates.append((excerpt, 0.0))
+    ranked = Reranker().rerank(expand_academic_query(question), candidates, k=len(candidates)) if candidates else []
+    # 普通“如何使用”先选正文主设置；明确问消融／附录时保留相应范围。
+    # 边界来自原文独立标题，不能把“see Appendix”当成正文结束。
+    appendix = {}
+    for doc in chunks:
+        if re.search(r"(?m)^\s*(?:APPENDIX|附录)\s*$", doc.page_content):
+            key, page = doc.metadata.get("doc_id"), doc.metadata.get("page_number")
+            if type(page) is int:
+                appendix[key] = min(appendix.get(key, page), page)
+    ranked = sorted(ranked + unchanged, key=lambda pair: -pair[1])
+    focused = {}
+    threshold = load_config()["generation"]["low_relevance_threshold"]
+    # “如何使用”优先明确的操作陈述；相似性图的观察不能当作模型执行步骤。
+    operations = r"\b(?:we|our model)\s+(?:use|employ|adopt|add)\b|\bare added to\b|使用|采用|加入|添加"
+    for document, score in ranked:
+        key = document.metadata.get("doc_id")
+        main = document.metadata.get("page_number", 1) < appendix.get(key, math.inf)
+        if main and score >= threshold and re.search(operations, document.page_content, re.I):
+            focused.setdefault(key, (document, score))
+    for document, score in ranked:
+        key = document.metadata.get("doc_id")
+        main = document.metadata.get("page_number", 1) < appendix.get(key, math.inf)
+        if main and score >= threshold:
+            focused.setdefault(key, (document, score))
+    for document, score in ranked:
+        focused.setdefault(document.metadata.get("doc_id"), (document, score))
+    return sorted(focused.values(), key=lambda pair: -pair[1])
+
+
 def prepare_rag_context(question: str, results: list[tuple[Document, float]]) -> dict:
     """问答只接收 BGE sigmoid 重排结果；低相关性暂停生成，原文留待确认。"""
     context = build_context(question, results)

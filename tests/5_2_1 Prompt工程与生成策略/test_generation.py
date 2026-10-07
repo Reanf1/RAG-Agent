@@ -30,7 +30,8 @@ class TestLocalGeneration(unittest.TestCase):
                               "model": "qwen2.5:7b", "temperature": 0.1, "top_p": 0.9,
                               "top_k": 40, "num_ctx": 8192, "num_predict": 512,
                               "repeat_penalty": 1.0},
-                       "generation": {"max_context_chars": 6000, "max_prompt_chars": 12000}}
+                       "generation": {"max_context_chars": 6000, "max_prompt_chars": 12000,
+                                      "low_relevance_threshold": 0.1}}
         config_patch = patch("src.generation.rag_pipeline.load_config", return_value=self.config)
         config_patch.start()
         self.addCleanup(config_patch.stop)
@@ -47,6 +48,64 @@ class TestLocalGeneration(unittest.TestCase):
 
     def set_response(self, response):
         self.opener.return_value = BytesIO(json.dumps(response).encode())
+
+    def test_narrow_question_focus_excludes_unrelated_object_and_preserves_source(self):
+        """位置编码相邻的分类头语句不能一起进入聚焦证据，引用仍为真实连续原文。"""
+        from src.generation.rag_pipeline import focus_answer_evidence
+        text = ("The classification head is a linear layer at fine-tuning time. "
+                "Position embeddings are added to patch embeddings. "
+                "We use standard learnable 1D position embeddings. "
+                "The encoder then processes the sequence.")
+        document = Document(page_content=text, metadata={"chunk_id": "c", "doc_id": "d",
+                            "page_number": 3, "start_index": 100, "end_index": 100 + len(text)})
+        before = deepcopy(document)
+        def rank(query, candidates, k):
+            return sorted([(d, 0.95 if d.page_content.startswith("Position") else 0.01)
+                           for d, _ in candidates], key=lambda p: -p[1])[:k]
+        with patch("src.retrieval.reranker.Reranker.rerank", side_effect=rank):
+            [(focused, score)] = focus_answer_evidence("如何使用位置编码？", [(document, 0.9)])
+        self.assertNotIn("classification", focused.page_content)
+        self.assertIn("learnable 1D", focused.page_content)
+        start = focused.metadata["start_index"] - 100
+        self.assertEqual(text[start:start + len(focused.page_content)], focused.page_content)
+        self.assertEqual(focused.metadata["end_index"], 100 + start + len(focused.page_content))
+        self.assertEqual(document, before)
+        self.assertEqual(score, 0.95)
+
+    def test_broad_question_does_not_focus_away_requested_details(self):
+        from src.generation.rag_pipeline import focus_answer_evidence
+        with patch("src.retrieval.reranker.Reranker.rerank") as rank:
+            results = [(Document(page_content="方法、训练数据与结果。"), 0.9)]
+            self.assertEqual(focus_answer_evidence("请全面介绍论文的方法和结果", results), results)
+            rank.assert_not_called()
+
+    def test_default_usage_prefers_main_setting_over_high_scored_appendix(self):
+        """高分附录消融不能覆盖正文主设置；明确问附录时仍能访问原文。"""
+        from src.generation.rag_pipeline import focus_answer_evidence
+        main = Document(page_content="Position embeddings are added to patches. We use learnable 1D embeddings. End.",
+                        metadata={"chunk_id": "main", "doc_id": "d", "page_number": 3, "start_index": 0})
+        appendix = Document(page_content="We compare 2D embeddings. We test relative embeddings. End.",
+                            metadata={"chunk_id": "appendix", "doc_id": "d", "page_number": 18, "start_index": 0})
+        heading = Document(page_content="APPENDIX", metadata={"doc_id": "d", "page_number": 13})
+        def rank(query, candidates, k):
+            return sorted([(d, .99 if d.metadata['chunk_id'] == 'appendix' else .8) for d, _ in candidates],
+                          key=lambda pair: -pair[1])
+        results = [(main, .8), (appendix, .99)]
+        with patch("src.retrieval.reranker.Reranker.rerank", side_effect=rank):
+            focused = focus_answer_evidence("如何使用位置编码？", results, chunks=[heading])
+            self.assertEqual(len(focused), 1)
+            self.assertEqual(focused[0][0].metadata["chunk_id"], "main")
+            self.assertEqual(focus_answer_evidence("附录如何使用位置编码？", results, chunks=[heading]), results)
+
+    def test_usage_prefers_explicit_operation_over_similarity_visualization(self):
+        """Figure7的相似性观察不能代替正文明确的实际使用方式。"""
+        from src.generation.rag_pipeline import focus_answer_evidence
+        texts = ("Position embeddings are added to patch embeddings. We use learnable 1D embeddings.",
+                 "Figure 7: Position embedding similarity. Each tile shows cosine similarity between embeddings.")
+        docs = [Document(page_content=text, metadata={"chunk_id": str(i), "doc_id": "d", "page_number": page,
+                         "start_index": 0}) for i, (text, page) in enumerate(zip(texts, (3, 9)))]
+        focused = focus_answer_evidence("ViT如何使用位置编码？", [(docs[1], .99), (docs[0], .8)])
+        self.assertEqual(focused[0][0].metadata["page_number"], 3)
 
     def test_config_reaches_native_ollama_and_citations(self):
         before = deepcopy(self.context)

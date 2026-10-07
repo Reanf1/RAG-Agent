@@ -113,12 +113,71 @@ class TestComparisonAndKeywords(unittest.TestCase):
         self.assertIn(paper_compare, AVAILABLE_TOOLS)
         self.assertIn(keyword_extract, AVAILABLE_TOOLS)
 
+    def test_numeric_result_below_chart_rank_is_recalled_without_neighbor_truncation(self):
+        """Top-2是图轴时继续检查Top-20，完整数值原文不能被扩展前缀截断。"""
+        numeric = deepcopy(self.documents[0])
+        numeric.page_content = "Model A pretrained on Dataset X achieves accuracy 88.55% on Dataset Y."
+        numeric.metadata.update(chunk_id="numeric", start_index=900, end_index=900 + len(numeric.page_content))
+        charts = []
+        for i in range(2):
+            d = deepcopy(numeric)
+            d.page_content = "Accuracy [%] 90 80 70. Figure: computational budget."
+            d.metadata.update(chunk_id=f"chart{i}", start_index=i * 400, end_index=i * 400 + len(d.page_content))
+            charts.append((d, 0.99 - i * 0.01))
+        def search(query, *, k, doc_id, rerank):
+            if doc_id == self.ids[0] and ("scores" in query or "指标数值" in query):
+                return (charts + [(numeric, 0.7)])[:k]
+            return [(self.documents[self.ids.index(doc_id)], 0.9)]
+        def packet(request, timeout):
+            payload = json.loads(request.data)
+            refs = json.loads(payload["messages"][-1]["content"])["references"]
+            selected = next((r["id"] for r in refs if "88.55% on Dataset Y" in r["text"]), refs[0]["id"])
+            choice = {"method": refs[0]["id"], "datasets": refs[0]["id"], "results": selected}
+            return BytesIO(json.dumps({**self.response, "message": {"content": json.dumps(choice)}}).encode())
+        with patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
+                patch("src.generation.rag_pipeline.urlopen", side_effect=packet):
+            retriever.return_value.search.side_effect = search
+            result = paper_compare.invoke(dict(zip(("paper_a_id", "paper_b_id"), self.ids)))
+        row = result["comparison"][2]["a"]
+        self.assertEqual(row["metadata"]["chunk_id"], "numeric")
+        self.assertFalse(row["truncated"])
+        self.assertIn("88.55%", result["answer"])
+        self.assertEqual(result["status"], "answered")
+
+    def test_table_tail_with_numbers_and_caption_is_not_complete_result(self):
+        """实测Table5尾块没有模型列，caption中的accuracy不能把孤立数字变成完整结果。"""
+        from src.agent.tools import _has_quantitative_result, _quantitative_excerpt
+        text = ("99.45\n99.68\nOxford-IIIT-Pets\n95.80\n97.56\n"
+                "Table 5: Top1 accuracy (in %) of Vision Transformer on various datasets. "
+                "Models are fine-tuned at 384 resolution. These techniques are used to achieve results in Table 2.")
+        doc = deepcopy(self.documents[0])
+        doc.page_content = text
+        self.assertFalse(_has_quantitative_result(text))
+        self.assertIsNone(_quantitative_excerpt(doc, []))
+
+    def test_numeric_excerpt_keeps_pretraining_and_dataset_metric_relation(self):
+        from src.agent.tools import _quantitative_excerpt
+        text = ("Background. ViT is pre-trained on ImageNet-21k or JFT-300M. "
+                "The best model reaches accuracy 88.55% on ImageNet and 94.55% on CIFAR-100. Related work.")
+        doc = deepcopy(self.documents[0])
+        doc.page_content = text
+        doc.metadata.update(start_index=80, end_index=80 + len(text))
+        before = deepcopy(doc)
+        result = _quantitative_excerpt(doc, [])
+        self.assertIn("pre-trained on ImageNet-21k", result.page_content)
+        self.assertIn("88.55% on ImageNet", result.page_content)
+        self.assertNotIn("Background", result.page_content)
+        offset = result.metadata["start_index"] - 80
+        self.assertEqual(text[offset:offset + len(result.page_content)], result.page_content)
+        self.assertEqual(doc, before)
+
     def test_comparison_filters_each_paper_and_covers_three_dimensions(self):
         result, retriever, http = self.compare()
         calls = retriever.return_value.search.call_args_list
         self.assertEqual(len(calls), 12)
         self.assertEqual([call.kwargs["doc_id"] for call in calls], [self.ids[0]] * 6 + [self.ids[1]] * 6)
-        self.assertTrue(all(call.kwargs["k"] == 2 and call.kwargs["rerank"] for call in calls))
+        self.assertEqual([call.kwargs["k"] for call in calls], [2, 2, 2, 2, 20, 20] * 2)
+        self.assertTrue(all(call.kwargs["rerank"] for call in calls))
         self.assertEqual(result["status"], "answered")
         self.assertEqual(len(result["citations"]), 2)
         self.assertEqual({r["metadata"]["doc_id"] for r in result["citations"]}, set(self.ids))
@@ -234,20 +293,26 @@ class TestComparisonAndKeywords(unittest.TestCase):
     def test_method_evidence_keeps_adjacent_actual_architecture_text(self):
         """孤立背景块补入同原文相邻块，避免本篇方法只剩背景概述。"""
         from langchain_core.documents import Document
+        from src.agent.tools import _finish_paper_compare
         current = self.documents[0]
         current.page_content = "Abstract: Transformers were mostly used in NLP. "
         current.metadata.update(start_index=0, end_index=len(current.page_content))
-        following_text = "Method: Split images into patches and use a Transformer encoder. BLEU 28.4."
+        following_text = ("Method: Split images into patches and use a Transformer encoder. BLEU 28.4."
+                          "\n1\nINTRODUCTION\nUnrelated NLP background.")
         following = Document(page_content=following_text,
             metadata={**current.metadata, "chunk_id": "next-method", "start_index": len(current.page_content),
                       "end_index": len(current.page_content) + len(following_text)})
         with patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
-                patch("src.generation.rag_pipeline.urlopen", side_effect=self.comparison_packet):
+                patch("src.generation.rag_pipeline.urlopen", side_effect=self.comparison_packet), \
+                patch("src.agent.tools._finish_paper_compare", wraps=_finish_paper_compare) as finish:
             retriever.return_value.search.side_effect = lambda query, **kw: [(self.documents[self.ids.index(kw['doc_id'])], .9)]
             retriever.return_value.vector_store.list_chunks.side_effect = [[current, following], [self.documents[1]]]
             result = paper_compare.invoke(dict(zip(("paper_a_id", "paper_b_id"), self.ids)))
         row = next(row for row in result["comparison"] if row["dimension"] == "方法")
         self.assertIn("Split images into patches", row["a"]["text"])
+        self.assertNotIn("INTRODUCTION", row["a"]["text"])
+        ref = next(ref for ref in finish.call_args.args[0]["references"] if ref["metadata"].get("comparison_method"))
+        self.assertEqual(ref["metadata"]["end_index"] - ref["metadata"]["start_index"], len(ref["text"]))
 
     def test_comparison_low_relevance_cannot_generate_or_auto_confirm(self):
         result, _, http = self.compare((0.9, 0.01))

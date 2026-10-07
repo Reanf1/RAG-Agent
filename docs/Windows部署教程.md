@@ -189,6 +189,17 @@ $env:RAG_OLLAMA_BASE_URL = 'http://127.0.0.1:11434'
 
 停止时在两个终端分别按Ctrl+C。原文`data/raw`、索引`data/index`、会话`data/sessions`、模型`data/models`和`logs`均在项目目录保留。只需复制/备份相关目录，不手工编辑Chroma内部文件；备份索引或SQLite前先停止应用，避免在写入中复制。
 
+### 7.1 已有索引出现Label not found时的停机维护
+
+先停止所有连接本项目索引的Streamlit／Python进程，在项目根目录同步本轮全部修复后执行一次：
+
+```powershell
+git pull --ff-only
+.\.venv\Scripts\python.exe -m src.retrieval.repair_index --activate
+```
+
+程序只读取原库的块ID、正文和来源，在旁边新建索引，用当前配置的本地Embedding重新编码；构建进程退出后，另一进程核对全部正文、全部持久化向量和原生HNSW查询。两阶段成功且原库未变化才替换，原库保留为`index-backup-<编号>`，终端打印实际备份路径。失败时保留原库和失败目录，不覆盖重跑、不把临时查询恢复当修复成功；目录被占用时先核对应用已停止。完成后按第6节重启一次，集中复测四个问题。该流程已在Mac临时索引实测，Windows原库仍需执行后核验；正式部署／断网／性能验收另行安排。
+
 ## 8 常见问题
 
 | 现象 | 处理 |
