@@ -130,6 +130,9 @@ def recovery_limits() -> tuple[float, int, int]:
 def _execute_attempts(call, tools, retries, deadline, stopped, attempts, on_token=None):
     """同一线程串行重试；已返回的TimeoutError才可重试，关闭/到期后不能再启动。"""
     started = perf_counter()
+    # 首次调用也可能因线程调度迟到，不能在请求已经结束后才启动模型或工具。
+    if stopped.is_set() or started >= deadline:
+        raise FutureTimeout("请求已结束，工具尚未启动")
     for attempt in range(retries + 1):
         if attempt and (stopped.is_set() or perf_counter() >= deadline):
             break

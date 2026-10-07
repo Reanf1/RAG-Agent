@@ -1,0 +1,15 @@
+{"cached_question": "模型准确率是否超过80%？", "query": "模型准确率是否低于80%？", "cosine": 0.9982471200976989, "constraints_match": true, "expected_hit": false, "actual_hit": true, "cache_result": {"hit": true, "mode": "semantic", "similarity": 0.9982471200976984, "question": "模型准确率是否超过80%？"}, "passed": false}
+{"cached_question": "模型准确率大于80%吗？", "query": "模型准确率小于80%吗？", "cosine": 0.996969517496707, "constraints_match": true, "expected_hit": false, "actual_hit": true, "cache_result": {"hit": true, "mode": "semantic", "similarity": 0.996969517496708, "question": "模型准确率大于80%吗？"}, "passed": false}
+{"cached_question": "BERT使用15%的掩码比例吗？", "query": "BERT使用15‰的掩码比例吗？", "cosine": 0.9876094018554732, "constraints_match": true, "expected_hit": false, "actual_hit": true, "cache_result": {"hit": true, "mode": "semantic", "similarity": 0.9876094018554724, "question": "BERT使用15%的掩码比例吗？"}, "passed": false}
+{"cached_question": "指标是否>=80？", "query": "指标是否<=80？", "cosine": 0.9959977471047479, "constraints_match": true, "expected_hit": false, "actual_hit": true, "cache_result": {"hit": true, "mode": "semantic", "similarity": 0.9959977471047479, "question": "指标是否>=80？"}, "passed": false}
+{"cached_question": "指标至少80吗？", "query": "指标至多80吗？", "cosine": 0.9943567533634201, "constraints_match": true, "expected_hit": false, "actual_hit": true, "cache_result": {"hit": true, "mode": "semantic", "similarity": 0.99435675336342, "question": "指标至少80吗？"}, "passed": false}
+{"cached_question": "Is accuracy greater than 80%?", "query": "Is accuracy less than 80%?", "cosine": 0.9785483833696274, "constraints_match": true, "expected_hit": false, "actual_hit": true, "cache_result": {"hit": true, "mode": "semantic", "similarity": 0.9785483833696272, "question": "Is accuracy greater than 80%?"}, "passed": false}
+{"cached_question": "指标为-5吗？", "query": "指标为5吗？", "cosine": 0.9822775336209867, "constraints_match": true, "expected_hit": false, "actual_hit": true, "cache_result": {"hit": true, "mode": "semantic", "similarity": 0.9822775336209886, "question": "指标为-5吗？"}, "passed": false}
+{"cached_question": "ViT采用什么输入？", "query": "ViT使用什么输入？", "cosine": 0.9895172857076948, "constraints_match": true, "expected_hit": true, "actual_hit": true, "cache_result": {"hit": true, "mode": "semantic", "similarity": 0.9895172857076957, "question": "ViT采用什么输入？"}, "passed": true}
+{"cached_question": "模型准确率是否超过80%？", "query": "模型的准确率是否超过80%？", "cosine": 0.9966072091406993, "constraints_match": true, "expected_hit": true, "actual_hit": true, "cache_result": {"hit": true, "mode": "semantic", "similarity": 0.9966072091406999, "question": "模型准确率是否超过80%？"}, "passed": true}
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/reports/5_4_4 端到端联调与测试/本地集中修复_20261007/verify_cache_constraints.py", line 69, in <module>
+    main()
+  File "/Users/rean/github/RAG+Agent/reports/5_4_4 端到端联调与测试/本地集中修复_20261007/verify_cache_constraints.py", line 65, in main
+    raise AssertionError("缓存条件变化或同义问句验证失败，真实结果已保留")
+AssertionError: 缓存条件变化或同义问句验证失败，真实结果已保留

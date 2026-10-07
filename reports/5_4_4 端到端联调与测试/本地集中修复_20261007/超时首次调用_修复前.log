@@ -1,0 +1,16 @@
+test_expired_request_never_starts_delayed_first_attempt (__main__.TestErrorRecovery)
+线程已提交但未进入工具时请求到期，之后恢复调度不能再启动首次调用。 ... FAIL
+
+======================================================================
+FAIL: test_expired_request_never_starts_delayed_first_attempt (__main__.TestErrorRecovery)
+线程已提交但未进入工具时请求到期，之后恢复调度不能再启动首次调用。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_3 Agent决策优化/test_error_recovery.py", line 214, in test_expired_request_never_starts_delayed_first_attempt
+    self.assertFalse(self.invocations)
+AssertionError: [('primary_lookup', 'Transformer')] is not false
+
+----------------------------------------------------------------------
+Ran 1 test in 0.044s
+
+FAILED (failures=1)

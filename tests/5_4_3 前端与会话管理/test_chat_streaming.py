@@ -10,6 +10,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 from langchain_core.messages import AIMessage
+from src.agent.react_loop import _run_react
 
 
 class TestStreamingFrontend(unittest.TestCase):
@@ -175,6 +176,79 @@ class TestStreamingFrontend(unittest.TestCase):
         self.app.button(key="new_conversation").click().run()
         self.assertFalse(self.app.session_state["agent_pending_rag"])
         self.core.assert_not_called()
+
+    def test_comparison_confirmation_runs_real_tool_and_agent_completion(self):
+        """页面确认贯通真实工具、Agent与会话；仅模型HTTP和索引版本为受控样例。"""
+        from io import BytesIO
+        import json
+        from src.data_loader import batch_import, create_import_tasks
+        from src.generation.rag_pipeline import prepare_rag_context
+
+        tasks = create_import_tasks([
+            ("论文A.md", b"Model A uses method A and achieves accuracy 85% on Dataset X."),
+            ("论文B.md", b"Model B uses method B and achieves accuracy 90% on Dataset Y."),
+        ])
+        list(batch_import(tasks, self.config["paths"]["raw_documents"]))
+        documents = [task["documents"][0] for task in tasks]
+        for index, doc in enumerate(documents):
+            doc.metadata["chunk_id"] = f"confirmation-{index}"
+        identifiers = [doc.metadata["doc_id"] for doc in documents]
+        question = "对比两篇论文的方法、数据集与实验结果。"
+        args = dict(zip(("paper_a_id", "paper_b_id"), identifiers))
+        self.core.side_effect = _run_react  # 恢复产品执行流程，不能以预设done事件证明完成。
+
+        def packet(request, timeout):
+            properties = json.loads(request.data)["format"]["properties"]
+            choice = {key: value["enum"][0] for key, value in properties.items()}
+            return BytesIO(json.dumps({"model": "protocol-fixture", "done": True, "done_reason": "stop",
+                "prompt_eval_count": 30, "eval_count": 10, "message": {"content": json.dumps(choice)}}).encode())
+
+        with patch("src.agent.tools.load_config", return_value=self.config), \
+                patch("src.generation.rag_pipeline.load_config", return_value=self.config), \
+                patch("src.generation.cache.cache_scope", return_value="scope-v1"), \
+                patch("src.retrieval.vector_store.VectorStore"), \
+                patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
+                patch("src.generation.rag_pipeline.urlopen", side_effect=packet) as http, \
+                patch("src.agent.react_loop.urlopen", side_effect=AssertionError("确认后无需重新规划或改写报告")):
+            context = prepare_rag_context(question, list(zip(documents, (.01, .9))))
+            papers = [{"label": label, "doc_id": identifier, "truncated": False,
+                       "references": [ref for ref in context["references"] if ref["metadata"]["doc_id"] == identifier]}
+                      for label, identifier in zip(("A", "B"), identifiers)]
+            base = {"papers": papers, "missing_dimensions": [], "low_relevance_dimensions": ["论文A：方法"],
+                    "low_relevance_papers": []}
+            approval = {"tool_name": "paper_compare", "question": question, "args": args,
+                        "session_id": self.app.session_state["agent_session_id"], "scope": "scope-v1",
+                        "context": context, "base": base}
+            original = deepcopy(approval)
+            event = {"request_id": "compare-review", "context": {"observations": [{"name": "paper_compare",
+                "status": "success", "call_id": "compare-call", "result": {"status": "needs_confirmation",
+                "references": context["references"], "citations": [], "confirmation_id": "compare-pending"}}]}}
+            self.app.session_state["agent_messages"] = [{"question": question, "answer": "待确认", "complete": False, "event": event}]
+            self.app.session_state["agent_pending_rag"] = {"compare-pending": deepcopy(approval)}
+            self.app.run()
+            self.app.button(key="cancel-rag:compare-pending").click().run()
+            self.assertFalse(self.app.exception)
+            self.core.assert_not_called()
+            http.assert_not_called()
+            self.app.session_state["agent_pending_rag"] = {"compare-pending": deepcopy(approval)}
+            self.app.run()
+            self.app.button(key="confirm-rag:compare-pending").click().run()
+            self.assertFalse(self.app.exception)
+            message = self.app.session_state["agent_messages"][-1]
+            self.assertTrue(message["complete"], message)
+            self.assertEqual(self.core.call_count, 1)
+            self.assertEqual(self.core.call_args.args[2]["confirmed_rag_args"], args)
+            self.assertEqual(http.call_count, 2)
+            retriever.assert_not_called()
+            observation = message["event"]["context"]["observations"][-1]["result"]
+            self.assertTrue(observation["confirmed"])
+            self.assertEqual({ref["metadata"]["doc_id"] for ref in observation["citations"]}, set(identifiers))
+            self.assertEqual([row["a"]["text"] for row in observation["comparison"]], [documents[0].page_content] * 3)
+            self.assertEqual(approval, original)
+            self.assertFalse(self.app.session_state["agent_pending_rag"])
+            self.app.run()
+            self.assertEqual(http.call_count, 2)
+            self.assertEqual(self.core.call_count, 1)
 
 
 class TestConversationStatistics(unittest.TestCase):

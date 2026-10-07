@@ -1,0 +1,32 @@
+test_agent_deadline_stops_without_observation_model_or_next_round (__main__.TestErrorRecovery) ... ok
+test_all_alternatives_fail_and_stop_without_reusing_failed_tools (__main__.TestErrorRecovery) ... ok
+test_alternating_cycle_is_also_stopped (__main__.TestErrorRecovery) ... ok
+test_closing_batch_does_not_wait_or_allow_late_retry (__main__.TestErrorRecovery) ... ok
+test_completed_timeout_retries_once_and_preserves_both_attempts (__main__.TestErrorRecovery) ... ok
+test_deadline_returns_before_worker_exits_and_ignores_late_result (__main__.TestErrorRecovery) ... ok
+test_deadline_workers_remain_bounded_across_requests (__main__.TestErrorRecovery)
+连续请求的迟到线程仍占共享执行额度，不能每次超时再开一条线程。 ... ok
+test_different_arguments_and_separate_requests_are_not_a_cycle (__main__.TestErrorRecovery) ... ok
+test_execution_error_forces_alternative_planning_and_preserves_failed_result (__main__.TestErrorRecovery) ... ok
+test_exhausted_timeout_can_use_alternative (__main__.TestErrorRecovery) ... ok
+test_exhausted_timeout_returns_real_error_without_third_attempt (__main__.TestErrorRecovery) ... ok
+test_expired_request_never_starts_delayed_first_attempt (__main__.TestErrorRecovery)
+线程已提交但未进入工具时请求到期，之后恢复调度不能再启动首次调用。 ... ok
+test_failed_tool_cannot_be_reselected_in_recovery_round (__main__.TestErrorRecovery) ... ok
+test_input_error_does_not_force_unrelated_alternative (__main__.TestErrorRecovery) ... ok
+test_invalid_recovery_limits_stop_before_model_or_tools (__main__.TestErrorRecovery) ... ok
+test_late_timeout_does_not_start_background_retry (__main__.TestErrorRecovery) ... ok
+test_no_alternative_reports_failure_and_does_not_invent_tools (__main__.TestErrorRecovery) ... ok
+test_no_suitable_alternative_finishes_incomplete_without_a_tool (__main__.TestErrorRecovery) ... ok
+test_non_timeout_input_or_execution_error_is_not_retried (__main__.TestErrorRecovery) ... ok
+test_parallel_timeout_preserves_success_and_shared_deadline (__main__.TestErrorRecovery) ... ok
+test_recovery_cannot_exceed_last_iteration (__main__.TestErrorRecovery) ... ok
+test_retry_can_be_disabled (__main__.TestErrorRecovery) ... ok
+test_same_call_is_stopped_before_third_execution (__main__.TestErrorRecovery) ... ok
+test_unrecovered_answer_cannot_claim_completion (__main__.TestErrorRecovery) ... ok
+test_wrapped_timeout_is_classified_without_guessing_from_text (__main__.TestErrorRecovery) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 1.341s
+
+OK

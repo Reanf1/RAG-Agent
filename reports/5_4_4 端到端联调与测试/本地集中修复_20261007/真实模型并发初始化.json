@@ -1,0 +1,30 @@
+{
+  "scope": "新进程以三个实际线程验证M3E／BGE首次加载单例；不是性能或Windows验收。",
+  "started_at": "2026-10-07T13:25:31.304407+08:00",
+  "embedding": {
+    "model": "moka-ai/m3e-base",
+    "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+    "local_path": "data/models/m3e-base",
+    "device": "cpu",
+    "batch_size": 32
+  },
+  "reranker": "data/models/bge-reranker-base",
+  "results": [
+    {
+      "model": "M3E",
+      "threads": 3,
+      "constructions": 1,
+      "same_instance": true,
+      "passed": true
+    },
+    {
+      "model": "BGE",
+      "threads": 3,
+      "constructions": 1,
+      "same_instance": true,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "finished_at": "2026-10-07T13:25:31.848168+08:00"
+}

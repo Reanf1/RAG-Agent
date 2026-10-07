@@ -30,7 +30,15 @@ def cache_scope(store: VectorStore) -> str:
 
 def _constraints(question: str) -> tuple:
     """保守过滤容易被向量相似度忽略的变化；这是规则，不是语义等价证明。"""
-    return (tuple(re.findall(r"\d+(?:\.\d+)?", question)),
+    # 正负号和百分／千分符号属于数值条件，不能只保留数字部分。
+    numbers = tuple(re.sub(r"\s+", "", value) for value in
+                    re.findall(r"[+-]?\d+(?:\.\d+)?(?:\s*[%‰])?", question))
+    # 相反的比较方向常有极高向量相似度；保守保留原比较词，不猜同义条件。
+    comparisons = tuple(match.lower() for match in re.findall(
+        r">=|<=|≥|≤|>|<|大于等于|小于等于|不超过|不低于|不高于|不少于|不多于|"
+        r"至少|至多|最多|最少|大于|小于|超过|低于|高于|"
+        r"\b(?:at least|at most|more than|less than|greater than|lower than|higher than)\b", question, re.I))
+    return (numbers, comparisons,
             tuple(sorted(set(re.findall(r"(?<![A-Za-z0-9])[A-Z]{2,}[A-Za-z0-9_-]*|(?:论文|文献)[A-Za-z0-9_-]+", question)))),
             bool(re.search(r"不|没|无|非|\b(?:not|no|without|never)\b|n't\b", question, re.I)),
             bool(re.search(r"[\u4e00-\u9fff]", question)),

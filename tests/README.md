@@ -1,6 +1,8 @@
 # 自动化测试
 
-当前769个用例、18个小节、49个测试文件；2026-10-07 Windows集中复测后新增2项方法摘要评分／覆盖状态与低分确认回归。[最新逐项结果](../reports/模块完整性验证/Windows维护与方法确认回归_20261007.json)及[完整日志](../reports/模块完整性验证/Windows维护与方法确认回归_20261007.log)全部通过，失败／错误／跳过均为0，53.358秒仅为本地测试运行时间。模型HTTP／小型模拟向量不代表真实质量或Windows性能。[Windows维护、问答与对比记录](../reports/5_4_4%20端到端联调与测试/Windows索引维护_20261007/Windows索引维护记录.md)另保留真实页面、初评及本地真实M3E／BGE确认入口；确认补丁尚未在Windows复测。
+当前772个用例、18个小节、49个测试文件；2026-10-07本地集中修复新增3项缓存条件、超时迟到首次调用与页面对比确认回归。[最新逐项结果](../reports/模块完整性验证/本地集中修复回归_20261007.json)及[完整日志](../reports/模块完整性验证/本地集中修复回归_20261007.log)全部通过，失败／错误／跳过均为0，54.410秒仅为本地测试运行时间。[集中修复报告](../reports/5_4_4%20端到端联调与测试/本地集中修复_20261007/本地集中修复报告.md)保留修复前失败、真实M3E缓存9对样例和M3E／BGE三线程首次加载验证；模型HTTP受控样例不代表论文答案质量。本轮未连接Windows，中文查询英文论文的排名按用户要求暂不处理，正式部署／断网／性能延后。
+
+此前769项新增2项方法摘要评分／覆盖状态与低分确认回归，[逐项结果](../reports/模块完整性验证/Windows维护与方法确认回归_20261007.json)及[完整日志](../reports/模块完整性验证/Windows维护与方法确认回归_20261007.log)保留。模型HTTP／小型模拟向量不代表真实质量或Windows性能。[Windows维护、问答与对比记录](../reports/5_4_4%20端到端联调与测试/Windows索引维护_20261007/Windows索引维护记录.md)另保留真实页面、初评及本地真实M3E／BGE确认入口；确认补丁尚未在Windows复测。
 
 此前767项集中补充4项真实Chroma维护、4项问答聚焦及3项定量证据回归，[逐项结果](../reports/模块完整性验证/四问题批量修复回归_20261007_最终复核.json)及[日志](../reports/模块完整性验证/四问题批量修复回归_20261007_最终复核.log)保留。标签损坏、重启后全部向量读取、HNSW查询及备份使用真实临时Chroma；真实Qwen／M3E／BGE样例及失败归档见[四问题批量修复报告](../reports/5_4_4%20端到端联调与测试/四问题批量修复_20261007/四问题批量修复报告.md)。
 
@@ -20,15 +22,15 @@
 | 5_1_4 混合检索与重排序 | 48 | [test_bm25.py](5_1_4%20混合检索与重排序/test_bm25.py)、[test_hybrid_retriever.py](5_1_4%20混合检索与重排序/test_hybrid_retriever.py)、[test_reranker.py](5_1_4%20混合检索与重排序/test_reranker.py)、[test_retrieval_evaluation.py](5_1_4%20混合检索与重排序/test_retrieval_evaluation.py) |
 | 5_2_1 Prompt工程与生成策略 | 65 | [test_prompt.py](5_2_1%20Prompt工程与生成策略/test_prompt.py)、[test_context.py](5_2_1%20Prompt工程与生成策略/test_context.py)、[test_citations.py](5_2_1%20Prompt工程与生成策略/test_citations.py)、[test_generation.py](5_2_1%20Prompt工程与生成策略/test_generation.py) |
 | 5_2_2 流式输出与引用 | 17 | [test_streaming.py](5_2_2%20流式输出与引用/test_streaming.py) |
-| 5_2_3 缓存与降级策略 | 32 | [test_degradation.py](5_2_3%20缓存与降级策略/test_degradation.py)、[test_cache.py](5_2_3%20缓存与降级策略/test_cache.py)、[test_agent_cache.py](5_2_3%20缓存与降级策略/test_agent_cache.py) |
+| 5_2_3 缓存与降级策略 | 33 | [test_degradation.py](5_2_3%20缓存与降级策略/test_degradation.py)、[test_cache.py](5_2_3%20缓存与降级策略/test_cache.py)、[test_agent_cache.py](5_2_3%20缓存与降级策略/test_agent_cache.py) |
 | 5_2_4 日志与可观测性 | 9 | [test_rag_logging.py](5_2_4%20日志与可观测性/test_rag_logging.py) |
 | 5_3_1 Agent核心循环 | 64 | [test_thought.py](5_3_1%20Agent核心循环/test_thought.py)、[test_action.py](5_3_1%20Agent核心循环/test_action.py)、[test_observation.py](5_3_1%20Agent核心循环/test_observation.py)、[test_system_prompt.py](5_3_1%20Agent核心循环/test_system_prompt.py) |
 | 5_3_2 工具集开发 | 104 | [test_research_tools.py](5_3_2%20工具集开发/test_research_tools.py)、[test_comparison_keywords.py](5_3_2%20工具集开发/test_comparison_keywords.py)、[test_summary_time_search.py](5_3_2%20工具集开发/test_summary_time_search.py)、[test_calculator_paper_list.py](5_3_2%20工具集开发/test_calculator_paper_list.py) |
-| 5_3_3 Agent决策优化 | 48 | [test_routing_parallel.py](5_3_3%20Agent决策优化/test_routing_parallel.py)、[test_error_recovery.py](5_3_3%20Agent决策优化/test_error_recovery.py) |
+| 5_3_3 Agent决策优化 | 49 | [test_routing_parallel.py](5_3_3%20Agent决策优化/test_routing_parallel.py)、[test_error_recovery.py](5_3_3%20Agent决策优化/test_error_recovery.py) |
 | 5_3_4 多轮对话记忆管理 | 55 | [test_session_isolation.py](5_3_4%20多轮对话记忆管理/test_session_isolation.py)、[test_history_window.py](5_3_4%20多轮对话记忆管理/test_history_window.py)、[test_conversation_summary.py](5_3_4%20多轮对话记忆管理/test_conversation_summary.py) |
 | 5_4_1 RAG与Agent深度融合 | 33 | [test_source_routing.py](5_4_1%20RAG与Agent深度融合/test_source_routing.py)、[test_memory_context.py](5_4_1%20RAG与Agent深度融合/test_memory_context.py) |
 | 5_4_2 可观测性与健康检查 | 59 | [test_health_check.py](5_4_2%20可观测性与健康检查/test_health_check.py)、[test_agent_metrics.py](5_4_2%20可观测性与健康检查/test_agent_metrics.py) |
-| 5_4_3 前端与会话管理 | 41 | [test_document_management.py](5_4_3%20前端与会话管理/test_document_management.py)、[test_chat_streaming.py](5_4_3%20前端与会话管理/test_chat_streaming.py)、[test_conversation_history.py](5_4_3%20前端与会话管理/test_conversation_history.py)、[test_agent_streaming.py](5_4_3%20前端与会话管理/test_agent_streaming.py)、[test_citation_page.py](5_4_3%20前端与会话管理/test_citation_page.py) |
+| 5_4_3 前端与会话管理 | 42 | [test_document_management.py](5_4_3%20前端与会话管理/test_document_management.py)、[test_chat_streaming.py](5_4_3%20前端与会话管理/test_chat_streaming.py)、[test_conversation_history.py](5_4_3%20前端与会话管理/test_conversation_history.py)、[test_agent_streaming.py](5_4_3%20前端与会话管理/test_agent_streaming.py)、[test_citation_page.py](5_4_3%20前端与会话管理/test_citation_page.py) |
 | 5_4_4 端到端联调与测试 | 35 | [test_document_flow.py](5_4_4%20端到端联调与测试/test_document_flow.py) |
 | 5_5_2 系统性能评估 | 10 | [test_system_evaluation.py](5_5_2%20系统性能评估/test_system_evaluation.py) |
 | 5_5_3 Bad Case分析与优化 | 19 | [test_bad_case_regression.py](5_5_3%20Bad%20Case分析与优化/test_bad_case_regression.py) |

@@ -98,6 +98,23 @@ class TestSemanticCache(unittest.TestCase):
         self.assertIsNone(self.cache.lookup(left[:-1] + "乙", "scope"))
         self.embedding.embed_query.assert_not_called()
 
+    def test_changed_comparison_or_numeric_sign_and_scale_never_reuses_answer(self):
+        """真实M3E会忽略比较方向及百分／千分符号，即使同向量也不能复用答案。"""
+        pairs = [("模型准确率是否超过80%？", "模型准确率是否低于80%？"),
+                 ("模型准确率大于80%吗？", "模型准确率小于80%吗？"),
+                 ("BERT使用15%的掩码比例吗？", "BERT使用15‰的掩码比例吗？"),
+                 ("指标是否>=80？", "指标是否<=80？"),
+                 ("指标至少80吗？", "指标至多80吗？"),
+                 ("Is accuracy greater than 80%?", "Is accuracy less than 80%?"),
+                 ("指标为-5吗？", "指标为5吗？")]
+        for left, right in pairs:
+            with self.subTest(left=left, right=right):
+                self.cache.clear()
+                self.cache.put(left, self.result, "scope")
+                self.embedding.embed_query.reset_mock()
+                self.assertIsNone(self.cache.lookup(right, "scope"))
+                self.embedding.embed_query.assert_not_called()
+
     def test_errors_length_missing_or_invalid_sources_and_empty_answers_are_not_stored(self):
         invalid = [{"type": "error"}, {"done_reason": "length"}, {"warnings": ["未完整"]},
                    {"citations": []}, {"missing_citations": True}, {"invalid_citation_ids": [9]}, {"answer": " "}]

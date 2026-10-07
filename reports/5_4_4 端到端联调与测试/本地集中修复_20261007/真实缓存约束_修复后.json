@@ -1,0 +1,120 @@
+{
+  "scope": "真实M3E与产品缓存验证条件变更；固定答案为协议样例，不作论文或生成质量成绩。",
+  "started_at": "2026-10-07T13:23:14.017584+08:00",
+  "revision": "cff7de705bebe1087873feb739117846ce9d1902",
+  "embedding": {
+    "model": "moka-ai/m3e-base",
+    "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+    "local_path": "data/models/m3e-base",
+    "device": "cpu",
+    "batch_size": 32
+  },
+  "cache": {
+    "similarity_threshold": 0.97,
+    "max_entries": 100
+  },
+  "pairs": [
+    {
+      "cached_question": "模型准确率是否超过80%？",
+      "query": "模型准确率是否低于80%？",
+      "cosine": 0.9982471200976989,
+      "constraints_match": false,
+      "expected_hit": false,
+      "actual_hit": false,
+      "cache_result": null,
+      "passed": true
+    },
+    {
+      "cached_question": "模型准确率大于80%吗？",
+      "query": "模型准确率小于80%吗？",
+      "cosine": 0.996969517496707,
+      "constraints_match": false,
+      "expected_hit": false,
+      "actual_hit": false,
+      "cache_result": null,
+      "passed": true
+    },
+    {
+      "cached_question": "BERT使用15%的掩码比例吗？",
+      "query": "BERT使用15‰的掩码比例吗？",
+      "cosine": 0.9876094018554732,
+      "constraints_match": false,
+      "expected_hit": false,
+      "actual_hit": false,
+      "cache_result": null,
+      "passed": true
+    },
+    {
+      "cached_question": "指标是否>=80？",
+      "query": "指标是否<=80？",
+      "cosine": 0.9959977471047479,
+      "constraints_match": false,
+      "expected_hit": false,
+      "actual_hit": false,
+      "cache_result": null,
+      "passed": true
+    },
+    {
+      "cached_question": "指标至少80吗？",
+      "query": "指标至多80吗？",
+      "cosine": 0.9943567533634201,
+      "constraints_match": false,
+      "expected_hit": false,
+      "actual_hit": false,
+      "cache_result": null,
+      "passed": true
+    },
+    {
+      "cached_question": "Is accuracy greater than 80%?",
+      "query": "Is accuracy less than 80%?",
+      "cosine": 0.9785483833696274,
+      "constraints_match": false,
+      "expected_hit": false,
+      "actual_hit": false,
+      "cache_result": null,
+      "passed": true
+    },
+    {
+      "cached_question": "指标为-5吗？",
+      "query": "指标为5吗？",
+      "cosine": 0.9822775336209867,
+      "constraints_match": false,
+      "expected_hit": false,
+      "actual_hit": false,
+      "cache_result": null,
+      "passed": true
+    },
+    {
+      "cached_question": "ViT采用什么输入？",
+      "query": "ViT使用什么输入？",
+      "cosine": 0.9895172857076948,
+      "constraints_match": true,
+      "expected_hit": true,
+      "actual_hit": true,
+      "cache_result": {
+        "hit": true,
+        "mode": "semantic",
+        "similarity": 0.9895172857076957,
+        "question": "ViT采用什么输入？"
+      },
+      "passed": true
+    },
+    {
+      "cached_question": "模型准确率是否超过80%？",
+      "query": "模型的准确率是否超过80%？",
+      "cosine": 0.9966072091406993,
+      "constraints_match": true,
+      "expected_hit": true,
+      "actual_hit": true,
+      "cache_result": {
+        "hit": true,
+        "mode": "semantic",
+        "similarity": 0.9966072091406999,
+        "question": "模型准确率是否超过80%？"
+      },
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "finished_at": "2026-10-07T13:23:16.413660+08:00"
+}

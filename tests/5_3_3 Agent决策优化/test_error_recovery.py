@@ -184,6 +184,35 @@ class TestErrorRecovery(unittest.TestCase):
         self.assertEqual(result, snapshot)
         self.assertEqual(len(self.invocations), 1)
 
+    def test_expired_request_never_starts_delayed_first_attempt(self):
+        """线程已提交但未进入工具时请求到期，之后恢复调度不能再启动首次调用。"""
+        from concurrent.futures import ThreadPoolExecutor
+        ready, released, finished = Event(), Event(), Event()
+        self.addCleanup(released.set)
+        self.config["agent"]["tool_timeout_seconds"] = .03
+
+        class DelayedExecutor(ThreadPoolExecutor):
+            def submit(executor, function, *args, **kwargs):
+                def delayed():
+                    ready.set()
+                    try:
+                        released.wait(timeout=3)
+                        return function(*args, **kwargs)
+                    finally:
+                        finished.set()
+                return super().submit(delayed)
+
+        with patch("src.agent.router.ThreadPoolExecutor", DelayedExecutor):
+            try:
+                result = list(execute_calls([self.call], self.tools))[0]
+                self.assertTrue(ready.is_set())
+                self.assertEqual(result["error_kind"], "deadline")
+                self.assertFalse(self.invocations)
+            finally:
+                released.set()
+                self.assertTrue(finished.wait(timeout=3))
+        self.assertFalse(self.invocations)
+
     def test_late_timeout_does_not_start_background_retry(self):
         self.config["agent"]["tool_timeout_seconds"] = .05
         blocking, _, released, finished = self.blocked_tool(timeout_after_release=True)
