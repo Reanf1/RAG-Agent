@@ -1,8 +1,8 @@
 # 自动化测试
 
-当前772个用例、18个小节、49个测试文件；2026-10-07本地集中修复新增3项缓存条件、超时迟到首次调用与页面对比确认回归。[最新逐项结果](../reports/模块完整性验证/本地集中修复回归_20261007.json)及[完整日志](../reports/模块完整性验证/本地集中修复回归_20261007.log)全部通过，失败／错误／跳过均为0，54.410秒仅为本地测试运行时间。[集中修复报告](../reports/5_4_4%20端到端联调与测试/本地集中修复_20261007/本地集中修复报告.md)保留修复前失败、真实M3E缓存9对样例和M3E／BGE三线程首次加载验证；模型HTTP受控样例不代表论文答案质量。本轮未连接Windows，中文查询英文论文的排名按用户要求暂不处理，正式部署／断网／性能延后。
+当前777个用例、18个小节、49个测试文件；2026-10-07本轮新增3项Windows索引入口448、1项“调用…实验结果”路由、1项确认后完整报告保留回归。Mac与Windows均0失败／错误／跳过，运行器耗时54.917／225.496秒，非模型性能。[Mac逐项结果](../reports/5_4_4%20端到端联调与测试/WindowsSSH集中复测_20261007/本地最终777项回归.json)、[Windows逐项结果](../reports/5_4_4%20端到端联调与测试/WindowsSSH集中复测_20261007/Windows最终777项回归.json)及同目录完整日志保留。[SSH集中报告](../reports/5_4_4%20端到端联调与测试/WindowsSSH集中复测_20261007/WindowsSSH集中复测报告.md)另记真实M3E／BGE、缓存及页面确认／取消／刷新与原库保护；自动回归的模型HTTP受控，不能代替质量评估。中文查英文排名暂缓，正式容器／物理断网／性能待执行。
 
-此前769项新增2项方法摘要评分／覆盖状态与低分确认回归，[逐项结果](../reports/模块完整性验证/Windows维护与方法确认回归_20261007.json)及[完整日志](../reports/模块完整性验证/Windows维护与方法确认回归_20261007.log)保留。模型HTTP／小型模拟向量不代表真实质量或Windows性能。[Windows维护、问答与对比记录](../reports/5_4_4%20端到端联调与测试/Windows索引维护_20261007/Windows索引维护记录.md)另保留真实页面、初评及本地真实M3E／BGE确认入口；确认补丁尚未在Windows复测。
+此前769项新增2项方法摘要评分／覆盖状态与低分确认回归，[逐项结果](../reports/模块完整性验证/Windows维护与方法确认回归_20261007.json)及[完整日志](../reports/模块完整性验证/Windows维护与方法确认回归_20261007.log)保留。模型HTTP／小型模拟向量不代表真实质量或Windows性能。[Windows维护、问答与对比记录](../reports/5_4_4%20端到端联调与测试/Windows索引维护_20261007/Windows索引维护记录.md)另保留真实页面、初评及本地真实M3E／BGE确认入口；确认补丁当时尚未在Windows复测，本轮SSH已核验。
 
 此前767项集中补充4项真实Chroma维护、4项问答聚焦及3项定量证据回归，[逐项结果](../reports/模块完整性验证/四问题批量修复回归_20261007_最终复核.json)及[日志](../reports/模块完整性验证/四问题批量修复回归_20261007_最终复核.log)保留。标签损坏、重启后全部向量读取、HNSW查询及备份使用真实临时Chroma；真实Qwen／M3E／BGE样例及失败归档见[四问题批量修复报告](../reports/5_4_4%20端到端联调与测试/四问题批量修复_20261007/四问题批量修复报告.md)。
 
@@ -18,7 +18,7 @@
 | --- | ---: | --- |
 | 5_1_1 文档加载与批量导入 | 41 | [test_pdf_loader.py](5_1_1%20文档加载与批量导入/test_pdf_loader.py)、[test_docx_loader.py](5_1_1%20文档加载与批量导入/test_docx_loader.py)、[test_text_loader.py](5_1_1%20文档加载与批量导入/test_text_loader.py)、[test_batch_import.py](5_1_1%20文档加载与批量导入/test_batch_import.py) |
 | 5_1_2 文本分块策略 | 40 | [test_chunking.py](5_1_2%20文本分块策略/test_chunking.py)、[test_academic_pdf.py](5_1_2%20文本分块策略/test_academic_pdf.py) |
-| 5_1_3 向量化与存储 | 49 | [test_vector_store.py](5_1_3%20向量化与存储/test_vector_store.py)、[test_embeddings.py](5_1_3%20向量化与存储/test_embeddings.py)、[test_batch_index.py](5_1_3%20向量化与存储/test_batch_index.py)、[test_chroma_path.py](5_1_3%20向量化与存储/test_chroma_path.py)、[test_index_repair.py](5_1_3%20向量化与存储/test_index_repair.py) |
+| 5_1_3 向量化与存储 | 52 | [test_vector_store.py](5_1_3%20向量化与存储/test_vector_store.py)、[test_embeddings.py](5_1_3%20向量化与存储/test_embeddings.py)、[test_batch_index.py](5_1_3%20向量化与存储/test_batch_index.py)、[test_chroma_path.py](5_1_3%20向量化与存储/test_chroma_path.py)、[test_index_repair.py](5_1_3%20向量化与存储/test_index_repair.py) |
 | 5_1_4 混合检索与重排序 | 48 | [test_bm25.py](5_1_4%20混合检索与重排序/test_bm25.py)、[test_hybrid_retriever.py](5_1_4%20混合检索与重排序/test_hybrid_retriever.py)、[test_reranker.py](5_1_4%20混合检索与重排序/test_reranker.py)、[test_retrieval_evaluation.py](5_1_4%20混合检索与重排序/test_retrieval_evaluation.py) |
 | 5_2_1 Prompt工程与生成策略 | 65 | [test_prompt.py](5_2_1%20Prompt工程与生成策略/test_prompt.py)、[test_context.py](5_2_1%20Prompt工程与生成策略/test_context.py)、[test_citations.py](5_2_1%20Prompt工程与生成策略/test_citations.py)、[test_generation.py](5_2_1%20Prompt工程与生成策略/test_generation.py) |
 | 5_2_2 流式输出与引用 | 17 | [test_streaming.py](5_2_2%20流式输出与引用/test_streaming.py) |
@@ -26,14 +26,14 @@
 | 5_2_4 日志与可观测性 | 9 | [test_rag_logging.py](5_2_4%20日志与可观测性/test_rag_logging.py) |
 | 5_3_1 Agent核心循环 | 64 | [test_thought.py](5_3_1%20Agent核心循环/test_thought.py)、[test_action.py](5_3_1%20Agent核心循环/test_action.py)、[test_observation.py](5_3_1%20Agent核心循环/test_observation.py)、[test_system_prompt.py](5_3_1%20Agent核心循环/test_system_prompt.py) |
 | 5_3_2 工具集开发 | 104 | [test_research_tools.py](5_3_2%20工具集开发/test_research_tools.py)、[test_comparison_keywords.py](5_3_2%20工具集开发/test_comparison_keywords.py)、[test_summary_time_search.py](5_3_2%20工具集开发/test_summary_time_search.py)、[test_calculator_paper_list.py](5_3_2%20工具集开发/test_calculator_paper_list.py) |
-| 5_3_3 Agent决策优化 | 49 | [test_routing_parallel.py](5_3_3%20Agent决策优化/test_routing_parallel.py)、[test_error_recovery.py](5_3_3%20Agent决策优化/test_error_recovery.py) |
+| 5_3_3 Agent决策优化 | 50 | [test_routing_parallel.py](5_3_3%20Agent决策优化/test_routing_parallel.py)、[test_error_recovery.py](5_3_3%20Agent决策优化/test_error_recovery.py) |
 | 5_3_4 多轮对话记忆管理 | 55 | [test_session_isolation.py](5_3_4%20多轮对话记忆管理/test_session_isolation.py)、[test_history_window.py](5_3_4%20多轮对话记忆管理/test_history_window.py)、[test_conversation_summary.py](5_3_4%20多轮对话记忆管理/test_conversation_summary.py) |
 | 5_4_1 RAG与Agent深度融合 | 33 | [test_source_routing.py](5_4_1%20RAG与Agent深度融合/test_source_routing.py)、[test_memory_context.py](5_4_1%20RAG与Agent深度融合/test_memory_context.py) |
 | 5_4_2 可观测性与健康检查 | 59 | [test_health_check.py](5_4_2%20可观测性与健康检查/test_health_check.py)、[test_agent_metrics.py](5_4_2%20可观测性与健康检查/test_agent_metrics.py) |
 | 5_4_3 前端与会话管理 | 42 | [test_document_management.py](5_4_3%20前端与会话管理/test_document_management.py)、[test_chat_streaming.py](5_4_3%20前端与会话管理/test_chat_streaming.py)、[test_conversation_history.py](5_4_3%20前端与会话管理/test_conversation_history.py)、[test_agent_streaming.py](5_4_3%20前端与会话管理/test_agent_streaming.py)、[test_citation_page.py](5_4_3%20前端与会话管理/test_citation_page.py) |
 | 5_4_4 端到端联调与测试 | 35 | [test_document_flow.py](5_4_4%20端到端联调与测试/test_document_flow.py) |
 | 5_5_2 系统性能评估 | 10 | [test_system_evaluation.py](5_5_2%20系统性能评估/test_system_evaluation.py) |
-| 5_5_3 Bad Case分析与优化 | 19 | [test_bad_case_regression.py](5_5_3%20Bad%20Case分析与优化/test_bad_case_regression.py) |
+| 5_5_3 Bad Case分析与优化 | 20 | [test_bad_case_regression.py](5_5_3%20Bad%20Case分析与优化/test_bad_case_regression.py) |
 
 ## 运行方式
 
@@ -69,10 +69,16 @@
 .venv/bin/python reports/模块完整性验证/verify_completeness_tests.py --scope all --output reports/模块完整性验证/全量回归_新时间.json
 ```
 
+Windows使用已有JSON运行器；它把相对路径样例放到TEMP盘，并在临时目录清理前停止属于该目录的Chroma实例，随后正常删除。不同盘符和打开的持久句柄不会通过忽略错误掩盖：
+
+```powershell
+.\.venv\Scripts\python.exe reports\模块完整性验证\verify_completeness_tests.py --scope all --output "$env:TEMP\rag-regression-新时间.json"
+```
+
 ## 样例与验证边界
 
 - PDF／Word／文本样例由测试临时生成，加载／分块实际执行；Chroma、SQLite、线程和Streamlit AppTest使用真实临时资源。
-- [helpers.py](helpers.py)复用明确二维模拟向量、NDJSON和日志隔离。HTTP模型为mock，模拟向量不代表M3E效果，自动回归不测真实模型质量或性能、不连接Windows。
+- [helpers.py](helpers.py)复用明确二维模拟向量、NDJSON和日志隔离。HTTP模型为mock，模拟向量不代表M3E效果，自动回归不测真实模型质量或性能；本轮已在Windows原生解释器运行同一套测试。
 - 需项目依赖及本地Qwen词表；Agent测试前后隔离日志，测试不写默认用户知识库／会话。
 - 上传／索引／删除恢复AppTest归5.4.4，组件／聊天／会话UI归5.4.3，会话并发归5.3.4。专项入口按实际职责选用例，数量不能与全量相加。
 

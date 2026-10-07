@@ -1,0 +1,51 @@
+{
+  "scale": "三项均为0～4分，沿用课程人工评分标准",
+  "source_revision": "043cf29a55e6ba774d7e454370846a6fc282223e",
+  "assistant_reviewed": 2,
+  "user_reviewed": 0,
+  "boundary": "独立现场样例，不追加至历史180条课程评测，不代表全量质量达标。",
+  "items": [
+    {
+      "id": "SSH-Q01",
+      "question": "TXT文件中的复测代号是什么？",
+      "answer": "## 回答\nTXT文件中的复测代号是WINCHECK20261005。[参考文档1：Windows复测\\_说明.txt；行1–3]\n\n## 参考来源\n- [参考文档1] Windows复测\\_说明.txt；行1–3",
+      "scores": {
+        "correctness": 4,
+        "completeness": 4,
+        "citation_accuracy": 4
+      },
+      "reason": "直接回答WINCHECK20261005，实际TXT第2行支持；引用行1–3准确，无多余论文结论。",
+      "evidence": "真实模型与缓存.json；原文事实核验.json，Windows复测_说明.txt行2",
+      "reviewer": "助手初评",
+      "date": "2026-10-07",
+      "user_review": {
+        "status": "待审核",
+        "scores": null,
+        "reason": null,
+        "reviewer": null,
+        "date": null
+      }
+    },
+    {
+      "id": "SSH-Q02",
+      "question": "请调用 paper_compare，对比以下两篇已入库论文的方法、数据集和实验结果：论文A ID=bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697；论文B ID=8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6。",
+      "answer": "## 回答\n以下按三个维度并列展示两篇论文的原文证据，不改写实验数字或条件。\n| 维度 | 论文A | 论文B |\n| --- | --- | --- |\n| 方法 | 原文摘录：Abstract The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English- to-German translation task, improving over the existing best results, including [参考文档7：attention.pdf；第1页（物理页码）] | 原文摘录：ABSTRACT While the Transformer architecture has become the de-facto standard for natural language processing tasks, its applications to computer vision remain limited. In vision, attention is either applied in conjunction with convolutional networks, or used to replace certain components of convolutional networks while keeping their overall structure in place. We show that this reliance on CNNs is not necessary and a pure transformer applied directly to sequences of image patches can perform very well on image classiﬁcation tasks. When pre-trained on large amounts of data and transferred to multiple mid-sized or small image recognition benchmarks \\(ImageNet, CIFAR-100, VTAB, etc.\\), Vision Transformer \\(ViT\\) attains excellent results compared to state-of-the-art convolutional networks while requiring sub- stantially fewer computational resources to train.^\\{1\\} [参考文档8：Windows验收\\_ViT.pdf；第1页（物理页码）] |\n| 数据集 | 原文摘录：from our models and present and discuss examples in the appendix. Not only do individual attention heads clearly learn to perform different tasks, many appear to exhibit behavior related to the syntactic and semantic structure of the sentences. 5 Training This section describes the training regime for our models. 5.1 Training Data and Batching We trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million sentence pairs. Sentences were encoded using byte-pair encoding \\[3\\], which has a shared source- target vocabulary of about 37000 tokens. For English-French, we used the significantly larger WMT 2014 English-French dataset consisting of 36M sentences and split tokens into a 32000 word-piece vocabulary \\[38\\]. Sentence pairs were batched together by approximate sequence length. Each training batch contained a set of sentence pairs containing approximately 25000 source tokens and 25000 target tokens. 5.2 [参考文档3：attention.pdf；第7页（物理页码）] | 原文摘录：a lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show that self-supervised ViT holds promise for the future. 4.1 SETUP Datasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes and 1.3M images \\(we refer to it as ImageNet in what follows\\), its superset ImageNet-21k with 21k classes and 14M images \\(Deng et al., 2009\\), and JFT \\(Sun et al., 2017\\) with 18k classes and 303M high-resolution images. We de-duplicate the pre-training datasets w.r.t. the test sets of the downstream tasks following Kolesnikov et al. \\(2020\\). We transfer the models trained on these dataset to several benchmark tasks: ImageNet on the original validation labels and the cleaned-up ReaL labels \\(Beyer et al., 2020\\), CIFAR-10/100 \\(Krizhevsky, 2009\\), Oxford-IIIT Pets \\(Parkhi et al., 2012\\), and Oxford Flowers-102 \\(Nilsback & Zisserman, 2008\\). For these datasets, pre-processing [参考文档4：Windows验收\\_ViT.pdf；第4页（物理页码）] |\n| 实验结果 | 原文摘录：Our model achieves 28.4 BLEU on the WMT 2014 English- to-German translation task, improving over the existing best results, including ensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.8 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the best models from the literature. [参考文档1：attention.pdf；第1页（物理页码）] | 原文摘录：When pre-trained on the public ImageNet-21k dataset or the in-house JFT-300M dataset, ViT approaches or beats state of the art on multiple image recognition benchmarks. In particular, the best model reaches the accuracy of 88.55% on ImageNet, 90.72% on ImageNet-ReaL, 94.55% on CIFAR-100, and 77.63% on the VTAB suite of 19 tasks. [参考文档6：Windows验收\\_ViT.pdf；第2页（物理页码）] |\n\n不同任务、数据集和实验条件的指标不可直接比较优劣；证据选择的语义适用性仍需对照原文核验。\n\n## 参考来源\n- [参考文档7] attention.pdf；第1页（物理页码）\n- [参考文档8] Windows验收\\_ViT.pdf；第1页（物理页码）\n- [参考文档3] attention.pdf；第7页（物理页码）；正文已截断，仅展示已送入上下文的证据\n- [参考文档4] Windows验收\\_ViT.pdf；第4页（物理页码）\n- [参考文档1] attention.pdf；第1页（物理页码）\n- [参考文档6] Windows验收\\_ViT.pdf；第2页（物理页码）\n\n部分维度的检索相关性低，相关陈述需对照原文核验：论文A：方法、论文B：方法\n\n单篇原文已按对比预算截断，结论仅依据返回的可见证据。\n\n低相关性维度需核验：论文A：方法、论文B：方法",
+      "scores": {
+        "correctness": 4,
+        "completeness": 3,
+        "citation_accuracy": 4
+      },
+      "reason": "核对Attention物理1／7页与ViT物理1／2／4页，方法、数据集规模和结果数字对应正确；未把iGPT的72%当ViT结果，保留任务条件不可直接比优劣及低分／截断说明。三维主要为英文原文并列摘录，方法缺少架构与训练细节及中文综合解释，完整性扣1分。",
+      "evidence": "页面会话核验.json；原文事实核验.json及5张实际原文渲染",
+      "reviewer": "助手初评",
+      "date": "2026-10-07",
+      "user_review": {
+        "status": "待审核",
+        "scores": null,
+        "reason": null,
+        "reviewer": null,
+        "date": null
+      }
+    }
+  ]
+}

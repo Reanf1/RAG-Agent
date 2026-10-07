@@ -1,0 +1,14 @@
+......E..................
+======================================================================
+ERROR: test_call_compare_results_is_not_a_dependent_use_of_results (test_routing_parallel.TestRoutingAndParallel)
+Windows现场：调用工具比较实验结果，不能误判为使用前一步结果。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_3 Agent决策优化/test_routing_parallel.py", line 112, in test_call_compare_results_is_not_a_dependent_use_of_results
+    self.assertEqual(route_question(question, AVAILABLE_TOOLS)["tool_name"], "paper_compare")
+TypeError: 'NoneType' object is not subscriptable
+
+----------------------------------------------------------------------
+Ran 25 tests in 0.464s
+
+FAILED (errors=1)

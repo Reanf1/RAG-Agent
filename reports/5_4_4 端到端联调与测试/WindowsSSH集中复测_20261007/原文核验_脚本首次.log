@@ -1,0 +1,11 @@
+warning: The `fitz` API is deprecated and will be removed in future. Use `import pymupdf` instead.
+Traceback (most recent call last):
+  File "C:\Users\asus\AppData\Local\Temp\rag-ssh-proof-383d0e8447ea4b2485635de3f5602a18\verify_sources.py", line 54, in <module>
+    main()
+  File "C:\Users\asus\AppData\Local\Temp\rag-ssh-proof-383d0e8447ea4b2485635de3f5602a18\verify_sources.py", line 18, in main
+    original = json.loads(args.expected.read_text(encoding="utf-8"))
+  File "C:\Users\asus\AppData\Local\Programs\Python\Python310\lib\pathlib.py", line 1134, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "C:\Users\asus\AppData\Local\Programs\Python\Python310\lib\pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\asus\\AppData\\Local\\Temp\\rag-ssh-proof-383d0e8447ea4b2485635de3f5602a18\\prepared.json'

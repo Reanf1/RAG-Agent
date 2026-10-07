@@ -1,0 +1,28 @@
+.E...F..
+======================================================================
+ERROR: test_other_path_error_is_not_treated_as_untrusted_mount (test_chroma_path.TestChromaPath)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_1_3 向量化与存储/test_chroma_path.py", line 119, in test_other_path_error_is_not_treated_as_untrusted_mount
+    chroma_persist_path(Path(root) / "中文索引")
+  File "/Users/rean/github/RAG+Agent/src/utils/chroma_path.py", line 35, in chroma_persist_path
+    from _winapi import CreateJunction
+ModuleNotFoundError: No module named '_winapi'
+
+======================================================================
+FAIL: test_untrusted_alias_uses_new_verified_entry_without_removing_old (test_chroma_path.TestChromaPath)
+Windows 448只更换当前进程入口；原入口及原索引都保留。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_1_3 向量化与存储/test_chroma_path.py", line 94, in test_untrusted_alias_uses_new_verified_entry_without_removing_old
+    self.assertEqual(os.readlink(old), str(directory))
+AssertionError: '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmp3ao5vkgz/中文索引' != '/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmp3ao5vkgz/中文索引'
+- /private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmp3ao5vkgz/中文索引
+? --------
++ /var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmp3ao5vkgz/中文索引
+
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.007s
+
+FAILED (failures=1, errors=1)

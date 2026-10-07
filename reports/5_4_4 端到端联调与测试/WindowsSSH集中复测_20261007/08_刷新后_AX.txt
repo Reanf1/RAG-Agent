@@ -1,0 +1,277 @@
+Browser tab: 4, Title: "智能科研助理", URL: "http://192.168.1.12:8501/?visitor=52e956336f014102a497641189511d42&conversation=3202a3b6341a40ca92e87677f5ec7520".
+1 AXWebArea 智能科研助理, URL: 192.168.1.12:8501/?visitor=52e956336f014102a497641189511d42&conversation=3202a3b6341a40ca92e87677f5ec7520
+	2 container
+		3 container
+			4 container
+				5 heading 系统状态, Value: 2
+					6 text 系统状态
+				7 container
+					8 text 系统时间：2026-10-07 14:02 :47
+				17 container
+					18 text LLM服务：可连接，推理未验证（qwen2.5 :7b ）
+				19 text 向量数据库：可读取，检索未验证（Chroma）
+				20 button 刷新状态
+					21 text 刷新状态
+				22 heading 文档上传与管理, Value: 2
+					23 text 文档上传与管理
+				24 container 上传文档
+					25 button file upload
+					26 button upload Upload
+						27 text upload
+						28 text Upload
+					29 text 20MB per file
+					30 text  • PDF, DOCX, TXT, MD, MARKDOWN
+				31 text 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+				32 button (disabled) 开始导入
+					33 text 开始导入
+				34 button (disabled) 重试失败项
+					35 text 重试失败项
+				36 heading 对话历史管理, Value: 2
+					37 text 对话历史管理
+				38 button 新建会话
+					39 text 新建会话
+				40 text 最近
+				41 button 请调用 paper_compare，对比以下两篇
+					42 text 请调用 paper_compare，对比以下两篇
+				43 button 请调用 paper_compare，对比以下两篇
+					44 text 请调用 paper_compare，对比以下两篇
+				45 button 请调用 paper_compare，对比以下两篇
+					46 text 请调用 paper_compare，对比以下两篇
+				47 button 删除当前会话
+					48 text 删除当前会话
+			9 container
+				10 button keyboard_double_arrow_right
+				11 pop up button (collapsed) Description: Main menu, Secondary Actions: Expand
+			12 container
+				13 heading 智能科研助理, Value: 1, ID: 2d7dc4e4
+					14 text 智能科研助理
+					15 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=52e956336f014102a497641189511d42&conversation=3202a3b6341a40ca92e87677f5ec7520#2d7dc4e4
+				16 text 基于 RAG + Agent 的论文知识库问答系统
+				49 tab group react-aria391810211-:r6:
+					50 tab (selected, settable, boolean) 科研对话, ID: react-aria391810211-:r6:-tab-0, Value: 1
+科研对话
+					51 tab (selectable, settable, boolean) 文档检索, ID: react-aria391810211-:r6:-tab-1, Value: 0
+文档检索
+					52 tab (selectable, settable, boolean) 知识库, ID: react-aria391810211-:r6:-tab-2, Value: 0
+知识库
+				53 container Description: 科研对话, ID: react-aria391810211-:r6:-tabpanel-0
+					54 container
+						55 text face
+						56 container Chat message from user
+							57 text 请调用 paper_compare，对比以下两篇已入库论文的方法、数据集和实验结果：论文A ID=bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697；论文B ID=8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6。
+						58 text smart_toy
+						59 container Chat message from assistant
+							60 text 检索结果相关性低，请查看候选原文后确认是否使用；尚未调用生成模型。
+							61 text 本次 Token：1820 · Agent响应耗时：41.359 秒
+							62 text 任务未完成：incomplete
+							63 container
+								64 button (expanded) keyboard_arrow_down 低相关候选：请核对原文, Secondary Actions: Collapse
+									65 text keyboard_arrow_down
+									66 text 低相关候选：请核对原文
+								67 text attention.pdf · 第1页（物理页码） · 重排分数 0.9546
+								68 text Our model achieves 28.4 BLEU on the WMT 2014 English- to-German translation task, improving over the existing best results, including ensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.8 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the best models from the literature.
+								69 button 查看attention.pdf · 第1页（物理页码）
+									70 text 查看attention.pdf · 第1页（物理页码）
+								71 text attention.pdf · 第1页（物理页码） · 重排分数 0.8296
+								72 text Our model achieves 28.4 BLEU on the WMT 2014 English- to-German translation task, improving over the existing best results, including ensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.8 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the best models from the literature.
+								73 button 查看attention.pdf · 第1页（物理页码）
+									74 text 查看attention.pdf · 第1页（物理页码）
+								75 text attention.pdf · 第7页（物理页码） · 重排分数 0.6605
+								76 text from our models and present and discuss examples in the appendix. Not only do individual attention heads clearly learn to perform different tasks, many appear to exhibit behavior related to the syntactic and semantic structure of the sentences. 5 Training This section describes the training regime for our models. 5.1 Training Data and Batching We trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million sentence pairs. Sentences were encoded using byte-pair encoding [3], which has a shared source- target vocabulary of about 37000 tokens. For English-French, we used the significantly larger WMT 2014 English-French dataset consisting of 36M sentences and split tokens into a 32000 word-piece vocabulary [38]. Sentence pairs were batched together by approximate sequence length. Each training batch contained a set of sentence pairs containing approximately 25000 source tokens and 25000 target tokens. 5.2
+								77 button 查看attention.pdf · 第7页（物理页码）
+									78 text 查看attention.pdf · 第7页（物理页码）
+								79 text Windows验收_ViT.pdf · 第4页（物理页码） · 重排分数 0.5690
+								80 text a lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show that self-supervised ViT holds promise for the future. 4.1 SETUP Datasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes and 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with 21k classes and 14M images (Deng et al., 2009), and JFT (Sun et al., 2017) with 18k classes and 303M high-resolution images. We de-duplicate the pre-training datasets w.r.t. the test sets of the downstream tasks following Kolesnikov et al. (2020). We transfer the models trained on these dataset to several benchmark tasks: ImageNet on the original validation labels and the cleaned-up ReaL labels (Beyer et al., 2020), CIFAR-10/100 (Krizhevsky, 2009), Oxford-IIIT Pets (Parkhi et al., 2012), and Oxford Flowers-102 (Nilsback & Zisserman, 2008). For these datasets, pre-processing
+								81 button 查看Windows验收_ViT.pdf · 第4页（物理页码）
+									82 text 查看Windows验收_ViT.pdf · 第4页（物理页码）
+								83 text Windows验收_ViT.pdf · 第2页（物理页码） · 重排分数 0.1295
+								84 text The model is trained in an unsu- pervised fashion as a generative model, and the resulting representation can then be ﬁne-tuned or probed linearly for classiﬁcation performance, achieving a maximal accuracy of 72% on ImageNet.
+								85 button 查看Windows验收_ViT.pdf · 第2页（物理页码）
+									86 text 查看Windows验收_ViT.pdf · 第2页（物理页码）
+								87 text Windows验收_ViT.pdf · 第2页（物理页码） · 重排分数 0.0463
+								88 text When pre-trained on the public ImageNet-21k dataset or the in-house JFT-300M dataset, ViT approaches or beats state of the art on multiple image recognition benchmarks. In particular, the best model reaches the accuracy of 88.55% on ImageNet, 90.72% on ImageNet-ReaL, 94.55% on CIFAR-100, and 77.63% on the VTAB suite of 19 tasks.
+								89 button 查看Windows验收_ViT.pdf · 第2页（物理页码）
+									90 text 查看Windows验收_ViT.pdf · 第2页（物理页码）
+								91 text attention.pdf · 第1页（物理页码） · 重排分数 0.0137
+								92 text Abstract The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English- to-German translation task, improving over the existing best results, including
+								93 button 查看attention.pdf · 第1页（物理页码）
+									94 text 查看attention.pdf · 第1页（物理页码）
+								95 text Windows验收_ViT.pdf · 第1页（物理页码） · 重排分数 0.0026
+								96 text ABSTRACT While the Transformer architecture has become the de-facto standard for natural language processing tasks, its applications to computer vision remain limited. In vision, attention is either applied in conjunction with convolutional networks, or used to replace certain components of convolutional networks while keeping their overall structure in place. We show that this reliance on CNNs is not necessary and a pure transformer applied directly to sequences of image patches can perform very well on image classiﬁcation tasks. When pre-trained on large amounts of data and transferred to multiple mid-sized or small image recognition benchmarks (ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent results compared to state-of-the-art convolutional networks while requiring sub- stantially fewer computational resources to train.^{1}
+								97 button 查看Windows验收_ViT.pdf · 第1页（物理页码）
+									98 text 查看Windows验收_ViT.pdf · 第1页（物理页码）
+						99 text face
+						100 container Chat message from user
+							101 text 请调用 paper_compare，对比以下两篇已入库论文的方法、数据集和实验结果：论文A ID=bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697；论文B ID=8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6。
+						102 text smart_toy
+						103 container Chat message from assistant
+							104 container
+								105 heading 回答, Value: 2, ID: 3a622f65
+									106 text 回答
+									107 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=52e956336f014102a497641189511d42&conversation=3202a3b6341a40ca92e87677f5ec7520#3a622f65
+								108 text 以下按三个维度并列展示两篇论文的原文证据，不改写实验数字或条件。
+								109 table
+									110 row
+										111 cell
+											112 text 维度
+										113 cell
+											114 text 论文A
+										115 cell
+											116 text 论文B
+									117 row
+										118 cell
+											119 text 方法
+										120 cell
+											121 text 原文摘录：Abstract The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English- to-German translation task, improving over the existing best results, including [参考文档7：attention.pdf；第1页（物理页码）]
+										122 cell
+											123 text 原文摘录：ABSTRACT While the Transformer architecture has become the de-facto standard for natural language processing tasks, its applications to computer vision remain limited. In vision, attention is either applied in conjunction with convolutional networks, or used to replace certain components of convolutional networks while keeping their overall structure in place. We show that this reliance on CNNs is not necessary and a pure transformer applied directly to sequences of image patches can perform very well on image classiﬁcation tasks. When pre-trained on large amounts of data and transferred to multiple mid-sized or small image recognition benchmarks (ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent results compared to state-of-the-art convolutional networks while requiring sub- stantially fewer computational resources to train.^{1} [参考文档8：Windows验收_ViT.pdf；第1页（物理页码）]
+									124 row
+										125 cell
+											126 text 数据集
+										127 cell
+											128 text 原文摘录：from our models and present and discuss examples in the appendix. Not only do individual attention heads clearly learn to perform different tasks, many appear to exhibit behavior related to the syntactic and semantic structure of the sentences. 5 Training This section describes the training regime for our models. 5.1 Training Data and Batching We trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million sentence pairs. Sentences were encoded using byte-pair encoding [3], which has a shared source- target vocabulary of about 37000 tokens. For English-French, we used the significantly larger WMT 2014 English-French dataset consisting of 36M sentences and split tokens into a 32000 word-piece vocabulary [38]. Sentence pairs were batched together by approximate sequence length. Each training batch contained a set of sentence pairs containing approximately 25000 source tokens and 25000 target tokens. 5.2 [参考文档3：attention.pdf；第7页（物理页码）]
+										129 cell
+											130 text 原文摘录：a lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show that self-supervised ViT holds promise for the future. 4.1 SETUP Datasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes and 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with 21k classes and 14M images (Deng et al., 2009), and JFT (Sun et al., 2017) with 18k classes and 303M high-resolution images. We de-duplicate the pre-training datasets w.r.t. the test sets of the downstream tasks following Kolesnikov et al. (2020). We transfer the models trained on these dataset to several benchmark tasks: ImageNet on the original validation labels and the cleaned-up ReaL labels (Beyer et al., 2020), CIFAR-10/100 (Krizhevsky, 2009), Oxford-IIIT Pets (Parkhi et al., 2012), and Oxford Flowers-102 (Nilsback & Zisserman, 2008). For these datasets, pre-processing [参考文档4：Windows验收_ViT.pdf；第4页（物理页码）]
+									131 row
+										132 cell
+											133 text 实验结果
+										134 cell
+											135 text 原文摘录：Our model achieves 28.4 BLEU on the WMT 2014 English- to-German translation task, improving over the existing best results, including ensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.8 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the best models from the literature. [参考文档1：attention.pdf；第1页（物理页码）]
+										136 cell
+											137 text 原文摘录：When pre-trained on the public ImageNet-21k dataset or the in-house JFT-300M dataset, ViT approaches or beats state of the art on multiple image recognition benchmarks. In particular, the best model reaches the accuracy of 88.55% on ImageNet, 90.72% on ImageNet-ReaL, 94.55% on CIFAR-100, and 77.63% on the VTAB suite of 19 tasks. [参考文档6：Windows验收_ViT.pdf；第2页（物理页码）]
+								138 text 不同任务、数据集和实验条件的指标不可直接比较优劣；证据选择的语义适用性仍需对照原文核验。
+								139 heading 参考来源, Value: 2, ID: 4f4c5596
+									140 text 参考来源
+									141 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=52e956336f014102a497641189511d42&conversation=3202a3b6341a40ca92e87677f5ec7520#4f4c5596
+								142 content list
+									143 container
+										144 AXListMarker • 
+										145 text [参考文档7] attention.pdf；第1页（物理页码）
+									146 container
+										147 AXListMarker • 
+										148 text [参考文档8] Windows验收_ViT.pdf；第1页（物理页码）
+									149 container
+										150 AXListMarker • 
+										151 text [参考文档3] attention.pdf；第7页（物理页码）；正文已截断，仅展示已送入上下文的证据
+									152 container
+										153 AXListMarker • 
+										154 text [参考文档4] Windows验收_ViT.pdf；第4页（物理页码）
+									155 container
+										156 AXListMarker • 
+										157 text [参考文档1] attention.pdf；第1页（物理页码）
+									158 container
+										159 AXListMarker • 
+										160 text [参考文档6] Windows验收_ViT.pdf；第2页（物理页码）
+								161 text 部分维度的检索相关性低，相关陈述需对照原文核验：论文A：方法、论文B：方法 单篇原文已按对比预算截断，结论仅依据返回的可见证据。 低相关性维度需核验：论文A：方法、论文B：方法
+							162 text 本次 Token：1648 · Agent响应耗时：5.750 秒
+							163 button 查看attention.pdf · 第1页（物理页码）
+								164 text 查看attention.pdf · 第1页（物理页码）
+							165 button 查看Windows验收_ViT.pdf · 第1页（物理页码）
+								166 text 查看Windows验收_ViT.pdf · 第1页（物理页码）
+							167 button 查看attention.pdf · 第7页（物理页码）
+								168 text 查看attention.pdf · 第7页（物理页码）
+							169 button 查看Windows验收_ViT.pdf · 第4页（物理页码）
+								170 text 查看Windows验收_ViT.pdf · 第4页（物理页码）
+							171 button 查看Windows验收_ViT.pdf · 第2页（物理页码）
+								172 text 查看Windows验收_ViT.pdf · 第2页（物理页码）
+					173 container
+						174 text entry area (settable) 输入消息…
+						175 button (disabled) Send message
+							176 text 发送
+					177 button (collapsed) keyboard_arrow_right 请调用 paper_compare，对比以下两篇已入库论文的方法、数据集和实验结果：论文A ID=bdfaa68d898, Secondary Actions: Expand
+						178 text keyboard_arrow_right
+						179 text 请调用 paper_compare，对比以下两篇已入库论文的方法、数据集和实验结果：论文A ID=bdfaa68d898
+					180 container
+						181 button (expanded) keyboard_arrow_down 请调用 paper_compare，对比以下两篇已入库论文的方法、数据集和实验结果：论文A ID=bdfaa68d898, Secondary Actions: Collapse
+							182 text keyboard_arrow_down
+							183 text 请调用 paper_compare，对比以下两篇已入库论文的方法、数据集和实验结果：论文A ID=bdfaa68d898
+						184 container
+							185 button Show/hide columns
+							186 button Download as CSV
+							187 button Search
+							188 button Fullscreen
+							189 image
+								190 table
+									191 row 阶段 轮次 工具 输入Token 输出Token 耗时 状态
+										192 cell (selectable) 阶段
+										193 cell (selectable) 轮次
+										194 cell (selectable) 工具
+										195 cell (selectable) 输入Token
+										196 cell (selectable) 输出Token
+										197 cell (selectable) 耗时
+										198 cell (selectable) 状态
+									199 container
+										200 row (selectable) Thought 1 — 0 0 未知 成功
+											201 cell (selectable) Value: Thought, ID: glide-cell-0-0
+											202 cell (selectable) Value: 1, ID: glide-cell-1-0
+											203 cell (selectable) Value: —, ID: glide-cell-2-0
+											204 cell (selectable) Value: 0, ID: glide-cell-3-0
+											205 cell (selectable) Value: 0, ID: glide-cell-4-0
+											206 cell (selectable) Value: 未知, ID: glide-cell-5-0
+											207 cell (selectable) Value: 成功, ID: glide-cell-6-0
+										208 row (selectable) Action 1 paper_compare 0 0 0.000 秒 成功
+											209 cell (selectable) Value: Action, ID: glide-cell-0-1
+											210 cell (selectable) Value: 1, ID: glide-cell-1-1
+											211 cell (selectable) Value: paper_compare, ID: glide-cell-2-1
+											212 cell (selectable) Value: 0, ID: glide-cell-3-1
+											213 cell (selectable) Value: 0, ID: glide-cell-4-1
+											214 cell (selectable) Value: 0.000 秒, ID: glide-cell-5-1
+											215 cell (selectable) Value: 成功, ID: glide-cell-6-1
+										216 row (selectable) 工具内部 1 paper_compare 1610 38 5.651 秒 成功
+											217 cell (selectable) Value: 工具内部, ID: glide-cell-0-2
+											218 cell (selectable) Value: 1, ID: glide-cell-1-2
+											219 cell (selectable) Value: paper_compare, ID: glide-cell-2-2
+											220 cell (selectable) Value: 1610, ID: glide-cell-3-2
+											221 cell (selectable) Value: 38, ID: glide-cell-4-2
+											222 cell (selectable) Value: 5.651 秒, ID: glide-cell-5-2
+											223 cell (selectable) Value: 成功, ID: glide-cell-6-2
+										224 row (selectable) Observation 1 — 0 0 0.000 秒 成功
+											225 cell (selectable) Value: Observation, ID: glide-cell-0-3
+											226 cell (selectable) Value: 1, ID: glide-cell-1-3
+											227 cell (selectable) Value: —, ID: glide-cell-2-3
+											228 cell (selectable) Value: 0, ID: glide-cell-3-3
+											229 cell (selectable) Value: 0, ID: glide-cell-4-3
+											230 cell (selectable) Value: 0.000 秒, ID: glide-cell-5-3
+											231 cell (selectable) Value: 成功, ID: glide-cell-6-3
+										232 row (selectable) 任务结束 1 — — — — 成功
+											233 cell (selectable) Value: 任务结束, ID: glide-cell-0-4
+											234 cell (selectable) Value: 1, ID: glide-cell-1-4
+											235 cell (selectable) Value: —, ID: glide-cell-2-4
+											236 cell (selectable) Value: —, ID: glide-cell-3-4
+											237 cell (selectable) Value: —, ID: glide-cell-4-4
+											238 cell (selectable) Value: —, ID: glide-cell-5-4
+											239 cell (selectable) Value: 成功, ID: glide-cell-6-4
+						240 pop up button (collapsed) 查看公开执行过程, Secondary Actions: Expand
+							241 text 查看公开执行过程
+					242 heading 状态统计, Value: 3, ID: f3abdead
+						243 text 状态统计
+						244 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=52e956336f014102a497641189511d42&conversation=3202a3b6341a40ca92e87677f5ec7520#f3abdead
+					245 text 当前会话累计；工具成功率只统计已返回调用，未报告的用量不计为零。
+					246 container
+						247 text 对话次数
+						248 text 2
+					249 container
+						250 text 累计Token
+						251 text 3468
+					252 container
+						253 text 累计响应耗时
+						254 text 47.109 秒
+					255 container
+						256 text 平均响应耗时
+						257 text 23.555 秒
+					258 container
+						259 text 任务完成率
+						260 text 50.0%
+					261 container
+						262 text 工具调用次数
+						263 text 2
+					264 container
+						265 text 工具调用成功率
+						266 text 100.0%
+					267 container
+						268 text 平均推理轮次
+						269 text 1.00
+					270 text RAG检索 0 次 · 候选命中率 未知 · 平均检索耗时 未知 · 平均工具耗时 20.288 秒。
+					271 text 工具成功 2 · 失败 0 · 待返回 0；已报告Token 3468 · 用量未知 0 次。
+
+The focused UI element is 1 AXWebArea 智能科研助理, URL: 192.168.1.12:8501/?visitor=52e956336f014102a497641189511d42&conversation=3202a3b6341a40ca92e87677f5ec7520

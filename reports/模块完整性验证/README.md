@@ -12,6 +12,8 @@
 
 ## 运行脚本
 
+2026-10-07最新Mac与Windows各777项全部通过，见[SSH报告](../5_4_4%20端到端联调与测试/WindowsSSH集中复测_20261007/WindowsSSH集中复测报告.md)、[Mac结果](../5_4_4%20端到端联调与测试/WindowsSSH集中复测_20261007/本地最终777项回归.json)及[Windows结果](../5_4_4%20端到端联调与测试/WindowsSSH集中复测_20261007/Windows最终777项回归.json)。运行器在Windows解决TEMP／项目跨盘相对路径及持久Chroma临时句柄释放；只停止属于当前测试临时目录的实例，不忽略清理异常。真实模型及质量结果分开记录。
+
 - [verify_completeness_tests.py](verify_completeness_tests.py)：模块四专项及全量自动化入口
 - [verify_module_one.py](verify_module_one.py)：模块一完整性与持久化验证
 - [verify_module_three.py](verify_module_three.py)：模块三真实工具/循环/记忆联调

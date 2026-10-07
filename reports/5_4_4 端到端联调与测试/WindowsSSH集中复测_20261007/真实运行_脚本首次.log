@@ -1,0 +1,34 @@
+{"model": "M3E", "threads": 3, "constructions": 1, "same_instance": true}
+{"model": "BGE", "threads": 3, "constructions": 1, "same_instance": true}
+PASSED=False
+Traceback (most recent call last):
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\api\models\CollectionCommon.py", line 90, in wrapper
+    return func(self, *args, **kwargs)
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\api\models\CollectionCommon.py", line 359, in _validate_and_prepare_update_request
+    update_embeddings = self._embed_record_set(record_set=update_records)
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\api\models\CollectionCommon.py", line 526, in _embed_record_set
+    return self._embed(input=record_set[field])  # type: ignore[literal-required]
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\api\models\CollectionCommon.py", line 535, in _embed
+    raise ValueError(
+ValueError: You must provide an embedding function to compute embeddings.https://docs.trychroma.com/guides/embeddings
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\asus\AppData\Local\Temp\rag-ssh-proof-383d0e8447ea4b2485635de3f5602a18\verify_runtime.py", line 121, in <module>
+    main()
+  File "C:\Users\asus\AppData\Local\Temp\rag-ssh-proof-383d0e8447ea4b2485635de3f5602a18\verify_runtime.py", line 105, in main
+    store._store._collection.update(ids=[chunk.metadata["chunk_id"]], documents=[chunk.page_content + "\n测试变更"])
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\api\models\Collection.py", line 289, in update
+    update_request = self._validate_and_prepare_update_request(
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\api\models\CollectionCommon.py", line 93, in wrapper
+    raise type(e)(msg).with_traceback(e.__traceback__)
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\api\models\CollectionCommon.py", line 90, in wrapper
+    return func(self, *args, **kwargs)
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\api\models\CollectionCommon.py", line 359, in _validate_and_prepare_update_request
+    update_embeddings = self._embed_record_set(record_set=update_records)
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\api\models\CollectionCommon.py", line 526, in _embed_record_set
+    return self._embed(input=record_set[field])  # type: ignore[literal-required]
+  File "E:\工作\RAG-Agent\.venv\lib\site-packages\chromadb\api\models\CollectionCommon.py", line 535, in _embed
+    raise ValueError(
+ValueError: You must provide an embedding function to compute embeddings.https://docs.trychroma.com/guides/embeddings in update.

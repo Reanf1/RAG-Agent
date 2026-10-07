@@ -1,0 +1,35 @@
+.....EE.
+======================================================================
+ERROR: test_untrusted_alias_uses_new_verified_entry_without_removing_old (test_chroma_path.TestChromaPath)
+Windows 448只更换当前进程入口；原入口及原索引都保留。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_1_3 向量化与存储/test_chroma_path.py", line 89, in test_untrusted_alias_uses_new_verified_entry_without_removing_old
+    replacement = Path(chroma_persist_path(directory))
+  File "/Users/rean/github/RAG+Agent/src/utils/chroma_path.py", line 31, in chroma_persist_path
+    if not alias.exists():
+  File "/Users/rean/github/RAG+Agent/tests/5_1_3 向量化与存储/test_chroma_path.py", line 81, in untrusted
+    raise error
+OSError: 不受信任的装入点
+
+======================================================================
+ERROR: test_untrusted_conflicting_target_is_rejected (test_chroma_path.TestChromaPath)
+入口报448仍须核验不跟随的目标字符串，不能换入口后掩盖冲突。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_1_3 向量化与存储/test_chroma_path.py", line 109, in test_untrusted_conflicting_target_is_rejected
+    chroma_persist_path(directory)
+  File "/Users/rean/github/RAG+Agent/src/utils/chroma_path.py", line 31, in chroma_persist_path
+    if not alias.exists():
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1114, in __call__
+    return self._mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1118, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1173, in _execute_mock_call
+    raise effect
+OSError: 不受信任的装入点
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.008s
+
+FAILED (errors=2)
