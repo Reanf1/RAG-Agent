@@ -254,7 +254,9 @@ class TestComparisonAndKeywords(unittest.TestCase):
         result_doc.metadata.update(chunk_id="result-core", page=5, page_number=6)
         before = deepcopy(chunks)
         with patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
+                patch("src.retrieval.reranker.Reranker") as reranker, \
                 patch("src.generation.rag_pipeline.urlopen", side_effect=self.comparison_packet) as http:
+            reranker.return_value.rerank.side_effect = lambda query, docs, k: [(doc, .9) for doc, _ in docs]
             retriever.return_value.search.side_effect = [[(doc, score)] for doc, score in
                 ((method, .8), (method, .8), (chunks[1], .9), (chunks[1], .9), (result_doc, .99), (result_doc, .99))
             ] + [[(self.documents[1], .9)]] * 6
@@ -304,7 +306,9 @@ class TestComparisonAndKeywords(unittest.TestCase):
                       "end_index": len(current.page_content) + len(following_text)})
         with patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
                 patch("src.generation.rag_pipeline.urlopen", side_effect=self.comparison_packet), \
+                patch("src.retrieval.reranker.Reranker") as reranker, \
                 patch("src.agent.tools._finish_paper_compare", wraps=_finish_paper_compare) as finish:
+            reranker.return_value.rerank.side_effect = lambda query, docs, k: [(doc, .9) for doc, _ in docs]
             retriever.return_value.search.side_effect = lambda query, **kw: [(self.documents[self.ids.index(kw['doc_id'])], .9)]
             retriever.return_value.vector_store.list_chunks.side_effect = [[current, following], [self.documents[1]]]
             result = paper_compare.invoke(dict(zip(("paper_a_id", "paper_b_id"), self.ids)))
@@ -313,6 +317,71 @@ class TestComparisonAndKeywords(unittest.TestCase):
         self.assertNotIn("INTRODUCTION", row["a"]["text"])
         ref = next(ref for ref in finish.call_args.args[0]["references"] if ref["metadata"].get("comparison_method"))
         self.assertEqual(ref["metadata"]["end_index"] - ref["metadata"]["start_index"], len(ref["text"]))
+
+    def test_cropped_abstract_replaces_stale_method_coverage_and_score(self):
+        """裁剪后摘要必须按方法重排，不能借用同块的数据集分数或旧缺失状态。"""
+        abstract = deepcopy(self.documents[0])
+        abstract.page_content = "Author email\nAbstract: We propose a Transformer. Dataset WMT. Our model achieves BLEU 28.4 on WMT.\n1\nINTRODUCTION\nBackground."
+        abstract.metadata.update(start_index=0, end_index=len(abstract.page_content))
+        before = deepcopy(abstract)
+        for method_score in (0.01, None):
+            with self.subTest(method_score=method_score), \
+                    patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
+                    patch("src.retrieval.reranker.Reranker") as reranker, \
+                    patch("src.generation.rag_pipeline.urlopen", side_effect=self.comparison_packet):
+                def search(query, *, k, doc_id, rerank):
+                    if doc_id != self.ids[0]:
+                        return [(self.documents[1], .9)]
+                    if "architecture" in query or "方法与模型" in query:
+                        return [] if method_score is None else [(abstract, method_score)]
+                    return [(abstract, .97)]
+                retriever.return_value.search.side_effect = search
+                retriever.return_value.vector_store.list_chunks.side_effect = [[abstract], []]
+                reranker.return_value.rerank.side_effect = lambda query, docs, k: [(doc, .8) for doc, _ in docs]
+                result = paper_compare.invoke(dict(zip(("paper_a_id", "paper_b_id"), self.ids)))
+                self.assertEqual(result["papers"][0]["coverage"]["方法"], {"generation_mode": "grounded", "top_score": .8})
+                self.assertEqual(result["low_relevance_dimensions"], [])
+                self.assertEqual(result["missing_dimensions"], [])
+                self.assertEqual(result["status"], "answered")
+                scored = reranker.return_value.rerank.call_args.args[1][0][0]
+                self.assertTrue(scored.page_content.startswith("Abstract"))
+                self.assertNotIn("INTRODUCTION", scored.page_content)
+                self.assertEqual(result["comparison"][0]["a"]["score"], .8)
+                self.assertEqual(abstract, before)
+
+    def test_low_method_dimension_exposes_confirmation_without_auto_generation(self):
+        """整篇高分不能绕过方法低分；复用现有候选确认入口，确认后不换证据。"""
+        from src.agent.tools import get_available_tools
+        abstract = deepcopy(self.documents[0])
+        abstract.page_content = "Abstract: We propose an attention-only Transformer."
+        abstract.metadata.update(chunk_id="abstract", start_index=0, end_index=len(abstract.page_content))
+        pending, args = {}, dict(zip(("paper_a_id", "paper_b_id"), self.ids))
+        with patch("src.generation.cache.cache_scope", return_value="scope-v1"), \
+                patch("src.retrieval.vector_store.VectorStore"), \
+                patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
+                patch("src.retrieval.reranker.Reranker") as reranker, \
+                patch("src.generation.rag_pipeline.urlopen", side_effect=self.comparison_packet) as http:
+            retriever.return_value.search.side_effect = lambda query, **kw: [(self.documents[self.ids.index(kw["doc_id"])], .9)]
+            retriever.return_value.vector_store.list_chunks.side_effect = [[abstract], []]
+            reranker.return_value.rerank.side_effect = lambda query, docs, k: [(doc, .03) for doc, _ in docs]
+            registry = get_available_tools(session_id="session", pending=pending, request_question="对比两篇论文")
+            result = next(t for t in registry if t.name == "paper_compare").invoke(args)
+            self.assertEqual(result["status"], "needs_confirmation")
+            self.assertEqual(result["low_relevance_dimensions"], ["论文A：方法"])
+            self.assertEqual(result["low_relevance_papers"], [])
+            self.assertEqual(result["papers"][0]["coverage"]["方法"]["top_score"], .03)
+            self.assertEqual(result["usage"]["eval_count"], 0)
+            http.assert_not_called()
+            approval = pending[result["confirmation_id"]]
+            retriever.reset_mock()
+            reranker.reset_mock()
+            registry = get_available_tools(session_id="session", confirmation=approval)
+            confirmed = next(t for t in registry if t.name == "paper_compare").invoke(args)
+            self.assertEqual(confirmed["status"], "answered")
+            self.assertTrue(confirmed["confirmed"])
+            self.assertEqual(confirmed["comparison"][0]["a"]["score"], .03)
+            retriever.assert_not_called()
+            reranker.assert_not_called()
 
     def test_comparison_low_relevance_cannot_generate_or_auto_confirm(self):
         result, _, http = self.compare((0.9, 0.01))
@@ -328,17 +397,17 @@ class TestComparisonAndKeywords(unittest.TestCase):
         self.assertEqual(result["citations"], [])
         http.assert_not_called()
 
-    def test_comparison_dimension_low_score_is_reported_with_paper_level_threshold(self):
+    def test_comparison_dimension_low_score_cannot_be_hidden_by_paper_top_score(self):
         scores = [0.9] * 6 + [0.01, 0.01, 0.9, 0.9, 0.9, 0.9]
         with patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
                 patch("src.generation.rag_pipeline.urlopen", side_effect=self.comparison_packet) as http:
             retriever.return_value.search.side_effect = [[(self.documents[i // 6], score)] for i, score in enumerate(scores)]
             result = paper_compare.invoke(dict(zip(("paper_a_id", "paper_b_id"), self.ids)))
-        self.assertEqual(result["status"], "answered")
+        self.assertEqual(result["status"], "needs_confirmation")
         self.assertEqual(result["low_relevance_dimensions"], ["论文B：方法"])
         self.assertEqual(result["low_relevance_papers"], [])
-        self.assertTrue(any("相关性低" in warning for warning in result["warnings"]))
-        self.assertEqual(http.call_count, 2)
+        self.assertIn("相关性低", result["answer"])
+        http.assert_not_called()
 
     def test_comparison_missing_paper_takes_priority_over_other_paper_low_score(self):
         result, _, http = self.compare((None, 0.01))

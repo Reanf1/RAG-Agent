@@ -1,0 +1,54 @@
+test_cropped_abstract_replaces_stale_method_coverage_and_score (__main__.TestComparisonAndKeywords)
+裁剪后摘要必须按方法重排，不能借用同块的数据集分数或旧缺失状态。 ... <frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+test_low_method_dimension_exposes_confirmation_without_auto_generation (__main__.TestComparisonAndKeywords)
+整篇高分不能绕过方法低分；复用现有候选确认入口，确认后不换证据。 ... FAIL
+
+======================================================================
+FAIL: test_cropped_abstract_replaces_stale_method_coverage_and_score (__main__.TestComparisonAndKeywords) (method_score=0.01)
+裁剪后摘要必须按方法重排，不能借用同块的数据集分数或旧缺失状态。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_2 工具集开发/test_comparison_keywords.py", line 338, in test_cropped_abstract_replaces_stale_method_coverage_and_score
+    self.assertEqual(result["papers"][0]["coverage"]["方法"], {"generation_mode": "grounded", "top_score": .8})
+AssertionError: {'generation_mode': 'low', 'top_score': 0.01} != {'generation_mode': 'grounded', 'top_score': 0.8}
+- {'generation_mode': 'low', 'top_score': 0.01}
+?                      ^ ^                  ^^
+
++ {'generation_mode': 'grounded', 'top_score': 0.8}
+?                      ^^ ^^^^^                  ^
+
+
+======================================================================
+FAIL: test_cropped_abstract_replaces_stale_method_coverage_and_score (__main__.TestComparisonAndKeywords) (method_score=None)
+裁剪后摘要必须按方法重排，不能借用同块的数据集分数或旧缺失状态。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_2 工具集开发/test_comparison_keywords.py", line 338, in test_cropped_abstract_replaces_stale_method_coverage_and_score
+    self.assertEqual(result["papers"][0]["coverage"]["方法"], {"generation_mode": "grounded", "top_score": .8})
+AssertionError: {'generation_mode': 'empty', 'top_score': None} != {'generation_mode': 'grounded', 'top_score': 0.8}
+- {'generation_mode': 'empty', 'top_score': None}
+?                       ^^^^                ^^^^
+
++ {'generation_mode': 'grounded', 'top_score': 0.8}
+?                      ++++++ ^                ^^^
+
+
+======================================================================
+FAIL: test_low_method_dimension_exposes_confirmation_without_auto_generation (__main__.TestComparisonAndKeywords)
+整篇高分不能绕过方法低分；复用现有候选确认入口，确认后不换证据。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_2 工具集开发/test_comparison_keywords.py", line 365, in test_low_method_dimension_exposes_confirmation_without_auto_generation
+    self.assertEqual(result["status"], "needs_confirmation")
+AssertionError: 'answered' != 'needs_confirmation'
+- answered
++ needs_confirmation
+
+
+----------------------------------------------------------------------
+Ran 2 tests in 1.016s
+
+FAILED (failures=3)
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

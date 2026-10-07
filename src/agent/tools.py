@@ -521,10 +521,6 @@ def _paper_compare(paper_a_id: str, paper_b_id: str, *, session_id=None, pending
             dimension_keys[dimension] = [document.metadata["chunk_id"] for document, _ in found]
             checked = prepare_rag_context(variants[0], found)
             coverage[dimension] = {"generation_mode": checked["generation_mode"], "top_score": checked["top_score"]}
-            if checked["generation_mode"] == "low":
-                low.append(f"论文{label}：{dimension}")
-            if checked["generation_mode"] == "empty":
-                missing.append(f"论文{label}：{dimension}")
             for document, score in found:
                 key = document.metadata["chunk_id"]
                 if key not in selected or score > selected[key][1]:
@@ -549,15 +545,22 @@ def _paper_compare(paper_a_id: str, paper_b_id: str, *, session_id=None, pending
         if abstracts:
             opening = abstracts[:1]
             dimension_keys["方法"] = []  # 摘要已保留本篇贡献，剩余预算交给数据集和完整结果。
-        novel = [doc for doc in opening if doc.metadata["chunk_id"] not in selected]
+        # 摘要已经扩展／裁剪，必须重新评分，不能沿用同块在其他维度或裁剪前的分数。
         opening_scores = {doc.metadata["chunk_id"]: (doc, score) for doc, score in
-                          # 输入占位分数不参与精排，输出全部为实际BGE模型分数。
-                          (Reranker().rerank(queries["方法"][0], [(doc, 0.0) for doc in novel], k=len(novel)) if novel else [])}
-        opening_scores.update({doc.metadata["chunk_id"]: (doc, selected[doc.metadata["chunk_id"]][1])
-                               for doc in opening if doc.metadata["chunk_id"] in selected})
+                          (Reranker().rerank(queries["方法"][0], [(doc, 0.0) for doc in opening], k=len(opening)) if opening else [])}
         for key in opening_scores:
             selected.pop(key, None)
         lead = build_context(question, list(opening_scores.values()), max_context_chars=budget // 3)
+        if abstracts:
+            # 实际方法已由摘要替换，覆盖状态也应来自送入上下文的摘要，不能保留旧的低分／缺失。
+            checked = prepare_rag_context(queries["方法"][0], [
+                (Document(page_content=ref["text"], metadata=ref["metadata"]), ref["score"]) for ref in lead["references"]])
+            coverage["方法"] = {"generation_mode": checked["generation_mode"], "top_score": checked["top_score"]}
+        for dimension, checked in coverage.items():
+            if checked["generation_mode"] == "low":
+                low.append(f"论文{label}：{dimension}")
+            if checked["generation_mode"] == "empty":
+                missing.append(f"论文{label}：{dimension}")
         # 不同维度查询的BGE分数不可跨查询竞争全部预算；同一块仅保留一次。
         groups, assigned = [], set()
         for keys in dimension_keys.values():
@@ -600,10 +603,11 @@ def _paper_compare(paper_a_id: str, paper_b_id: str, *, session_id=None, pending
     base = {"papers": papers, "missing_dimensions": missing, "low_relevance_dimensions": low, "low_relevance_papers": low_papers}
     context = prepare_rag_context(question, results)
     empty_paper = any(not paper["references"] for paper in papers)
-    if empty_paper or low_papers:
+    # Agent不能将未确认的低分维度视为完成；直接接入已有候选确认入口，避免生成后只剩未完成提示。
+    if empty_paper or low_papers or low:
         result = {**base, "status": "insufficient_evidence" if empty_paper else "needs_confirmation",
                   "answer": "一篇论文没有可用索引证据，请先完成两篇论文入库。" if empty_paper else "检索相关性低，请用户核对候选原文。",
-                  "references": _tool_references(context["references"]), "generation_mode": "low" if low_papers else "empty",
+                  "references": _tool_references(context["references"]), "generation_mode": "empty" if empty_paper else "low",
                   "citations": [], "usage": {"prompt_eval_count": 0, "eval_count": 0},
                   "warnings": list(dict.fromkeys(ref["metadata"]["retrieval_warning"] for ref in context["references"]
                                                   if ref["metadata"].get("retrieval_warning"))),

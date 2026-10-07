@@ -1,0 +1,249 @@
+Browser tab: 3, Title: "智能科研助理", URL: "http://192.168.1.12:8501/?visitor=a4d34763e0db497f89225aae9267e1e5&conversation=eea5d5e9505e4ed781ed91bb4257b2ba".
+0 AXWebArea 智能科研助理, URL: 192.168.1.12:8501/?visitor=a4d34763e0db497f89225aae9267e1e5&conversation=eea5d5e9505e4ed781ed91bb4257b2ba
+	1 container
+		2 container
+			3 container
+				4 heading 系统状态, Value: 2
+					11 text 系统状态
+				12 container
+					13 text 系统时间：2026-10-07 12:32 :22
+				14 container
+					15 text LLM服务：可连接，推理未验证（qwen2.5 :7b ）
+				16 text 向量数据库：可读取，检索未验证（Chroma）
+				17 button 刷新状态
+					18 text 刷新状态
+				19 heading 文档上传与管理, Value: 2
+					20 text 文档上传与管理
+				21 container 上传文档
+					22 button file upload
+					23 button upload Upload
+						24 text upload
+						25 text Upload
+					26 text 20MB per file
+					27 text  • PDF, DOCX, TXT, MD, MARKDOWN
+				28 text 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+				29 button (disabled) 开始导入
+					30 text 开始导入
+				31 button (disabled) 重试失败项
+					32 text 重试失败项
+				33 heading 对话历史管理, Value: 2
+					34 text 对话历史管理
+				35 button 新建会话
+					36 text 新建会话
+				37 text 最近
+				38 button 新会话
+					39 text 新会话
+				40 button 删除当前会话
+					41 text 删除当前会话
+			5 container
+				6 button keyboard_double_arrow_right
+				7 pop up button (collapsed) Description: Main menu, Secondary Actions: Expand
+			8 container
+				9 heading 智能科研助理, Value: 1, ID: 2d7dc4e4
+					42 text 智能科研助理
+					10 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=a4d34763e0db497f89225aae9267e1e5&conversation=eea5d5e9505e4ed781ed91bb4257b2ba#2d7dc4e4
+				43 text 基于 RAG + Agent 的论文知识库问答系统
+				44 tab group react-aria5633486390-:r6:
+					45 tab (selectable, settable, boolean) 科研对话, ID: react-aria5633486390-:r6:-tab-0, Value: 0
+科研对话
+					46 tab (selected, settable, boolean) 文档检索, ID: react-aria5633486390-:r6:-tab-1, Value: 1
+文档检索
+					47 tab (selectable, settable, boolean) 知识库, ID: react-aria5633486390-:r6:-tab-2, Value: 0
+知识库
+				49 container Description: 文档检索, ID: react-aria5633486390-:r6:-tabpanel-1
+					50 heading 文档 Top-K 检索, Value: 3, ID: top-k
+						51 text 文档 Top-K 检索
+						52 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=a4d34763e0db497f89225aae9267e1e5&conversation=eea5d5e9505e4ed781ed91bb4257b2ba#top-k
+					53 container
+						54 combo box (collapsed, settable) Description: 检索方式, Value: 向量相似度, ID: react-aria5633486390-:r32:, Secondary Actions: Expand
+						55 pop up button (collapsed) Description: Open, ID: react-aria5633486390-:r2u:, Secondary Actions: Expand
+					56 container
+						57 stepper (settable, integer) Description: Top-k, Value: 5, ID: :r3b:
+						58 button Decrement
+						59 button Increment
+					60 container
+						61 button Help for 文档ID
+						62 text field (settable) Description: 文档ID, Value: 8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6, ID: :r3h:
+					63 container
+						64 text field (settable) Description: 查询内容, Value: ViT如何使用位置编码？, ID: :r3p:
+					65 button 检索
+						66 text 检索
+					67 text 返回 5 个文档块（Top-K=5）。
+					68 container
+						69 button (expanded) keyboard_arrow_down 1. Windows验收_ViT.pdf · 余弦相似度 0.7818, Secondary Actions: Collapse
+							70 text keyboard_arrow_down
+							71 text 1. Windows验收_ViT.pdf · 余弦相似度 0.7818
+						72 text 来源：Windows验收_ViT.pdf；物理页码：16
+						73 text 文档 ID：8ce7b839；块 ID：c3365d80
+						74 text for different conﬁgurations. All conﬁgurations are based on a ViT model with 8 layers, D = 1024,
+DMLP = 2048 and a patch size of 32, the intersection of all lines. We can see that scaling the
+depth results in the biggest improvements which are clearly visible up until 64 layers. However,
+diminishing returns are already visible after 16 layers. Interestingly, scaling the width of the net-
+work seems to result in the smallest changes. Decreasing the patch size and thus increasing the
+					75 container
+						76 button (expanded) keyboard_arrow_down 2. Windows验收_ViT.pdf · 余弦相似度 0.7793, Secondary Actions: Collapse
+							77 text keyboard_arrow_down
+							78 text 2. Windows验收_ViT.pdf · 余弦相似度 0.7793
+						79 text 来源：Windows验收_ViT.pdf；物理页码：18
+						80 text 文档 ID：8ce7b839；块 ID：45acfb2c
+						81 text Published as a conference paper at ICLR 2021
+ViT-L16
+ViT-L16
+ViT-L16
+7 epochs, LR=0.0002, WD=0.01
+7 epochs, LR=0.0004, WD=0.1
+14 epochs, LR=0.0004, WD=0.1
+1
+[图像区域 1：原文第 18 页]
+[图像区域 3：原文第 18 页]
+[图像区域 5：原文第 18 页]
+[图像区域 2：原文第 18 页]
+[图像区域 4：原文第 18 页]
+[图像区域 6：原文第 18 页]
+1
+1
+1
+2
+2
+2
+3
+3
+3
+4
+4
+4
+5
+5
+5
+Cosine similarity
+Input patch row
+Input patch row
+Input patch row
+6
+6
+6
+7
+7
+7
+8
+8
+8
+9
+9
+9
+10
+10
+10
+11
+11
+11
+12
+12
+12
+13
+13
+13
+14
+14
+14
+1
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10 11 12 13 14
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10 11 12 13 14
+1
+2
+3
+4
+5
+6
+7
+					82 container
+						83 button (expanded) keyboard_arrow_down 3. Windows验收_ViT.pdf · 余弦相似度 0.7772, Secondary Actions: Collapse
+							84 text keyboard_arrow_down
+							85 text 3. Windows验收_ViT.pdf · 余弦相似度 0.7772
+						86 text 来源：Windows验收_ViT.pdf；物理页码：8
+						87 text 文档 ID：8ce7b839；块 ID：69912204
+						88 text since one might expect convolutional local feature processing to assist ViT at any size. Third, Vision
+Transformers appear not to saturate within the range tried, motivating future scaling efforts.
+4.5
+INSPECTING VISION TRANSFORMER
+To begin to understand how the Vision Transformer processes im-
+Input
+Attention
+age data, we analyze its internal representations. The ﬁrst layer of
+the Vision Transformer linearly projects the ﬂattened patches into a
+[图像区域 1：原文第 8 页]
+[图像区域 2：原文第 8 页]
+					89 container
+						90 button (expanded) keyboard_arrow_down 4. Windows验收_ViT.pdf · 余弦相似度 0.7732, Secondary Actions: Collapse
+							91 text keyboard_arrow_down
+							92 text 4. Windows验收_ViT.pdf · 余弦相似度 0.7732
+						93 text 来源：Windows验收_ViT.pdf；物理页码：14
+						94 text 文档 ID：8ce7b839；块 ID：5568f534
+						95 text et al., 2020)).
+When transferring ViT models to another dataset, we remove the whole head (two linear layers) and
+replace it by a single, zero-initialized linear layer outputting the number of classes required by the
+target dataset. We found this to be a little more robust than simply re-initializing the very last layer.
+For VTAB we follow the protocol in Kolesnikov et al. (2020), and use the same hyperparameter
+					96 container
+						97 button (expanded) keyboard_arrow_down 5. Windows验收_ViT.pdf · 余弦相似度 0.7725, Secondary Actions: Collapse
+							98 text keyboard_arrow_down
+							99 text 5. Windows验收_ViT.pdf · 余弦相似度 0.7725
+						100 text 来源：Windows验收_ViT.pdf；物理页码：19
+						101 text 文档 ID：8ce7b839；块 ID：9bb9cb71
+						102 text can be seen, the theoretical bi-quadratic scaling of ViT with image size only barely starts happening
+for the largest models at the largest resolutions.
+Another quantity of interest is the largest batch-size each model can ﬁt onto a core, larger being
+better for scaling to large datasets. Figure 12 (right) shows this quantity for the same set of models.
+This shows that large ViT models have a clear advantage in terms of memory-efﬁciency over ResNet
+models.
+R50x1
+ViT-B/32
+ViT-B/16
+ViT-H/14
+R50x2
+ViT-L/32
+					103 heading 检索分数分布, Value: 3, ID: cf661d5
+						104 text 检索分数分布
+						105 link Description: Link to heading, Value: 192.168.1.12:8501/?visitor=a4d34763e0db497f89225aae9267e1e5&conversation=eea5d5e9505e4ed781ed91bb4257b2ba#cf661d5
+					106 text 请求 32 · 缓存命中 2 · 空结果 3 · 检索失败 5
+					107 text BAAI/bge-reranker-base · 版本 2cfc18c9 · 样本 21 · 均值 0.4977 · 范围 0.0000–0.9991
+					108 container
+						109 button Show data
+						110 button Download as PNG
+						111 button Fullscreen
+						112 container Vega visualization
+							113 image
+								114 container X-axis titled 'Top-1 分数区间' for a discrete scale with 10 values: 0.0–0.1, 0.1–0.2, 0.2–0.3, 0.3–0.4, 0.4–0.5, ending with 0.9–1.0 Y-axis titled '实际检索次数' for a linear scale with values from 0 to 8 Top-1 分数区间: 0.0–0.1; 实际检索次数: 7; range: 0.0–0.1; count: 7 Top-1 分数区间: 0.1–0.2; 实际检索次数: 2; range: 0.1–0.2; count: 2 Top-1 分数区间: 0.2–0.3; 实际检索次数: 0; range: 0.2–0.3; count: 0 Top-1 分数区间: 0.3–0.4; 实际检索次数: 1; range: 0.3–0.4; count: 1 Top-1 分数区间: 0.4–0.5; 实际检索次数: 0; range: 0.4–0.5; count: 0 Top-1 分数区间: 0.5–0.6; 实际检索次数: 2; range: 0.5–0.6; count: 2 Top-1 分数区间: 0.6–0.7; 实际检索次数: 0; range: 0.6–0.7; count: 0 Top-1 分数区间: 0.7–0.8; 实际检索次数: 0; range: 0.7–0.8; count: 0 Top-1 分数区间: 0.8–0.9; 实际检索次数: 1; range: 0.8–0.9; count: 1 Top-1 分数区间: 0.9–1.0; 实际检索次数: 8; range: 0.9–1.0; count: 8
+									115 axis X-axis titled 'Top-1 分数区间' for a discrete scale with 10 values: 0.0–0.1, 0.1–0.2, 0.2–0.3, 0.3–0.4, 0.4–0.5, ending with 0.9–1.0
+									116 axis Y-axis titled '实际检索次数' for a linear scale with values from 0 to 8
+									117 container Top-1 分数区间: 0.0–0.1; 实际检索次数: 7; range: 0.0–0.1; count: 7 Top-1 分数区间: 0.1–0.2; 实际检索次数: 2; range: 0.1–0.2; count: 2 Top-1 分数区间: 0.2–0.3; 实际检索次数: 0; range: 0.2–0.3; count: 0 Top-1 分数区间: 0.3–0.4; 实际检索次数: 1; range: 0.3–0.4; count: 1 Top-1 分数区间: 0.4–0.5; 实际检索次数: 0; range: 0.4–0.5; count: 0 Top-1 分数区间: 0.5–0.6; 实际检索次数: 2; range: 0.5–0.6; count: 2 Top-1 分数区间: 0.6–0.7; 实际检索次数: 0; range: 0.6–0.7; count: 0 Top-1 分数区间: 0.7–0.8; 实际检索次数: 0; range: 0.7–0.8; count: 0 Top-1 分数区间: 0.8–0.9; 实际检索次数: 1; range: 0.8–0.9; count: 1 Top-1 分数区间: 0.9–1.0; 实际检索次数: 8; range: 0.9–1.0; count: 8
+										118 bar Top-1 分数区间: 0.0–0.1; 实际检索次数: 7; range: 0.0–0.1; count: 7
+										119 bar Top-1 分数区间: 0.1–0.2; 实际检索次数: 2; range: 0.1–0.2; count: 2
+										120 bar Top-1 分数区间: 0.2–0.3; 实际检索次数: 0; range: 0.2–0.3; count: 0
+										121 bar Top-1 分数区间: 0.3–0.4; 实际检索次数: 1; range: 0.3–0.4; count: 1
+										122 bar Top-1 分数区间: 0.4–0.5; 实际检索次数: 0; range: 0.4–0.5; count: 0
+										123 bar Top-1 分数区间: 0.5–0.6; 实际检索次数: 2; range: 0.5–0.6; count: 2
+										124 bar Top-1 分数区间: 0.6–0.7; 实际检索次数: 0; range: 0.6–0.7; count: 0
+										125 bar Top-1 分数区间: 0.7–0.8; 实际检索次数: 0; range: 0.7–0.8; count: 0
+										126 bar Top-1 分数区间: 0.8–0.9; 实际检索次数: 1; range: 0.8–0.9; count: 1
+										127 bar Top-1 分数区间: 0.9–1.0; 实际检索次数: 8; range: 0.9–1.0; count: 8
+
+The focused UI element is 65 button 检索

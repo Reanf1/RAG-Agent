@@ -1,6 +1,8 @@
 # 自动化测试
 
-当前767个用例、18个小节、49个测试文件；2026-10-07集中补充4项真实Chroma维护、4项问答聚焦及3项定量证据回归。[最终逐项结果](../reports/模块完整性验证/四问题批量修复回归_20261007_最终复核.json)及[完整日志](../reports/模块完整性验证/四问题批量修复回归_20261007_最终复核.log)全部通过，失败／错误／跳过均为0，54.042秒仅为本地测试运行时间。标签损坏、重启后全部向量读取、HNSW查询及备份使用真实临时Chroma；模型HTTP／小型模拟向量不代表真实质量或Windows性能。真实Qwen／M3E／BGE样例及失败归档见[四问题批量修复报告](../reports/5_4_4%20端到端联调与测试/四问题批量修复_20261007/四问题批量修复报告.md)。
+当前769个用例、18个小节、49个测试文件；2026-10-07 Windows集中复测后新增2项方法摘要评分／覆盖状态与低分确认回归。[最新逐项结果](../reports/模块完整性验证/Windows维护与方法确认回归_20261007.json)及[完整日志](../reports/模块完整性验证/Windows维护与方法确认回归_20261007.log)全部通过，失败／错误／跳过均为0，53.358秒仅为本地测试运行时间。模型HTTP／小型模拟向量不代表真实质量或Windows性能。[Windows维护、问答与对比记录](../reports/5_4_4%20端到端联调与测试/Windows索引维护_20261007/Windows索引维护记录.md)另保留真实页面、初评及本地真实M3E／BGE确认入口；确认补丁尚未在Windows复测。
+
+此前767项集中补充4项真实Chroma维护、4项问答聚焦及3项定量证据回归，[逐项结果](../reports/模块完整性验证/四问题批量修复回归_20261007_最终复核.json)及[日志](../reports/模块完整性验证/四问题批量修复回归_20261007_最终复核.log)保留。标签损坏、重启后全部向量读取、HNSW查询及备份使用真实临时Chroma；真实Qwen／M3E／BGE样例及失败归档见[四问题批量修复报告](../reports/5_4_4%20端到端联调与测试/四问题批量修复_20261007/四问题批量修复报告.md)。
 
 此前[756项邻块保护](../reports/模块完整性验证/Windows邻块遮蔽修复回归_20261007.json)及[755项维度预算结果](../reports/模块完整性验证/Windows维度证据预算修复回归_20261007.json)保留；756项全量标准输出当时未完整存盘，以逐项JSON为证据。
 
@@ -21,7 +23,7 @@
 | 5_2_3 缓存与降级策略 | 32 | [test_degradation.py](5_2_3%20缓存与降级策略/test_degradation.py)、[test_cache.py](5_2_3%20缓存与降级策略/test_cache.py)、[test_agent_cache.py](5_2_3%20缓存与降级策略/test_agent_cache.py) |
 | 5_2_4 日志与可观测性 | 9 | [test_rag_logging.py](5_2_4%20日志与可观测性/test_rag_logging.py) |
 | 5_3_1 Agent核心循环 | 64 | [test_thought.py](5_3_1%20Agent核心循环/test_thought.py)、[test_action.py](5_3_1%20Agent核心循环/test_action.py)、[test_observation.py](5_3_1%20Agent核心循环/test_observation.py)、[test_system_prompt.py](5_3_1%20Agent核心循环/test_system_prompt.py) |
-| 5_3_2 工具集开发 | 102 | [test_research_tools.py](5_3_2%20工具集开发/test_research_tools.py)、[test_comparison_keywords.py](5_3_2%20工具集开发/test_comparison_keywords.py)、[test_summary_time_search.py](5_3_2%20工具集开发/test_summary_time_search.py)、[test_calculator_paper_list.py](5_3_2%20工具集开发/test_calculator_paper_list.py) |
+| 5_3_2 工具集开发 | 104 | [test_research_tools.py](5_3_2%20工具集开发/test_research_tools.py)、[test_comparison_keywords.py](5_3_2%20工具集开发/test_comparison_keywords.py)、[test_summary_time_search.py](5_3_2%20工具集开发/test_summary_time_search.py)、[test_calculator_paper_list.py](5_3_2%20工具集开发/test_calculator_paper_list.py) |
 | 5_3_3 Agent决策优化 | 48 | [test_routing_parallel.py](5_3_3%20Agent决策优化/test_routing_parallel.py)、[test_error_recovery.py](5_3_3%20Agent决策优化/test_error_recovery.py) |
 | 5_3_4 多轮对话记忆管理 | 55 | [test_session_isolation.py](5_3_4%20多轮对话记忆管理/test_session_isolation.py)、[test_history_window.py](5_3_4%20多轮对话记忆管理/test_history_window.py)、[test_conversation_summary.py](5_3_4%20多轮对话记忆管理/test_conversation_summary.py) |
 | 5_4_1 RAG与Agent深度融合 | 33 | [test_source_routing.py](5_4_1%20RAG与Agent深度融合/test_source_routing.py)、[test_memory_context.py](5_4_1%20RAG与Agent深度融合/test_memory_context.py) |
