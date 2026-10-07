@@ -56,6 +56,56 @@ class TestAgentSystemPrompt(unittest.TestCase):
         self.assertEqual(context, original)
         self.assertIn("模型上下文已截断", payload["messages"][1]["content"])
 
+    def test_long_windows_metadata_preserves_text_positions_and_parameters(self):
+        """长Windows路径超预算时精简辅助字段，正文、定位和原始日志不改写。"""
+        from langchain_core.messages import ToolMessage
+        from src.agent.react_loop import _model_request
+        from src.utils.token_budget import request_tokens
+        references = [{"text": f"第{i+1}页的完整证据。", "metadata": {
+            "doc_id": "a" * 64, "source_file": "论文.pdf", "page": i, "page_number": i+1,
+            "page_end": i+1, "paragraph_index": i, "table_index": 2, "line_start": 1,
+            "line_end": 5, "retrieval_warning": "来源待确认", "chunk_id": "b" * 64,
+            "file_type": ".pdf", "source": "E:\\工作\\" + "长目录\\" * 180 + "论文.pdf"}} for i in range(19)]
+        # 旧来源若没有文件名或有效物理页，不能删除唯一的路径与页索引。
+        references.append({"text": "旧资料证据", "metadata": {"source": "E:\\工作\\旧论文.pdf",
+            "page": 3, "page_number": None, "chunk_id": "c" * 64, "file_type": ".pdf"}})
+        context = {"observations": [{"name": "paper_summary", "status": "success",
+            "args": {"doc_id": "a" * 64, "metadata": {"source": "参数中的路径必须保留"}},
+            "result": {"references": references}}]}
+        original = deepcopy(context)
+        message = ToolMessage(content=json.dumps({"references": references}, ensure_ascii=False),
+                              tool_call_id="真实调用ID", name="paper_summary")
+        content = message.content
+        payload = json.loads(_model_request([
+            *build_agent_messages("请根据指定论文回答。", [], context, stage="observation"), message]).data)
+        self.assertLessEqual(request_tokens(payload) + payload["options"]["num_predict"], payload["options"]["num_ctx"])
+        state = json.loads(payload["messages"][1]["content"])
+        self.assertEqual(state["question"], "请根据指定论文回答。")
+        self.assertEqual(state["context"]["observations"][0]["args"], original["observations"][0]["args"])
+        for fitted in (state["context"]["observations"][0]["result"]["references"],
+                       json.loads(payload["messages"][-1]["content"])["references"]):
+            for got, before in zip(fitted, references):
+                self.assertEqual(got["text"], before["text"])
+                redundant = {"source", "chunk_id", "file_type", "page"} if before["metadata"].get("source_file") else {"chunk_id", "file_type"}
+                self.assertEqual(got["metadata"], {k: v for k, v in before["metadata"].items() if k not in redundant})
+        self.assertEqual(context, original)
+        self.assertEqual(message.content, content)
+
+    def test_small_request_keeps_all_metadata(self):
+        """未超预算时不改变任何来源字段。"""
+        from src.agent.react_loop import _model_request
+        context = {"observations": [{"result": {"references": [{"text": "完整证据", "metadata": {
+            "source": "E:\\工作\\论文.pdf", "chunk_id": "b" * 64, "file_type": ".pdf", "page": 0, "page_number": 1}}]}}]}
+        messages = build_agent_messages("问题", [], context)
+        payload = json.loads(_model_request(messages).data)
+        self.assertEqual(payload["messages"][1]["content"], messages[1].content)
+
+    def test_oversized_current_question_remains_rejected(self):
+        """当前任务自身超限仍明确拒绝，不能通过删除问题掩盖。"""
+        from src.agent.react_loop import _model_request
+        with self.assertRaises(ValueError):
+            _model_request(build_agent_messages("🧬" * 15000, []))
+
     def test_native_tool_message_is_json_and_can_fit_full_request_budget(self):
         """执行器返回的原生ToolMessage也必须可裁剪，不能只处理Human Context。"""
         from src.agent.tools import execute_tool

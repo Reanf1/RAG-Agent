@@ -115,7 +115,7 @@ def build_thought_messages(question: str, tools: list[BaseTool], context: dict |
 
 
 def _fit_agent_payload(payload: dict):
-    """仅裁剪发送副本中的旧历史和证据正文；原始Context、参数与引用位置不改写。"""
+    """仅精简发送副本的旧历史、辅助来源字段和正文；原始Context与引用位置保留。"""
     budget = payload["options"]["num_ctx"] - payload["options"]["num_predict"]
     editable = []
     for message in payload["messages"]:
@@ -142,12 +142,25 @@ def _fit_agent_payload(payload: dict):
             continue
         candidates = []
         def collect(value):
+            nonlocal changed
             if isinstance(value, list):
                 for item in value:
                     collect(item)
             elif isinstance(value, dict):
                 for key, item in value.items():
-                    if key in {"args", "metadata", "question", "thought", "tool_question"}:
+                    if key in {"args", "question", "thought", "tool_question"}:
+                        continue
+                    if key == "metadata":
+                        if isinstance(item, dict):
+                            # 超预算时去掉重复的绝对路径和内部标识，稳定ID及来源定位仍保留。
+                            redundant = {"chunk_id", "file_type"}
+                            if isinstance(item.get("source_file"), str) and item["source_file"].strip():
+                                redundant.add("source")
+                            if type(item.get("page_number")) is int and item["page_number"] > 0:
+                                redundant.add("page")
+                            for field in redundant & item.keys():
+                                del item[field]
+                                changed = True
                         continue
                     if key in {"text", "answer", "raw_answer", "abstract", "summary", "context"} and isinstance(item, str) and len(item) > 128:
                         candidates.append((len(item), value, key))
@@ -155,6 +168,10 @@ def _fit_agent_payload(payload: dict):
                         collect(item)
         for _, value in editable:
             collect(value.get("context", value))
+        if changed:
+            for message, value in editable:
+                message["content"] = json.dumps(value, ensure_ascii=False, allow_nan=False)
+            continue
         if not candidates:
             break  # 固定提示／问题／参数超限交给最终检查明确拒绝，不静默裁掉任务。
         _, parent, key = max(candidates, key=lambda item: item[0])
