@@ -1,0 +1,77 @@
+第 8 页三线表列边界不明确，保留原始正文与页码。
+Consider using the pymupdf_layout package for a greatly improved page layout analysis.
+宽上下文对照 None ## 回答
+ViT在预训练阶段使用了一个具有一个隐藏层的多层感知机（MLP）作为分类头，而在微调阶段则使用了一个单一的线性层。位置编码通过将位置嵌入添加到patch嵌入中来保留位置信息。研究使用了标准的可学习的一维位置嵌入，因为没有观察到使用更高级的二维感知位置嵌入能带来显著的性能提升（第3页）。
+
+在一项消融研究中，位置嵌入的不同编码方式之间几乎没有差异。研究结果表明，带有位置嵌入的模型性能显著优于没有位置嵌入的模型，但不同位置编码方式之间的性能差异很小（第18页）。
+
+[参考文档1：Windows验收\_ViT.pdf；第3页（物理页码）][参考文档2：Windows验收\_ViT.pdf；第18页（物理页码）]
+
+## 参考来源
+- [参考文档1] Windows验收\_ViT.pdf；第3页（物理页码）
+- [参考文档2] Windows验收\_ViT.pdf；第18页（物理页码）
+聚焦短问题 insufficient_evidence ViT（Vision Transformer）通过位置编码来保留输入图像中各个patch的位置信息。具体来说，位置编码可以通过以下几种方式添加到patch嵌入中：
+
+1. **基于路径坐标的位置编码**：根据patch在输入路径上的坐标，将X和Y嵌入进行拼接，以获取最终的位置嵌入。[参考文档3, 第17页]
+
+2. **标准可学习的一维位置嵌入**：使用标准的可学习一维位置嵌入，而没有观察到使用更先进的二维感知位置嵌入带来的显著性能提升。[参考文档4, 第3页]
+
+3. **相对位置嵌入**：考虑patch之间的相对距离来编码空间信息，而不是它们的绝对位置。[参考文档3, 第17页]
+
+4. **位置嵌入的添加**：在patch嵌入中添加位置嵌入以保留位置信息。[参考文档5, 第17页]
+
+在ViT模型的主干部分，位置嵌入是在输入传递给Transformer编码器之前添加的（所有其他实验中的默认设置）。[参考文档2, 第18页]
+
+## 参考来源
+无可引用来源
+聚焦带文档ID问题 insufficient_evidence ViT（Vision Transformer）使用位置编码的方法如下：
+
+1. **一维位置编码**：将输入视为按栅格顺序排列的序列（在所有其他实验中默认使用）。[参考文档5, 第9页]
+
+2. **二维位置编码**：将输入视为二维网格中的补丁。[参考文档5, 第9页]
+
+3. 在模型的茎部分添加位置嵌入，并在输入传递给Transformer编码器之前进行（在本文所有其他实验中默认使用）。[参考文档2, 第18页]
+
+4. 在每个层的开始处学习并添加位置嵌入到输入中。[参考文档2, 第18页]
+
+5. 在每个层的开始处共享学习到的位置嵌入。[参考文档2, 第18页]
+
+6. 根据输入补丁的相对距离，编码空间信息，而不是它们的绝对位置。[参考文档1, 第17页]
+
+7. 位置嵌入添加到补丁嵌入中，以保留位置信息。使用标准可学习的一维位置嵌入，因为没有观察到使用更高级的二维感知位置嵌入带来的显著性能提升。[参考文档3, 第3页]
+
+## 参考来源
+无可引用来源
+完整Attention与ViT对比 answered ## 回答
+以下按三个维度并列展示两篇论文的原文证据，不改写实验数字或条件。
+| 维度 | 论文A | 论文B |
+| --- | --- | --- |
+| 方法 | 原文摘录：\[图像区域 1：原文第 3 页\] Figure 1: The Transformer - model architecture. The Transformer follows this overall architecture using stacked self-attention and point-wise, fully connected layers for both the encoder and decoder, shown in the left and right halves of Figure 1, respectively. 3.1 Encoder and Decoder Stacks The encoder is composed of a stack of N = 6 identical layers. Each layer has two Encoder: sub-layers. The first is a multi-head self-attention mechanism, and the second is a simple, position- wise fully connected feed-forward network. We employ a residual connection \[11\] around each of [参考文档5：完整Attention.pdf；第3页（物理页码）] | 原文摘录：1 INTRODUCTION Self-attention-based architectures, in particular Transformers \(Vaswani et al., 2017\), have become the model of choice in natural language processing \(NLP\). The dominant approach is to pre-train on a large text corpus and then ﬁne-tune on a smaller task-speciﬁc dataset \(Devlin et al., 2019\). Thanks to Transformers’ computational efﬁciency and scalability, it has become possible to train models of unprecedented size, with over 100B parameters \(Brown et al., 2020; Lepikhin et al., 2020\). With the models and datasets growing, there is still no sign of saturating performance. [参考文档8：Windows验收\_ViT.pdf；第1页（物理页码）] |
+| 数据集 | 原文摘录：sentence pairs. Sentences were encoded using byte-pair encoding \[3\], which has a shared source- target vocabulary of about 37000 tokens. For English-French, we used the significantly larger WMT 2014 English-French dataset consisting of 36M sentences and split tokens into a 32000 word-piece vocabulary \[38\]. Sentence pairs were batched together by approximate sequence length. Each training batch contained a set of sentence pairs containing approximately 25000 source tokens and 25000 target tokens. 5.2 Hardware and Schedule We trained our models on one machine with 8 NVIDIA P100 GPUs. [参考文档3：完整Attention.pdf；第7页（物理页码）] | 原文摘录：a lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show that self-supervised ViT holds promise for the future. 4.1 SETUP Datasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes and 1.3M images \(we refer to it as ImageNet in what follows\), its superset ImageNet-21k with 21k classes and 14M images \(Deng et al., 2009\), and JFT \(Sun et al., 2017\) with 18k classes and 303M high-resolution images. We de-duplicate the pre-training datasets w.r.t. the test sets of the downstream tasks following Kolesnikov et al. \(2020\). [参考文档4：Windows验收\_ViT.pdf；第4页（物理页码）] |
+| 实验结果 | 原文摘录：ensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.8 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the best models from the literature. We show that the Transformer generalizes well to other tasks by applying it successfully to English constituency parsing both with large and limited training data. [参考文档1：完整Attention.pdf；第1页（物理页码）] | 原文摘录：99.45 99.68 Oxford-IIIT-Pets 95.80 93.40 97.11 95.83 97.56 Table 5: Top1 accuracy \(in %\) of Vision Transformer on various datasets when pre-trained on Im- ageNet, ImageNet-21k or JFT300M. These values correspond to Figure 3 in the main text. Models are ﬁne-tuned at 384 resolution. Note that the ImageNet results are computed without additional techniques \(Polyak averaging and 512 resolution images\) used to achieve results in Table 2. \[表格：原文第 15 页，数据见独立表格内容\] [参考文档6：Windows验收\_ViT.pdf；第15页（物理页码）] |
+
+不同任务、数据集和实验条件的指标不可直接比较优劣；证据选择的语义适用性仍需对照原文核验。
+
+## 参考来源
+- [参考文档5] 完整Attention.pdf；第3页（物理页码）；正文已截断，仅展示已送入上下文的证据
+- [参考文档8] Windows验收\_ViT.pdf；第1页（物理页码）；正文已截断，仅展示已送入上下文的证据
+- [参考文档3] 完整Attention.pdf；第7页（物理页码）；正文已截断，仅展示已送入上下文的证据
+- [参考文档4] Windows验收\_ViT.pdf；第4页（物理页码）；正文已截断，仅展示已送入上下文的证据
+- [参考文档1] 完整Attention.pdf；第1页（物理页码）
+- [参考文档6] Windows验收\_ViT.pdf；第15页（物理页码）
+ViT与DETR两页节选对比 insufficient_evidence ## 回答
+以下按三个维度并列展示两篇论文的原文证据，不改写实验数字或条件。
+| 维度 | 论文A | 论文B |
+| --- | --- | --- |
+| 方法 | 原文摘录：1 INTRODUCTION Self-attention-based architectures, in particular Transformers \(Vaswani et al., 2017\), have become the model of choice in natural language processing \(NLP\). The dominant approach is to pre-train on a large text corpus and then ﬁne-tune on a smaller task-speciﬁc dataset \(Devlin et al., 2019\). Thanks to Transformers’ computational efﬁciency and scalability, it has become possible to train models of unprecedented size, with over 100B parameters \(Brown et al., 2020; Lepikhin et al., 2020\). With the models and datasets growing, there is still no sign of saturating performance. [参考文档6：Windows验收\_ViT.pdf；第1页（物理页码）] | 原文摘录：Abstract. We present a new method that views object detection as a direct set prediction problem. Our approach streamlines the detection pipeline, eﬀectively removing the need for many hand-designed compo- nents like a non-maximum suppression procedure or anchor generation that explicitly encode our prior knowledge about the task. The main ingredients of the new framework, called DEtection TRansformer or DETR, are a set-based global loss that forces unique predictions via bi- partite matching, and a transformer encoder-decoder architecture. Given a ﬁxed small set of learned object queries, DETR reasons about the re- lations of the objects and the global image context to directly output the ﬁnal set of predictions in parallel. The new model is conceptually [参考文档8：DETR节选.pdf；第1页（物理页码）] |
+| 数据集 | 原文摘录：a lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show that self-supervised ViT holds promise for the future. 4.1 SETUP Datasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes and 1.3M images \(we refer to it as ImageNet in what follows\), its superset ImageNet-21k with 21k classes and 14M images \(Deng et al., 2009\), and JFT \(Sun et al., 2017\) with 18k classes and 303M high-resolution images. We de-duplicate the pre-training datasets w.r.t. the test sets of the downstream tasks following Kolesnikov et al. \(2020\). [参考文档1：Windows验收\_ViT.pdf；第4页（物理页码）] | 原文摘录：loss function uniquely assigns a prediction to a ground truth object, and is invariant to a permutation of predicted objects, so we can emit them in parallel. We evaluate DETR on one of the most popular object detection datasets, COCO \[24\], against a very competitive Faster R-CNN baseline \[37\]. Faster R- CNN has undergone many design iterations and its performance was greatly improved since the original publication. Our experiments show that our new model achieves comparable performances. More precisely, DETR demonstrates signiﬁcantly better performance on large objects, a result likely enabled by the [参考文档7：DETR节选.pdf；第2页（物理页码）] |
+| 实验结果 | 原文摘录：99.45 99.68 Oxford-IIIT-Pets 95.80 93.40 97.11 95.83 97.56 Table 5: Top1 accuracy \(in %\) of Vision Transformer on various datasets when pre-trained on Im- ageNet, ImageNet-21k or JFT300M. These values correspond to Figure 3 in the main text. Models are ﬁne-tuned at 384 resolution. Note that the ImageNet results are computed without additional techniques \(Polyak averaging and 512 resolution images\) used to achieve results in Table 2. \[表格：原文第 15 页，数据见独立表格内容\] [参考文档2：Windows验收\_ViT.pdf；第15页（物理页码）] | 原文证据已截断，不能完整列出数值及对应模型／数据集；请核对原文。 [参考文档7：DETR节选.pdf；第2页（物理页码）] |
+
+不同任务、数据集和实验条件的指标不可直接比较优劣；证据选择的语义适用性仍需对照原文核验。
+
+## 参考来源
+- [参考文档6] Windows验收\_ViT.pdf；第1页（物理页码）；正文已截断，仅展示已送入上下文的证据
+- [参考文档8] DETR节选.pdf；第1页（物理页码）
+- [参考文档1] Windows验收\_ViT.pdf；第4页（物理页码）；正文已截断，仅展示已送入上下文的证据
+- [参考文档7] DETR节选.pdf；第2页（物理页码）；正文已截断，仅展示已送入上下文的证据
+- [参考文档2] Windows验收\_ViT.pdf；第15页（物理页码）

@@ -1,0 +1,14 @@
+....................F
+======================================================================
+FAIL: test_usage_prefers_explicit_operation_over_similarity_visualization (test_generation.TestLocalGeneration)
+Figure7的相似性观察不能代替正文明确的实际使用方式。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_2_1 Prompt工程与生成策略/test_generation.py", line 108, in test_usage_prefers_explicit_operation_over_similarity_visualization
+    self.assertEqual(focused[0][0].metadata["page_number"], 3)
+AssertionError: 9 != 3
+
+----------------------------------------------------------------------
+Ran 21 tests in 0.763s
+
+FAILED (failures=1)

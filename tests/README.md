@@ -1,6 +1,8 @@
 # 自动化测试
 
-当前756个用例、18个小节、48个测试文件；2026-10-07新增邻块遮蔽回归，先复现前置补充挤掉数据集正文，再验证实际模型输入保留命中正文、连续原文、行号、截断标志及输入未改。[最新逐项结果](../reports/模块完整性验证/Windows邻块遮蔽修复回归_20261007.json)全部通过，失败／错误／跳过均为0。30项对比[定向日志](../reports/模块完整性验证/Windows邻块遮蔽修复后_20261007.log)通过；51.474秒仅为本地测试时间，不代表真实Qwen质量或性能通过。该次全量标准输出未完整存盘，以逐项JSON为证据；[前次755项结果](../reports/模块完整性验证/Windows维度证据预算修复回归_20261007.json)及其完整日志保留。
+当前767个用例、18个小节、49个测试文件；2026-10-07集中补充4项真实Chroma维护、4项问答聚焦及3项定量证据回归。[最终逐项结果](../reports/模块完整性验证/四问题批量修复回归_20261007_最终复核.json)及[完整日志](../reports/模块完整性验证/四问题批量修复回归_20261007_最终复核.log)全部通过，失败／错误／跳过均为0，54.042秒仅为本地测试运行时间。标签损坏、重启后全部向量读取、HNSW查询及备份使用真实临时Chroma；模型HTTP／小型模拟向量不代表真实质量或Windows性能。真实Qwen／M3E／BGE样例及失败归档见[四问题批量修复报告](../reports/5_4_4%20端到端联调与测试/四问题批量修复_20261007/四问题批量修复报告.md)。
+
+此前[756项邻块保护](../reports/模块完整性验证/Windows邻块遮蔽修复回归_20261007.json)及[755项维度预算结果](../reports/模块完整性验证/Windows维度证据预算修复回归_20261007.json)保留；756项全量标准输出当时未完整存盘，以逐项JSON为证据。
 
 测试按“5_1_1 中文小节名”组织，目录含空格时命令路径加引号。2026-10-06为754个用例、18个小节、48个测试文件；2026-10-06新增输出要求剥离2项、对比恢复提示1项、请求内临时向量复用2项回归后全量通过，无失败／错误／跳过，见[当时完整日志](../reports/模块完整性验证/Windows真实问答问题修复回归_20261006_最终.log)及[逐项结果](../reports/模块完整性验证/Windows真实问答问题修复回归_20261006_最终.json)。[初轮754项结果](../reports/模块完整性验证/Windows真实问答问题修复回归_20261006.json)保留：新增提示使旧1000字符样例没有正文空间，调整测试为当前完整模板另留500字符，继续核验长问题挤占160字符及完整请求不超预算；产品预算未放宽。此前[最终749项](../reports/模块完整性验证/Windows标签读取与失败表述修复回归_20261006_最终.json)、[749项中的断流失败](../reports/模块完整性验证/Windows标签读取与失败表述修复回归_20261006.json)、[740项路由日志](../reports/模块完整性验证/Windows内容问答路由修复回归_20261006.log)、[737项路径日志](../reports/模块完整性验证/Windows中文索引入口修复回归_20261006.log)及[730项独立审查日志](../reports/模块完整性验证/独立审查修复回归_20261006_最终.log)仍保留。
 
@@ -12,14 +14,14 @@
 | --- | ---: | --- |
 | 5_1_1 文档加载与批量导入 | 41 | [test_pdf_loader.py](5_1_1%20文档加载与批量导入/test_pdf_loader.py)、[test_docx_loader.py](5_1_1%20文档加载与批量导入/test_docx_loader.py)、[test_text_loader.py](5_1_1%20文档加载与批量导入/test_text_loader.py)、[test_batch_import.py](5_1_1%20文档加载与批量导入/test_batch_import.py) |
 | 5_1_2 文本分块策略 | 40 | [test_chunking.py](5_1_2%20文本分块策略/test_chunking.py)、[test_academic_pdf.py](5_1_2%20文本分块策略/test_academic_pdf.py) |
-| 5_1_3 向量化与存储 | 45 | [test_vector_store.py](5_1_3%20向量化与存储/test_vector_store.py)、[test_embeddings.py](5_1_3%20向量化与存储/test_embeddings.py)、[test_batch_index.py](5_1_3%20向量化与存储/test_batch_index.py)、[test_chroma_path.py](5_1_3%20向量化与存储/test_chroma_path.py) |
+| 5_1_3 向量化与存储 | 49 | [test_vector_store.py](5_1_3%20向量化与存储/test_vector_store.py)、[test_embeddings.py](5_1_3%20向量化与存储/test_embeddings.py)、[test_batch_index.py](5_1_3%20向量化与存储/test_batch_index.py)、[test_chroma_path.py](5_1_3%20向量化与存储/test_chroma_path.py)、[test_index_repair.py](5_1_3%20向量化与存储/test_index_repair.py) |
 | 5_1_4 混合检索与重排序 | 48 | [test_bm25.py](5_1_4%20混合检索与重排序/test_bm25.py)、[test_hybrid_retriever.py](5_1_4%20混合检索与重排序/test_hybrid_retriever.py)、[test_reranker.py](5_1_4%20混合检索与重排序/test_reranker.py)、[test_retrieval_evaluation.py](5_1_4%20混合检索与重排序/test_retrieval_evaluation.py) |
-| 5_2_1 Prompt工程与生成策略 | 61 | [test_prompt.py](5_2_1%20Prompt工程与生成策略/test_prompt.py)、[test_context.py](5_2_1%20Prompt工程与生成策略/test_context.py)、[test_citations.py](5_2_1%20Prompt工程与生成策略/test_citations.py)、[test_generation.py](5_2_1%20Prompt工程与生成策略/test_generation.py) |
+| 5_2_1 Prompt工程与生成策略 | 65 | [test_prompt.py](5_2_1%20Prompt工程与生成策略/test_prompt.py)、[test_context.py](5_2_1%20Prompt工程与生成策略/test_context.py)、[test_citations.py](5_2_1%20Prompt工程与生成策略/test_citations.py)、[test_generation.py](5_2_1%20Prompt工程与生成策略/test_generation.py) |
 | 5_2_2 流式输出与引用 | 17 | [test_streaming.py](5_2_2%20流式输出与引用/test_streaming.py) |
 | 5_2_3 缓存与降级策略 | 32 | [test_degradation.py](5_2_3%20缓存与降级策略/test_degradation.py)、[test_cache.py](5_2_3%20缓存与降级策略/test_cache.py)、[test_agent_cache.py](5_2_3%20缓存与降级策略/test_agent_cache.py) |
 | 5_2_4 日志与可观测性 | 9 | [test_rag_logging.py](5_2_4%20日志与可观测性/test_rag_logging.py) |
 | 5_3_1 Agent核心循环 | 64 | [test_thought.py](5_3_1%20Agent核心循环/test_thought.py)、[test_action.py](5_3_1%20Agent核心循环/test_action.py)、[test_observation.py](5_3_1%20Agent核心循环/test_observation.py)、[test_system_prompt.py](5_3_1%20Agent核心循环/test_system_prompt.py) |
-| 5_3_2 工具集开发 | 99 | [test_research_tools.py](5_3_2%20工具集开发/test_research_tools.py)、[test_comparison_keywords.py](5_3_2%20工具集开发/test_comparison_keywords.py)、[test_summary_time_search.py](5_3_2%20工具集开发/test_summary_time_search.py)、[test_calculator_paper_list.py](5_3_2%20工具集开发/test_calculator_paper_list.py) |
+| 5_3_2 工具集开发 | 102 | [test_research_tools.py](5_3_2%20工具集开发/test_research_tools.py)、[test_comparison_keywords.py](5_3_2%20工具集开发/test_comparison_keywords.py)、[test_summary_time_search.py](5_3_2%20工具集开发/test_summary_time_search.py)、[test_calculator_paper_list.py](5_3_2%20工具集开发/test_calculator_paper_list.py) |
 | 5_3_3 Agent决策优化 | 48 | [test_routing_parallel.py](5_3_3%20Agent决策优化/test_routing_parallel.py)、[test_error_recovery.py](5_3_3%20Agent决策优化/test_error_recovery.py) |
 | 5_3_4 多轮对话记忆管理 | 55 | [test_session_isolation.py](5_3_4%20多轮对话记忆管理/test_session_isolation.py)、[test_history_window.py](5_3_4%20多轮对话记忆管理/test_history_window.py)、[test_conversation_summary.py](5_3_4%20多轮对话记忆管理/test_conversation_summary.py) |
 | 5_4_1 RAG与Agent深度融合 | 33 | [test_source_routing.py](5_4_1%20RAG与Agent深度融合/test_source_routing.py)、[test_memory_context.py](5_4_1%20RAG与Agent深度融合/test_memory_context.py) |

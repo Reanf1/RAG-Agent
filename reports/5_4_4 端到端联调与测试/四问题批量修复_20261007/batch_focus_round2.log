@@ -1,0 +1,27 @@
+..........E......E..
+======================================================================
+ERROR: test_default_usage_prefers_main_setting_over_high_scored_appendix (test_generation.TestLocalGeneration)
+高分附录消融不能覆盖正文主设置；明确问附录时仍能访问原文。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_2_1 Prompt工程与生成策略/test_generation.py", line 94, in test_default_usage_prefers_main_setting_over_high_scored_appendix
+    focused = focus_answer_evidence("如何使用位置编码？", results, chunks=[heading])
+  File "/Users/rean/github/RAG+Agent/src/generation/rag_pipeline.py", line 67, in focus_answer_evidence
+    threshold = load_config()["generation"]["low_relevance_threshold"]
+KeyError: 'low_relevance_threshold'
+
+======================================================================
+ERROR: test_narrow_question_focus_excludes_unrelated_object_and_preserves_source (test_generation.TestLocalGeneration)
+位置编码相邻的分类头语句不能一起进入聚焦证据，引用仍为真实连续原文。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_2_1 Prompt工程与生成策略/test_generation.py", line 65, in test_narrow_question_focus_excludes_unrelated_object_and_preserves_source
+    [(focused, score)] = focus_answer_evidence("如何使用位置编码？", [(document, 0.9)])
+  File "/Users/rean/github/RAG+Agent/src/generation/rag_pipeline.py", line 67, in focus_answer_evidence
+    threshold = load_config()["generation"]["low_relevance_threshold"]
+KeyError: 'low_relevance_threshold'
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.641s
+
+FAILED (errors=2)

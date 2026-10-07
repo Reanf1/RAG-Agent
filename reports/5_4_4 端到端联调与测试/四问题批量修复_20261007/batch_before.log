@@ -1,0 +1,38 @@
+.......E........E..<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+...........................F...
+======================================================================
+ERROR: test_broad_question_does_not_focus_away_requested_details (tests.5_2_1 Prompt工程与生成策略.test_generation.TestLocalGeneration)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_2_1 Prompt工程与生成策略/test_generation.py", line 75, in test_broad_question_does_not_focus_away_requested_details
+    from src.generation.rag_pipeline import focus_answer_evidence
+ImportError: cannot import name 'focus_answer_evidence' from 'src.generation.rag_pipeline' (/Users/rean/github/RAG+Agent/src/generation/rag_pipeline.py)
+
+======================================================================
+ERROR: test_narrow_question_focus_excludes_unrelated_object_and_preserves_source (tests.5_2_1 Prompt工程与生成策略.test_generation.TestLocalGeneration)
+位置编码相邻的分类头语句不能一起进入聚焦证据，引用仍为真实连续原文。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_2_1 Prompt工程与生成策略/test_generation.py", line 53, in test_narrow_question_focus_excludes_unrelated_object_and_preserves_source
+    from src.generation.rag_pipeline import focus_answer_evidence
+ImportError: cannot import name 'focus_answer_evidence' from 'src.generation.rag_pipeline' (/Users/rean/github/RAG+Agent/src/generation/rag_pipeline.py)
+
+======================================================================
+FAIL: test_numeric_result_below_chart_rank_is_recalled_without_neighbor_truncation (tests.5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords)
+Top-2是图轴时继续检查Top-20，完整数值原文不能被扩展前缀截断。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_2 工具集开发/test_comparison_keywords.py", line 142, in test_numeric_result_below_chart_rank_is_recalled_without_neighbor_truncation
+    self.assertEqual(row["metadata"]["chunk_id"], "numeric")
+AssertionError: 'chart0' != 'numeric'
+- chart0
++ numeric
+
+
+----------------------------------------------------------------------
+Ran 50 tests in 5.422s
+
+FAILED (failures=1, errors=2)
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

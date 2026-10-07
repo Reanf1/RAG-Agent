@@ -1,0 +1,123 @@
+{
+  "scope": "四问题的本地真实模型复测；不连接Windows，不作部署／离线／性能验收。",
+  "cases": [
+    {
+      "name": "宽上下文对照",
+      "seconds": 0.7415333749959245,
+      "error": "RuntimeError('本地 Ollama 调用失败：本地模型服务暂时无法完成请求（HTTP 500）。等待当前任务结束，检查本地服务日志与可用内存，必要时重启 Ollama 后重新提交问题。')"
+    },
+    {
+      "name": "聚焦短问题",
+      "seconds": 4.319826292048674,
+      "error": "RuntimeError('本地 Ollama 调用失败：本地模型服务暂时无法完成请求（HTTP 500）。等待当前任务结束，检查本地服务日志与可用内存，必要时重启 Ollama 后重新提交问题。')"
+    },
+    {
+      "name": "聚焦带文档ID问题",
+      "seconds": 4.481739791983273,
+      "error": "RuntimeError('本地 Ollama 调用失败：本地模型服务暂时无法完成请求（HTTP 500）。等待当前任务结束，检查本地服务日志与可用内存，必要时重启 Ollama 后重新提交问题。')"
+    },
+    {
+      "name": "完整Attention与ViT对比",
+      "seconds": 13.432796207955107,
+      "error": "<HTTPError 500: 'Internal Server Error'>"
+    },
+    {
+      "name": "ViT与DETR两页节选对比",
+      "seconds": 10.018067708006129,
+      "error": "<HTTPError 500: 'Internal Server Error'>"
+    }
+  ],
+  "complete": true,
+  "config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://localhost:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 8192,
+      "num_predict": 512,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 6000,
+      "max_prompt_chars": 12000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "max_parallel_calls": 2,
+      "tool_timeout_seconds": 300,
+      "max_tool_retries": 1,
+      "max_repeated_calls": 2,
+      "online_search_enabled": false
+    },
+    "memory": {
+      "max_history_tokens": 2000,
+      "tokenizer_path": "data/models/qwen2.5-tokenizer/tokenizer.json",
+      "summary_trigger_turns": 10,
+      "summary_keep_recent_turns": 4,
+      "summary_max_tokens": 400
+    },
+    "paths": {
+      "raw_documents": "/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-batch-local-jhxv433x/raw",
+      "vector_index": "/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-batch-local-jhxv433x/index",
+      "logs": "/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-batch-local-jhxv433x/logs",
+      "session_db": "data/sessions/memory.sqlite3"
+    }
+  },
+  "inputs": [
+    {
+      "file": "Windows验收_ViT.pdf",
+      "sha256": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6"
+    },
+    {
+      "file": "完整Attention.pdf",
+      "sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"
+    },
+    {
+      "file": "DETR节选.pdf",
+      "sha256": "ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c3079f448a2ad"
+    }
+  ],
+  "chunks": 274
+}
