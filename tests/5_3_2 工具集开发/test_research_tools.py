@@ -238,7 +238,7 @@ class TestResearchTools(unittest.TestCase):
         self.assertEqual(result["evidence"]["abstract"][0]["location"], "行5")
         self.assertIn("张三", result["evidence"]["authors"][1]["text"])
         self.assertEqual(result["missing_fields"], [])
-        self.assertEqual(self.path.read_text(), self.text)
+        self.assertEqual(self.path.read_text(encoding="utf-8"), self.text)
         payload = json.loads(http.call_args.args[0].data)
         self.assertEqual(payload["messages"][0]["role"], "system")
         self.assertEqual(payload["format"]["properties"]["doi"]["enum"], [None, "10.1234/demo.2024", "10.5678/other"])

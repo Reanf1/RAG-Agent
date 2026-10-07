@@ -16,8 +16,8 @@ SPEC.loader.exec_module(evaluation)
 class EvaluationMetricTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.questions = {q["id"]: q for q in json.loads(evaluation.DATASET.read_text())}
-        cls.manifest = json.loads(evaluation.MANIFEST.read_text())
+        cls.questions = {q["id"]: q for q in json.loads(evaluation.DATASET.read_text(encoding="utf-8"))}
+        cls.manifest = json.loads(evaluation.MANIFEST.read_text(encoding="utf-8"))
         cls.identifiers = {p["id"]: p["doc_id"] for p in cls.manifest["papers"]}
 
     def chunk(self, paper, page, end=None):

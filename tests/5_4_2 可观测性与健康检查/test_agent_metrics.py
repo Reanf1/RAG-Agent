@@ -312,7 +312,7 @@ class TestAgentMetricsEntryAndPage(unittest.TestCase):
 
     def logs(self):
         return [json.loads(line) for path in Path(self.config["paths"]["logs"]).glob("agent_*.jsonl")
-                for line in path.read_text().splitlines()]
+                for line in path.read_text(encoding="utf-8").splitlines()]
 
     def test_session_persists_incremental_metrics_identity_and_answer(self):
         memory = MemoryManager()

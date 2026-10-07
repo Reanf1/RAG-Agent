@@ -26,7 +26,7 @@ def packet(content=None, name=None, args=None):
 
 class TestCitationRetention(unittest.TestCase):
     def setUp(self):
-        self.fixture = json.loads((ROOT / "reports/5_5_3 Bad Case分析与优化/F001引用丢失复现样例.json").read_text())
+        self.fixture = json.loads((ROOT / "reports/5_5_3 Bad Case分析与优化/F001引用丢失复现样例.json").read_text(encoding="utf-8"))
         self.context = {"observations": [deepcopy(self.fixture["tool_result"])]}
 
     def decision(self, context=None, decision=None):

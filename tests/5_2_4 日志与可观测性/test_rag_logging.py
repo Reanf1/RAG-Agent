@@ -45,7 +45,7 @@ class TestRAGLogging(unittest.TestCase):
         record_rag_request(self.message, "completed")
         paths = list(Path(self.directory.name).glob("rag_*.jsonl"))
         self.assertEqual(len(paths), 1)
-        raw = paths[0].read_text()
+        raw = paths[0].read_text(encoding="utf-8")
         self.assertIn("科研原文", raw)
         self.assertEqual(len(raw.splitlines()), 1)  # 正文换行编码为 JSON 转义。
         record = json.loads(raw)

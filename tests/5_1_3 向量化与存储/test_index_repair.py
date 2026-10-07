@@ -60,7 +60,7 @@ from src.retrieval.repair_index import rebuild_index
 from tests.helpers import SmallEmbeddings
 rebuild_index(sys.argv[1],sys.argv[2],embeddings=SmallEmbeddings())
 ''', self.source, self.output)
-        self.assertFalse(json.loads((self.output / "repair.json").read_text())["verified_after_restart"])
+        self.assertFalse(json.loads((self.output / "repair.json").read_text(encoding="utf-8"))["verified_after_restart"])
         with self.assertRaisesRegex(ValueError, "独立进程"):
             activate_index(self.source, self.output)
         self.worker('''import sys
@@ -105,7 +105,7 @@ VectorStore(sys.argv[1])._store.get(include=['embeddings'])
         store.add_chunks([Document(page_content="新增", metadata={"chunk_id": "2", "doc_id": "d"})])
         with self.assertRaisesRegex(ValueError, "发生变化"):
             verify_index(self.output)
-        self.assertFalse(json.loads((self.output / "repair.json").read_text())["verified_after_restart"])
+        self.assertFalse(json.loads((self.output / "repair.json").read_text(encoding="utf-8"))["verified_after_restart"])
         self.assertEqual(store.count(), 2)
 
     def test_locked_target_rolls_back_directory_replacement(self):

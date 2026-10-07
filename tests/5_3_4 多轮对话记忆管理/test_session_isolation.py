@@ -273,7 +273,7 @@ class TestSessionIsolation(unittest.TestCase):
             self.assertEqual(self.contents(user, session), [f"我的代号是{code}。", "已记录。", "我的代号是什么？", code])
         self.assertEqual(len(request_ids), 2)
         self.assertEqual(sorted(requests), sorted([code for _, _, code in identities] * 2))
-        logs = [json.loads(line) for path in log_dir.glob("agent_*.jsonl") for line in path.read_text().splitlines()]
+        logs = [json.loads(line) for path in log_dir.glob("agent_*.jsonl") for line in path.read_text(encoding="utf-8").splitlines()]
         self.assertEqual(len(logs), sum(len(events) for events in streams))
         for (user, session, _), events in zip(identities, streams):
             owned = [row for row in logs if row["request_id"] == events[-1]["request_id"]]
