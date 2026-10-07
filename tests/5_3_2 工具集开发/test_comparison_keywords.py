@@ -136,6 +136,29 @@ class TestComparisonAndKeywords(unittest.TestCase):
         self.assertEqual(self.documents, before)
         self.assertEqual([r["source_file"] for r in result["citations"]], ["同名.md", "同名.md"])
 
+    def test_dimension_budget_keeps_lower_scored_method_evidence(self):
+        """不同查询的分数不能混排挤掉已召回的主方法；总预算仍不放宽。"""
+        self.config["generation"]["max_context_chars"] = 1400
+        candidates = []
+        for index, text in enumerate(("Method: patch Transformer. ", "Dataset: ImageNet. ", "Accuracy: 88.55%. ")):
+            document = deepcopy(self.documents[0])
+            document.page_content = text + "Evidence details. " * 20
+            document.metadata["chunk_id"] = f"dimension-{index}"
+            candidates.append(document)
+        before = deepcopy(candidates)
+        with patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
+                patch("src.generation.rag_pipeline.urlopen", side_effect=self.comparison_packet) as http:
+            retriever.return_value.search.side_effect = [
+                [(candidates[index], score)] for index, score in ((0, .6), (0, .6), (1, .9), (1, .9), (2, .99), (2, .99))
+            ] + [[(self.documents[1], .9)]] * 6
+            result = paper_compare.invoke(dict(zip(("paper_a_id", "paper_b_id"), self.ids)))
+        references = result["papers"][0]["references"]
+        self.assertEqual({ref["metadata"]["chunk_id"] for ref in references}, {f"dimension-{i}" for i in range(3)})
+        payload = json.loads(json.loads(http.call_args_list[0].args[0].data)["messages"][1]["content"])
+        self.assertTrue(any("Method: patch Transformer" in ref["text"] for ref in payload["references"]))
+        self.assertEqual(candidates, before)
+        self.assertTrue(result["papers"][0]["truncated"])
+
     def test_comparison_preserves_vector_recovery_notice_in_answer_and_confirmation(self):
         """重建对比Context和低相关确认不能丢掉临时向量恢复限制。"""
         notice = "持久化向量读取失败（Label not found）；本次临时计算，原索引完整性仍待核验。"

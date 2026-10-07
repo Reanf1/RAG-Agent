@@ -4,7 +4,7 @@ from langchain_core.messages import BaseMessage
 from langchain_core.prompts import ChatPromptTemplate
 
 
-PROMPT_VERSION = "rag-v5"
+PROMPT_VERSION = "rag-v6"
 NO_CONTEXT_TEXT = "当前知识库中未找到相关文档。"
 
 # 沿用参考项目的角色、参考文档、Markdown 与来源要求，补充科研事实约束。
@@ -22,6 +22,9 @@ RAG_SYSTEM_PROMPT = """你是“智能科研助理”，负责依据检索到的
 5. 即使用户确认使用候选文档，也不代表文档支持所问结论；资料不相关时说明不足。
 6. 保留原文的对象和条件：图像块不等于像素，相似性观察不等于模型操作；
    “无显著提升”不能改写为“效果不好”，消融中的替代设置不能当作主模型设置。
+   回答“论文如何使用／实现某方法”时，先陈述原文明示的主设置；不要把相关候选
+   罗列为主方法的多个步骤或并行方案。替代设置只能单独标为消融／对照实验；
+   片段未交代设置归属时说明无法确认，不能自行补成主方法。
 
 【输出格式】
 使用 Markdown，包含以下两个部分：

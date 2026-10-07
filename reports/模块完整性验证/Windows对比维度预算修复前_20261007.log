@@ -1,0 +1,21 @@
+test_dimension_budget_keeps_lower_scored_method_evidence (tests.5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords)
+不同查询的分数不能混排挤掉已召回的主方法；总预算仍不放宽。 ... <frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+FAIL
+
+======================================================================
+FAIL: test_dimension_budget_keeps_lower_scored_method_evidence (tests.5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords)
+不同查询的分数不能混排挤掉已召回的主方法；总预算仍不放宽。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_2 工具集开发/test_comparison_keywords.py", line 156, in test_dimension_budget_keeps_lower_scored_method_evidence
+    self.assertEqual({ref["metadata"]["chunk_id"] for ref in references}, {f"dimension-{i}" for i in range(3)})
+AssertionError: Items in the second set but not the first:
+'dimension-0'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.784s
+
+FAILED (failures=1)
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

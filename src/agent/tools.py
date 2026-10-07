@@ -457,7 +457,7 @@ def _paper_compare(paper_a_id: str, paper_b_id: str, *, session_id=None, pending
                "实验结果": ("What accuracy, BLEU or other quantitative scores does the proposed model achieve?", "论文模型在各实验数据集上取得哪些准确率、BLEU或其他指标数值？")}
     budget = load_config()["generation"]["max_context_chars"] // 2
     for label, identifier, path in zip(("A", "B"), (paper_a_id, paper_b_id), paths):
-        selected, coverage = {}, {}
+        selected, coverage, dimension_keys = {}, {}, {}
         for dimension, variants in queries.items():
             candidates = {}
             for query in variants:
@@ -466,6 +466,7 @@ def _paper_compare(paper_a_id: str, paper_b_id: str, *, session_id=None, pending
                     if key not in candidates or score > candidates[key][1]:
                         candidates[key] = (document, score)
             found = sorted(candidates.values(), key=lambda pair: pair[1], reverse=True)[:2]
+            dimension_keys[dimension] = [document.metadata["chunk_id"] for document, _ in found]
             checked = prepare_rag_context(variants[0], found)
             coverage[dimension] = {"generation_mode": checked["generation_mode"], "top_score": checked["top_score"]}
             if checked["generation_mode"] == "low":
@@ -498,9 +499,18 @@ def _paper_compare(paper_a_id: str, paper_b_id: str, *, session_id=None, pending
         for key in opening_scores:
             selected.pop(key, None)
         lead = build_context(question, list(opening_scores.values()), max_context_chars=budget // 3)
-        body = build_context(question, list(selected.values()), max_context_chars=budget - budget // 3)
-        references = [{**ref, "id": index} for index, ref in enumerate(lead["references"] + body["references"], 1)]
-        context = {"references": references, "truncated": lead["truncated"] or body["truncated"]}
+        # 不同维度查询的BGE分数不可跨查询竞争全部预算；同一块仅保留一次。
+        groups, assigned = [], set()
+        for keys in dimension_keys.values():
+            group = [selected[key] for key in keys if key in selected and key not in assigned]
+            assigned.update(keys)
+            if group:
+                groups.append(group)
+        body_budget = budget - budget // 3
+        bodies = [build_context(question, group, max_context_chars=body_budget // len(groups)) for group in groups]
+        body_refs = [ref for body in bodies for ref in body["references"]]
+        references = [{**ref, "id": index} for index, ref in enumerate(lead["references"] + body_refs, 1)]
+        context = {"references": references, "truncated": lead["truncated"] or any(body["truncated"] for body in bodies)}
         # 与模块二一致，按每篇实际入选证据的Top-1判断；单个维度的低分仍单独记录。
         top_score = max((ref["score"] for ref in context["references"]), default=None)
         if top_score is not None and top_score < load_config()["generation"]["low_relevance_threshold"]:
