@@ -1,0 +1,36 @@
+{
+  "说明": "同指纹本地PDF受控预算核验；不是Windows原始索引读取或真实模型质量通过证据。预算不变，字符末端按实际保留文字计算。",
+  "源文件": "reports/5_4_4 端到端联调与测试/Windows浏览器验收_20261004/测试输入/Windows验收_ViT.pdf",
+  "sha256": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+  "物理页": 4,
+  "chunk_id": "abe2f1d08bd659d3bfb96dc5918c09824c6db2b3b3ef1255557393dabfe91510",
+  "命中正文区间": [
+    3225,
+    3673
+  ],
+  "维度预算字符数": 666,
+  "结果": {
+    "修复前双侧扩展": {
+      "扩展字符数": 1440,
+      "保留字符数": 605,
+      "保留数据集段": false,
+      "保留ImageNet21k": false,
+      "保留JFT": false,
+      "truncated": true,
+      "start_index": 2718,
+      "实际保留末端": 3323,
+      "text": "\ninductive bias about the 2D structure of the images is manually injected into the Vision Transformer.\n4\nEXPERIMENTS\nWe evaluate the representation learning capabilities of ResNet, Vision Transformer (ViT), and the\nhybrid. To understand the data requirements of each model, we pre-train on datasets of varying size\nand evaluate many benchmark tasks. When considering the computational cost of pre-training the\nmodel, ViT performs very favourably, attaining state of the art on most recognition benchmarks at\na lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show"
+    },
+    "修复后保留命中正文": {
+      "扩展字符数": 933,
+      "保留字符数": 600,
+      "保留数据集段": true,
+      "保留ImageNet21k": true,
+      "保留JFT": true,
+      "truncated": true,
+      "start_index": 3225,
+      "实际保留末端": 3825,
+      "text": "\na lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show\nthat self-supervised ViT holds promise for the future.\n4.1\nSETUP\nDatasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes\nand 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with\n21k classes and 14M images (Deng et al., 2009), and JFT (Sun et al., 2017) with 18k classes and\n303M high-resolution images. We de-duplicate the pre-training datasets w.r.t. the test sets of the\ndownstream tasks following Kolesnikov et al. (2020)."
+    }
+  }
+}
