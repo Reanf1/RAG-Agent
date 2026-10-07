@@ -175,6 +175,43 @@ class TestComparisonAndKeywords(unittest.TestCase):
                     http.assert_not_called()
         self.assertEqual(self.documents, before)
 
+    def test_adjacent_prefix_cannot_displace_retrieved_dataset_evidence(self):
+        """前置邻块不能占满维度预算；实际模型输入须保留已命中的数据集正文。"""
+        from langchain_core.documents import Document
+
+        prefix = "Background architecture and related work. " * 17
+        core = "\nDatasets: ImageNet-21k and JFT-300M. " + "Dataset setup details. " * 17
+        suffix = "\nEvaluation uses ImageNet and CIFAR-100. " + "Evaluation details. " * 16
+        chunks = []
+        offset = 0
+        for index, text in enumerate((prefix, core, suffix)):
+            chunks.append(Document(page_content=text, metadata={**self.documents[0].metadata,
+                "chunk_id": f"dataset-neighbor-{index}", "page": 3, "page_number": 4,
+                "start_index": offset, "end_index": offset + len(text), "line_start": index + 1,
+                "line_end": index + 1}))
+            offset += len(text)
+        method, result_doc = deepcopy(self.documents[0]), deepcopy(self.documents[0])
+        method.metadata.update(chunk_id="method-core", page=1, page_number=2)
+        result_doc.metadata.update(chunk_id="result-core", page=5, page_number=6)
+        before = deepcopy(chunks)
+        with patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
+                patch("src.generation.rag_pipeline.urlopen", side_effect=self.comparison_packet) as http:
+            retriever.return_value.search.side_effect = [[(doc, score)] for doc, score in
+                ((method, .8), (method, .8), (chunks[1], .9), (chunks[1], .9), (result_doc, .99), (result_doc, .99))
+            ] + [[(self.documents[1], .9)]] * 6
+            retriever.return_value.vector_store.list_chunks.side_effect = [chunks, [self.documents[1]]]
+            result = paper_compare.invoke(dict(zip(("paper_a_id", "paper_b_id"), self.ids)))
+        payload = json.loads(json.loads(http.call_args_list[0].args[0].data)["messages"][1]["content"])
+        self.assertTrue(any("Datasets: ImageNet-21k and JFT-300M" in ref["text"] for ref in payload["references"]))
+        sent = next(ref for ref in payload["references"] if "Datasets: ImageNet-21k and JFT-300M" in ref["text"])
+        ref = next(ref for ref in result["papers"][0]["references"] if ref["metadata"]["chunk_id"] == chunks[1].metadata["chunk_id"])
+        self.assertEqual(sent["text"], ref["text"])
+        self.assertTrue(ref["text"].startswith(core))
+        self.assertIn(ref["text"], prefix + core + suffix)
+        self.assertEqual(ref["metadata"]["line_start"], 2)
+        self.assertTrue(ref["truncated"])
+        self.assertEqual(chunks, before)
+
     def test_qualitative_excerpt_explicitly_reports_missing_experiment_numbers(self):
         """W04节选只有定性结果时，不把年份或页码当成实验指标数值。"""
         self.documents[1].page_content = "DETR method. COCO dataset. Comparable to Faster R-CNN in 2020."

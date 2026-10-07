@@ -1,0 +1,55 @@
+test_adjacent_prefix_cannot_displace_retrieved_dataset_evidence (__main__.TestComparisonAndKeywords)
+前置邻块不能占满维度预算；实际模型输入须保留已命中的数据集正文。 ... <frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+FAIL
+test_comparison_balances_budget_and_reports_truncated_evidence (__main__.TestComparisonAndKeywords) ... ok
+test_comparison_deduplicates_chunks_without_mutating_source (__main__.TestComparisonAndKeywords) ... ok
+test_comparison_dimension_low_score_is_reported_with_paper_level_threshold (__main__.TestComparisonAndKeywords) ... ok
+test_comparison_filters_each_paper_and_covers_three_dimensions (__main__.TestComparisonAndKeywords) ... ok
+test_comparison_low_relevance_cannot_generate_or_auto_confirm (__main__.TestComparisonAndKeywords) ... ok
+test_comparison_missing_one_paper_citation_is_warned (__main__.TestComparisonAndKeywords) ... ok
+test_comparison_missing_paper_takes_priority_over_other_paper_low_score (__main__.TestComparisonAndKeywords) ... ok
+test_comparison_network_failure_is_a_real_error_without_retry (__main__.TestComparisonAndKeywords) ... ok
+test_comparison_preserves_vector_recovery_notice_in_answer_and_confirmation (__main__.TestComparisonAndKeywords)
+重建对比Context和低相关确认不能丢掉临时向量恢复限制。 ... ok
+test_comparison_reads_and_scores_opening_chunks_with_real_reranker_contract (__main__.TestComparisonAndKeywords) ... ok
+test_comparison_rejects_wrong_paper_ids_missing_fields_and_partial_model_choice (__main__.TestComparisonAndKeywords) ... ok
+test_comparison_same_missing_or_invalid_id_fails_before_retrieval (__main__.TestComparisonAndKeywords) ... ok
+test_comparison_unindexed_paper_has_no_model_fallback (__main__.TestComparisonAndKeywords) ... ok
+test_dimension_budget_keeps_lower_scored_method_evidence (__main__.TestComparisonAndKeywords)
+不同查询的分数不能混排挤掉已召回的主方法；总预算仍不放宽。 ... ok
+test_insufficient_comparison_cannot_be_marked_complete (__main__.TestComparisonAndKeywords) ... ok
+test_keyword_cross_line_phrase_has_real_line_evidence (__main__.TestComparisonAndKeywords) ... ok
+test_keyword_deduplication_empty_result_and_unknown_usage (__main__.TestComparisonAndKeywords) ... ok
+test_keyword_document_uses_uploaded_original_and_locations (__main__.TestComparisonAndKeywords) ... ok
+test_keyword_invalid_expanded_or_embedded_terms_are_rejected (__main__.TestComparisonAndKeywords) ... ok
+test_keyword_question_preserves_bilingual_terms_and_evidence (__main__.TestComparisonAndKeywords) ... ok
+test_keyword_rejects_ambiguous_empty_and_invalid_input_before_model (__main__.TestComparisonAndKeywords) ... ok
+test_keyword_truncation_does_not_accept_terms_outside_input (__main__.TestComparisonAndKeywords) ... ok
+test_keyword_unfinished_malformed_and_network_response_fails (__main__.TestComparisonAndKeywords) ... ok
+test_low_comparison_confirmation_reuses_reviewed_candidates (__main__.TestComparisonAndKeywords)
+确认只复用本会话、同索引版本的证据；不二次检索更换原文。 ... ok
+test_method_evidence_keeps_adjacent_actual_architecture_text (__main__.TestComparisonAndKeywords)
+孤立背景块补入同原文相邻块，避免本篇方法只剩背景概述。 ... ok
+test_new_tools_have_real_registered_parameter_schemas (__main__.TestComparisonAndKeywords) ... ok
+test_observation_schema_prevents_empty_finish_seen_in_real_keyword_call (__main__.TestComparisonAndKeywords) ... ok
+test_qualitative_excerpt_explicitly_reports_missing_experiment_numbers (__main__.TestComparisonAndKeywords)
+W04节选只有定性结果时，不把年份或页码当成实验指标数值。 ... ok
+test_truncated_result_does_not_display_isolated_model_scores (__main__.TestComparisonAndKeywords)
+上下文截断后不能只列半行数值，丢失模型、数据集和对应列。 ... ok
+
+======================================================================
+FAIL: test_adjacent_prefix_cannot_displace_retrieved_dataset_evidence (__main__.TestComparisonAndKeywords)
+前置邻块不能占满维度预算；实际模型输入须保留已命中的数据集正文。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_2 工具集开发/test_comparison_keywords.py", line 205, in test_adjacent_prefix_cannot_displace_retrieved_dataset_evidence
+    self.assertTrue(any("Datasets: ImageNet-21k and JFT-300M" in ref["text"] for ref in payload["references"]))
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 30 tests in 6.335s
+
+FAILED (failures=1)
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

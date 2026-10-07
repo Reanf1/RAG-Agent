@@ -386,8 +386,8 @@ def paper_metadata(doc_id: str) -> dict:
             "usage": {key: response.get(key) for key in ("prompt_eval_count", "eval_count")}}
 
 
-def _expand_paper_evidence(document, chunks):
-    """补入同原文中紧邻的前后块，保留重叠之外的真实文字，不跨页/段落/表格拼接。"""
+def _expand_paper_evidence(document, chunks, *, include_previous=True):
+    """补同原文相邻块；前文遮蔽命中正文时可只补后文，仍保留连续来源。"""
     metadata = document.metadata
     start, end = metadata.get("start_index"), metadata.get("end_index")
     if type(start) is not int or type(end) is not int:
@@ -397,7 +397,7 @@ def _expand_paper_evidence(document, chunks):
                  and type(chunk.metadata.get("start_index")) is int and type(chunk.metadata.get("end_index")) is int]
     before = [chunk for chunk in neighbors if chunk.metadata["start_index"] < start <= chunk.metadata["end_index"] <= end]
     after = [chunk for chunk in neighbors if start <= chunk.metadata["start_index"] <= end < chunk.metadata["end_index"]]
-    left = max(before, key=lambda chunk: chunk.metadata["start_index"], default=document)
+    left = max(before, key=lambda chunk: chunk.metadata["start_index"], default=document) if include_previous else document
     right = min(after, key=lambda chunk: chunk.metadata["start_index"], default=document)
     result = deepcopy(document)
     prefix = left.page_content[:start - left.metadata["start_index"]] if left is not document else ""
@@ -480,7 +480,6 @@ def _paper_compare(paper_a_id: str, paper_b_id: str, *, session_id=None, pending
         # 摘要交代本篇贡献；为摘要单独留预算，避免结果高分块淹没方法，或将引用中的前人方法当成主方法。
         chunks = sorted(retriever.vector_store.list_chunks(doc_id=identifier),
                         key=lambda doc: (doc.metadata.get("page_number", 1), doc.metadata.get("start_index", 0)))
-        selected = {key: (_expand_paper_evidence(doc, chunks), score) for key, (doc, score) in selected.items()}
         first_page = [doc for doc in chunks if doc.metadata.get("page_number", 1) == 1]
         start = next((i for i, doc in enumerate(first_page) if re.search(r"\bAbstract\b|摘要", doc.page_content, re.I)), 0)
         opening = [_expand_paper_evidence(doc, chunks) for doc in first_page[start:start + 2]]
@@ -494,7 +493,7 @@ def _paper_compare(paper_a_id: str, paper_b_id: str, *, session_id=None, pending
         opening_scores = {doc.metadata["chunk_id"]: (doc, score) for doc, score in
                           # 输入占位分数不参与精排，输出全部为实际BGE模型分数。
                           (Reranker().rerank(queries["方法"][0], [(doc, 0.0) for doc in novel], k=len(novel)) if novel else [])}
-        opening_scores.update({doc.metadata["chunk_id"]: selected[doc.metadata["chunk_id"]]
+        opening_scores.update({doc.metadata["chunk_id"]: (doc, selected[doc.metadata["chunk_id"]][1])
                                for doc in opening if doc.metadata["chunk_id"] in selected})
         for key in opening_scores:
             selected.pop(key, None)
@@ -507,7 +506,23 @@ def _paper_compare(paper_a_id: str, paper_b_id: str, *, session_id=None, pending
             if group:
                 groups.append(group)
         body_budget = budget - budget // 3
-        bodies = [build_context(question, group, max_context_chars=body_budget // len(groups)) for group in groups]
+        bodies = []
+        for group in groups:
+            expanded = [(_expand_paper_evidence(doc, chunks), score) for doc, score in group]
+            body = build_context(question, expanded, max_context_chars=body_budget // len(groups))
+            displaced = set()
+            for ref in body["references"]:
+                original = selected[ref["metadata"]["chunk_id"]][0].metadata
+                start, end = original.get("start_index"), original.get("end_index")
+                if (type(start) is int and type(end) is int and ref["metadata"]["start_index"] < start
+                        and ref["metadata"]["start_index"] + len(ref["text"]) < end):
+                    displaced.add(ref["metadata"]["chunk_id"])
+            if displaced:
+                # 用实际裁剪区间判断；预算不够时移除前置补充，不能让它挤掉命中正文。
+                expanded = [(_expand_paper_evidence(doc, chunks,
+                            include_previous=doc.metadata["chunk_id"] not in displaced), score) for doc, score in group]
+                body = build_context(question, expanded, max_context_chars=body_budget // len(groups))
+            bodies.append(body)
         body_refs = [ref for body in bodies for ref in body["references"]]
         references = [{**ref, "id": index} for index, ref in enumerate(lead["references"] + body_refs, 1)]
         context = {"references": references, "truncated": lead["truncated"] or any(body["truncated"] for body in bodies)}

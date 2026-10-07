@@ -1,0 +1,20 @@
+test_adjacent_prefix_cannot_displace_retrieved_dataset_evidence (__main__.TestComparisonAndKeywords)
+前置邻块不能占满维度预算；实际模型输入须保留已命中的数据集正文。 ... <frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+FAIL
+
+======================================================================
+FAIL: test_adjacent_prefix_cannot_displace_retrieved_dataset_evidence (__main__.TestComparisonAndKeywords)
+前置邻块不能占满维度预算；实际模型输入须保留已命中的数据集正文。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_2 工具集开发/test_comparison_keywords.py", line 205, in test_adjacent_prefix_cannot_displace_retrieved_dataset_evidence
+    self.assertTrue(any("Datasets: ImageNet-21k and JFT-300M" in ref["text"] for ref in payload["references"]))
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 1 test in 0.601s
+
+FAILED (failures=1)
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
