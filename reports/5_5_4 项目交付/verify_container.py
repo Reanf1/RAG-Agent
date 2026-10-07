@@ -17,6 +17,7 @@ def main():
     args = parser.parse_args()
     if not Path('/.dockerenv').is_file(): raise RuntimeError('本脚本只用于独立验收容器')
     import torch
+    import sqlite3
     torch.set_num_threads(4)
     from src.utils.config import load_config, check_health
     from src.retrieval.vector_store import VectorStore
@@ -36,7 +37,7 @@ def main():
     from src.retrieval.hybrid_retriever import HybridRetriever
     from src.frontend.components.documents import read_pdf_page
     if args.output.exists() or Path(config['paths']['vector_index']).exists(): raise FileExistsError('必须使用独立的新数据卷')
-    report = {'status': 'running', 'started_at': datetime.now().astimezone().isoformat(), 'python': platform.python_version(), 'platform': platform.platform(), 'config': config}
+    report = {'status': 'running', 'started_at': datetime.now().astimezone().isoformat(), 'python': platform.python_version(), 'sqlite': sqlite3.sqlite_version, 'platform': platform.platform(), 'config': config}
     def save(): args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n')
     save()
     assert platform.python_version() == '3.10.10'

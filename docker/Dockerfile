@@ -9,6 +9,13 @@ WORKDIR /app
 COPY requirements.txt ./
 RUN python -m pip install --no-cache-dir -r requirements.txt
 
+# Python 3.10.10 基础镜像自带 SQLite 3.34.1，低于 Chroma 的要求。
+# 仅在 Linux amd64 镜像替换 SQLite 驱动，保留 Windows/Mac 原生环境。
+RUN python -m pip install --no-cache-dir pysqlite3-binary==0.5.4 \
+    && python -c "import site; from pathlib import Path; Path(site.getsitepackages()[0], 'rag_sqlite.pth').write_text(\"import sys, pysqlite3; sys.modules['sqlite3'] = pysqlite3\\n\", encoding='utf-8')"
+# 独立新进程核验启动钩子，构建时就暴露 SQLite/Chroma 不兼容。
+RUN python -c "import sqlite3, chromadb; assert sqlite3.sqlite_version_info >= (3, 35, 0); print('SQLite', sqlite3.sqlite_version, 'Chroma', chromadb.__version__)"
+
 COPY config.yaml ./
 COPY src ./src
 
