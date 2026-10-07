@@ -1,11 +1,11 @@
 # 单个Streamlit业务应用，本地Ollama负责推理；Chroma与SQLite仍为应用内文件。
 services:
   app:
+    image: rag-agent:local
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    ports:
-      - "127.0.0.1:8501:8501"
+    networks: [offline]
     environment:
       RAG_OLLAMA_BASE_URL: http://ollama:11434
       STREAMLIT_BROWSER_GATHER_USAGE_STATS: "false"
@@ -33,8 +33,23 @@ services:
       start_period: 20s
       retries: 6
     restart: unless-stopped
+    networks: [offline]
+
+  # Docker内部网络不发布宿主端口，独立TCP入口仅转发给Streamlit。
+  # 复用业务镜像，不引入第二个业务应用或HTTP接口层。
+  gateway:
+    image: rag-agent:local
+    command: ["python", "docker/tcp_proxy.py"]
+    ports:
+      - "127.0.0.1:8501:8501"
+    networks: [default, offline]
+    depends_on:
+      app:
+        condition: service_healthy
+    restart: unless-stopped
 
 # 权重和镜像准备后，业务网络仅供两个本地容器通信。
 networks:
-  default:
+  offline:
     internal: true
+  default: {}

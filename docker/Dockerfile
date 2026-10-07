@@ -18,6 +18,7 @@ RUN python -c "import sqlite3, chromadb; assert sqlite3.sqlite_version_info >= (
 
 COPY config.yaml ./
 COPY src ./src
+COPY docker/tcp_proxy.py ./docker/tcp_proxy.py
 
 EXPOSE 8501
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \

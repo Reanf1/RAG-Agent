@@ -14,6 +14,7 @@ def main():
     parser.add_argument('--pdf', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--reopen', action='store_true')
+    parser.add_argument('--reuse-index', action='store_true', help='证据脚本修正后复用已验收的独立索引，不重复导入')
     args = parser.parse_args()
     if not Path('/.dockerenv').is_file(): raise RuntimeError('本脚本只用于独立验收容器')
     import torch
@@ -36,9 +37,10 @@ def main():
     from src.chunking import split_documents
     from src.retrieval.hybrid_retriever import HybridRetriever
     from src.frontend.components.documents import read_pdf_page
-    if args.output.exists() or Path(config['paths']['vector_index']).exists(): raise FileExistsError('必须使用独立的新数据卷')
+    if args.output.exists() or (Path(config['paths']['vector_index']).exists() and not args.reuse_index): raise FileExistsError('必须使用独立的新数据卷，或明确复用独立验收索引')
     report = {'status': 'running', 'started_at': datetime.now().astimezone().isoformat(), 'python': platform.python_version(), 'sqlite': sqlite3.sqlite_version, 'platform': platform.platform(), 'config': config}
-    def save(): args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n')
+    # Agent事件包含LangChain消息，保存其真实字段以便复核，不能用对象字符串代替。
+    def save(): args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2, default=lambda value: value.model_dump())+'\n', encoding='utf-8')
     save()
     assert platform.python_version() == '3.10.10'
     try:
@@ -47,20 +49,25 @@ def main():
     except OSError as error: report['external_tcp_blocked'] = f'{type(error).__name__}: {error}'
     report['health_before'] = check_health()
     assert report['health_before']['llm']['status'] == 'ok'
-    assert report['health_before']['vector_database']['status'] == 'not_initialized'
-    tasks = create_import_tasks([(args.pdf.name, args.pdf.read_bytes())])
-    started = perf_counter()
-    report['import_progress'] = list(batch_import(tasks, config['paths']['raw_documents']))
-    assert tasks[0]['status'] == 'success'
-    chunks = split_documents(tasks[0]['documents'])
-    store = VectorStore()
-    assert store.add_chunks(chunks) == len(chunks)
-    report.update(chunks=len(chunks), import_index_seconds=perf_counter()-started,
-                  source_sha256=hashlib.sha256(args.pdf.read_bytes()).hexdigest(), repeat_added=store.add_chunks(chunks))
-    assert report['repeat_added'] == 0
+    report['source_sha256'] = hashlib.sha256(args.pdf.read_bytes()).hexdigest()
+    if args.reuse_index:
+        store = VectorStore()
+        report.update(chunks=store.count(), reused_acceptance_index=True)
+        assert report['chunks'] == 167
+    else:
+        assert report['health_before']['vector_database']['status'] == 'not_initialized'
+        tasks = create_import_tasks([(args.pdf.name, args.pdf.read_bytes())])
+        started = perf_counter()
+        report['import_progress'] = list(batch_import(tasks, config['paths']['raw_documents']))
+        assert tasks[0]['status'] == 'success'
+        chunks = split_documents(tasks[0]['documents'])
+        store = VectorStore()
+        assert store.add_chunks(chunks) == len(chunks)
+        report.update(chunks=len(chunks), import_index_seconds=perf_counter()-started, repeat_added=store.add_chunks(chunks))
+        assert report['repeat_added'] == 0
     report['health_after'] = check_health()
     assert report['health_after']['status'] == 'ok'
-    save();print(f'真实PDF导入与索引 {len(chunks)} 块通过', flush=True)
+    save();print(f"独立验收索引 {report['chunks']} 块可用；复用={args.reuse_index}", flush=True)
     # 离线验收使用论文同语言问题；跨语言排名按用户要求另行暂缓。
     started=perf_counter();hits=HybridRetriever(store).search('Which three datasets were used to pretrain Vision Transformer models?', k=5, rerank=True)
     assert hits and all(d.metadata['doc_id'] == report['source_sha256'] for d, _ in hits)
@@ -70,6 +77,7 @@ def main():
     report['original_page'] = {'page': page['page_number'], 'filename': page['filename'], 'png_bytes': len(page['image']), 'pdf_bytes': len(page['pdf'])}
     save();print('混合重排与物理页读取通过', flush=True)
     memory=MemoryManager();report['user_id']='container-verification';report['session_id']=memory.create_session(report['user_id'])
+    save()
     question=f"Use knowledge_base_search to answer: which three datasets were used to pretrain Vision Transformer models? doc_id={report['source_sha256']}"
     started=perf_counter();events=list(run_session(question, report['user_id'], report['session_id'], memory=memory, stream=True))
     done=events[-1];report['agent']={**done, 'seconds': perf_counter()-started, 'stream_token_events': sum(e['type']=='token' for e in events)}
