@@ -16,6 +16,8 @@ ROOT = Path(__file__).resolve().parents[2]
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('stage', choices=['chunking', 'routing', 'parallel'])
+    parser.add_argument('--source', type=Path, help='本轮真实结果，省略时使用历史记录')
+    parser.add_argument('--output', type=Path, help='新图表路径，禁止覆盖已有图表')
     args = parser.parse_args()
     font = Path('/System/Library/Fonts/Supplemental/Arial Unicode.ttf')
     if font.exists():
@@ -26,7 +28,10 @@ def main():
     folders = {'chunking': '5_1_2 文本分块策略', 'routing': '5_5_2 系统性能评估', 'parallel': '5_5_2 系统性能评估'}
     names = {'chunking': '五组分块检索对比_20261004', 'routing': 'Agent与固定RAG对照_20261004', 'parallel': '独立工具串行并行对照_20261004'}
     root = ROOT/'reports'/folders[args.stage]
-    data = json.loads((root/(names[args.stage]+'.json')).read_text())
+    source = args.source or root/(names[args.stage]+'.json')
+    target = args.output or root/(names[args.stage]+'.png')
+    if target.exists(): raise FileExistsError('图表已存在，复测使用新路径')
+    data = json.loads(source.read_text(encoding='utf-8'))
     assert data['status'] == 'completed'
     if args.stage == 'chunking':
         fig, axes = plt.subplots(1, 3, figsize=(14, 4.6), layout='constrained')
@@ -52,8 +57,10 @@ def main():
             values = [mean(r['seconds'] for r in data['rows'] if r['category'] == category and r['profile'] == p) for p in ['serial', 'parallel']]
             bars = ax.bar(['串行调度', '并行调度'], values, color=colors[:2], width=.5)
             ax.bar_label(bars, fmt='%.2f', padding=4);ax.set(title=title, ylabel='完整Agent请求耗时 / 秒');ax.margins(y=.15);ax.grid(axis='y', alpha=.2)
-        fig.suptitle('两种工具组合各3对；Ollama单并发，失败请求保留', fontsize=15)
-    target = root/(names[args.stage]+'.png')
+        # 耗时包含失败请求，只描述本轮观测，不能把失败的快速返回解释为加速。
+        failed = sum(not r['task_complete'] for r in data['rows'])
+        fig.suptitle(f'两种工具组合各3对；未完成{failed}/{len(data["rows"])}，耗时均保留', fontsize=15)
+    target.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(target, dpi=180);plt.close(fig)
     print(target)
 

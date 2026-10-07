@@ -1,0 +1,4045 @@
+{
+  "status": "completed",
+  "started_at": "2026-10-07T18:58:21.230237+08:00",
+  "stage": "parallel",
+  "config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://localhost:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 8192,
+      "num_predict": 512,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 6000,
+      "max_prompt_chars": 12000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "max_parallel_calls": 2,
+      "tool_timeout_seconds": 300,
+      "max_tool_retries": 1,
+      "max_repeated_calls": 2,
+      "online_search_enabled": false
+    },
+    "memory": {
+      "max_history_tokens": 2000,
+      "tokenizer_path": "data/models/qwen2.5-tokenizer/tokenizer.json",
+      "summary_trigger_turns": 10,
+      "summary_keep_recent_turns": 4,
+      "summary_max_tokens": 400
+    },
+    "paths": {
+      "raw_documents": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-acceptance-d31ae9fe7da24e548aee0bb08f810694\\windows-benchmark-4\\parallel-runtime\\raw",
+      "vector_index": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-acceptance-d31ae9fe7da24e548aee0bb08f810694\\windows-benchmark-4\\parallel-runtime\\index",
+      "logs": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-acceptance-d31ae9fe7da24e548aee0bb08f810694\\windows-benchmark-4\\parallel-runtime\\logs",
+      "session_db": "data/sessions/memory.sqlite3"
+    }
+  },
+  "frozen_root": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-acceptance-d31ae9fe7da24e548aee0bb08f810694\\windows-benchmark-4\\system-runtime",
+  "model_seed": 20261004,
+  "rows": [
+    {
+      "id": "time_keywords",
+      "profile": "serial",
+      "repeat": 1,
+      "category": "time_keywords",
+      "language": "zh",
+      "seconds": 14.654293699997652,
+      "tokens": {
+        "prompt_eval_count": 7193,
+        "eval_count": 220,
+        "total": 7413,
+        "unknown_calls": 0
+      },
+      "iterations": 1,
+      "task_complete": true,
+      "tool_selection_correct": true,
+      "tool_calls": [
+        {
+          "name": "current_time",
+          "args": {},
+          "iteration": 1
+        },
+        {
+          "name": "keyword_extract",
+          "args": {
+            "text": "Transformer用于机器翻译，ViT用于图像分类。"
+          },
+          "iteration": 1
+        }
+      ],
+      "answer": "当前时间为2026-10-07 18:58:42（中国标准时间）。文本中的关键词为：Transformer（用于机器翻译）、ViT（用于图像分类）。",
+      "error": null,
+      "tool_results": [
+        {
+          "name": "current_time",
+          "status": "success",
+          "result": {
+            "system_time": "2026-10-07T18:58:42+08:00",
+            "timezone": "中国标准时间",
+            "usage": {
+              "prompt_eval_count": 0,
+              "eval_count": 0
+            }
+          },
+          "iteration": 1,
+          "execution_mode": "serial",
+          "elapsed_seconds": 0.001916900000651367
+        },
+        {
+          "name": "keyword_extract",
+          "status": "success",
+          "result": {
+            "keywords": [
+              "Transformer",
+              "机器翻译",
+              "ViT",
+              "图像分类"
+            ],
+            "evidence": [
+              {
+                "keyword": "Transformer",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "机器翻译",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "ViT",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "图像分类",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              }
+            ],
+            "doc_id": null,
+            "source_file": null,
+            "input_truncated": false,
+            "model": "qwen2.5:7b",
+            "usage": {
+              "prompt_eval_count": 96,
+              "eval_count": 19
+            },
+            "elapsed_seconds": 2.497157399993739
+          },
+          "iteration": 1,
+          "execution_mode": "serial",
+          "elapsed_seconds": 2.499742200001492
+        }
+      ]
+    },
+    {
+      "id": "time_keywords",
+      "profile": "parallel",
+      "repeat": 1,
+      "category": "time_keywords",
+      "language": "zh",
+      "seconds": 14.782745099997555,
+      "tokens": {
+        "prompt_eval_count": 7195,
+        "eval_count": 224,
+        "total": 7419,
+        "unknown_calls": 0
+      },
+      "iterations": 1,
+      "task_complete": true,
+      "tool_selection_correct": true,
+      "tool_calls": [
+        {
+          "name": "current_time",
+          "args": {},
+          "iteration": 1
+        },
+        {
+          "name": "keyword_extract",
+          "args": {
+            "text": "Transformer用于机器翻译，ViT用于图像分类。"
+          },
+          "iteration": 1
+        }
+      ],
+      "answer": "当前时间为2026-10-07 18:58:56（中国标准时间）。关键词为：Transformer、机器翻译、ViT、图像分类。",
+      "error": null,
+      "tool_results": [
+        {
+          "name": "current_time",
+          "status": "success",
+          "result": {
+            "system_time": "2026-10-07T18:58:56+08:00",
+            "timezone": "中国标准时间",
+            "usage": {
+              "prompt_eval_count": 0,
+              "eval_count": 0
+            }
+          },
+          "iteration": 1,
+          "execution_mode": "parallel",
+          "elapsed_seconds": 0.0027592999977059662
+        },
+        {
+          "name": "keyword_extract",
+          "status": "success",
+          "result": {
+            "keywords": [
+              "Transformer",
+              "机器翻译",
+              "ViT",
+              "图像分类"
+            ],
+            "evidence": [
+              {
+                "keyword": "Transformer",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "机器翻译",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "ViT",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "图像分类",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              }
+            ],
+            "doc_id": null,
+            "source_file": null,
+            "input_truncated": false,
+            "model": "qwen2.5:7b",
+            "usage": {
+              "prompt_eval_count": 96,
+              "eval_count": 19
+            },
+            "elapsed_seconds": 2.4869285999957356
+          },
+          "iteration": 1,
+          "execution_mode": "parallel",
+          "elapsed_seconds": 2.4906465000021853
+        }
+      ]
+    },
+    {
+      "id": "two_knowledge",
+      "profile": "serial",
+      "repeat": 1,
+      "category": "two_knowledge",
+      "language": "zh",
+      "seconds": 34.37476759999845,
+      "tokens": {
+        "prompt_eval_count": 10486,
+        "eval_count": 496,
+        "total": 10982,
+        "unknown_calls": 0
+      },
+      "iterations": 1,
+      "task_complete": true,
+      "tool_selection_correct": true,
+      "tool_calls": [
+        {
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "论文ViT的图像分类输入是什么",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6"
+          },
+          "iteration": 1
+        },
+        {
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "论文DeiT的训练数据是什么",
+            "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5"
+          },
+          "iteration": 1
+        }
+      ],
+      "answer": "根据提供的文档，ViT（Vision Transformer）的图像分类输入是经过重塑的图像块。具体来说，输入图像首先被重塑为一维序列的令牌嵌入。关于DeiT的训练数据，当前知识库中未找到直接说明的具体文档，但根据提供的信息，DeiT在ImageNet上进行了预训练，并且在某些实验中使用了小数据集CIFAR-10。",
+      "error": null,
+      "tool_results": [
+        {
+          "name": "knowledge_base_search",
+          "status": "success",
+          "result": {
+            "answer": "## 回答\n根据提供的文档，ViT（Vision Transformer）的图像分类输入是经过重塑的图像块。具体来说，输入图像首先被重塑为一维序列的令牌嵌入。[参考文档3：vit.pdf；第3页（物理页码）][参考文档4：vit.pdf；第8页（物理页码）]\n\n## 参考来源\n- [参考文档3] vit.pdf；第3页（物理页码）\n- [参考文档4] vit.pdf；第8页（物理页码）",
+            "citations": [
+              {
+                "id": 3,
+                "source_file": "vit.pdf",
+                "location": "第3页（物理页码）",
+                "text": "\nAn advantage of this intentionally simple setup is that scalable NLP Transformer architectures – and\ntheir efﬁcient implementations – can be used almost out of the box.\n3.1\nVISION TRANSFORMER (VIT)\nAn overview of the model is depicted in Figure 1. The standard Transformer receives as input a 1D\nsequence of token embeddings. To handle 2D images, we reshape the image x ∈R^{H}^{×}^{W}^{×}^{C} into a",
+                "metadata": {
+                  "chunk_id": "e9421d560c4aef147dd3372395048bb2d712d95a5ac1e433dd7db157a0614db9",
+                  "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                  "page_number": 3,
+                  "source_file": "vit.pdf"
+                },
+                "truncated": false,
+                "score": 0.16273941099643707
+              },
+              {
+                "id": 4,
+                "source_file": "vit.pdf",
+                "location": "第8页（物理页码）",
+                "text": "\nsince one might expect convolutional local feature processing to assist ViT at any size. Third, Vision\nTransformers appear not to saturate within the range tried, motivating future scaling efforts.\n4.5\nINSPECTING VISION TRANSFORMER\nTo begin to understand how the Vision Transformer processes im-\nInput\nAttention\nage data, we analyze its internal representations. The ﬁrst layer of\nthe Vision Transformer linearly projects the ﬂattened patches into a\n[图像区域 1：原文第 8 页]\n[图像区域 2：原文第 8 页]",
+                "metadata": {
+                  "chunk_id": "69912204f0887d231c30ba3301594f7a0545463c95c337cafcd50fbe97404afa",
+                  "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                  "page_number": 8,
+                  "source_file": "vit.pdf"
+                },
+                "truncated": false,
+                "score": 0.051542799919843674
+              }
+            ],
+            "invalid_citation_ids": [],
+            "missing_citations": false,
+            "warnings": [],
+            "generation_mode": "grounded",
+            "notice": "",
+            "raw_answer": "## 回答\n根据提供的文档，ViT（Vision Transformer）的图像分类输入是经过重塑的图像块。具体来说，输入图像首先被重塑为一维序列的令牌嵌入。[参考文档3][参考文档4]\n\n## 参考来源\n[参考文档3][参考文档4]",
+            "model": "qwen2.5:7b",
+            "options": {
+              "temperature": 0.1,
+              "top_p": 0.9,
+              "top_k": 40,
+              "num_ctx": 8192,
+              "num_predict": 512,
+              "repeat_penalty": 1.0
+            },
+            "done_reason": "stop",
+            "usage": {
+              "prompt_eval_count": 1817,
+              "eval_count": 68,
+              "total_duration": 2252845800,
+              "load_duration": 2652600,
+              "prompt_eval_duration": 635628000,
+              "eval_duration": 1573668000
+            },
+            "status": "answered",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "sources": [
+              "vit.pdf"
+            ],
+            "top_score": 0.42601558566093445,
+            "confirmed": false,
+            "retrieval_seconds": 5.559398500001407,
+            "elapsed_seconds": 9.873076500000025,
+            "retrieval": {
+              "request_id": "1585daddca494a738b60c3cf46e89aac",
+              "status": "success",
+              "returned_chunks": 5
+            }
+          },
+          "iteration": 1,
+          "execution_mode": "serial",
+          "elapsed_seconds": 10.152622200002952
+        },
+        {
+          "name": "knowledge_base_search",
+          "status": "success",
+          "result": {
+            "answer": "## 回答\n当前知识库中未找到直接说明DeiT训练数据的具体文档。根据提供的信息，DeiT在ImageNet上进行了预训练，并且在某些实验中使用了小数据集CIFAR-10 [参考文档5：deit.pdf；第6页（物理页码）]。但具体训练数据集和规模未在检索到的文档中明确提及。\n\n## 参考来源\n- [参考文档5] deit.pdf；第6页（物理页码）",
+            "citations": [
+              {
+                "id": 5,
+                "source_file": "deit.pdf",
+                "location": "第6页（物理页码）",
+                "text": "\non the datasets in Table 8. Table 6 compares DeiT transfer\nlearning results to those of ViT and EfﬁcientNet. DeiT is on\npar with competitive convnet models, which is in line with\nour previous conclusion on ImageNet1k.\nComparison vs training from scratch.\nWe investigate\nthe performance when training from scratch on a small\ndataset, without Imagenet pre-training. We get the following\nresults on the small CIFAR-10, which is small both w.r.t.\nthe number of images and labels:",
+                "metadata": {
+                  "chunk_id": "96c7641061cffbe52821378595f1ad7428e9d42977ed61fa9cd253b4de027260",
+                  "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5",
+                  "page_number": 6,
+                  "source_file": "deit.pdf"
+                },
+                "truncated": false,
+                "score": 0.8314456939697266
+              }
+            ],
+            "invalid_citation_ids": [],
+            "missing_citations": false,
+            "warnings": [],
+            "generation_mode": "grounded",
+            "notice": "",
+            "raw_answer": "## 回答\n当前知识库中未找到直接说明DeiT训练数据的具体文档。根据提供的信息，DeiT在ImageNet上进行了预训练，并且在某些实验中使用了小数据集CIFAR-10 [参考文档5]。但具体训练数据集和规模未在检索到的文档中明确提及。\n\n## 参考来源\n无可引用来源",
+            "model": "qwen2.5:7b",
+            "options": {
+              "temperature": 0.1,
+              "top_p": 0.9,
+              "top_k": 40,
+              "num_ctx": 8192,
+              "num_predict": 512,
+              "repeat_penalty": 1.0
+            },
+            "done_reason": "stop",
+            "usage": {
+              "prompt_eval_count": 1586,
+              "eval_count": 83,
+              "total_duration": 3048229400,
+              "load_duration": 2739100,
+              "prompt_eval_duration": 553731000,
+              "eval_duration": 2463678000
+            },
+            "status": "answered",
+            "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5",
+            "sources": [
+              "deit.pdf"
+            ],
+            "top_score": 0.952273428440094,
+            "confirmed": false,
+            "retrieval_seconds": 3.2585667000021203,
+            "elapsed_seconds": 8.362181099997542,
+            "retrieval": {
+              "request_id": "3b1b9c4bd50e4c0b953a0a33f7ba9ac3",
+              "status": "success",
+              "returned_chunks": 5
+            }
+          },
+          "iteration": 1,
+          "execution_mode": "serial",
+          "elapsed_seconds": 8.379891199998383
+        }
+      ]
+    },
+    {
+      "id": "two_knowledge",
+      "profile": "parallel",
+      "repeat": 1,
+      "category": "two_knowledge",
+      "language": "zh",
+      "seconds": 26.3670648000043,
+      "tokens": {
+        "prompt_eval_count": 10480,
+        "eval_count": 501,
+        "total": 10981,
+        "unknown_calls": 0
+      },
+      "iterations": 1,
+      "task_complete": true,
+      "tool_selection_correct": true,
+      "tool_calls": [
+        {
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "论文ViT的图像分类输入是什么",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6"
+          },
+          "iteration": 1
+        },
+        {
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "论文DeiT的训练数据是什么",
+            "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5"
+          },
+          "iteration": 1
+        }
+      ],
+      "answer": "根据提供的文档，ViT（Vision Transformer）的图像分类输入是经过重塑的图像块。具体来说，输入图像首先被重塑为一维序列的令牌嵌入。而DeiT的训练数据信息有限，仅提及了在ImageNet上进行了预训练，并且在某些实验中使用了小数据集CIFAR-10。但具体训练数据集和规模未在检索到的文档中明确提及。",
+      "error": null,
+      "tool_results": [
+        {
+          "name": "knowledge_base_search",
+          "status": "success",
+          "result": {
+            "answer": "## 回答\n根据提供的文档，ViT（Vision Transformer）的图像分类输入是经过重塑的图像块。具体来说，输入图像首先被重塑为一维序列的令牌嵌入。[参考文档3：vit.pdf；第3页（物理页码）][参考文档4：vit.pdf；第8页（物理页码）]\n\n## 参考来源\n- [参考文档3] vit.pdf；第3页（物理页码）\n- [参考文档4] vit.pdf；第8页（物理页码）",
+            "citations": [
+              {
+                "id": 3,
+                "source_file": "vit.pdf",
+                "location": "第3页（物理页码）",
+                "text": "\nAn advantage of this intentionally simple setup is that scalable NLP Transformer architectures – and\ntheir efﬁcient implementations – can be used almost out of the box.\n3.1\nVISION TRANSFORMER (VIT)\nAn overview of the model is depicted in Figure 1. The standard Transformer receives as input a 1D\nsequence of token embeddings. To handle 2D images, we reshape the image x ∈R^{H}^{×}^{W}^{×}^{C} into a",
+                "metadata": {
+                  "chunk_id": "e9421d560c4aef147dd3372395048bb2d712d95a5ac1e433dd7db157a0614db9",
+                  "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                  "page_number": 3,
+                  "source_file": "vit.pdf"
+                },
+                "truncated": false,
+                "score": 0.16273941099643707
+              },
+              {
+                "id": 4,
+                "source_file": "vit.pdf",
+                "location": "第8页（物理页码）",
+                "text": "\nsince one might expect convolutional local feature processing to assist ViT at any size. Third, Vision\nTransformers appear not to saturate within the range tried, motivating future scaling efforts.\n4.5\nINSPECTING VISION TRANSFORMER\nTo begin to understand how the Vision Transformer processes im-\nInput\nAttention\nage data, we analyze its internal representations. The ﬁrst layer of\nthe Vision Transformer linearly projects the ﬂattened patches into a\n[图像区域 1：原文第 8 页]\n[图像区域 2：原文第 8 页]",
+                "metadata": {
+                  "chunk_id": "69912204f0887d231c30ba3301594f7a0545463c95c337cafcd50fbe97404afa",
+                  "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                  "page_number": 8,
+                  "source_file": "vit.pdf"
+                },
+                "truncated": false,
+                "score": 0.051542799919843674
+              }
+            ],
+            "invalid_citation_ids": [],
+            "missing_citations": false,
+            "warnings": [],
+            "generation_mode": "grounded",
+            "notice": "",
+            "raw_answer": "## 回答\n根据提供的文档，ViT（Vision Transformer）的图像分类输入是经过重塑的图像块。具体来说，输入图像首先被重塑为一维序列的令牌嵌入。[参考文档3][参考文档4]\n\n## 参考来源\n[参考文档3][参考文档4]",
+            "model": "qwen2.5:7b",
+            "options": {
+              "temperature": 0.1,
+              "top_p": 0.9,
+              "top_k": 40,
+              "num_ctx": 8192,
+              "num_predict": 512,
+              "repeat_penalty": 1.0
+            },
+            "done_reason": "stop",
+            "usage": {
+              "prompt_eval_count": 1817,
+              "eval_count": 68,
+              "total_duration": 1804886000,
+              "load_duration": 3141300,
+              "prompt_eval_duration": 30139000,
+              "eval_duration": 1714761000
+            },
+            "status": "answered",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "sources": [
+              "vit.pdf"
+            ],
+            "top_score": 0.42601558566093445,
+            "confirmed": false,
+            "retrieval_seconds": 6.485618999999133,
+            "elapsed_seconds": 10.346145800001977,
+            "retrieval": {
+              "request_id": "cf173993edf04ccaa94d734fff05e177",
+              "status": "success",
+              "returned_chunks": 5
+            }
+          },
+          "iteration": 1,
+          "execution_mode": "parallel",
+          "elapsed_seconds": 10.361587699997472
+        },
+        {
+          "name": "knowledge_base_search",
+          "status": "success",
+          "result": {
+            "answer": "## 回答\n当前知识库中未找到直接说明DeiT训练数据的具体文档。根据提供的信息，DeiT在ImageNet上进行了预训练，并且在某些实验中使用了小数据集CIFAR-10 [参考文档5：deit.pdf；第6页（物理页码）]。但具体训练数据集和规模未在检索到的文档中明确提及。\n\n## 参考来源\n- [参考文档5] deit.pdf；第6页（物理页码）",
+            "citations": [
+              {
+                "id": 5,
+                "source_file": "deit.pdf",
+                "location": "第6页（物理页码）",
+                "text": "\non the datasets in Table 8. Table 6 compares DeiT transfer\nlearning results to those of ViT and EfﬁcientNet. DeiT is on\npar with competitive convnet models, which is in line with\nour previous conclusion on ImageNet1k.\nComparison vs training from scratch.\nWe investigate\nthe performance when training from scratch on a small\ndataset, without Imagenet pre-training. We get the following\nresults on the small CIFAR-10, which is small both w.r.t.\nthe number of images and labels:",
+                "metadata": {
+                  "chunk_id": "96c7641061cffbe52821378595f1ad7428e9d42977ed61fa9cd253b4de027260",
+                  "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5",
+                  "page_number": 6,
+                  "source_file": "deit.pdf"
+                },
+                "truncated": false,
+                "score": 0.8314456939697266
+              }
+            ],
+            "invalid_citation_ids": [],
+            "missing_citations": false,
+            "warnings": [],
+            "generation_mode": "grounded",
+            "notice": "",
+            "raw_answer": "## 回答\n当前知识库中未找到直接说明DeiT训练数据的具体文档。根据提供的信息，DeiT在ImageNet上进行了预训练，并且在某些实验中使用了小数据集CIFAR-10 [参考文档5]。但具体训练数据集和规模未在检索到的文档中明确提及。\n\n## 参考来源\n无可引用来源",
+            "model": "qwen2.5:7b",
+            "options": {
+              "temperature": 0.1,
+              "top_p": 0.9,
+              "top_k": 40,
+              "num_ctx": 8192,
+              "num_predict": 512,
+              "repeat_penalty": 1.0
+            },
+            "done_reason": "stop",
+            "usage": {
+              "prompt_eval_count": 1586,
+              "eval_count": 83,
+              "total_duration": 2013642100,
+              "load_duration": 3123200,
+              "prompt_eval_duration": 24276000,
+              "eval_duration": 1931039000
+            },
+            "status": "answered",
+            "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5",
+            "sources": [
+              "deit.pdf"
+            ],
+            "top_score": 0.952273428440094,
+            "confirmed": false,
+            "retrieval_seconds": 4.344420399997034,
+            "elapsed_seconds": 8.390144199998758,
+            "retrieval": {
+              "request_id": "77e5df71ec12463887f0cd7a7cc33330",
+              "status": "success",
+              "returned_chunks": 5
+            }
+          },
+          "iteration": 1,
+          "execution_mode": "parallel",
+          "elapsed_seconds": 8.402179400000023
+        }
+      ]
+    },
+    {
+      "id": "time_keywords",
+      "profile": "parallel",
+      "repeat": 2,
+      "category": "time_keywords",
+      "language": "zh",
+      "seconds": 14.297267800000554,
+      "tokens": {
+        "prompt_eval_count": 7197,
+        "eval_count": 209,
+        "total": 7406,
+        "unknown_calls": 0
+      },
+      "iterations": 1,
+      "task_complete": true,
+      "tool_selection_correct": true,
+      "tool_calls": [
+        {
+          "name": "current_time",
+          "args": {},
+          "iteration": 1
+        },
+        {
+          "name": "keyword_extract",
+          "args": {
+            "text": "Transformer用于机器翻译，ViT用于图像分类。"
+          },
+          "iteration": 1
+        }
+      ],
+      "answer": "当前时间为2026-10-07 19:00:12（中国标准时间）。文本中的关键词为：Transformer、机器翻译、ViT、图像分类。",
+      "error": null,
+      "tool_results": [
+        {
+          "name": "current_time",
+          "status": "success",
+          "result": {
+            "system_time": "2026-10-07T19:00:12+08:00",
+            "timezone": "中国标准时间",
+            "usage": {
+              "prompt_eval_count": 0,
+              "eval_count": 0
+            }
+          },
+          "iteration": 1,
+          "execution_mode": "parallel",
+          "elapsed_seconds": 0.0024989000012283213
+        },
+        {
+          "name": "keyword_extract",
+          "status": "success",
+          "result": {
+            "keywords": [
+              "Transformer",
+              "机器翻译",
+              "ViT",
+              "图像分类"
+            ],
+            "evidence": [
+              {
+                "keyword": "Transformer",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "机器翻译",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "ViT",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "图像分类",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              }
+            ],
+            "doc_id": null,
+            "source_file": null,
+            "input_truncated": false,
+            "model": "qwen2.5:7b",
+            "usage": {
+              "prompt_eval_count": 96,
+              "eval_count": 19
+            },
+            "elapsed_seconds": 2.487692299997434
+          },
+          "iteration": 1,
+          "execution_mode": "parallel",
+          "elapsed_seconds": 2.4908444000029704
+        }
+      ]
+    },
+    {
+      "id": "time_keywords",
+      "profile": "serial",
+      "repeat": 2,
+      "category": "time_keywords",
+      "language": "zh",
+      "seconds": 14.711468100002094,
+      "tokens": {
+        "prompt_eval_count": 7196,
+        "eval_count": 209,
+        "total": 7405,
+        "unknown_calls": 0
+      },
+      "iterations": 1,
+      "task_complete": true,
+      "tool_selection_correct": true,
+      "tool_calls": [
+        {
+          "name": "current_time",
+          "args": {},
+          "iteration": 1
+        },
+        {
+          "name": "keyword_extract",
+          "args": {
+            "text": "Transformer用于机器翻译，ViT用于图像分类。"
+          },
+          "iteration": 1
+        }
+      ],
+      "answer": "当前时间为2026-10-07 19:00:26（中国标准时间）。文本中的关键词为：Transformer、机器翻译、ViT、图像分类。",
+      "error": null,
+      "tool_results": [
+        {
+          "name": "current_time",
+          "status": "success",
+          "result": {
+            "system_time": "2026-10-07T19:00:26+08:00",
+            "timezone": "中国标准时间",
+            "usage": {
+              "prompt_eval_count": 0,
+              "eval_count": 0
+            }
+          },
+          "iteration": 1,
+          "execution_mode": "serial",
+          "elapsed_seconds": 0.0016198000012082048
+        },
+        {
+          "name": "keyword_extract",
+          "status": "success",
+          "result": {
+            "keywords": [
+              "Transformer",
+              "机器翻译",
+              "ViT",
+              "图像分类"
+            ],
+            "evidence": [
+              {
+                "keyword": "Transformer",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "机器翻译",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "ViT",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "图像分类",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              }
+            ],
+            "doc_id": null,
+            "source_file": null,
+            "input_truncated": false,
+            "model": "qwen2.5:7b",
+            "usage": {
+              "prompt_eval_count": 96,
+              "eval_count": 19
+            },
+            "elapsed_seconds": 2.5027262000003248
+          },
+          "iteration": 1,
+          "execution_mode": "serial",
+          "elapsed_seconds": 2.5052623999945354
+        }
+      ]
+    },
+    {
+      "id": "two_knowledge",
+      "profile": "parallel",
+      "repeat": 2,
+      "category": "two_knowledge",
+      "language": "zh",
+      "seconds": 26.311516399997345,
+      "tokens": {
+        "prompt_eval_count": 10488,
+        "eval_count": 492,
+        "total": 10980,
+        "unknown_calls": 0
+      },
+      "iterations": 1,
+      "task_complete": true,
+      "tool_selection_correct": true,
+      "tool_calls": [
+        {
+          "name": "knowledge_base_search",
+          "args": {
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "question": "论文ViT的图像分类输入是什么"
+          },
+          "iteration": 1
+        },
+        {
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "论文DeiT的训练数据是什么",
+            "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5"
+          },
+          "iteration": 1
+        }
+      ],
+      "answer": "根据提供的文档，ViT（Vision Transformer）的图像分类输入是经过重塑的图像块。具体来说，输入图像首先被重塑为一维序列的令牌嵌入。关于DeiT的训练数据，当前知识库中未找到直接说明的具体文档，但提到DeiT在ImageNet上进行了预训练，并且在某些实验中使用了小数据集CIFAR-10。具体训练数据集和规模未在检索到的文档中明确提及。",
+      "error": null,
+      "tool_results": [
+        {
+          "name": "knowledge_base_search",
+          "status": "success",
+          "result": {
+            "answer": "## 回答\n根据提供的文档，ViT（Vision Transformer）的图像分类输入是经过重塑的图像块。具体来说，输入图像首先被重塑为一维序列的令牌嵌入。[参考文档3：vit.pdf；第3页（物理页码）][参考文档4：vit.pdf；第8页（物理页码）]\n\n## 参考来源\n- [参考文档3] vit.pdf；第3页（物理页码）\n- [参考文档4] vit.pdf；第8页（物理页码）",
+            "citations": [
+              {
+                "id": 3,
+                "source_file": "vit.pdf",
+                "location": "第3页（物理页码）",
+                "text": "\nAn advantage of this intentionally simple setup is that scalable NLP Transformer architectures – and\ntheir efﬁcient implementations – can be used almost out of the box.\n3.1\nVISION TRANSFORMER (VIT)\nAn overview of the model is depicted in Figure 1. The standard Transformer receives as input a 1D\nsequence of token embeddings. To handle 2D images, we reshape the image x ∈R^{H}^{×}^{W}^{×}^{C} into a",
+                "metadata": {
+                  "chunk_id": "e9421d560c4aef147dd3372395048bb2d712d95a5ac1e433dd7db157a0614db9",
+                  "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                  "page_number": 3,
+                  "source_file": "vit.pdf"
+                },
+                "truncated": false,
+                "score": 0.16273941099643707
+              },
+              {
+                "id": 4,
+                "source_file": "vit.pdf",
+                "location": "第8页（物理页码）",
+                "text": "\nsince one might expect convolutional local feature processing to assist ViT at any size. Third, Vision\nTransformers appear not to saturate within the range tried, motivating future scaling efforts.\n4.5\nINSPECTING VISION TRANSFORMER\nTo begin to understand how the Vision Transformer processes im-\nInput\nAttention\nage data, we analyze its internal representations. The ﬁrst layer of\nthe Vision Transformer linearly projects the ﬂattened patches into a\n[图像区域 1：原文第 8 页]\n[图像区域 2：原文第 8 页]",
+                "metadata": {
+                  "chunk_id": "69912204f0887d231c30ba3301594f7a0545463c95c337cafcd50fbe97404afa",
+                  "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                  "page_number": 8,
+                  "source_file": "vit.pdf"
+                },
+                "truncated": false,
+                "score": 0.051542799919843674
+              }
+            ],
+            "invalid_citation_ids": [],
+            "missing_citations": false,
+            "warnings": [],
+            "generation_mode": "grounded",
+            "notice": "",
+            "raw_answer": "## 回答\n根据提供的文档，ViT（Vision Transformer）的图像分类输入是经过重塑的图像块。具体来说，输入图像首先被重塑为一维序列的令牌嵌入。[参考文档3][参考文档4]\n\n## 参考来源\n[参考文档3][参考文档4]",
+            "model": "qwen2.5:7b",
+            "options": {
+              "temperature": 0.1,
+              "top_p": 0.9,
+              "top_k": 40,
+              "num_ctx": 8192,
+              "num_predict": 512,
+              "repeat_penalty": 1.0
+            },
+            "done_reason": "stop",
+            "usage": {
+              "prompt_eval_count": 1817,
+              "eval_count": 68,
+              "total_duration": 1974094000,
+              "load_duration": 3840600,
+              "prompt_eval_duration": 30584000,
+              "eval_duration": 1881971000
+            },
+            "status": "answered",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "sources": [
+              "vit.pdf"
+            ],
+            "top_score": 0.42601558566093445,
+            "confirmed": false,
+            "retrieval_seconds": 6.4646387999964645,
+            "elapsed_seconds": 10.480035799999314,
+            "retrieval": {
+              "request_id": "1c301da8e6ce440b8627291e5f84ced5",
+              "status": "success",
+              "returned_chunks": 5
+            }
+          },
+          "iteration": 1,
+          "execution_mode": "parallel",
+          "elapsed_seconds": 10.494410599996627
+        },
+        {
+          "name": "knowledge_base_search",
+          "status": "success",
+          "result": {
+            "answer": "## 回答\n当前知识库中未找到直接说明DeiT训练数据的具体文档。根据提供的信息，DeiT在ImageNet上进行了预训练，并且在某些实验中使用了小数据集CIFAR-10 [参考文档5：deit.pdf；第6页（物理页码）]。但具体训练数据集和规模未在检索到的文档中明确提及。\n\n## 参考来源\n- [参考文档5] deit.pdf；第6页（物理页码）",
+            "citations": [
+              {
+                "id": 5,
+                "source_file": "deit.pdf",
+                "location": "第6页（物理页码）",
+                "text": "\non the datasets in Table 8. Table 6 compares DeiT transfer\nlearning results to those of ViT and EfﬁcientNet. DeiT is on\npar with competitive convnet models, which is in line with\nour previous conclusion on ImageNet1k.\nComparison vs training from scratch.\nWe investigate\nthe performance when training from scratch on a small\ndataset, without Imagenet pre-training. We get the following\nresults on the small CIFAR-10, which is small both w.r.t.\nthe number of images and labels:",
+                "metadata": {
+                  "chunk_id": "96c7641061cffbe52821378595f1ad7428e9d42977ed61fa9cd253b4de027260",
+                  "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5",
+                  "page_number": 6,
+                  "source_file": "deit.pdf"
+                },
+                "truncated": false,
+                "score": 0.8314456939697266
+              }
+            ],
+            "invalid_citation_ids": [],
+            "missing_citations": false,
+            "warnings": [],
+            "generation_mode": "grounded",
+            "notice": "",
+            "raw_answer": "## 回答\n当前知识库中未找到直接说明DeiT训练数据的具体文档。根据提供的信息，DeiT在ImageNet上进行了预训练，并且在某些实验中使用了小数据集CIFAR-10 [参考文档5]。但具体训练数据集和规模未在检索到的文档中明确提及。\n\n## 参考来源\n无可引用来源",
+            "model": "qwen2.5:7b",
+            "options": {
+              "temperature": 0.1,
+              "top_p": 0.9,
+              "top_k": 40,
+              "num_ctx": 8192,
+              "num_predict": 512,
+              "repeat_penalty": 1.0
+            },
+            "done_reason": "stop",
+            "usage": {
+              "prompt_eval_count": 1586,
+              "eval_count": 83,
+              "total_duration": 1969743000,
+              "load_duration": 2871300,
+              "prompt_eval_duration": 24163000,
+              "eval_duration": 1899279000
+            },
+            "status": "answered",
+            "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5",
+            "sources": [
+              "deit.pdf"
+            ],
+            "top_score": 0.952273428440094,
+            "confirmed": false,
+            "retrieval_seconds": 4.483828200005519,
+            "elapsed_seconds": 8.501667100004852,
+            "retrieval": {
+              "request_id": "c8d71dfa4eb643a7818a5ff440ee8913",
+              "status": "success",
+              "returned_chunks": 5
+            }
+          },
+          "iteration": 1,
+          "execution_mode": "parallel",
+          "elapsed_seconds": 8.51339200000075
+        }
+      ]
+    },
+    {
+      "id": "two_knowledge",
+      "profile": "serial",
+      "repeat": 2,
+      "category": "two_knowledge",
+      "language": "zh",
+      "seconds": 32.176901199993154,
+      "tokens": {
+        "prompt_eval_count": 10484,
+        "eval_count": 491,
+        "total": 10975,
+        "unknown_calls": 0
+      },
+      "iterations": 1,
+      "task_complete": true,
+      "tool_selection_correct": true,
+      "tool_calls": [
+        {
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "论文ViT的图像分类输入是什么",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6"
+          },
+          "iteration": 1
+        },
+        {
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "论文DeiT的训练数据是什么",
+            "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5"
+          },
+          "iteration": 1
+        }
+      ],
+      "answer": "根据提供的文档，ViT（Vision Transformer）的图像分类输入是经过重塑的图像块。具体来说，输入图像首先被重塑为一维序列的令牌嵌入。而DeiT的训练数据未明确提及，但提到其在ImageNet上进行了预训练，并在某些实验中使用了CIFAR-10数据集。",
+      "error": null,
+      "tool_results": [
+        {
+          "name": "knowledge_base_search",
+          "status": "success",
+          "result": {
+            "answer": "## 回答\n根据提供的文档，ViT（Vision Transformer）的图像分类输入是经过重塑的图像块。具体来说，输入图像首先被重塑为一维序列的令牌嵌入。[参考文档3：vit.pdf；第3页（物理页码）][参考文档4：vit.pdf；第8页（物理页码）]\n\n## 参考来源\n- [参考文档3] vit.pdf；第3页（物理页码）\n- [参考文档4] vit.pdf；第8页（物理页码）",
+            "citations": [
+              {
+                "id": 3,
+                "source_file": "vit.pdf",
+                "location": "第3页（物理页码）",
+                "text": "\nAn advantage of this intentionally simple setup is that scalable NLP Transformer architectures – and\ntheir efﬁcient implementations – can be used almost out of the box.\n3.1\nVISION TRANSFORMER (VIT)\nAn overview of the model is depicted in Figure 1. The standard Transformer receives as input a 1D\nsequence of token embeddings. To handle 2D images, we reshape the image x ∈R^{H}^{×}^{W}^{×}^{C} into a",
+                "metadata": {
+                  "chunk_id": "e9421d560c4aef147dd3372395048bb2d712d95a5ac1e433dd7db157a0614db9",
+                  "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                  "page_number": 3,
+                  "source_file": "vit.pdf"
+                },
+                "truncated": false,
+                "score": 0.16273941099643707
+              },
+              {
+                "id": 4,
+                "source_file": "vit.pdf",
+                "location": "第8页（物理页码）",
+                "text": "\nsince one might expect convolutional local feature processing to assist ViT at any size. Third, Vision\nTransformers appear not to saturate within the range tried, motivating future scaling efforts.\n4.5\nINSPECTING VISION TRANSFORMER\nTo begin to understand how the Vision Transformer processes im-\nInput\nAttention\nage data, we analyze its internal representations. The ﬁrst layer of\nthe Vision Transformer linearly projects the ﬂattened patches into a\n[图像区域 1：原文第 8 页]\n[图像区域 2：原文第 8 页]",
+                "metadata": {
+                  "chunk_id": "69912204f0887d231c30ba3301594f7a0545463c95c337cafcd50fbe97404afa",
+                  "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                  "page_number": 8,
+                  "source_file": "vit.pdf"
+                },
+                "truncated": false,
+                "score": 0.051542799919843674
+              }
+            ],
+            "invalid_citation_ids": [],
+            "missing_citations": false,
+            "warnings": [],
+            "generation_mode": "grounded",
+            "notice": "",
+            "raw_answer": "## 回答\n根据提供的文档，ViT（Vision Transformer）的图像分类输入是经过重塑的图像块。具体来说，输入图像首先被重塑为一维序列的令牌嵌入。[参考文档3][参考文档4]\n\n## 参考来源\n[参考文档3][参考文档4]",
+            "model": "qwen2.5:7b",
+            "options": {
+              "temperature": 0.1,
+              "top_p": 0.9,
+              "top_k": 40,
+              "num_ctx": 8192,
+              "num_predict": 512,
+              "repeat_penalty": 1.0
+            },
+            "done_reason": "stop",
+            "usage": {
+              "prompt_eval_count": 1817,
+              "eval_count": 68,
+              "total_duration": 1641678600,
+              "load_duration": 2817400,
+              "prompt_eval_duration": 22316000,
+              "eval_duration": 1573557000
+            },
+            "status": "answered",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "sources": [
+              "vit.pdf"
+            ],
+            "top_score": 0.42601558566093445,
+            "confirmed": false,
+            "retrieval_seconds": 5.391216099997109,
+            "elapsed_seconds": 9.087977900002443,
+            "retrieval": {
+              "request_id": "e988a4ef50634d29b65d4fc3df4feb5b",
+              "status": "success",
+              "returned_chunks": 5
+            }
+          },
+          "iteration": 1,
+          "execution_mode": "serial",
+          "elapsed_seconds": 9.102338800003054
+        },
+        {
+          "name": "knowledge_base_search",
+          "status": "success",
+          "result": {
+            "answer": "## 回答\n当前知识库中未找到直接说明DeiT训练数据的具体文档。根据提供的信息，DeiT在ImageNet上进行了预训练，并且在某些实验中使用了小数据集CIFAR-10 [参考文档5：deit.pdf；第6页（物理页码）]。但具体训练数据集和规模未在检索到的文档中明确提及。\n\n## 参考来源\n- [参考文档5] deit.pdf；第6页（物理页码）",
+            "citations": [
+              {
+                "id": 5,
+                "source_file": "deit.pdf",
+                "location": "第6页（物理页码）",
+                "text": "\non the datasets in Table 8. Table 6 compares DeiT transfer\nlearning results to those of ViT and EfﬁcientNet. DeiT is on\npar with competitive convnet models, which is in line with\nour previous conclusion on ImageNet1k.\nComparison vs training from scratch.\nWe investigate\nthe performance when training from scratch on a small\ndataset, without Imagenet pre-training. We get the following\nresults on the small CIFAR-10, which is small both w.r.t.\nthe number of images and labels:",
+                "metadata": {
+                  "chunk_id": "96c7641061cffbe52821378595f1ad7428e9d42977ed61fa9cd253b4de027260",
+                  "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5",
+                  "page_number": 6,
+                  "source_file": "deit.pdf"
+                },
+                "truncated": false,
+                "score": 0.8314456939697266
+              }
+            ],
+            "invalid_citation_ids": [],
+            "missing_citations": false,
+            "warnings": [],
+            "generation_mode": "grounded",
+            "notice": "",
+            "raw_answer": "## 回答\n当前知识库中未找到直接说明DeiT训练数据的具体文档。根据提供的信息，DeiT在ImageNet上进行了预训练，并且在某些实验中使用了小数据集CIFAR-10 [参考文档5]。但具体训练数据集和规模未在检索到的文档中明确提及。\n\n## 参考来源\n无可引用来源",
+            "model": "qwen2.5:7b",
+            "options": {
+              "temperature": 0.1,
+              "top_p": 0.9,
+              "top_k": 40,
+              "num_ctx": 8192,
+              "num_predict": 512,
+              "repeat_penalty": 1.0
+            },
+            "done_reason": "stop",
+            "usage": {
+              "prompt_eval_count": 1586,
+              "eval_count": 83,
+              "total_duration": 2003929700,
+              "load_duration": 2622800,
+              "prompt_eval_duration": 22090000,
+              "eval_duration": 1937498000
+            },
+            "status": "answered",
+            "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5",
+            "sources": [
+              "deit.pdf"
+            ],
+            "top_score": 0.952273428440094,
+            "confirmed": false,
+            "retrieval_seconds": 3.252098199998727,
+            "elapsed_seconds": 7.290157499999623,
+            "retrieval": {
+              "request_id": "7704e2488f7b471199fffc7705641ad2",
+              "status": "success",
+              "returned_chunks": 5
+            }
+          },
+          "iteration": 1,
+          "execution_mode": "serial",
+          "elapsed_seconds": 7.302459300000919
+        }
+      ]
+    },
+    {
+      "id": "time_keywords",
+      "profile": "serial",
+      "repeat": 3,
+      "category": "time_keywords",
+      "language": "zh",
+      "seconds": 13.499661800000467,
+      "tokens": {
+        "prompt_eval_count": 7190,
+        "eval_count": 182,
+        "total": 7372,
+        "unknown_calls": 0
+      },
+      "iterations": 1,
+      "task_complete": true,
+      "tool_selection_correct": true,
+      "tool_calls": [
+        {
+          "name": "current_time",
+          "args": {},
+          "iteration": 1
+        },
+        {
+          "name": "keyword_extract",
+          "args": {
+            "text": "Transformer用于机器翻译，ViT用于图像分类。"
+          },
+          "iteration": 1
+        }
+      ],
+      "answer": "当前时间为2026年10月7日19点01分39秒（中国标准时间）。文本中的关键词包括：Transformer（用于机器翻译）、ViT（用于图像分类）。",
+      "error": null,
+      "tool_results": [
+        {
+          "name": "current_time",
+          "status": "success",
+          "result": {
+            "system_time": "2026-10-07T19:01:39+08:00",
+            "timezone": "中国标准时间",
+            "usage": {
+              "prompt_eval_count": 0,
+              "eval_count": 0
+            }
+          },
+          "iteration": 1,
+          "execution_mode": "serial",
+          "elapsed_seconds": 0.0017912000039359555
+        },
+        {
+          "name": "keyword_extract",
+          "status": "success",
+          "result": {
+            "keywords": [
+              "Transformer",
+              "机器翻译",
+              "ViT",
+              "图像分类"
+            ],
+            "evidence": [
+              {
+                "keyword": "Transformer",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "机器翻译",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "ViT",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "图像分类",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              }
+            ],
+            "doc_id": null,
+            "source_file": null,
+            "input_truncated": false,
+            "model": "qwen2.5:7b",
+            "usage": {
+              "prompt_eval_count": 96,
+              "eval_count": 19
+            },
+            "elapsed_seconds": 2.495552400003362
+          },
+          "iteration": 1,
+          "execution_mode": "serial",
+          "elapsed_seconds": 2.4978834000066854
+        }
+      ]
+    },
+    {
+      "id": "time_keywords",
+      "profile": "parallel",
+      "repeat": 3,
+      "category": "time_keywords",
+      "language": "zh",
+      "seconds": 14.857843700003286,
+      "tokens": {
+        "prompt_eval_count": 7189,
+        "eval_count": 230,
+        "total": 7419,
+        "unknown_calls": 0
+      },
+      "iterations": 1,
+      "task_complete": true,
+      "tool_selection_correct": true,
+      "tool_calls": [
+        {
+          "name": "current_time",
+          "args": {},
+          "iteration": 1
+        },
+        {
+          "name": "keyword_extract",
+          "args": {
+            "text": "Transformer用于机器翻译，ViT用于图像分类。"
+          },
+          "iteration": 1
+        }
+      ],
+      "answer": "当前时间为2026-10-07T19:01:53+08:00，中国标准时间。关键词为：Transformer、机器翻译、ViT、图像分类。",
+      "error": null,
+      "tool_results": [
+        {
+          "name": "current_time",
+          "status": "success",
+          "result": {
+            "system_time": "2026-10-07T19:01:53+08:00",
+            "timezone": "中国标准时间",
+            "usage": {
+              "prompt_eval_count": 0,
+              "eval_count": 0
+            }
+          },
+          "iteration": 1,
+          "execution_mode": "parallel",
+          "elapsed_seconds": 0.0031460000027436763
+        },
+        {
+          "name": "keyword_extract",
+          "status": "success",
+          "result": {
+            "keywords": [
+              "Transformer",
+              "机器翻译",
+              "ViT",
+              "图像分类"
+            ],
+            "evidence": [
+              {
+                "keyword": "Transformer",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "机器翻译",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "ViT",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              },
+              {
+                "keyword": "图像分类",
+                "locations": [
+                  {
+                    "text": "Transformer用于机器翻译，ViT用于图像分类。",
+                    "location": "问题第1行",
+                    "source_file": null
+                  }
+                ]
+              }
+            ],
+            "doc_id": null,
+            "source_file": null,
+            "input_truncated": false,
+            "model": "qwen2.5:7b",
+            "usage": {
+              "prompt_eval_count": 96,
+              "eval_count": 19
+            },
+            "elapsed_seconds": 2.4860573999976623
+          },
+          "iteration": 1,
+          "execution_mode": "parallel",
+          "elapsed_seconds": 2.4896676999997
+        }
+      ]
+    },
+    {
+      "id": "two_knowledge",
+      "profile": "serial",
+      "repeat": 3,
+      "category": "two_knowledge",
+      "language": "zh",
+      "seconds": 31.571202600003744,
+      "tokens": {
+        "prompt_eval_count": 10487,
+        "eval_count": 451,
+        "total": 10938,
+        "unknown_calls": 0
+      },
+      "iterations": 1,
+      "task_complete": true,
+      "tool_selection_correct": true,
+      "tool_calls": [
+        {
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "论文ViT的图像分类输入是什么",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6"
+          },
+          "iteration": 1
+        },
+        {
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "论文DeiT的训练数据是什么",
+            "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5"
+          },
+          "iteration": 1
+        }
+      ],
+      "answer": "根据提供的文档，ViT（Vision Transformer）的图像分类输入是经过重塑的图像块，具体来说，输入图像首先被重塑为一维序列的令牌嵌入。DeiT在ImageNet上进行了预训练，并且在某些实验中使用了小数据集CIFAR-10，但具体训练数据集和规模未在检索到的文档中明确提及。",
+      "error": null,
+      "tool_results": [
+        {
+          "name": "knowledge_base_search",
+          "status": "success",
+          "result": {
+            "answer": "## 回答\n根据提供的文档，ViT（Vision Transformer）的图像分类输入是经过重塑的图像块。具体来说，输入图像首先被重塑为一维序列的令牌嵌入。[参考文档3：vit.pdf；第3页（物理页码）][参考文档4：vit.pdf；第8页（物理页码）]\n\n## 参考来源\n- [参考文档3] vit.pdf；第3页（物理页码）\n- [参考文档4] vit.pdf；第8页（物理页码）",
+            "citations": [
+              {
+                "id": 3,
+                "source_file": "vit.pdf",
+                "location": "第3页（物理页码）",
+                "text": "\nAn advantage of this intentionally simple setup is that scalable NLP Transformer architectures – and\ntheir efﬁcient implementations – can be used almost out of the box.\n3.1\nVISION TRANSFORMER (VIT)\nAn overview of the model is depicted in Figure 1. The standard Transformer receives as input a 1D\nsequence of token embeddings. To handle 2D images, we reshape the image x ∈R^{H}^{×}^{W}^{×}^{C} into a",
+                "metadata": {
+                  "chunk_id": "e9421d560c4aef147dd3372395048bb2d712d95a5ac1e433dd7db157a0614db9",
+                  "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                  "page_number": 3,
+                  "source_file": "vit.pdf"
+                },
+                "truncated": false,
+                "score": 0.16273941099643707
+              },
+              {
+                "id": 4,
+                "source_file": "vit.pdf",
+                "location": "第8页（物理页码）",
+                "text": "\nsince one might expect convolutional local feature processing to assist ViT at any size. Third, Vision\nTransformers appear not to saturate within the range tried, motivating future scaling efforts.\n4.5\nINSPECTING VISION TRANSFORMER\nTo begin to understand how the Vision Transformer processes im-\nInput\nAttention\nage data, we analyze its internal representations. The ﬁrst layer of\nthe Vision Transformer linearly projects the ﬂattened patches into a\n[图像区域 1：原文第 8 页]\n[图像区域 2：原文第 8 页]",
+                "metadata": {
+                  "chunk_id": "69912204f0887d231c30ba3301594f7a0545463c95c337cafcd50fbe97404afa",
+                  "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                  "page_number": 8,
+                  "source_file": "vit.pdf"
+                },
+                "truncated": false,
+                "score": 0.051542799919843674
+              }
+            ],
+            "invalid_citation_ids": [],
+            "missing_citations": false,
+            "warnings": [],
+            "generation_mode": "grounded",
+            "notice": "",
+            "raw_answer": "## 回答\n根据提供的文档，ViT（Vision Transformer）的图像分类输入是经过重塑的图像块。具体来说，输入图像首先被重塑为一维序列的令牌嵌入。[参考文档3][参考文档4]\n\n## 参考来源\n[参考文档3][参考文档4]",
+            "model": "qwen2.5:7b",
+            "options": {
+              "temperature": 0.1,
+              "top_p": 0.9,
+              "top_k": 40,
+              "num_ctx": 8192,
+              "num_predict": 512,
+              "repeat_penalty": 1.0
+            },
+            "done_reason": "stop",
+            "usage": {
+              "prompt_eval_count": 1817,
+              "eval_count": 68,
+              "total_duration": 2290038700,
+              "load_duration": 2859000,
+              "prompt_eval_duration": 22666000,
+              "eval_duration": 2221016000
+            },
+            "status": "answered",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "sources": [
+              "vit.pdf"
+            ],
+            "top_score": 0.42601558566093445,
+            "confirmed": false,
+            "retrieval_seconds": 5.489736199997424,
+            "elapsed_seconds": 9.843059699996957,
+            "retrieval": {
+              "request_id": "c6d8ff777da3496e9e932c5148261353",
+              "status": "success",
+              "returned_chunks": 5
+            }
+          },
+          "iteration": 1,
+          "execution_mode": "serial",
+          "elapsed_seconds": 9.857436400001461
+        },
+        {
+          "name": "knowledge_base_search",
+          "status": "success",
+          "result": {
+            "answer": "## 回答\n当前知识库中未找到直接说明DeiT训练数据的具体文档。根据提供的信息，DeiT在ImageNet上进行了预训练，并且在某些实验中使用了小数据集CIFAR-10 [参考文档5：deit.pdf；第6页（物理页码）]。但具体训练数据集和规模未在检索到的文档中明确提及。\n\n## 参考来源\n- [参考文档5] deit.pdf；第6页（物理页码）",
+            "citations": [
+              {
+                "id": 5,
+                "source_file": "deit.pdf",
+                "location": "第6页（物理页码）",
+                "text": "\non the datasets in Table 8. Table 6 compares DeiT transfer\nlearning results to those of ViT and EfﬁcientNet. DeiT is on\npar with competitive convnet models, which is in line with\nour previous conclusion on ImageNet1k.\nComparison vs training from scratch.\nWe investigate\nthe performance when training from scratch on a small\ndataset, without Imagenet pre-training. We get the following\nresults on the small CIFAR-10, which is small both w.r.t.\nthe number of images and labels:",
+                "metadata": {
+                  "chunk_id": "96c7641061cffbe52821378595f1ad7428e9d42977ed61fa9cd253b4de027260",
+                  "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5",
+                  "page_number": 6,
+                  "source_file": "deit.pdf"
+                },
+                "truncated": false,
+                "score": 0.8314456939697266
+              }
+            ],
+            "invalid_citation_ids": [],
+            "missing_citations": false,
+            "warnings": [],
+            "generation_mode": "grounded",
+            "notice": "",
+            "raw_answer": "## 回答\n当前知识库中未找到直接说明DeiT训练数据的具体文档。根据提供的信息，DeiT在ImageNet上进行了预训练，并且在某些实验中使用了小数据集CIFAR-10 [参考文档5]。但具体训练数据集和规模未在检索到的文档中明确提及。\n\n## 参考来源\n无可引用来源",
+            "model": "qwen2.5:7b",
+            "options": {
+              "temperature": 0.1,
+              "top_p": 0.9,
+              "top_k": 40,
+              "num_ctx": 8192,
+              "num_predict": 512,
+              "repeat_penalty": 1.0
+            },
+            "done_reason": "stop",
+            "usage": {
+              "prompt_eval_count": 1586,
+              "eval_count": 83,
+              "total_duration": 1992743000,
+              "load_duration": 2616900,
+              "prompt_eval_duration": 22360000,
+              "eval_duration": 1926195000
+            },
+            "status": "answered",
+            "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5",
+            "sources": [
+              "deit.pdf"
+            ],
+            "top_score": 0.952273428440094,
+            "confirmed": false,
+            "retrieval_seconds": 3.295403299998725,
+            "elapsed_seconds": 7.340519600002153,
+            "retrieval": {
+              "request_id": "4aa66515031240d0a3080b4d2a157768",
+              "status": "success",
+              "returned_chunks": 5
+            }
+          },
+          "iteration": 1,
+          "execution_mode": "serial",
+          "elapsed_seconds": 7.350692200001504
+        }
+      ]
+    },
+    {
+      "id": "two_knowledge",
+      "profile": "parallel",
+      "repeat": 3,
+      "category": "two_knowledge",
+      "language": "zh",
+      "seconds": 27.032455399996252,
+      "tokens": {
+        "prompt_eval_count": 10488,
+        "eval_count": 461,
+        "total": 10949,
+        "unknown_calls": 0
+      },
+      "iterations": 1,
+      "task_complete": true,
+      "tool_selection_correct": true,
+      "tool_calls": [
+        {
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "论文ViT的图像分类输入是什么",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6"
+          },
+          "iteration": 1
+        },
+        {
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "论文DeiT的训练数据是什么",
+            "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5"
+          },
+          "iteration": 1
+        }
+      ],
+      "answer": "根据提供的文档，ViT（Vision Transformer）的图像分类输入是经过重塑的图像块，输入图像首先被重塑为一维序列的令牌嵌入。对于DeiT，它在ImageNet上进行了预训练，并且在某些实验中使用了小数据集CIFAR-10，但具体训练数据集和规模未在检索到的文档中明确提及。",
+      "error": null,
+      "tool_results": [
+        {
+          "name": "knowledge_base_search",
+          "status": "success",
+          "result": {
+            "answer": "## 回答\n根据提供的文档，ViT（Vision Transformer）的图像分类输入是经过重塑的图像块。具体来说，输入图像首先被重塑为一维序列的令牌嵌入。[参考文档3：vit.pdf；第3页（物理页码）][参考文档4：vit.pdf；第8页（物理页码）]\n\n## 参考来源\n- [参考文档3] vit.pdf；第3页（物理页码）\n- [参考文档4] vit.pdf；第8页（物理页码）",
+            "citations": [
+              {
+                "id": 3,
+                "source_file": "vit.pdf",
+                "location": "第3页（物理页码）",
+                "text": "\nAn advantage of this intentionally simple setup is that scalable NLP Transformer architectures – and\ntheir efﬁcient implementations – can be used almost out of the box.\n3.1\nVISION TRANSFORMER (VIT)\nAn overview of the model is depicted in Figure 1. The standard Transformer receives as input a 1D\nsequence of token embeddings. To handle 2D images, we reshape the image x ∈R^{H}^{×}^{W}^{×}^{C} into a",
+                "metadata": {
+                  "chunk_id": "e9421d560c4aef147dd3372395048bb2d712d95a5ac1e433dd7db157a0614db9",
+                  "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                  "page_number": 3,
+                  "source_file": "vit.pdf"
+                },
+                "truncated": false,
+                "score": 0.16273941099643707
+              },
+              {
+                "id": 4,
+                "source_file": "vit.pdf",
+                "location": "第8页（物理页码）",
+                "text": "\nsince one might expect convolutional local feature processing to assist ViT at any size. Third, Vision\nTransformers appear not to saturate within the range tried, motivating future scaling efforts.\n4.5\nINSPECTING VISION TRANSFORMER\nTo begin to understand how the Vision Transformer processes im-\nInput\nAttention\nage data, we analyze its internal representations. The ﬁrst layer of\nthe Vision Transformer linearly projects the ﬂattened patches into a\n[图像区域 1：原文第 8 页]\n[图像区域 2：原文第 8 页]",
+                "metadata": {
+                  "chunk_id": "69912204f0887d231c30ba3301594f7a0545463c95c337cafcd50fbe97404afa",
+                  "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                  "page_number": 8,
+                  "source_file": "vit.pdf"
+                },
+                "truncated": false,
+                "score": 0.051542799919843674
+              }
+            ],
+            "invalid_citation_ids": [],
+            "missing_citations": false,
+            "warnings": [],
+            "generation_mode": "grounded",
+            "notice": "",
+            "raw_answer": "## 回答\n根据提供的文档，ViT（Vision Transformer）的图像分类输入是经过重塑的图像块。具体来说，输入图像首先被重塑为一维序列的令牌嵌入。[参考文档3][参考文档4]\n\n## 参考来源\n[参考文档3][参考文档4]",
+            "model": "qwen2.5:7b",
+            "options": {
+              "temperature": 0.1,
+              "top_p": 0.9,
+              "top_k": 40,
+              "num_ctx": 8192,
+              "num_predict": 512,
+              "repeat_penalty": 1.0
+            },
+            "done_reason": "stop",
+            "usage": {
+              "prompt_eval_count": 1817,
+              "eval_count": 68,
+              "total_duration": 1804341400,
+              "load_duration": 2778500,
+              "prompt_eval_duration": 24313000,
+              "eval_duration": 1733605000
+            },
+            "status": "answered",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "sources": [
+              "vit.pdf"
+            ],
+            "top_score": 0.42601558566093445,
+            "confirmed": false,
+            "retrieval_seconds": 7.107968399999663,
+            "elapsed_seconds": 10.985332800002652,
+            "retrieval": {
+              "request_id": "0d3e6d3162ef41d883b85a558fdb683b",
+              "status": "success",
+              "returned_chunks": 5
+            }
+          },
+          "iteration": 1,
+          "execution_mode": "parallel",
+          "elapsed_seconds": 11.002259399996547
+        },
+        {
+          "name": "knowledge_base_search",
+          "status": "success",
+          "result": {
+            "answer": "## 回答\n当前知识库中未找到直接说明DeiT训练数据的具体文档。根据提供的信息，DeiT在ImageNet上进行了预训练，并且在某些实验中使用了小数据集CIFAR-10 [参考文档5：deit.pdf；第6页（物理页码）]。但具体训练数据集和规模未在检索到的文档中明确提及。\n\n## 参考来源\n- [参考文档5] deit.pdf；第6页（物理页码）",
+            "citations": [
+              {
+                "id": 5,
+                "source_file": "deit.pdf",
+                "location": "第6页（物理页码）",
+                "text": "\non the datasets in Table 8. Table 6 compares DeiT transfer\nlearning results to those of ViT and EfﬁcientNet. DeiT is on\npar with competitive convnet models, which is in line with\nour previous conclusion on ImageNet1k.\nComparison vs training from scratch.\nWe investigate\nthe performance when training from scratch on a small\ndataset, without Imagenet pre-training. We get the following\nresults on the small CIFAR-10, which is small both w.r.t.\nthe number of images and labels:",
+                "metadata": {
+                  "chunk_id": "96c7641061cffbe52821378595f1ad7428e9d42977ed61fa9cd253b4de027260",
+                  "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5",
+                  "page_number": 6,
+                  "source_file": "deit.pdf"
+                },
+                "truncated": false,
+                "score": 0.8314456939697266
+              }
+            ],
+            "invalid_citation_ids": [],
+            "missing_citations": false,
+            "warnings": [],
+            "generation_mode": "grounded",
+            "notice": "",
+            "raw_answer": "## 回答\n当前知识库中未找到直接说明DeiT训练数据的具体文档。根据提供的信息，DeiT在ImageNet上进行了预训练，并且在某些实验中使用了小数据集CIFAR-10 [参考文档5]。但具体训练数据集和规模未在检索到的文档中明确提及。\n\n## 参考来源\n无可引用来源",
+            "model": "qwen2.5:7b",
+            "options": {
+              "temperature": 0.1,
+              "top_p": 0.9,
+              "top_k": 40,
+              "num_ctx": 8192,
+              "num_predict": 512,
+              "repeat_penalty": 1.0
+            },
+            "done_reason": "stop",
+            "usage": {
+              "prompt_eval_count": 1586,
+              "eval_count": 83,
+              "total_duration": 2143561100,
+              "load_duration": 3728800,
+              "prompt_eval_duration": 26092000,
+              "eval_duration": 2062129000
+            },
+            "status": "answered",
+            "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5",
+            "sources": [
+              "deit.pdf"
+            ],
+            "top_score": 0.952273428440094,
+            "confirmed": false,
+            "retrieval_seconds": 4.668177599996852,
+            "elapsed_seconds": 8.860168999999587,
+            "retrieval": {
+              "request_id": "741ef9c367364a7e8337824953c408d5",
+              "status": "success",
+              "returned_chunks": 5
+            }
+          },
+          "iteration": 1,
+          "execution_mode": "parallel",
+          "elapsed_seconds": 8.872298399997817
+        }
+      ]
+    }
+  ],
+  "profiles": {
+    "parallel": {
+      "requests": 6,
+      "seconds_mean": 20.60814886666655,
+      "tokens_mean_known": 9192.333333333334,
+      "unknown_requests": 0,
+      "tokens_total_known": 55154,
+      "iterations_mean": 1,
+      "tool_path_accuracy": 1,
+      "by_category": {
+        "time_keywords": {
+          "requests": 3,
+          "tokens_mean_known": 7414.666666666667,
+          "seconds_mean": 14.645952200000465,
+          "tool_path_accuracy": 1
+        },
+        "two_knowledge": {
+          "requests": 3,
+          "tokens_mean_known": 10970,
+          "seconds_mean": 26.57034553333263,
+          "tool_path_accuracy": 1
+        }
+      }
+    },
+    "serial": {
+      "requests": 6,
+      "seconds_mean": 23.498049166665925,
+      "tokens_mean_known": 9180.833333333334,
+      "unknown_requests": 0,
+      "tokens_total_known": 55085,
+      "iterations_mean": 1,
+      "tool_path_accuracy": 1,
+      "by_category": {
+        "time_keywords": {
+          "requests": 3,
+          "tokens_mean_known": 7396.666666666667,
+          "seconds_mean": 14.288474533333405,
+          "tool_path_accuracy": 1
+        },
+        "two_knowledge": {
+          "requests": 3,
+          "tokens_mean_known": 10965,
+          "seconds_mean": 32.70762379999845,
+          "tool_path_accuracy": 1
+        }
+      }
+    }
+  },
+  "questions": [
+    {
+      "id": "F001",
+      "category": "fact",
+      "language": "zh",
+      "question": "ViT论文在模型规模实验中使用了哪三个训练数据集？",
+      "reference_answer": "ImageNet（ILSVRC-2012）、ImageNet-21k和JFT。",
+      "answer_points": [
+        "ImageNet/ILSVRC-2012",
+        "ImageNet-21k",
+        "JFT"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "vit"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "V_DATA",
+          "paper_id": "vit",
+          "page_number": 4,
+          "section": "4.1 Setup"
+        }
+      ]
+    },
+    {
+      "id": "F002",
+      "category": "fact",
+      "language": "en",
+      "question": "Which dataset does DeiT use for training without external data?",
+      "reference_answer": "DeiT trains on ImageNet only, without external training images.",
+      "answer_points": [
+        "ImageNet",
+        "No external training data"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "deit"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "D_DATA",
+          "paper_id": "deit",
+          "page_number": 1,
+          "section": "Abstract / Introduction"
+        }
+      ]
+    },
+    {
+      "id": "F003",
+      "category": "fact",
+      "language": "zh",
+      "question": "Swin Transformer初始输入patch的大小和原始RGB特征维度分别是多少？",
+      "reference_answer": "patch为4×4像素，拼接RGB值后为4×4×3=48维。",
+      "answer_points": [
+        "4×4 pixels",
+        "48-dimensional RGB feature"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "swin"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "SW_PATCH",
+          "paper_id": "swin",
+          "page_number": 3,
+          "section": "3.1 Overall Architecture"
+        }
+      ]
+    },
+    {
+      "id": "F004",
+      "category": "fact",
+      "language": "en",
+      "question": "How many stages does PVT use, and what are their output strides?",
+      "reference_answer": "PVT has four stages with output strides 4, 8, 16 and 32.",
+      "answer_points": [
+        "Four stages",
+        "Strides 4/8/16/32"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "pvt"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "P_STAGE",
+          "paper_id": "pvt",
+          "page_number": 4,
+          "section": "3.1 Overall Architecture"
+        }
+      ]
+    },
+    {
+      "id": "F005",
+      "category": "fact",
+      "language": "zh",
+      "question": "T2T-ViT的两个主要架构组成是什么？",
+      "reference_answer": "逐步聚合局部结构的Tokens-to-Token模块，以及深窄Transformer骨干。",
+      "answer_points": [
+        "Tokens-to-Token module",
+        "Deep-narrow backbone"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "t2t_vit"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "T_TOKEN",
+          "paper_id": "t2t_vit",
+          "page_number": 2,
+          "section": "1 Introduction / contributions"
+        },
+        {
+          "evidence_id": "T_BACKBONE",
+          "paper_id": "t2t_vit",
+          "page_number": 2,
+          "section": "1 Introduction / contributions"
+        }
+      ]
+    },
+    {
+      "id": "F006",
+      "category": "fact",
+      "language": "en",
+      "question": "In CaiT’s class-attention stage, which embeddings are updated?",
+      "reference_answer": "Only the class embedding is updated; the processed patch embeddings remain fixed in this stage.",
+      "answer_points": [
+        "Class embedding updated",
+        "Patch embeddings fixed in class-attention stage"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "cait"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "CA_CLASS",
+          "paper_id": "cait",
+          "page_number": 3,
+          "section": "3 Specializing layers for class attention"
+        }
+      ]
+    },
+    {
+      "id": "F007",
+      "category": "fact",
+      "language": "zh",
+      "question": "DETR的COCO 2017实验训练集和验证集分别约有多少张图像？",
+      "reference_answer": "约11.8万张训练图像和5000张验证图像。",
+      "answer_points": [
+        "118k training images",
+        "5k validation images"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "DE_DATA",
+          "paper_id": "detr",
+          "page_number": 8,
+          "section": "4 Experiments / Dataset"
+        }
+      ]
+    },
+    {
+      "id": "F008",
+      "category": "fact",
+      "language": "en",
+      "question": "What default training schedule is stated for Deformable DETR?",
+      "reference_answer": "The default schedule is 50 epochs, with a learning-rate drop at epoch 40.",
+      "answer_points": [
+        "50 epochs",
+        "Learning rate decayed at epoch 40"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "deformable_detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "DF_TRAIN",
+          "paper_id": "deformable_detr",
+          "page_number": 7,
+          "section": "5 Experiment / Implementation Details"
+        }
+      ]
+    },
+    {
+      "id": "F009",
+      "category": "fact",
+      "language": "zh",
+      "question": "Conditional DETR报告了哪些标准COCO检测指标？",
+      "reference_answer": "AP、AP50、AP75，以及小、中、大目标的AP（APS/APM/APL）。",
+      "answer_points": [
+        "AP/AP50/AP75",
+        "APS/APM/APL"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "conditional_detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "CO_METRIC",
+          "paper_id": "conditional_detr",
+          "page_number": 7,
+          "section": "4.1 Setup / Evaluation"
+        }
+      ]
+    },
+    {
+      "id": "F010",
+      "category": "fact",
+      "language": "en",
+      "question": "What do the four coordinates in a DAB-DETR anchor query represent?",
+      "reference_answer": "The coordinates (x,y,w,h) represent box center and width/height; they are updated across decoder layers.",
+      "answer_points": [
+        "x/y are center",
+        "w/h are width/height",
+        "Layer-wise update"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "dab_detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "AB_CORE",
+          "paper_id": "dab_detr",
+          "page_number": 6,
+          "section": "4.1 Overview / 4.2 Learning Anchor Boxes Directly"
+        }
+      ]
+    },
+    {
+      "id": "F011",
+      "category": "fact",
+      "language": "zh",
+      "question": "DN-DETR摘要中，ResNet-50骨干训练12轮和50轮分别取得多少AP？",
+      "reference_answer": "12轮43.4 AP，50轮48.6 AP；这两项结果均明确限定为论文的ResNet-50设置。",
+      "answer_points": [
+        "12 epochs:43.4 AP",
+        "50 epochs:48.6 AP",
+        "ResNet-50 setting"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "dn_detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "DN_SCORE",
+          "paper_id": "dn_detr",
+          "page_number": 1,
+          "section": "Abstract"
+        }
+      ]
+    },
+    {
+      "id": "F012",
+      "category": "fact",
+      "language": "en",
+      "question": "Which three improvements are named in the DINO detection paper?",
+      "reference_answer": "Contrastive denoising, mixed query selection, and look forward twice.",
+      "answer_points": [
+        "Contrastive denoising",
+        "Mixed query selection",
+        "Look forward twice"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "dino"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "DI_METHOD",
+          "paper_id": "dino",
+          "page_number": 1,
+          "section": "Abstract"
+        }
+      ]
+    },
+    {
+      "id": "F013",
+      "category": "fact",
+      "language": "zh",
+      "question": "ViT采用什么位置编码来保留patch位置信息？",
+      "reference_answer": "添加标准可学习的一维位置编码。",
+      "answer_points": [
+        "Learnable",
+        "One-dimensional position embeddings"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "vit"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "V_POS",
+          "paper_id": "vit",
+          "page_number": 3,
+          "section": "3.1 Vision Transformer"
+        }
+      ]
+    },
+    {
+      "id": "F014",
+      "category": "fact",
+      "language": "en",
+      "question": "How does DETR handle predictions that are unmatched to objects?",
+      "reference_answer": "They are supervised as the no-object class; the target set is padded with no-object entries.",
+      "answer_points": [
+        "No-object class",
+        "Padded target set"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "DE_SET",
+          "paper_id": "detr",
+          "page_number": 5,
+          "section": "3.1 Object detection set prediction loss"
+        }
+      ]
+    },
+    {
+      "id": "F015",
+      "category": "fact",
+      "language": "zh",
+      "question": "DINO使用ResNet-50、多尺度特征时，12轮和24轮的COCO AP分别是多少？",
+      "reference_answer": "分别为49.4 AP和51.3 AP，不能混同于Swin-L加Objects365预训练的结果。",
+      "answer_points": [
+        "12 epochs:49.4 AP",
+        "24 epochs:51.3 AP",
+        "ResNet-50 and multi-scale"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "dino"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "DI_SCORE",
+          "paper_id": "dino",
+          "page_number": 1,
+          "section": "Abstract"
+        }
+      ]
+    },
+    {
+      "id": "C001",
+      "category": "comparison",
+      "language": "en",
+      "question": "How do the data regimes studied by ViT and DeiT differ?",
+      "reference_answer": "ViT studies ImageNet, ImageNet-21k and JFT scaling; DeiT emphasizes ImageNet-only training without external data.",
+      "answer_points": [
+        "ViT includes larger pretraining datasets",
+        "DeiT uses ImageNet only"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "vit",
+        "deit"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "V_DATA",
+          "paper_id": "vit",
+          "page_number": 4,
+          "section": "4.1 Setup"
+        },
+        {
+          "evidence_id": "D_DATA",
+          "paper_id": "deit",
+          "page_number": 1,
+          "section": "Abstract / Introduction"
+        }
+      ]
+    },
+    {
+      "id": "C002",
+      "category": "comparison",
+      "language": "zh",
+      "question": "ViT和T2T-ViT的图像token化方式有什么区别？",
+      "reference_answer": "ViT将固定patch线性映射；T2T-ViT通过重叠soft split反复聚合邻近token，建模局部结构并缩短序列。",
+      "answer_points": [
+        "ViT fixed patch projection",
+        "T2T overlapping iterative aggregation",
+        "Local structure and shorter sequence"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "vit",
+        "t2t_vit"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "V_ARCH",
+          "paper_id": "vit",
+          "page_number": 3,
+          "section": "3.1 Vision Transformer"
+        },
+        {
+          "evidence_id": "T_TOKEN",
+          "paper_id": "t2t_vit",
+          "page_number": 2,
+          "section": "1 Introduction / contributions"
+        }
+      ]
+    },
+    {
+      "id": "C003",
+      "category": "comparison",
+      "language": "en",
+      "question": "How is class-token processing different in ViT and CaiT?",
+      "reference_answer": "ViT processes class and patch tokens together; CaiT first processes patches, then updates the class embedding through separate class-attention layers.",
+      "answer_points": [
+        "ViT joint class/patch processing",
+        "CaiT separate stages",
+        "Fixed patches in class-attention stage"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "vit",
+        "cait"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "V_ARCH",
+          "paper_id": "vit",
+          "page_number": 3,
+          "section": "3.1 Vision Transformer"
+        },
+        {
+          "evidence_id": "CA_CLASS",
+          "paper_id": "cait",
+          "page_number": 3,
+          "section": "3 Specializing layers for class attention"
+        }
+      ]
+    },
+    {
+      "id": "C004",
+      "category": "comparison",
+      "language": "zh",
+      "question": "ViT与Swin Transformer在注意力范围和层级结构上有什么区别？",
+      "reference_answer": "ViT主要采用全局patch自注意力；Swin采用交替窗口/移动窗口，并用patch merging构成层级特征。",
+      "answer_points": [
+        "ViT global attention",
+        "Swin window/shifted-window attention",
+        "Swin hierarchical merging"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "vit",
+        "swin"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "V_ARCH",
+          "paper_id": "vit",
+          "page_number": 3,
+          "section": "3.1 Vision Transformer"
+        },
+        {
+          "evidence_id": "SW_PATCH",
+          "paper_id": "swin",
+          "page_number": 3,
+          "section": "3.1 Overall Architecture"
+        },
+        {
+          "evidence_id": "SW_ATT",
+          "paper_id": "swin",
+          "page_number": 4,
+          "section": "3.2 Shifted Window based Self-Attention"
+        }
+      ]
+    },
+    {
+      "id": "C005",
+      "category": "comparison",
+      "language": "en",
+      "question": "How do Swin and PVT reduce the cost of attention differently?",
+      "reference_answer": "Swin restricts attention to local windows; PVT’s SRA reduces the spatial lengths of keys and values.",
+      "answer_points": [
+        "Local-window restriction",
+        "K/V spatial reduction"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "swin",
+        "pvt"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "SW_ATT",
+          "paper_id": "swin",
+          "page_number": 4,
+          "section": "3.2 Shifted Window based Self-Attention"
+        },
+        {
+          "evidence_id": "P_SRA",
+          "paper_id": "pvt",
+          "page_number": 5,
+          "section": "3.3 Spatial-Reduction Attention"
+        }
+      ]
+    },
+    {
+      "id": "C006",
+      "category": "comparison",
+      "language": "zh",
+      "question": "DETR和Deformable DETR的交叉注意力读取图像特征的方式有何不同？",
+      "reference_answer": "DETR关注编码器的全局特征；Deformable DETR围绕参考点采样少量位置，且支持多尺度特征。",
+      "answer_points": [
+        "DETR global encoder-feature attention",
+        "Sparse points around references",
+        "Multi-scale support"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "detr",
+        "deformable_detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "DE_ARCH",
+          "paper_id": "detr",
+          "page_number": 7,
+          "section": "3.2 DETR architecture"
+        },
+        {
+          "evidence_id": "DF_CORE",
+          "paper_id": "deformable_detr",
+          "page_number": 1,
+          "section": "Abstract / Introduction"
+        },
+        {
+          "evidence_id": "DF_MULTI",
+          "paper_id": "deformable_detr",
+          "page_number": 6,
+          "section": "4.1 Multi-scale Deformable Attention Module"
+        }
+      ]
+    },
+    {
+      "id": "C007",
+      "category": "comparison",
+      "language": "en",
+      "question": "What does Conditional DETR add to the original DETR localization mechanism?",
+      "reference_answer": "It adds a decoder-conditioned spatial query that narrows each head’s localization range, reducing reliance on high-quality content embeddings.",
+      "answer_points": [
+        "DETR relies heavily on content embeddings",
+        "Conditional spatial query",
+        "Narrowed per-head localization regions"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "detr",
+        "conditional_detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "DE_ARCH",
+          "paper_id": "detr",
+          "page_number": 7,
+          "section": "3.2 DETR architecture"
+        },
+        {
+          "evidence_id": "CO_CORE",
+          "paper_id": "conditional_detr",
+          "page_number": 1,
+          "section": "Abstract"
+        }
+      ]
+    },
+    {
+      "id": "C008",
+      "category": "comparison",
+      "language": "zh",
+      "question": "Conditional DETR与DAB-DETR在空间查询中利用目标尺寸的方式有什么差异？",
+      "reference_answer": "Conditional DETR以条件空间查询限定定位范围；DAB-DETR进一步把中心和宽高写成4D框，并用宽高调节注意力范围。",
+      "answer_points": [
+        "Conditional spatial localization",
+        "DAB 4D box query",
+        "Width/height modulate attention"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "conditional_detr",
+        "dab_detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "CO_CORE",
+          "paper_id": "conditional_detr",
+          "page_number": 1,
+          "section": "Abstract"
+        },
+        {
+          "evidence_id": "AB_CORE",
+          "paper_id": "dab_detr",
+          "page_number": 6,
+          "section": "4.1 Overview / 4.2 Learning Anchor Boxes Directly"
+        },
+        {
+          "evidence_id": "AB_SCALE",
+          "paper_id": "dab_detr",
+          "page_number": 5,
+          "section": "3 What Is the Role of DETR Queries"
+        }
+      ]
+    },
+    {
+      "id": "C009",
+      "category": "comparison",
+      "language": "en",
+      "question": "What changes does DN-DETR introduce on top of DAB-DETR?",
+      "reference_answer": "DAB-DETR introduces dynamic box queries; DN-DETR adds noisy-ground-truth reconstruction as auxiliary training to stabilize matching.",
+      "answer_points": [
+        "Dynamic box queries in DAB",
+        "Denoising reconstruction in DN",
+        "Training stabilization"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "dab_detr",
+        "dn_detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "AB_CORE",
+          "paper_id": "dab_detr",
+          "page_number": 6,
+          "section": "4.1 Overview / 4.2 Learning Anchor Boxes Directly"
+        },
+        {
+          "evidence_id": "DN_CORE",
+          "paper_id": "dn_detr",
+          "page_number": 1,
+          "section": "Abstract"
+        }
+      ]
+    },
+    {
+      "id": "C010",
+      "category": "comparison",
+      "language": "zh",
+      "question": "DN-DETR与DINO的去噪监督有什么区别？",
+      "reference_answer": "DN-DETR重建加噪真值；DINO增加对比去噪：正查询重建真值，负查询预测无目标。",
+      "answer_points": [
+        "DN reconstructs noisy GT",
+        "DINO positive reconstruction",
+        "DINO negative no-object prediction"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "dn_detr",
+        "dino"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "DN_CORE",
+          "paper_id": "dn_detr",
+          "page_number": 1,
+          "section": "Abstract"
+        },
+        {
+          "evidence_id": "DI_CDN",
+          "paper_id": "dino",
+          "page_number": 7,
+          "section": "3.3 Contrastive DeNoising Training"
+        }
+      ]
+    },
+    {
+      "id": "C011",
+      "category": "comparison",
+      "language": "en",
+      "question": "How does DINO initialize query positions differently from DN-DETR?",
+      "reference_answer": "DN-DETR uses image-independent learned anchors; DINO initializes anchors from selected encoder features while keeping content queries learnable.",
+      "answer_points": [
+        "DN static learned anchors",
+        "DINO encoder-selected positional initialization",
+        "DINO learnable content queries"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "dn_detr",
+        "dino"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "DN_CORE",
+          "paper_id": "dn_detr",
+          "page_number": 1,
+          "section": "Abstract"
+        },
+        {
+          "evidence_id": "DI_STATIC",
+          "paper_id": "dino",
+          "page_number": 9,
+          "section": "3.4 Mixed Query Selection"
+        },
+        {
+          "evidence_id": "DI_MIX",
+          "paper_id": "dino",
+          "page_number": 10,
+          "section": "3.4 Mixed Query Selection"
+        }
+      ]
+    },
+    {
+      "id": "C012",
+      "category": "comparison",
+      "language": "zh",
+      "question": "ViT与PVT为什么对密集预测的输出适配性不同？",
+      "reference_answer": "ViT保留单尺度token序列；PVT以逐级缩小的四阶段输出多尺度特征，更便于接入密集预测模型。",
+      "answer_points": [
+        "ViT single-scale output",
+        "PVT pyramid multi-scale output",
+        "Dense prediction integration"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "vit",
+        "pvt"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "V_ARCH",
+          "paper_id": "vit",
+          "page_number": 3,
+          "section": "3.1 Vision Transformer"
+        },
+        {
+          "evidence_id": "P_STAGE",
+          "paper_id": "pvt",
+          "page_number": 4,
+          "section": "3.1 Overall Architecture"
+        },
+        {
+          "evidence_id": "P_COMPARE",
+          "paper_id": "pvt",
+          "page_number": 5,
+          "section": "3.4 Discussion"
+        }
+      ]
+    },
+    {
+      "id": "C013",
+      "category": "comparison",
+      "language": "en",
+      "question": "How do DeiT and CaiT add mechanisms for producing the image-level prediction?",
+      "reference_answer": "DeiT adds a teacher-supervised distillation token alongside the class token; CaiT separates patch processing from class-attention summarization.",
+      "answer_points": [
+        "Teacher-supervised token in DeiT",
+        "Separate class-attention in CaiT"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "deit",
+        "cait"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "D_TOKEN",
+          "paper_id": "deit",
+          "page_number": 4,
+          "section": "4 Distillation through attention"
+        },
+        {
+          "evidence_id": "CA_CLASS",
+          "paper_id": "cait",
+          "page_number": 3,
+          "section": "3 Specializing layers for class attention"
+        }
+      ]
+    },
+    {
+      "id": "C014",
+      "category": "comparison",
+      "language": "zh",
+      "question": "T2T-ViT和PVT都缩短token序列，但两者设计目标有何侧重差异？",
+      "reference_answer": "T2T-ViT聚合局部结构以提高分类训练效率；PVT通过金字塔形成多尺度特征，服务检测等密集预测。",
+      "answer_points": [
+        "T2T local aggregation for classification",
+        "PVT pyramid for dense prediction"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "t2t_vit",
+        "pvt"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "T_TOKEN",
+          "paper_id": "t2t_vit",
+          "page_number": 2,
+          "section": "1 Introduction / contributions"
+        },
+        {
+          "evidence_id": "T_BACKBONE",
+          "paper_id": "t2t_vit",
+          "page_number": 2,
+          "section": "1 Introduction / contributions"
+        },
+        {
+          "evidence_id": "P_STAGE",
+          "paper_id": "pvt",
+          "page_number": 4,
+          "section": "3.1 Overall Architecture"
+        },
+        {
+          "evidence_id": "P_COMPARE",
+          "paper_id": "pvt",
+          "page_number": 5,
+          "section": "3.4 Discussion"
+        }
+      ]
+    },
+    {
+      "id": "C015",
+      "category": "comparison",
+      "language": "en",
+      "question": "Compare the reported DETR and Deformable DETR training schedules without making a wall-clock speed claim.",
+      "reference_answer": "DETR’s Faster R-CNN comparison uses 500 epochs; Deformable DETR defaults to 50. Epoch counts do not establish a universal latency ratio.",
+      "answer_points": [
+        "DETR 500-epoch comparison",
+        "Deformable default 50 epochs",
+        "No universal wall-clock speed claim"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "detr",
+        "deformable_detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "DE_TRAIN",
+          "paper_id": "detr",
+          "page_number": 9,
+          "section": "4 Experiments / Training"
+        },
+        {
+          "evidence_id": "DF_TRAIN",
+          "paper_id": "deformable_detr",
+          "page_number": 7,
+          "section": "5 Experiment / Implementation Details"
+        }
+      ]
+    },
+    {
+      "id": "S001",
+      "category": "synthesis",
+      "language": "zh",
+      "question": "综合ViT、DeiT、Swin与DETR，列举分类与检测实验的数据集，并区分用途。",
+      "reference_answer": "ViT用ImageNet/21k/JFT研究分类训练规模；DeiT只用ImageNet；Swin与DETR在COCO上做检测。",
+      "answer_points": [
+        "ViT classification data regimes",
+        "DeiT ImageNet only",
+        "COCO detection in Swin/DETR"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "vit",
+        "deit",
+        "swin",
+        "detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "V_DATA",
+          "paper_id": "vit",
+          "page_number": 4,
+          "section": "4.1 Setup"
+        },
+        {
+          "evidence_id": "D_DATA",
+          "paper_id": "deit",
+          "page_number": 1,
+          "section": "Abstract / Introduction"
+        },
+        {
+          "evidence_id": "SW_TASK",
+          "paper_id": "swin",
+          "page_number": 1,
+          "section": "Abstract"
+        },
+        {
+          "evidence_id": "DE_DATA",
+          "paper_id": "detr",
+          "page_number": 8,
+          "section": "4 Experiments / Dataset"
+        }
+      ]
+    },
+    {
+      "id": "S002",
+      "category": "synthesis",
+      "language": "en",
+      "question": "Summarize task-specific quality metrics from DeiT, Swin and Conditional DETR.",
+      "reference_answer": "Classification uses top-1 accuracy; detection uses AP and its threshold/size variants; Swin’s segmentation experiments use mIoU.",
+      "answer_points": [
+        "Top-1 classification accuracy",
+        "AP/AP50/AP75 and size-specific AP",
+        "mIoU for segmentation"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "deit",
+        "swin",
+        "conditional_detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "D_DATA",
+          "paper_id": "deit",
+          "page_number": 1,
+          "section": "Abstract / Introduction"
+        },
+        {
+          "evidence_id": "SW_TASK",
+          "paper_id": "swin",
+          "page_number": 1,
+          "section": "Abstract"
+        },
+        {
+          "evidence_id": "CO_METRIC",
+          "paper_id": "conditional_detr",
+          "page_number": 7,
+          "section": "4.1 Setup / Evaluation"
+        }
+      ]
+    },
+    {
+      "id": "S003",
+      "category": "synthesis",
+      "language": "zh",
+      "question": "综合Swin、PVT和Deformable DETR，多尺度特征分别通过什么方式进入视觉任务？",
+      "reference_answer": "Swin通过patch merging形成层级；PVT通过四阶段金字塔输出；Deformable DETR在多个尺度特征上稀疏采样。",
+      "answer_points": [
+        "Swin hierarchical merging",
+        "PVT four-stage pyramid",
+        "Deformable multi-scale sampling"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "swin",
+        "pvt",
+        "deformable_detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "SW_PATCH",
+          "paper_id": "swin",
+          "page_number": 3,
+          "section": "3.1 Overall Architecture"
+        },
+        {
+          "evidence_id": "P_STAGE",
+          "paper_id": "pvt",
+          "page_number": 4,
+          "section": "3.1 Overall Architecture"
+        },
+        {
+          "evidence_id": "DF_MULTI",
+          "paper_id": "deformable_detr",
+          "page_number": 6,
+          "section": "4.1 Multi-scale Deformable Attention Module"
+        }
+      ]
+    },
+    {
+      "id": "S004",
+      "category": "synthesis",
+      "language": "en",
+      "question": "Summarize the different explanations of slow DETR training in Conditional DETR and DN-DETR.",
+      "reference_answer": "Conditional DETR highlights difficult content-dependent localization; DN-DETR highlights unstable bipartite matching and inconsistent early optimization targets.",
+      "answer_points": [
+        "Localization/content difficulty",
+        "Matching instability",
+        "These are distinct explanations"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "detr",
+        "conditional_detr",
+        "dn_detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "DE_TRAIN",
+          "paper_id": "detr",
+          "page_number": 9,
+          "section": "4 Experiments / Training"
+        },
+        {
+          "evidence_id": "CO_CORE",
+          "paper_id": "conditional_detr",
+          "page_number": 1,
+          "section": "Abstract"
+        },
+        {
+          "evidence_id": "DN_CORE",
+          "paper_id": "dn_detr",
+          "page_number": 1,
+          "section": "Abstract"
+        }
+      ]
+    },
+    {
+      "id": "S005",
+      "category": "synthesis",
+      "language": "zh",
+      "question": "按Conditional DETR、DAB-DETR、DINO归纳空间查询逐渐增强的设计信息。",
+      "reference_answer": "Conditional使用条件空间查询；DAB加入框中心与宽高并逐层更新；DINO再用encoder选中的位置初始化anchor。",
+      "answer_points": [
+        "Conditional spatial query",
+        "DAB center/size and iterative updates",
+        "DINO encoder-selected anchor initialization"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "conditional_detr",
+        "dab_detr",
+        "dino"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "CO_CORE",
+          "paper_id": "conditional_detr",
+          "page_number": 1,
+          "section": "Abstract"
+        },
+        {
+          "evidence_id": "AB_CORE",
+          "paper_id": "dab_detr",
+          "page_number": 6,
+          "section": "4.1 Overview / 4.2 Learning Anchor Boxes Directly"
+        },
+        {
+          "evidence_id": "DI_MIX",
+          "paper_id": "dino",
+          "page_number": 10,
+          "section": "3.4 Mixed Query Selection"
+        }
+      ]
+    },
+    {
+      "id": "S006",
+      "category": "synthesis",
+      "language": "en",
+      "question": "Organize the improvement strategies of DeiT, T2T-ViT and CaiT into three architectural or training themes.",
+      "reference_answer": "DeiT emphasizes distillation; T2T-ViT emphasizes local token aggregation and efficient backbones; CaiT emphasizes deep-network optimization and separate class attention.",
+      "answer_points": [
+        "Distillation",
+        "Tokenization/backbone efficiency",
+        "Deep optimization/class attention"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "deit",
+        "t2t_vit",
+        "cait"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "D_TOKEN",
+          "paper_id": "deit",
+          "page_number": 4,
+          "section": "4 Distillation through attention"
+        },
+        {
+          "evidence_id": "T_TOKEN",
+          "paper_id": "t2t_vit",
+          "page_number": 2,
+          "section": "1 Introduction / contributions"
+        },
+        {
+          "evidence_id": "T_BACKBONE",
+          "paper_id": "t2t_vit",
+          "page_number": 2,
+          "section": "1 Introduction / contributions"
+        },
+        {
+          "evidence_id": "CA_SCALE",
+          "paper_id": "cait",
+          "page_number": 2,
+          "section": "2 Deeper image transformers with LayerScale"
+        },
+        {
+          "evidence_id": "CA_CLASS",
+          "paper_id": "cait",
+          "page_number": 3,
+          "section": "3 Specializing layers for class attention"
+        }
+      ]
+    },
+    {
+      "id": "S007",
+      "category": "synthesis",
+      "language": "zh",
+      "question": "结合ViT、Swin、PVT，归纳控制注意力计算量的主要设计方向。",
+      "reference_answer": "ViT的全局序列作为参照；Swin限制窗口大小；PVT压缩K/V空间长度并采用金字塔。复杂度结论需注明输入和固定参数。",
+      "answer_points": [
+        "Global sequence baseline",
+        "Fixed local windows",
+        "K/V reduction and pyramid",
+        "State complexity assumptions"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "vit",
+        "swin",
+        "pvt"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "V_ARCH",
+          "paper_id": "vit",
+          "page_number": 3,
+          "section": "3.1 Vision Transformer"
+        },
+        {
+          "evidence_id": "SW_ATT",
+          "paper_id": "swin",
+          "page_number": 4,
+          "section": "3.2 Shifted Window based Self-Attention"
+        },
+        {
+          "evidence_id": "P_SRA",
+          "paper_id": "pvt",
+          "page_number": 5,
+          "section": "3.3 Spatial-Reduction Attention"
+        }
+      ]
+    },
+    {
+      "id": "S008",
+      "category": "synthesis",
+      "language": "en",
+      "question": "What preserves the end-to-end set-prediction formulation across DETR, DAB-DETR and DN-DETR?",
+      "reference_answer": "They retain decoder predictions and bipartite matching; DAB changes query geometry and DN adds training supervision rather than restoring conventional NMS pipelines.",
+      "answer_points": [
+        "Set predictions",
+        "Bipartite matching",
+        "Query/training changes retain formulation"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "detr",
+        "dab_detr",
+        "dn_detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "DE_SET",
+          "paper_id": "detr",
+          "page_number": 5,
+          "section": "3.1 Object detection set prediction loss"
+        },
+        {
+          "evidence_id": "AB_CORE",
+          "paper_id": "dab_detr",
+          "page_number": 6,
+          "section": "4.1 Overview / 4.2 Learning Anchor Boxes Directly"
+        },
+        {
+          "evidence_id": "DN_CORE",
+          "paper_id": "dn_detr",
+          "page_number": 1,
+          "section": "Abstract"
+        }
+      ]
+    },
+    {
+      "id": "S009",
+      "category": "synthesis",
+      "language": "zh",
+      "question": "综合ViT、DINO与Conditional DETR，比较论文实验结果时至少要核对哪些设置？",
+      "reference_answer": "核对任务/数据与划分、预训练数据、骨干、输入或多尺度、训练轮数及参数/计算量；不直接跨设置比较AP或accuracy。",
+      "answer_points": [
+        "Task/data/split",
+        "Pretraining and backbone",
+        "Input or multi-scale",
+        "Epochs/parameters/compute",
+        "Avoid unmatched score comparison"
+      ],
+      "answer_basis": "跨论文实验设置归纳",
+      "paper_ids": [
+        "vit",
+        "dino",
+        "conditional_detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "V_DATA",
+          "paper_id": "vit",
+          "page_number": 4,
+          "section": "4.1 Setup"
+        },
+        {
+          "evidence_id": "DI_SCORE",
+          "paper_id": "dino",
+          "page_number": 1,
+          "section": "Abstract"
+        },
+        {
+          "evidence_id": "CO_FAIR",
+          "paper_id": "conditional_detr",
+          "page_number": 7,
+          "section": "4.2 Results"
+        }
+      ]
+    },
+    {
+      "id": "S010",
+      "category": "synthesis",
+      "language": "en",
+      "question": "Which training-only information is removed from inference in DeiT and DN-DETR?",
+      "reference_answer": "DeiT’s student predicts through class/distillation heads without the teacher; DN-DETR removes noisy-GT denoising queries and retains its matching branch.",
+      "answer_points": [
+        "No teacher needed for DeiT student inference",
+        "DeiT prediction heads remain",
+        "DN denoising branch removed"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "deit",
+        "dn_detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "D_TOKEN",
+          "paper_id": "deit",
+          "page_number": 4,
+          "section": "4 Distillation through attention"
+        },
+        {
+          "evidence_id": "DN_TEST",
+          "paper_id": "dn_detr",
+          "page_number": 5,
+          "section": "4.3 Denoising Training"
+        }
+      ]
+    },
+    {
+      "id": "S011",
+      "category": "synthesis",
+      "language": "zh",
+      "question": "综合Swin、PVT和Deformable DETR，归纳支持不同目标尺度的设计。",
+      "reference_answer": "Swin/PVT输出分层多尺度特征；Deformable DETR从多尺度特征采样，并针对DETR的小目标和高分辨率瓶颈改进。",
+      "answer_points": [
+        "Hierarchical/pyramid scales",
+        "Multi-scale sparse sampling",
+        "Small-object/high-resolution motivation"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "swin",
+        "pvt",
+        "deformable_detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "SW_PATCH",
+          "paper_id": "swin",
+          "page_number": 3,
+          "section": "3.1 Overall Architecture"
+        },
+        {
+          "evidence_id": "P_STAGE",
+          "paper_id": "pvt",
+          "page_number": 4,
+          "section": "3.1 Overall Architecture"
+        },
+        {
+          "evidence_id": "DF_CORE",
+          "paper_id": "deformable_detr",
+          "page_number": 1,
+          "section": "Abstract / Introduction"
+        },
+        {
+          "evidence_id": "DF_MULTI",
+          "paper_id": "deformable_detr",
+          "page_number": 6,
+          "section": "4.1 Multi-scale Deformable Attention Module"
+        }
+      ]
+    },
+    {
+      "id": "S012",
+      "category": "synthesis",
+      "language": "en",
+      "question": "Besides accuracy, which efficiency measures appear in DeiT and T2T-ViT?",
+      "reference_answer": "DeiT reports image throughput; T2T-ViT reports parameter counts and MACs. These describe efficiency, not answer-quality or retrieval metrics.",
+      "answer_points": [
+        "Images-per-second throughput",
+        "Parameter count",
+        "MACs"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "deit",
+        "t2t_vit"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "D_DATA",
+          "paper_id": "deit",
+          "page_number": 1,
+          "section": "Abstract / Introduction"
+        },
+        {
+          "evidence_id": "T_BACKBONE",
+          "paper_id": "t2t_vit",
+          "page_number": 2,
+          "section": "1 Introduction / contributions"
+        }
+      ]
+    },
+    {
+      "id": "S013",
+      "category": "synthesis",
+      "language": "zh",
+      "question": "综合DAB-DETR、DN-DETR和DINO，归纳DINO沿用的基础设计及三个新增方向。",
+      "reference_answer": "基础包括动态anchor与去噪训练；DINO新增对比去噪、混合查询选择和利用相邻层梯度信息的两次前瞻。",
+      "answer_points": [
+        "Dynamic anchors",
+        "Denoising baseline",
+        "Contrastive DN",
+        "Mixed query selection",
+        "Look forward twice"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "dab_detr",
+        "dn_detr",
+        "dino"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "AB_CORE",
+          "paper_id": "dab_detr",
+          "page_number": 6,
+          "section": "4.1 Overview / 4.2 Learning Anchor Boxes Directly"
+        },
+        {
+          "evidence_id": "DN_CORE",
+          "paper_id": "dn_detr",
+          "page_number": 1,
+          "section": "Abstract"
+        },
+        {
+          "evidence_id": "DI_METHOD",
+          "paper_id": "dino",
+          "page_number": 1,
+          "section": "Abstract"
+        },
+        {
+          "evidence_id": "DI_CDN",
+          "paper_id": "dino",
+          "page_number": 7,
+          "section": "3.3 Contrastive DeNoising Training"
+        },
+        {
+          "evidence_id": "DI_MIX",
+          "paper_id": "dino",
+          "page_number": 10,
+          "section": "3.4 Mixed Query Selection"
+        },
+        {
+          "evidence_id": "DI_LOOK",
+          "paper_id": "dino",
+          "page_number": 7,
+          "section": "3.2 Model Overview"
+        }
+      ]
+    },
+    {
+      "id": "S014",
+      "category": "synthesis",
+      "language": "en",
+      "question": "Group ViT, T2T-ViT, CaiT, PVT and Swin by the visual tasks emphasized in their designs.",
+      "reference_answer": "ViT, T2T-ViT and CaiT emphasize classification; PVT and Swin provide versatile backbones for classification and dense prediction.",
+      "answer_points": [
+        "Classification emphasis in ViT/T2T/CaiT",
+        "PVT/Swin general-purpose dense backbones"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "vit",
+        "t2t_vit",
+        "cait",
+        "pvt",
+        "swin"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "V_ARCH",
+          "paper_id": "vit",
+          "page_number": 3,
+          "section": "3.1 Vision Transformer"
+        },
+        {
+          "evidence_id": "T_LOCAL",
+          "paper_id": "t2t_vit",
+          "page_number": 1,
+          "section": "Abstract / Introduction"
+        },
+        {
+          "evidence_id": "CA_DATA",
+          "paper_id": "cait",
+          "page_number": 1,
+          "section": "Abstract"
+        },
+        {
+          "evidence_id": "P_COMPARE",
+          "paper_id": "pvt",
+          "page_number": 5,
+          "section": "3.4 Discussion"
+        },
+        {
+          "evidence_id": "SW_TASK",
+          "paper_id": "swin",
+          "page_number": 1,
+          "section": "Abstract"
+        }
+      ]
+    },
+    {
+      "id": "S015",
+      "category": "synthesis",
+      "language": "zh",
+      "question": "从ViT、DETR及Conditional DETR中归纳三种不能忽略的实验或适用性限制。",
+      "reference_answer": "ViT小数据训练受弱归纳偏置影响；DETR有小目标与长训练问题；Conditional的某些对比因参数和计算量不同并非完全公平。",
+      "answer_points": [
+        "ViT data/bias limitation",
+        "DETR small-object/long-training limitation",
+        "Conditional comparison fairness limitation"
+      ],
+      "answer_basis": "原文直接陈述",
+      "paper_ids": [
+        "vit",
+        "detr",
+        "conditional_detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "V_BIAS",
+          "paper_id": "vit",
+          "page_number": 2,
+          "section": "1 Introduction"
+        },
+        {
+          "evidence_id": "DE_LIMIT",
+          "paper_id": "detr",
+          "page_number": 2,
+          "section": "1 Introduction"
+        },
+        {
+          "evidence_id": "DE_TRAIN",
+          "paper_id": "detr",
+          "page_number": 9,
+          "section": "4 Experiments / Training"
+        },
+        {
+          "evidence_id": "CO_FAIR",
+          "paper_id": "conditional_detr",
+          "page_number": 7,
+          "section": "4.2 Results"
+        }
+      ]
+    },
+    {
+      "id": "R001",
+      "category": "reasoning",
+      "language": "en",
+      "question": "Why can large-scale pretraining compensate for ViT’s weaker convolutional inductive biases?",
+      "reference_answer": "The paper argues that sufficient data allows the model to learn visual regularities otherwise supplied by stronger architectural priors.",
+      "answer_points": [
+        "Weaker built-in local/translation priors",
+        "Sufficient data can learn regularities",
+        "Paper-specific evidence, not a universal guarantee"
+      ],
+      "answer_basis": "作者解释与实验观察",
+      "paper_ids": [
+        "vit"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "V_BIAS",
+          "paper_id": "vit",
+          "page_number": 2,
+          "section": "1 Introduction"
+        },
+        {
+          "evidence_id": "V_DATA",
+          "paper_id": "vit",
+          "page_number": 4,
+          "section": "4.1 Setup"
+        }
+      ]
+    },
+    {
+      "id": "R002",
+      "category": "reasoning",
+      "language": "zh",
+      "question": "DeiT的卷积教师优势能否直接证明归纳偏置已被传入学生？为什么？",
+      "reference_answer": "不能。论文观察到卷积教师更好及预测更相关，但明确表示难以正式回答归纳偏置是否继承，不能把相关性当作机制证明。",
+      "answer_points": [
+        "Convnet-teacher empirical advantage",
+        "Prediction agreement is observed",
+        "Author says formal explanation is difficult",
+        "No causal proof claim"
+      ],
+      "answer_basis": "作者明确说明的证据局限",
+      "paper_ids": [
+        "deit"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "D_TEACHER",
+          "paper_id": "deit",
+          "page_number": 5,
+          "section": "5.2 Distillation"
+        }
+      ]
+    },
+    {
+      "id": "R003",
+      "category": "reasoning",
+      "language": "en",
+      "question": "Why does Swin alternate regular and shifted windows instead of keeping one fixed partition?",
+      "reference_answer": "Fixed windows isolate groups; shifted partitions enable neighboring-window communication while retaining efficient local attention.",
+      "answer_points": [
+        "Fixed partitions lack cross-window links",
+        "Shifts connect neighboring groups",
+        "Local efficiency retained"
+      ],
+      "answer_basis": "作者明确说明的动机",
+      "paper_ids": [
+        "swin"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "SW_ATT",
+          "paper_id": "swin",
+          "page_number": 4,
+          "section": "3.2 Shifted Window based Self-Attention"
+        }
+      ]
+    },
+    {
+      "id": "R004",
+      "category": "reasoning",
+      "language": "zh",
+      "question": "为什么PVT同时采用金字塔和SRA，而不是直接沿用ViT做高分辨率检测骨干？",
+      "reference_answer": "检测需高分辨率及多尺度；金字塔产生不同尺度，SRA缩短K/V以减少注意力资源开销，缓解ViT单尺度和长序列瓶颈。",
+      "answer_points": [
+        "Dense tasks require resolution/scales",
+        "Pyramid supplies scales",
+        "SRA reduces K/V cost",
+        "ViT single-scale limitation"
+      ],
+      "answer_basis": "作者设计动机与机制组合",
+      "paper_ids": [
+        "pvt"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "P_STAGE",
+          "paper_id": "pvt",
+          "page_number": 4,
+          "section": "3.1 Overall Architecture"
+        },
+        {
+          "evidence_id": "P_SRA",
+          "paper_id": "pvt",
+          "page_number": 5,
+          "section": "3.3 Spatial-Reduction Attention"
+        },
+        {
+          "evidence_id": "P_COMPARE",
+          "paper_id": "pvt",
+          "page_number": 5,
+          "section": "3.4 Discussion"
+        }
+      ]
+    },
+    {
+      "id": "R005",
+      "category": "reasoning",
+      "language": "en",
+      "question": "Why should T2T-ViT’s overlapping aggregation help ImageNet-only training?",
+      "reference_answer": "The paper argues that neighboring-token aggregation preserves local structure missed by hard splitting, improving the efficiency of learning visual features.",
+      "answer_points": [
+        "Hard splitting misses local structure",
+        "Overlapping aggregation preserves it",
+        "Author’s data-efficiency hypothesis"
+      ],
+      "answer_basis": "作者提出的假设及设计论证",
+      "paper_ids": [
+        "t2t_vit"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "T_TOKEN",
+          "paper_id": "t2t_vit",
+          "page_number": 2,
+          "section": "1 Introduction / contributions"
+        },
+        {
+          "evidence_id": "T_LOCAL",
+          "paper_id": "t2t_vit",
+          "page_number": 1,
+          "section": "Abstract / Introduction"
+        }
+      ]
+    },
+    {
+      "id": "R006",
+      "category": "reasoning",
+      "language": "zh",
+      "question": "LayerScale为什么用小初值的逐通道可学习缩放来帮助训练更深的CaiT？",
+      "reference_answer": "小初值让残差路径初期贡献较小、模型接近恒等映射；逐通道权重可逐渐调节，比单个缩放标量提供更多优化自由度。",
+      "answer_points": [
+        "Small initial residual contribution",
+        "Near-identity starting point",
+        "Learnable per-channel optimization freedom"
+      ],
+      "answer_basis": "作者解释与消融观察",
+      "paper_ids": [
+        "cait"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "CA_SCALE",
+          "paper_id": "cait",
+          "page_number": 2,
+          "section": "2 Deeper image transformers with LayerScale"
+        },
+        {
+          "evidence_id": "CA_CLASS",
+          "paper_id": "cait",
+          "page_number": 3,
+          "section": "3 Specializing layers for class attention"
+        }
+      ]
+    },
+    {
+      "id": "R007",
+      "category": "reasoning",
+      "language": "en",
+      "question": "Why is one-to-one matching important for DETR’s NMS-free prediction design?",
+      "reference_answer": "It gives each target one matched prediction, while unmatched outputs receive no-object supervision, encouraging unique set predictions instead of post-hoc duplicate suppression.",
+      "answer_points": [
+        "One match per target",
+        "Unmatched no-object supervision",
+        "Supports NMS-free set prediction"
+      ],
+      "answer_basis": "作者集合预测机制",
+      "paper_ids": [
+        "detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "DE_SET",
+          "paper_id": "detr",
+          "page_number": 5,
+          "section": "3.1 Object detection set prediction loss"
+        }
+      ]
+    },
+    {
+      "id": "R008",
+      "category": "reasoning",
+      "language": "zh",
+      "question": "为什么Deformable DETR的稀疏采样更适合高分辨率和小目标，而不是全局密集注意力？",
+      "reference_answer": "高分辨率使全局注意力代价高；参考点附近少量采样降低开销，允许多尺度高分辨率特征，改善小目标信息利用。",
+      "answer_points": [
+        "Dense global attention cost",
+        "Few samples around references",
+        "High-resolution/multi-scale feasibility",
+        "Small-object motivation"
+      ],
+      "answer_basis": "作者设计动机与机制",
+      "paper_ids": [
+        "deformable_detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "DF_CORE",
+          "paper_id": "deformable_detr",
+          "page_number": 1,
+          "section": "Abstract / Introduction"
+        },
+        {
+          "evidence_id": "DF_MULTI",
+          "paper_id": "deformable_detr",
+          "page_number": 6,
+          "section": "4.1 Multi-scale Deformable Attention Module"
+        }
+      ]
+    },
+    {
+      "id": "R009",
+      "category": "reasoning",
+      "language": "en",
+      "question": "Why does Conditional DETR reduce the need for highly discriminative content embeddings during localization?",
+      "reference_answer": "Conditional spatial queries restrict each head to a relevant band, separating part of localization from content-only matching and easing optimization.",
+      "answer_points": [
+        "Content-only localization is difficult",
+        "Spatial bands narrow search",
+        "Reduced content dependence"
+      ],
+      "answer_basis": "作者明确说明的动机",
+      "paper_ids": [
+        "conditional_detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "CO_CORE",
+          "paper_id": "conditional_detr",
+          "page_number": 1,
+          "section": "Abstract"
+        }
+      ]
+    },
+    {
+      "id": "R010",
+      "category": "reasoning",
+      "language": "zh",
+      "question": "为什么DAB-DETR在空间查询中使用宽高，而不只使用中心坐标？",
+      "reference_answer": "中心只给出位置；宽高还表达目标尺度和形状，能调节注意力范围，使查询更适应不同大小目标并形成soft ROI聚合。",
+      "answer_points": [
+        "Center encodes location",
+        "Width/height encode scale/shape",
+        "Size-modulated attention",
+        "Soft ROI interpretation"
+      ],
+      "answer_basis": "作者机制与分析",
+      "paper_ids": [
+        "dab_detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "AB_CORE",
+          "paper_id": "dab_detr",
+          "page_number": 6,
+          "section": "4.1 Overview / 4.2 Learning Anchor Boxes Directly"
+        },
+        {
+          "evidence_id": "AB_SCALE",
+          "paper_id": "dab_detr",
+          "page_number": 5,
+          "section": "3 What Is the Role of DETR Queries"
+        }
+      ]
+    },
+    {
+      "id": "R011",
+      "category": "reasoning",
+      "language": "en",
+      "question": "Why can DN-DETR’s noisy-GT reconstruction stabilize early training despite retaining Hungarian matching?",
+      "reference_answer": "Reconstruction supplies consistent auxiliary targets while matching assignments fluctuate, easing query learning without replacing the set-prediction loss.",
+      "answer_points": [
+        "Early matching instability",
+        "Consistent reconstruction supervision",
+        "Matching branch retained"
+      ],
+      "answer_basis": "作者匹配不稳定分析",
+      "paper_ids": [
+        "dn_detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "DN_CORE",
+          "paper_id": "dn_detr",
+          "page_number": 1,
+          "section": "Abstract"
+        }
+      ]
+    },
+    {
+      "id": "R012",
+      "category": "reasoning",
+      "language": "zh",
+      "question": "DN-DETR为什么必须屏蔽匹配查询对去噪查询的访问以及去噪组之间的访问？",
+      "reference_answer": "否则匹配查询可能看到含真值的去噪输入，或不同噪声组相互泄漏答案，产生训练捷径，损害没有去噪输入的推理。",
+      "answer_points": [
+        "GT leakage into matching part",
+        "Leakage across denoising groups",
+        "Training shortcut",
+        "Denoising unavailable at inference"
+      ],
+      "answer_basis": "作者信息泄漏分析",
+      "paper_ids": [
+        "dn_detr"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "DN_MASK",
+          "paper_id": "dn_detr",
+          "page_number": 5,
+          "section": "4.4 Attention Mask"
+        },
+        {
+          "evidence_id": "DN_TEST",
+          "paper_id": "dn_detr",
+          "page_number": 5,
+          "section": "4.3 Denoising Training"
+        }
+      ]
+    },
+    {
+      "id": "R013",
+      "category": "reasoning",
+      "language": "en",
+      "question": "Why does DINO initialize positions from encoder features but leave content queries learnable?",
+      "reference_answer": "Preliminary encoder content may mix objects or show only object parts; position-only initialization avoids misleading content while retaining useful location priors.",
+      "answer_points": [
+        "Encoder content can be ambiguous",
+        "Positions provide useful priors",
+        "Learnable content avoids misleading initialization"
+      ],
+      "answer_basis": "作者明确说明的动机",
+      "paper_ids": [
+        "dino"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "DI_MIX",
+          "paper_id": "dino",
+          "page_number": 10,
+          "section": "3.4 Mixed Query Selection"
+        }
+      ]
+    },
+    {
+      "id": "R014",
+      "category": "reasoning",
+      "language": "zh",
+      "question": "DINO为什么增加预测无目标的负去噪查询，而不只重建正样本？",
+      "reference_answer": "只重建附近真值不足以学会拒绝无目标anchor；负查询提供拒绝监督，帮助减少相邻anchor混淆及重复预测。",
+      "answer_points": [
+        "Positive-only reconstruction limitation",
+        "Negative no-object supervision",
+        "Reject poor anchors and reduce confusion",
+        "No guarantee of eliminating all duplicates"
+      ],
+      "answer_basis": "作者对比去噪分析",
+      "paper_ids": [
+        "dino"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "DI_CDN",
+          "paper_id": "dino",
+          "page_number": 7,
+          "section": "3.3 Contrastive DeNoising Training"
+        },
+        {
+          "evidence_id": "DI_CDN_REASON",
+          "paper_id": "dino",
+          "page_number": 8,
+          "section": "3.3 Analysis"
+        }
+      ]
+    },
+    {
+      "id": "R015",
+      "category": "reasoning",
+      "language": "en",
+      "question": "With only ImageNet available, which collected approaches offer better-supported starting points than requiring JFT pretraining, and why?",
+      "reference_answer": "DeiT and T2T-ViT explicitly study ImageNet-only training. Their distillation or local-token designs provide evidence-based options, without guaranteeing published accuracy on new hardware.",
+      "answer_points": [
+        "DeiT ImageNet-only evidence",
+        "T2T ImageNet-only evidence",
+        "Distillation/local structure as different options",
+        "No new-hardware accuracy guarantee"
+      ],
+      "answer_basis": "基于指定论文的场景推断，非新增实验证明",
+      "paper_ids": [
+        "vit",
+        "deit",
+        "t2t_vit"
+      ],
+      "evidence": [
+        {
+          "evidence_id": "V_DATA",
+          "paper_id": "vit",
+          "page_number": 4,
+          "section": "4.1 Setup"
+        },
+        {
+          "evidence_id": "D_DATA",
+          "paper_id": "deit",
+          "page_number": 1,
+          "section": "Abstract / Introduction"
+        },
+        {
+          "evidence_id": "T_LOCAL",
+          "paper_id": "t2t_vit",
+          "page_number": 1,
+          "section": "Abstract / Introduction"
+        },
+        {
+          "evidence_id": "T_TOKEN",
+          "paper_id": "t2t_vit",
+          "page_number": 2,
+          "section": "1 Introduction / contributions"
+        }
+      ]
+    },
+    {
+      "id": "X01",
+      "category": "concept",
+      "language": "zh",
+      "question": "什么是深度学习？",
+      "expected_tools": [],
+      "supplemental": true
+    },
+    {
+      "id": "X02",
+      "category": "concept",
+      "language": "zh",
+      "question": "什么是机器学习？",
+      "expected_tools": [],
+      "supplemental": true
+    },
+    {
+      "id": "X03",
+      "category": "concept",
+      "language": "zh",
+      "question": "解释什么是人工智能。",
+      "expected_tools": [],
+      "supplemental": true
+    },
+    {
+      "id": "X04",
+      "category": "concept",
+      "language": "en",
+      "question": "What is deep learning?",
+      "expected_tools": [],
+      "supplemental": true
+    },
+    {
+      "id": "X05",
+      "category": "calculator",
+      "language": "zh",
+      "question": "3.14乘以2.56",
+      "expected_tools": [
+        "calculator"
+      ],
+      "supplemental": true
+    },
+    {
+      "id": "X06",
+      "category": "calculator",
+      "language": "zh",
+      "question": "计算25加17",
+      "expected_tools": [
+        "calculator"
+      ],
+      "supplemental": true
+    },
+    {
+      "id": "X07",
+      "category": "calculator",
+      "language": "zh",
+      "question": "计算144除以12",
+      "expected_tools": [
+        "calculator"
+      ],
+      "supplemental": true
+    },
+    {
+      "id": "X08",
+      "category": "calculator",
+      "language": "zh",
+      "question": "计算9乘以8",
+      "expected_tools": [
+        "calculator"
+      ],
+      "supplemental": true
+    },
+    {
+      "id": "X09",
+      "category": "time",
+      "language": "zh",
+      "question": "现在几点？",
+      "expected_tools": [
+        "current_time"
+      ],
+      "supplemental": true
+    },
+    {
+      "id": "X10",
+      "category": "time",
+      "language": "zh",
+      "question": "返回当前系统时间和时区",
+      "expected_tools": [
+        "current_time"
+      ],
+      "supplemental": true
+    },
+    {
+      "id": "X11",
+      "category": "time",
+      "language": "en",
+      "question": "What is the current time?",
+      "expected_tools": [
+        "current_time"
+      ],
+      "supplemental": true
+    },
+    {
+      "id": "X12",
+      "category": "time",
+      "language": "zh",
+      "question": "请查询今天的日期和当前时间",
+      "expected_tools": [
+        "current_time"
+      ],
+      "supplemental": true
+    }
+  ],
+  "inputs_sha256": {
+    "reports\\评测集.json": "51e282a8edb0f1e20e636b3a7c749fa3c4b0a9bb90572b353e6420d935d1acf6",
+    "reports\\5_5_1 评测集构建\\论文清单.json": "70bd8d162d8ca61b8da47d078e954c2aee8917a48c1d999408f37a83d9cc661f",
+    "config.yaml": "68cb1d3803699088d072e5a3131d5b2c37b2f04127ad34de00a200bcf2ad7df1"
+  },
+  "source_sha256": {
+    "src\\__init__.py": "4eff7d4ca3dac42df51b1c3af47dca63bd2ce497ae566c8711223c15ccfab2b4",
+    "src\\agent\\__init__.py": "2ce20f266dfd2f68d0c4cbcb47894436933c8029a8b01064e9c4ad9af29294d9",
+    "src\\agent\\memory.py": "d9f929649003851101de00ac5dfddaa263b4c91d2bceb27f5a56044c27928215",
+    "src\\agent\\react_loop.py": "0f260dc12cfa98d7cc6eb63703f245631752a44e6befd0988ce242fa60b0eace",
+    "src\\agent\\router.py": "7444c6d39fd1dc19fdc43d36e77974d8e2ab5f761ce42215a8594854cbf37574",
+    "src\\agent\\tools.py": "2a7d636f215eed6a519ebab0f9a1c670d7703158938695372ab29d7dc9112ccc",
+    "src\\chunking\\__init__.py": "f7715c93a88b8fdcf4ed35ffef878684e32d0d7e9671bc0b754c8b261aed4c37",
+    "src\\chunking\\fixed_chunk.py": "3eba644bd15a827731aedaa246d21146a7353fea34e4d282e5f13414d37ed85d",
+    "src\\chunking\\recursive_chunk.py": "102e05c0bee461b0bf897987f098ed818dbcde19fa48b30af7e66502c417a8b3",
+    "src\\chunking\\semantic_chunk.py": "dd58437f9a6b2d1482f794ec95e53989d87c7af39c696b5230fb54d07e2d93e4",
+    "src\\data_loader\\__init__.py": "b3a40abae8e3dda3e31b863ff079f3308a44fc83270d87fa24d970179828a384",
+    "src\\data_loader\\docx_loader.py": "a4e8c69cb289855a6b6d5a69a840fe5dbd4abf9152dfe9d203bfaa1e1febb35d",
+    "src\\data_loader\\pdf_loader.py": "6eebea1d8df76485e2e8b5e59af699d94bcd6724c7a3f2f9512264330e02c311",
+    "src\\data_loader\\text_loader.py": "ee23c076850491e7ca8b6b07de2a64734e4af41c06de65b96b8f076ce9a91477",
+    "src\\frontend\\__init__.py": "97c19dc7c9063934076460cb7134e8adad9ae2f723ae464b0a6f5d811dbfe936",
+    "src\\frontend\\app.py": "4a9cf1236cb7f76b377c8aa0fc634427c8a976d360b09b3b580170c7bbfa83f0",
+    "src\\frontend\\components\\documents.py": "0a71edec8c38074d6de480100047a9c6f35a4efe001d98999e8f015faafd2f98",
+    "src\\frontend\\components\\sessions.py": "dcbd7ea158fcda1ab86a3d935ee2104c31488e0866a03d559efd1cc4fda7213a",
+    "src\\frontend\\components\\trace.py": "0590bbac8b8788ad1b5272e66668e7130477113e52b5a0f3de1a1da656f0864c",
+    "src\\generation\\__init__.py": "fa92e01f4ecaefcc243a6e741c068fd1e99a208edf122757477c052eb29e8e7e",
+    "src\\generation\\cache.py": "30512a0012947761ac0deeab40b5b41afd01aed69b499a1a30f615d8a49e8914",
+    "src\\generation\\prompt_template.py": "5756a37fe6bf8749977afa1e3094a290ec64182fc03135c6240659d9e0f4d88e",
+    "src\\generation\\rag_pipeline.py": "3d9c17f6c77323637ee4f67d0aa44cf7769ebd4581d7b317395f62ce202e3370",
+    "src\\generation\\streaming.py": "a3d3247e1dbb2296757f23f27476997f0916e3e4cddc3127433de684602b9911",
+    "src\\retrieval\\__init__.py": "1c06b17aa89c59f50655993328e63eb7afdb5e0f2348f663941064a977bbeb27",
+    "src\\retrieval\\bm25_retriever.py": "361c5200c2da282a2683f8761827ca1c59dec3367d7b383bf2f1826724d307ae",
+    "src\\retrieval\\hybrid_retriever.py": "643c492041bf83ed42c4e4bf07b4390175845748a1908fda7ba33b27dc85f7e4",
+    "src\\retrieval\\repair_index.py": "2cfb97493e521a125523755ce2e5025093ef52d93efc286bfd52b2b02cfc827d",
+    "src\\retrieval\\reranker.py": "f694cf3ec828e05332a5be08e6a9363c3e8e869a79651f0ea1a21dec544c06f9",
+    "src\\retrieval\\vector_store.py": "832f111be33b787b476b3cfabb6e49edcf587488ad430986af9c2ffa5c679428",
+    "src\\utils\\__init__.py": "5400eb325512c113952b4137673a981259a8500d6824d392c2dd6c1904ee660a",
+    "src\\utils\\chroma_path.py": "85026d90844e9b2a690ea49c97faca70ca36cf0f158f8389058053abafdfcf27",
+    "src\\utils\\config.py": "18d2e2b484d4b1d6b74cbe70219d649a24eb8310097448aaff1738290220853d",
+    "src\\utils\\logger.py": "dac0197df3d490bf68fea2bf9a617e4b66e2e352ee8a753641d10594ea912944",
+    "src\\utils\\messages.py": "ff85b1bd80fe680d4b3e1767164c80602a2d7aca18687655cb7ce799fbad0441",
+    "src\\utils\\token_budget.py": "0c20f118ee2de0bd80c367afe06befa8f72a2850b9990b7528585919a4745bd8"
+  },
+  "tags": {
+    "models": [
+      {
+        "name": "qwen2.5:7b",
+        "model": "qwen2.5:7b",
+        "modified_at": "2026-10-05T17:43:17.3307676+08:00",
+        "size": 4683087332,
+        "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen2",
+          "families": [
+            "qwen2"
+          ],
+          "parameter_size": "7.6B",
+          "quantization_level": "Q4_K_M",
+          "context_length": 32768,
+          "embedding_length": 3584
+        },
+        "capabilities": [
+          "completion",
+          "tools"
+        ]
+      }
+    ]
+  },
+  "version": {
+    "version": "0.35.1"
+  },
+  "warmup": {
+    "model": "qwen2.5:7b",
+    "created_at": "2026-10-07T10:58:27.7008909Z",
+    "message": {
+      "role": "assistant",
+      "content": "好"
+    },
+    "done": true,
+    "done_reason": "stop",
+    "total_duration": 96441000,
+    "load_duration": 2755700,
+    "prompt_eval_count": 32,
+    "prompt_eval_cached_count": 31,
+    "prompt_eval_duration": 22611000,
+    "eval_count": 2,
+    "eval_duration": 23069000
+  },
+  "tool_combinations": {},
+  "completed_at": "2026-10-07T19:03:00.334433+08:00"
+}

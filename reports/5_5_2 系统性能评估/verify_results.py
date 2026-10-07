@@ -32,7 +32,8 @@ def main():
                       ("evaluation_script_sha256", Path(__file__).with_name("evaluate_system.py"))):
         assert hashlib.sha256(path.read_bytes()).hexdigest() == retrieval["inputs"][key], key
     for name, expected in retrieval["inputs"]["source_sha256"].items():
-        assert hashlib.sha256((ROOT / name).read_bytes()).hexdigest() == expected, name
+        # Windows归档用反斜杠，在Mac复核同一相对源码路径时统一分隔符。
+        assert hashlib.sha256((ROOT / name.replace("\\", "/")).read_bytes()).hexdigest() == expected, name
     assert len(retrieval["rows"]) == 300 and len(agent["rows"]) == 120
     for key in retrieval["profiles"]:
         rows = [r for r in retrieval["rows"] if r["profile"] == key]

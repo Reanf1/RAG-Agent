@@ -1,0 +1,81 @@
+{
+  "started_at": "2026-10-07T16:42:25.385516+08:00",
+  "status": "completed",
+  "project": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-acceptance-d31ae9fe7da24e548aee0bb08f810694\\project",
+  "python": "E:\\工作\\RAG-Agent\\.venv\\Scripts\\python.exe",
+  "stages": [
+    {
+      "stage": "retrieval",
+      "started_at": "2026-10-07T16:42:25.386773+08:00",
+      "command": [
+        "E:\\工作\\RAG-Agent\\.venv\\Scripts\\python.exe",
+        "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-acceptance-d31ae9fe7da24e548aee0bb08f810694\\project\\reports\\5_5_2 系统性能评估\\evaluate_system.py",
+        "--stage",
+        "retrieval",
+        "--root",
+        "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-acceptance-d31ae9fe7da24e548aee0bb08f810694\\windows-benchmark-4\\system-runtime",
+        "--output",
+        "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-acceptance-d31ae9fe7da24e548aee0bb08f810694\\windows-benchmark-4\\retrieval.json"
+      ],
+      "exit_code": 0,
+      "seconds": 2303.6238969000005,
+      "finished_at": "2026-10-07T17:20:49.011590+08:00"
+    },
+    {
+      "stage": "agent",
+      "started_at": "2026-10-07T17:20:49.012591+08:00",
+      "command": [
+        "E:\\工作\\RAG-Agent\\.venv\\Scripts\\python.exe",
+        "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-acceptance-d31ae9fe7da24e548aee0bb08f810694\\project\\reports\\5_5_2 系统性能评估\\evaluate_system.py",
+        "--stage",
+        "agent",
+        "--root",
+        "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-acceptance-d31ae9fe7da24e548aee0bb08f810694\\windows-benchmark-4\\system-runtime",
+        "--output",
+        "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-acceptance-d31ae9fe7da24e548aee0bb08f810694\\windows-benchmark-4\\agent.json"
+      ],
+      "exit_code": 0,
+      "seconds": 3524.217207599999,
+      "finished_at": "2026-10-07T18:19:38.052603+08:00"
+    },
+    {
+      "stage": "routing",
+      "started_at": "2026-10-07T18:19:38.053603+08:00",
+      "command": [
+        "E:\\工作\\RAG-Agent\\.venv\\Scripts\\python.exe",
+        "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-acceptance-d31ae9fe7da24e548aee0bb08f810694\\project\\reports\\5_5_2 系统性能评估\\evaluate_research.py",
+        "--stage",
+        "routing",
+        "--root",
+        "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-acceptance-d31ae9fe7da24e548aee0bb08f810694\\windows-benchmark-4\\routing-runtime",
+        "--output",
+        "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-acceptance-d31ae9fe7da24e548aee0bb08f810694\\windows-benchmark-4\\routing.json",
+        "--frozen-root",
+        "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-acceptance-d31ae9fe7da24e548aee0bb08f810694\\windows-benchmark-4\\system-runtime"
+      ],
+      "exit_code": 0,
+      "seconds": 2320.061093200002,
+      "finished_at": "2026-10-07T18:58:18.115465+08:00"
+    },
+    {
+      "stage": "parallel",
+      "started_at": "2026-10-07T18:58:18.116875+08:00",
+      "command": [
+        "E:\\工作\\RAG-Agent\\.venv\\Scripts\\python.exe",
+        "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-acceptance-d31ae9fe7da24e548aee0bb08f810694\\project\\reports\\5_5_2 系统性能评估\\evaluate_research.py",
+        "--stage",
+        "parallel",
+        "--root",
+        "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-acceptance-d31ae9fe7da24e548aee0bb08f810694\\windows-benchmark-4\\parallel-runtime",
+        "--output",
+        "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-acceptance-d31ae9fe7da24e548aee0bb08f810694\\windows-benchmark-4\\parallel.json",
+        "--frozen-root",
+        "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-acceptance-d31ae9fe7da24e548aee0bb08f810694\\windows-benchmark-4\\system-runtime"
+      ],
+      "exit_code": 0,
+      "seconds": 283.3448158999963,
+      "finished_at": "2026-10-07T19:03:01.461752+08:00"
+    }
+  ],
+  "finished_at": "2026-10-07T19:03:01.463759+08:00"
+}

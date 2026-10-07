@@ -30,7 +30,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--pages", type=Path, help="视觉核验后的标题实际页号JSON")
     args = parser.parse_args()
-    markdown = (ROOT / "docs/课程报告.md").read_text()
+    markdown = (ROOT / "docs/课程报告.md").read_text(encoding="utf-8")
     doc = Document(ROOT / "docs/项目交付模板.docx")
     original = list(doc.element.body)
     for element in original:
@@ -95,11 +95,11 @@ def main():
         p = doc.add_paragraph(f"成员 {index}：班级________ 学号________ 姓名________")
         p.paragraph_format.space_before = Pt(14)
         font(p.runs[0], "黑体", 14)
-    doc.add_paragraph("资料截止：2026年10月4日；个人信息与真实贡献比例待提供。")
+    doc.add_paragraph("资料截止：2026年10月7日；个人信息与真实贡献比例待填写。")
 
     headings = [(line.count('#'), line.lstrip('#').strip()) for line in markdown.splitlines()
                 if line.startswith('## ') or line.startswith('### ')]
-    page_map = json.loads(args.pages.read_text()) if args.pages else {}
+    page_map = json.loads(args.pages.read_text(encoding="utf-8")) if args.pages else {}
     toc = doc.add_paragraph("目录")
     toc.paragraph_format.page_break_before = True
     toc.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -160,7 +160,8 @@ def main():
             table = doc.add_table(rows=0, cols=len(cells[0]))
             table.style = 'Table Grid'
             table.autofit = False
-            widths = [4.6, 1.75, 1.75, 6.55] if len(cells[0]) == 4 else [3.3, 3.3, 3.3, 2.3, 2.45] if len(cells[0]) == 5 else [3.2, 5.2, 6.25]
+            widths = {3: [3.2, 5.2, 6.25], 4: [4.6, 1.75, 1.75, 6.55],
+                      5: [3.3, 3.3, 3.3, 2.3, 2.45], 6: [2.75, 2.7, 1.3, 2.4, 3.1, 2.4]}[len(cells[0])]
             for col, cm in zip(table.columns, widths): col.width = Cm(cm)
             for n, values in enumerate(cells):
                 row = table.add_row()
@@ -170,6 +171,8 @@ def main():
                 for cell, value, cm in zip(row.cells, values, widths):
                     cell.width = Cm(cm); cell.text = value
                     for p in cell.paragraphs:
+                        # 表内文字左对齐，避免模板的两端对齐把短词拉开。
+                        p.alignment = WD_ALIGN_PARAGRAPH.LEFT
                         p.paragraph_format.line_spacing = 1.15
                         p.paragraph_format.space_after = Pt(4)
                         p.paragraph_format.space_before = Pt(4)
@@ -192,7 +195,7 @@ def main():
     doc.settings.element.append(setting)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     doc.save(args.output)
-    print(f"已从模板副本生成 {args.output}；成员与人评保持待填。")
+    print(f"已从模板副本生成 {args.output}；成员资料与用户质量审核保持待填。")
 
 
 if __name__ == '__main__':

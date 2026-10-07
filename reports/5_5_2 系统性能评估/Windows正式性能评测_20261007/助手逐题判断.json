@@ -1,0 +1,1082 @@
+{
+  "F001:default": {
+    "scores": [
+      4,
+      4,
+      4
+    ],
+    "reason": "三个训练数据集均正确且完整。实际引用vit.pdf第14页末尾明确列出三种预训练数据，第15页Table 5标题及分组再次支持；附录物理页也可作为有效证据，不仅按金标准第4页机械判分。",
+    "answer_sha256": "0f1d4316941729e435c2c84495dba657d42d363b601bcea7568b4e1798527f20"
+  },
+  "F001:no_rules": {
+    "scores": [
+      4,
+      4,
+      4
+    ],
+    "reason": "三个训练数据集均正确且完整。实际引用vit.pdf第14页末尾明确列出三种预训练数据，第15页Table 5标题及分组再次支持；附录物理页也可作为有效证据，不仅按金标准第4页机械判分。",
+    "answer_sha256": "0f1d4316941729e435c2c84495dba657d42d363b601bcea7568b4e1798527f20"
+  },
+  "F002:no_rules": {
+    "scores": [
+      0,
+      0,
+      0
+    ],
+    "reason": "最终仅返回输入超预算错误，没有给出ImageNet及不使用外部训练数据两个必要要点，也无最终有效引用。轨迹中检索已返回DeiT原文，但模型先错误地称未找到文档，再改用摘要；工具中间结果不作为最终答案得分。",
+    "answer_sha256": "1f9a337227ff04e3fc0bb6777123166841c9a442084d15de7c0e6a7546ab4bf5"
+  },
+  "F002:default": {
+    "scores": [
+      0,
+      0,
+      0
+    ],
+    "reason": "最终错误地声称知识库未找到相关文档，没有回答ImageNet训练及不使用外部训练数据，也未给出有效引用。",
+    "answer_sha256": "13b7f37578469e34882b62a3e140fe6f9ac58b5531fbf9c52a04eca10ed6514e"
+  },
+  "F003:default": {
+    "scores": [
+      4,
+      4,
+      4
+    ],
+    "reason": "4×4初始patch、RGB原始特征维度48及4×4×3计算均准确完整；已核对swin.pdf物理第3页，引用直接支持这些要点。",
+    "answer_sha256": "34dd7f0af8c01ca8195caba2beeaee261eccbf7859f0753f6855ca1f6712f118"
+  },
+  "F003:no_rules": {
+    "scores": [
+      4,
+      4,
+      4
+    ],
+    "reason": "4×4初始patch、RGB原始特征维度48及4×4×3计算均准确完整；已核对swin.pdf物理第3页，引用直接支持这些要点。",
+    "answer_sha256": "34dd7f0af8c01ca8195caba2beeaee261eccbf7859f0753f6855ca1f6712f118"
+  },
+  "F004:no_rules": {
+    "scores": [
+      2,
+      2,
+      0
+    ],
+    "reason": "四阶段正确，但只给出8、16、32三个步幅，漏掉第1阶段的4，导致四阶段序列不完整。pvt.pdf物理第4页图3及正文明确为4、8、16、32；最终没有来源引用。",
+    "answer_sha256": "39dce93e13474e78fce949cf2e944bba8c53c12a3fc1a14ddffe86256d4158db"
+  },
+  "F004:default": {
+    "scores": [
+      3,
+      2,
+      4
+    ],
+    "reason": "四阶段及pvt.pdf物理第4页引用准确，但没有给出4、8、16、32输出步幅，且声称原文未明确提及与已核对图3及正文不符。对最终已提供的四阶段事实引用有效，遗漏另计完整性。",
+    "answer_sha256": "9f852d89241d9fd9c7414bcbbec1e8226cd008ff0373644d7bfd30bbf6643e81"
+  },
+  "F005:default": {
+    "scores": [
+      3,
+      2,
+      0
+    ],
+    "reason": "识别了T2T与Transformer主干两个大部件，但把主干泛称ViT，没有说明论文的deep-narrow主干设计；无工具依据和最终引用。",
+    "answer_sha256": "72748f7df75d7d3d5b9e871b889687d23516fa04b00d609a9dfe332e2eff6554"
+  },
+  "F005:no_rules": {
+    "scores": [
+      4,
+      3,
+      4
+    ],
+    "reason": "正确识别Tokens-to-Token模块和T2T-ViT主干；少了deep-narrow设计要点。已核对t2t_vit.pdf物理第5页图4及3.3节，引用直接支持两部分组成。",
+    "answer_sha256": "ffeb0ac0df85e558a2d94922c93bdeac5598848132e94e37639a4f532c7c3c1d"
+  },
+  "F006:no_rules": {
+    "scores": [
+      4,
+      4,
+      4
+    ],
+    "reason": "只有class embedding更新已隐含patch embeddings不更新，回答覆盖全部要点；cait.pdf物理第3页class-attention说明可直接追溯。",
+    "answer_sha256": "f28f90306bd7d56715070c3ccbf61c21388f2477c8159fdf4ea4915799318eb6"
+  },
+  "F006:default": {
+    "scores": [
+      4,
+      4,
+      4
+    ],
+    "reason": "只有class embedding更新已隐含patch embeddings不更新，回答覆盖全部要点；cait.pdf物理第3页class-attention说明可直接追溯。",
+    "answer_sha256": "f28f90306bd7d56715070c3ccbf61c21388f2477c8159fdf4ea4915799318eb6"
+  },
+  "F007:default": {
+    "scores": [
+      4,
+      4,
+      3
+    ],
+    "reason": "118000训练与5000验证数量准确完整；detr.pdf物理第8页直接支持，但附加conditional_detr.pdf第2页没有这些数量，是多余的错误页码引用。",
+    "answer_sha256": "f2b4d32470ed705ebc295fcb02c51fb25a93bb15c221c9a781c4a7a59347a8c1"
+  },
+  "F007:no_rules": {
+    "scores": [
+      4,
+      4,
+      3
+    ],
+    "reason": "118000训练与5000验证数量准确完整；detr.pdf物理第8页直接支持，但附加conditional_detr.pdf第2页没有这些数量，是多余的错误页码引用。",
+    "answer_sha256": "f2b4d32470ed705ebc295fcb02c51fb25a93bb15c221c9a781c4a7a59347a8c1"
+  },
+  "F008:no_rules": {
+    "scores": [
+      4,
+      2,
+      4
+    ],
+    "reason": "50 epochs准确，有deformable_detr.pdf物理第7页依据；漏掉默认在epoch 40降低学习率的重要日程要点。",
+    "answer_sha256": "69b8d2c58a1f33098aa2448b383c21cb904478c81961af1694585ce7e1ff737a"
+  },
+  "F008:default": {
+    "scores": [
+      4,
+      2,
+      4
+    ],
+    "reason": "50 epochs准确，有deformable_detr.pdf物理第7页依据；漏掉默认在epoch 40降低学习率的重要日程要点。",
+    "answer_sha256": "69b8d2c58a1f33098aa2448b383c21cb904478c81961af1694585ce7e1ff737a"
+  },
+  "F009:default": {
+    "scores": [
+      4,
+      4,
+      4
+    ],
+    "reason": "六项AP指标及含义准确完整。已核对conditional_detr.pdf物理第6页Table 1完整六项表头，允许表格页作为证据。",
+    "answer_sha256": "d22ec43e97a392a959722fe54df284cbdee0c7f4fbee80d5b8c1ca2153dd637c"
+  },
+  "F009:no_rules": {
+    "scores": [
+      4,
+      4,
+      4
+    ],
+    "reason": "六项AP指标及含义准确完整。已核对conditional_detr.pdf物理第6页Table 1完整六项表头，允许表格页作为证据。",
+    "answer_sha256": "921e31f10cfba2cd722fc1073e64487a55cc31e428d2a1cb838d7f84230e7697"
+  },
+  "F010:no_rules": {
+    "scores": [
+      4,
+      4,
+      4
+    ],
+    "reason": "x/y中心与w/h宽高准确且回答了坐标含义。已核对dino.pdf物理第5页和dn_detr.pdf物理第4页，二者明确介绍DAB-DETR的四维查询；虽非原论文页仍是直接支持的真实论文证据。",
+    "answer_sha256": "a9774a23302622d2080117a15d8821168e930db9ab16fd884d36a4ca899694db"
+  },
+  "F010:default": {
+    "scores": [
+      4,
+      4,
+      4
+    ],
+    "reason": "x/y中心与w/h宽高准确且回答了坐标含义。已核对dino.pdf物理第5页和dn_detr.pdf物理第4页，二者明确介绍DAB-DETR的四维查询；虽非原论文页仍是直接支持的真实论文证据。",
+    "answer_sha256": "a9774a23302622d2080117a15d8821168e930db9ab16fd884d36a4ca899694db"
+  },
+  "F011:default": {
+    "scores": [
+      4,
+      4,
+      4
+    ],
+    "reason": "43.4/48.6 AP及ResNet-50、12/50 epochs设置准确完整。dn_detr.pdf物理第1页摘要直接支持两数，第7页表3及正文支持50 epochs数值；没有把48.6误归其他骨干。",
+    "answer_sha256": "03e8edc011f8c1eada7635d6f729ea737d4c1eb3c0a1929096dfc95df14e9bdd"
+  },
+  "F011:no_rules": {
+    "scores": [
+      4,
+      4,
+      4
+    ],
+    "reason": "43.4/48.6 AP及ResNet-50、12/50 epochs设置准确完整。dn_detr.pdf物理第1页摘要直接支持两数，第7页表3及正文支持50 epochs数值；没有把48.6误归其他骨干。",
+    "answer_sha256": "03e8edc011f8c1eada7635d6f729ea737d4c1eb3c0a1929096dfc95df14e9bdd"
+  },
+  "F012:no_rules": {
+    "scores": [
+      3,
+      1,
+      4
+    ],
+    "reason": "仅列出去噪、初始化、框预测三个泛化方向，没有给出题目要求的contrastive denoising、mixed query selection、look forward twice名称。已核对dino.pdf物理第3页明确描述这三个方向，第7页方法展开，引用支持已说出的泛化事实，但不能弥补名称漏答。",
+    "answer_sha256": "dce685969039827781519de3f0e643f6c849380241db7369f46095f1b91f777f"
+  },
+  "F012:default": {
+    "scores": [
+      3,
+      1,
+      4
+    ],
+    "reason": "仅列出去噪、初始化、框预测三个泛化方向，没有给出题目要求的contrastive denoising、mixed query selection、look forward twice名称。已核对dino.pdf物理第3页明确描述这三个方向，第7页方法展开，引用支持已说出的泛化事实，但不能弥补名称漏答。",
+    "answer_sha256": "dce685969039827781519de3f0e643f6c849380241db7369f46095f1b91f777f"
+  },
+  "F013:default": {
+    "scores": [
+      4,
+      4,
+      4
+    ],
+    "reason": "可学习的一维位置嵌入回答准确完整；补充分类头和2D位置编码比较与vit.pdf物理第3页一致，引用可直接追溯。",
+    "answer_sha256": "ba447ec7812bfe736ce52aa925b01651bacf9112de52ac37f282169186ef5812"
+  },
+  "F013:no_rules": {
+    "scores": [
+      4,
+      4,
+      4
+    ],
+    "reason": "可学习的一维位置嵌入回答准确完整；vit.pdf物理第3页支持核心与分类头，第17页Table 8及D.4节为1D/2D位置编码比较，附加引用有效。",
+    "answer_sha256": "1e3792895d04358b30ae320cfccda6d92d8214ebcf59ac14defa75e1a7c7a37f"
+  },
+  "F014:no_rules": {
+    "scores": [
+      2,
+      1,
+      2
+    ],
+    "reason": "只泛述二部匹配与损失，漏掉未匹配预测应输出no-object及目标集合补空的机制，还将未匹配预测笼统说成错误预测。已核对detr.pdf物理第2页图1明确说明no-object；引用页可支持匹配但不支持这种笼统惩罚解释。",
+    "answer_sha256": "0ba01fe250f935617f47adfa0b583e9ac2f95b26e833053f2e13b61300496292"
+  },
+  "F014:default": {
+    "scores": [
+      2,
+      2,
+      3
+    ],
+    "reason": "固定预测集和二部匹配正确，背景接近no-object含义，但混入未检测到对象的错误表述，且没有目标集合补空机制。detr.pdf物理第2页图1支持未匹配no-object，第1页仅总述匹配；核心可追溯但解释有偏差。",
+    "answer_sha256": "f48b0096674c715d8968e9ad5bde08b17438b04123dbae189d2760fe02e9f871"
+  },
+  "F015:default": {
+    "scores": [
+      4,
+      4,
+      4
+    ],
+    "reason": "49.4/51.3 AP、12/24 epochs和ResNet-50多尺度设置准确完整；dino.pdf物理第1、3、4页明确列出同一结果，第13页表2支持24 epochs的5-scale 51.3，不混淆4-scale 50.4。",
+    "answer_sha256": "c39ab0d2e98386bb3f74d78382975ec90a97f39de407d875985308b7ac2945e8"
+  },
+  "F015:no_rules": {
+    "scores": [
+      4,
+      4,
+      4
+    ],
+    "reason": "49.4/51.3 AP、12/24 epochs和ResNet-50多尺度设置准确完整；dino.pdf物理第1、3、4页明确列出同一结果，第13页表2支持24 epochs的5-scale 51.3，不混淆4-scale 50.4。",
+    "answer_sha256": "c39ab0d2e98386bb3f74d78382975ec90a97f39de407d875985308b7ac2945e8"
+  },
+  "C001:no_rules": {
+    "scores": [
+      3,
+      3,
+      4
+    ],
+    "reason": "正确区分ViT的大规模预训练与DeiT在ImageNet上高效训练，但将ViT需要大数据说得过于绝对，并未明确DeiT仅用ImageNet。swin.pdf物理第3页相关工作直接给出此对比，deit.pdf第5页训练和蒸馏实验支持ImageNet训练；对已提供的事实引用有效。",
+    "answer_sha256": "9338bcb26dbe87c872ccba01408c8040f9543bada76288196679690ec44ca40d"
+  },
+  "C001:default": {
+    "scores": [
+      3,
+      3,
+      4
+    ],
+    "reason": "正确区分ViT的大规模预训练与DeiT在ImageNet上高效训练，但将ViT需要大数据说得过于绝对，并未明确DeiT仅用ImageNet。swin.pdf物理第3页相关工作直接给出此对比，deit.pdf第5页训练和蒸馏实验支持ImageNet训练；对已提供的事实引用有效。",
+    "answer_sha256": "9338bcb26dbe87c872ccba01408c8040f9543bada76288196679690ec44ca40d"
+  },
+  "C002:default": {
+    "scores": [
+      4,
+      3,
+      4
+    ],
+    "reason": "正确区分ViT固定patch与T2T逐步聚合相邻token，完整解释局部结构与缩短序列；没有明确重叠soft split细节。t2t_vit.pdf物理第1页对ViT的描述和第2页T2T贡献直接支持比较，不机械要求只能引用ViT原文。",
+    "answer_sha256": "1c76a2bf6c881094dfc6eb2c3778b13341f39dae1352fa355219f81232339002"
+  },
+  "C002:no_rules": {
+    "scores": [
+      4,
+      3,
+      4
+    ],
+    "reason": "正确区分ViT固定patch与T2T逐步聚合相邻token，完整解释局部结构与缩短序列；没有明确重叠soft split细节。t2t_vit.pdf物理第1页对ViT的描述和第2页T2T贡献直接支持比较，不机械要求只能引用ViT原文。",
+    "answer_sha256": "1c76a2bf6c881094dfc6eb2c3778b13341f39dae1352fa355219f81232339002"
+  },
+  "C003:no_rules": {
+    "scores": [
+      4,
+      3,
+      2
+    ],
+    "reason": "正确区分ViT的一体处理与CaiT的patch/class-attention两阶段，但漏掉第二阶段固定patch、仅更新class embedding的关键细节。已核对cait.pdf物理第1页，其支持CaiT两阶段，却不能单独支持回答中ViT的可训练类标记、前置及线性分类完整流程，引用只覆盖比较的一部分。",
+    "answer_sha256": "cffcb91e082fe57d4b0081a531229f25167a556c17360a3e93a2c264134e02bc"
+  },
+  "C003:default": {
+    "scores": [
+      4,
+      3,
+      4
+    ],
+    "reason": "正确区分ViT的一体处理与CaiT两阶段，但漏掉第二阶段固定patch、仅更新class embedding。cait.pdf物理第1页直接支持两阶段，deit.pdf第3页明确介绍ViT的可训练class token前置、Transformer处理及线性分类，两个引用共同支持已陈述的流程。",
+    "answer_sha256": "e5135559e13703d730ddde1022c80a30a056ec86bcb457460c972200b95d3409"
+  },
+  "C004:default": {
+    "scores": [
+      2,
+      1,
+      4
+    ],
+    "reason": "只有ViT全局建模与Swin移窗两个笼统描述，没有回答Swin窗口内注意力和patch merging层级结构，还错误声称文档没有直接比较。swin.pdf物理第1页图1及第3页已直接比较；最终引用第8页的Performer速度/准确率与t2t_vit.pdf第1页ViT全局关系均支持已给出的旁支事实，引用有效不能代替漏答。",
+    "answer_sha256": "9b6958df627849aa02a7db35977dfaf1b4c251fcc88d301bd852289b645c2672"
+  },
+  "C004:no_rules": {
+    "scores": [
+      4,
+      3,
+      3
+    ],
+    "reason": "正确说明ViT全局与Swin窗口内注意力，也给出Swin层级金字塔，但没有移窗连接和patch merging的具体机制。swin.pdf第3页、t2t_vit.pdf第1页支持ViT描述，第8页结论支持层级表示，但把窗口内交互细节与金字塔构建均仅引到第8页，具体架构页应为第3至4页。",
+    "answer_sha256": "60b488ea4e40a8f83f91598c035b69bb1d2e16bf23ec2b8dafb3c71608066dae"
+  },
+  "C005:no_rules": {
+    "scores": [
+      4,
+      2,
+      4
+    ],
+    "reason": "Swin局部窗口、PVT金字塔及SRA均描述正确，但没有说明PVT具体缩减K/V空间长度，缺少题目要求的核心机制对比。swin.pdf物理第1页及pvt.pdf第1至2页直接支持已陈述事实。",
+    "answer_sha256": "4b7ee0bea48b635c44e9a94c0642e22d8c99ac55ef7becc742b2e58a1beeed2f"
+  },
+  "C005:default": {
+    "scores": [
+      4,
+      2,
+      4
+    ],
+    "reason": "Swin局部窗口、PVT金字塔及SRA均描述正确，但没有说明PVT具体缩减K/V空间长度，缺少题目要求的核心机制对比。swin.pdf物理第1页及pvt.pdf第1至2页直接支持已陈述事实。",
+    "answer_sha256": "7d4822738a33cab05e2e5971353ac61164810922f84185a7953ec20243e5837d"
+  },
+  "C006:default": {
+    "scores": [
+      2,
+      1,
+      0
+    ],
+    "reason": "仅说明标准注意力、复杂度与变形注意力的泛化好处，没有交叉注意力全局读取与参考点周围少量采样的实际对比，也没有多尺度支持。deformable_detr.pdf物理第1页和第6页可核对这些必要机制；最终无有效引用，系统也标为incomplete。",
+    "answer_sha256": "1dfa05f68016765975767dd11535584a39e543a1939d9514ef38ebda35d4036e"
+  },
+  "C006:no_rules": {
+    "scores": [
+      2,
+      1,
+      0
+    ],
+    "reason": "仅说明标准注意力、复杂度与变形注意力的泛化好处，没有交叉注意力全局读取与参考点周围少量采样的实际对比，也没有多尺度支持。deformable_detr.pdf物理第1页和第6页可核对这些必要机制；最终无有效引用。",
+    "answer_sha256": "f41f366f85ebbfb35cc9d8db552ed1a1aa426920151eb1e3ce96feac8850e3ba"
+  },
+  "C007:no_rules": {
+    "scores": [
+      4,
+      2,
+      4
+    ],
+    "reason": "条件空间查询来自decoder embedding、改进交叉注意力定位与训练均正确，但漏掉每个head关注窄带和减轻对content embedding依赖的具体新增机制。conditional_detr.pdf物理第1页摘要及第3页Main work支持最终陈述，引用有效。",
+    "answer_sha256": "c4d757e91c5aa7454778a10f2a9da5f21fb6706176f297beb15c8b2b9aabc47c"
+  },
+  "C007:default": {
+    "scores": [
+      4,
+      3,
+      4
+    ],
+    "reason": "条件空间查询与改进交叉注意力正确，补充四端点注意力实验及原DETR内容查询训练困难；没有明确每个head窄带及减轻内容依赖的机制。已核对conditional_detr.pdf物理第5页Comparison to DETR，50/500 epochs图示解释与第1、3页引用均支持已提供陈述。",
+    "answer_sha256": "e902a0143932ee06c8d31eb966b2d252719ddd59a711e2bdc4a2f452f8a97127"
+  },
+  "C008:default": {
+    "scores": [
+      4,
+      3,
+      3
+    ],
+    "reason": "正确给出Conditional位置查询与DAB显式宽高调制的差别，但没有完整说明DAB的(x,y,w,h)四维框查询。dab_detr.pdf物理第5页图4直接支持所述对比；第18页只有失败案例、运行时及收敛比较，不能支持此机制，是附加错误页码。",
+    "answer_sha256": "84c1db1ff769422a887384267920b4867d4ad3f716dac1ec2f02ffc7316bed97"
+  },
+  "C008:no_rules": {
+    "scores": [
+      4,
+      3,
+      3
+    ],
+    "reason": "正确给出Conditional位置查询与DAB显式宽高调制的差别，但没有完整说明DAB的(x,y,w,h)四维框查询。dab_detr.pdf物理第5页图4直接支持所述对比；第18页只有失败案例、运行时及收敛比较，不能支持此机制，是附加错误页码。",
+    "answer_sha256": "24abb623cd8018879e9ee037f4c8cf2f2f7fd53f98d42ad33bcaa843c710d4f3"
+  },
+  "C009:no_rules": {
+    "scores": [
+      4,
+      2,
+      4
+    ],
+    "reason": "标签嵌入及框/标签去噪训练准确，但没有说明噪声GT重建如何缓解不稳定匹配，也没有介绍DAB动态框查询这一基线。已核对dn_detr.pdf物理第8页结论，最终引用直接支持实际给出的两个变化。",
+    "answer_sha256": "fd2bbf0ec69f5fa6acafc7b30fcbd2cd179958dff1c6bd1d9e91d6702b482ccd"
+  },
+  "C009:default": {
+    "scores": [
+      4,
+      2,
+      4
+    ],
+    "reason": "标签嵌入及框/标签去噪训练准确，但没有说明噪声GT重建如何缓解不稳定匹配，也没有介绍DAB动态框查询这一基线。已核对dn_detr.pdf物理第8页结论，最终引用直接支持实际给出的两个变化。",
+    "answer_sha256": "fd2bbf0ec69f5fa6acafc7b30fcbd2cd179958dff1c6bd1d9e91d6702b482ccd"
+  },
+  "C010:default": {
+    "scores": [
+      2,
+      1,
+      2
+    ],
+    "reason": "只给出contrastive denoising名称，没有解释DN重建噪声GT与DINO正样本重建、负样本no-object的监督差别；旁支结果还把12/24 epochs的49.4/51.3 AP对调。dino.pdf物理第1页可支持组件名称却明确反驳这组错配，第15页也没有错配数值，关键陈述只能部分追溯。",
+    "answer_sha256": "6f32ecbf44729d3e9cd77006a3891c97682dbe7510c1bb1527c41c7ad48f2a31"
+  },
+  "C010:no_rules": {
+    "scores": [
+      4,
+      1,
+      4
+    ],
+    "reason": "contrastive denoising及另外两个组件名称均准确，但没有回答DN重建噪声GT、DINO正样本重建与负样本no-object这三个实际监督要点。dino.pdf物理第1、3、15页支持已给出的组件及性能改善概述，引用有效但不能补足核心机制漏答。",
+    "answer_sha256": "5d45d6ab52dfbe84b222225940c936eaa0c209a8652c2ea2baa39c8c4e7e632d"
+  },
+  "C011:no_rules": {
+    "scores": [
+      2,
+      1,
+      3
+    ],
+    "reason": "回答把共同的动态锚框/DN损失说成DINO区别，没有给出DN图像无关学习锚框与DINO encoder选择位置、保留可学习content的真正初始化差异。dino.pdf物理第6页确有DN借鉴Deformable及DINO沿用动态锚框，但这些事实不能推出最终声称的初始化差异；第9至10页才明确真正差别。",
+    "answer_sha256": "76fe9ff2f1bd2c4e119266131096768fea5ab4cf6c42f06aaaf8d42dfa3f995d"
+  },
+  "C011:default": {
+    "scores": [
+      3,
+      1,
+      4
+    ],
+    "reason": "mixed query selection名称和DN借鉴Deformable技术正确，但没有说明encoder选位置、content仍可学习及DN静态锚框，缺少how的主要内容。dino.pdf物理第1页支持mixed query selection用于初始化，第6页支持DN借鉴技术，已给出的事实引用有效。",
+    "answer_sha256": "7c20f7bf9f0380470935343eb6611d3c062f22e64b03db1f16a1b7ddf7b139e8"
+  },
+  "C012:default": {
+    "scores": [
+      4,
+      3,
+      4
+    ],
+    "reason": "正确解释ViT低分辨率分类设计、PVT金字塔及检测/分割适配；没有明确单尺度与多尺度输出的直接对比。pvt.pdf物理第1至2页摘要和引言直接支持所有已陈述事实。",
+    "answer_sha256": "617c864421a31c9b51ac8b18345891f67f3b6ec594f1cb51631b8925a740b34d"
+  },
+  "C012:no_rules": {
+    "scores": [
+      4,
+      3,
+      4
+    ],
+    "reason": "正确解释ViT低分辨率分类设计、PVT金字塔及检测/分割适配；没有明确单尺度与多尺度输出的直接对比。pvt.pdf物理第1至2页摘要和引言直接支持所有已陈述事实。",
+    "answer_sha256": "c1b51c58882ea398c567c81058db076b5faef12e82cdcddebe80fcba2d9908a8"
+  },
+  "C013:default": {
+    "scores": [
+      1,
+      1,
+      4
+    ],
+    "reason": "只提到RegNetY蒸馏和训练效果，没有说明DeiT的teacher监督distillation token与CaiT独立class-attention这两个图像级预测机制。LayerScale相关训练方法不是题目所问的分类机制；文中声称细节未提供也与deit.pdf第6页的distillation token及cait.pdf第8页的冻结trunk/class更新说明相矛盾。两个实际引用页确实支持已提供的性能与Rezero等旁支事实，引用有效不能替代核心回答。",
+    "answer_sha256": "a4009c7a3cf783c535db3f23fe3c006c308b0e3d2a80badfc159b0bb335ef830"
+  },
+  "C013:no_rules": {
+    "scores": [
+      1,
+      1,
+      4
+    ],
+    "reason": "只提到RegNetY蒸馏和训练效果，没有说明DeiT的teacher监督distillation token与CaiT独立class-attention这两个图像级预测机制。LayerScale相关训练方法不是题目所问的分类机制；文中声称细节未提供也与deit.pdf第6页的distillation token及cait.pdf第8页的冻结trunk/class更新说明相矛盾。两个实际引用页确实支持已提供的性能与Rezero等旁支事实，引用有效不能替代核心回答。",
+    "answer_sha256": "eb0232ee0c57d466d6cb05f659876ec2314044e52b396e4b17c9067f5f2a1102"
+  },
+  "C014:default": {
+    "scores": [
+      2,
+      1,
+      4
+    ],
+    "reason": "T2T逐步token化和深窄主干的说明有第3、5页支持，但未说清局部聚合服务分类的侧重；完全没有PVT金字塔、多尺度密集预测目标，无法完成两者比较。已提供的T2T事实引用准确，不能因此认为题目已答完整。",
+    "answer_sha256": "1b3c6cc98d3a37ee1dbbdcdb618a8618364d139cf83fe632ddf24b625f811fe2"
+  },
+  "C014:no_rules": {
+    "scores": [
+      2,
+      1,
+      3
+    ],
+    "reason": "T2T逐步token化和深窄主干的说明有第3、5页支持，但未说清局部聚合服务分类的侧重；完全没有PVT金字塔、多尺度密集预测目标。用T2T第1页为PVT资料不足的判断提供引用也不能支持该判断，其余T2T引用有效。",
+    "answer_sha256": "2b30863f834b50d4a09e5907db7c0a850858416c281b2e1833a420a57b6821e1"
+  },
+  "C015:no_rules": {
+    "scores": [
+      0,
+      0,
+      0
+    ],
+    "reason": "实际终止为error：Thought要求两个独立检索调用，Action只返回一个调用，完整批次检查拒绝执行。最终只显示协议错误，没有给出训练周期比较或任何论文引用。",
+    "answer_sha256": "5828e1aa4866e9e13b1f15553f1d3bab52b3272300e74439a3c7fbab8e1341ff"
+  },
+  "C015:default": {
+    "scores": [
+      4,
+      4,
+      4
+    ],
+    "reason": "明确给出DETR 500 epochs与Deformable DETR少10倍训练周期，后者可直接换算为50 epochs，满足两个训练日程比较；未作通用墙钟速度断言。deformable_detr.pdf物理第8页表1及图3支持500/50与收敛比较。",
+    "answer_sha256": "cbf1354ba1b62897e5600383eed5f55496d41239a825eea035ed205d39337c7d"
+  },
+  "S001:default": {
+    "scores": [
+      3,
+      2,
+      3
+    ],
+    "reason": "已区分ImageNet分类与COCO检测，DeiT及Swin的分类数据说明基本正确；将ViT概括为主要使用ImageNet-1K遗漏ImageNet-21k/JFT预训练制度，且漏掉Swin的COCO检测。ViT第6页本身列出大规模预训练，DETR第2页支持COCO检测但没有COCO 2017年份或实例分割实验，部分具体引用不足。",
+    "answer_sha256": "3b273cdaa0709f20303b958e1167d5c4a426b98c824c393cafa99c81a0737fd5"
+  },
+  "S001:no_rules": {
+    "scores": [
+      3,
+      2,
+      3
+    ],
+    "reason": "区分了ImageNet分类与COCO检测，但漏掉ViT的ImageNet-21k/JFT预训练制度及Swin的COCO检测，将ViT概括为主要使用ImageNet-1K不充分。ViT第6页实际列出大规模预训练；DETR第2页支持COCO检测，但没有具体2017年份或实例分割实验，相关具体引用不足。",
+    "answer_sha256": "d20d2de4263e683891b456d898b48e5130e74859635a226f2eab9d28d26d6a2a"
+  },
+  "S002:no_rules": {
+    "scores": [
+      0,
+      0,
+      0
+    ],
+    "reason": "最终以incomplete结束，只称没有相关文档，没有Top-1、COCO AP及mIoU等题目所需指标，也没有可核验引用。",
+    "answer_sha256": "78ed2a45a4a4bf72aa2237798656a9d0e9fa32d55154574079a243de30bcba46"
+  },
+  "S002:default": {
+    "scores": [
+      0,
+      0,
+      0
+    ],
+    "reason": "最终以incomplete结束，只称没有相关文档，没有Top-1、COCO AP及mIoU等题目所需指标，也没有可核验引用。",
+    "answer_sha256": "46fc54ec502aee4692f8fa11f4b0e35f6e92b03777386b920bb6a8083a4b268d"
+  },
+  "S003:default": {
+    "scores": [
+      0,
+      0,
+      0
+    ],
+    "reason": "最终以incomplete结束，未回答Swin层级合并、PVT四阶段金字塔与Deformable多尺度采样三个机制，没有引用。",
+    "answer_sha256": "ae331242ea3276be92c670a928428b701eeb261551d775ccb80d02553e497287"
+  },
+  "S003:no_rules": {
+    "scores": [
+      0,
+      0,
+      0
+    ],
+    "reason": "最终以incomplete结束，未回答Swin层级合并、PVT四阶段金字塔与Deformable多尺度采样三个机制，没有引用。",
+    "answer_sha256": "e1c3ab5c2245f297c30d22f1c705363427833649ff6977246081c7b4b1a48b6c"
+  },
+  "S004:no_rules": {
+    "scores": [
+      4,
+      3,
+      4
+    ],
+    "reason": "正确区分Conditional的decoder cross-attention困难与DN的二分匹配不稳定，且正确描述DN重建噪声标签和框；但把Conditional归因泛化为机制效率低，没有解释定位极值对高质量content embedding的依赖。Conditional第1页、DN第8页结论和DINO第5页相关工作支持两种解释及去噪描述。",
+    "answer_sha256": "6ef5b5b92d7d4ba37f26f89af00504950e0100f96d52a2a9f4da5b250ca2e614"
+  },
+  "S004:default": {
+    "scores": [
+      4,
+      3,
+      4
+    ],
+    "reason": "正确区分Conditional的decoder cross-attention困难与DN的二分匹配不稳定，且正确描述DN重建噪声标签和框；但未展开Conditional定位极值对content embedding的高依赖。Conditional第1页、DN第8页结论和DINO第5页相关工作支持两种解释及去噪描述。",
+    "answer_sha256": "2e310fdba30aaa641f42d17820601bd30732371378bfe825913c5293e3a1b9e6"
+  },
+  "S005:default": {
+    "scores": [
+      2,
+      1,
+      1
+    ],
+    "reason": "Conditional条件查询及DINO改进去噪、查询初始化、框预测的概述部分正确，但把DAB的核心误称deformable queries，漏掉(x,y,w,h)、逐层更新和DINO encoder-selected初始化，未归纳空间查询演进。DAB第12页尺度批评指Anchor DETR而非Conditional；第18页不是DINO大对象新记录证据，只有DINO第3页支持部分组件概述，多数性能与机制断言引用不足。",
+    "answer_sha256": "2131a6dc258508d730a9cc095f51bcfbb94bd3b1654671dd2f7fda73177c26ce"
+  },
+  "S005:no_rules": {
+    "scores": [
+      2,
+      1,
+      1
+    ],
+    "reason": "Conditional条件查询及DINO三个改进组件的概述部分正确，但把DAB核心误称deformable queries，漏掉4D中心/尺寸、逐层更新及DINO encoder-selected初始化。DAB第12页对象尺度批评指Anchor DETR，并非Conditional；第18页不能支持DINO小对象新记录或DAB性能比较，仅DINO第3页支持部分组件概述。",
+    "answer_sha256": "e75472c88e71678ac5e04b7894fc8183881af6d13c52845cf903ca8eea671462"
+  },
+  "S006:no_rules": {
+    "scores": [
+      0,
+      0,
+      0
+    ],
+    "reason": "以error结束，Action漏掉已规划独立调用而被完整批次检查拒绝，未回答蒸馏、token化/主干效率和深层优化/class-attention三条主题，无引用。",
+    "answer_sha256": "5828e1aa4866e9e13b1f15553f1d3bab52b3272300e74439a3c7fbab8e1341ff"
+  },
+  "S006:default": {
+    "scores": [
+      0,
+      0,
+      0
+    ],
+    "reason": "以error结束，Action漏掉已规划独立调用而被完整批次检查拒绝，未回答蒸馏、token化/主干效率和深层优化/class-attention三条主题，无引用。",
+    "answer_sha256": "5828e1aa4866e9e13b1f15553f1d3bab52b3272300e74439a3c7fbab8e1341ff"
+  },
+  "S007:default": {
+    "scores": [
+      3,
+      1,
+      4
+    ],
+    "reason": "PVT的SRA成本与高分辨率密集预测说明基本正确，轴向注意力描述也对应ViT附录第19页的变体讨论；但缺少原始ViT全局序列基线、Swin固定局部窗口、PVT K/V压缩和金字塔细节及复杂度假设，未完成三篇归纳。已提供的PVT与Axial Attention事实有相应页支持。",
+    "answer_sha256": "a9c5a27e4d76ebec2b93716d6f62aacb10af3696da381392eb4773d3ada602db"
+  },
+  "S007:no_rules": {
+    "scores": [
+      2,
+      1,
+      3
+    ],
+    "reason": "PVT SRA成本和密集预测描述正确，但将原始ViT称为使用轴向注意力错误，第19页讨论的是修改后的Axial-ViT变体。未给出全局注意力基线、Swin固定窗口、PVT K/V压缩/金字塔细节和复杂度假设；PVT引用有效，ViT机制断言与所引页不符。",
+    "answer_sha256": "db16d25ee75b2ba610cf6f53c95520b5201508645a487473c3585b9cca2d82e3"
+  },
+  "S008:no_rules": {
+    "scores": [
+      3,
+      3,
+      4
+    ],
+    "reason": "明确三者共享端到端集合预测并保留二分匹配，概述DAB动态锚框细化与DN去噪，但未解释DN训练辅助分支不改变推理集合预测，且声称实现细节未提供过于笼统。DETR第2页的set loss、DINO第3页对DAB/DN的相关工作支持已提供的核心事实，跨论文引用在此可核验。",
+    "answer_sha256": "61023acf19afeddbda2cbbc447dcda209d08c47fe2c9ce8d85d9668d9dba5ddb"
+  },
+  "S008:default": {
+    "scores": [
+      3,
+      3,
+      4
+    ],
+    "reason": "明确三者共享端到端集合预测并保留二分匹配，概述DAB动态锚框细化与DN去噪，但未解释DN训练辅助分支不改变推理集合预测，且声称实现细节未提供过于笼统。DETR第2页的set loss、DINO第3页对DAB/DN的相关工作支持已提供的核心事实，跨论文引用在此可核验。",
+    "answer_sha256": "61023acf19afeddbda2cbbc447dcda209d08c47fe2c9ce8d85d9668d9dba5ddb"
+  },
+  "S009:default": {
+    "scores": [
+      0,
+      0,
+      0
+    ],
+    "reason": "最终仅提示候选相关性低、需要确认，以incomplete结束；没有回答数据/任务划分、预训练与backbone、输入或多尺度、训练预算及公平比较条件，也无具体来源。工具列表和中间比较不能替代最终答案。",
+    "answer_sha256": "0aa60e9955b125293e50dfc526c781c11a32306db80e961b5e5f1ad75ffb714d"
+  },
+  "S009:no_rules": {
+    "scores": [
+      0,
+      0,
+      0
+    ],
+    "reason": "最终只提示候选相关性低、需确认，以incomplete结束，未回答数据/任务划分、预训练与backbone、输入或多尺度、训练预算及公平比较条件，没有具体引用。中间工具选出了两篇，不代表最终三篇归纳完成。",
+    "answer_sha256": "0aa60e9955b125293e50dfc526c781c11a32306db80e961b5e5f1ad75ffb714d"
+  },
+  "S010:no_rules": {
+    "scores": [
+      2,
+      2,
+      3
+    ],
+    "reason": "准确说明DN去噪分支仅训练使用、推理只保留matching，并有DN第5页直接支持；但漏掉DeiT学生推理无需teacher、分类与蒸馏预测头仍保留。DeiT第6页为学生分类头与推理性能比较，不能作为无法说明训练信息去除的证据。",
+    "answer_sha256": "daf472dcca775d57cf2ac1ec8a1f761ada18d3878d6cedfaacdda9170783bbe0"
+  },
+  "S010:default": {
+    "scores": [
+      2,
+      2,
+      3
+    ],
+    "reason": "准确说明DN去噪分支仅训练使用、推理只保留matching，并有DN第5页直接支持；但漏掉DeiT学生推理无需teacher、分类与蒸馏预测头仍保留。DeiT第6页为学生分类头与推理性能比较，不能支持笼统的未提及判断。",
+    "answer_sha256": "8b85f241d12124d779e98d38402911aaab4335461fe1f54328c114647edb6240"
+  },
+  "S011:default": {
+    "scores": [
+      2,
+      1,
+      2
+    ],
+    "reason": "PVT密集预测/层级与Deformable关注边界的描述部分正确，但完全漏掉Swin，改写成题目之外的DAB且把DAB误称2D锚点；未说明层级合并、四级金字塔、多尺度稀疏采样与小目标/高分辨率动机。PVT第2页与Deformable第13页支持部分事实；DAB第12页的2D锚点描述实际属于Anchor DETR。",
+    "answer_sha256": "87e658d507bd9db4ca460cfc79ceea99e10793d4d73dc903985a25ab17e97f07"
+  },
+  "S011:no_rules": {
+    "scores": [
+      2,
+      1,
+      2
+    ],
+    "reason": "Swin分层、PVT密集预测及Deformable边界观察有部分事实基础，但将前两者的尺度设计称为未提及，漏掉patch merging、金字塔及跨特征级稀疏采样，未展开小目标/高分辨率动机。Deformable第13页支持边界可视化与框尺度相关采样，但答案未讲明后者；Swin/PVT断言无实际引用。",
+    "answer_sha256": "5e614ec164b2f33498b9c1fbe837779f58f25710c6f4af0a74fba0690583872b"
+  },
+  "S012:no_rules": {
+    "scores": [
+      2,
+      2,
+      2
+    ],
+    "reason": "提到了参数量和MACs，但漏掉DeiT的images/s吞吐量。T2T第6页表2中48.6M/10.1G/78.1属于ViT-S/16，并非答案写的ViT-L/16；同页也明确列出DeiT-small参数量与MACs，不能称文档未给出。T2T-14的21.5M/4.8G正确，其余型号和数值对应引用失准；T2T第3页的KD token说明不能替代效率指标。",
+    "answer_sha256": "3a8641c2e876f152833be555265ea3689656582ff39a4d3360c2d91e7e6747b4"
+  },
+  "S012:default": {
+    "scores": [
+      2,
+      2,
+      2
+    ],
+    "reason": "提到了参数量和MACs，但漏掉DeiT的images/s吞吐量。T2T第6页表2中48.6M/10.1G/78.1属于ViT-S/16，并非答案写的ViT-L/16；同页也明确列出DeiT-small参数量与MACs，不能称文档未给出。T2T-14的21.5M/4.8G正确，其余型号和数值对应引用失准；T2T第3页的KD token说明不能替代效率指标。",
+    "answer_sha256": "b0fa0e732700131e07b615c5e5dae4b1fc7eebd18118012aafa22cc92011272e"
+  },
+  "S013:default": {
+    "scores": [
+      4,
+      2,
+      4
+    ],
+    "reason": "正确描述DAB动态锚框逐层细化和DN去噪基础，也列出DINO去噪、初始化、框预测三个方向；但新增方法仍泛泛而谈，缺少contrastive DN、mixed query selection与look forward twice的具体名称或作用。DINO第3页直接支持沿用基础及三个方向。",
+    "answer_sha256": "951ba5c0d6fc5e16a55107e9aebd161ec0b86d023994ab46bcf9ccf348681328"
+  },
+  "S013:no_rules": {
+    "scores": [
+      2,
+      2,
+      3
+    ],
+    "reason": "列出三个宽泛方向，但把既有DN带噪标签/框及DAB动态锚框细化当作DINO的新改进，未区分contrastive DN、encoder-selected位置/learnable内容的mixed query和look forward twice。DINO第3页支持基础架构与继承方法，却不能支持把这些继承机制当成新增方法的归因。",
+    "answer_sha256": "40cb85e5881ba8da9a153b8dac994a10e30898a9982e55174c36ba8c28c4dbfa"
+  },
+  "S014:no_rules": {
+    "scores": [
+      3,
+      3,
+      3
+    ],
+    "reason": "ViT分类、PVT密集预测、Swin通用视觉骨干及T2T的ImageNet实验基本正确，缺少CaiT分类侧重，且对CaiT可能沿用效率/特征设计作了无原文依据的推测。PVT第1页、Swin第2页、T2T第1/4/6页支持四者已提供的归类与方法；CaiT推测无引用。",
+    "answer_sha256": "cd97bd4fab71bab77168fb09fcd55ed0d914c76212cef5714fc80da96f86961a"
+  },
+  "S014:default": {
+    "scores": [
+      4,
+      3,
+      4
+    ],
+    "reason": "给出了ViT分类、PVT密集预测、Swin通用骨干与T2T ImageNet实验的正确侧重，漏掉CaiT的分类设计且T2T分类用途表达较间接。实际所引PVT第1页、Swin第2页、T2T第1/4/6页支持已提供的四者事实。",
+    "answer_sha256": "184fc535382a0b0671aa156e7e93504a54db3715710906176e485e475fee8976"
+  },
+  "S015:default": {
+    "scores": [
+      0,
+      0,
+      0
+    ],
+    "reason": "Action漏掉完整独立批次，以error结束，最终只显示错误，没有ViT数据/归纳偏置、DETR小目标/长训练或Conditional公平比较限制，也无引用。",
+    "answer_sha256": "5828e1aa4866e9e13b1f15553f1d3bab52b3272300e74439a3c7fbab8e1341ff"
+  },
+  "S015:no_rules": {
+    "scores": [
+      0,
+      0,
+      0
+    ],
+    "reason": "以incomplete结束，只称资料没有限制信息，未提供题目要求的三类限制或任何引用；不能把对资料不足的笼统判断当成已完成的归纳。",
+    "answer_sha256": "de55904d52c9bf57fd73e437dd117fceffeb9d2c3a1e3240237d1e53c1b6bedc"
+  },
+  "R001:no_rules": {
+    "scores": [
+      2,
+      3,
+      2
+    ],
+    "reason": "主结论和数据规模方向基本正确，但解释段把ViT缺少卷积先验导致的小数据泛化不足错归到CNN及其固有特性；ViT第2页不支持这一倒置。未说明这只是论文实验范围内的证据。",
+    "answer_sha256": "0c1d07b0baef1768cf3efc411dab42e685601375a32324453ba82167845416e3"
+  },
+  "R001:default": {
+    "scores": [
+      2,
+      3,
+      2
+    ],
+    "reason": "正确提及弱局部/平移先验与14M–300M预训练，但把小数据泛化不足归因于CNN的固有特性，颠倒ViT第2页原意；没有明确限定结论的实验适用范围。",
+    "answer_sha256": "301241e55a9aa5b97a9885b56f3c78825d10ff87611ada6b9a684553ced2645c"
+  },
+  "R002:default": {
+    "scores": [
+      0,
+      0,
+      0
+    ],
+    "reason": "以incomplete结束，仅要求人工确认低相关检索候选，没有回答卷积教师优势、预测一致性和因果证据边界，也没有引用。",
+    "answer_sha256": "0aa60e9955b125293e50dfc526c781c11a32306db80e961b5e5f1ad75ffb714d"
+  },
+  "R002:no_rules": {
+    "scores": [
+      0,
+      0,
+      0
+    ],
+    "reason": "以incomplete结束，仅要求人工确认低相关检索候选，没有回答卷积教师优势、预测一致性和因果证据边界，也没有引用。",
+    "answer_sha256": "0aa60e9955b125293e50dfc526c781c11a32306db80e961b5e5f1ad75ffb714d"
+  },
+  "R003:no_rules": {
+    "scores": [
+      3,
+      1,
+      3
+    ],
+    "reason": "Swin第4页确有交替窗口促进连接的设计，但答案泛称层间连接，未解释固定分区缺少跨窗口联系以及保留局部计算效率；核心跨窗口机制表述不清。",
+    "answer_sha256": "a6f51b664edee15428f8aa44fea23c14ed3fe3a606b0b0122960bd00f6891ea0"
+  },
+  "R003:default": {
+    "scores": [
+      3,
+      2,
+      3
+    ],
+    "reason": "引用Swin第4页并提到非重叠窗口计算效率，仍把重点说成跨层连接，没有说明移位如何连通邻近窗口及固定分区的局限。",
+    "answer_sha256": "9ae53babaf08166b01998b90da00f71a21fcac9b211abb3ce8644f05fa052bbf"
+  },
+  "R004:default": {
+    "scores": [
+      4,
+      3,
+      4
+    ],
+    "reason": "PVT第2、5页支持高分辨率密集预测、多尺度金字塔、SRA节省计算和ViT单尺度局限；尚未解释SRA具体缩减K/V空间长度。",
+    "answer_sha256": "106a76b5b9076ff7e95c2fd8ccf49b86891d540731426f196fa056ab3c583028"
+  },
+  "R004:no_rules": {
+    "scores": [
+      4,
+      3,
+      4
+    ],
+    "reason": "PVT第2、5页支持金字塔、多尺度与高分辨率需求、SRA降低资源成本和ViT局限；省略缩减K/V序列这一关键实现机制。",
+    "answer_sha256": "1055853d7432ca7b2259e2feda943f9f7161dcc5c66ce8b19e0f57a948279271"
+  },
+  "R005:no_rules": {
+    "scores": [
+      4,
+      2,
+      4
+    ],
+    "reason": "T2T第1、8页支持结构信息聚合、特征丰富性和ImageNet从头训练结果；未解释硬划分丢失邻域结构、重叠聚合如何保留它，也未点明作者的数据效率假设。",
+    "answer_sha256": "3e63c49fef53c376e3d9340cda419767324f94c1b5273b89130e2e829524ba4b"
+  },
+  "R005:default": {
+    "scores": [
+      4,
+      2,
+      4
+    ],
+    "reason": "T2T第1、8页支持结构信息聚合、特征丰富性和ImageNet从头训练结果；未解释硬划分丢失邻域结构、重叠聚合如何保留它，也未点明作者的数据效率假设。",
+    "answer_sha256": "b167280c902fd5c6cdde27b39319b5682b2617f0f80eadad634adfff630f29f6"
+  },
+  "R006:default": {
+    "scores": [
+      4,
+      1,
+      4
+    ],
+    "reason": "CaiT第3页支持逐通道可学习缩放带来更多优化自由度；没有回答小初值降低残差分支贡献、近恒等初始化与逐步整合参数的原因。",
+    "answer_sha256": "b71200cd3ae5d9a4c62931abcd9e73986a2975b3d60a81aacd35a416e25c6039"
+  },
+  "R006:no_rules": {
+    "scores": [
+      4,
+      1,
+      4
+    ],
+    "reason": "CaiT第3页支持逐通道可学习缩放带来更多优化自由度；没有回答小初值降低残差分支贡献、近恒等初始化与逐步整合参数的原因。",
+    "answer_sha256": "6133a1f00252f37a45873a5f3f3d955090481e3a5b637cb39afc317d128b4c4c"
+  },
+  "R007:no_rules": {
+    "scores": [
+      1,
+      1,
+      1
+    ],
+    "reason": "把训练中的一对一Hungarian匹配混同于DINO第19页的测试时增强集成；还反称DETR在单次增强内部易有重复框，与该页DETR类模型不易重复的解释相反。只有集合损失抑制重复的零散事实正确，未回答每目标唯一匹配及未匹配no-object监督。",
+    "answer_sha256": "114310f7c25e08bbf18e2fa1b9dbb68083bf09210e6d66e6f4298710552e006a"
+  },
+  "R007:default": {
+    "scores": [
+      1,
+      1,
+      1
+    ],
+    "reason": "把训练中的一对一Hungarian匹配混同于DINO第19页的测试时增强集成；还反称DETR在单次增强内部易有重复框，与该页DETR类模型不易重复的解释相反。只有集合损失抑制重复的零散事实正确，未回答每目标唯一匹配及未匹配no-object监督。",
+    "answer_sha256": "df59e86e9a7147b63aa511454d1f489e827839150727dc1a80ff0be0b6e7ab3a"
+  },
+  "R008:default": {
+    "scores": [
+      2,
+      1,
+      2
+    ],
+    "reason": "Deformable第4页支持全局自注意力的二次计算/内存开销与高分辨率小目标动机；答案却说减少对高分辨率的依赖，没有说明参考点周围少量采样和多尺度高分辨率可行性，引用不支持这项推断。",
+    "answer_sha256": "ca773c42db0c27aedbda5a5d976c5fdc967650f66f6e4c34864c3ed884915c3d"
+  },
+  "R008:no_rules": {
+    "scores": [
+      3,
+      2,
+      3
+    ],
+    "reason": "全局自注意力高复杂度与降低稀疏注意力开销的方向正确；未说明参考点附近少量采样和多尺度机制，Deformable第4页支持复杂度/小目标动机，但稀疏模块细节在后页。",
+    "answer_sha256": "059033600fb34ecfc491fa1c72d3eb40798fcad61f054c0e94348d6cf7fc0a31"
+  },
+  "R009:no_rules": {
+    "scores": [
+      2,
+      2,
+      2
+    ],
+    "reason": "条件空间查询缩小定位范围的主思路正确，但没有说明各头关注空间带；把6.7倍和10倍分别归给R50/R101，误读Conditional第2页：两者均6.7倍，10倍属于DC5-R50/DC5-R101。",
+    "answer_sha256": "e028692dbfb96be007d16c05b289e01f83d032e2b31ec5e9f1d0b93d41f5aee2"
+  },
+  "R009:default": {
+    "scores": [
+      2,
+      2,
+      2
+    ],
+    "reason": "条件空间查询缩小定位范围的主思路正确，但没有说明各头关注空间带；把6.7倍和10倍分别归给R50/R101，误读Conditional第2页：两者均6.7倍，10倍属于DC5-R50/DC5-R101。",
+    "answer_sha256": "eec4248f56acac71c189013677318fcfaa726030fe3e489ece2fcf870e1c94e4"
+  },
+  "R010:default": {
+    "scores": [
+      4,
+      3,
+      4
+    ],
+    "reason": "DAB第3、5页和DN第4页支持锚框宽高表征尺度、调节位置交叉注意力以及动态更新；未明确中心只表示位置，也没有回答soft ROI pooling的解释。",
+    "answer_sha256": "3538d0a5d526c0e6dafb6217a185a78d3e713b376e8e36885dab82a5235135ed"
+  },
+  "R010:no_rules": {
+    "scores": [
+      4,
+      3,
+      4
+    ],
+    "reason": "DAB第3、5页和DN第4页支持锚框宽高表征尺度、调节位置交叉注意力以及动态更新；未明确中心只表示位置，也没有回答soft ROI pooling的解释。",
+    "answer_sha256": "eb4d106cd388e441c533fa2776f8dad617f659b0b8e72d2ff92555b4bb964772"
+  },
+  "R011:no_rules": {
+    "scores": [
+      3,
+      3,
+      3
+    ],
+    "reason": "DN第3页及DINO第6页支持匹配不稳定、噪声GT重建绕过匹配的辅助监督并保留Hungarian损失；但第三点将效果扩展到对噪声输入的鲁棒性能，所引DN第1页没有这种结论。未明确分开匹配和重建分支。",
+    "answer_sha256": "bc0b0f0a5b34dae184b2904382df79553af597fdcd2c370f8d5333b90d4a4812"
+  },
+  "R011:default": {
+    "scores": [
+      4,
+      3,
+      4
+    ],
+    "reason": "DN第3页支持早期匹配目标不稳定和直接重建GT的稳定监督，保留Hungarian匹配的主解释正确；未明确指出辅助重建分支与原匹配分支各自的监督关系。",
+    "answer_sha256": "a002172dd4b33527e1c61459f65db0290ac905d95811a8b0df06d70753aba657"
+  },
+  "R012:default": {
+    "scores": [
+      0,
+      0,
+      0
+    ],
+    "reason": "低相关检索后以incomplete结束，未回答GT信息泄漏、去噪组互相利用的训练捷径以及推理时没有去噪查询，也没有引用。",
+    "answer_sha256": "0aa60e9955b125293e50dfc526c781c11a32306db80e961b5e5f1ad75ffb714d"
+  },
+  "R012:no_rules": {
+    "scores": [
+      0,
+      0,
+      0
+    ],
+    "reason": "低相关检索后以incomplete结束，未回答GT信息泄漏、去噪组互相利用的训练捷径以及推理时没有去噪查询，也没有引用。",
+    "answer_sha256": "0aa60e9955b125293e50dfc526c781c11a32306db80e961b5e5f1ad75ffb714d"
+  },
+  "R013:no_rules": {
+    "scores": [
+      4,
+      2,
+      3
+    ],
+    "reason": "DINO第3、7页支持编码器初始化位置查询而保留可学习内容查询，第3页确有聚焦空间先验的解释；其对应引用却落到第7页。遗漏第10页关于初步编码器内容含多目标或目标片段而歧义/误导的核心理由。",
+    "answer_sha256": "861714a42a4167c4334b398e3a08823a5398df5c211d5c9b85d83d4af5e8ad55"
+  },
+  "R013:default": {
+    "scores": [
+      2,
+      1,
+      2
+    ],
+    "reason": "位置与内容查询的初始化事实正确，却把防止重复目标输出归因于混合查询选择；DINO第3页将该作用归给对比去噪。遗漏编码器内容歧义、空间先验和避免误导初始化的解释。",
+    "answer_sha256": "31bd3430c9ddd5d76646cce890ca4e92a79e8eea20043aeef6c1621163f0db3e"
+  },
+  "R014:default": {
+    "scores": [
+      0,
+      0,
+      0
+    ],
+    "reason": "低相关检索后以incomplete结束，没有回答正样本重建的局限、负查询no-object监督、无效锚框拒绝及重复预测边界，也没有引用。",
+    "answer_sha256": "0aa60e9955b125293e50dfc526c781c11a32306db80e961b5e5f1ad75ffb714d"
+  },
+  "R014:no_rules": {
+    "scores": [
+      0,
+      0,
+      0
+    ],
+    "reason": "低相关检索后以incomplete结束，没有回答正样本重建的局限、负查询no-object监督、无效锚框拒绝及重复预测边界，也没有引用。",
+    "answer_sha256": "0aa60e9955b125293e50dfc526c781c11a32306db80e961b5e5f1ad75ffb714d"
+  },
+  "R015:no_rules": {
+    "scores": [
+      0,
+      0,
+      1
+    ],
+    "reason": "没有识别仅ImageNet条件下的DeiT与T2T方案，反而建议需要额外数据的ViT/ImageNet-21k并误归最高成绩为ImageNet预训练。还把ViT第7页小数据下逊于ResNet说成优于ResNet。只有第2页最佳模型数字本身可追溯，训练归属和结论不受引用支持。",
+    "answer_sha256": "7d57d599f3a55b1c8193618d49efcae9134b4ef117be9078297051cc1030dada"
+  },
+  "R015:default": {
+    "scores": [
+      0,
+      0,
+      2
+    ],
+    "reason": "没有识别仅ImageNet条件下的DeiT或T2T起点及各自的蒸馏/局部结构方案，首段将ViT最佳数字误归为ImageNet预训练。关于大规模JFT预训练更有利的部分陈述可追溯，但不回应仅ImageNet的方案约束，结论与引文不能支撑所提起点。",
+    "answer_sha256": "8870ae1da16c4e7f1a46ca48d6eabfc56c6fa637229f5563e8e6fb3f100e8d70"
+  }
+}

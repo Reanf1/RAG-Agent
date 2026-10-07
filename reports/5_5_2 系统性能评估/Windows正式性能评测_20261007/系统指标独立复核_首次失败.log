@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/reports/5_5_2 系统性能评估/verify_results.py", line 105, in <module>
+    main()
+  File "/Users/rean/github/RAG+Agent/reports/5_5_2 系统性能评估/verify_results.py", line 35, in main
+    assert hashlib.sha256((ROOT / name).read_bytes()).hexdigest() == expected, name
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/rean/github/RAG+Agent/src\\__init__.py'

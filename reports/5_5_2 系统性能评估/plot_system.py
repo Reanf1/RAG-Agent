@@ -41,10 +41,11 @@ def main():
         raise FileExistsError("图表已存在，复测请使用新输出目录")
     output.mkdir(parents=True, exist_ok=True)
     profiles = list(retrieval["profiles"].values())
-    labels = [p["label"].replace("/", "\n") for p in profiles]
+    # 两行子图与短标签适合课程报告的A4正文宽度，避免缩小后难以阅读。
+    labels = ["向量", "混合", "重排20", "重排10", "重排40"]
     colors = ["#6B7A89", "#4778A8", "#39856C", "#76A89B", "#C28739"]
-    fig, axes = plt.subplots(1, 4, figsize=(16, 4.8), layout="constrained")
-    for ax, key, title, percent in zip(axes,
+    fig, axes = plt.subplots(2, 2, figsize=(11, 8), layout="constrained")
+    for ax, key, title, percent in zip(axes.flat,
             ("hit_at_5", "mrr_at_5", "recall_at_5", "latency_mean_ms"),
             ("Hit@5（至少一个标注页）", "MRR@5（块排名）", "Recall@5（标注页）", "平均检索延迟 / ms"),
             (True, False, True, False)):
@@ -99,7 +100,7 @@ def main():
     axes[1].legend(loc="upper right", frameon=False, fontsize=9)
     fig.savefig(targets[2], dpi=180)
     plt.close(fig)
-    print("已从逐题真实结果生成3幅性能图表；人工评分仍待评阅人填写。")
+    print("已从逐题真实结果生成3幅性能图表；质量分数见单独初评和审核记录。")
 
 
 if __name__ == "__main__":

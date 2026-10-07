@@ -1,6 +1,7 @@
 // 从原始评测结果制作可复算性能表与待填写人工评分表，不用助手分数冒充人工分数。
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { Workbook, SpreadsheetFile } from '@oai/artifact-tool';
 
 const [retrievalPath, agentPath, outputDir] = process.argv.slice(2);
@@ -8,7 +9,8 @@ if (!outputDir) throw new Error('需要检索JSON、Agent JSON和输出目录三
 const retrieval = JSON.parse(await fs.readFile(retrievalPath, 'utf8'));
 const agent = JSON.parse(await fs.readFile(agentPath, 'utf8'));
 if (retrieval.status !== 'completed' || agent.status !== 'completed') throw new Error('实验尚未完成');
-const reportsRoot = path.dirname(path.dirname(path.resolve(retrievalPath)));
+// 结果允许放在按日期归档的子目录；评测集始终从本仓库reports读取。
+const reportsRoot = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const questions = JSON.parse(await fs.readFile(path.join(reportsRoot,'评测集.json'), 'utf8'));
 const manifest = JSON.parse(await fs.readFile(path.join(reportsRoot,'5_5_1 评测集构建/论文清单.json'), 'utf8'));
 const qa = new Map(questions.map(q => [q.id, q]));
@@ -68,7 +70,8 @@ styleTable(decisions,`A1:N${agent.rows.length+1}`,'A1:N1',[['A',12],['B',16],['C
 decisions.getRange(`G2:G${agent.rows.length+1}`).setNumberFormat('0.000');
 decisions.freezePanes.freezeRows(1);
 
-summary.getRange('A2').values = [['视觉Transformer系统性能评测（12篇，60题）']];
+const platformLabel = retrieval.environment.platform.startsWith('Windows') ? 'Windows' : 'Mac';
+summary.getRange('A2').values = [[`${platformLabel}视觉Transformer系统性能评测（12篇，60题；${retrieval.started_at.slice(0,10)}）`]];
 summary.getRange('A3').values = [['检索按论文物理页判定；MRR/Recall截断至5。原文全部英文，失败题保留。']];
 summary.getRange('A5:I5').values = [['检索配置','候选数','题数','Hit@5','MRR@5','Recall@5','论文覆盖率@5','全部论文命中@5','平均延迟(ms)']];
 const nr=rawRetrieval.length+1;
@@ -103,13 +106,13 @@ summary.getRange('C15:C16').setNumberFormat('0.0%');
 summary.getRange('D15:F16').setNumberFormat('0.0');
 summary.getRange('G15:H16').setNumberFormat('#,##0');
 summary.getRange('I15:I16').setNumberFormat('0.0%');
-summary.getRange('A22').values = [['来源：逐题本地模型/检索运行；完整原始结果与配置保存在同目录JSON。']];
+summary.getRange('A22').values = [[`原始结果：${path.relative(path.dirname(reportsRoot), path.dirname(retrievalPath))}/retrieval.json、agent.json。`]];
 
 const human=Workbook.create();
 const scores=human.worksheets.add('人工评分');
 const answers=human.worksheets.add('答案与依据');
 const rubric=human.worksheets.add('评分标准');
-const protocol=JSON.parse(await fs.readFile(path.join(path.dirname(path.resolve(retrievalPath)),'评测方案.json'),'utf8'));
+const protocol=JSON.parse(await fs.readFile(path.join(reportsRoot,'5_5_2 系统性能评估/评测方案.json'),'utf8'));
 rubric.getRange('A1:D1').values=[['分数','正确性','完整性','引用准确性']];
 rubric.getRange('A2:D6').values=Array.from({length:5},(_,i)=>[i,
   protocol.human_quality.correctness[i],protocol.human_quality.completeness[i],protocol.human_quality.citation_accuracy[i]]);

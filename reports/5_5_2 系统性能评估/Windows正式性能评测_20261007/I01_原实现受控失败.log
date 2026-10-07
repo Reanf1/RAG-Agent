@@ -1,0 +1,18 @@
+E..
+======================================================================
+ERROR: test_long_windows_metadata_preserves_text_positions_and_parameters (__main__.TestBudgetCandidate)
+19条长Windows路径复现预算溢出，精简辅助字段后正文及来源定位不丢失。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/rag-delivery-20261007/test_budget_baseline.py", line 34, in test_long_windows_metadata_preserves_text_positions_and_parameters
+    payload = json.loads(react_loop._model_request([
+  File "/Users/rean/github/RAG+Agent/src/agent/react_loop.py", line 176, in _model_request
+    check_request_budget(payload)
+  File "/Users/rean/github/RAG+Agent/src/utils/token_budget.py", line 20, in check_request_budget
+    raise ValueError(f"完整请求约{tokens} Token，输入预算为{budget} Token（已预留输出）；请缩短问题或证据")
+ValueError: 完整请求约27474 Token，输入预算为7680 Token（已预留输出）；请缩短问题或证据
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.182s
+
+FAILED (errors=1)

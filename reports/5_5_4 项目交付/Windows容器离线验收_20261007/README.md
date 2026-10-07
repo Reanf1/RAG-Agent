@@ -1,6 +1,14 @@
 # Windows容器离线验收（2026-10-07）
 
-最终镜像 `rag-acceptance:0be8716` 在 Windows Docker Desktop 4.81.0、Engine 29.6.1、WSL2 上通过真实检索、BGE 重排、Qwen 生成、引用原文页、流式 Agent 和重启持久化验收。[完整终态](container-6.json)、[摘要](验收摘要.json)、[构建日志](build-5.log)、[实际依赖与源码指纹](environment-2.json)及[依赖检查](pip-check.log)保留。
+此前通过镜像 `rag-acceptance:0be8716` 在 Windows Docker Desktop 4.81.0、Engine 29.6.1、WSL2 上通过真实检索、BGE 重排、Qwen 生成、引用原文页、流式 Agent 和重启持久化验收。[完整终态](container-6.json)、[摘要](验收摘要.json)、[构建日志](build-5.log)、[实际依赖与源码指纹](environment-2.json)及[依赖检查](pip-check.log)保留。
+
+## 修复后最终验收
+
+业务补丁99db29e重新构建为 `rag-acceptance:99db29e`，38个业务／配置／代理文件与本地字节SHA一致，见[环境与实际源码](environment-3.json)、[构建](build-6.log)及[本次Compose](compose-postfix.yml)。测试编码修复af91d9a仅改变测试读取，不改变这38个镜像运行文件。最终[container-7](container-7.json)真实问答通过，125.753秒、3331实际Token、51正文增量，答出ImageNet、ImageNet-21k、JFT-300M并引用vit.pdf第6物理页；助手核验核心事实与来源对应。此前container-6保留为历史，均为CPU单样例功能耗时。
+
+显式复用已验收的167块索引；[重启日志](postfix-restart.log)及container-7确认新进程恢复167块和2条完整历史。[重启后页面](I01后镜像页面检索.png)返回5块并显示真实文件、分数与物理页。[容器](postfix-container-inspect.json)、[网络](postfix-network-inspect.json)、[镜像摘要](postfix-image-inspect.json)、[Ollama出口](ollama-egress-2.log)及[依赖检查](pip-check-2.log)保留，app与Ollama只接internal网络且公网TCP被阻断。宿主未物理断网。
+
+验证脚本在/proof下首次执行不能导入src，实际[失败日志](container-7首次脚本导入失败.log)保留；执行时指定PYTHONPATH=/app后通过，没有因记录脚本额外改变业务代码。环境JSON原始UTF-8 BOM文件[另存](environment-3_原始BOM.json)，规范化副本仅移除传输BOM，不改实际源码指纹。
 
 ## 结果与边界
 
@@ -27,3 +35,5 @@ app和ollama只连接internal网络，两个业务运行时实际连接公网TCP
 [本次Compose](compose.yml)记录隔离数据、只读模型及证明目录挂载；Ollama只读复用Windows用户预备的模型目录，默认交付路径仍为 `data/models/ollama/models`，需包含完整blobs和manifests。镜像/权重准备阶段可以联网，离线运行阶段不能pull模型。[镜像指纹](final-image-inspect.json)保存最终镜像及Ollama0.34.0的实际摘要。业务源码与当前提交按LF/CRLF换行等价逐文件核对，元数据保存镜像实际原始字节SHA，不声称其与Mac字节完全一致。
 
 [服务日志](container-final-service.log)和所有首次失败均保留；功能通过不等于60题语义质量达标，也不代表任意机器可用同样时延。
+
+[用户原库最终只读核验](原库最终只读核验.json)：278块／6篇，内容SHA256和六份原文指纹均与验收前一致；验收使用独立索引与会话。
