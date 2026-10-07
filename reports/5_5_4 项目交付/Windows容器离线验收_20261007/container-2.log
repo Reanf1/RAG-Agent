@@ -1,0 +1,27 @@
+Consider using the pymupdf_layout package for a greatly improved page layout analysis.
+真实PDF导入与索引 167 块通过
+混合重排与物理页读取通过
+Traceback (most recent call last):
+  File "/proof/verify_container.py", line 86, in <module>
+    if __name__=='__main__': main()
+  File "/proof/verify_container.py", line 77, in main
+    save()  # 完成判断失败时也保留真实模型正文和轨迹，不能只留下成功样例。
+  File "/proof/verify_container.py", line 41, in save
+    def save(): args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n')
+  File "/usr/local/lib/python3.10/json/__init__.py", line 238, in dumps
+    **kw).encode(obj)
+  File "/usr/local/lib/python3.10/json/encoder.py", line 201, in encode
+    chunks = list(chunks)
+  File "/usr/local/lib/python3.10/json/encoder.py", line 431, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "/usr/local/lib/python3.10/json/encoder.py", line 405, in _iterencode_dict
+    yield from chunks
+  File "/usr/local/lib/python3.10/json/encoder.py", line 325, in _iterencode_list
+    yield from chunks
+  File "/usr/local/lib/python3.10/json/encoder.py", line 405, in _iterencode_dict
+    yield from chunks
+  File "/usr/local/lib/python3.10/json/encoder.py", line 438, in _iterencode
+    o = _default(o)
+  File "/usr/local/lib/python3.10/json/encoder.py", line 179, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type AIMessage is not JSON serializable

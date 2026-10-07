@@ -15,8 +15,8 @@ def main():
     parser.add_argument('--project', type=Path, required=True)
     parser.add_argument('--root', type=Path, required=True)
     args = parser.parse_args()
-    args.root.mkdir(parents=True, exist_ok=False)
     import psutil
+    args.root.mkdir(parents=True, exist_ok=False)
     stop = Event()
     report = {'started_at': datetime.now().astimezone().isoformat(), 'status': 'running',
               'project': str(args.project), 'python': sys.executable, 'stages': []}

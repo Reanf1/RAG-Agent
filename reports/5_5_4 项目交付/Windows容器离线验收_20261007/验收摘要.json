@@ -1,0 +1,41 @@
+{
+  "status": "passed",
+  "acceptance": "container-6.json",
+  "fresh_import": "container-2.json，仅导入/检索阶段；该轮整体因记录序列化失败未通过",
+  "chunks": 167,
+  "fresh_import_index_seconds": 66.51670915099999,
+  "repeat_added": 0,
+  "actual_agent_seconds": 189.2861831199998,
+  "stream_token_events": 56,
+  "reopen": {
+    "chunks": 167,
+    "history_messages": 2
+  },
+  "python": "3.10.10",
+  "sqlite": "3.46.1",
+  "dependencies": {
+    "chromadb": "0.5.23",
+    "torch": "2.5.1",
+    "streamlit": "1.64.0",
+    "langchain-core": "0.3.29",
+    "sentence-transformers": "3.3.1",
+    "pysqlite3-binary": "0.5.4"
+  },
+  "checked_business_files": 38,
+  "source_check": "实际镜像CRLF文本与本地LF文本逐文件换行等价，文件逻辑未改动",
+  "application_and_ollama_networks": {
+    "/ragaccept20261007-app-1": [
+      "ragaccept20261007_offline"
+    ],
+    "/ragaccept20261007-ollama-1": [
+      "ragaccept20261007_offline"
+    ],
+    "/ragaccept20261007-gateway-1": [
+      "ragaccept20261007_default",
+      "ragaccept20261007_offline"
+    ]
+  },
+  "app_external_tcp_blocked": "OSError: [Errno 101] Network is unreachable",
+  "ollama_external_tcp_blocked": "{\"namespace\": \"ollama\", \"external_tcp_blocked\": \"[Errno 101] Network is unreachable\", \"status\": \"passed\"}",
+  "boundary": "Windows Docker Desktop/WSL2的CPU容器；网络隔离运行验收，不称物理拔网或GPU性能评测。"
+}

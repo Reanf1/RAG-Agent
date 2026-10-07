@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/proof/verify_container.py", line 85, in <module>
+    if __name__=='__main__': main()
+  File "/proof/verify_container.py", line 22, in main
+    from src.retrieval.vector_store import VectorStore
+  File "/app/src/retrieval/vector_store.py", line 14, in <module>
+    from chromadb.config import Settings
+  File "/usr/local/lib/python3.10/site-packages/chromadb/__init__.py", line 86, in <module>
+    raise RuntimeError(
+RuntimeError: [91mYour system has an unsupported version of sqlite3. Chroma                     requires sqlite3 >= 3.35.0.[0m
+[94mPlease visit                     https://docs.trychroma.com/troubleshooting#sqlite to learn how                     to upgrade.[0m

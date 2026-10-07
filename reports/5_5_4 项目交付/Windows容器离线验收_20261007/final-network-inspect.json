@@ -1,0 +1,126 @@
+﻿[
+    {
+        "Name": "ragaccept20261007_offline",
+        "Id": "34093af2968fe803686f8a31754b3f496b7b6b50869390414a6254bf8cdadf84",
+        "Created": "2026-10-07T08:14:46.957361221Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv4": true,
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.19.0.0/16",
+                    "Gateway": "172.19.0.1"
+                }
+            ]
+        },
+        "Internal": true,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Options": {
+            "com.docker.network.enable_ipv4": "true",
+            "com.docker.network.enable_ipv6": "false"
+        },
+        "Labels": {
+            "com.docker.compose.config-hash": "7f43d442fcdd9b4e70be691344e9af1b98269762801acba9b41f82f5805f0e33",
+            "com.docker.compose.network": "offline",
+            "com.docker.compose.project": "ragaccept20261007",
+            "com.docker.compose.version": "5.2.0"
+        },
+        "Containers": {
+            "502927e7e314c0fd95926f3e892b8d908d85521db07a6a84d9912876ca406909": {
+                "Name": "ragaccept20261007-gateway-1",
+                "EndpointID": "b79fae3146a503cb6ab2f02e87f625b207076164717cdbd0a173c58b348fc7ce",
+                "MacAddress": "fa:94:30:90:b9:a5",
+                "IPv4Address": "172.19.0.4/16",
+                "IPv6Address": ""
+            },
+            "6f4084753fae16923aedb23c7ff0b8950b43aba05e593762e70a769dd8635664": {
+                "Name": "ragaccept20261007-app-1",
+                "EndpointID": "4ce8a3a116ac69b7a9525412261645ee7f061c3a8e2be2339aae0abbe36e1e0f",
+                "MacAddress": "7e:34:61:bd:aa:66",
+                "IPv4Address": "172.19.0.3/16",
+                "IPv6Address": ""
+            },
+            "ba1e35e88ac2dee32cc452a7082fcae203b6e5cdc081f57b3f25e1cce430f3a2": {
+                "Name": "ragaccept20261007-ollama-1",
+                "EndpointID": "b4cb207602c732e90fc5a44430f43b6a9d46f51babe57352a10c5bdd9c793648",
+                "MacAddress": "4e:d3:40:e8:b2:4f",
+                "IPv4Address": "172.19.0.2/16",
+                "IPv6Address": ""
+            }
+        },
+        "Status": {
+            "IPAM": {
+                "Subnets": {
+                    "172.19.0.0/16": {
+                        "IPsInUse": 6,
+                        "DynamicIPsAvailable": 65530
+                    }
+                }
+            }
+        }
+    },
+    {
+        "Name": "ragaccept20261007_default",
+        "Id": "8838443e115b784e4bad6de5b7f29da65b480b66485f3dd1d58b8edffeb65e9f",
+        "Created": "2026-10-07T08:14:46.996330658Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv4": true,
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.20.0.0/16",
+                    "Gateway": "172.20.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Options": {
+            "com.docker.network.enable_ipv4": "true",
+            "com.docker.network.enable_ipv6": "false"
+        },
+        "Labels": {
+            "com.docker.compose.config-hash": "2da0aa0e379dd7fd0cf5b4bd78459d1df54cbd3cd669e31b0246361733714012",
+            "com.docker.compose.network": "default",
+            "com.docker.compose.project": "ragaccept20261007",
+            "com.docker.compose.version": "5.2.0"
+        },
+        "Containers": {
+            "502927e7e314c0fd95926f3e892b8d908d85521db07a6a84d9912876ca406909": {
+                "Name": "ragaccept20261007-gateway-1",
+                "EndpointID": "feb618fe5df36786afb0e92d1583c6dcd7bb15c55a568718956e53e3798eb5de",
+                "MacAddress": "26:91:54:b5:a3:00",
+                "IPv4Address": "172.20.0.2/16",
+                "IPv6Address": ""
+            }
+        },
+        "Status": {
+            "IPAM": {
+                "Subnets": {
+                    "172.20.0.0/16": {
+                        "IPsInUse": 4,
+                        "DynamicIPsAvailable": 65532
+                    }
+                }
+            }
+        }
+    }
+]

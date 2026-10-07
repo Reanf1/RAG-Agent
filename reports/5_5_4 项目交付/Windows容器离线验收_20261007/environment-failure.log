@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/proof/environment.py", line 5, in <module>
+    print(json.dumps({'python':platform.python_version(),'sqlite':sqlite3.sqlite_version,'dependencies':{p:version(p) for p in ('chromadb','torch','streamlit','langchain','sentence-transformers','pysqlite3-binary')},'source_sha256':{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path('/app/config.yaml'),Path('/app/docker/tcp_proxy.py'),*sorted(Path('/app/src').rglob('*.py'))]}},ensure_ascii=False,indent=2))
+  File "/proof/environment.py", line 5, in <dictcomp>
+    print(json.dumps({'python':platform.python_version(),'sqlite':sqlite3.sqlite_version,'dependencies':{p:version(p) for p in ('chromadb','torch','streamlit','langchain','sentence-transformers','pysqlite3-binary')},'source_sha256':{str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path('/app/config.yaml'),Path('/app/docker/tcp_proxy.py'),*sorted(Path('/app/src').rglob('*.py'))]}},ensure_ascii=False,indent=2))
+  File "/usr/local/lib/python3.10/importlib/metadata/__init__.py", line 996, in version
+    return distribution(distribution_name).version
+  File "/usr/local/lib/python3.10/importlib/metadata/__init__.py", line 969, in distribution
+    return Distribution.from_name(distribution_name)
+  File "/usr/local/lib/python3.10/importlib/metadata/__init__.py", line 548, in from_name
+    raise PackageNotFoundError(name)
+importlib.metadata.PackageNotFoundError: No package metadata was found for langchain

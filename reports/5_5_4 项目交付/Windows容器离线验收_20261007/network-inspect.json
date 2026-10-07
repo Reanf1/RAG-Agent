@@ -1,0 +1,64 @@
+﻿[
+    {
+        "Name": "ragaccept20261007_default",
+        "Id": "26be87652a64302501c4a1b35ce56d7fbd331d7929c76297f1f5c829596cacd3",
+        "Created": "2026-10-07T08:00:07.014388613Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv4": true,
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.19.0.0/16",
+                    "Gateway": "172.19.0.1"
+                }
+            ]
+        },
+        "Internal": true,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Options": {
+            "com.docker.network.enable_ipv4": "true",
+            "com.docker.network.enable_ipv6": "false"
+        },
+        "Labels": {
+            "com.docker.compose.config-hash": "4614b2d1f44511578cdff67b2da2ca41e844b1db910271cafbdd067f82d26e62",
+            "com.docker.compose.network": "default",
+            "com.docker.compose.project": "ragaccept20261007",
+            "com.docker.compose.version": "5.2.0"
+        },
+        "Containers": {
+            "bdb3491ba008c725b6836890d32f08d95e2f20f3a9229d8554f658b4c122f1e0": {
+                "Name": "ragaccept20261007-ollama-1",
+                "EndpointID": "8344575c41023fb0d84c4c06bf19254ba3fa33524e974b65b8fb8c98ce82b87d",
+                "MacAddress": "f6:de:58:5b:5b:35",
+                "IPv4Address": "172.19.0.2/16",
+                "IPv6Address": ""
+            },
+            "db59c9bcae23d6fad0bfe9a19267c190414b6350e180e85636baed354409730e": {
+                "Name": "ragaccept20261007-app-1",
+                "EndpointID": "767c4824af69ab58b3a84b3c1977648dffb23f26be2ce14c926cb7d8c51b065b",
+                "MacAddress": "f2:c7:7c:4c:8f:f1",
+                "IPv4Address": "172.19.0.3/16",
+                "IPv6Address": ""
+            }
+        },
+        "Status": {
+            "IPAM": {
+                "Subnets": {
+                    "172.19.0.0/16": {
+                        "IPsInUse": 5,
+                        "DynamicIPsAvailable": 65531
+                    }
+                }
+            }
+        }
+    }
+]

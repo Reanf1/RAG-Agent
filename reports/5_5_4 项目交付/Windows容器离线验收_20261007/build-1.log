@@ -1,0 +1,31 @@
+--progress is a global compose flag, better use `docker compose --progress xx build ...
+ Image rag-acceptance:0373ccd Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 653B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 810B 0.0s done
+#2 DONE 0.1s
+
+#3 [internal] load metadata for docker.io/library/python:3.10.10-slim
+#3 ERROR: error getting credentials - err: exit status 1, out: `A specified logon session does not exist. It may already have been terminated.`
+------
+ > [internal] load metadata for docker.io/library/python:3.10.10-slim:
+------
+Dockerfile:2
+
+--------------------
+
+   1 |     # 与课程开发环境一致；模型和用户数据通过挂载保存，不打进镜像。
+
+   2 | >>> FROM python:3.10.10-slim
+
+   3 |     
+
+   4 |     ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 \
+
+--------------------
+
+failed to solve: error getting credentials - err: exit status 1, out: `A specified logon session does not exist. It may already have been terminated.`
+

@@ -1,6 +1,6 @@
 # Windows部署教程
 
-适用于当前项目的Windows x64原生部署，命令使用PowerShell，示例目录为`D:\projects\RAG+Agent`。保持Python3.10.10、Ollama0.34.0、Qwen2.5:7b、M3E-base、BGE reranker及现有配置；先让应用运行起来，正式测试与性能实验在用户通知恢复后开展。本文编写日期为2026年10月4日，未在Mac上重新启动部署或测试。
+适用于Windows x64原生部署，命令使用PowerShell，示例目录为`D:\projects\RAG+Agent`。2026-10-07已在用户实际目录`E:\工作\RAG-Agent`完成原生业务复测和隔离Docker离线运行验收；原生Python3.10.10、Ollama0.35.1、Qwen2.5:7b，容器Ollama固定0.34.0。Embedding/BGE仍用CPU，原生Qwen用RTX4060 Laptop GPU；正式性能正在按冻结评测集执行。
 
 ## 1 部署流程与机器准备
 
@@ -14,7 +14,7 @@
 
 ## 2 将当前项目复制到Windows
 
-当前Mac目录是`/Users/rean/github/RAG+Agent`，存在本轮尚未提交的修改。**只从GitHub克隆会遗漏这些修改**。推荐直接复制当前工作目录的代码、配置、文档和报告到`D:\projects\RAG+Agent`，包含新增文件；需要保留已有提交历史时一并复制`.git`。
+代码通过Git同步，先提交并推送需要部署的修复，再在Windows根目录拉取相同提交；用 `git rev-parse --short HEAD` 核对。权重和评测论文不随Git提交，需另外复制。不要覆盖已有未提交修改或原始索引。
 
 不迁移Mac的`.venv`、`__pycache__`、`.DS_Store`及`data/models/ollama/runtime`可执行文件。Windows重新创建虚拟环境，使用Windows版Ollama。
 
@@ -221,3 +221,18 @@ git pull --ff-only
 我随后根据可用的Windows访问方式开展自动回归、完整链路、持久化、边缘场景及正式性能测试；远程连接需要你提供已有的访问入口。暂停时的组合路由问题及未完成实验仍按[暂停交接说明](../reports/5_5_4%20项目交付/暂停与Windows复测说明_20261004.md)处理，不把Mac结果写成Windows验收。
 
 原生部署完成后再处理Docker交付。当前Compose未配置GPU直通，直接启动默认是CPU方案；已有Docker步骤见[用户使用手册](用户使用手册.md)。容器结果与原生GPU结果分别记录。
+
+## 9 2026-10-07容器验收与正式评测准备
+
+[真实容器记录](../reports/5_5_4%20项目交付/Windows容器离线验收_20261007/README.md)包含首次失败、最终镜像指纹、CPU真实Agent、网络隔离和重启恢复。Docker Desktop4.81.0／Engine29.6.1在internal-only网络下未发布宿主页面端口；最终Compose使用固定TCP入口发布回环8501，app/ollama继续仅连internal网络。验收副本使用8502，避免占用已有原生8501。默认Compose不启用GPU，CPU功能验收耗时不能当成原生GPU性能。
+
+先准备依赖、镜像和全部模型，再进入离线运行。桌面Ollama权重可能位于 `$env:USERPROFILE\.ollama\models`，默认Compose却挂项目 `data/models/ollama/models`；需复制完整blobs/manifests或在自己的Compose副本中显式只读挂载已有目录，原服务的权重目录不移动。Ollama的版本可按实际环境记录，不为了教程版本覆盖正在使用的服务。
+
+正式评测使用隔离副本，保持12篇固定原文、60题、配置和源码一致，并顺序运行五组检索、两组Agent、固定RAG路由对照与串并行实验；准备资源采样依赖：
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r 'reports\5_5_2 系统性能评估\requirements-evaluation.txt'
+$env:PYTHONUTF8 = '1'
+```
+
+Git默认CRLF转换会改变JSON清单与源码的原始字节哈希。冻结实验副本应保持提交原始LF文本，并先核对语料中的manifest_sha256；只做换行转换的文件须逐项确认与Git原始内容相等，有源码补丁的文件单独记录。不能通过删掉哈希检查、改变标注或覆写既有结果来使实验继续。

@@ -1,0 +1,45 @@
+services:
+  app:
+    build:
+      context: C:/Users/asus/AppData/Local/Temp/rag-acceptance-d31ae9fe7da24e548aee0bb08f810694/project
+      dockerfile: docker/Dockerfile
+    ports:
+    - 127.0.0.1:8502:8501
+    environment:
+      RAG_OLLAMA_BASE_URL: http://ollama:11434
+      STREAMLIT_BROWSER_GATHER_USAGE_STATS: 'false'
+    volumes:
+    - C:/Users/asus/AppData/Local/Temp/rag-acceptance-d31ae9fe7da24e548aee0bb08f810694/project/config.yaml:/app/config.yaml:ro
+    - C:/Users/asus/AppData/Local/Temp/rag-acceptance-d31ae9fe7da24e548aee0bb08f810694/container-data:/app/data
+    - C:/Users/asus/AppData/Local/Temp/rag-acceptance-d31ae9fe7da24e548aee0bb08f810694/container-logs:/app/logs
+    - C:/Users/asus/AppData/Local/Temp/rag-acceptance-d31ae9fe7da24e548aee0bb08f810694/proof:/proof
+    - C:/Users/asus/AppData/Local/Temp/rag-acceptance-d31ae9fe7da24e548aee0bb08f810694/project/data/raw/evaluation_vision_transformers/vit.pdf:/input/vit.pdf:ro
+    - E:/工作/RAG-Agent/data/models/m3e-base:/app/data/models/m3e-base:ro
+    - E:/工作/RAG-Agent/data/models/bge-reranker-base:/app/data/models/bge-reranker-base:ro
+    - E:/工作/RAG-Agent/data/models/qwen2.5-tokenizer:/app/data/models/qwen2.5-tokenizer:ro
+    depends_on:
+      ollama:
+        condition: service_healthy
+    restart: unless-stopped
+    image: rag-acceptance:02ebf5b
+  ollama:
+    image: ollama/ollama:0.34.0
+    environment:
+      OLLAMA_HOST: 0.0.0.0:11434
+      OLLAMA_NO_CLOUD: '1'
+    volumes:
+    - C:/Users/asus/.ollama/models:/root/.ollama/models:ro
+    healthcheck:
+      test:
+      - CMD
+      - ollama
+      - list
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
+      retries: 6
+    restart: unless-stopped
+networks:
+  default:
+    driver_opts:
+      com.docker.network.bridge.enable_ip_masquerade: 'false'

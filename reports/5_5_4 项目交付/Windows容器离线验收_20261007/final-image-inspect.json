@@ -1,0 +1,158 @@
+﻿[
+    {
+        "Id": "sha256:a8eb745be4b99864355c22d3870bff4fae4284b0d037e6bbcc6296721ca26527",
+        "RepoTags": [
+            "rag-acceptance:0be8716"
+        ],
+        "RepoDigests": [
+            "rag-acceptance@sha256:a8eb745be4b99864355c22d3870bff4fae4284b0d037e6bbcc6296721ca26527"
+        ],
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2026-10-07T08:24:09.267956021Z",
+        "Config": {
+            "ExposedPorts": {
+                "8501/tcp": {}
+            },
+            "Env": [
+                "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "LANG=C.UTF-8",
+                "GPG_KEY=A035C8C19219BA821ECEA86B64E628F8D684696D",
+                "PYTHON_VERSION=3.10.10",
+                "PYTHON_PIP_VERSION=22.3.1",
+                "PYTHON_SETUPTOOLS_VERSION=65.5.1",
+                "PYTHON_GET_PIP_URL=https://github.com/pypa/get-pip/raw/d5cb0afaf23b8520f1bbcfed521017b4a95f5c01/public/get-pip.py",
+                "PYTHON_GET_PIP_SHA256=394be00f13fa1b9aaa47e911bdb59a09c3b2986472130f30aa0bfaf7f3980637",
+                "PYTHONUNBUFFERED=1",
+                "PYTHONDONTWRITEBYTECODE=1",
+                "HF_HUB_OFFLINE=1",
+                "TRANSFORMERS_OFFLINE=1",
+                "TOKENIZERS_PARALLELISM=false",
+                "TZ=Asia/Shanghai"
+            ],
+            "Cmd": [
+                "python",
+                "-m",
+                "streamlit",
+                "run",
+                "src/frontend/app.py",
+                "--server.address=0.0.0.0",
+                "--server.port=8501",
+                "--browser.gatherUsageStats=false"
+            ],
+            "WorkingDir": "/app",
+            "Labels": {
+                "com.docker.compose.project": "ragaccept20261007",
+                "com.docker.compose.service": "app",
+                "com.docker.compose.version": "5.2.0"
+            },
+            "ArgsEscaped": true,
+            "Healthcheck": {
+                "Test": [
+                    "CMD-SHELL",
+                    "python -c \"from urllib.request import urlopen; urlopen('http://127.0.0.1:8501/_stcore/health', timeout=3)\""
+                ],
+                "Interval": 30000000000,
+                "Timeout": 5000000000,
+                "StartPeriod": 30000000000,
+                "Retries": 3
+            }
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 3403065408,
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:3af14c9a24c941c626553628cf1942dcd94d40729777f2fcfbcd3b8a3dfccdd6",
+                "sha256:219c6c2423f19da93c40808cd3f8d84d65059c0b4ae26746e66c5352b5a25282",
+                "sha256:16af495390990b358cfa28e324a7bf43b7b23ed05c6d343731a37e387851d9f0",
+                "sha256:7766968e58766e7bc774c4ac66783404b195a15f6e4e11c5dc58a1cbae6cf320",
+                "sha256:8a2adc4b2731751ec162d07bbec48acb5ca0536f8790694ac3e02257c3b4ce86",
+                "sha256:3b076ae0e584cb2321a9c6ac4cf9f88f3fa9056b57ff43ca40ef6a623effc681",
+                "sha256:14fc78e86b026f52e3ac44ce277711981ea331279c634c013dab066008d30d9b",
+                "sha256:1ef11520a311ab25b26ec71af7c8fa14970b25234e256fc683f083f3f3c79f80",
+                "sha256:7652ff7d1ca56d85e2e605c3923e222b9923f47ea374267d8d291ead7b56af10",
+                "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+                "sha256:8b5a3c193e030c3ce2abdfdc7c0d6551e1ed85b8f2c33005366f740e47c9a720",
+                "sha256:0f57a86b79db9a85b12278a7060bfbdea9d44b72bad731c6305b5f66d34aa63b",
+                "sha256:c34c3a7ffcd5d616d6eee22e3cf19e1276bf6ec0248ca494ef3626308a786308"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2026-10-07T08:24:09.726067512Z"
+        },
+        "Descriptor": {
+            "mediaType": "application/vnd.oci.image.index.v1+json",
+            "digest": "sha256:a8eb745be4b99864355c22d3870bff4fae4284b0d037e6bbcc6296721ca26527",
+            "size": 856
+        },
+        "Identity": {
+            "Build": [
+                {
+                    "Ref": "l92lgozjtpsk034gjtkjgxdrl",
+                    "CreatedAt": "2026-10-07T08:24:09.791194117Z"
+                }
+            ]
+        }
+    },
+    {
+        "Id": "sha256:684d8674b4315fa18f4f0e973a118ec2652ed96f67563277839985175858e0ba",
+        "RepoTags": [
+            "ollama/ollama:0.34.0"
+        ],
+        "RepoDigests": [
+            "ollama/ollama@sha256:684d8674b4315fa18f4f0e973a118ec2652ed96f67563277839985175858e0ba"
+        ],
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2026-09-09T23:17:47.304461496Z",
+        "Config": {
+            "ExposedPorts": {
+                "11434/tcp": {}
+            },
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64",
+                "NVIDIA_DRIVER_CAPABILITIES=compute,utility",
+                "NVIDIA_VISIBLE_DEVICES=all",
+                "OLLAMA_HOST=0.0.0.0:11434"
+            ],
+            "Entrypoint": [
+                "/bin/ollama"
+            ],
+            "Cmd": [
+                "serve"
+            ],
+            "Labels": {
+                "org.opencontainers.image.version": "24.04"
+            },
+            "ArgsEscaped": true
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 3703364316,
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:6078cde548a521a729def2ee7875e9f65513c18f0d4bac4db817417617d7006a",
+                "sha256:9b930d1efe67267584b80a116d45a6d3be17ab84636ab42e8b7c1497b7189cd1",
+                "sha256:ca448e7a7158f7effdccb1d790d6f8776049b12b73a3aafe185b073772cf9c3b",
+                "sha256:c49d8fd3709e96d71819244b5910ba85cbb7cf733edb344fd370cc6ddc23f126"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2026-10-07T07:55:08.817212002Z"
+        },
+        "Descriptor": {
+            "mediaType": "application/vnd.oci.image.index.v1+json",
+            "digest": "sha256:684d8674b4315fa18f4f0e973a118ec2652ed96f67563277839985175858e0ba",
+            "size": 647
+        },
+        "Identity": {
+            "Pull": [
+                {
+                    "Repository": "docker.io/ollama/ollama"
+                }
+            ]
+        }
+    }
+]

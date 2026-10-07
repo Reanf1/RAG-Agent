@@ -1,0 +1,71 @@
+ Image rag-acceptance:02ebf5b Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 653B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.48kB done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/python:3.10.10-slim
+#3 DONE 2.2s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 171B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 2.14kB done
+#5 DONE 0.0s
+
+#6 [1/8] FROM docker.io/library/python:3.10.10-slim@sha256:7b0a5cefbcdd085faa21533c21549e55a7e66f5aed40f8d1f4de13a017e352cd
+#6 resolve docker.io/library/python:3.10.10-slim@sha256:7b0a5cefbcdd085faa21533c21549e55a7e66f5aed40f8d1f4de13a017e352cd 0.1s done
+#6 DONE 0.1s
+
+#7 [2/8] WORKDIR /app
+#7 CACHED
+
+#8 [3/8] COPY requirements.txt ./
+#8 CACHED
+
+#9 [4/8] RUN python -m pip install --no-cache-dir -r requirements.txt
+#9 CACHED
+
+#10 [5/8] RUN python -m pip install --no-cache-dir pysqlite3-binary==0.5.4     && python -c "import site; from pathlib import Path; Path(site.getsitepackages()[0], 'rag_sqlite.pth').write_text("import sys, pysqlite3; sys.modules['sqlite3'] = pysqlite3\n", encoding='utf-8')"
+#10 2.437 Collecting pysqlite3-binary==0.5.4
+#10 3.045   Downloading pysqlite3_binary-0.5.4-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (5.2 MB)
+#10 25.37      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.2/5.2 MB 231.0 kB/s eta 0:00:00
+#10 26.65 Installing collected packages: pysqlite3-binary
+#10 26.86 Successfully installed pysqlite3-binary-0.5.4
+#10 26.86 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+#10 27.67 
+#10 27.67 [notice] A new release of pip available: 22.3.1 -> 26.2.1
+#10 27.67 [notice] To update, run: pip install --upgrade pip
+#10 DONE 28.0s
+
+#11 [6/8] RUN python -c "import sqlite3, chromadb; assert sqlite3.sqlite_version_info >= (3, 35, 0); print('SQLite', sqlite3.sqlite_version, 'Chroma', chromadb.__version__)"
+#11 1.883 SQLite 3.46.1 Chroma 0.5.23
+#11 DONE 2.0s
+
+#12 [7/8] COPY config.yaml ./
+#12 DONE 0.1s
+
+#13 [8/8] COPY src ./src
+#13 DONE 0.1s
+
+#14 exporting to image
+#14 exporting layers
+#14 exporting layers 0.9s done
+#14 exporting manifest sha256:b765d2b99569bc932e9f742b2bf19cbdfaf550f9033816b5b594105b8395379a 0.0s done
+#14 exporting config sha256:bb811574a12b5654760144c3b8bc11946c4c93cc6ba342f666b617b94fd9b575 0.0s done
+#14 exporting attestation manifest sha256:ebcd6b60dfd667d611d98ad45d3b18e5764323abcb3071630870ccc50af897e4
+#14 exporting attestation manifest sha256:ebcd6b60dfd667d611d98ad45d3b18e5764323abcb3071630870ccc50af897e4 0.1s done
+#14 exporting manifest list sha256:864e20d589759d2f68aa8ad3c4182b43cad208095e9c9f441e71583e17ebea3f 0.0s done
+#14 naming to docker.io/library/rag-acceptance:02ebf5b done
+#14 unpacking to docker.io/library/rag-acceptance:02ebf5b
+#14 unpacking to docker.io/library/rag-acceptance:02ebf5b 0.3s done
+#14 DONE 1.4s
+
+#15 resolving provenance for metadata file
+#15 DONE 0.0s
+ Image rag-acceptance:02ebf5b Built 

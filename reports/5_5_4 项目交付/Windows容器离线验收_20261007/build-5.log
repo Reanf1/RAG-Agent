@@ -1,0 +1,65 @@
+--progress is a global compose flag, better use `docker compose --progress xx build ...
+ Image rag-acceptance:0be8716 Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 653B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.52kB done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/python:3.10.10-slim
+#3 DONE 2.6s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 171B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 3.52kB 0.0s done
+#5 DONE 0.1s
+
+#6 [1/9] FROM docker.io/library/python:3.10.10-slim@sha256:7b0a5cefbcdd085faa21533c21549e55a7e66f5aed40f8d1f4de13a017e352cd
+#6 resolve docker.io/library/python:3.10.10-slim@sha256:7b0a5cefbcdd085faa21533c21549e55a7e66f5aed40f8d1f4de13a017e352cd 0.1s done
+#6 DONE 0.1s
+
+#7 [4/9] RUN python -m pip install --no-cache-dir -r requirements.txt
+#7 CACHED
+
+#8 [5/9] RUN python -m pip install --no-cache-dir pysqlite3-binary==0.5.4     && python -c "import site; from pathlib import Path; Path(site.getsitepackages()[0], 'rag_sqlite.pth').write_text("import sys, pysqlite3; sys.modules['sqlite3'] = pysqlite3\n", encoding='utf-8')"
+#8 CACHED
+
+#9 [7/9] COPY config.yaml ./
+#9 CACHED
+
+#10 [6/9] RUN python -c "import sqlite3, chromadb; assert sqlite3.sqlite_version_info >= (3, 35, 0); print('SQLite', sqlite3.sqlite_version, 'Chroma', chromadb.__version__)"
+#10 CACHED
+
+#11 [2/9] WORKDIR /app
+#11 CACHED
+
+#12 [3/9] COPY requirements.txt ./
+#12 CACHED
+
+#13 [8/9] COPY src ./src
+#13 CACHED
+
+#14 [9/9] COPY docker/tcp_proxy.py ./docker/tcp_proxy.py
+#14 DONE 0.1s
+
+#15 exporting to image
+#15 exporting layers
+#15 exporting layers 0.2s done
+#15 exporting manifest sha256:f8a6a50790704818655a6b0d62e88610ea360b4992660dd1012756637823c997 0.0s done
+#15 exporting config sha256:7ca150d4795fccc0016297e24e38ba765ec89e683ba3530531e8fd2e306c45f2 0.0s done
+#15 exporting attestation manifest sha256:1ef89b3d67abb1ef27902497114f905d96f970f3384112db3922f06160c7cf5e
+#15 exporting attestation manifest sha256:1ef89b3d67abb1ef27902497114f905d96f970f3384112db3922f06160c7cf5e 0.1s done
+#15 exporting manifest list sha256:a8eb745be4b99864355c22d3870bff4fae4284b0d037e6bbcc6296721ca26527 0.0s done
+#15 naming to docker.io/library/rag-acceptance:0be8716
+#15 naming to docker.io/library/rag-acceptance:0be8716 done
+#15 unpacking to docker.io/library/rag-acceptance:0be8716 0.1s done
+#15 DONE 0.5s
+
+#16 resolving provenance for metadata file
+#16 DONE 0.0s
+ Image rag-acceptance:0be8716 Built 
