@@ -11,18 +11,19 @@ ROOT = Path(__file__).resolve().parents[2]
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('stage', choices=['chunking', 'routing', 'parallel'])
+    parser.add_argument('--source', type=Path, help='本轮新结果；省略时复核历史记录')
     args = parser.parse_args()
     paths = {'chunking': ROOT/'reports/5_1_2 文本分块策略/五组分块检索对比_20261004.json',
              'routing': ROOT/'reports/5_5_2 系统性能评估/Agent与固定RAG对照_20261004.json',
              'parallel': ROOT/'reports/5_5_2 系统性能评估/独立工具串行并行对照_20261004.json'}
-    path = paths[args.stage]
-    data = json.loads(path.read_text())
+    path = args.source or paths[args.stage]
+    data = json.loads(path.read_text(encoding='utf-8'))
     assert data['status'] == 'completed', '实验尚未完成，不能作为最终结论'
     assert len(data['rows']) == {'chunking': 300, 'routing': 144, 'parallel': 12}[args.stage]
     errors, checks = [], 0
     if args.stage == 'chunking':
-        questions = {q['id']: q for q in json.loads((ROOT/'reports/评测集.json').read_text())}
-        papers = json.loads((ROOT/'reports/5_5_1 评测集构建/论文清单.json').read_text())['papers']
+        questions = {q['id']: q for q in json.loads((ROOT/'reports/评测集.json').read_text(encoding='utf-8'))}
+        papers = json.loads((ROOT/'reports/5_5_1 评测集构建/论文清单.json').read_text(encoding='utf-8'))['papers']
         ids = {p['id']: p['doc_id'] for p in papers}
         assert hashlib.sha256((ROOT/'reports/评测集.json').read_bytes()).hexdigest() == data['dataset_sha256']
         assert len({(r['id'], r['profile']) for r in data['rows']}) == 300
@@ -45,7 +46,7 @@ def main():
                 for key in ('hit', 'mrr', 'recall'):
                     assert abs(mean(r['at_k'][str(k)][key] for r in rows) - profile['at_k'][str(k)][key]) < 1e-12
     else:
-        raw = [json.loads(line) for line in path.with_suffix('.calls.jsonl').read_text().splitlines()]
+        raw = [json.loads(line) for line in path.with_suffix('.calls.jsonl').read_text(encoding='utf-8').splitlines()]
         keys = [(r['id'], r['profile'], r['repeat']) for r in data['rows']]
         assert len(set(keys)) == len(keys)
         assert {tuple(c[k] for k in ('id', 'profile', 'repeat')) for c in raw} <= set(keys)
@@ -76,7 +77,9 @@ def main():
               'rows': len(data['rows']), 'independent_checks': checks, 'schedule_failures': errors,
               'source_sha256': hashlib.sha256(path.read_bytes()).hexdigest()}
     target = path.with_name(path.stem + '_独立复核.json')
-    target.write_text(json.dumps(output, ensure_ascii=False, indent=2)+'\n')
+    if target.exists():
+        raise FileExistsError('独立复核结果已存在，不覆盖历史证据')
+    target.write_text(json.dumps(output, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
     print(json.dumps(output, ensure_ascii=False))
 
 

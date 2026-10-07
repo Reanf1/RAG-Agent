@@ -188,7 +188,7 @@ def main():
         report["profiles"] = {key: {"label": value[0], "candidate_k": value[1], "rerank": value[2],
                 **summarize_retrieval([r for r in report["rows"] if r["profile"] == key])} for key, value in PROFILES.items()}
     else:
-        assert json.loads((args.root / "input_fingerprint.json").read_text()) == fingerprint
+        assert json.loads((args.root / "input_fingerprint.json").read_text(encoding="utf-8")) == fingerprint
         store = VectorStore()
         assert store.count() == len(corpus["corpus"])
         with rag_pipeline.urlopen(config["llm"]["base_url"] + "/api/tags", timeout=10) as response:

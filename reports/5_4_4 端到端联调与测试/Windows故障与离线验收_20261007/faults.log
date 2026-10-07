@@ -1,0 +1,13 @@
+{"passed": false, "rows": []}
+Traceback (most recent call last):
+  File "C:\Users\asus\AppData\Local\Temp\rag-acceptance-d31ae9fe7da24e548aee0bb08f810694\verify_faults.py", line 216, in <module>
+    main()
+  File "C:\Users\asus\AppData\Local\Temp\rag-acceptance-d31ae9fe7da24e548aee0bb08f810694\verify_faults.py", line 114, in main
+    stack.enter_context(patch(module + '.load_config', return_value=config))
+  File "C:\Users\asus\AppData\Local\Programs\Python\Python310\lib\contextlib.py", line 492, in enter_context
+    result = _cm_type.__enter__(cm)
+  File "C:\Users\asus\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py", line 1447, in __enter__
+    original, local = self.get_original()
+  File "C:\Users\asus\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py", line 1420, in get_original
+    raise AttributeError(
+AttributeError: <module 'src.utils.token_budget' from 'E:\\工作\\RAG-Agent\\src\\utils\\token_budget.py'> does not have the attribute 'load_config'

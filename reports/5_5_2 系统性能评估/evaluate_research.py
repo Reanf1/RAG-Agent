@@ -78,8 +78,9 @@ def main():
     from src.generation import rag_pipeline
     from src.agent.tools import knowledge_base_search
     from src.retrieval.hybrid_retriever import HybridRetriever
-    questions = json.loads(baseline.DATASET.read_text()) + supplemental()
-    manifest = json.loads(baseline.MANIFEST.read_text())
+    # 评测资料固定为UTF-8，不能依赖Windows默认的GBK编码。
+    questions = json.loads(baseline.DATASET.read_text(encoding="utf-8")) + supplemental()
+    manifest = json.loads(baseline.MANIFEST.read_text(encoding="utf-8"))
     report = {"status": "running", "started_at": datetime.now().astimezone().isoformat(), "stage": args.stage,
               "config": deepcopy(config), "frozen_root": str(frozen), "model_seed": 20261004, "rows": [], "profiles": {}, "questions": questions,
               "inputs_sha256": {str(p.relative_to(ROOT)): baseline.digest(p) for p in [baseline.DATASET, baseline.MANIFEST, ROOT / "config.yaml"]},
@@ -106,7 +107,7 @@ def main():
             entry["seconds"] = perf_counter() - start
             with lock:
                 calls.append(entry)
-                with raw_path.open("a") as output:
+                with raw_path.open("a", encoding="utf-8") as output:
                     output.write(json.dumps(entry, ensure_ascii=False) + "\n")
     def usage(actual):
         unknown = sum(any(type(c.get("response", {}).get(key)) is not int for key in ("prompt_eval_count", "eval_count")) for c in actual)

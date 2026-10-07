@@ -60,7 +60,8 @@ def main():
     report['health_after'] = check_health()
     assert report['health_after']['status'] == 'ok'
     save();print(f'真实PDF导入与索引 {len(chunks)} 块通过', flush=True)
-    started=perf_counter();hits=HybridRetriever(store).search('ViT模型使用了哪三个预训练数据集？', k=5, rerank=True)
+    # 离线验收使用论文同语言问题；跨语言排名按用户要求另行暂缓。
+    started=perf_counter();hits=HybridRetriever(store).search('Which three datasets were used to pretrain Vision Transformer models?', k=5, rerank=True)
     assert hits and all(d.metadata['doc_id'] == report['source_sha256'] for d, _ in hits)
     report['retrieval'] = {'seconds': perf_counter()-started, 'top5': [{'text': d.page_content, 'metadata': d.metadata, 'score': score} for d, score in hits]}
     meta=hits[0][0].metadata
@@ -68,10 +69,11 @@ def main():
     report['original_page'] = {'page': page['page_number'], 'filename': page['filename'], 'png_bytes': len(page['image']), 'pdf_bytes': len(page['pdf'])}
     save();print('混合重排与物理页读取通过', flush=True)
     memory=MemoryManager();report['user_id']='container-verification';report['session_id']=memory.create_session(report['user_id'])
-    question=f"用knowledge_base_search回答ViT论文在模型规模实验中使用了哪三个训练数据集？doc_id={report['source_sha256']}"
+    question=f"Use knowledge_base_search to answer: which three datasets were used to pretrain Vision Transformer models? doc_id={report['source_sha256']}"
     started=perf_counter();events=list(run_session(question, report['user_id'], report['session_id'], memory=memory, stream=True))
     done=events[-1];report['agent']={**done, 'seconds': perf_counter()-started, 'stream_token_events': sum(e['type']=='token' for e in events)}
     report['agent_events']=events
+    save()  # 完成判断失败时也保留真实模型正文和轨迹，不能只留下成功样例。
     assert done['type']=='done' and done['task_complete'], done
     assert any(e['type']=='tool_call' and e['name']=='knowledge_base_search' for e in events)
     assert any(e['type']=='tool_result' and e['name']=='knowledge_base_search' and e['status']=='success' and e['result']['citations'] for e in events)
