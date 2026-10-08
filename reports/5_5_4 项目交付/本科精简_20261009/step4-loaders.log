@@ -1,0 +1,187 @@
+test_all_formats_saved_with_correct_sources (test_batch_import.TestBatchImport)
+四类文档均实际解析和保存，来源指向持久文件而非临时文件。 ... ok
+test_empty_batch_and_duplicate_inputs (test_batch_import.TestBatchImport)
+空批次不创建目录，相同文件名和内容的重复项合并。 ... ok
+test_existing_file_with_different_bytes_is_not_overwritten (test_batch_import.TestBatchImport)
+已有保存位置被外部修改时明确失败，保留其内容。 ... 文档导入失败：paper.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 92, in batch_import
+    raise ValueError("保存位置已有不同内容的文件，未覆盖")
+ValueError: 保存位置已有不同内容的文件，未覆盖
+ok
+test_failure_does_not_stop_later_files_or_leave_failed_file (test_batch_import.TestBatchImport)
+中间文件损坏也继续导入后续文件，完成进度包含失败项。 ... 文档导入失败：bad.pdf
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/pymupdf/__init__.py", line 2981, in __init__
+    doc = mupdf.fz_open_document_with_stream_and_dir(filetype if filetype else '', fz_stream, archive.this)
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/pymupdf/mupdf.py", line 53426, in fz_open_document_with_stream_and_dir
+    return _mupdf.fz_open_document_with_stream_and_dir(magic, stream, dir)
+pymupdf.mupdf.FzErrorFormat: code=7: no objects found
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/pdf_loader.py", line 265, in load_pdf
+    pdf = pymupdf.open(stream=data, filetype="pdf")
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/pymupdf/__init__.py", line 2984, in __init__
+    raise FileDataError('Failed to open stream') from e
+pymupdf.FileDataError: Failed to open stream
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/pdf_loader.py", line 267, in load_pdf
+    raise pymupdf.FileDataError(f"PDF 文件损坏或不是有效的 PDF：{path.name}") from error
+pymupdf.FileDataError: PDF 文件损坏或不是有效的 PDF：bad.pdf
+ok
+test_interrupted_loading_task_can_resume (test_batch_import.TestBatchImport)
+页面中断后遗留的处理中任务可继续处理。 ... ok
+test_persistent_failure_is_bounded (test_batch_import.TestBatchImport)
+每次重试只处理一轮，永久错误不会产生无限循环。 ... 文档导入失败：bad.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+文档导入失败：bad.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+ok
+test_repeated_run_skips_completed_tasks (test_batch_import.TestBatchImport)
+成功后再次调用不会重复加载或重复保存。 ... ok
+test_retry_failed_recovers_without_reloading_success (test_batch_import.TestBatchImport)
+模拟一次临时错误，手动重试仅失败项，成功项尝试次数不增加。 ... 文档导入失败：retry.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1114, in __call__
+    return self._mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1118, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1179, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "/Users/rean/github/RAG+Agent/tests/5_1_1 文档加载与批量导入/test_batch_import.py", line 73, in fail_once
+    raise OSError("临时读取失败")
+OSError: 临时读取失败
+ok
+test_same_name_different_content_is_preserved (test_batch_import.TestBatchImport)
+不同内容的同名文献独立保存，不覆盖旧内容。 ... ok
+test_size_limit (test_batch_import.TestBatchImport)
+前端之外的调用也核验单份文档大小。 ... 文档导入失败：large.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 80, in batch_import
+    raise ValueError(f"文件过大，单份最大支持 {max_file_size_mb} MB")
+ValueError: 文件过大，单份最大支持 1 MB
+ok
+test_storage_failure_is_retryable (test_batch_import.TestBatchImport)
+保存位置暂时不可用时记录错误，恢复后可重试成功。 ... 文档导入失败：ok.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 89, in batch_import
+    destination.parent.mkdir(parents=True, exist_ok=True)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/pathlib.py", line 1175, in mkdir
+    self._accessor.mkdir(self, mode)
+NotADirectoryError: [Errno 20] Not a directory: '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpeo578mei/raw/71988c4d8e0803ba4519f0b2864c1331c14a1890bf8694e251379177bfedb5c3'
+ok
+test_unsupported_format_and_unsafe_names (test_batch_import.TestBatchImport)
+路径名和不支持格式记录失败，不写到导入目录之外。 ... 文档导入失败：../escape.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 76, in batch_import
+    raise ValueError("文件名不能包含目录路径")
+ValueError: 文件名不能包含目录路径
+文档导入失败：/tmp/escape.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 76, in batch_import
+    raise ValueError("文件名不能包含目录路径")
+ValueError: 文件名不能包含目录路径
+文档导入失败：folder\escape.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 76, in batch_import
+    raise ValueError("文件名不能包含目录路径")
+ValueError: 文件名不能包含目录路径
+文档导入失败：paper.exe
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 78, in batch_import
+    raise ValueError(f"不支持的文件格式：{Path(name).suffix}")
+ValueError: 不支持的文件格式：.exe
+ok
+test_blank_blocks_do_not_shift_positions (test_docx_loader.TestDOCXLoader)
+空段落和空表格跳过，但后续段落/表格编号不偏移。 ... ok
+test_damaged_document (test_docx_loader.TestDOCXLoader)
+损坏文件的解析错误向上传递。 ... ok
+test_document_id_is_stable_shared_and_changes (test_docx_loader.TestDOCXLoader)
+同文件各块共用内容 ID，重复读取稳定，内容变化后更新。 ... ok
+test_empty_document (test_docx_loader.TestDOCXLoader)
+仅有空段落和空表格时明确报错。 ... ok
+test_legacy_doc_extension (test_docx_loader.TestDOCXLoader)
+旧版 .doc 格式需转换后导入。 ... ok
+test_missing_file (test_docx_loader.TestDOCXLoader)
+缺失文件不会被当成空文档。 ... ok
+test_paragraph_table_order_and_metadata (test_docx_loader.TestDOCXLoader)
+表格保留在正文原位置，中文段落与单元格内容均可读取。 ... ok
+test_table_empty_cells_and_multiple_paragraphs (test_docx_loader.TestDOCXLoader)
+空单元格保留分隔符，单元格内的多个段落不丢失。 ... ok
+test_blank_page_does_not_shift_page_numbers (test_pdf_loader.TestPDFLoader)
+跳过中间空白页仍保留原始物理页码，避免引用错页。 ... ok
+test_chinese_text_and_page_metadata (test_pdf_loader.TestPDFLoader)
+每页正文与来源完整，页码同时提供索引和展示值。 ... ok
+test_corrupt_pdf_reports_file_error_without_temporary_path (test_pdf_loader.TestPDFLoader)
+W06损坏内容应明确是PDF文件问题，原始解析异常通过cause保留。 ... ok
+test_damaged_pdf (test_pdf_loader.TestPDFLoader)
+损坏文件的解析错误向上传递，不返回空列表掩盖失败。 ... ok
+test_document_id_changes_with_file_content (test_pdf_loader.TestPDFLoader)
+文件内容改变后标识也改变，避免误用旧索引。 ... ok
+test_document_id_is_stable_and_shared (test_pdf_loader.TestPDFLoader)
+重复导入与文件副本共用内容标识，各页不会随机生成不同 ID。 ... ok
+test_image_only_pdf_is_not_silently_accepted (test_pdf_loader.TestPDFLoader)
+将文字渲染为图片，验证没有文本层的扫描页不会伪装为导入成功。 ... ok
+test_missing_file (test_pdf_loader.TestPDFLoader)
+不存在的文件明确报错。 ... ok
+test_password_protected_pdf (test_pdf_loader.TestPDFLoader)
+需要打开密码的文件明确提示先解密。 ... ok
+test_pdf_parser_uses_bytes_and_does_not_hold_source_file_handle (test_pdf_loader.TestPDFLoader)
+用真实解析器核对字节加载，避免Windows文件句柄影响临时目录清理。 ... ok
+test_position_sorting (test_pdf_loader.TestPDFLoader)
+内容流先写下方再写上方时，正文仍按页面位置排序。 ... ok
+test_relative_string_path (test_pdf_loader.TestPDFLoader)
+字符串相对路径也能加载，来源统一为绝对路径。 ... ok
+test_unsupported_extension (test_pdf_loader.TestPDFLoader)
+其他加载器的格式不能误入 PDF 解析流程。 ... ok
+test_document_id_is_stable_and_changes (test_text_loader.TestTextLoader)
+内容指纹由原始字节生成，重复读取稳定，文本变化后更新。 ... ok
+test_empty_or_whitespace_only_file (test_text_loader.TestTextLoader)
+空字节、仅 BOM 和纯空白都不视为有效内容。 ... ok
+test_invalid_utf8 (test_text_loader.TestTextLoader)
+不静默替换错误字符，也不猜测 GBK 等其他编码。 ... ok
+test_markdown_preserves_syntax_and_indentation (test_text_loader.TestTextLoader)
+Markdown 标题、链接、表格和代码块不被转换或清理。 ... ok
+test_missing_file (test_text_loader.TestTextLoader)
+缺失文件明确报错。 ... ok
+test_unsupported_extension (test_text_loader.TestTextLoader)
+二进制格式不能被当作纯文本导入。 ... ok
+test_utf8_bom_and_crlf (test_text_loader.TestTextLoader)
+移除 BOM，但保留 Windows 的 CRLF 换行。 ... ok
+test_utf8_text_and_line_metadata (test_text_loader.TestTextLoader)
+中文正文保留首尾空白与空行，来源和行号完整。 ... ok
+
+----------------------------------------------------------------------
+Ran 41 tests in 0.240s
+
+OK
+Consider using the pymupdf_layout package for a greatly improved page layout analysis.

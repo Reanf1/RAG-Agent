@@ -1,0 +1,95 @@
+test_aligned_multiline_numeric_rows_keep_model_units_and_values_together (test_academic_pdf.TestAcademicPDF)
+明确模拟PDF网格提取结果；原始单元格仍留在元数据供原页核对。 ... ok
+test_ambiguous_three_line_header_keeps_original_text (test_academic_pdf.TestAcademicPDF)
+父表头横跨两个子列时不输出错误结构，正文和原文位置仍保留。 ... ok
+test_below_captions_do_not_attach_to_the_next_table (test_academic_pdf.TestAcademicPDF)
+相邻网格表下置标题分别绑定，不能把Table5赋给Table6。 ... ok
+test_chinese_continuation_and_unnumbered_tables (test_academic_pdf.TestAcademicPDF)
+中文续表无重复表头时可合并；无编号的独立表不凭同表头合并。 ... ok
+test_continuation_without_repeated_header (test_academic_pdf.TestAcademicPDF)
+明确同编号续表可无重复表头，下一页首行数据不可丢失。 ... ok
+test_cross_page_table_merges_rows_and_keeps_row_sources (test_academic_pdf.TestAcademicPDF)
+相邻页同一续表合并，重复表头去重，每行记录真实来源页。 ... ok
+test_dense_formula_rows_do_not_leak_into_neighbors (test_academic_pdf.TestAcademicPDF)
+上标边缘与邻行相交时，不能向表头或邻行复制残留字符。 ... ok
+test_different_numbered_tables_do_not_merge (test_academic_pdf.TestAcademicPDF)
+几何位置和表头相同也不能合并不同编号的独立表。 ... ok
+test_formula_symbols_and_scripts_are_preserved (test_academic_pdf.TestAcademicPDF)
+公式符号与上下标保持，不能把 x 的平方压成普通 x2。 ... ok
+test_fraction_layout_retains_original_positions (test_academic_pdf.TestAcademicPDF)
+不猜测二维分式的 LaTeX，保留分子/分母位置以回看原文。 ... ok
+test_full_width_separator_between_column_sections (test_academic_pdf.TestAcademicPDF)
+页中通栏内容将双栏分为上下区域，避免跨区域串读。 ... ok
+test_image_formula_is_locatable_after_batch_save (test_academic_pdf.TestAcademicPDF)
+混合文本页的公式图片保留原文定位，批量保存后仍可裁剪查看。 ... ok
+test_indented_single_column_is_not_reordered (test_academic_pdf.TestAcademicPDF)
+上下分离的缩进段落不能被误当作同时并排的两栏。 ... ok
+test_multiline_top_caption_wins_over_next_tables_caption (test_academic_pdf.TestAcademicPDF)
+上置标题最后一行最接近本表，不能只按第一行距离改绑下方标题。 ... ok
+test_multiple_table_styles_on_same_page (test_academic_pdf.TestAcademicPDF)
+同页网格表与三线表分别保留，不把横线范围或单元格混在一起。 ... ok
+test_nonadjacent_or_incompatible_tables_do_not_merge (test_academic_pdf.TestAcademicPDF)
+页码断开、表头或列结构不同、非页边续接均分别保留。 ... ok
+test_three_line_formula_cells_and_header_words (test_academic_pdf.TestAcademicPDF)
+多词表头和公式中的间隔不拆成虚假的列。 ... ok
+test_three_line_table_and_empty_cells (test_academic_pdf.TestAcademicPDF)
+三线表在规则围出的区域内识别，空单元格不从相邻行填值。 ... ok
+test_three_page_table_keeps_first_caption_identity (test_academic_pdf.TestAcademicPDF)
+中间续页不重复标题时，仍保留整张表的编号和第三页数据。 ... ok
+test_two_columns_with_full_width_heading (test_academic_pdf.TestAcademicPDF)
+先通栏标题，再完整左栏、完整右栏，最后页脚。 ... ok
+test_unequal_multiline_columns_are_not_guessed_into_rows (test_academic_pdf.TestAcademicPDF) ... ok
+test_config_defaults_and_overrides (test_chunking.TestChunking)
+统一入口读取唯一配置，显式参数可覆盖实验值。 ... ok
+test_empty_documents (test_chunking.TestChunking)
+空列表、空文本和仅空白文档不生成无效块。 ... ok
+test_fixed_course_sizes (test_chunking.TestChunking)
+课程规定的 256/512/1024 都可切分，正文长度不超过设置。 ... ok
+test_fixed_exact_overlap (test_chunking.TestChunking)
+固定窗口按字符数切分，相邻正文块精确重叠。 ... ok
+test_fixed_no_redundant_tail (test_chunking.TestChunking)
+末尾已被覆盖时不再输出完全包含在上一块中的尾块。 ... ok
+test_image_layout_is_stored_once_per_page_with_stable_source (test_chunking.TestChunking)
+三种分块不重复整页图片坐标；每页来源独立，重做ID稳定，原文不修改。 ... ok
+test_invalid_parameters (test_chunking.TestChunking)
+拒绝不合法大小和重叠，避免零步长或负数切片。 ... ok
+test_layout_is_localized_without_losing_cross_chunk_or_unlocated_lines (test_chunking.TestChunking)
+布局按字符相交保留，跨块公式、重复文本和不在正文的表格坐标均不丢。 ... ok
+test_loaded_text_line_numbers (test_chunking.TestChunking)
+真实 TXT 加载后细化 CRLF 行范围；块内原文和文件来源保持一致。 ... ok
+test_loaded_word_and_pdf (test_chunking.TestChunking)
+真实 Word/PDF 加载结果可直接分块，来源位置与表格不丢失。 ... ok
+test_pdf_and_word_tables_remain_whole (test_chunking.TestChunking)
+独立表格不拆，即使超长也保留跨页行信息和保护标记。 ... ok
+test_preserves_metadata_without_mutating_input (test_chunking.TestChunking)
+保留 PDF 页码、版面和公式原位置，并复制元数据。 ... ok
+test_ranges_cover_original_content (test_chunking.TestChunking)
+不同大小和重叠下，区间准确、向前推进，所有非空白字符均被覆盖。 ... ok
+test_recursive_character_fallback (test_chunking.TestChunking)
+没有分隔符的长文本仍能限长并保留重叠。 ... ok
+test_recursive_paragraph_boundaries (test_chunking.TestChunking)
+优先按段落分隔符切分，并保留分隔符原文。 ... ok
+test_recursive_repeated_punctuation_advances_and_covers_source (test_chunking.TestChunking)
+默认重叠下，短重复分隔符不能回指旧片段或漏掉句号。 ... ok
+test_semantic_chinese_sentences_and_quotes (test_chunking.TestChunking)
+长段落拆句，结束引号与标点跟随原句。 ... ok
+test_semantic_complete_unit_overlap (test_chunking.TestChunking)
+重叠复用完整句子；不足容纳整句时不截出半句。 ... ok
+test_semantic_english_decimal_and_doi (test_chunking.TestChunking)
+英文句号可拆句，小数和 DOI 内部的点不误拆。 ... ok
+test_semantic_keeps_paragraphs (test_chunking.TestChunking)
+短段落整体保留，空行跟随原段落。 ... ok
+test_semantic_long_sentence_fallback (test_chunking.TestChunking)
+超长单句按字符兜底，最后短片段不丢失。 ... ok
+test_short_document (test_chunking.TestChunking)
+短文档保持原文，包括缩进与尾部换行。 ... ok
+test_stable_distinct_chunk_ids (test_chunking.TestChunking)
+重复执行 ID 不变，重复正文在不同页/段落及不同配置中不会混淆。 ... ok
+test_unknown_strategy (test_chunking.TestChunking)
+未知策略明确报错，不悄悄回退。 ... ok
+
+----------------------------------------------------------------------
+Ran 45 tests in 0.307s
+
+OK
+Consider using the pymupdf_layout package for a greatly improved page layout analysis.

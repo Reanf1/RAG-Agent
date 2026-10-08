@@ -56,6 +56,7 @@ def _build_chunks(documents, split_ranges, strategy, chunk_size, chunk_overlap):
         # 与 str.splitlines() 一致；CRLF 作为一个换行，换行字符归前一行。
         line_ends = [match.end() for match in re.finditer(r"\r\n|[\n\r\v\f\x1c-\x1e\x85\u2028\u2029]", text)]
         layout, layout_origin = _layout_ranges(metadata.get("formula_layout"), text), None
+        image_origin = None
         for index, (start, end) in enumerate(ranges):
             content = text[start:end]
             if not content.strip():
@@ -69,6 +70,13 @@ def _build_chunks(documents, split_ranges, strategy, chunk_size, chunk_overlap):
                 "chunk_size": chunk_size, "chunk_overlap": chunk_overlap,
                 "start_index": start, "end_index": end,
             })
+            if "image_regions" in metadata:
+                # 本页图片坐标只存首个非空块，其余块保留稳定来源指针；原文元数据不变。
+                if image_origin is None:
+                    image_origin = chunk_metadata["chunk_id"]
+                else:
+                    del chunk_metadata["image_regions"]
+                    chunk_metadata["image_regions_origin_chunk_id"] = image_origin
             if layout is not None:
                 # 跨块行保留完整坐标；重复文本保守匹配全部位置，不推测排版对应关系。
                 entries = [entry for entry, positions in layout if

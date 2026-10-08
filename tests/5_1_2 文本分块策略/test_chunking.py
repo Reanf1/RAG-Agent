@@ -173,6 +173,27 @@ class TestChunking(unittest.TestCase):
             self.assertEqual(document.metadata, metadata)
             self.assertNotIn("chunk_id", document.metadata)
 
+    def test_image_layout_is_stored_once_per_page_with_stable_source(self):
+        """三种分块不重复整页图片坐标；每页来源独立，重做ID稳定，原文不修改。"""
+        images = json.dumps([{"page_number": 1, "bbox": [0, i, 10, i + 1]} for i in range(100)])
+        documents = [Document(page_content="  \n" + "图像附近的说明。" * 20,
+                              metadata={"doc_id": "paper", "page": page, "image_regions": images})
+                     for page in (0, 1)]
+        for splitter in self.strategies:
+            chunks = splitter(documents, 30, 4)
+            for page in (0, 1):
+                group = [chunk for chunk in chunks if chunk.metadata["page"] == page]
+                self.assertGreater(len(group), 1)
+                self.assertEqual(group[0].metadata["image_regions"], images)
+                self.assertTrue(all("image_regions" not in chunk.metadata for chunk in group[1:]))
+                self.assertTrue(all(chunk.metadata["image_regions_origin_chunk_id"] == group[0].metadata["chunk_id"] for chunk in group[1:]))
+                stored = sum(len(chunk.metadata.get("image_regions", "")) + len(chunk.metadata.get("image_regions_origin_chunk_id", "")) for chunk in group)
+                self.assertLess(stored, len(images) * len(group) / 2)
+            again = splitter(documents, 30, 4)
+            self.assertEqual([chunk.metadata for chunk in chunks], [chunk.metadata for chunk in again])
+            self.assertTrue(all(document.metadata["image_regions"] == images for document in documents))
+            self.assertTrue(all("image_regions_origin_chunk_id" not in document.metadata for document in documents))
+
     def test_stable_distinct_chunk_ids(self):
         """重复执行 ID 不变，重复正文在不同页/段落及不同配置中不会混淆。"""
         documents = [Document(page_content="重复内容" * 8, metadata={"doc_id": "id", "page": page})
