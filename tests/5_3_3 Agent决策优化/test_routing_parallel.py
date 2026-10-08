@@ -156,30 +156,30 @@ class TestRoutingAndParallel(unittest.TestCase):
         self.assertEqual(think_mock.call_count, 1)
         self.assertEqual(len(events[-1]["context"]["observations"]), 1)
 
-    def test_thought_accepts_independent_names_list_and_schema_limit(self):
-        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(self.plan)).encode())) as http:
+    def test_thought_binds_registered_tools_once_with_parallel_limit(self):
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.response).encode())) as http:
             result = think("独立读取3和5", self.tools)
-        self.assertEqual(result["parallel_tools"], ["read_number"])
-        choice = json.loads(http.call_args.args[0].data)["format"]["properties"]["parallel_tools"]
-        self.assertEqual(choice["maxItems"], 2)
-        self.assertNotIn("uniqueItems", choice)
+        self.assertEqual(result["parallel_tools"], ["read_number", "read_number"])
+        payload = json.loads(http.call_args.args[0].data)
+        self.assertEqual(len(payload["tools"]), 1)
+        self.assertNotIn("format", payload)
+        self.assertIn("最多2个", payload["messages"][0]["content"])
 
-    def test_same_tool_two_inputs_are_accepted_without_duplicate_schema(self):
-        plan = {**self.plan, "parallel_tools": ["read_number", "read_number"]}
-        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(plan)).encode())):
-            self.assertEqual(think("分别读取3和5", self.tools)["parallel_tools"], plan["parallel_tools"])
-        events, http = self.action(plan=plan)
+    def test_same_tool_two_inputs_reuse_decision_without_second_request(self):
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.response).encode())):
+            plan = think("分别读取3和5", self.tools)
+        with patch("src.agent.react_loop.urlopen") as http:
+            events = list(act("分别读取3和5", plan, self.tools))
+        http.assert_not_called()
         self.assertEqual(sorted(self.invocations), [3, 5])
-        self.assertEqual(len(json.loads(http.call_args.args[0].data)["tools"]), 1)
         self.assertEqual(sum(e["type"] == "tool_result" for e in events), 2)
-        response = {**self.response, "message": {"tool_calls": self.response["message"]["tool_calls"][:1]}}
-        events, _ = self.action(response=response, plan=plan)
-        self.assertEqual(events[-1]["type"], "error")
+        self.assertTrue(all(e["usage"]["eval_count"] == 0 for e in events if e["type"] == "tool_call"))
 
-    def test_thought_rejects_empty_duplicate_unknown_or_excessive_batch(self):
-        for names in (None, "read_number", ["read_number"] * 3, ["unknown"], [1], ["read_number", "unknown", "other"]):
-            with self.subTest(names=names), patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(
-                    self.packet({**self.plan, "parallel_tools": names})).encode())), self.assertRaises(RuntimeError):
+    def test_thought_rejects_unknown_or_excessive_native_calls(self):
+        for calls in ([{"function": {"name": "unknown", "arguments": {}}}],
+                      self.response["message"]["tool_calls"] * 2):
+            response = {**self.response, "message": {"tool_calls": calls}}
+            with self.subTest(calls=calls), patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(response).encode())), self.assertRaises(RuntimeError):
                 think("独立读取", self.tools)
 
     def test_two_threads_reach_barrier_and_return_stable_order(self):
@@ -275,10 +275,9 @@ class TestRoutingAndParallel(unittest.TestCase):
         events, _ = self.action(packet, plan, [*self.tools, current_time])
         self.assertEqual([event["type"] for event in events], ["error"])
         self.assertIn("完整", events[0]["message"])
-        for bad in ({**self.plan, "tool_name": "current_time"}, {**self.plan, "next_step": "answer", "tool_name": None}):
-            with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(bad)).encode())), \
-                    self.subTest(plan=bad), self.assertRaises(RuntimeError):
-                think("读取独立输入", [*self.tools, current_time])
+        bad_plan = {**plan, "tool_name": "current_time"}
+        events, _ = self.action(packet, bad_plan, [*self.tools, current_time])
+        self.assertEqual([event["type"] for event in events], ["error"])
         self.assertEqual(self.invocations, [])
 
     def test_closing_during_batch_call_events_starts_no_tools(self):
@@ -300,7 +299,7 @@ class TestRoutingAndParallel(unittest.TestCase):
 
     def test_loop_observes_entire_batch_and_preserves_native_input_order(self):
         with patch("src.agent.react_loop.urlopen", side_effect=[BytesIO(json.dumps(x).encode()) for x in
-                (self.packet(self.plan), self.response, self.packet(self.finished))]) as http:
+                (self.response, self.packet(self.finished))]) as http:
             events = list(run_react("处理独立输入3和5。", self.tools))
         self.assertEqual([item["result"] for item in events[-1]["context"]["observations"]], [6, 10])
         self.assertTrue(events[-1]["task_complete"])

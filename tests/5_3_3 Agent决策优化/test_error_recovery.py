@@ -74,8 +74,7 @@ class TestErrorRecovery(unittest.TestCase):
                 "done_reason": "stop", "prompt_eval_count": 100, "eval_count": 20}
 
     def plan(self, name=None):
-        return self.packet({"thought": "获取同一词条。" if name else "说明结果或失败。",
-                            "next_step": "tool" if name else "answer", "tool_name": name})
+        return self.packet(name=name) if name else self.packet("说明结果或失败。")
 
     def loop(self, packets, tools=None, context=None):
         with patch("src.agent.react_loop.route_question", return_value=None), \
@@ -256,8 +255,8 @@ class TestErrorRecovery(unittest.TestCase):
         self.config["agent"]["tool_timeout_seconds"] = .05
         blocking, _, released, finished = self.blocked_tool()
         try:
-            events, http = self.loop([self.plan(blocking.name), self.packet(name=blocking.name)], [blocking, self.tools[1]])
-            self.assertEqual(http.call_count, 2)
+            events, http = self.loop([self.packet(name=blocking.name)], [blocking, self.tools[1]])
+            self.assertEqual(http.call_count, 1)
             self.assertEqual(events[-1]["stop_reason"], "tool_timeout")
             self.assertFalse(events[-1]["task_complete"])
             self.assertIn("后台函数", events[-1]["full_response"])
@@ -270,13 +269,13 @@ class TestErrorRecovery(unittest.TestCase):
         self.mode = "execution"
         context = {"observations": []}
         original = deepcopy(context)
-        events, http = self.loop([self.plan("primary_lookup"), self.packet(name="primary_lookup"), self.packet(self.failed),
-                                  self.plan("backup_lookup"), self.packet(name="backup_lookup"), self.packet(self.finished)], context=context)
+        events, http = self.loop([self.packet(name="primary_lookup"), self.packet(self.failed),
+                                  self.packet(name="backup_lookup"), self.packet(self.finished)], context=context)
         self.assertTrue(events[-1]["task_complete"])
         self.assertEqual([item[0] for item in self.invocations], ["primary_lookup", "backup_lookup"])
         self.assertEqual([item["status"] for item in events[-1]["context"]["observations"]], ["error", "success"])
         self.assertEqual(len([e for e in events if e["type"] == "recovery"]), 1)
-        specs = json.loads(json.loads(http.call_args_list[3].args[0].data)["messages"][0]["content"].split("【可用工具描述】\n")[1].splitlines()[0])
+        specs = json.loads(json.loads(http.call_args_list[2].args[0].data)["messages"][0]["content"].split("【可用工具描述】\n")[1].splitlines()[0])
         self.assertEqual([item["name"] for item in specs["available_tools"]], ["backup_lookup"])
         results = [e for e in events if e["type"] == "tool_result"]
         self.assertNotEqual(results[0]["call_id"], results[1]["call_id"])
@@ -284,18 +283,18 @@ class TestErrorRecovery(unittest.TestCase):
 
     def test_exhausted_timeout_can_use_alternative(self):
         self.mode = "timeout"
-        events, _ = self.loop([self.plan("primary_lookup"), self.packet(name="primary_lookup"), self.packet(self.failed),
-                              self.plan("backup_lookup"), self.packet(name="backup_lookup"), self.packet(self.finished)])
+        events, _ = self.loop([self.packet(name="primary_lookup"), self.packet(self.failed),
+                              self.packet(name="backup_lookup"), self.packet(self.finished)])
         self.assertTrue(events[-1]["task_complete"])
         self.assertEqual(len(self.invocations), 3)
         self.assertEqual(len(events[-1]["context"]["observations"][0]["attempts"]), 2)
 
     def test_no_alternative_reports_failure_and_does_not_invent_tools(self):
         self.mode = "execution"
-        events, http = self.loop([self.plan("primary_lookup"), self.packet(name="primary_lookup"), self.packet(self.failed)], self.tools[:1])
+        events, http = self.loop([self.packet(name="primary_lookup"), self.packet(self.failed)], self.tools[:1])
         self.assertFalse(events[-1]["task_complete"])
         self.assertEqual(events[-1]["stop_reason"], "incomplete")
-        self.assertEqual(http.call_count, 3)
+        self.assertEqual(http.call_count, 2)
         self.assertFalse(any(e["type"] == "recovery" for e in events))
 
     def test_all_alternatives_fail_and_stop_without_reusing_failed_tools(self):
@@ -305,8 +304,8 @@ class TestErrorRecovery(unittest.TestCase):
             """备用也真实抛错，验证恢复次数受注册工具和迭代上限约束。"""
             self.invocations.append(("backup_lookup", key))
             raise RuntimeError("备用查询也不可用")
-        events, _ = self.loop([self.plan("primary_lookup"), self.packet(name="primary_lookup"), self.packet(self.failed),
-                              self.plan("backup_lookup"), self.packet(name="backup_lookup"), self.packet(self.failed)],
+        events, _ = self.loop([self.packet(name="primary_lookup"), self.packet(self.failed),
+                              self.packet(name="backup_lookup"), self.packet(self.failed)],
                              [self.tools[0], unavailable_backup])
         self.assertEqual(events[-1]["stop_reason"], "incomplete")
         self.assertEqual(len(self.invocations), 2)
@@ -316,29 +315,29 @@ class TestErrorRecovery(unittest.TestCase):
     def test_recovery_cannot_exceed_last_iteration(self):
         self.mode = "execution"
         self.config["agent"]["max_iterations"] = 1
-        events, http = self.loop([self.plan("primary_lookup"), self.packet(name="primary_lookup"), self.packet(self.pending)])
+        events, http = self.loop([self.packet(name="primary_lookup"), self.packet(self.pending)])
         self.assertEqual(events[-1]["stop_reason"], "max_iterations")
-        self.assertEqual(http.call_count, 3)
+        self.assertEqual(http.call_count, 2)
         self.assertEqual(len(self.invocations), 1)
 
     def test_input_error_does_not_force_unrelated_alternative(self):
         self.mode = "input"
-        events, http = self.loop([self.plan("primary_lookup"), self.packet(name="primary_lookup"), self.packet(self.failed)])
+        events, http = self.loop([self.packet(name="primary_lookup"), self.packet(self.failed)])
         self.assertEqual(events[-1]["stop_reason"], "incomplete")
-        self.assertEqual(http.call_count, 3)
+        self.assertEqual(http.call_count, 2)
         self.assertEqual(len(self.invocations), 1)
 
     def test_failed_tool_cannot_be_reselected_in_recovery_round(self):
         self.mode = "execution"
-        events, http = self.loop([self.plan("primary_lookup"), self.packet(name="primary_lookup"), self.packet(self.failed),
+        events, http = self.loop([self.packet(name="primary_lookup"), self.packet(self.failed),
                                   self.plan("primary_lookup")])
         self.assertEqual(events[-1]["stop_reason"], "error")
-        self.assertEqual(http.call_count, 4)
+        self.assertEqual(http.call_count, 3)
         self.assertEqual(len(self.invocations), 1)
 
     def test_no_suitable_alternative_finishes_incomplete_without_a_tool(self):
         self.mode = "execution"
-        events, _ = self.loop([self.plan("primary_lookup"), self.packet(name="primary_lookup"), self.packet(self.failed),
+        events, _ = self.loop([self.packet(name="primary_lookup"), self.packet(self.failed),
                               self.plan(), self.packet(self.failed)])
         self.assertEqual(events[-1]["stop_reason"], "incomplete")
         self.assertEqual(len(self.invocations), 1)
@@ -346,24 +345,24 @@ class TestErrorRecovery(unittest.TestCase):
 
     def test_unrecovered_answer_cannot_claim_completion(self):
         self.mode = "execution"
-        events, _ = self.loop([self.plan("primary_lookup"), self.packet(name="primary_lookup"), self.packet(self.failed),
+        events, _ = self.loop([self.packet(name="primary_lookup"), self.packet(self.failed),
                               self.plan(), self.packet(self.finished)])
         self.assertFalse(events[-1]["task_complete"])
         self.assertEqual(events[-1]["stop_reason"], "error")
 
     def test_same_call_is_stopped_before_third_execution(self):
-        round_packets = [self.plan("primary_lookup"), self.packet(name="primary_lookup"), self.packet(self.pending)]
-        events, http = self.loop([*round_packets, *round_packets, self.plan("primary_lookup"), self.packet(name="primary_lookup")])
+        round_packets = [self.packet(name="primary_lookup"), self.packet(self.pending)]
+        events, http = self.loop([*round_packets, *round_packets, self.packet(name="primary_lookup")])
         self.assertEqual(events[-1]["stop_reason"], "repeated_calls")
         self.assertIn("死循环", events[-1]["full_response"])
         self.assertEqual(len(self.invocations), 2)
-        self.assertEqual(http.call_count, 8)
+        self.assertEqual(http.call_count, 5)
 
     def test_alternating_cycle_is_also_stopped(self):
         packets = []
         for name in ("primary_lookup", "backup_lookup", "primary_lookup", "backup_lookup"):
-            packets.extend([self.plan(name), self.packet(name=name), self.packet(self.pending)])
-        events, _ = self.loop([*packets, self.plan("primary_lookup"), self.packet(name="primary_lookup")])
+            packets.extend([self.packet(name=name), self.packet(self.pending)])
+        events, _ = self.loop([*packets, self.packet(name="primary_lookup")])
         self.assertEqual(events[-1]["stop_reason"], "repeated_calls")
         self.assertEqual(len(self.invocations), 4)
         self.assertEqual(events[-1]["iterations"], 5)
@@ -371,11 +370,11 @@ class TestErrorRecovery(unittest.TestCase):
     def test_different_arguments_and_separate_requests_are_not_a_cycle(self):
         packets = []
         for key in ("A", "B", "C"):
-            packets.extend([self.plan("primary_lookup"), self.packet(name="primary_lookup", args={"key": key}),
+            packets.extend([self.packet(name="primary_lookup", args={"key": key}),
                             self.packet(self.finished if key == "C" else self.pending)])
         self.assertTrue(self.loop(packets)[0][-1]["task_complete"])
         self.invocations = []
-        packets = [self.plan("primary_lookup"), self.packet(name="primary_lookup"), self.packet(self.finished)]
+        packets = [self.packet(name="primary_lookup"), self.packet(self.finished)]
         for _ in range(3):
             self.assertTrue(self.loop(packets)[0][-1]["task_complete"])
         self.assertEqual(len(self.invocations), 3)

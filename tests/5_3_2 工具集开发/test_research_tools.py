@@ -363,7 +363,6 @@ class TestResearchTools(unittest.TestCase):
         def packet(content):
             return {**self.response, "message": {"content": json.dumps(content)}}
 
-        plan = {"thought": "先检索论文。", "next_step": "tool", "tool_name": "knowledge_base_search"}
         action = {**self.response, "message": {"tool_calls": [{"function": {
             "name": "knowledge_base_search", "arguments": {"question": "模型结果？"}}}]}}
         observed = {"observation": "已获得带来源答案。", "decision": "finish", "task_complete": True,
@@ -372,7 +371,7 @@ class TestResearchTools(unittest.TestCase):
         with patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
                 patch("src.generation.rag_pipeline.urlopen", return_value=BytesIO(json.dumps(rag_response).encode())), \
                 patch("src.agent.react_loop.urlopen", side_effect=[BytesIO(json.dumps(r).encode()) for r in
-                                                                   (packet(plan), action, packet(observed))]):
+                                                                   (action, packet(observed))]):
             retriever.return_value.search.return_value = [(self.document, 0.9)]
             events = list(run_react("模型结果？"))
         self.assertTrue(events[-1]["task_complete"])

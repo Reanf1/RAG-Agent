@@ -256,7 +256,7 @@ class TestSessionIsolation(unittest.TestCase):
                 requests.append(codes[0])
             # 每个用户的Thought及Observation都等待另一用户，不能用串行执行冒充并发。
             barrier.wait(timeout=5)
-            planning = "thought" in body["format"]["properties"]
+            planning = "format" not in body
             content = {"thought": "依据本会话历史回答。", "next_step": "answer", "tool_name": None} if planning else {
                 "observation": "本会话记录包含代号。", "decision": "finish", "task_complete": True, "answer": codes[0]}
             return BytesIO(json.dumps(self.packet(content), ensure_ascii=False).encode())

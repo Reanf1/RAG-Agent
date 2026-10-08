@@ -15,7 +15,7 @@ from unittest.mock import patch
 from urllib.error import URLError
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.tools import tool
-from src.agent.react_loop import build_thought_messages, think
+from src.agent.react_loop import act, build_thought_messages, think
 from src.utils.config import load_config
 from tests.helpers import isolated_agent_logs
 
@@ -46,7 +46,7 @@ class TestThought(unittest.TestCase):
 
         self.tools = [multiply]
         self.plan = {"thought": "下一步用乘法工具获得准确结果。", "next_step": "tool", "tool_name": "multiply"}
-        self.response = {"model": "qwen2.5:7b", "message": {"content": json.dumps(self.plan)},
+        self.response = {"model": "qwen2.5:7b", "message": {"content": "", "tool_calls": [{"function": {"name": "multiply", "arguments": {"a": 3.14, "b": 2.56}}}]},
                          "done": True, "done_reason": "stop", "prompt_eval_count": 400, "eval_count": 30}
 
     def call(self, response=None, tools=None):
@@ -70,7 +70,7 @@ class TestThought(unittest.TestCase):
         self.assertEqual(set(spec["parameters"]["required"]), {"a", "b"})
         self.assertEqual(context, snapshot)
         self.assertNotIn("available_tools", data)
-        self.assertIn("简短", messages[0].content)
+        self.assertIn("一次同时确定工具和参数", messages[0].content)
 
     def test_dynamic_instructions_do_not_change_system_message(self):
         baseline = build_thought_messages("问题", [])
@@ -97,7 +97,8 @@ class TestThought(unittest.TestCase):
         self.assertFalse(payload["stream"])
         self.assertEqual(payload["model"], self.config["llm"]["model"])
         self.assertEqual(payload["options"]["temperature"], self.config["llm"]["temperature"])
-        self.assertEqual(payload["format"]["properties"]["tool_name"]["enum"], [None, "multiply"])
+        self.assertEqual(payload["tools"][0]["function"]["name"], "multiply")
+        self.assertNotIn("format", payload)
         self.assertEqual(json.loads(payload["messages"][1]["content"])["context"], context)
         self.assertEqual(result["type"], "thought")
         self.assertEqual(result["next_step"], "tool")
@@ -105,38 +106,49 @@ class TestThought(unittest.TestCase):
         self.assertGreaterEqual(result["elapsed_seconds"], 0)
         self.assertEqual(context, snapshot)
         self.assertEqual(self.invocations, [])  # 选择不是执行；本阶段不能出现Action副作用。
-        self.assertNotIn("tools", payload)  # Thought结构化计划不是已实现的Function Calling Action。
+        self.assertEqual(result["tool_calls"], self.response["message"]["tool_calls"])
 
-    def test_direct_answer_plan_with_no_tools_does_not_generate_answer(self):
-        response = deepcopy(self.response)
-        response["message"]["content"] = json.dumps({"thought": "通用概念可在下一步直接回答。", "next_step": "answer", "tool_name": None})
+    def test_direct_answer_without_tools_has_no_tool_calls(self):
+        response = {**self.response, "message": {"content": "通用概念可直接回答。"}}
         result = self.call(response, tools=[])
         self.assertEqual(result["next_step"], "answer")
         self.assertIsNone(result["tool_name"])
-        self.assertNotIn("answer", result)
+        self.assertEqual(result["tool_calls"], [])
 
-    def test_invalid_plan_fields_and_tool_decisions_are_rejected(self):
-        plans = [[], {}, {**self.plan, "answer": "越界回答"}, {**self.plan, "thought": " "},
-                 {**self.plan, "thought": 1}, {**self.plan, "thought": "长" * 201},
-                 {**self.plan, "next_step": "execute"}, {**self.plan, "tool_name": "web_search"},
-                 {**self.plan, "tool_name": None}, {**self.plan, "next_step": "answer"}]
-        for plan in plans:
-            with self.subTest(plan=plan), self.assertRaises(RuntimeError):
-                response = deepcopy(self.response)
-                response["message"]["content"] = json.dumps(plan)
-                self.call(response)
+    def test_invalid_native_tool_decisions_are_rejected(self):
+        calls = [None, {}, [None], [{"function": None}],
+                 [{"function": {"name": "unknown", "arguments": {}}}],
+                 [{"function": {"name": "multiply", "arguments": "{}"}}]]
+        for batch in calls:
+            with self.subTest(calls=batch), self.assertRaises(RuntimeError):
+                self.call({**self.response, "message": {"tool_calls": batch}})
+        self.assertEqual(self.invocations, [])
 
-    def test_no_tools_cannot_select_tool_and_boundary_length_is_valid(self):
+    def test_no_tools_cannot_select_tool(self):
         with self.assertRaisesRegex(RuntimeError, "不可用工具"):
             self.call(tools=[])
-        response = deepcopy(self.response)
-        response["message"]["content"] = json.dumps({**self.plan, "thought": "短" * 200})
-        self.assertEqual(len(self.call(response)["thought"]), 200)
 
-    def test_invalid_json_and_content_shape_are_explicit_errors(self):
-        for content in ("不是JSON", "```json\n{}\n```", {}, None):
+    def test_empty_or_non_text_answer_is_explicit_error(self):
+        for content in ("", " ", {}, None):
             with self.subTest(content=content), self.assertRaises(RuntimeError):
                 self.call({**self.response, "message": {"content": content}})
+
+    def test_action_reuses_decision_and_validates_args_without_second_http(self):
+        """同一次决策同时选工具和参数，校验与实际执行仍在Action。"""
+        thought = self.call()
+        with patch("src.agent.react_loop.urlopen") as http:
+            events = list(act("3.14乘以2.56", thought, self.tools))
+        http.assert_not_called()
+        self.assertEqual(self.invocations, [(3.14, 2.56)])
+        self.assertEqual(events[0]["usage"], {"prompt_eval_count": 0, "eval_count": 0})
+        self.assertEqual(events[0]["message"].tool_calls[0]["id"], events[1]["message"].tool_call_id)
+        self.invocations.clear()
+        thought["tool_calls"][0]["function"]["arguments"] = {"a": 1}
+        with patch("src.agent.react_loop.urlopen") as http:
+            events = list(act("问题", thought, self.tools))
+        http.assert_not_called()
+        self.assertEqual(events[-1]["status"], "error")
+        self.assertEqual(self.invocations, [])
 
     def test_unfinished_length_stops_service_errors_and_bad_shapes_are_rejected(self):
         responses = [[], {"error": "模型出错"}, {**self.response, "message": None},

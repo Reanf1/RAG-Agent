@@ -174,14 +174,14 @@ class TestAgentSystemPrompt(unittest.TestCase):
         http.assert_not_called()
 
     def test_empty_registry_constrains_model_plan_to_answer(self):
-        plan = {"thought": "没有文献资料，需说明不足。", "next_step": "answer", "tool_name": None}
         response = {"model": "qwen2.5:7b", "done": True, "done_reason": "stop",
-                    "message": {"content": json.dumps(plan)}}
+                    "message": {"content": "没有文献资料，需先上传论文。"}}
         with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(response).encode())) as http:
-            think("未上传论文的准确率是多少？", [])
-        schema = json.loads(http.call_args.args[0].data)["format"]
-        self.assertEqual(schema["properties"]["next_step"]["enum"], ["answer"])
-        self.assertEqual(schema["properties"]["tool_name"]["enum"], [None])
+            result = think("未上传论文的准确率是多少？", [])
+        payload = json.loads(http.call_args.args[0].data)
+        self.assertEqual(payload["tools"], [])
+        self.assertEqual(result["next_step"], "answer")
+        self.assertEqual(result["tool_calls"], [])
 
 
 if __name__ == "__main__":

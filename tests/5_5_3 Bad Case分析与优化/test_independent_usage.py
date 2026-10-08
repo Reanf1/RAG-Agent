@@ -63,7 +63,7 @@ class ActionFailureUsageAudit(unittest.TestCase):
         """参数校验失败发生在响应之后；两阶段均保留服务返回的真实账目。"""
         for question in ("帮我处理一下", "什么是深度学习？"):
             packet = {"model": "报文替身", "done": True, "done_reason": "stop", "prompt_eval_count": 90,
-                      "eval_count": 10, "message": {"content": "不是合法JSON"}}
+                      "eval_count": 10, "message": {"content": None}}
             with self.subTest(question=question), patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(packet).encode())):
                 events = list(run_react(question, []))
                 error = next(event for event in events if event["type"] == "error")

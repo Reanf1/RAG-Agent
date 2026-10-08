@@ -144,7 +144,7 @@ class TestAgentMemoryContext(unittest.TestCase):
         plan = {"thought": "按历史系数计算。", "next_step": "tool", "tool_name": "calculator", "parallel_tools": []}
         calls = [{"function": {"name": "calculator", "arguments": {"expression": "3.14*2"}}}]
         finish = {"observation": "工具返回6.28。", "decision": "finish", "task_complete": True, "answer": "结果为6.28。"}
-        with patch("src.agent.react_loop.urlopen", side_effect=[self.packet(plan), self.packet(calls=calls), self.packet(finish)]) as model:
+        with patch("src.agent.react_loop.urlopen", side_effect=[self.packet(calls=calls), self.packet(finish)]) as model:
             events = list(public_run("用刚才的系数乘以2。", "alice", self.session, memory=MemoryManager(self.path)))
         self.assertEqual(next(e["result"]["result"] for e in events if e["type"] == "tool_result"), "6.28")
         for call in model.call_args_list:

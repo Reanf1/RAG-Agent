@@ -100,8 +100,8 @@ class TestObservationAndLoop(unittest.TestCase):
         context = {"source": "原始资料", "observations": []}
         original = deepcopy(context)
         events, http = self.run_loop([
-            self.plan("multiply"), self.packet(name="multiply", args={"a": 3, "b": 4}), self.packet(self.pending),
-            self.plan("add"), self.packet(name="add", args={"a": 12, "b": 5}), self.packet(self.finished)], context)
+            self.packet(name="multiply", args={"a": 3, "b": 4}), self.packet(self.pending),
+            self.packet(name="add", args={"a": 12, "b": 5}), self.packet(self.finished)], context)
         self.assertEqual(self.invocations, [("multiply", 3, 4), ("add", 12, 5)])
         self.assertEqual([e["type"] for e in events],
                          ["thought", "tool_call", "tool_result", "observation"] * 2 + ["done"])
@@ -113,21 +113,21 @@ class TestObservationAndLoop(unittest.TestCase):
         self.assertEqual([e["result"] for e in done["context"]["observations"]], [12, 17])
         self.assertEqual(done["context"]["source"], "原始资料")
         self.assertEqual(context, original)
-        native = json.loads(http.call_args_list[2].args[0].data)["messages"]
+        native = json.loads(http.call_args_list[1].args[0].data)["messages"]
         self.assertEqual([m["role"] for m in native], ["system", "user", "assistant", "tool"])
         self.assertEqual(native[2]["tool_calls"][0]["function"], {"name": "multiply", "arguments": {"a": 3, "b": 4}})
         self.assertEqual(native[3]["tool_name"], "multiply")
         self.assertEqual(native[3]["content"], "12.0")
-        second_state = json.loads(json.loads(http.call_args_list[3].args[0].data)["messages"][1]["content"])["context"]
+        second_state = json.loads(json.loads(http.call_args_list[2].args[0].data)["messages"][1]["content"])["context"]
         self.assertEqual(second_state["observations"][0]["result"], 12)
         self.assertEqual(second_state["last_observation"]["decision"], "continue")
         self.assertEqual(events[1]["message"].tool_calls[0]["id"], events[2]["message"].tool_call_id)
 
     def test_continue_stops_at_limit_without_extra_model_or_tool_calls(self):
         events, http = self.run_loop([
-            self.plan("multiply"), self.packet(name="multiply", args={"a": 3, "b": 4}), self.packet(self.pending),
-            self.plan("add"), self.packet(name="add", args={"a": 12, "b": 5}), self.packet(self.pending)])
-        self.assertEqual(http.call_count, 6)
+            self.packet(name="multiply", args={"a": 3, "b": 4}), self.packet(self.pending),
+            self.packet(name="add", args={"a": 12, "b": 5}), self.packet(self.pending)])
+        self.assertEqual(http.call_count, 4)
         self.assertEqual(len(self.invocations), 2)
         self.assertFalse(events[-1]["task_complete"])
         self.assertEqual(events[-1]["stop_reason"], "max_iterations")
@@ -251,17 +251,17 @@ class TestObservationAndLoop(unittest.TestCase):
     def test_tool_failure_is_observed_and_stops_honestly(self):
         failed = {"observation": "除数为零，工具失败。", "decision": "finish",
                   "task_complete": False, "answer": "除零无法计算，请修改除数。"}
-        events, http = self.run_loop([self.plan("divide"), self.packet(name="divide", args={"a": 1, "b": 0}),
+        events, http = self.run_loop([self.packet(name="divide", args={"a": 1, "b": 0}),
                                       self.packet(failed)])
         self.assertEqual(self.invocations, [("divide", 1, 0)])
         self.assertEqual(events[2]["status"], "error")
-        state = json.loads(json.loads(http.call_args_list[2].args[0].data)["messages"][1]["content"])["context"]
+        state = json.loads(json.loads(http.call_args_list[1].args[0].data)["messages"][1]["content"])["context"]
         self.assertIn("ZeroDivisionError", state["observations"][0]["error"])
         self.assertIsNone(state["observations"][0]["result"])
         self.assertEqual(events[-1]["stop_reason"], "incomplete")
 
     def test_failed_tool_cannot_be_marked_successful(self):
-        events, _ = self.run_loop([self.plan("divide"), self.packet(name="divide", args={"a": 1, "b": 0}),
+        events, _ = self.run_loop([self.packet(name="divide", args={"a": 1, "b": 0}),
                                    self.packet(self.finished)])
         self.assertEqual([e["type"] for e in events[-2:]], ["error", "done"])
         self.assertFalse(events[-1]["task_complete"])
@@ -270,22 +270,21 @@ class TestObservationAndLoop(unittest.TestCase):
 
     def test_tool_error_can_continue_to_a_real_alternative(self):
         events, _ = self.run_loop([
-            self.plan("divide"), self.packet(name="divide", args={"a": 1, "b": 0}), self.packet(self.pending),
-            self.plan("add"), self.packet(name="add", args={"a": 12, "b": 5}), self.packet(self.finished)])
+            self.packet(name="divide", args={"a": 1, "b": 0}), self.packet(self.pending),
+            self.packet(name="add", args={"a": 12, "b": 5}), self.packet(self.finished)])
         self.assertTrue(events[-1]["task_complete"])
         self.assertEqual([o["status"] for o in events[-1]["context"]["observations"]], ["error", "success"])
 
     def test_model_errors_stop_in_each_stage_and_preserve_actual_results(self):
-        first = [self.plan("multiply"), self.packet(name="multiply", args={"a": 3, "b": 4})]
-        for responses in ([URLError("Thought断开")], [first[0], URLError("Action断开")],
-                          [*first, URLError("Observation断开")]):
+        first = self.packet(name="multiply", args={"a": 3, "b": 4})
+        for responses in ([URLError("决策断开")], [first, URLError("Observation断开")]):
             with self.subTest(stage=len(responses)):
                 events, http = self.run_loop(responses)
                 self.assertEqual(http.call_count, len(responses))
                 self.assertEqual(events[-1]["stop_reason"], "error")
                 self.assertFalse(events[-1]["task_complete"])
                 self.assertEqual(sum(e["type"] == "error" for e in events), 1)
-                self.assertEqual(len(events[-1]["context"]["observations"]), int(len(responses) == 3))
+                self.assertEqual(len(events[-1]["context"]["observations"]), int(len(responses) == 2))
 
     def test_invalid_limits_and_context_stop_before_model_calls(self):
         for limit in (0, -1, 1.5, True, "2"):
@@ -301,7 +300,7 @@ class TestObservationAndLoop(unittest.TestCase):
             http.assert_not_called()
 
     def test_closing_loop_and_mutating_events_do_not_execute_or_change_state(self):
-        responses = [self.plan("multiply"), self.packet(name="multiply", args={"a": 3, "b": 4}),
+        responses = [self.packet(name="multiply", args={"a": 3, "b": 4}),
                      self.packet({**self.finished, "answer": "12"})]
         with patch("src.agent.react_loop.urlopen", side_effect=self.http_responses(responses)):
             loop = run_react("3乘4", self.tools)
@@ -319,7 +318,7 @@ class TestObservationAndLoop(unittest.TestCase):
             next(loop)
             next(loop)
             loop.close()
-        self.assertEqual(http.call_count, 2)
+        self.assertEqual(http.call_count, 1)
         self.assertEqual(self.invocations, [])
 
     def test_observation_rejects_inconsistent_decisions(self):
