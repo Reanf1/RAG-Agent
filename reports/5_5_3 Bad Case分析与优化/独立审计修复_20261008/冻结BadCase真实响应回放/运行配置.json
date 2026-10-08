@@ -1,0 +1,77 @@
+{
+  "app": {
+    "name": "智能科研助理",
+    "description": "基于 RAG + Agent 的论文知识库问答系统"
+  },
+  "importing": {
+    "max_file_size_mb": 20
+  },
+  "llm": {
+    "provider": "ollama",
+    "base_url": "http://127.0.0.1:11439",
+    "model": "qwen2.5:7b",
+    "temperature": 0.1,
+    "top_p": 0.9,
+    "top_k": 40,
+    "num_ctx": 8192,
+    "num_predict": 512,
+    "repeat_penalty": 1.0
+  },
+  "generation": {
+    "low_relevance_threshold": 0.1,
+    "max_context_chars": 6000,
+    "max_prompt_chars": 12000,
+    "cache": {
+      "similarity_threshold": 0.97,
+      "max_entries": 100
+    }
+  },
+  "embedding": {
+    "model": "moka-ai/m3e-base",
+    "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+    "local_path": "data/models/m3e-base",
+    "device": "cpu",
+    "batch_size": 32
+  },
+  "retrieval": {
+    "vector_store": "chroma",
+    "collection_name": "paper_chunks",
+    "search_ef": 100,
+    "index_threads": 4,
+    "top_k": 5,
+    "candidate_k": 20,
+    "rrf_k": 60,
+    "reranker_model": "BAAI/bge-reranker-base",
+    "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+    "reranker_local_path": "data/models/bge-reranker-base",
+    "reranker_device": "cpu",
+    "reranker_batch_size": 8,
+    "reranker_max_length": 512
+  },
+  "chunking": {
+    "strategy": "recursive",
+    "chunk_size": 512,
+    "chunk_overlap": 64
+  },
+  "agent": {
+    "max_iterations": 8,
+    "max_parallel_calls": 2,
+    "tool_timeout_seconds": 300,
+    "max_tool_retries": 1,
+    "max_repeated_calls": 2,
+    "online_search_enabled": false
+  },
+  "memory": {
+    "max_history_tokens": 2000,
+    "tokenizer_path": "data/models/qwen2.5-tokenizer/tokenizer.json",
+    "summary_trigger_turns": 10,
+    "summary_keep_recent_turns": 4,
+    "summary_max_tokens": 400
+  },
+  "paths": {
+    "raw_documents": "/Users/rean/github/测试项/data/raw",
+    "vector_index": "/Users/rean/github/RAG+Agent/.test-tmp/audit-repairs/index",
+    "logs": "reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase真实响应回放/business_logs",
+    "session_db": "/Users/rean/github/RAG+Agent/.test-tmp/audit-repairs/sessions.sqlite3"
+  }
+}

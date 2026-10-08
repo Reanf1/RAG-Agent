@@ -1,0 +1,62 @@
+{
+  "question": "比较 DeiT 与 T2T-ViT 改善 ImageNet 数据效率的主要路径。",
+  "context_sha256": "60e4150becf9a30ffbe8844db9e6226328d0771275e54fafee103da49066dd44",
+  "baseline_http": "/Users/rean/github/测试项/docs/完整性测试证据/agent_rag/benchmark60/http_00153.json",
+  "replayed_response": "reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase原句约束复测/http_005.json",
+  "boundary": "同一真实证据与参数的生成复测；最终Agent整链路另测。回放耗时不是模型生成耗时。",
+  "seconds": 0.00048145800246857107,
+  "result": {
+    "answer": "## 回答\nDeiT 通过知识蒸馏（Knowledge Distillation, KD）来提高 ViT 的性能。[参考文档3：deit.pdf；第6页（物理页码）]\n具体来说，DeiT 通过添加 KD 令牌（KD token）与类令牌（class token）相结合的方式，利用较弱的 RegNetY 进行蒸馏，从而实现更好的性能。[参考文档3：deit.pdf；第6页（物理页码）]\n\nT2T-ViT 则主要通过其架构设计来提高效率。[参考文档2：t2t\\_vit.pdf；第3页（物理页码）] T2T-ViT 在参数量和计算量（MACs）上显著减少，但仍然能够获得更高的准确率。[参考文档4：t2t\\_vit.pdf；第6页（物理页码）]\n\nDeiT 和 T2T-ViT 改善 ImageNet 数据效率的主要路径不同。DeiT 依赖于知识蒸馏技术，而 T2T-ViT 则侧重于架构优化。[参考文档2：t2t\\_vit.pdf；第3页（物理页码）][参考文档4：t2t\\_vit.pdf；第6页（物理页码）]\n\n## 参考来源\n- [参考文档3] deit.pdf；第6页（物理页码）\n- [参考文档2] t2t\\_vit.pdf；第3页（物理页码）\n- [参考文档4] t2t\\_vit.pdf；第6页（物理页码）",
+    "citations": [
+      {
+        "id": 3,
+        "source_file": "deit.pdf",
+        "location": "第6页（物理页码）",
+        "metadata": {},
+        "truncated": false,
+        "text": "Our method DeiT is slightly below EfﬁcientNet, which\nshows that we have almost closed the gap between vision\ntransformers and convnets when training with Imagenet\nonly. These results are a major improvement (+6.3% top-1\nin a comparable setting) over previous ViT models trained\non Imagenet1k only (Dosovitskiy et al., 2020). Furthermore,\nwhen DeiT beneﬁts from the distillation from a relatively\nweaker RegNetY to produce DeiT⚗, it outperforms Efﬁ-\ncientNet. It also outperforms by 1% (top-1 acc.) the Vit-B\n\n---"
+      },
+      {
+        "id": 2,
+        "source_file": "t2t_vit.pdf",
+        "location": "第3页（物理页码）",
+        "metadata": {},
+        "truncated": false,
+        "text": "able) for model pretraining, requiring huge computation re-\nsources. In contrast, our proposed T2T-ViT is more efﬁcient\nand can be trained on ImageNet without using those large-\nscale datasets. A recent concurrent work DeiT [36] applies\nKnowledge Distillation [16, 49] to improve the original ViT\nby adding a KD token along with the class token, which is\northogonal to our work, as our T2T-ViT focuses on the ar-\nchitecture design, and our T2T-ViT can achieve higher per-\n\n---"
+      },
+      {
+        "id": 4,
+        "source_file": "t2t_vit.pdf",
+        "location": "第6页（物理页码）",
+        "metadata": {},
+        "truncated": false,
+        "text": "14/19/24 (Performer).\nT2T-ViT vs. ViT\nWe ﬁrst compare performance of T2T-\nViT and ViT on ImageNet. The results are given in Tab. 2.\nOur T2T-ViT is much smaller than ViT in number of pa-\nrameters and MACs, yet giving higher performance. For\nexample, the small ViT model ViT-S/16 with 48.6M and\n10.1G MACs has 78.1% top-1 accuracy when trained from\nscratch on ImageNet, while our T2T-ViTt-14 with only\n44.2% parameters and 51.5% MACs achieves more than\n3.0% improvement (81.5%). If we compare T2T-ViT_{t}-24\n\n---"
+      }
+    ],
+    "invalid_citation_ids": [],
+    "missing_citations": false,
+    "warnings": [],
+    "evidence_quote_errors": [],
+    "generation_mode": "grounded",
+    "notice": "",
+    "raw_answer": "## 回答\nDeiT 通过知识蒸馏（Knowledge Distillation, KD）来提高 ViT 的性能。[参考文档3]\n具体来说，DeiT 通过添加 KD 令牌（KD token）与类令牌（class token）相结合的方式，利用较弱的 RegNetY 进行蒸馏，从而实现更好的性能。[参考文档3]\n\nT2T-ViT 则主要通过其架构设计来提高效率。[参考文档2] T2T-ViT 在参数量和计算量（MACs）上显著减少，但仍然能够获得更高的准确率。[参考文档4]\n\nDeiT 和 T2T-ViT 改善 ImageNet 数据效率的主要路径不同。DeiT 依赖于知识蒸馏技术，而 T2T-ViT 则侧重于架构优化。[参考文档2][参考文档4]\n\n## 参考来源\n[参考文档2][参考文档3][参考文档4]",
+    "model": "qwen2.5:7b",
+    "options": {
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 8192,
+      "num_predict": 512,
+      "repeat_penalty": 1.0
+    },
+    "done_reason": "stop",
+    "usage": {
+      "prompt_eval_count": 2111,
+      "eval_count": 203,
+      "total_duration": 14117255125,
+      "load_duration": 632292,
+      "prompt_eval_duration": 4663109000,
+      "eval_duration": 9448489000
+    }
+  }
+}

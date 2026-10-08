@@ -1,0 +1,246 @@
+#0 building with "colima-rag-agent" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.78kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.10.10-slim
+#2 DONE 3.6s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 155B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 406.93kB done
+#4 DONE 0.0s
+
+#5 [ 1/10] FROM docker.io/library/python:3.10.10-slim@sha256:7b0a5cefbcdd085faa21533c21549e55a7e66f5aed40f8d1f4de13a017e352cd
+#5 resolve docker.io/library/python:3.10.10-slim@sha256:7b0a5cefbcdd085faa21533c21549e55a7e66f5aed40f8d1f4de13a017e352cd 0.0s done
+#5 sha256:ac3600f134ee2f5d56ef6d3ddbaaf560a002005b0fa2e35a4158d26a49459331 0B / 3.37MB 0.2s
+#5 sha256:8171e1a273d71eb8a7c04046eaa760ce39a86f9d0811993db8e2c5ac19521c67 0B / 245B 0.2s
+#5 sha256:b0e67886e6a040e430cc3680b3ef299ec8efbad7feb3c7c582cc2bc7eed6a795 0B / 11.54MB 0.2s
+#5 sha256:2d2b016608857911079186690549bb03798585a3f2310e34bc878db7fa0fcd80 0B / 1.08MB 0.2s
+#5 sha256:8171e1a273d71eb8a7c04046eaa760ce39a86f9d0811993db8e2c5ac19521c67 245B / 245B 1.4s done
+#5 sha256:ac3600f134ee2f5d56ef6d3ddbaaf560a002005b0fa2e35a4158d26a49459331 1.05MB / 3.37MB 1.7s
+#5 sha256:f1f26f5702560b7e591bef5c4d840f76a232bf13fd5aefc4e22077a1ae4440c7 0B / 31.41MB 0.2s
+#5 sha256:ac3600f134ee2f5d56ef6d3ddbaaf560a002005b0fa2e35a4158d26a49459331 2.10MB / 3.37MB 2.3s
+#5 sha256:ac3600f134ee2f5d56ef6d3ddbaaf560a002005b0fa2e35a4158d26a49459331 3.15MB / 3.37MB 2.7s
+#5 sha256:ac3600f134ee2f5d56ef6d3ddbaaf560a002005b0fa2e35a4158d26a49459331 3.37MB / 3.37MB 2.8s done
+#5 sha256:b0e67886e6a040e430cc3680b3ef299ec8efbad7feb3c7c582cc2bc7eed6a795 1.05MB / 11.54MB 4.1s
+#5 sha256:f1f26f5702560b7e591bef5c4d840f76a232bf13fd5aefc4e22077a1ae4440c7 2.10MB / 31.41MB 2.6s
+#5 sha256:2d2b016608857911079186690549bb03798585a3f2310e34bc878db7fa0fcd80 1.08MB / 1.08MB 5.0s done
+#5 sha256:f1f26f5702560b7e591bef5c4d840f76a232bf13fd5aefc4e22077a1ae4440c7 4.19MB / 31.41MB 3.8s
+#5 sha256:b0e67886e6a040e430cc3680b3ef299ec8efbad7feb3c7c582cc2bc7eed6a795 2.10MB / 11.54MB 5.9s
+#5 sha256:f1f26f5702560b7e591bef5c4d840f76a232bf13fd5aefc4e22077a1ae4440c7 6.29MB / 31.41MB 4.4s
+#5 sha256:f1f26f5702560b7e591bef5c4d840f76a232bf13fd5aefc4e22077a1ae4440c7 8.39MB / 31.41MB 5.1s
+#5 sha256:b0e67886e6a040e430cc3680b3ef299ec8efbad7feb3c7c582cc2bc7eed6a795 3.15MB / 11.54MB 7.4s
+#5 sha256:f1f26f5702560b7e591bef5c4d840f76a232bf13fd5aefc4e22077a1ae4440c7 10.49MB / 31.41MB 5.9s
+#5 sha256:f1f26f5702560b7e591bef5c4d840f76a232bf13fd5aefc4e22077a1ae4440c7 12.58MB / 31.41MB 6.6s
+#5 sha256:b0e67886e6a040e430cc3680b3ef299ec8efbad7feb3c7c582cc2bc7eed6a795 4.19MB / 11.54MB 8.6s
+#5 sha256:f1f26f5702560b7e591bef5c4d840f76a232bf13fd5aefc4e22077a1ae4440c7 14.68MB / 31.41MB 7.1s
+#5 sha256:f1f26f5702560b7e591bef5c4d840f76a232bf13fd5aefc4e22077a1ae4440c7 16.78MB / 31.41MB 7.4s
+#5 sha256:b0e67886e6a040e430cc3680b3ef299ec8efbad7feb3c7c582cc2bc7eed6a795 5.24MB / 11.54MB 9.3s
+#5 sha256:f1f26f5702560b7e591bef5c4d840f76a232bf13fd5aefc4e22077a1ae4440c7 18.87MB / 31.41MB 7.8s
+#5 sha256:f1f26f5702560b7e591bef5c4d840f76a232bf13fd5aefc4e22077a1ae4440c7 20.97MB / 31.41MB 8.3s
+#5 sha256:b0e67886e6a040e430cc3680b3ef299ec8efbad7feb3c7c582cc2bc7eed6a795 6.29MB / 11.54MB 10.1s
+#5 sha256:f1f26f5702560b7e591bef5c4d840f76a232bf13fd5aefc4e22077a1ae4440c7 23.07MB / 31.41MB 8.6s
+#5 sha256:f1f26f5702560b7e591bef5c4d840f76a232bf13fd5aefc4e22077a1ae4440c7 25.17MB / 31.41MB 9.0s
+#5 sha256:b0e67886e6a040e430cc3680b3ef299ec8efbad7feb3c7c582cc2bc7eed6a795 7.34MB / 11.54MB 10.7s
+#5 sha256:f1f26f5702560b7e591bef5c4d840f76a232bf13fd5aefc4e22077a1ae4440c7 27.26MB / 31.41MB 9.3s
+#5 sha256:f1f26f5702560b7e591bef5c4d840f76a232bf13fd5aefc4e22077a1ae4440c7 29.36MB / 31.41MB 9.6s
+#5 sha256:b0e67886e6a040e430cc3680b3ef299ec8efbad7feb3c7c582cc2bc7eed6a795 8.39MB / 11.54MB 11.3s
+#5 sha256:f1f26f5702560b7e591bef5c4d840f76a232bf13fd5aefc4e22077a1ae4440c7 31.41MB / 31.41MB 9.8s done
+#5 extracting sha256:f1f26f5702560b7e591bef5c4d840f76a232bf13fd5aefc4e22077a1ae4440c7
+#5 extracting sha256:f1f26f5702560b7e591bef5c4d840f76a232bf13fd5aefc4e22077a1ae4440c7 0.3s done
+#5 extracting sha256:2d2b016608857911079186690549bb03798585a3f2310e34bc878db7fa0fcd80 0.0s done
+#5 sha256:b0e67886e6a040e430cc3680b3ef299ec8efbad7feb3c7c582cc2bc7eed6a795 9.44MB / 11.54MB 11.7s
+#5 sha256:b0e67886e6a040e430cc3680b3ef299ec8efbad7feb3c7c582cc2bc7eed6a795 10.49MB / 11.54MB 12.0s
+#5 sha256:b0e67886e6a040e430cc3680b3ef299ec8efbad7feb3c7c582cc2bc7eed6a795 11.54MB / 11.54MB 12.2s done
+#5 extracting sha256:b0e67886e6a040e430cc3680b3ef299ec8efbad7feb3c7c582cc2bc7eed6a795 0.1s done
+#5 DONE 12.3s
+
+#5 [ 1/10] FROM docker.io/library/python:3.10.10-slim@sha256:7b0a5cefbcdd085faa21533c21549e55a7e66f5aed40f8d1f4de13a017e352cd
+#5 extracting sha256:8171e1a273d71eb8a7c04046eaa760ce39a86f9d0811993db8e2c5ac19521c67 done
+#5 extracting sha256:ac3600f134ee2f5d56ef6d3ddbaaf560a002005b0fa2e35a4158d26a49459331 0.0s done
+#5 DONE 12.4s
+
+#6 [ 2/10] RUN test "amd64" = "amd64" || (echo "本项目镜像仅支持linux/amd64，请使用Docker Compose或--platform=linux/amd64构建" >&2; exit 1)
+#6 DONE 0.2s
+
+#7 [ 3/10] WORKDIR /app
+#7 DONE 0.0s
+
+#8 [ 4/10] COPY requirements.txt ./
+#8 DONE 0.0s
+
+#9 [ 5/10] RUN python -m pip install --no-cache-dir -r requirements.txt
+#9 5.570 Collecting streamlit==1.64.0
+#9 6.136   Downloading streamlit-1.64.0-py3-none-any.whl (10.1 MB)
+#9 8.511      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.1/10.1 MB 4.5 MB/s eta 0:00:00
+#9 9.443 Collecting PyYAML==6.0.3
+#9 9.691   Downloading pyyaml-6.0.3-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (770 kB)
+#9 9.897      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 770.3/770.3 kB 4.0 MB/s eta 0:00:00
+#9 10.27 Collecting markdown-it-py==4.2.0
+#9 10.49   Downloading markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
+#9 10.52      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 91.7/91.7 kB 4.8 MB/s eta 0:00:00
+#9 12.66 Collecting PyMuPDF==1.28.2
+#9 12.89   Downloading pymupdf-1.28.2-cp310-abi3-manylinux_2_28_x86_64.whl (25.8 MB)
+#9 18.08      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 25.8/25.8 MB 4.6 MB/s eta 0:00:00
+#9 19.42 Collecting langchain-core==0.3.29
+#9 19.64   Downloading langchain_core-0.3.29-py3-none-any.whl (411 kB)
+#9 19.75      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 411.6/411.6 kB 4.1 MB/s eta 0:00:00
+#9 20.06 Collecting python-docx==1.1.2
+#9 20.29   Downloading python_docx-1.1.2-py3-none-any.whl (244 kB)
+#9 20.32      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 244.3/244.3 kB 22.8 MB/s eta 0:00:00
+#9 20.68 Collecting langchain-text-splitters==0.3.5
+#9 20.92   Downloading langchain_text_splitters-0.3.5-py3-none-any.whl (31 kB)
+#9 21.25 Collecting langchain-huggingface==0.1.2
+#9 21.49   Downloading langchain_huggingface-0.1.2-py3-none-any.whl (21 kB)
+#9 21.87 Collecting sentence-transformers==3.3.1
+#9 22.10   Downloading sentence_transformers-3.3.1-py3-none-any.whl (268 kB)
+#9 22.15      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 268.8/268.8 kB 8.6 MB/s eta 0:00:00
+#9 22.82 Collecting transformers==4.46.3
+#9 23.05   Downloading transformers-4.46.3-py3-none-any.whl (10.0 MB)
+#9 24.83      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.0/10.0 MB 5.7 MB/s eta 0:00:00
+#9 26.92 Collecting tokenizers==0.20.3
+#9 27.15   Downloading tokenizers-0.20.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.0 MB)
+#9 27.84      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.0/3.0 MB 4.5 MB/s eta 0:00:00
+#9 28.66 Collecting huggingface-hub==0.26.5
+#9 28.90   Downloading huggingface_hub-0.26.5-py3-none-any.whl (447 kB)
+#9 28.95      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 447.8/447.8 kB 11.2 MB/s eta 0:00:00
+#9 29.75 Collecting torch==2.5.1
+#9 29.98   Downloading torch-2.5.1-cp310-cp310-manylinux1_x86_64.whl (906.4 MB)
+#9 196.9      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 906.4/906.4 MB 4.4 MB/s eta 0:00:00
+#9 218.3 Collecting scipy==1.14.1
+#9 218.5   Downloading scipy-1.14.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (41.2 MB)
+#9 225.0      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 41.2/41.2 MB 5.3 MB/s eta 0:00:00
+#9 226.3 Collecting langchain-chroma==0.1.4
+#9 226.5   Downloading langchain_chroma-0.1.4-py3-none-any.whl (10 kB)
+#9 227.1 Collecting chromadb==0.5.23
+#9 227.3   Downloading chromadb-0.5.23-py3-none-any.whl (628 kB)
+#9 227.6      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 628.3/628.3 kB 2.8 MB/s eta 0:00:00
+#9 230.1 Collecting numpy==1.26.4
+#9 230.4   Downloading numpy-1.26.4-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (18.2 MB)
+#9 233.3      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 18.2/18.2 MB 6.4 MB/s eta 0:00:00
+#9 234.4 Collecting posthog==3.25.0
+#9 234.6   Downloading posthog-3.25.0-py2.py3-none-any.whl (89 kB)
+#9 234.7      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 89.1/89.1 kB 19.7 MB/s eta 0:00:00
+#9 234.9 Collecting rank-bm25==0.2.2
+#9 235.2   Downloading rank_bm25-0.2.2-py3-none-any.whl (8.6 kB)
+#9 235.6 Collecting httpx==0.28.1
+#9 235.8   Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+#9 235.8      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 73.5/73.5 kB 18.4 MB/s eta 0:00:00
+#9 236.2 Collecting beautifulsoup4==4.12.3
+#9 236.3   Downloading beautifulsoup4-4.12.3-py3-none-any.whl (147 kB)
+#9 236.3      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 147.9/147.9 kB 22.0 MB/s eta 0:00:00
+#9 236.8 Collecting itsdangerous<3,>=2.1.2
+#9 237.0   Downloading itsdangerous-2.2.0-py3-none-any.whl (16 kB)
+#9 238.5 Collecting websockets<17,>=12.0.0
+#9 238.7   Downloading websockets-16.1.1-cp310-cp310-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (186 kB)
+#9 238.7      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 186.0/186.0 kB 19.9 MB/s eta 0:00:00
+#9 239.3 Collecting uvicorn<1,>=0.30.0
+#9 239.5   Downloading uvicorn-0.54.0-py3-none-any.whl (87 kB)
+#9 239.5      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 87.4/87.4 kB 19.2 MB/s eta 0:00:00
+#9 240.0 Collecting starlette<2,>=0.46.0
+#9 240.3   Downloading starlette-1.7.0-py3-none-any.whl (78 kB)
+#9 240.3      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 79.0/79.0 kB 17.7 MB/s eta 0:00:00
+#9 240.9 Collecting watchdog<7,>=2.1.5
+#9 241.2   Downloading watchdog-6.0.0-py3-none-manylinux2014_x86_64.whl (79 kB)
+#9 241.3      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 79.1/79.1 kB 928.8 kB/s eta 0:00:00
+#9 243.2 Collecting protobuf<8,>=5.26.1
+#9 243.4   Downloading protobuf-7.36.2-cp310-abi3-manylinux2014_x86_64.whl (343 kB)
+#9 243.5      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 343.2/343.2 kB 3.0 MB/s eta 0:00:00
+#9 245.0 Collecting pandas<4,>=1.4.0
+#9 245.3   Downloading pandas-2.3.3-cp310-cp310-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (12.8 MB)
+#9 247.4      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.8/12.8 MB 6.2 MB/s eta 0:00:00
+#9 248.0 Collecting toml<2,>=0.10.1
+#9 248.2   Downloading toml-0.10.2-py2.py3-none-any.whl (16 kB)
+#9 248.6 Collecting python-multipart<1,>=0.0.10
+#9 248.8   Downloading python_multipart-0.0.32-py3-none-any.whl (30 kB)
+#9 250.9 Collecting pillow<13,>=7.1.0
+#9 251.2   Downloading pillow-12.3.0-cp310-cp310-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (6.9 MB)
+#9 252.6      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.9/6.9 MB 5.2 MB/s eta 0:00:00
+#9 253.1 Collecting packaging>=20
+#9 253.3   Downloading packaging-26.3-py3-none-any.whl (129 kB)
+#9 253.4      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 130.0/130.0 kB 9.1 MB/s eta 0:00:00
+#9 253.8 Collecting altair!=5.4.0,!=5.4.1,<7,>=5.0.0
+#9 254.0   Downloading altair-6.2.2-py3-none-any.whl (797 kB)
+#9 254.2      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 797.6/797.6 kB 3.8 MB/s eta 0:00:00
+#9 254.8 Collecting requests<3,>=2.27
+#9 255.0   Downloading requests-2.34.2-py3-none-any.whl (73 kB)
+#9 255.0      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 73.1/73.1 kB 3.4 MB/s eta 0:00:00
+#9 255.6 Collecting httptools<1,>=0.6.3
+#9 255.8   Downloading httptools-0.8.0-cp310-cp310-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (450 kB)
+#9 255.9      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 450.0/450.0 kB 10.4 MB/s eta 0:00:00
+#9 256.3 Collecting typing-extensions<5,>=4.10.0
+#9 256.5   Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+#9 256.5      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 45.6/45.6 kB 22.8 MB/s eta 0:00:00
+#9 257.7 Collecting pyarrow!=25.0.0,<26,>=7.0
+#9 258.0   Downloading pyarrow-25.0.1-cp310-cp310-manylinux_2_28_x86_64.whl (50.1 MB)
+#9 267.2      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 50.1/50.1 MB 6.3 MB/s eta 0:00:00
+#9 268.6 Collecting pydeck<1,>=0.8.0b4
+#9 268.8   Downloading pydeck-0.9.3-py2.py3-none-any.whl (11.4 MB)
+#9 271.4      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.4/11.4 MB 4.8 MB/s eta 0:00:00
+#9 272.0 Collecting anyio<5,>=4.0.0
+#9 272.3   Downloading anyio-4.15.1-py3-none-any.whl (132 kB)
+#9 272.4      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 132.1/132.1 kB 25.1 MB/s eta 0:00:00
+#9 272.7 Collecting click<9,>=7.0
+#9 273.0   Downloading click-8.5.0-py3-none-any.whl (125 kB)
+#9 273.0      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 125.3/125.3 kB 19.2 MB/s eta 0:00:00
+#9 273.4 Collecting mdurl~=0.1
+#9 273.6   Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+#9 275.1 Collecting pydantic<3.0.0,>=2.5.2
+#9 275.3   Downloading pydantic-2.13.5-py3-none-any.whl (472 kB)
+#9 275.4      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 472.6/472.6 kB 6.0 MB/s eta 0:00:00
+#9 275.8 Collecting jsonpatch<2.0,>=1.33
+#9 276.0   Downloading jsonpatch-1.33-py2.py3-none-any.whl (12 kB)
+#9 277.1 Collecting langsmith<0.3,>=0.1.125
+#9 277.3   Downloading langsmith-0.2.11-py3-none-any.whl (326 kB)
+#9 277.5      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 326.9/326.9 kB 1.9 MB/s eta 0:00:00
+#9 277.5 Collecting packaging>=20
+#9 277.8   Downloading packaging-24.2-py3-none-any.whl (65 kB)
+#9 277.9      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 65.5/65.5 kB 15.5 MB/s eta 0:00:00
+#9 278.3 Collecting tenacity!=8.4.0,<10.0.0,>=8.1.0
+#9 278.6   Downloading tenacity-9.2.1-py3-none-any.whl (32 kB)
+#9 281.6 Collecting lxml>=3.1.0
+#9 282.2   Downloading lxml-6.1.3-cp310-cp310-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl (5.3 MB)
+#9 288.4      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.3/5.3 MB 853.1 kB/s eta 0:00:00
+#9 290.2 Collecting scikit-learn
+#9 290.5   Downloading scikit_learn-1.7.2-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (9.7 MB)
+#9 294.2      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.7/9.7 MB 2.6 MB/s eta 0:00:00
+#9 295.0 Collecting tqdm
+#9 295.2   Downloading tqdm-4.70.1-py3-none-any.whl (80 kB)
+#9 295.2      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 80.2/80.2 kB 11.0 MB/s eta 0:00:00
+#9 297.2 Collecting filelock
+#9 297.4   Downloading filelock-4.0.12-py3-none-any.whl (111 kB)
+#9 297.5      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 111.7/111.7 kB 10.0 MB/s eta 0:00:00
+#9 302.6 Collecting regex!=2019.12.17
+#9 302.8   Downloading regex-2026.9.29-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (797 kB)
+#9 303.1      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 797.6/797.6 kB 3.2 MB/s eta 0:00:00
+#9 304.8 Collecting safetensors>=0.4.1
+#9 305.0   Downloading safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (516 kB)
+#9 305.1      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 516.0/516.0 kB 6.1 MB/s eta 0:00:00
+#9 306.1 Collecting fsspec>=2023.5.0
+#9 306.4   Downloading fsspec-2026.9.0-py3-none-any.whl (221 kB)
+#9 306.4      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 221.7/221.7 kB 10.0 MB/s eta 0:00:00
+#9 307.0 Collecting nvidia-cudnn-cu12==9.1.0.70
+#9 307.2   Downloading nvidia_cudnn_cu12-9.1.0.70-py3-none-manylinux2014_x86_64.whl (664.8 MB)
+#9 446.8      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 664.8/664.8 MB 7.4 MB/s eta 0:00:00
+#9 461.1 Collecting nvidia-cuda-cupti-cu12==12.4.127
+#9 461.3   Downloading nvidia_cuda_cupti_cu12-12.4.127-py3-none-manylinux2014_x86_64.whl (13.8 MB)
+#9 463.9      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.8/13.8 MB 5.4 MB/s eta 0:00:00
+#9 464.5 Collecting sympy==1.13.1
+#9 464.8   Downloading sympy-1.13.1-py3-none-any.whl (6.2 MB)
+#9 466.0      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.2/6.2 MB 5.3 MB/s eta 0:00:00
+#9 466.5 Collecting jinja2
+#9 466.7   Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+#9 466.8      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 134.9/134.9 kB 16.5 MB/s eta 0:00:00
+#9 467.2 Collecting networkx
+#9 467.5   Downloading networkx-3.4.2-py3-none-any.whl (1.7 MB)
+#9 467.8      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.7/1.7 MB 6.0 MB/s eta 0:00:00
+#9 468.2 Collecting nvidia-cusolver-cu12==11.6.1.9
+#9 468.4   Downloading nvidia_cusolver_cu12-11.6.1.9-py3-none-manylinux2014_x86_64.whl (127.9 MB)
+#9 486.4      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 127.9/127.9 MB 7.5 MB/s eta 0:00:00
+#9 CANCELED
+ERROR: failed to build: failed to solve: Canceled: context canceled

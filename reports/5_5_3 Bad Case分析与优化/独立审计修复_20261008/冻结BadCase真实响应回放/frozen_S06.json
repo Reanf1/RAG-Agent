@@ -1,0 +1,61 @@
+{
+  "question": "Summarize CaiT architectural contributions and the reported efficiency comparison.",
+  "context_sha256": "47157ccfaeed09badf1319314574ac8689434b2691a8b4e7b1aa10cb485b3885",
+  "baseline_http": "/Users/rean/github/测试项/docs/完整性测试证据/agent_rag/benchmark60/http_00192.json",
+  "replayed_response": "reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测第二轮/http_006.json",
+  "boundary": "同一真实证据与参数的生成复测；最终Agent整链路另测。回放耗时不是模型生成耗时。",
+  "seconds": 0.0007717920016148128,
+  "result": {
+    "answer": "## 回答\nCaiT架构的主要贡献包括：\n1. **插入CLS（Class Token）**：在架构中插入CLS（Class Token）以提高性能。具体做法是在插入CLS时冻结patch embeddings，从而确保网络的最后部分（通常为2层）专注于总结信息，供线性分类器使用。只有类嵌入在总结阶段的CA和FFN处理中通过残差更新。[参考文档1：cait.pdf；第3页（物理页码）]\n2. **多头类注意**：引入多头类注意机制。[参考文档1：cait.pdf；第3页（物理页码）]\n3. **LayerScale的使用**：CaiT架构利用LayerScale来优化性能，尽管它不会改变架构的表达能力。[参考文档2：cait.pdf；第3页（物理页码）]\n\n在效率比较方面，CaiT模型在ImageNet分类任务上的表现如下：\n- CaiT-S36和CaiT-M36模型在不同分辨率下的表现：\n  - CaiT-S36在@224和@384分辨率下分别达到82.7%和85.1%的Top-1准确率。\n  - CaiT-M36在@224和@384分辨率下分别达到83.4%和84.5%的Top-1准确率。\n- 通过对比实验，CaiT模型在不使用外部数据的情况下，与当前最先进的模型相比，具有较高的Top-1准确率。[参考文档4：cait.pdf；第7页（物理页码）]\n\n## 参考来源\n- [参考文档1] cait.pdf；第3页（物理页码）\n- [参考文档2] cait.pdf；第3页（物理页码）\n- [参考文档4] cait.pdf；第7页（物理页码）",
+    "citations": [
+      {
+        "id": 1,
+        "source_file": "cait.pdf",
+        "location": "第3页（物理页码）",
+        "metadata": {},
+        "truncated": false,
+        "text": "inserting CLS later improves performance (middle). In the CaiT\narchitecture (right), we further propose to freeze the patch embed-\ndings when inserting CLS to save compute, so that the last part of\nthe network (typically 2 layers) is fully devoted to summarizing\nthe information to be fed to the linear classiﬁer.\nOnly the class embedding is updated by residual in the CA\nand FFN processing of the summarize stage.\nMulti-heads class attention.\nThe role of the CA layer\n\n---"
+      },
+      {
+        "id": 2,
+        "source_file": "cait.pdf",
+        "location": "第3页（物理页码）",
+        "metadata": {},
+        "truncated": false,
+        "text": "advantage of LayerScale over existing approaches.\nFormally, adding these weights does not change the ex-\npressive power of the architecture since they can be inte-\ngrated into the previous matrix of the SA and FFN layers.\n3. Specializing layers for class attention\nIn this section, we introduce the CaiT architecture, de-\npicted in Figure 2 (right). This design aims at circumvent-\ning one of the problems of the ViT architecture: the learned\nweights are asked to optimize two contradictory objectives:\n\n---"
+      },
+      {
+        "id": 4,
+        "source_file": "cait.pdf",
+        "location": "第7页（物理页码）",
+        "metadata": {},
+        "truncated": false,
+        "text": "hard distillation as suggested by Touvron et al. [64] pro-\nvides a boost in accuracy without affecting the number of\nparameters nor the speed.\nComparison with the state of the art.\nIn Table 5 we\ncompare some of our models with the state of the art on\nImagenet classiﬁcation without external data. We focus on\nthe models CaiT-S36 and CaiT-M36, at different resolu-\ntions and with or without distillation.\nOn Imagenet-val, we achieve 86.5% of top-1 accuracy,\n\n---"
+      }
+    ],
+    "invalid_citation_ids": [],
+    "missing_citations": false,
+    "warnings": [],
+    "generation_mode": "grounded",
+    "notice": "",
+    "raw_answer": "## 回答\nCaiT架构的主要贡献包括：\n1. **插入CLS（Class Token）**：在架构中插入CLS（Class Token）以提高性能。具体做法是在插入CLS时冻结patch embeddings，从而确保网络的最后部分（通常为2层）专注于总结信息，供线性分类器使用。只有类嵌入在总结阶段的CA和FFN处理中通过残差更新。[参考文档1]\n2. **多头类注意**：引入多头类注意机制。[参考文档1]\n3. **LayerScale的使用**：CaiT架构利用LayerScale来优化性能，尽管它不会改变架构的表达能力。[参考文档2]\n\n在效率比较方面，CaiT模型在ImageNet分类任务上的表现如下：\n- CaiT-S36和CaiT-M36模型在不同分辨率下的表现：\n  - CaiT-S36在@224和@384分辨率下分别达到82.7%和85.1%的Top-1准确率。\n  - CaiT-M36在@224和@384分辨率下分别达到83.4%和84.5%的Top-1准确率。\n- 通过对比实验，CaiT模型在不使用外部数据的情况下，与当前最先进的模型相比，具有较高的Top-1准确率。[参考文档4]\n\n## 参考来源\n[参考文档1][参考文档2][参考文档4]",
+    "model": "qwen2.5:7b",
+    "options": {
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 8192,
+      "num_predict": 512,
+      "repeat_penalty": 1.0
+    },
+    "done_reason": "stop",
+    "usage": {
+      "prompt_eval_count": 2461,
+      "eval_count": 327,
+      "total_duration": 22432035333,
+      "load_duration": 605917,
+      "prompt_eval_duration": 7237648000,
+      "eval_duration": 15178408000
+    }
+  }
+}

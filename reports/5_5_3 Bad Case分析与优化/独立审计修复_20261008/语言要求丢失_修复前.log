@@ -1,0 +1,14 @@
+...F
+======================================================================
+FAIL: test_rewritten_search_keeps_explicit_answer_language (__main__.AgentAudit)
+真实F14/S06改写查询丢掉语言要求；检索子问题仍应保留原输出要求。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_independent_agent.py", line 97, in test_rewritten_search_keeps_explicit_answer_language
+    self.assertIn(requirement, received[-1])
+AssertionError: 'Answer in English' not found in 'CaiT compute comparison'
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.022s
+
+FAILED (failures=1)

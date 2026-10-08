@@ -1,0 +1,25 @@
+<jemalloc>: MADV_DONTNEED does not work (memset will be used instead)
+<jemalloc>: (This is the expected behaviour if you are running under QEMU)
+Traceback (most recent call last):
+  File "/app/src/generation/rag_pipeline.py", line 190, in generate_answer
+    with urlopen(request, timeout=300) as response:
+  File "/usr/local/lib/python3.10/urllib/request.py", line 525, in open
+    response = meth(req, response)
+  File "/usr/local/lib/python3.10/urllib/request.py", line 634, in http_response
+    response = self.parent.error(
+  File "/usr/local/lib/python3.10/urllib/request.py", line 563, in error
+    return self._call_chain(*args)
+  File "/usr/local/lib/python3.10/urllib/request.py", line 496, in _call_chain
+    result = func(*args)
+  File "/usr/local/lib/python3.10/urllib/request.py", line 643, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 500: Internal Server Error
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/tmp/verify_container_runtime.py", line 40, in <module>
+    answer = generate_answer(question, build_context(question, ranked))
+  File "/app/src/generation/rag_pipeline.py", line 197, in generate_answer
+    raise exception from error
+RuntimeError: 本地 Ollama 调用失败：本地模型服务暂时无法完成请求（HTTP 500）。等待当前任务结束，检查本地服务日志与可用内存，必要时重启 Ollama 后重新提交问题。

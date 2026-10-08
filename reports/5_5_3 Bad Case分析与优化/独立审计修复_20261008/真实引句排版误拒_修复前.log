@@ -1,0 +1,27 @@
+test_pdf_line_break_and_ligature_must_not_reject_real_quote (__main__.GenerationAudit)
+只消除PDF排版差异，不能改写事实数字或匹配其他来源。 ... <frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+FAIL
+
+======================================================================
+FAIL: test_pdf_line_break_and_ligature_must_not_reject_real_quote (__main__.GenerationAudit)
+只消除PDF排版差异，不能改写事实数字或匹配其他来源。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_independent_generation.py", line 76, in test_pdf_line_break_and_ligature_must_not_reject_real_quote
+    self.assertEqual(result['evidence_quote_errors'], [])
+AssertionError: Lists differ: [[1]] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+[1]
+
+- [[1]]
++ []
+
+----------------------------------------------------------------------
+Ran 1 test in 0.257s
+
+FAILED (failures=1)
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

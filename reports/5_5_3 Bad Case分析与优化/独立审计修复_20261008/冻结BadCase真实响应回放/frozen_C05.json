@@ -1,0 +1,61 @@
+{
+  "question": "Compare Conditional DETR and DAB-DETR in the spatial information carried by decoder queries.",
+  "context_sha256": "1f1beeaea4dcedf1615ea3059d14e65d5eea59880188e246c51e3804b31a1a15",
+  "baseline_http": "/Users/rean/github/测试项/docs/完整性测试证据/agent_rag/benchmark60/http_00105.json",
+  "replayed_response": "reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测第二轮/http_004.json",
+  "boundary": "同一真实证据与参数的生成复测；最终Agent整链路另测。回放耗时不是模型生成耗时。",
+  "seconds": 0.0004808750018128194,
+  "result": {
+    "answer": "## 回答\nConditional DETR 和 DAB-DETR 在解码器查询中携带的空间信息存在差异。在 Conditional DETR 中，解码器查询是从对应的前一个解码器输出嵌入中学习得到的条件空间嵌入，用于精确定位边界点 [参考文档3：conditional\\_detr.pdf；第1页（物理页码）][参考文档4：conditional\\_detr.pdf；第2页（物理页码）]。而在 DAB-DETR 中，并未明确提及具体的解码器查询如何携带空间信息，但根据文档 [参考文档2：dab\\_detr.pdf；第17页（物理页码）] 中提到的，DAB-DETR 引入了多尺度技术以提高小目标和大目标的检测性能，这表明 DAB-DETR 可能通过不同的机制来处理空间信息。\n\n## 参考来源\n- [参考文档3] conditional\\_detr.pdf；第1页（物理页码）\n- [参考文档4] conditional\\_detr.pdf；第2页（物理页码）\n- [参考文档2] dab\\_detr.pdf；第17页（物理页码）",
+    "citations": [
+      {
+        "id": 3,
+        "source_file": "conditional_detr.pdf",
+        "location": "第1页（物理页码）",
+        "metadata": {},
+        "truncated": false,
+        "text": "and present a conditional cross-attention mechanism for\nfast DETR training. Our approach is motivated by that the\ncross-attention in DETR relies highly on the content embed-\ndings for localizing the four extremities and predicting the\nbox, which increases the need for high-quality content em-\nbeddings and thus the training difficulty.\nOur approach, named conditional DETR, learns a con-\nditional spatial query from the decoder embedding for\ndecoder multi-head cross-attention.\nThe benefit is that\n\n---"
+      },
+      {
+        "id": 4,
+        "source_file": "conditional_detr.pdf",
+        "location": "第2页（物理页码）",
+        "metadata": {},
+        "truncated": false,
+        "text": "ing the specific image information; and that (ii) due to short\ntraining the content queries are not strong enough to match\nthe spatial keys well as they are also used to match the con-\ntent keys. This increases the dependence on high-quality\ncontent embeddings, thus increasing the training difficulty.\nWe present a conditional DETR approach, which learns a\nconditional spatial embedding for each query from the cor-\nresponding previous decoder output embedding, to form a\n\n---"
+      },
+      {
+        "id": 2,
+        "source_file": "dab_detr.pdf",
+        "location": "第17页（物理页码）",
+        "metadata": {},
+        "truncated": false,
+        "text": "The boxes of Conditional DETR have larger variances and we mark some boundaries of boxes with\na large change in yellow.\nimprove the performance of our model, we will introduce a multi-scale technique into our model to\nimprove the detection performance on small and large objects.\nJ\nCOMPARISON OF RUNTIME\nWe compare the runtime of DETR, Conditional DETR, and our proposed DAB-DETR in Table\n9. Their runtime speeds are reported on a single Nvidia A100 GPU. Our DAB-DETR has a simi-\n\n---"
+      }
+    ],
+    "invalid_citation_ids": [],
+    "missing_citations": false,
+    "warnings": [],
+    "generation_mode": "grounded",
+    "notice": "",
+    "raw_answer": "## 回答\nConditional DETR 和 DAB-DETR 在解码器查询中携带的空间信息存在差异。在 Conditional DETR 中，解码器查询是从对应的前一个解码器输出嵌入中学习得到的条件空间嵌入，用于精确定位边界点 [参考文档3][参考文档4]。而在 DAB-DETR 中，并未明确提及具体的解码器查询如何携带空间信息，但根据文档 [参考文档2] 中提到的，DAB-DETR 引入了多尺度技术以提高小目标和大目标的检测性能，这表明 DAB-DETR 可能通过不同的机制来处理空间信息。\n\n## 参考来源\n[参考文档3][参考文档4][参考文档2]",
+    "model": "qwen2.5:7b",
+    "options": {
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 8192,
+      "num_predict": 512,
+      "repeat_penalty": 1.0
+    },
+    "done_reason": "stop",
+    "usage": {
+      "prompt_eval_count": 1628,
+      "eval_count": 164,
+      "total_duration": 11405278584,
+      "load_duration": 631042,
+      "prompt_eval_duration": 3261503000,
+      "eval_duration": 8108031000
+    }
+  }
+}

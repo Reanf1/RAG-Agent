@@ -1,0 +1,94 @@
+#0 building with "colima-rag-agent" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.00kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.10.10-slim
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 155B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 125.08kB done
+#4 DONE 0.0s
+
+#5 [ 1/10] FROM docker.io/library/python:3.10.10-slim@sha256:7b0a5cefbcdd085faa21533c21549e55a7e66f5aed40f8d1f4de13a017e352cd
+#5 resolve docker.io/library/python:3.10.10-slim@sha256:7b0a5cefbcdd085faa21533c21549e55a7e66f5aed40f8d1f4de13a017e352cd done
+#5 DONE 0.0s
+
+#6 [ 2/10] RUN test "amd64" = "amd64" || (echo "本项目镜像仅支持linux/amd64，请使用Docker Compose或--platform=linux/amd64构建" >&2; exit 1)
+#6 CACHED
+
+#7 [ 3/10] WORKDIR /app
+#7 CACHED
+
+#8 [ 4/10] COPY requirements.txt ./
+#8 CACHED
+
+#9 [ 5/10] RUN python -m pip install --no-cache-dir torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu     && python -m pip install --no-cache-dir -r requirements.txt
+#9 4.245 Looking in indexes: https://download.pytorch.org/whl/cpu
+#9 6.237 Collecting torch==2.5.1
+#9 7.133   Downloading https://download-r2.pytorch.org/whl/cpu/torch-2.5.1%2Bcpu-cp310-cp310-linux_x86_64.whl (174.7 MB)
+#9 38.72      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 174.7/174.7 MB 5.0 MB/s eta 0:00:00
+#9 43.04 Collecting sympy==1.13.1
+#9 43.04   Obtaining dependency information for sympy==1.13.1 from https://files.pythonhosted.org/packages/b2/fe/81695a1aa331a842b582453b605175f419fe8540355886031328089d840a/sympy-1.13.1-py3-none-any.whl.metadata
+#9 43.87   Downloading sympy-1.13.1-py3-none-any.whl.metadata (12 kB)
+#9 44.31 Collecting networkx
+#9 44.32   Obtaining dependency information for networkx from https://files.pythonhosted.org/packages/b9/54/dd730b32ea14ea797530a4479b2ed46a6fb250f682a9cfb997e968bf0261/networkx-3.4.2-py3-none-any.whl.metadata
+#9 44.56   Downloading networkx-3.4.2-py3-none-any.whl.metadata (6.3 kB)
+#9 45.01 Collecting fsspec
+#9 45.02   Obtaining dependency information for fsspec from https://files.pythonhosted.org/packages/fd/3c/6a2bf344106328fd04963664a60b9bb6496fc25df8e962fcdc1367285fb9/fsspec-2026.7.0-py3-none-any.whl.metadata
+#9 45.26   Downloading fsspec-2026.7.0-py3-none-any.whl.metadata (10 kB)
+#9 45.65 Collecting typing-extensions>=4.8.0
+#9 45.65   Obtaining dependency information for typing-extensions>=4.8.0 from https://files.pythonhosted.org/packages/49/d3/b8441a820a491ddfc024b0b0cf0393375b75ea13866d9c66727e54c2fc80/typing_extensions-4.16.0-py3-none-any.whl.metadata
+#9 45.90   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+#9 45.91 Discarding https://files.pythonhosted.org/packages/49/d3/b8441a820a491ddfc024b0b0cf0393375b75ea13866d9c66727e54c2fc80/typing_extensions-4.16.0-py3-none-any.whl#sha256=481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8 (from https://download.pytorch.org/whl/cpu/typing-extensions/) (requires-python:>=3.9): Requested typing-extensions>=4.8.0 from https://files.pythonhosted.org/packages/49/d3/b8441a820a491ddfc024b0b0cf0393375b75ea13866d9c66727e54c2fc80/typing_extensions-4.16.0-py3-none-any.whl#sha256=481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8 (from torch==2.5.1) has inconsistent Name: expected 'typing-extensions', but metadata has 'typing_extensions'
+#9 46.24   Downloading typing_extensions-4.16.0.tar.gz (113 kB)
+#9 46.46      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 113.6/113.6 kB 575.9 kB/s eta 0:00:00
+#9 46.53   Installing build dependencies: started
+#9 53.63   Installing build dependencies: finished with status 'error'
+#9 53.65   error: subprocess-exited-with-error
+#9 53.65   
+#9 53.65   × pip subprocess to install build dependencies did not run successfully.
+#9 53.65   │ exit code: 1
+#9 53.65   ╰─> [4 lines of output]
+#9 53.65       Looking in indexes: https://download.pytorch.org/whl/cpu
+#9 53.65       ERROR: Could not find a version that satisfies the requirement flit_core<4,>=3.11 (from versions: none)
+#9 53.65       ERROR: No matching distribution found for flit_core<4,>=3.11
+#9 53.65       WARNING: There was an error checking the latest version of pip.
+#9 53.65       [end of output]
+#9 53.65   
+#9 53.65   note: This error originates from a subprocess, and is likely not a problem with pip.
+#9 53.65 error: subprocess-exited-with-error
+#9 53.65 
+#9 53.65 × pip subprocess to install build dependencies did not run successfully.
+#9 53.65 │ exit code: 1
+#9 53.65 ╰─> See above for output.
+#9 53.65 
+#9 53.65 note: This error originates from a subprocess, and is likely not a problem with pip.
+#9 54.36 WARNING: There was an error checking the latest version of pip.
+#9 ERROR: process "/bin/sh -c python -m pip install --no-cache-dir torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu     && python -m pip install --no-cache-dir -r requirements.txt" did not complete successfully: exit code: 1
+------
+ > [ 5/10] RUN python -m pip install --no-cache-dir torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu     && python -m pip install --no-cache-dir -r requirements.txt:
+53.65   
+53.65   note: This error originates from a subprocess, and is likely not a problem with pip.
+53.65 error: subprocess-exited-with-error
+53.65 
+53.65 × pip subprocess to install build dependencies did not run successfully.
+53.65 │ exit code: 1
+53.65 ╰─> See above for output.
+53.65 
+53.65 note: This error originates from a subprocess, and is likely not a problem with pip.
+54.36 WARNING: There was an error checking the latest version of pip.
+------
+Dockerfile:15
+--------------------
+  14 |     # 应用内Embedding/重排固定使用CPU；Ollama在独立容器推理，无需在应用镜像安装CUDA。
+  15 | >>> RUN python -m pip install --no-cache-dir torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu \
+  16 | >>>     && python -m pip install --no-cache-dir -r requirements.txt
+  17 |     
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c python -m pip install --no-cache-dir torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu     && python -m pip install --no-cache-dir -r requirements.txt" did not complete successfully: exit code: 1

@@ -1,0 +1,25 @@
+test_G01_redirect_must_not_bypass_local_host_allowlist (__main__.GenerationAudit)
+两个端口都在127.0.0.1；127.1是同一本机的缩写，但不在配置允许名单。 ... <frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+ok
+test_G02_indented_code_citation_must_not_validate_or_enter_cache (__main__.GenerationAudit) ... ok
+test_G03_nonboolean_done_must_not_end_stream_successfully (__main__.GenerationAudit) ... ok
+test_claimed_quote_must_exist_in_its_cited_excerpt (__main__.GenerationAudit)
+模型输出为替身，只检验引句定位及缓存拒绝，不冒充语义质量评测。 ... ok
+test_literal_hyphen_and_changed_number_remain_distinct (__main__.GenerationAudit) ... ok
+test_nonstream_validation_failure_preserves_returned_usage (__main__.GenerationAudit) ... ok
+test_pdf_line_break_and_ligature_must_not_reject_real_quote (__main__.GenerationAudit)
+只消除PDF排版差异，不能改写事实数字或匹配其他来源。 ... ok
+test_quote_from_another_reference_does_not_validate (__main__.GenerationAudit) ... ok
+test_stream_validation_failure_preserves_returned_usage (__main__.GenerationAudit) ... ok
+test_whitespace_in_original_quote_is_preserved_as_evidence (__main__.GenerationAudit) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 1.438s
+
+OK
+G01 observed: {"redirect_target_requests": []}
+G02 observed: {"citation_count": 0, "missing_citations": true, "warnings": ["回答未提供有效文献引用，不能作为已溯源答案。"], "cached": false}
+G03 observed: {"done_value": "false", "event_types": ["token", "error"], "final_reason": null}
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

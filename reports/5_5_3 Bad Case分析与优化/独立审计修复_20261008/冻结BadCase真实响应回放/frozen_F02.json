@@ -1,0 +1,45 @@
+{
+  "question": "Answer in English. What training data and single-crop ImageNet accuracy does the DeiT abstract report for its 86M-parameter reference model?",
+  "context_sha256": "14f9d234bd651dd1a24f261354a127d5dfb27a6b95dfe0f2b5f5a5e569e4722c",
+  "baseline_http": "/Users/rean/github/测试项/docs/完整性测试证据/agent_rag/benchmark60/http_00015.json",
+  "replayed_response": "reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测第二轮/http_001.json",
+  "boundary": "同一真实证据与参数的生成复测；最终Agent整链路另测。回放耗时不是模型生成耗时。",
+  "seconds": 0.0011212910030735657,
+  "result": {
+    "answer": "## Answer\nThe DeiT abstract reports that their reference vision transformer (86M parameters) achieves top-1 accuracy of 83.1% on ImageNet with no external data. [参考文档1：deit.pdf；第1页（物理页码）]\n\n## 参考来源\n- [参考文档1] deit.pdf；第1页（物理页码）",
+    "citations": [
+      {
+        "id": 1,
+        "source_file": "deit.pdf",
+        "location": "第1页（物理页码）",
+        "metadata": {},
+        "truncated": false,
+        "text": "infrastructure, thereby limiting their adoption.\nIn this work, we produce competitive convolution-\nfree transformers trained on ImageNet only us-\ning a single computer in less than 3 days. Our\nreference vision transformer (86M parameters)\nachieves top-1 accuracy of 83.1% (single-crop)\non ImageNet with no external data.\nWe also introduce a teacher-student strategy spe-\nciﬁc to transformers. It relies on a distillation\ntoken ensuring that the student learns from the\n\n---"
+      }
+    ],
+    "invalid_citation_ids": [],
+    "missing_citations": false,
+    "warnings": [],
+    "generation_mode": "grounded",
+    "notice": "",
+    "raw_answer": "## Answer\nThe DeiT abstract reports that their reference vision transformer (86M parameters) achieves top-1 accuracy of 83.1% on ImageNet with no external data. [参考文档1]\n\n## Reference Sources\n[参考文档1]",
+    "model": "qwen2.5:7b",
+    "options": {
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 8192,
+      "num_predict": 512,
+      "repeat_penalty": 1.0
+    },
+    "done_reason": "stop",
+    "usage": {
+      "prompt_eval_count": 1699,
+      "eval_count": 54,
+      "total_duration": 14178829334,
+      "load_duration": 4386153959,
+      "prompt_eval_duration": 7289275000,
+      "eval_duration": 2484299000
+    }
+  }
+}

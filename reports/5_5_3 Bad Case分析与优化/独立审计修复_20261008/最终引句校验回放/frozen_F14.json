@@ -1,0 +1,46 @@
+{
+  "question": "What FLOPs and parameter counts does CaiT compare with its strongest competing model at 86.5% ImageNet1k-val accuracy?",
+  "context_sha256": "de7a41babe06586534f53ca7919ada632104a0abbb89ba68386e82bdd4820722",
+  "baseline_http": "/Users/rean/github/测试项/docs/完整性测试证据/agent_rag/benchmark60/http_00078.json",
+  "replayed_response": "reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase原句约束复测/http_003.json",
+  "boundary": "同一真实证据与参数的生成复测；最终Agent整链路另测。回放耗时不是模型生成耗时。",
+  "seconds": 0.00047083299432415515,
+  "result": {
+    "answer": "## 回答\nCaiT-M36↑384Υ模型在ImageNet-1k-val上达到86.5%的top-1精度，其FLOPs和参数量分别为271M和173B。[参考文档4：cait.pdf；第8页（物理页码）]\n\n原文依据：\"CaiT-M36↑384Υ 271M 173B\"。[参考文档4：cait.pdf；第8页（物理页码）]\n\n## 参考来源\n- [参考文档4] cait.pdf；第8页（物理页码）",
+    "citations": [
+      {
+        "id": 4,
+        "source_file": "cait.pdf",
+        "location": "第8页（物理页码）",
+        "metadata": {},
+        "truncated": false,
+        "text": "| CaiT-S36 68M 14B<br>CaiT-S36↑384 68M 48B<br>CaiT-S48↑384 89M 64B | 224 224<br>224 384<br>224 384 | 83.3<br>85.0<br>85.1 | 88.0<br>89.2<br>89.5 | 72.5<br>75.0<br>75.5 |\n| --- | --- | --- | --- | --- |\n| CaiT-S36Υ 68M 14B<br>CaiT-S36↑384Υ 68M 48B<br>CaiT-M36↑384Υ 271M 173B<br>CaiT-M36↑448Υ 271M 248B<br>CaiT-M48↑448Υ 356M 330B | 224 224<br>224 384<br>224 384<br>224 448<br>224 448 | 84.0<br>85.4<br>86.1<br>86.3<br>86.5 | 88.9<br>89.8<br>90.0<br>90.2<br>90.2 | 74.1<br>76.2<br>76.3<br>76.7<br>76.9 |\n\n---"
+      }
+    ],
+    "invalid_citation_ids": [],
+    "missing_citations": false,
+    "warnings": [],
+    "evidence_quote_errors": [],
+    "generation_mode": "grounded",
+    "notice": "",
+    "raw_answer": "## 回答\nCaiT-M36↑384Υ模型在ImageNet-1k-val上达到86.5%的top-1精度，其FLOPs和参数量分别为271M和173B。[参考文档4]\n\n原文依据：\"CaiT-M36↑384Υ 271M 173B\"。[参考文档4]\n\n## 参考来源\n[参考文档4]",
+    "model": "qwen2.5:7b",
+    "options": {
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 8192,
+      "num_predict": 512,
+      "repeat_penalty": 1.0
+    },
+    "done_reason": "stop",
+    "usage": {
+      "prompt_eval_count": 2567,
+      "eval_count": 103,
+      "total_duration": 11471169291,
+      "load_duration": 1428375,
+      "prompt_eval_duration": 6627880000,
+      "eval_duration": 4836772000
+    }
+  }
+}

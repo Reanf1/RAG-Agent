@@ -1,0 +1,144 @@
+{
+  "source_files": 37,
+  "source_identical": true,
+  "source_sha256": {
+    "src/__init__.py": "4eff7d4ca3dac42df51b1c3af47dca63bd2ce497ae566c8711223c15ccfab2b4",
+    "src/frontend/__init__.py": "97c19dc7c9063934076460cb7134e8adad9ae2f723ae464b0a6f5d811dbfe936",
+    "src/frontend/app.py": "876159a8548a51e2cd5cb028b51cc57d260c2ba73532a9861f8600d5eb5d4237",
+    "src/frontend/components/trace.py": "0590bbac8b8788ad1b5272e66668e7130477113e52b5a0f3de1a1da656f0864c",
+    "src/frontend/components/sessions.py": "dcbd7ea158fcda1ab86a3d935ee2104c31488e0866a03d559efd1cc4fda7213a",
+    "src/frontend/components/documents.py": "0a71edec8c38074d6de480100047a9c6f35a4efe001d98999e8f015faafd2f98",
+    "src/utils/chroma_path.py": "85026d90844e9b2a690ea49c97faca70ca36cf0f158f8389058053abafdfcf27",
+    "src/utils/config.py": "18d2e2b484d4b1d6b74cbe70219d649a24eb8310097448aaff1738290220853d",
+    "src/utils/token_budget.py": "0c20f118ee2de0bd80c367afe06befa8f72a2850b9990b7528585919a4745bd8",
+    "src/utils/__init__.py": "5400eb325512c113952b4137673a981259a8500d6824d392c2dd6c1904ee660a",
+    "src/utils/logger.py": "eb3682cf2bb642954aa00453c9e0b80067269657eb6eb251d2268e4bb7676551",
+    "src/utils/messages.py": "ff85b1bd80fe680d4b3e1767164c80602a2d7aca18687655cb7ce799fbad0441",
+    "src/agent/memory.py": "d9f929649003851101de00ac5dfddaa263b4c91d2bceb27f5a56044c27928215",
+    "src/agent/tools.py": "bab0c83aaa27d6b81c7b029aedbad3efed48a0f0b02898ab46546d18f63c450b",
+    "src/agent/__init__.py": "2ce20f266dfd2f68d0c4cbcb47894436933c8029a8b01064e9c4ad9af29294d9",
+    "src/agent/router.py": "9543ddb2238edb9ec361fca0d0587a3d1f4de615f9f875c92c3bc8f575a300b5",
+    "src/agent/react_loop.py": "4179bab482ac19f5c9400554290fc1ad0628c1bb999335cc620728757c0acf22",
+    "src/chunking/fixed_chunk.py": "3eba644bd15a827731aedaa246d21146a7353fea34e4d282e5f13414d37ed85d",
+    "src/chunking/recursive_chunk.py": "102e05c0bee461b0bf897987f098ed818dbcde19fa48b30af7e66502c417a8b3",
+    "src/chunking/__init__.py": "f7715c93a88b8fdcf4ed35ffef878684e32d0d7e9671bc0b754c8b261aed4c37",
+    "src/chunking/semantic_chunk.py": "dd58437f9a6b2d1482f794ec95e53989d87c7af39c696b5230fb54d07e2d93e4",
+    "src/retrieval/reranker.py": "e38e177b85f21cf4d9011620ee0620688bccecccb35e7a63e3696e9c11b95748",
+    "src/retrieval/bm25_retriever.py": "361c5200c2da282a2683f8761827ca1c59dec3367d7b383bf2f1826724d307ae",
+    "src/retrieval/vector_store.py": "d05b588e8676b73bf1bdd0a96f1a0ef1a4757a372fe1aae979fe9dbacd7cac9f",
+    "src/retrieval/__init__.py": "1c06b17aa89c59f50655993328e63eb7afdb5e0f2348f663941064a977bbeb27",
+    "src/retrieval/hybrid_retriever.py": "6fa5ef3e8d48c63ebf5bc62e20423b3c2c492b4706ae3d1e895903f92c9fe703",
+    "src/retrieval/repair_index.py": "2cfb97493e521a125523755ce2e5025093ef52d93efc286bfd52b2b02cfc827d",
+    "src/data_loader/pdf_loader.py": "61c751a0e1be21224ebc62cbff42864a1cb1fd27bada9079a441800373ca8e3f",
+    "src/data_loader/docx_loader.py": "a4e8c69cb289855a6b6d5a69a840fe5dbd4abf9152dfe9d203bfaa1e1febb35d",
+    "src/data_loader/__init__.py": "b3a40abae8e3dda3e31b863ff079f3308a44fc83270d87fa24d970179828a384",
+    "src/data_loader/text_loader.py": "ee23c076850491e7ca8b6b07de2a64734e4af41c06de65b96b8f076ce9a91477",
+    "src/generation/cache.py": "f59ddbe1433502d6ac3ece6d24c6456a63c4bdf1658c77f32713e193f3717dfe",
+    "src/generation/__init__.py": "fa92e01f4ecaefcc243a6e741c068fd1e99a208edf122757477c052eb29e8e7e",
+    "src/generation/rag_pipeline.py": "21ed554ab97f599b0c8fb96110c5d4c8058301bb4e0c3caceacb6ef99a9447bc",
+    "src/generation/streaming.py": "20c7b02c32954449ada75bc9d3b85a36bb337a0676ef4857d9a23d5d02806f31",
+    "src/generation/prompt_template.py": "c270df17170f59a13f029d7e88626deb12a6a63edf337fa62866354522b7be68",
+    "docker/tcp_proxy.py": "49ecdf4f7b210ab3c33de1b102cbf3feedcf15fa8ed37ac03df72b8477245960"
+  },
+  "containers": [
+    {
+      "name": "/rag-audit-20261008-app-1",
+      "image": "rag-agent:audit-20261008",
+      "image_id": "sha256:3c649eb0162b086c7c00355133649bd8645506c75bc2abeb7fb2f6cc16ad2788",
+      "health": "healthy",
+      "networks": [
+        "rag-audit-20261008_offline"
+      ]
+    },
+    {
+      "name": "/rag-audit-20261008-ollama-1",
+      "image": "ollama/ollama:0.34.0",
+      "image_id": "sha256:684d8674b4315fa18f4f0e973a118ec2652ed96f67563277839985175858e0ba",
+      "health": "healthy",
+      "networks": [
+        "rag-audit-20261008_offline"
+      ]
+    },
+    {
+      "name": "/rag-audit-20261008-gateway-1",
+      "image": "rag-agent:audit-20261008",
+      "image_id": "sha256:3c649eb0162b086c7c00355133649bd8645506c75bc2abeb7fb2f6cc16ad2788",
+      "health": "healthy",
+      "networks": [
+        "rag-audit-20261008_default",
+        "rag-audit-20261008_offline"
+      ]
+    }
+  ],
+  "business_network_internal": true,
+  "gateway_health": {
+    "status": 200,
+    "body": "ok"
+  },
+  "docker_vm": {
+    "name": "rag-agent",
+    "status": "Running",
+    "arch": "aarch64",
+    "cpus": 4,
+    "memory": 12884901888,
+    "disk": 32212254720,
+    "runtime": "docker"
+  },
+  "final_runtime": {
+    "phase": "verify",
+    "seconds": 21.75617499399999,
+    "result": {
+      "after_new_process_chunks": 1,
+      "session_restored": true,
+      "outbound_blocked": true,
+      "rerank_score": 0.9998624324798584,
+      "generation": {
+        "answer": "## 回答\n容器本地复测代号是 AUDITDOCKER20261008。[参考文档1：容器探针.txt；行1–1]\n\n## 参考来源\n- [参考文档1] 容器探针.txt；行1–1",
+        "citations": [
+          {
+            "id": 1,
+            "source_file": "容器探针.txt",
+            "location": "行1–1",
+            "text": "容器本地复测代号是 AUDITDOCKER20261008。",
+            "metadata": {
+              "chunk_id": "container-probe",
+              "doc_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "line_end": 1,
+              "line_start": 1,
+              "source_file": "容器探针.txt"
+            },
+            "truncated": false,
+            "score": 0.9998624324798584
+          }
+        ],
+        "invalid_citation_ids": [],
+        "missing_citations": false,
+        "warnings": [],
+        "evidence_quote_errors": [],
+        "generation_mode": "grounded",
+        "notice": "",
+        "raw_answer": "## 回答\n容器本地复测代号是 AUDITDOCKER20261008。[参考文档1]\n\n## 参考来源\n[参考文档1]",
+        "model": "qwen2.5:7b",
+        "options": {
+          "temperature": 0.1,
+          "top_p": 0.9,
+          "top_k": 40,
+          "num_ctx": 8192,
+          "num_predict": 512,
+          "repeat_penalty": 1.0
+        },
+        "done_reason": "stop",
+        "usage": {
+          "prompt_eval_count": 1095,
+          "eval_count": 41,
+          "total_duration": 3391070925,
+          "load_duration": 5493236,
+          "prompt_eval_duration": 562636000,
+          "eval_duration": 2805408000
+        }
+      }
+    },
+    "boundary": "真实容器与本地M3E/BGE/Qwen，探针文字为合成数据；不代表论文质量或总体性能"
+  },
+  "boundary": "本机Apple Silicon，app/gateway为linux/amd64仿真，Ollama为ARM CPU。12GB为本次临时VM配置，不代表最低硬件要求或Windows最终补丁验收。"
+}

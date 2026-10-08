@@ -1,0 +1,57 @@
+#0 building with "colima-rag-agent" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.01kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.10.10-slim
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 155B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 217.81kB done
+#4 DONE 0.0s
+
+#5 [ 1/10] FROM docker.io/library/python:3.10.10-slim@sha256:7b0a5cefbcdd085faa21533c21549e55a7e66f5aed40f8d1f4de13a017e352cd
+#5 resolve docker.io/library/python:3.10.10-slim@sha256:7b0a5cefbcdd085faa21533c21549e55a7e66f5aed40f8d1f4de13a017e352cd 0.0s done
+#5 DONE 0.0s
+
+#6 [ 5/10] RUN python -m pip install --no-cache-dir --no-deps torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu     && python -m pip install --no-cache-dir -r requirements.txt
+#6 CACHED
+
+#7 [ 3/10] WORKDIR /app
+#7 CACHED
+
+#8 [ 2/10] RUN test "amd64" = "amd64" || (echo "本项目镜像仅支持linux/amd64，请使用Docker Compose或--platform=linux/amd64构建" >&2; exit 1)
+#8 CACHED
+
+#9 [ 4/10] COPY requirements.txt ./
+#9 CACHED
+
+#10 [ 7/10] RUN python -c "import sqlite3, chromadb; assert sqlite3.sqlite_version_info >= (3, 35, 0); print('SQLite', sqlite3.sqlite_version, 'Chroma', chromadb.__version__)"
+#10 CACHED
+
+#11 [ 6/10] RUN python -m pip install --no-cache-dir pysqlite3-binary==0.5.4     && python -c "import site; from pathlib import Path; Path(site.getsitepackages()[0], 'rag_sqlite.pth').write_text("import sys, pysqlite3; sys.modules['sqlite3'] = pysqlite3\n", encoding='utf-8')"
+#11 CACHED
+
+#12 [ 8/10] COPY config.yaml ./
+#12 CACHED
+
+#13 [ 9/10] COPY src ./src
+#13 DONE 0.0s
+
+#14 [10/10] COPY docker/tcp_proxy.py ./docker/tcp_proxy.py
+#14 DONE 0.0s
+
+#15 exporting to image
+#15 exporting layers 0.0s done
+#15 exporting manifest sha256:3235b24b220527ed079bc69935eba6cc8127ab898bd72f3b4569889ef3b0d769 done
+#15 exporting config sha256:7a58713a7c00a8a465910e83bfa90d4b8e4bdb22627584437a04a1ca79199b38 done
+#15 exporting attestation manifest sha256:78febd2bf76256d333eab8f2eae2d156d2679e79cdc44191b08cefae2f1ef67e done
+#15 exporting manifest list sha256:39c9b1192d1e2f471154aff5956cd83c053f51d6eba5bc3518f8e4ec54fb322e
+#15 exporting manifest list sha256:39c9b1192d1e2f471154aff5956cd83c053f51d6eba5bc3518f8e4ec54fb322e done
+#15 naming to docker.io/library/rag-agent:audit-20261008 done
+#15 DONE 0.0s

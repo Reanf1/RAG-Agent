@@ -1,0 +1,53 @@
+{
+  "question": "What FLOPs and parameter counts does CaiT compare with its strongest competing model at 86.5% ImageNet1k-val accuracy?",
+  "context_sha256": "de7a41babe06586534f53ca7919ada632104a0abbb89ba68386e82bdd4820722",
+  "baseline_http": "/Users/rean/github/测试项/docs/完整性测试证据/agent_rag/benchmark60/http_00078.json",
+  "replayed_response": "reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测第二轮/http_003.json",
+  "boundary": "同一真实证据与参数的生成复测；最终Agent整链路另测。回放耗时不是模型生成耗时。",
+  "seconds": 0.0004899579944321886,
+  "result": {
+    "answer": "## 回答\nCaiT-M36↑384Υ模型在ImageNet-1k-val上达到了86.5%的top-1精度，其参数量为271M，FLOPs为173B。最强的竞争对手NFNet-F6+SAM在相同精度下的参数量为438M，FLOPs为377B。因此，CaiT-M36↑384Υ在参数量上比NFNet-F6+SAM少了167M，在FLOPs上少了204B。[参考文档4：cait.pdf；第8页（物理页码）][参考文档5：cait.pdf；第8页（物理页码）]\n\n## 参考来源\n- [参考文档4] cait.pdf；第8页（物理页码）\n- [参考文档5] cait.pdf；第8页（物理页码）",
+    "citations": [
+      {
+        "id": 4,
+        "source_file": "cait.pdf",
+        "location": "第8页（物理页码）",
+        "metadata": {},
+        "truncated": false,
+        "text": "| CaiT-S36 68M 14B<br>CaiT-S36↑384 68M 48B<br>CaiT-S48↑384 89M 64B | 224 224<br>224 384<br>224 384 | 83.3<br>85.0<br>85.1 | 88.0<br>89.2<br>89.5 | 72.5<br>75.0<br>75.5 |\n| --- | --- | --- | --- | --- |\n| CaiT-S36Υ 68M 14B<br>CaiT-S36↑384Υ 68M 48B<br>CaiT-M36↑384Υ 271M 173B<br>CaiT-M36↑448Υ 271M 248B<br>CaiT-M48↑448Υ 356M 330B | 224 224<br>224 384<br>224 384<br>224 448<br>224 448 | 84.0<br>85.4<br>86.1<br>86.3<br>86.5 | 88.9<br>89.8<br>90.0<br>90.2<br>90.2 | 74.1<br>76.2<br>76.3<br>76.7<br>76.9 |\n\n---"
+      },
+      {
+        "id": 5,
+        "source_file": "cait.pdf",
+        "location": "第8页（物理页码）",
+        "metadata": {},
+        "truncated": false,
+        "text": "| nb of nb of image size ImNet Real V2<br>Network param. FLOPs train test top-1 top-1 top-1 |  |  |  |  |\n| --- | --- | --- | --- | --- |\n| RegNetY-16GF 84M 16B | 224 224 | 82.9 | 88.1 | 72.4 |\n| EfficientNet-B5 30M 10B<br>EfficientNet-B7 66M 37B | 456 456<br>600 600 | 83.6<br>84.3 | 88.3 | 73.6 |\n| EfficientNet-B5 RA 30M 10B<br>EfficientNet-B7 RA 66M 37B | 456 456<br>600 600 | 83.7<br>84.7 |  |  |\n| Fix-EfficientNet-B8 87M 90B | 672 800 | 85.7 | 90.0 | 75.9 |\n| NFNet-F0 72M 12B 192 256 83.6 88.1 72.6<br>NFNet-F1 133M 36B 224 320 84.7 88.9 74.4<br>NFNet-F2 194M 62B 256 352 85.1 88.9 74.3<br>NFNet-F3 255M 115B 320 416 85.7 89.4 75.2<br>NFNet-F4 316M 215B 384 512 85.9 89.4 75.2<br>NFNet-F5 377M 290B 416 544 86.0 89.2 74.6<br>NFNet-F6+SAM 438M 377B 448 576 86.5 89.9 75.8 |  |  |  |  |"
+      }
+    ],
+    "invalid_citation_ids": [],
+    "missing_citations": false,
+    "warnings": [],
+    "generation_mode": "grounded",
+    "notice": "",
+    "raw_answer": "## 回答\nCaiT-M36↑384Υ模型在ImageNet-1k-val上达到了86.5%的top-1精度，其参数量为271M，FLOPs为173B。最强的竞争对手NFNet-F6+SAM在相同精度下的参数量为438M，FLOPs为377B。因此，CaiT-M36↑384Υ在参数量上比NFNet-F6+SAM少了167M，在FLOPs上少了204B。[参考文档4][参考文档5]\n\n## 参考来源\n[参考文档4][参考文档5]",
+    "model": "qwen2.5:7b",
+    "options": {
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 8192,
+      "num_predict": 512,
+      "repeat_penalty": 1.0
+    },
+    "done_reason": "stop",
+    "usage": {
+      "prompt_eval_count": 2410,
+      "eval_count": 150,
+      "total_duration": 13623416000,
+      "load_duration": 580958,
+      "prompt_eval_duration": 6608046000,
+      "eval_duration": 6999617000
+    }
+  }
+}

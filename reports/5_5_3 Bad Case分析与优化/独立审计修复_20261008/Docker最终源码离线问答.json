@@ -1,0 +1,56 @@
+{
+  "phase": "verify",
+  "seconds": 21.75617499399999,
+  "result": {
+    "after_new_process_chunks": 1,
+    "session_restored": true,
+    "outbound_blocked": true,
+    "rerank_score": 0.9998624324798584,
+    "generation": {
+      "answer": "## 回答\n容器本地复测代号是 AUDITDOCKER20261008。[参考文档1：容器探针.txt；行1–1]\n\n## 参考来源\n- [参考文档1] 容器探针.txt；行1–1",
+      "citations": [
+        {
+          "id": 1,
+          "source_file": "容器探针.txt",
+          "location": "行1–1",
+          "text": "容器本地复测代号是 AUDITDOCKER20261008。",
+          "metadata": {
+            "chunk_id": "container-probe",
+            "doc_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "line_end": 1,
+            "line_start": 1,
+            "source_file": "容器探针.txt"
+          },
+          "truncated": false,
+          "score": 0.9998624324798584
+        }
+      ],
+      "invalid_citation_ids": [],
+      "missing_citations": false,
+      "warnings": [],
+      "evidence_quote_errors": [],
+      "generation_mode": "grounded",
+      "notice": "",
+      "raw_answer": "## 回答\n容器本地复测代号是 AUDITDOCKER20261008。[参考文档1]\n\n## 参考来源\n[参考文档1]",
+      "model": "qwen2.5:7b",
+      "options": {
+        "temperature": 0.1,
+        "top_p": 0.9,
+        "top_k": 40,
+        "num_ctx": 8192,
+        "num_predict": 512,
+        "repeat_penalty": 1.0
+      },
+      "done_reason": "stop",
+      "usage": {
+        "prompt_eval_count": 1095,
+        "eval_count": 41,
+        "total_duration": 3391070925,
+        "load_duration": 5493236,
+        "prompt_eval_duration": 562636000,
+        "eval_duration": 2805408000
+      }
+    }
+  },
+  "boundary": "真实容器与本地M3E/BGE/Qwen，探针文字为合成数据；不代表论文质量或总体性能"
+}

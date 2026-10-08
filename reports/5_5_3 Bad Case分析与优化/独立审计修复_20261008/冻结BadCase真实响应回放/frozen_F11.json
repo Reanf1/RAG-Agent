@@ -1,0 +1,53 @@
+{
+  "question": "DN-DETR 用什么附加训练任务缓解二分图匹配不稳定？",
+  "context_sha256": "ad0586e16d4fe3a52bb71dbc799244089d82b3bc3a97b06d9a900bbac0a8026e",
+  "baseline_http": "/Users/rean/github/测试项/docs/完整性测试证据/agent_rag/benchmark60/http_00058.json",
+  "replayed_response": "reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测第二轮/http_002.json",
+  "boundary": "同一真实证据与参数的生成复测；最终Agent整链路另测。回放耗时不是模型生成耗时。",
+  "seconds": 0.00044587499724002555,
+  "result": {
+    "answer": "## 回答\nDN-DETR 通过引入去噪（DN）训练方法来缓解二分图匹配的不稳定性。具体来说，DN-DETR 在 Transformer 解码器中额外输入噪声化的 ground-truth 标签和框，并训练模型重建 ground-truth 标签和框。这种方法通过添加噪声（∆x, ∆y, ∆w, ∆h），其中 |∆x| < λw 来稳定训练过程，并加速收敛。[参考文档1：dino.pdf；第5页（物理页码）][参考文档2：dn\\_detr.pdf；第8页（物理页码）]\n\n## 参考来源\n- [参考文档1] dino.pdf；第5页（物理页码）\n- [参考文档2] dn\\_detr.pdf；第8页（物理页码）",
+    "citations": [
+      {
+        "id": 1,
+        "source_file": "dino.pdf",
+        "location": "第5页（物理页码）",
+        "metadata": {},
+        "truncated": false,
+        "text": "the decoder.\nDN-DETR [17] introduces a denoising (DN) training method to accelerate the\ntraining convergence of DETR-like models. It shows that the slow convergence\nproblem in DETR is caused by the instability of bipartite matching. To mitigate\nthis problem, DN-DETR proposes to additionally feed noised ground-truth (GT)\nlabels and boxes into the Transformer decoder and train the model to reconstruct\nthe ground-truth ones. The added noise (∆x, ∆y, ∆w, ∆h) is constrained by\n|∆x| < ^{λw}\n\n---"
+      },
+      {
+        "id": 2,
+        "source_file": "dn_detr.pdf",
+        "location": "第8页（物理页码）",
+        "metadata": {},
+        "truncated": false,
+        "text": "In this paper, we have analyzed the reason for the slow\nconvergence of DETR training lying in the unstable bi-\n[图像区域 3：原文第 8 页]\nFigure 6. DN-DETR in different noise scales. We fix one noise\nscale to 0.4 and change the other. Noise scale is defined in 4.3\npartite matching and proposed a novel denoising training\nmethod to address this problem. Based on this analysis, we\nproposed DN-DETR by integrating denoising training into\nDAB-DETR to test its effectiveness. DN-DETR specifies\n\n---"
+      }
+    ],
+    "invalid_citation_ids": [],
+    "missing_citations": false,
+    "warnings": [],
+    "generation_mode": "grounded",
+    "notice": "",
+    "raw_answer": "## 回答\nDN-DETR 通过引入去噪（DN）训练方法来缓解二分图匹配的不稳定性。具体来说，DN-DETR 在 Transformer 解码器中额外输入噪声化的 ground-truth 标签和框，并训练模型重建 ground-truth 标签和框。这种方法通过添加噪声（∆x, ∆y, ∆w, ∆h），其中 |∆x| < λw 来稳定训练过程，并加速收敛。[参考文档1][参考文档2]\n\n## 参考来源\n[参考文档1][参考文档2]",
+    "model": "qwen2.5:7b",
+    "options": {
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 8192,
+      "num_predict": 512,
+      "repeat_penalty": 1.0
+    },
+    "done_reason": "stop",
+    "usage": {
+      "prompt_eval_count": 1657,
+      "eval_count": 129,
+      "total_duration": 9466379000,
+      "load_duration": 2188791,
+      "prompt_eval_duration": 3389766000,
+      "eval_duration": 6069871000
+    }
+  }
+}

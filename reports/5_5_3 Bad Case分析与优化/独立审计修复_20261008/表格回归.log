@@ -1,0 +1,60 @@
+test_ambiguous_three_line_header_keeps_original_text (test_academic_pdf.TestAcademicPDF)
+父表头横跨两个子列时不输出错误结构，正文和原文位置仍保留。 ... ok
+test_below_captions_do_not_attach_to_the_next_table (test_academic_pdf.TestAcademicPDF)
+相邻网格表下置标题分别绑定，不能把Table5赋给Table6。 ... ok
+test_chinese_continuation_and_unnumbered_tables (test_academic_pdf.TestAcademicPDF)
+中文续表无重复表头时可合并；无编号的独立表不凭同表头合并。 ... ok
+test_continuation_without_repeated_header (test_academic_pdf.TestAcademicPDF)
+明确同编号续表可无重复表头，下一页首行数据不可丢失。 ... ok
+test_cross_page_table_merges_rows_and_keeps_row_sources (test_academic_pdf.TestAcademicPDF)
+相邻页同一续表合并，重复表头去重，每行记录真实来源页。 ... ok
+test_dense_formula_rows_do_not_leak_into_neighbors (test_academic_pdf.TestAcademicPDF)
+上标边缘与邻行相交时，不能向表头或邻行复制残留字符。 ... ok
+test_different_numbered_tables_do_not_merge (test_academic_pdf.TestAcademicPDF)
+几何位置和表头相同也不能合并不同编号的独立表。 ... ok
+test_formula_symbols_and_scripts_are_preserved (test_academic_pdf.TestAcademicPDF)
+公式符号与上下标保持，不能把 x 的平方压成普通 x2。 ... ok
+test_fraction_layout_retains_original_positions (test_academic_pdf.TestAcademicPDF)
+不猜测二维分式的 LaTeX，保留分子/分母位置以回看原文。 ... ok
+test_full_width_separator_between_column_sections (test_academic_pdf.TestAcademicPDF)
+页中通栏内容将双栏分为上下区域，避免跨区域串读。 ... ok
+test_image_formula_is_locatable_after_batch_save (test_academic_pdf.TestAcademicPDF)
+混合文本页的公式图片保留原文定位，批量保存后仍可裁剪查看。 ... ok
+test_indented_single_column_is_not_reordered (test_academic_pdf.TestAcademicPDF)
+上下分离的缩进段落不能被误当作同时并排的两栏。 ... ok
+test_multiline_top_caption_wins_over_next_tables_caption (test_academic_pdf.TestAcademicPDF)
+上置标题最后一行最接近本表，不能只按第一行距离改绑下方标题。 ... FAIL
+test_multiple_table_styles_on_same_page (test_academic_pdf.TestAcademicPDF)
+同页网格表与三线表分别保留，不把横线范围或单元格混在一起。 ... ok
+test_nonadjacent_or_incompatible_tables_do_not_merge (test_academic_pdf.TestAcademicPDF)
+页码断开、表头或列结构不同、非页边续接均分别保留。 ... ok
+test_three_line_formula_cells_and_header_words (test_academic_pdf.TestAcademicPDF)
+多词表头和公式中的间隔不拆成虚假的列。 ... ok
+test_three_line_table_and_empty_cells (test_academic_pdf.TestAcademicPDF)
+三线表在规则围出的区域内识别，空单元格不从相邻行填值。 ... ok
+test_three_page_table_keeps_first_caption_identity (test_academic_pdf.TestAcademicPDF)
+中间续页不重复标题时，仍保留整张表的编号和第三页数据。 ... ok
+test_two_columns_with_full_width_heading (test_academic_pdf.TestAcademicPDF)
+先通栏标题，再完整左栏、完整右栏，最后页脚。 ... ok
+
+======================================================================
+FAIL: test_multiline_top_caption_wins_over_next_tables_caption (test_academic_pdf.TestAcademicPDF)
+上置标题最后一行最接近本表，不能只按第一行距离改绑下方标题。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_1_2 文本分块策略/test_academic_pdf.py", line 143, in test_multiline_top_caption_wins_over_next_tables_caption
+    self.assertEqual([t.page_content.splitlines()[0] for t in tables],
+AssertionError: Lists differ: ['Table 4: ablation', '| Method | Score |'] != ['Table 3: model results', 'Table 4: ablation']
+
+First differing element 0:
+'Table 4: ablation'
+'Table 3: model results'
+
+- ['Table 4: ablation', '| Method | Score |']
++ ['Table 3: model results', 'Table 4: ablation']
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.265s
+
+FAILED (failures=1)
+Consider using the pymupdf_layout package for a greatly improved page layout analysis.

@@ -1,0 +1,244 @@
+test_archive_selection_restores_only_selected_document (test_document_flow.TestImportFrontend)
+归档区选择另一份原文，恢复按钮只重建所选文档。 ... 2026-10-08 10:26:50.718 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_batch_upload_progress_state_and_rerun (test_document_flow.TestImportFrontend)
+实际操作上传/按钮，核验混合结果、完整进度和重跑不重复执行。 ... 2026-10-08 10:26:52.032 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-08 10:26:52.194 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+文档导入失败：bad.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+文档导入失败：bad.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+ok
+test_bm25_database_error_is_visible_and_retryable (test_document_flow.TestImportFrontend)
+语料读取异常明确提示，恢复后重新提交可查，不静默切换检索方式。 ... 2026-10-08 10:26:52.549 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_bm25_search_reflects_upload_and_delete (test_document_flow.TestImportFrontend)
+上传后每次查询读取当前语料，新文档立即可查，已删除文档不再出现。 ... 2026-10-08 10:26:52.876 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_bm25_search_without_model_and_with_document_filter (test_document_flow.TestImportFrontend)
+页面 BM25 不加载权重，单文献负分仍展示正文、位置与 ID。 ... 2026-10-08 10:26:53.517 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_delete_only_selected_document_keeps_other_index_and_progress (test_document_flow.TestImportFrontend)
+删除一份文献不会清空全库，保留任务的进度与真实列表一致。 ... 2026-10-08 10:26:53.842 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_eight_character_document_filter_uses_full_identity (test_document_flow.TestImportFrontend)
+真实上传文献的八位ID可检索，重名简写拒绝执行，完整ID仍有效。 ... 2026-10-08 10:26:54.382 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_failed_upload_recovers_and_disables_retry (test_document_flow.TestImportFrontend)
+页面通过失败按钮恢复成功，之后重试按钮禁用且文献存在。 ... 2026-10-08 10:26:54.922 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+文档导入失败：retry.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1114, in __call__
+    return self._mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1118, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1173, in _execute_mock_call
+    raise effect
+OSError: 暂时失败
+ok
+test_filtered_vector_label_recovery_displays_warning_and_real_source (test_document_flow.TestImportFrontend)
+页面实际经Chroma读取Label异常恢复，提示限制并展示原文行号。 ... 2026-10-08 10:26:55.286 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+ok
+test_knowledge_panel_content_alias_keeps_both_batch_results (test_document_flow.TestImportFrontend)
+同内容异名按指纹合并，仍保留一个成功和另一个失败的实际结果。 ... 2026-10-08 10:26:55.556 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_knowledge_panel_empty_is_read_only (test_document_flow.TestImportFrontend)
+空库显示真实零值，刷新不会建向量库、编码或改变当前会话。 ... 2026-10-08 10:26:55.892 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_knowledge_panel_index_error_is_unknown_not_zero (test_document_flow.TestImportFrontend)
+索引不可读不显示正常空库或捏造零统计，修复后刷新重新读取。 ... 2026-10-08 10:26:56.108 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_knowledge_panel_missing_source_and_external_index_change (test_document_flow.TestImportFrontend)
+只剩索引时明确原文缺失；外部移除块后刷新显示未向量化，不沿用旧批次成功。 ... 2026-10-08 10:26:56.551 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_knowledge_panel_partial_index_does_not_claim_import_success (test_document_flow.TestImportFrontend)
+第二批失败时面板显示实际500块，左侧保留失败详情，重试补全。 ... 2026-10-08 10:26:57.004 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+2026-10-08 10:26:57.425 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_knowledge_panel_tracks_failed_unindexed_and_refresh (test_document_flow.TestImportFrontend)
+成功与写入失败并存，刷新后磁盘状态仍准确但不补造本页批次结果。 ... 2026-10-08 10:26:57.673 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+2026-10-08 10:26:58.007 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_knowledge_selection_shows_full_original_and_short_id (test_document_flow.TestImportFrontend)
+两份原文切换只展示选中文件，删除后不遗留另一份文件的内容。 ... 2026-10-08 10:26:58.244 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_layout_library_delete_cancel_restore (test_document_flow.TestImportFrontend)
+真实页面上传、取消删除、删除和恢复均核验原文及Chroma。 ... 2026-10-08 10:26:58.855 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_library_persists_without_upload_and_failure_keeps_original (test_document_flow.TestImportFrontend)
+页面重载读全库；索引删除失败会回滚原文且允许重试。 ... 2026-10-08 10:26:59.617 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-08 10:26:59.941 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_model_error_keeps_file_and_retry_completes_index (test_document_flow.TestImportFrontend)
+缺失本地模型时不误报成功，恢复模型后仅重试索引。 ... 2026-10-08 10:27:00.239 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_model_reranking_displays_new_order_score_and_sources (test_document_flow.TestImportFrontend)
+页面使用模型分数重新排列，保留 Word 段落与 TXT 行范围。 ... 2026-10-08 10:27:00.612 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_model_reranking_empty_cases_and_error_recovery (test_document_flow.TestImportFrontend)
+空问题/空库无需模型，模型缺失或推理失败有错误提示，修复后可重新提交。 ... 2026-10-08 10:27:00.887 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_model_reranking_uploaded_document_filter_and_delete (test_document_flow.TestImportFrontend)
+新文献可精排，文档 ID 限定在模型评分前生效，删除后不加载重排模型。 ... 2026-10-08 10:27:01.398 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_new_upload_is_incremental_and_repeat_upload_skips_encoding (test_document_flow.TestImportFrontend)
+改变文件选择新增文献，重新选原文也不重算已有向量。 ... 2026-10-08 10:27:01.988 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_oversized_upload_shows_failure_and_valid_file_still_indexes (test_document_flow.TestImportFrontend)
+AppTest绕过浏览器大小限制，验证20MiB后端保护与页面失败/重试状态。 ... 2026-10-08 10:27:02.600 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+文档导入失败：oversized.pdf
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 80, in batch_import
+    raise ValueError(f"文件过大，单份最大支持 {max_file_size_mb} MB")
+ValueError: 文件过大，单份最大支持 20 MB
+文档导入失败：oversized.pdf
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 80, in batch_import
+    raise ValueError(f"文件过大，单份最大支持 {max_file_size_mb} MB")
+ValueError: 文件过大，单份最大支持 20 MB
+ok
+test_restore_index_failure_can_retry (test_document_flow.TestImportFrontend)
+回收原文恢复后模型失败，不冒充入库成功；现有失败重试补全索引。 ... 2026-10-08 10:27:03.024 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_retry_keeps_new_unimported_selection (test_document_flow.TestImportFrontend)
+重试旧失败文件时，不清空用户新选但尚未导入的其他文件。 ... 2026-10-08 10:27:03.651 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+文档导入失败：old.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1114, in __call__
+    return self._mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1118, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1173, in _execute_mock_call
+    raise effect
+OSError: 暂时失败
+ok
+test_retry_separates_current_progress_from_cumulative_results (test_document_flow.TestImportFrontend)
+六份混合导入后只重试两份，当前2/2与累计4成功2失败分别标明。 ... 2026-10-08 10:27:04.169 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+文档导入失败：bad-a.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+文档导入失败：bad-b.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xfe in position 0: invalid start byte
+文档导入失败：bad-a.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+文档导入失败：bad-b.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xfe in position 0: invalid start byte
+ok
+test_rrf_empty_input_empty_store_and_model_error (test_document_flow.TestImportFrontend)
+空问题/空库无需权重；有数据但模型失败不静默改为 BM25。 ... 2026-10-08 10:27:04.599 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_rrf_search_after_upload_and_database_recovery (test_document_flow.TestImportFrontend)
+新上传文档参加两路召回，数据库异常恢复后可查，删除过滤无陈旧块。 ... 2026-10-08 10:27:05.043 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_rrf_search_displays_fused_score_and_original_source (test_document_flow.TestImportFrontend)
+页面切换混合检索，共同命中的块排序提高，并保留 Word 位置。 ... 2026-10-08 10:27:05.691 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_sidebar_titles_and_upload_label_are_consistent (test_document_flow.TestImportFrontend)
+三个侧栏标题同用header，上传组件更名但保持批量能力。 ... 2026-10-08 10:27:05.962 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_vector_search_blank_input_and_empty_index (test_document_flow.TestImportFrontend)
+启动/空问题不初始化模型，空库明确提示且不计算查询向量。 ... 2026-10-08 10:27:06.124 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_vector_search_document_filter_and_non_pdf_locations (test_document_flow.TestImportFrontend)
+文档过滤生效，Word 显示段落/表格、TXT 显示行号，不伪造页码。 ... 2026-10-08 10:27:06.491 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_vector_search_errors_are_visible_and_retryable (test_document_flow.TestImportFrontend)
+模型/数据库失败明确报错，修复后重新提交可检索，不当作空库。 ... 2026-10-08 10:27:06.882 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_vector_search_uses_persisted_index_and_top_k (test_document_flow.TestImportFrontend)
+页面没有上传任务也能查旧库，展示排序、跨页来源与负相似度。 ... 2026-10-08 10:27:07.255 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_workbench_tabs_keep_features_in_their_sections (test_document_flow.TestImportFrontend)
+三个工作区分别承载问答、检索和原文管理。 ... 2026-10-08 10:27:07.588 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+
+----------------------------------------------------------------------
+Ran 36 tests in 17.163s
+
+OK

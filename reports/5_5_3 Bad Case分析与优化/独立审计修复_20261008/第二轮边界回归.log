@@ -1,0 +1,36 @@
+test_open_issue_agent_01_previous_tool_evidence_survives_observation (test_independent_agent.AgentAudit)
+缺陷：第二轮Observation把第一轮结果删掉，却只附第二轮ToolMessage。 ... ok
+test_open_issue_agent_02_suffix_filename_does_not_select_wrong_paper (test_independent_agent.AgentAudit)
+缺陷：paper.pdf被当作mypaper.pdf的匹配项，错误ID不能被当前目标纠正。 ... ok
+test_open_issue_agent_03_nonserializable_result_is_recorded_as_tool_error (test_independent_agent.AgentAudit)
+缺陷：输出JSON序列化在异常处理外，错误结果绕过tool_result和恢复逻辑。 ... ok
+test_arabic_numbers_block_even_high_similarity (test_independent_cache.ExtendedAgentBoundaryAudit) ... ok
+test_changed_negation_target_does_not_reuse_old_answer (test_independent_cache.ExtendedAgentBoundaryAudit) ... ok
+test_chinese_number_change_does_not_reuse_old_answer (test_independent_cache.ExtendedAgentBoundaryAudit) ... ok
+test_same_user_sessions_remain_isolated_after_reopen_and_clear (test_independent_cache.ExtendedAgentBoundaryAudit)
+真实SQLite，只替代Token计数；不同会话不得互读或一起清空。 ... ok
+test_G01_redirect_must_not_bypass_local_host_allowlist (test_independent_generation.GenerationAudit)
+两个端口都在127.0.0.1；127.1是同一本机的缩写，但不在配置允许名单。 ... ok
+test_G02_indented_code_citation_must_not_validate_or_enter_cache (test_independent_generation.GenerationAudit) ... ok
+test_G03_nonboolean_done_must_not_end_stream_successfully (test_independent_generation.GenerationAudit) ... ok
+test_hybrid_should_refill_after_discarding_twenty_image_placeholders (test_independent_retrieval.RetrievalAudit)
+候选补位边界 R2：用排名桩证明过滤后不补取，不能据此推断真实召回率。 ... ok
+test_reindex_after_chunk_config_change_should_not_mix_old_strategy (test_independent_retrieval.RetrievalAudit)
+已知缺陷 R1：再次导入新策略后旧块仍在，成功状态与列表冲突。 ... /Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_calculator_input_error_has_known_zero_model_usage (test_independent_usage.ActionFailureUsageAudit)
+I05同类：纯四则工具输入校验失败没有LLM调用，应保留确定的零。 ... ok
+test_completed_model_usage_survives_batch_count_validation_error (test_independent_usage.ActionFailureUsageAudit)
+已收到的真实用量应随错误事件保留；当前实现丢弃此字段。 ... ok
+test_keyword_validation_failure_preserves_already_reported_usage (test_independent_usage.ActionFailureUsageAudit)
+S08同类：拒绝扩展词正确，但已结束模型的用量不能随结果丢弃。 ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 1.370s
+
+OK
+G01 observed: {"redirect_target_requests": []}
+G02 observed: {"citation_count": 0, "missing_citations": true, "warnings": ["回答未提供有效文献引用，不能作为已溯源答案。"], "cached": false}
+G03 observed: {"done_value": "false", "event_types": ["token", "error"], "final_reason": null}
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

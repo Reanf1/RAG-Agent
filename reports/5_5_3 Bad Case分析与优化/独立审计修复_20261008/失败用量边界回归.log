@@ -1,0 +1,15 @@
+test_calculator_input_error_has_known_zero_model_usage (test_independent_usage.ActionFailureUsageAudit)
+I05同类：纯四则工具输入校验失败没有LLM调用，应保留确定的零。 ... ok
+test_completed_model_usage_survives_batch_count_validation_error (test_independent_usage.ActionFailureUsageAudit)
+已收到的真实用量应随错误事件保留；当前实现丢弃此字段。 ... ok
+test_invalid_thought_and_observation_keep_completed_response_usage (test_independent_usage.ActionFailureUsageAudit)
+参数校验失败发生在响应之后；两阶段均保留服务返回的真实账目。 ... ok
+test_keyword_validation_failure_preserves_already_reported_usage (test_independent_usage.ActionFailureUsageAudit)
+S08同类：拒绝扩展词正确，但已结束模型的用量不能随结果丢弃。 ... ok
+test_retry_deadline_preserves_first_completed_usage_and_marks_unknown_tail (test_independent_usage.ActionFailureUsageAudit)
+第二次仍运行时结束等待，保留第一次失败的用量，不接收迟到响应。 ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.313s
+
+OK
