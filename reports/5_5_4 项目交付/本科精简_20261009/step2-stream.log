@@ -1,0 +1,13 @@
+test_close_during_stream_closes_network_without_final_event (test_agent_streaming.TestAgentStreaming) ... ok
+test_disconnect_keeps_partial_but_does_not_complete (test_agent_streaming.TestAgentStreaming) ... ok
+test_length_cutoff_and_invalid_finish_are_not_success (test_agent_streaming.TestAgentStreaming) ... ok
+test_null_message_keeps_partial_and_closes_response (test_agent_streaming.TestAgentStreaming)
+损坏的分包不能抛出未处理异常，也不能把已输出片段当完整答案。 ... ok
+test_partial_parser_does_not_leak_json_or_observation (test_agent_streaming.TestAgentStreaming) ... ok
+test_stream_tokens_do_not_duplicate_token_cost_or_trace (test_agent_streaming.TestAgentStreaming) ... ok
+test_tokens_arrive_before_last_packet_and_response_closes (test_agent_streaming.TestAgentStreaming) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.398s
+
+OK

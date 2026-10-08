@@ -1,0 +1,93 @@
+test_answer_plan_skips_model_and_tool_execution (test_action.TestAction) ... ok
+test_closing_after_call_event_does_not_execute_tool (test_action.TestAction) ... ok
+test_current_document_filter_cannot_be_omitted_by_action (test_action.TestAction)
+最新问题的单个完整ID必须成为检索过滤，不扩展为全库查询。 ... ok
+test_current_paper_id_overrides_model_choice_from_old_history (test_action.TestAction)
+复现W09：最新问题指定ViT，模型Action却填了历史DETR的真实ID。 ... ok
+test_empty_multiple_wrong_name_and_non_dict_arguments_do_not_execute (test_action.TestAction) ... ok
+test_execution_keeps_selected_tool_when_caller_changes_registry_after_call_event (test_action.TestAction) ... ok
+test_executor_rejects_unknown_duplicate_and_non_dict_arguments (test_action.TestAction) ... ok
+test_filename_only_rule_search_passes_question_without_model_or_invented_id (test_action.TestAction) ... ok
+test_filename_preflight_uses_declared_empty_paper_list_arguments (test_action.TestAction)
+复现W01：模型曾把文件名塞入无参数文献列表的query字段。 ... ok
+test_invalid_thought_and_duplicate_tools_do_not_call_model (test_action.TestAction) ... ok
+test_keyword_document_filename_preflight_and_alias (test_action.TestAction)
+文档关键词入口先查列表，再将唯一文件名映射为真实ID。 ... ok
+test_native_call_executes_selected_tool_and_correlates_messages (test_action.TestAction) ... ok
+test_network_failure_and_cloud_configuration_do_not_execute (test_action.TestAction) ... ok
+test_no_argument_and_optional_default_tools_execute (test_action.TestAction) ... ok
+test_only_selected_tool_is_exposed_even_when_other_tools_are_available (test_action.TestAction) ... ok
+test_partial_response_service_errors_and_malformed_json_do_not_execute (test_action.TestAction) ... ok
+test_provided_fingerprint_in_question_or_tool_context_keeps_document_filter (test_action.TestAction) ... ok
+test_required_type_and_extra_argument_errors_are_tool_results_without_side_effects (test_action.TestAction) ... ok
+test_structured_results_and_mutating_tools_preserve_original_parameters (test_action.TestAction) ... ok
+test_text_keyword_input_is_not_changed_to_conflicting_document_input (test_action.TestAction)
+关键词处理已给定文本时，即使问题提到ID，也不能自动再补doc_id。 ... ok
+test_tool_exception_is_preserved_and_not_retried (test_action.TestAction) ... ok
+test_unprovided_or_invalid_fingerprint_never_executes_tool (test_action.TestAction) ... ok
+test_closing_loop_and_mutating_events_do_not_execute_or_change_state (test_observation.TestObservationAndLoop) ... ok
+test_continue_stops_at_limit_without_extra_model_or_tool_calls (test_observation.TestObservationAndLoop) ... ok
+test_direct_answer_finishes_without_tool_calling_request (test_observation.TestObservationAndLoop) ... ok
+test_empty_library_notice_survives_observation_rewriting (test_observation.TestObservationAndLoop)
+复现W05：工具已声明空库，Observation却只返回纯模型正文。 ... ok
+test_failed_rag_followed_by_missing_metadata_is_not_empty_library (test_observation.TestObservationAndLoop)
+f5b26c7真实复测：检索Label失败，元字段缺项不能改写为文档不存在。 ... ok
+test_failed_tool_cannot_be_marked_successful (test_observation.TestObservationAndLoop) ... ok
+test_invalid_limits_and_context_stop_before_model_calls (test_observation.TestObservationAndLoop) ... ok
+test_missing_information_can_finish_without_claiming_completion (test_observation.TestObservationAndLoop) ... ok
+test_model_errors_stop_in_each_stage_and_preserve_actual_results (test_observation.TestObservationAndLoop) ... ok
+test_observation_rejects_inconsistent_decisions (test_observation.TestObservationAndLoop) ... ok
+test_observation_rejects_partial_malformed_and_service_responses (test_observation.TestObservationAndLoop) ... ok
+test_observation_unknown_usage_and_boundary_description (test_observation.TestObservationAndLoop) ... ok
+test_observation_validates_state_before_call_and_never_uses_cloud (test_observation.TestObservationAndLoop) ... ok
+test_pending_candidates_preserve_vector_recovery_notice (test_observation.TestObservationAndLoop)
+等候相关性确认时保留恢复限制，不被固定结束语覆盖。 ... ok
+test_requested_missing_doi_is_explicit_in_final_metadata_answer (test_observation.TestObservationAndLoop)
+复现W02：工具已返回DOI缺失，最终回答不得省略用户请求的字段。 ... ok
+test_retrieved_text_without_citation_is_not_rewritten_as_empty_library (test_observation.TestObservationAndLoop)
+复现W07：无有效引用不等于检索无文档，保留真实工具状态。 ... ok
+test_single_rag_preserves_citations_after_action_shortens_question (test_observation.TestObservationAndLoop)
+单一RAG任务的查询改写不能导致Observation再次生成和丢失引用。 ... ok
+test_single_summary_after_failed_comparison_cannot_complete_original_task (test_observation.TestObservationAndLoop)
+W13回归：最后一个摘要成功不代表两篇论文对比已完成。 ... ok
+test_source_url_followed_by_chinese_has_explicit_markdown_boundary (test_observation.TestObservationAndLoop)
+W11只修复原文真实URL的裸链接边界，不猜测未知网址。 ... ok
+test_successful_retrieval_after_failure_can_still_report_real_empty_result (test_observation.TestObservationAndLoop)
+失败与后续真正空结果不同，不能全面禁止已经核验的空库说明。 ... ok
+test_tool_error_can_continue_to_a_real_alternative (test_observation.TestObservationAndLoop) ... ok
+test_tool_failure_is_observed_and_stops_honestly (test_observation.TestObservationAndLoop) ... ok
+test_two_real_tools_feed_next_round_and_native_observation_messages (test_observation.TestObservationAndLoop) ... ok
+test_all_stages_preserve_actual_tool_description_without_duplicate_schema (test_system_prompt.TestAgentSystemPrompt) ... ok
+test_empty_registry_constrains_model_plan_to_answer (test_system_prompt.TestAgentSystemPrompt) ... ok
+test_empty_registry_is_explicit_and_does_not_add_planned_production_tools (test_system_prompt.TestAgentSystemPrompt) ... ok
+test_large_observation_request_fits_without_mutating_original (test_system_prompt.TestAgentSystemPrompt)
+超窗口工具证据只裁剪发送副本，当前问题、真实ID和原始结果保留。 ... ok
+test_long_windows_metadata_preserves_text_positions_and_parameters (test_system_prompt.TestAgentSystemPrompt)
+长Windows路径超预算时精简辅助字段，正文、定位和原始日志不改写。 ... ok
+test_native_tool_message_is_json_and_can_fit_full_request_budget (test_system_prompt.TestAgentSystemPrompt)
+执行器返回的原生ToolMessage也必须可裁剪，不能只处理Human Context。 ... ok
+test_oversized_current_question_remains_rejected (test_system_prompt.TestAgentSystemPrompt)
+当前任务自身超限仍明确拒绝，不能通过删除问题掩盖。 ... ok
+test_small_request_keeps_all_metadata (test_system_prompt.TestAgentSystemPrompt)
+未超预算时不改变任何来源字段。 ... ok
+test_unknown_stage_is_rejected_without_model_or_tool_execution (test_system_prompt.TestAgentSystemPrompt) ... ok
+test_user_documents_observations_and_thought_cannot_replace_system_rules (test_system_prompt.TestAgentSystemPrompt) ... ok
+test_action_reuses_decision_and_validates_args_without_second_http (test_thought.TestThought)
+同一次决策同时选工具和参数，校验与实际执行仍在Action。 ... ok
+test_cloud_and_invalid_addresses_are_rejected_before_network (test_thought.TestThought) ... ok
+test_direct_answer_without_tools_has_no_tool_calls (test_thought.TestThought) ... ok
+test_dynamic_instructions_do_not_change_system_message (test_thought.TestThought) ... ok
+test_empty_or_non_text_answer_is_explicit_error (test_thought.TestThought) ... ok
+test_input_errors_do_not_call_model (test_thought.TestThought) ... ok
+test_invalid_native_tool_decisions_are_rejected (test_thought.TestThought) ... ok
+test_local_model_failure_is_not_retried (test_thought.TestThought) ... ok
+test_message_roles_tools_schema_and_current_state_are_preserved (test_thought.TestThought) ... ok
+test_no_tools_cannot_select_tool (test_thought.TestThought) ... ok
+test_plan_only_selects_registered_tool_and_uses_llm_config (test_thought.TestThought) ... ok
+test_unfinished_length_stops_service_errors_and_bad_shapes_are_rejected (test_thought.TestThought) ... ok
+test_unknown_usage_is_not_estimated (test_thought.TestThought) ... ok
+
+----------------------------------------------------------------------
+Ran 68 tests in 2.050s
+
+OK

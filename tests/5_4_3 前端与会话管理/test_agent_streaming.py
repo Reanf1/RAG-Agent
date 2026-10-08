@@ -49,6 +49,18 @@ class TestAgentStreaming(unittest.TestCase):
         self.assertIn("回答未完成", events[-1]["full_response"])
         self.assertIsNone(events[-1]["metrics"]["tokens"]["total"])
 
+    def test_null_message_keeps_partial_and_closes_response(self):
+        """损坏的分包不能抛出未处理异常，也不能把已输出片段当完整答案。"""
+        for final in (False, True):
+            packets = self.packets()[:-1] + [{"message": None, "done": final}]
+            response = StreamingResponse(packets)
+            with self.subTest(final=final), patch("src.agent.react_loop.urlopen", return_value=response):
+                events = list(run_react("什么是深度学习？", [], stream=True))
+            self.assertTrue(response.closed)
+            self.assertTrue(any(e["type"] == "token" for e in events))
+            self.assertFalse(events[-1]["task_complete"])
+            self.assertIn("回答未完成", events[-1]["full_response"])
+
     def test_stream_tokens_do_not_duplicate_token_cost_or_trace(self):
         with patch("src.agent.react_loop.urlopen", return_value=StreamingResponse(self.packets())):
             events = list(run_react("什么是深度学习？", [], stream=True))

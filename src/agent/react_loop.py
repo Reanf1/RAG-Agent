@@ -71,7 +71,7 @@ recovery中的失败工具不可再调用；只有适用的剩余工具才能完
 
 def build_agent_messages(question: str, tools: list[BaseTool], context: dict | None = None,
                          *, stage: str = "thought", thought: dict | None = None) -> list:
-    """三个阶段共用角色/工具/规则结构；工具定义来自代码，用户资料置于Human消息。"""
+    """角色消息只列工具用途；参数Schema由原生tools传递，避免重复占窗口。"""
     if not question.strip():
         raise ValueError("问题不能为空")
     names = [tool.name for tool in tools]
@@ -82,7 +82,7 @@ def build_agent_messages(question: str, tools: list[BaseTool], context: dict | N
                "observation": OBSERVATION_SYSTEM_PROMPT}
     if stage not in prompts:
         raise ValueError("Agent阶段必须为thought、action或observation")
-    specs = [convert_to_openai_tool(tool)["function"] for tool in tools]
+    specs = [{"name": tool.name, "description": tool.description} for tool in tools]
     tool_description = json.dumps({"available_tools": specs}, ensure_ascii=False, allow_nan=False)
     system = f"{AGENT_ROLE_PROMPT}\n\n【可用工具描述】\n{tool_description}\n"
     system += ("联网搜索当前可用；仅在外部信息任务中使用。\n" if "web_search" in names else
@@ -619,8 +619,8 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
         schema["properties"]["task_complete"] = {"const": False}
     # 真实关键词调用出现finish但答案为空；将已有Python约束同步到采样Schema。
     schema["anyOf"] = [
-        {**schema, "properties": {**schema["properties"], "decision": {"const": "finish"}, "answer": {"type": "string", "minLength": 1}}},
-        {**schema, "properties": {**schema["properties"], "decision": {"const": "continue"}, "answer": {"type": "string", "maxLength": 0}, "task_complete": {"const": False}}},
+        {"properties": {"decision": {"const": "finish"}, "answer": {"minLength": 1}}},
+        {"properties": {"decision": {"const": "continue"}, "answer": {"maxLength": 0}, "task_complete": {"const": False}}},
     ]
     answering = thought is not None and thought.get("next_step") == "answer"
     if answering:
@@ -645,7 +645,10 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
                     packet = json.loads(line)
                     if not isinstance(packet, dict) or packet.get("error"):
                         raise ValueError("Observation流式响应错误")
-                    content = packet.get("message", {}).get("content", "")
+                    message = packet.get("message")
+                    if not isinstance(message, dict):
+                        raise ValueError("Observation流式响应缺少消息")
+                    content = message.get("content", "")
                     if not isinstance(content, str):
                         raise ValueError("Observation流式正文必须为文本")
                     raw += content

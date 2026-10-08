@@ -123,7 +123,7 @@ class TestAgentSystemPrompt(unittest.TestCase):
         self.assertLessEqual(request_tokens(payload) + payload["options"]["num_predict"], payload["options"]["num_ctx"])
         self.assertEqual(event["message"].content, original)
 
-    def test_all_stages_preserve_actual_tool_description_and_parameter_constraints(self):
+    def test_all_stages_preserve_actual_tool_description_without_duplicate_schema(self):
         for stage in ("thought", "action", "observation"):
             with self.subTest(stage=stage):
                 messages = build_agent_messages("处理Transformer关键词", self.tools, stage=stage)
@@ -136,11 +136,7 @@ class TestAgentSystemPrompt(unittest.TestCase):
                 self.assertEqual(len(tools), 1)
                 self.assertEqual(tools[0]["name"], "format_keyword")
                 self.assertEqual(tools[0]["description"], "将英文关键词转换为小写或大写。")
-                params = tools[0]["parameters"]
-                self.assertEqual(params["required"], ["word"])
-                self.assertEqual(params["properties"]["word"]["type"], "string")
-                self.assertEqual(params["properties"]["style"]["enum"], ["lower", "upper"])
-                self.assertEqual(params["properties"]["style"]["default"], "lower")
+                self.assertNotIn("parameters", tools[0])  # 参数只由原生tools发送一次。
                 self.assertEqual(set(json.loads(messages[1].content)), {"question", "context"})
 
     def test_user_documents_observations_and_thought_cannot_replace_system_rules(self):

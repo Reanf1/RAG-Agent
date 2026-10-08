@@ -190,7 +190,7 @@ class TestAction(unittest.TestCase):
             return events, None
         payload = json.loads(http.call_args.args[0].data)
         described = json.loads(payload["messages"][0]["content"].split("【可用工具描述】\n")[1].splitlines()[0])
-        self.assertEqual(described["available_tools"], [spec["function"] for spec in payload["tools"]])
+        self.assertEqual(described["available_tools"], [{key: spec["function"][key] for key in ("name", "description")} for spec in payload["tools"]])
         return events, payload["tools"][0]["function"]["parameters"]
 
     def test_filename_only_rule_search_passes_question_without_model_or_invented_id(self):

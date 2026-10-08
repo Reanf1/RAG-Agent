@@ -67,7 +67,8 @@ class TestThought(unittest.TestCase):
         tool_section = messages[0].content.split("【可用工具描述】\n")[1].splitlines()[0]
         spec = json.loads(tool_section)["available_tools"][0]
         self.assertEqual(spec["name"], "multiply")
-        self.assertEqual(set(spec["parameters"]["required"]), {"a", "b"})
+        self.assertEqual(spec["description"], self.tools[0].description)
+        self.assertNotIn("parameters", spec)
         self.assertEqual(context, snapshot)
         self.assertNotIn("available_tools", data)
         self.assertIn("一次同时确定工具和参数", messages[0].content)
@@ -98,6 +99,10 @@ class TestThought(unittest.TestCase):
         self.assertEqual(payload["model"], self.config["llm"]["model"])
         self.assertEqual(payload["options"]["temperature"], self.config["llm"]["temperature"])
         self.assertEqual(payload["tools"][0]["function"]["name"], "multiply")
+        params = payload["tools"][0]["function"]["parameters"]
+        self.assertEqual(set(params["required"]), {"a", "b"})
+        self.assertEqual(params["properties"]["a"]["type"], "number")
+        self.assertEqual(params["properties"]["b"]["type"], "number")
         self.assertNotIn("format", payload)
         self.assertEqual(json.loads(payload["messages"][1]["content"])["context"], context)
         self.assertEqual(result["type"], "thought")
