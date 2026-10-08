@@ -1,6 +1,7 @@
 """上下文拼接、截断、本地生成共用逻辑与答案引用溯源。"""
 
 from copy import deepcopy
+from decimal import Decimal
 import math
 import re
 import json
@@ -218,7 +219,7 @@ def _finish_generation(result: dict, context: dict, sampling: dict) -> dict:
         # 仅去掉行末断词的连字符；同一行的术语连字符和数字原样保留。
         text = re.sub(r"(?<=\w)-\s*\n\s*(?=\w)", "", text)
         return re.sub(r"\s+", "", text)
-    quote_errors = []
+    quote_errors, verified_quotes = [], []
     # 模型省略引号时也核验明确标为“原文依据”的内容，不能让数字改写绕过校验。
     for quote in re.finditer(r'(?:原文依据|Source evidence|Original evidence)\s*[:：]\s*([^\[]+?)\s*((?:\[参考文档\d+\])+)', raw_answer, re.I | re.S):
         evidence = quote[1].strip()
@@ -229,10 +230,36 @@ def _finish_generation(result: dict, context: dict, sampling: dict) -> dict:
         ids = [int(value) for value in re.findall(r"\[参考文档(\d+)\]", quote[2])]
         if not text or not any(text in quote_text(references.get(value, "")) for value in ids):
             quote_errors.append(ids)
+        else:
+            verified_quotes.append((quote.group(), ids))
     if quote_errors:
         resolved["warnings"].append("回答声称引用的原句无法在所引片段定位，已暂停展示结论；请核对原文后重试。")
         resolved["answer"] = "当前回答的原文引句未通过定位校验，无法据此确认科研结论。请查看引用原文或补充相关片段。"
     resolved["evidence_quote_errors"] = quote_errors
+    # 只核对带引用的“万／亿”数量换算；不能据此认定对象、条件或全部语义正确。
+    # Decimal 按十进制比较，避免 303M 与 3.03 亿出现浮点误差。
+    units = {"M": 1000000, "million": 1000000, "B": 1000000000,
+             "billion": 1000000000, "万": 10000, "亿": 100000000}
+    amount_pattern = r"(?<![\dA-Za-z.])(\d+(?:,\d{3})*(?:\.\d+)?)\s*(M\b|B\b|million\b|billion\b|万|亿)"
+    def amounts(text):
+        return {Decimal(number.replace(",", "")) * units[unit]
+                for number, unit in re.findall(amount_pattern, text)}
+    number_errors = []
+    for claim in re.finditer(r"([^\n\[]*)((?:\[参考文档\d+\])+)", raw_answer):
+        converted = amounts(" ".join(re.findall(r"[\d,]+(?:\.\d+)?\s*[万亿]", claim[1])))
+        ids = [int(value) for value in re.findall(r"\[参考文档(\d+)\]", claim[2])]
+        source = "\n".join(references.get(value, "") for value in ids)
+        if converted and re.search(r"\d\s*(?:M\b|B\b|million\b|billion\b)", source):
+            if not converted <= amounts(source):
+                number_errors.extend(value for value in ids if value not in number_errors)
+    if number_errors:
+        resolved["warnings"].append("回答中的万／亿数量与所引原文不一致，已暂停展示结论；请核对原文数值与单位。")
+        resolved["answer"] = "当前回答的数量换算未通过原文核对，无法据此确认科研结论。请查看引用原文中的数值与单位。"
+        # 有已定位的引句时仍展示原文供核对，不改写模型的错误数量或冒充任务完成。
+        excerpts = [text for text, ids in verified_quotes if set(ids) & set(number_errors)]
+        if excerpts:
+            resolved["answer"] = resolve_citations(resolved["answer"] + "\n\n" + "\n\n".join(excerpts), context)["answer"]
+    resolved["evidence_number_errors"] = number_errors
     resolved = _with_generation_notice(resolved, context)
     if result.get("done_reason") == "length":
         resolved["warnings"].append("回答已达到生成 Token 上限，内容可能尚未完整。")

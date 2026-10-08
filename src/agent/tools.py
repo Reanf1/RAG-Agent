@@ -232,7 +232,7 @@ def _knowledge_base_search(question: str, doc_id: str | None = None, *, cache=No
             result["citations"] = _tool_references(result["citations"])
             result.update(status="answered", doc_id=doc_id, sources=context["sources"], top_score=context["top_score"])
             result["confirmed"] = context["confirmed"]
-            if result.get("evidence_quote_errors") or context["generation_mode"] in {"grounded", "low"} and not result["citations"]:
+            if result.get("evidence_quote_errors") or result.get("evidence_number_errors") or context["generation_mode"] in {"grounded", "low"} and not result["citations"]:
                 result["status"] = "insufficient_evidence"  # 有检索候选却没有有效引用，不能冒充已溯源回答。
             if result.get("done_reason") != "stop":
                 result["status"] = "incomplete"

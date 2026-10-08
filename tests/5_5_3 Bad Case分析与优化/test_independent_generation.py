@@ -73,6 +73,46 @@ class GenerationAudit(unittest.TestCase):
                     if expected:
                         self.assertNotIn("304M", result["answer"])
 
+    def test_cited_chinese_unit_conversion_must_match_original_amount(self):
+        """复现真实303M→30.3亿，正确换算仍可展示；只核验带引用的数量。"""
+        self.context["references"][0]["text"] = "ImageNet has 1.3M images. JFT has 303M images."
+        for amount, errors in (("30.3亿", [1]), ("3.03亿", []), ("30300万", []), ("130万", [])):
+            with self.subTest(amount=amount):
+                raw = f"图像数为{amount}。[参考文档1]"
+                result = _finish_generation({**self.done, "message": {"content": raw}}, self.context, {})
+                self.assertEqual(result["evidence_number_errors"], errors)
+                if errors:
+                    self.assertEqual(result["raw_answer"], raw)
+                    self.assertNotIn(amount, result["answer"])
+                    self.assertFalse(SemanticCache().put("图像数", {"type": "done", **result}, "范围"))
+
+    def test_unit_conversion_cannot_borrow_another_citation(self):
+        self.context["references"][0]["text"] = "JFT has 303M images."
+        self.context["references"].append({**self.context["references"][0], "id": 2,
+                                            "text": "Other data has 3.03B images."})
+        raw = "JFT图像数为30.3亿。[参考文档1]"
+        result = _finish_generation({**self.done, "message": {"content": raw}}, self.context, {})
+        self.assertEqual(result["evidence_number_errors"], [1])
+
+    def test_failed_conversion_preserves_only_verified_source_quote(self):
+        self.context["references"][0]["text"] = "JFT has 303M images."
+        raw = '原文依据："JFT has 303M images."。[参考文档1]\nJFT有30.3亿图像。[参考文档1]'
+        result = _finish_generation({**self.done, "message": {"content": raw}}, self.context, {})
+        self.assertEqual(result["evidence_number_errors"], [1])
+        self.assertIn("JFT has 303M images.", result["answer"])
+        self.assertNotIn("30.3亿", result["answer"])
+        self.assertEqual(result["raw_answer"], raw)
+        self.assertTrue(result["warnings"])
+
+    def test_spelled_out_million_and_original_chinese_amounts(self):
+        """英文全称和原有中文单位可核对；不将保留原单位的陈述误判为换算。"""
+        self.context["references"][0]["text"] = "4.5 million pairs and 36M sentences. 中文数量为2亿。"
+        for raw in ("数量为450万。[参考文档1]", "数量为2亿。[参考文档1]",
+                    "数量为36M。[参考文档1]"):
+            with self.subTest(raw=raw):
+                result = _finish_generation({**self.done, "message": {"content": raw}}, self.context, {})
+                self.assertEqual(result["evidence_number_errors"], [])
+
     def test_whitespace_in_original_quote_is_preserved_as_evidence(self):
         raw = '原文依据："实验准确率为81%。\n第二句说明数据来源。"。[参考文档1]'
         result = _finish_generation({**self.done, 'message': {'content': raw}}, self.context, {})

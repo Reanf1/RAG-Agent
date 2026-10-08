@@ -240,6 +240,16 @@ class TestResearchTools(unittest.TestCase):
                     self.assertEqual(result["status"], "error")
             retriever.assert_not_called()
 
+    def test_rag_does_not_mark_failed_unit_conversion_as_answered(self):
+        """HTTP仅为错误报文替身；工具状态必须阻止Agent把失败结论计为完成。"""
+        self.document.page_content = "JFT has 303M images."
+        raw = '原文依据："JFT has 303M images."。[参考文档1]\nJFT有30.3亿图像。[参考文档1]'
+        result, _, _ = self.rag([.9], raw, self.doc_id)
+        self.assertEqual(result["status"], "insufficient_evidence")
+        self.assertEqual(result["evidence_number_errors"], [1])
+        self.assertIn("JFT has 303M images.", result["answer"])
+        self.assertNotIn("30.3亿", result["answer"])
+
     def test_rag_filters_by_existing_uploaded_fingerprint(self):
         result, retriever, _ = self.rag([0.9], doc_id=self.doc_id)
         self.assertEqual(result["doc_id"], self.doc_id)
