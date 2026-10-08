@@ -167,6 +167,7 @@ class TestContextBuilding(unittest.TestCase):
 
     def test_unicode_token_budget_preserves_matching_reference_prefix(self):
         """实际词表裁剪高Token密度正文，引用只含真实送入的前缀。"""
+        self.config["llm"]["num_ctx"] = 8192  # 用固定小窗口复现裁剪，不依赖日常默认容量。
         from src.utils.token_budget import request_tokens
         from src.utils.messages import messages_to_ollama
         from src.generation.prompt_template import build_rag_messages

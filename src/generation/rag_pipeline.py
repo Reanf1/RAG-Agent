@@ -219,8 +219,13 @@ def _finish_generation(result: dict, context: dict, sampling: dict) -> dict:
         text = re.sub(r"(?<=\w)-\s*\n\s*(?=\w)", "", text)
         return re.sub(r"\s+", "", text)
     quote_errors = []
-    for quote in re.finditer(r'(?:原文依据|Source evidence|Original evidence)\s*[:：]\s*["“](.*?)["”][。.]?\s*((?:\[参考文档\d+\])+)', raw_answer, re.I | re.S):
-        text = quote_text(quote[1])
+    # 模型省略引号时也核验明确标为“原文依据”的内容，不能让数字改写绕过校验。
+    for quote in re.finditer(r'(?:原文依据|Source evidence|Original evidence)\s*[:：]\s*([^\[]+?)\s*((?:\[参考文档\d+\])+)', raw_answer, re.I | re.S):
+        evidence = quote[1].strip()
+        if evidence.startswith(('"', '“')):
+            evidence = evidence.rstrip('。.').strip()[1:]
+            evidence = evidence[:-1] if evidence.endswith(('"', '”')) else evidence
+        text = quote_text(evidence)
         ids = [int(value) for value in re.findall(r"\[参考文档(\d+)\]", quote[2])]
         if not text or not any(text in quote_text(references.get(value, "")) for value in ids):
             quote_errors.append(ids)

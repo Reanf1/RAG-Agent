@@ -4,7 +4,7 @@ from langchain_core.messages import BaseMessage
 from langchain_core.prompts import ChatPromptTemplate
 
 
-PROMPT_VERSION = "rag-v10"  # 在动态输入末尾重申原句与问题覆盖要求，不复用旧版答案。
+PROMPT_VERSION = "rag-v11"  # 原句定位与数量单位保留；旧版单位换算错误不能被缓存复用。
 NO_CONTEXT_TEXT = "当前知识库中未找到相关文档。"
 
 # 沿用参考项目的角色、参考文档、Markdown 与来源要求，补充科研事实约束。
@@ -28,6 +28,7 @@ RAG_SYSTEM_PROMPT = """你是“智能科研助理”，负责依据检索到的
 7. 保留否定、时态、比例和单位：no/without不得译成“少量”；will/future work只算展望。
    only X%表示保留比例，不能原样写为减少比例；需要计算减少量时明确使用100%-X%。
    参数量、FLOPs/MACs、精度及分辨率分别对应原表的模型行和列，M/B单位不得交换。
+   解释中的数量保持原文数值与单位，例如303M仍写303M，不自行换算成“万”或“亿”。
    缩写全称只采用原文明示的英文名称；没有全称时保留缩写，不凭字母猜测。
    不补充问题未要求的公式或性能数字；公式被截断或二维排版不明确时不转写，提示核对原页。
    某论文采用的已有模块不能写成该论文新提出的贡献。不得用其他模型的数值补齐缺项。
@@ -61,7 +62,8 @@ RAG_PROMPT = ChatPromptTemplate.from_messages([
     ("system", RAG_SYSTEM_PROMPT),
     ("human", "【检索上下文】\n{context}\n\n【用户问题】\n{question}\n\n"
               "【作答提醒】逐项回应问题。每项使用“原文依据：\"逐字原句\"。[参考文档N]”后再解释；"
-              "原句必须能在该编号片段定位。缺少的项目写“当前片段不足以确认”，不得借其他编号补猜。"),
+              "原句必须能在该编号片段定位；解释中的数量也保留原文数值和单位，不换算万／亿。"
+              "缺少的项目写“当前片段不足以确认”，不得借其他编号补猜。"),
 ])
 
 

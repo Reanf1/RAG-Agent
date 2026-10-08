@@ -17,17 +17,17 @@ llm:
   top_p: 0.9
   # 生成候选词数，不是 retrieval.top_k 的文档数；实测选型见生成参数 QA。
   top_k: 40
-  # Windows 8GB显存实测16K可保留多步证据；低显存可改回8192，输出/历史预算不变。
+  # Windows 8GB显存实测16K可保留多步证据；完整请求按词表预留输出预算。
   num_ctx: 16384
-  num_predict: 512
+  num_predict: 1024
   repeat_penalty: 1.0
 
 # 先按字符／句界挑选证据；发送前用本地Qwen词表核对完整请求并预留输出Token。
 generation:
   low_relevance_threshold: 0.1  # 仅用于 BGE sigmoid 重排分数；低于此值先确认，不代表命中概率。
-  max_context_chars: 6000
+  max_context_chars: 9000
   # 包含系统规范、用户问题、来源标记和分隔符，不包含模型回答。
-  max_prompt_chars: 12000
+  max_prompt_chars: 18000
   # 只复用同知识库/配置且校验通过的答案；保守阈值依据见语义缓存 QA。
   cache:
     similarity_threshold: 0.97

@@ -270,6 +270,7 @@ class TestComparisonAndKeywords(unittest.TestCase):
 
     def test_adjacent_prefix_cannot_displace_retrieved_dataset_evidence(self):
         """前置邻块不能占满维度预算；实际模型输入须保留已命中的数据集正文。"""
+        self.config["generation"]["max_context_chars"] = 6000  # 固定紧预算，核验邻块与命中正文的取舍。
         from langchain_core.documents import Document
 
         prefix = "Background architecture and related work. " * 17

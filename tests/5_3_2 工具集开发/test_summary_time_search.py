@@ -89,7 +89,7 @@ class TestSummaryTimeSearch(unittest.TestCase):
         self.assertEqual(payload["format"]["required"], list(self.sections))
         self.assertEqual(payload["messages"][0]["role"], "system")
         self.assertIn("Transformer", payload["messages"][1]["content"])
-        self.assertEqual(payload["options"]["num_predict"], 512)
+        self.assertEqual(payload["options"]["num_predict"], self.config["llm"]["num_predict"])
 
     def test_summary_preserves_pdf_physical_page_and_word_paragraph(self):
         import fitz

@@ -61,6 +61,18 @@ class GenerationAudit(unittest.TestCase):
         self.assertEqual(result['raw_answer'], raw)
         self.assertFalse(SemanticCache().put('准确率', {'type': 'done', **result}, '范围'))
 
+    def test_unquoted_source_evidence_still_checks_numbers_and_reference(self):
+        """真实模型有时省略引号；不能让数字改写绕过原句定位。"""
+        self.context["references"][0]["text"] = "JFT has 303M high-resolution images."
+        for label in ("原文依据", "Source evidence", "Original evidence"):
+            for count, expected in (("303", []), ("304", [[1]])):
+                with self.subTest(label=label, count=count):
+                    raw = f"{label}：JFT has {count}M high-resolution images. [参考文档1]"
+                    result = _finish_generation({**self.done, "message": {"content": raw}}, self.context, {})
+                    self.assertEqual(result["evidence_quote_errors"], expected)
+                    if expected:
+                        self.assertNotIn("304M", result["answer"])
+
     def test_whitespace_in_original_quote_is_preserved_as_evidence(self):
         raw = '原文依据："实验准确率为81%。\n第二句说明数据来源。"。[参考文档1]'
         result = _finish_generation({**self.done, 'message': {'content': raw}}, self.context, {})
