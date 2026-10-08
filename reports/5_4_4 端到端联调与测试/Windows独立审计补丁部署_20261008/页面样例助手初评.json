@@ -1,0 +1,26 @@
+{
+  "type": "助手初评，非用户审核或总体质量评测",
+  "user_reviewed": 0,
+  "samples": [
+    {
+      "question": "Windows复测_说明.md中的Markdown标记是什么？",
+      "initial_review": "本样例通过",
+      "evidence": [
+        "页面Markdown问答.txt",
+        "页面Markdown问答.jpg"
+      ],
+      "observation": "正确返回WINMD20261005，引用本地Markdown行1–6。"
+    },
+    {
+      "question": "Answer in English: According to Windows验收_ViT.pdf, which three datasets are used for pre-training, and how large are they?",
+      "initial_review": "未通过回答完整性与逐断言引用支持",
+      "evidence": [
+        "页面ViT问答.txt",
+        "页面ViT引用页.jpg",
+        "native-state-before-restart.json"
+      ],
+      "observation": "回答列出ImageNet、ImageNet-21k、JFT，但未给JFT图片数量；引用文档2为物理第7页Figure 3段，并不能支持所述1.3M、14M、18k等规模事实。有效引用编号和可打开原页不等于事实得到支持。",
+      "remaining_work": "既有RAG完整性与引用语义问题，需在固定质量题集修复后重测；不改本次部署成绩或伪称质量通过。"
+    }
+  ]
+}

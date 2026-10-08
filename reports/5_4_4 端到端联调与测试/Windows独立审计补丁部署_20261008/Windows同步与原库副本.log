@@ -1,0 +1,369 @@
+From https://github.com/Reanf1/RAG-Agent
+   d6bdde4..c90ed95  main       -> origin/main
+Updating d6bdde4..c90ed95
+Fast-forward
+ .gitignore                                         |    1 +
+ README.md                                          |    6 +-
+ docker/Dockerfile                                  |    8 +-
+ docker/docker-compose.yml                          |    2 +
+ docs/技术设计文档.md                               |   16 +-
+ docs/用户使用手册.md                               |   10 +-
+ reports/5_5_3 Bad Case分析与优化/README.md         |    2 +
+ .../独立审计修复_20261008/Docker依赖检查.log       |    1 +
+ .../独立审计修复_20261008/Docker原生ARM拒绝.log    |   37 +
+ .../Docker引句排版最终构建.log                     |    3 +
+ .../Docker引句排版最终构建_授权运行.log            |   63 +
+ .../独立审计修复_20261008/Docker收尾剩余容器.log   |    0
+ .../独立审计修复_20261008/Docker最新源码构建.log   |   57 +
+ .../独立审计修复_20261008/Docker最终容器启动.log   |   13 +
+ .../独立审计修复_20261008/Docker最终源码启动.log   |   13 +
+ .../独立审计修复_20261008/Docker最终源码构建.log   |   56 +
+ .../Docker最终源码离线问答.json                    |   56 +
+ .../Docker最终源码离线问答.log                     |    2 +
+ .../Docker最终状态与源码核对.json                  |  144 ++
+ .../独立审计修复_20261008/Docker构建.log           |    1 +
+ .../独立审计修复_20261008/Docker构建CPU.log        |   94 ++
+ .../独立审计修复_20261008/Docker构建CPU第二轮.log  |  448 ++++++
+ .../独立审计修复_20261008/Docker构建实际.log       |  246 ++++
+ .../Docker模型首次运行故障.log                     |   70 +
+ .../独立审计修复_20261008/Docker测试环境收尾.log   |   16 +
+ .../独立审计修复_20261008/Docker测试虚拟机12GB.log |   46 +
+ .../独立审计修复_20261008/Docker测试虚拟机收尾.log |   18 +
+ .../独立审计修复_20261008/Docker测试虚拟机重启.log |   19 +
+ .../独立审计修复_20261008/Docker真实入库.json      |   12 +
+ .../独立审计修复_20261008/Docker真实入库.log       |    2 +
+ .../Docker重启离线真实问答.json                    |    0
+ .../Docker重启离线真实问答.log                     |   25 +
+ .../Docker重启离线真实问答_12GB.json               |   56 +
+ .../Docker重启离线真实问答_12GB.log                |    2 +
+ .../独立审计修复_20261008/Docker隔离启动.log       |   24 +
+ .../独立审计修复_20261008/F05实际链路.log          |    0
+ .../F05实际链路/F05真实Agent.json                  | 1144 ++++++++++++++++
+ .../F05实际链路/business_logs/rag_2026-10-08.jsonl |    1 +
+ .../F05实际链路/http_001.json                      |   27 +
+ .../F05实际链路/运行配置.json                      |   77 ++
+ .../独立审计修复_20261008/Ollama本机复测运行.log   | 1180 ++++++++++++++++
+ .../独立审计修复_20261008/Ollama运行.log           |  995 ++++++++++++++
+ .../独立审计修复_20261008/R1修复前.log             |   22 +
+ .../独立审计修复_20261008/README.md                |   63 +
+ .../verify_container_runtime.py                    |   53 +
+ .../独立审计修复_20261008/verify_real_repairs.py   |  175 +++
+ .../独立审计修复_20261008/verify_source_quality.py |   59 +
+ .../独立审计修复_20261008/verify_table_captions.py |   31 +
+ .../独立审计修复_20261008/修复前.log               |  201 +++
+ .../独立审计修复_20261008/全量交付回归.json        |  895 ++++++++++++
+ .../独立审计修复_20261008/全量交付回归.log         | 1414 +++++++++++++++++++
+ .../独立审计修复_20261008/全量回归初轮.json        |  885 ++++++++++++
+ .../独立审计修复_20261008/全量回归第二轮.json      |  887 ++++++++++++
+ .../独立审计修复_20261008/全量回归第二轮.log       | 1403 +++++++++++++++++++
+ .../独立审计修复_20261008/全量最终回归.json        |  903 +++++++++++++
+ .../独立审计修复_20261008/全量最终回归.log         | 1428 ++++++++++++++++++++
+ .../独立审计修复_20261008/全量最终复核.json        |  894 ++++++++++++
+ .../独立审计修复_20261008/全量最终复核.log         | 1412 +++++++++++++++++++
+ .../独立审计修复_20261008/全量最终验收回归.json    |  897 ++++++++++++
+ .../独立审计修复_20261008/全量最终验收回归.log     | 1417 +++++++++++++++++++
+ .../冻结BadCase原句约束复测.log                    |    6 +
+ .../冻结BadCase原句约束复测/frozen_C05.json        |   53 +
+ .../冻结BadCase原句约束复测/frozen_C14.json        |   61 +
+ .../冻结BadCase原句约束复测/frozen_F02.json        |   45 +
+ .../冻结BadCase原句约束复测/frozen_F11.json        |   53 +
+ .../冻结BadCase原句约束复测/frozen_F14.json        |   45 +
+ .../冻结BadCase原句约束复测/frozen_S06.json        |   53 +
+ .../冻结BadCase原句约束复测/http_001.json          |   27 +
+ .../冻结BadCase原句约束复测/http_002.json          |   27 +
+ .../冻结BadCase原句约束复测/http_003.json          |   27 +
+ .../冻结BadCase原句约束复测/http_004.json          |   27 +
+ .../冻结BadCase原句约束复测/http_005.json          |   27 +
+ .../冻结BadCase原句约束复测/http_006.json          |   27 +
+ .../冻结BadCase原句约束复测/运行配置.json          |   77 ++
+ .../独立审计修复_20261008/冻结BadCase复测.log      |    6 +
+ .../冻结BadCase复测/frozen_C05.json                |    8 +
+ .../冻结BadCase复测/frozen_C14.json                |    8 +
+ .../冻结BadCase复测/frozen_F02.json                |    8 +
+ .../冻结BadCase复测/frozen_F11.json                |    8 +
+ .../冻结BadCase复测/frozen_F14.json                |    8 +
+ .../冻结BadCase复测/frozen_S06.json                |    8 +
+ .../冻结BadCase复测/运行配置.json                  |   77 ++
+ .../冻结BadCase复测第二轮.log                      |    6 +
+ .../冻结BadCase复测第二轮/frozen_C05.json          |    8 +
+ .../冻结BadCase复测第二轮/frozen_C14.json          |    8 +
+ .../冻结BadCase复测第二轮/frozen_F02.json          |    8 +
+ .../冻结BadCase复测第二轮/frozen_F11.json          |    8 +
+ .../冻结BadCase复测第二轮/frozen_F14.json          |    8 +
+ .../冻结BadCase复测第二轮/frozen_S06.json          |    8 +
+ .../冻结BadCase复测第二轮/http_001.json            |   27 +
+ .../冻结BadCase复测第二轮/http_002.json            |   27 +
+ .../冻结BadCase复测第二轮/http_003.json            |   27 +
+ .../冻结BadCase复测第二轮/http_004.json            |   27 +
+ .../冻结BadCase复测第二轮/http_005.json            |   27 +
+ .../冻结BadCase复测第二轮/http_006.json            |   27 +
+ .../冻结BadCase复测第二轮/运行配置.json            |   77 ++
+ .../冻结BadCase真实响应回放.log                    |    6 +
+ .../冻结BadCase真实响应回放/frozen_C05.json        |   61 +
+ .../冻结BadCase真实响应回放/frozen_C14.json        |   61 +
+ .../冻结BadCase真实响应回放/frozen_F02.json        |   45 +
+ .../冻结BadCase真实响应回放/frozen_F11.json        |   53 +
+ .../冻结BadCase真实响应回放/frozen_F14.json        |   53 +
+ .../冻结BadCase真实响应回放/frozen_S06.json        |   61 +
+ .../冻结BadCase真实响应回放/运行配置.json          |   77 ++
+ .../独立审计修复_20261008/助手逐题修复复评.json    |  159 +++
+ .../独立审计修复_20261008/助手逐题修复复评.md      |   25 +
+ .../独立审计修复_20261008/失败用量边界回归.log     |   15 +
+ .../独立审计修复_20261008/导入页面回归.log         |  244 ++++
+ .../独立审计修复_20261008/已知原页生成诊断.log     |   11 +
+ .../已知原页生成诊断/AUDIT60-C05.json              |  134 ++
+ .../已知原页生成诊断/AUDIT60-C06.json              |  118 ++
+ .../已知原页生成诊断/AUDIT60-C14.json              |  159 +++
+ .../已知原页生成诊断/AUDIT60-F02.json              |   92 ++
+ .../已知原页生成诊断/AUDIT60-F11.json              |   94 ++
+ .../已知原页生成诊断/AUDIT60-F14.json              |   92 ++
+ .../已知原页生成诊断/AUDIT60-S05.json              |  134 ++
+ .../已知原页生成诊断/AUDIT60-S06.json              |  130 ++
+ .../已知原页生成诊断/http_001.json                 |   27 +
+ .../已知原页生成诊断/http_002.json                 |   27 +
+ .../已知原页生成诊断/http_003.json                 |   27 +
+ .../已知原页生成诊断/http_004.json                 |   27 +
+ .../已知原页生成诊断/http_005.json                 |   27 +
+ .../已知原页生成诊断/http_006.json                 |   27 +
+ .../已知原页生成诊断/http_007.json                 |   27 +
+ .../已知原页生成诊断/http_008.json                 |   27 +
+ .../已知原页生成诊断/运行配置.json                 |   77 ++
+ .../独立审计修复_20261008/引句定位边界回归.log     |   20 +
+ .../排版归一化真实回答回放/AUDIT60-C05.json        |   66 +
+ .../排版归一化真实回答回放/AUDIT60-C06.json        |   45 +
+ .../排版归一化真实回答回放/AUDIT60-C14.json        |   66 +
+ .../排版归一化真实回答回放/AUDIT60-F02.json        |   46 +
+ .../排版归一化真实回答回放/AUDIT60-F11.json        |   47 +
+ .../排版归一化真实回答回放/AUDIT60-F14.json        |   46 +
+ .../排版归一化真实回答回放/AUDIT60-S05.json        |   67 +
+ .../排版归一化真实回答回放/AUDIT60-S06.json        |   65 +
+ .../独立审计修复_20261008/收尾源码与原件指纹.json  |  331 +++++
+ .../独立审计修复_20261008/文档入口与原件核验.json  |   20 +
+ .../独立审计修复_20261008/最终引句校验回放.log     |    6 +
+ .../最终引句校验回放/frozen_C05.json               |   54 +
+ .../最终引句校验回放/frozen_C14.json               |   62 +
+ .../最终引句校验回放/frozen_F02.json               |   46 +
+ .../最终引句校验回放/frozen_F11.json               |   54 +
+ .../最终引句校验回放/frozen_F14.json               |   46 +
+ .../最终引句校验回放/frozen_S06.json               |   54 +
+ .../最终引句校验回放/运行配置.json                 |   77 ++
+ .../独立审计修复_20261008/测试服务收尾核验.json    |   22 +
+ .../独立审计修复_20261008/真实CaiT正确模型行.json  |   54 +
+ .../独立审计修复_20261008/真实CaiT长表.json        |   55 +
+ .../真实引句排版误拒_修复前.log                    |   27 +
+ .../真实引句排版误拒_修复后.log                    |   25 +
+ .../独立审计修复_20261008/真实模型边界.log         |    1 +
+ .../真实模型边界/真实BGE长表.json                  |   17 +
+ .../真实模型边界/真实M3E缓存.json                  |   16 +
+ .../真实模型边界/运行配置.json                     |   77 ++
+ .../真实表标题一对一复测.json                      |   74 +
+ .../独立审计修复_20261008/真实表标题修复后.json    |   74 +
+ .../独立审计修复_20261008/真实表标题坐标复核.json  |  138 ++
+ .../独立审计修复_20261008/真实表标题复测.json      |   90 ++
+ .../独立审计修复_20261008/真实表标题最终复测.json  |   74 +
+ .../独立审计修复_20261008/第一轮回归.log           |   45 +
+ .../独立审计修复_20261008/第二轮边界回归.log       |   36 +
+ .../独立审计修复_20261008/表格回归.log             |   60 +
+ .../独立审计修复_20261008/表格回归最终.log         |   44 +
+ .../独立审计修复_20261008/表格整行回归.log         |   47 +
+ .../独立审计修复_20261008/语言要求丢失_修复前.log  |   14 +
+ .../独立审计修复_20261008/语言要求丢失_修复后.log  |    5 +
+ .../独立审计修复_20261008/长块边界回归.log         |   10 +
+ reports/README.md                                  |    2 +-
+ requirements.txt                                   |    2 +
+ src/agent/react_loop.py                            |   60 +-
+ src/agent/router.py                                |   22 +-
+ src/agent/tools.py                                 |   60 +-
+ src/data_loader/pdf_loader.py                      |   48 +-
+ src/frontend/app.py                                |    7 +-
+ src/generation/cache.py                            |    8 +-
+ src/generation/prompt_template.py                  |   17 +-
+ src/generation/rag_pipeline.py                     |   54 +-
+ src/generation/streaming.py                        |   10 +-
+ src/retrieval/hybrid_retriever.py                  |   14 +-
+ src/retrieval/reranker.py                          |   59 +-
+ src/retrieval/vector_store.py                      |   10 +
+ src/utils/logger.py                                |    6 +-
+ tests/5_1_2 文本分块策略/test_academic_pdf.py      |   46 +
+ tests/5_1_4 混合检索与重排序/test_long_reranker.py |   76 ++
+ tests/5_3_3 Agent决策优化/test_routing_parallel.py |   10 +-
+ tests/5_4_4 端到端联调与测试/test_document_flow.py |   17 +
+ .../test_independent_agent.py                      |  101 ++
+ .../test_independent_cache.py                      |   52 +
+ .../test_independent_generation.py                 |  158 +++
+ .../test_independent_retrieval.py                  |   83 ++
+ .../test_independent_usage.py                      |  106 ++
+ tests/README.md                                    |   18 +-
+ 192 files changed, 24324 insertions(+), 73 deletions(-)
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker依赖检查.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker原生ARM拒绝.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker引句排版最终构建.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker引句排版最终构建_授权运行.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker收尾剩余容器.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker最新源码构建.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker最终容器启动.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker最终源码启动.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker最终源码构建.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker最终源码离线问答.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker最终源码离线问答.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker最终状态与源码核对.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker构建.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker构建CPU.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker构建CPU第二轮.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker构建实际.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker模型首次运行故障.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker测试环境收尾.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker测试虚拟机12GB.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker测试虚拟机收尾.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker测试虚拟机重启.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker真实入库.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker真实入库.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker重启离线真实问答.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker重启离线真实问答.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker重启离线真实问答_12GB.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker重启离线真实问答_12GB.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Docker隔离启动.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/F05实际链路.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/F05实际链路/F05真实Agent.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/F05实际链路/business_logs/rag_2026-10-08.jsonl
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/F05实际链路/http_001.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/F05实际链路/运行配置.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Ollama本机复测运行.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/Ollama运行.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/R1修复前.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/README.md
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/verify_container_runtime.py
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/verify_real_repairs.py
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/verify_source_quality.py
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/verify_table_captions.py
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/修复前.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/全量交付回归.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/全量交付回归.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/全量回归初轮.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/全量回归第二轮.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/全量回归第二轮.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/全量最终回归.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/全量最终回归.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/全量最终复核.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/全量最终复核.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/全量最终验收回归.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/全量最终验收回归.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase原句约束复测.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase原句约束复测/frozen_C05.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase原句约束复测/frozen_C14.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase原句约束复测/frozen_F02.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase原句约束复测/frozen_F11.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase原句约束复测/frozen_F14.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase原句约束复测/frozen_S06.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase原句约束复测/http_001.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase原句约束复测/http_002.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase原句约束复测/http_003.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase原句约束复测/http_004.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase原句约束复测/http_005.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase原句约束复测/http_006.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase原句约束复测/运行配置.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测/frozen_C05.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测/frozen_C14.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测/frozen_F02.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测/frozen_F11.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测/frozen_F14.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测/frozen_S06.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测/运行配置.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测第二轮.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测第二轮/frozen_C05.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测第二轮/frozen_C14.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测第二轮/frozen_F02.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测第二轮/frozen_F11.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测第二轮/frozen_F14.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测第二轮/frozen_S06.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测第二轮/http_001.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测第二轮/http_002.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测第二轮/http_003.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测第二轮/http_004.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测第二轮/http_005.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测第二轮/http_006.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase复测第二轮/运行配置.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase真实响应回放.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase真实响应回放/frozen_C05.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase真实响应回放/frozen_C14.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase真实响应回放/frozen_F02.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase真实响应回放/frozen_F11.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase真实响应回放/frozen_F14.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase真实响应回放/frozen_S06.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/冻结BadCase真实响应回放/运行配置.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/助手逐题修复复评.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/助手逐题修复复评.md
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/失败用量边界回归.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/导入页面回归.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/已知原页生成诊断.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/已知原页生成诊断/AUDIT60-C05.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/已知原页生成诊断/AUDIT60-C06.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/已知原页生成诊断/AUDIT60-C14.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/已知原页生成诊断/AUDIT60-F02.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/已知原页生成诊断/AUDIT60-F11.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/已知原页生成诊断/AUDIT60-F14.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/已知原页生成诊断/AUDIT60-S05.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/已知原页生成诊断/AUDIT60-S06.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/已知原页生成诊断/http_001.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/已知原页生成诊断/http_002.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/已知原页生成诊断/http_003.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/已知原页生成诊断/http_004.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/已知原页生成诊断/http_005.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/已知原页生成诊断/http_006.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/已知原页生成诊断/http_007.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/已知原页生成诊断/http_008.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/已知原页生成诊断/运行配置.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/引句定位边界回归.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/排版归一化真实回答回放/AUDIT60-C05.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/排版归一化真实回答回放/AUDIT60-C06.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/排版归一化真实回答回放/AUDIT60-C14.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/排版归一化真实回答回放/AUDIT60-F02.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/排版归一化真实回答回放/AUDIT60-F11.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/排版归一化真实回答回放/AUDIT60-F14.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/排版归一化真实回答回放/AUDIT60-S05.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/排版归一化真实回答回放/AUDIT60-S06.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/收尾源码与原件指纹.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/文档入口与原件核验.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/最终引句校验回放.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/最终引句校验回放/frozen_C05.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/最终引句校验回放/frozen_C14.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/最终引句校验回放/frozen_F02.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/最终引句校验回放/frozen_F11.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/最终引句校验回放/frozen_F14.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/最终引句校验回放/frozen_S06.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/最终引句校验回放/运行配置.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/测试服务收尾核验.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/真实CaiT正确模型行.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/真实CaiT长表.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/真实引句排版误拒_修复前.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/真实引句排版误拒_修复后.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/真实模型边界.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/真实模型边界/真实BGE长表.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/真实模型边界/真实M3E缓存.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/真实模型边界/运行配置.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/真实表标题一对一复测.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/真实表标题修复后.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/真实表标题坐标复核.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/真实表标题复测.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/真实表标题最终复测.json
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/第一轮回归.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/第二轮边界回归.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/表格回归.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/表格回归最终.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/表格整行回归.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/语言要求丢失_修复前.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/语言要求丢失_修复后.log
+ create mode 100644 reports/5_5_3 Bad Case分析与优化/独立审计修复_20261008/长块边界回归.log
+ create mode 100644 tests/5_1_4 混合检索与重排序/test_long_reranker.py
+ create mode 100644 tests/5_5_3 Bad Case分析与优化/test_independent_agent.py
+ create mode 100644 tests/5_5_3 Bad Case分析与优化/test_independent_cache.py
+ create mode 100644 tests/5_5_3 Bad Case分析与优化/test_independent_generation.py
+ create mode 100644 tests/5_5_3 Bad Case分析与优化/test_independent_retrieval.py
+ create mode 100644 tests/5_5_3 Bad Case分析与优化/test_independent_usage.py
+c90ed95732bff1e272b5d411a2ab2fd8d9cb3ef0
+No broken requirements found.
+{"torch": "2.5.1+cpu", "markdown-it-py": "4.2.0", "chromadb": "0.5.23", "sentence-transformers": "3.3.1", "streamlit": "1.64.0"}
+{"scope": "Windows原生功能复测准备：复制真实资料和索引，仅修改副本的来源路径。", "revision": "c90ed95732bff1e272b5d411a2ab2fd8d9cb3ef0", "source_raw": "E:\\工作\\RAG-Agent\\data\\raw", "source_index": "E:\\工作\\RAG-Agent\\data\\index", "probe_root": "E:\\工作\\RAG-Agent\\.test-tmp\\win-audit-deploy-20261008\\original-probe", "chunks": 278, "documents": 6, "source_content_sha256": "a72c99fdf44a68c1f84bcb40c43f2f4193424b43bad13b8ec32c87451e52df5d", "original_unchanged": true, "files": [{"file": "Windows复测_说明.md", "doc_id": "6455abc0e87729a9bd5767f0fc835919c596456e7313a7fe0d1872ad6aa9c695", "bytes": 176, "sha256": "6455abc0e87729a9bd5767f0fc835919c596456e7313a7fe0d1872ad6aa9c695"}, {"file": "Windows验收_ViT.pdf", "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6", "bytes": 3743814, "sha256": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6"}, {"file": "Windows复测_说明.docx", "doc_id": "b308ae667c36aee4fc2632d9647925c2aa181f67ca755269a80c6543938d8ada", "bytes": 8620, "sha256": "b308ae667c36aee4fc2632d9647925c2aa181f67ca755269a80c6543938d8ada"}, {"file": "attention.pdf", "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697", "bytes": 2215244, "sha256": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"}, {"file": "Windows复测_说明.txt", "doc_id": "cb990ff1e44de00ba328e34169099d3f4704470d7d34fa9b71a586471d715baa", "bytes": 250, "sha256": "cb990ff1e44de00ba328e34169099d3f4704470d7d34fa9b71a586471d715baa"}, {"file": "Windows复测_DETR节选.pdf", "doc_id": "ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c3079f448a2ad", "bytes": 533907, "sha256": "ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c3079f448a2ad"}], "vectors_shape": [278, 768], "native_hnsw_self_distance": -3.5762786865234375e-07, "passed": true}
+
+REMOTE_EXIT=0

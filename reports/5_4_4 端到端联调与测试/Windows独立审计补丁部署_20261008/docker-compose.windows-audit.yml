@@ -1,0 +1,62 @@
+# 本轮独立容器验证，数据与端口不占用原生应用。
+services:
+  app:
+    platform: linux/amd64
+    image: rag-agent:win-audit-20261008
+    networks:
+    - offline
+    environment:
+      RAG_OLLAMA_BASE_URL: http://ollama:11434
+      STREAMLIT_BROWSER_GATHER_USAGE_STATS: 'false'
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+    volumes:
+    - E:/工作/RAG-Agent/config.yaml:/app/config.yaml:ro
+    - E:/工作/RAG-Agent/.test-tmp/win-audit-deploy-20261008/container-data:/app/data
+    - E:/工作/RAG-Agent/.test-tmp/win-audit-deploy-20261008/container-logs:/app/logs
+    - E:/工作/RAG-Agent/.test-tmp/win-audit-deploy-20261008:/proof:ro
+    - E:/工作/RAG-Agent/data/models/m3e-base:/app/data/models/m3e-base:ro
+    - E:/工作/RAG-Agent/data/models/bge-reranker-base:/app/data/models/bge-reranker-base:ro
+    - E:/工作/RAG-Agent/data/models/qwen2.5-tokenizer:/app/data/models/qwen2.5-tokenizer:ro
+    depends_on:
+      ollama:
+        condition: service_healthy
+    restart: 'no'
+  ollama:
+    image: ollama/ollama:0.34.0
+    environment:
+      OLLAMA_HOST: 0.0.0.0:11434
+      OLLAMA_NO_CLOUD: '1'
+    volumes:
+    - C:/Users/asus/.ollama/models:/root/.ollama/models:ro
+    healthcheck:
+      test:
+      - CMD
+      - ollama
+      - list
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
+      retries: 6
+    restart: 'no'
+    networks:
+    - offline
+  gateway:
+    platform: linux/amd64
+    image: rag-agent:win-audit-20261008
+    command:
+    - python
+    - docker/tcp_proxy.py
+    ports:
+    - 127.0.0.1:8502:8501
+    networks:
+    - default
+    - offline
+    depends_on:
+      app:
+        condition: service_healthy
+    restart: 'no'
+networks:
+  offline:
+    internal: true
+  default: {}

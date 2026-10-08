@@ -1,0 +1,1638 @@
+{
+  "checked_at": "2026-10-08T22:15:03.510366+08:00",
+  "phase": "before-restart",
+  "original_sessions": [
+    {
+      "table": "sessions",
+      "before_rows": 61,
+      "after_rows": 64,
+      "all_original_rows_preserved": true
+    },
+    {
+      "table": "messages",
+      "before_rows": 194,
+      "after_rows": 198,
+      "all_original_rows_preserved": true
+    },
+    {
+      "table": "summaries",
+      "before_rows": 1,
+      "after_rows": 1,
+      "all_original_rows_preserved": true
+    },
+    {
+      "table": "rag_history",
+      "before_rows": 5,
+      "after_rows": 5,
+      "all_original_rows_preserved": true
+    }
+  ],
+  "audit_sessions": [
+    {
+      "session_id": "002a1a037d424c558c4a96a5c9ca2735",
+      "messages": [
+        {
+          "role": "human",
+          "content": "Windows复测_说明.md中的Markdown标记是什么？",
+          "details": {}
+        },
+        {
+          "role": "ai",
+          "content": "## 回答\nMarkdown标记是WINMD20261005。[参考文档1：Windows复测\\_说明.md；行1–6]\n\n说明：文档直接给出了Markdown标记的具体内容。\n\n## 参考来源\n- [参考文档1] Windows复测\\_说明.md；行1–6",
+          "details": {
+            "task_complete": true,
+            "stop_reason": "task_complete",
+            "event": {
+              "type": "done",
+              "task_complete": true,
+              "stop_reason": "task_complete",
+              "iterations": 2,
+              "context": {
+                "history": [],
+                "history_window": {
+                  "tokens": 0,
+                  "max_tokens": 2000,
+                  "retained_turns": 0,
+                  "dropped_turns": 0,
+                  "tokenizer": "Qwen2.5"
+                },
+                "observations": [
+                  {
+                    "call_id": "a171f013293d4964a14f3b090f357dcd",
+                    "name": "paper_list",
+                    "args": {},
+                    "status": "success",
+                    "result": {
+                      "papers": [
+                        {
+                          "doc_id": "ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c3079f448a2ad",
+                          "source_file": "Windows复测_DETR节选.pdf",
+                          "indexed_chunks": 13,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        },
+                        {
+                          "doc_id": "b308ae667c36aee4fc2632d9647925c2aa181f67ca755269a80c6543938d8ada",
+                          "source_file": "Windows复测_说明.docx",
+                          "indexed_chunks": 2,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        },
+                        {
+                          "doc_id": "6455abc0e87729a9bd5767f0fc835919c596456e7313a7fe0d1872ad6aa9c695",
+                          "source_file": "Windows复测_说明.md",
+                          "indexed_chunks": 1,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        },
+                        {
+                          "doc_id": "cb990ff1e44de00ba328e34169099d3f4704470d7d34fa9b71a586471d715baa",
+                          "source_file": "Windows复测_说明.txt",
+                          "indexed_chunks": 1,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        },
+                        {
+                          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                          "source_file": "Windows验收_ViT.pdf",
+                          "indexed_chunks": 165,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        },
+                        {
+                          "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                          "source_file": "attention.pdf",
+                          "indexed_chunks": 94,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        }
+                      ],
+                      "total": 6,
+                      "usage": {
+                        "prompt_eval_count": 0,
+                        "eval_count": 0
+                      }
+                    },
+                    "error": "",
+                    "error_kind": null,
+                    "usage": {
+                      "prompt_eval_count": 0,
+                      "eval_count": 0
+                    },
+                    "usage_incomplete": false,
+                    "elapsed_seconds": 0.10705460000008316,
+                    "attempts": [
+                      {
+                        "attempt": 1,
+                        "status": "success",
+                        "error": "",
+                        "error_kind": null,
+                        "elapsed_seconds": 0.10702159999982541,
+                        "usage": {
+                          "prompt_eval_count": 0,
+                          "eval_count": 0
+                        },
+                        "usage_incomplete": false
+                      }
+                    ],
+                    "execution_mode": "serial"
+                  },
+                  {
+                    "call_id": "c18a328b0fe8484cbfa27b501472dafa",
+                    "name": "knowledge_base_search",
+                    "args": {
+                      "question": "Windows复测_说明.md中的Markdown标记是什么？",
+                      "doc_id": "6455abc0e87729a9bd5767f0fc835919c596456e7313a7fe0d1872ad6aa9c695"
+                    },
+                    "status": "success",
+                    "result": {
+                      "answer": "## 回答\nMarkdown标记是WINMD20261005。[参考文档1：Windows复测\\_说明.md；行1–6]\n\n说明：文档直接给出了Markdown标记的具体内容。\n\n## 参考来源\n- [参考文档1] Windows复测\\_说明.md；行1–6",
+                      "citations": [
+                        {
+                          "id": 1,
+                          "source_file": "Windows复测_说明.md",
+                          "location": "行1–6",
+                          "text": "# 科研助理Markdown复测\n\nMarkdown标记是WINMD20261005。\n\n- 引用必须对应本地文件和行号。\n- 对比两篇论文时保留方法、数据集、实验结果。\n",
+                          "metadata": {
+                            "chunk_id": "103c8673a98b1824781776d046f4eb28de0fca617e44ff13e042e63bde4411e3",
+                            "doc_id": "6455abc0e87729a9bd5767f0fc835919c596456e7313a7fe0d1872ad6aa9c695",
+                            "file_type": ".md",
+                            "line_end": 6,
+                            "line_start": 1,
+                            "source": "E:\\工作\\RAG-Agent\\data\\raw\\6455abc0e87729a9bd5767f0fc835919c596456e7313a7fe0d1872ad6aa9c695\\Windows复测_说明.md",
+                            "source_file": "Windows复测_说明.md"
+                          },
+                          "truncated": false,
+                          "score": 0.9994463324546814
+                        }
+                      ],
+                      "invalid_citation_ids": [],
+                      "missing_citations": false,
+                      "warnings": [],
+                      "evidence_quote_errors": [],
+                      "generation_mode": "grounded",
+                      "notice": "",
+                      "raw_answer": "## 回答\nMarkdown标记是WINMD20261005。[参考文档1]\n\n说明：文档直接给出了Markdown标记的具体内容。\n\n## 参考来源\n[参考文档1]",
+                      "model": "qwen2.5:7b",
+                      "options": {
+                        "temperature": 0.1,
+                        "top_p": 0.9,
+                        "top_k": 40,
+                        "num_ctx": 8192,
+                        "num_predict": 512,
+                        "repeat_penalty": 1.0
+                      },
+                      "done_reason": "stop",
+                      "usage": {
+                        "prompt_eval_count": 1131,
+                        "eval_count": 46,
+                        "total_duration": 1627723100,
+                        "load_duration": 8810800,
+                        "prompt_eval_duration": 578535000,
+                        "eval_duration": 991881000
+                      },
+                      "status": "answered",
+                      "doc_id": "6455abc0e87729a9bd5767f0fc835919c596456e7313a7fe0d1872ad6aa9c695",
+                      "sources": [
+                        "Windows复测_说明.md"
+                      ],
+                      "top_score": 0.9994463324546814,
+                      "confirmed": false,
+                      "retrieval_seconds": 6.089708499999688,
+                      "elapsed_seconds": 7.732920899999954,
+                      "retrieval": {
+                        "request_id": "51df1d57ca8442ed9900795284329067",
+                        "status": "success",
+                        "returned_chunks": 1
+                      }
+                    },
+                    "error": "",
+                    "error_kind": null,
+                    "usage": {
+                      "prompt_eval_count": 1131,
+                      "eval_count": 46
+                    },
+                    "usage_incomplete": false,
+                    "elapsed_seconds": 7.859290500000498,
+                    "attempts": [
+                      {
+                        "attempt": 1,
+                        "status": "success",
+                        "error": "",
+                        "error_kind": null,
+                        "elapsed_seconds": 7.859254500000134,
+                        "usage": {
+                          "prompt_eval_count": 1131,
+                          "eval_count": 46,
+                          "total_duration": 1627723100,
+                          "load_duration": 8810800,
+                          "prompt_eval_duration": 578535000,
+                          "eval_duration": 991881000
+                        },
+                        "usage_incomplete": false
+                      }
+                    ],
+                    "execution_mode": "serial"
+                  }
+                ],
+                "last_observation": {
+                  "observation": "保留RAG工具答案、引用及实际检索状态。",
+                  "decision": "finish",
+                  "task_complete": true
+                }
+              },
+              "request_id": "0257ebf0430d4773b8f569729fd15900",
+              "metrics": {
+                "calls": [
+                  {
+                    "id": "thought:1",
+                    "iteration": 1,
+                    "phase": "Thought",
+                    "tool": "—",
+                    "tool_call_ids": [],
+                    "input": 0,
+                    "output": 0,
+                    "incomplete": false,
+                    "seconds": 0.0028057999998054584
+                  },
+                  {
+                    "id": "action:1",
+                    "iteration": 1,
+                    "phase": "Action",
+                    "tool": "paper_list",
+                    "tool_call_ids": [
+                      "a171f013293d4964a14f3b090f357dcd"
+                    ],
+                    "input": 0,
+                    "output": 0,
+                    "incomplete": false,
+                    "seconds": 0.005907900000238442
+                  },
+                  {
+                    "id": "a171f013293d4964a14f3b090f357dcd",
+                    "iteration": 1,
+                    "phase": "工具内部",
+                    "tool": "paper_list",
+                    "tool_call_ids": [
+                      "a171f013293d4964a14f3b090f357dcd"
+                    ],
+                    "input": 0,
+                    "output": 0,
+                    "incomplete": false,
+                    "seconds": 0.10705460000008316
+                  },
+                  {
+                    "id": "observation:1",
+                    "iteration": 1,
+                    "phase": "Observation",
+                    "tool": "—",
+                    "tool_call_ids": [],
+                    "input": 0,
+                    "output": 0,
+                    "incomplete": false,
+                    "seconds": 0.0001540000002933084
+                  },
+                  {
+                    "id": "thought:2",
+                    "iteration": 2,
+                    "phase": "Thought",
+                    "tool": "—",
+                    "tool_call_ids": [],
+                    "input": 0,
+                    "output": 0,
+                    "incomplete": false,
+                    "seconds": 6.510000002890592e-05
+                  },
+                  {
+                    "id": "action:2",
+                    "iteration": 2,
+                    "phase": "Action",
+                    "tool": "knowledge_base_search",
+                    "tool_call_ids": [
+                      "c18a328b0fe8484cbfa27b501472dafa"
+                    ],
+                    "input": 2500,
+                    "output": 31,
+                    "incomplete": false,
+                    "seconds": 4.697541800000181
+                  },
+                  {
+                    "id": "c18a328b0fe8484cbfa27b501472dafa",
+                    "iteration": 2,
+                    "phase": "工具内部",
+                    "tool": "knowledge_base_search",
+                    "tool_call_ids": [
+                      "c18a328b0fe8484cbfa27b501472dafa"
+                    ],
+                    "input": 1131,
+                    "output": 46,
+                    "incomplete": false,
+                    "seconds": 7.859290500000498
+                  },
+                  {
+                    "id": "observation:2",
+                    "iteration": 2,
+                    "phase": "Observation",
+                    "tool": "—",
+                    "tool_call_ids": [],
+                    "input": 0,
+                    "output": 0,
+                    "incomplete": false,
+                    "seconds": 7.400000049528899e-05
+                  }
+                ],
+                "trace": [
+                  {
+                    "type": "thought",
+                    "thought": "先获取已上传文献的真实ID，再执行论文工具。",
+                    "next_step": "tool",
+                    "tool_name": "paper_list",
+                    "parallel_tools": [],
+                    "route": "rule",
+                    "elapsed_seconds": 0.0028057999998054584,
+                    "iteration": 1
+                  },
+                  {
+                    "type": "tool_call",
+                    "name": "paper_list",
+                    "call_id": "a171f013293d4964a14f3b090f357dcd",
+                    "args": {},
+                    "elapsed_seconds": 0.005907900000238442,
+                    "iteration": 1
+                  },
+                  {
+                    "type": "tool_result",
+                    "name": "paper_list",
+                    "call_id": "a171f013293d4964a14f3b090f357dcd",
+                    "args": {},
+                    "result": {
+                      "papers": [
+                        {
+                          "doc_id": "ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c3079f448a2ad",
+                          "source_file": "Windows复测_DETR节选.pdf",
+                          "indexed_chunks": 13,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        },
+                        {
+                          "doc_id": "b308ae667c36aee4fc2632d9647925c2aa181f67ca755269a80c6543938d8ada",
+                          "source_file": "Windows复测_说明.docx",
+                          "indexed_chunks": 2,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        },
+                        {
+                          "doc_id": "6455abc0e87729a9bd5767f0fc835919c596456e7313a7fe0d1872ad6aa9c695",
+                          "source_file": "Windows复测_说明.md",
+                          "indexed_chunks": 1,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        },
+                        {
+                          "doc_id": "cb990ff1e44de00ba328e34169099d3f4704470d7d34fa9b71a586471d715baa",
+                          "source_file": "Windows复测_说明.txt",
+                          "indexed_chunks": 1,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        },
+                        {
+                          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                          "source_file": "Windows验收_ViT.pdf",
+                          "indexed_chunks": 165,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        },
+                        {
+                          "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                          "source_file": "attention.pdf",
+                          "indexed_chunks": 94,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        }
+                      ],
+                      "total": 6,
+                      "usage": {
+                        "prompt_eval_count": 0,
+                        "eval_count": 0
+                      }
+                    },
+                    "status": "success",
+                    "error": "",
+                    "error_kind": null,
+                    "attempts": [
+                      {
+                        "attempt": 1,
+                        "status": "success",
+                        "error": "",
+                        "error_kind": null,
+                        "elapsed_seconds": 0.10702159999982541,
+                        "usage": {
+                          "prompt_eval_count": 0,
+                          "eval_count": 0
+                        },
+                        "usage_incomplete": false
+                      }
+                    ],
+                    "execution_mode": "serial",
+                    "elapsed_seconds": 0.10705460000008316,
+                    "iteration": 1
+                  },
+                  {
+                    "type": "observation",
+                    "elapsed_seconds": 0.0001540000002933084,
+                    "observation": "文献列表已返回，继续执行指定的论文任务。",
+                    "decision": "continue",
+                    "task_complete": false,
+                    "iteration": 1
+                  },
+                  {
+                    "type": "thought",
+                    "thought": "论文资料问题优先查询实际知识库。",
+                    "next_step": "tool",
+                    "tool_name": "knowledge_base_search",
+                    "parallel_tools": [],
+                    "route": "rule",
+                    "elapsed_seconds": 6.510000002890592e-05,
+                    "iteration": 2
+                  },
+                  {
+                    "type": "tool_call",
+                    "name": "knowledge_base_search",
+                    "call_id": "c18a328b0fe8484cbfa27b501472dafa",
+                    "args": {
+                      "question": "Windows复测_说明.md中的Markdown标记是什么？",
+                      "doc_id": "6455abc0e87729a9bd5767f0fc835919c596456e7313a7fe0d1872ad6aa9c695"
+                    },
+                    "elapsed_seconds": 4.697541800000181,
+                    "iteration": 2
+                  },
+                  {
+                    "type": "tool_result",
+                    "name": "knowledge_base_search",
+                    "call_id": "c18a328b0fe8484cbfa27b501472dafa",
+                    "args": {
+                      "question": "Windows复测_说明.md中的Markdown标记是什么？",
+                      "doc_id": "6455abc0e87729a9bd5767f0fc835919c596456e7313a7fe0d1872ad6aa9c695"
+                    },
+                    "result": {
+                      "answer": "## 回答\nMarkdown标记是WINMD20261005。[参考文档1：Windows复测\\_说明.md；行1–6]\n\n说明：文档直接给出了Markdown标记的具体内容。\n\n## 参考来源\n- [参考文档1] Windows复测\\_说明.md；行1–6",
+                      "citations": [
+                        {
+                          "id": 1,
+                          "source_file": "Windows复测_说明.md",
+                          "location": "行1–6",
+                          "text": "# 科研助理Markdown复测\n\nMarkdown标记是WINMD20261005。\n\n- 引用必须对应本地文件和行号。\n- 对比两篇论文时保留方法、数据集、实验结果。\n",
+                          "metadata": {
+                            "chunk_id": "103c8673a98b1824781776d046f4eb28de0fca617e44ff13e042e63bde4411e3",
+                            "doc_id": "6455abc0e87729a9bd5767f0fc835919c596456e7313a7fe0d1872ad6aa9c695",
+                            "file_type": ".md",
+                            "line_end": 6,
+                            "line_start": 1,
+                            "source": "E:\\工作\\RAG-Agent\\data\\raw\\6455abc0e87729a9bd5767f0fc835919c596456e7313a7fe0d1872ad6aa9c695\\Windows复测_说明.md",
+                            "source_file": "Windows复测_说明.md"
+                          },
+                          "truncated": false,
+                          "score": 0.9994463324546814
+                        }
+                      ],
+                      "invalid_citation_ids": [],
+                      "missing_citations": false,
+                      "warnings": [],
+                      "evidence_quote_errors": [],
+                      "generation_mode": "grounded",
+                      "notice": "",
+                      "raw_answer": "## 回答\nMarkdown标记是WINMD20261005。[参考文档1]\n\n说明：文档直接给出了Markdown标记的具体内容。\n\n## 参考来源\n[参考文档1]",
+                      "model": "qwen2.5:7b",
+                      "options": {
+                        "temperature": 0.1,
+                        "top_p": 0.9,
+                        "top_k": 40,
+                        "num_ctx": 8192,
+                        "num_predict": 512,
+                        "repeat_penalty": 1.0
+                      },
+                      "done_reason": "stop",
+                      "usage": {
+                        "prompt_eval_count": 1131,
+                        "eval_count": 46,
+                        "total_duration": 1627723100,
+                        "load_duration": 8810800,
+                        "prompt_eval_duration": 578535000,
+                        "eval_duration": 991881000
+                      },
+                      "status": "answered",
+                      "doc_id": "6455abc0e87729a9bd5767f0fc835919c596456e7313a7fe0d1872ad6aa9c695",
+                      "sources": [
+                        "Windows复测_说明.md"
+                      ],
+                      "top_score": 0.9994463324546814,
+                      "confirmed": false,
+                      "retrieval_seconds": 6.089708499999688,
+                      "elapsed_seconds": 7.732920899999954,
+                      "retrieval": {
+                        "request_id": "51df1d57ca8442ed9900795284329067",
+                        "status": "success",
+                        "returned_chunks": 1
+                      }
+                    },
+                    "status": "success",
+                    "error": "",
+                    "error_kind": null,
+                    "attempts": [
+                      {
+                        "attempt": 1,
+                        "status": "success",
+                        "error": "",
+                        "error_kind": null,
+                        "elapsed_seconds": 7.859254500000134,
+                        "usage": {
+                          "prompt_eval_count": 1131,
+                          "eval_count": 46,
+                          "total_duration": 1627723100,
+                          "load_duration": 8810800,
+                          "prompt_eval_duration": 578535000,
+                          "eval_duration": 991881000
+                        },
+                        "usage_incomplete": false
+                      }
+                    ],
+                    "execution_mode": "serial",
+                    "elapsed_seconds": 7.859290500000498,
+                    "iteration": 2
+                  },
+                  {
+                    "type": "observation",
+                    "elapsed_seconds": 7.400000049528899e-05,
+                    "observation": "保留RAG工具答案、引用及实际检索状态。",
+                    "decision": "finish",
+                    "task_complete": true,
+                    "iteration": 2
+                  },
+                  {
+                    "type": "done",
+                    "task_complete": true,
+                    "stop_reason": "task_complete",
+                    "full_response": "## 回答\nMarkdown标记是WINMD20261005。[参考文档1：Windows复测\\_说明.md；行1–6]\n\n说明：文档直接给出了Markdown标记的具体内容。\n\n## 参考来源\n- [参考文档1] Windows复测\\_说明.md；行1–6",
+                    "iteration": 2
+                  }
+                ],
+                "tool_calls": [
+                  {
+                    "call_id": "a171f013293d4964a14f3b090f357dcd",
+                    "name": "paper_list",
+                    "iteration": 1,
+                    "status": "success",
+                    "seconds": 0.10705460000008316,
+                    "attempts": 1,
+                    "execution_mode": "serial"
+                  },
+                  {
+                    "call_id": "c18a328b0fe8484cbfa27b501472dafa",
+                    "name": "knowledge_base_search",
+                    "iteration": 2,
+                    "status": "success",
+                    "seconds": 7.859290500000498,
+                    "attempts": 1,
+                    "execution_mode": "serial"
+                  }
+                ],
+                "tools": {
+                  "started": 2,
+                  "completed": 2,
+                  "successes": 2,
+                  "failures": 0,
+                  "pending": 0,
+                  "success_rate": 1.0,
+                  "mean_seconds": 3.9831725500002904,
+                  "by_tool": [
+                    {
+                      "name": "paper_list",
+                      "started": 1,
+                      "completed": 1,
+                      "successes": 1,
+                      "failures": 0,
+                      "pending": 0,
+                      "success_rate": 1.0,
+                      "mean_seconds": 0.10705460000008316
+                    },
+                    {
+                      "name": "knowledge_base_search",
+                      "started": 1,
+                      "completed": 1,
+                      "successes": 1,
+                      "failures": 0,
+                      "pending": 0,
+                      "success_rate": 1.0,
+                      "mean_seconds": 7.859290500000498
+                    }
+                  ]
+                },
+                "tokens": {
+                  "input": 3631,
+                  "output": 77,
+                  "total": 3708,
+                  "known_total": 3708,
+                  "unknown_calls": 0
+                },
+                "response_seconds": 13.171386599999096,
+                "retrievals": [
+                  {
+                    "call_id": "c18a328b0fe8484cbfa27b501472dafa",
+                    "request_id": "51df1d57ca8442ed9900795284329067",
+                    "status": "success",
+                    "returned_chunks": 1,
+                    "seconds": 6.089708499999688
+                  }
+                ]
+              },
+              "user_id": "70d3fd048a7a45c29a5bd7a436423824",
+              "session_id": "002a1a037d424c558c4a96a5c9ca2735"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "session_id": "70587c6951b640c694eda4fb5bd3d5ba",
+      "messages": [
+        {
+          "role": "human",
+          "content": "Answer in English: According to Windows验收_ViT.pdf, which three datasets are used for pre-training, and how large are they?",
+          "details": {}
+        },
+        {
+          "role": "ai",
+          "content": "## Answer\nThe three datasets used for pre-training are ILSVRC-2012 ImageNet, ImageNet-21k, and JFT. [参考文档2：Windows验收\\_ViT.pdf；第7页（物理页码）]\n\n- ILSVRC-2012 ImageNet dataset has 1k classes and 1.3M images.\n- ImageNet-21k dataset has 21k classes and 14M images.\n- JFT dataset has 18k classes. [参考文档2：Windows验收\\_ViT.pdf；第7页（物理页码）]\n\n## 参考来源\n- [参考文档2] Windows验收\\_ViT.pdf；第7页（物理页码）",
+          "details": {
+            "task_complete": true,
+            "stop_reason": "task_complete",
+            "event": {
+              "type": "done",
+              "task_complete": true,
+              "stop_reason": "task_complete",
+              "iterations": 2,
+              "context": {
+                "history": [],
+                "history_window": {
+                  "tokens": 0,
+                  "max_tokens": 2000,
+                  "retained_turns": 0,
+                  "dropped_turns": 0,
+                  "tokenizer": "Qwen2.5"
+                },
+                "observations": [
+                  {
+                    "call_id": "14ab5b76b2364b05b9237eacc0f5de6e",
+                    "name": "paper_list",
+                    "args": {},
+                    "status": "success",
+                    "result": {
+                      "papers": [
+                        {
+                          "doc_id": "ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c3079f448a2ad",
+                          "source_file": "Windows复测_DETR节选.pdf",
+                          "indexed_chunks": 13,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        },
+                        {
+                          "doc_id": "b308ae667c36aee4fc2632d9647925c2aa181f67ca755269a80c6543938d8ada",
+                          "source_file": "Windows复测_说明.docx",
+                          "indexed_chunks": 2,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        },
+                        {
+                          "doc_id": "6455abc0e87729a9bd5767f0fc835919c596456e7313a7fe0d1872ad6aa9c695",
+                          "source_file": "Windows复测_说明.md",
+                          "indexed_chunks": 1,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        },
+                        {
+                          "doc_id": "cb990ff1e44de00ba328e34169099d3f4704470d7d34fa9b71a586471d715baa",
+                          "source_file": "Windows复测_说明.txt",
+                          "indexed_chunks": 1,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        },
+                        {
+                          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                          "source_file": "Windows验收_ViT.pdf",
+                          "indexed_chunks": 165,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        },
+                        {
+                          "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                          "source_file": "attention.pdf",
+                          "indexed_chunks": 94,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        }
+                      ],
+                      "total": 6,
+                      "usage": {
+                        "prompt_eval_count": 0,
+                        "eval_count": 0
+                      }
+                    },
+                    "error": "",
+                    "error_kind": null,
+                    "usage": {
+                      "prompt_eval_count": 0,
+                      "eval_count": 0
+                    },
+                    "usage_incomplete": false,
+                    "elapsed_seconds": 0.11967000000004191,
+                    "attempts": [
+                      {
+                        "attempt": 1,
+                        "status": "success",
+                        "error": "",
+                        "error_kind": null,
+                        "elapsed_seconds": 0.11963680000008026,
+                        "usage": {
+                          "prompt_eval_count": 0,
+                          "eval_count": 0
+                        },
+                        "usage_incomplete": false
+                      }
+                    ],
+                    "execution_mode": "serial"
+                  },
+                  {
+                    "call_id": "94c0faf0f13e45b1a022b4eb62c7a56b",
+                    "name": "knowledge_base_search",
+                    "args": {
+                      "question": "According to Windows验收_ViT.pdf, which three datasets are used for pre-training, and how large are they?。Answer in English。",
+                      "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6"
+                    },
+                    "status": "success",
+                    "result": {
+                      "answer": "## Answer\nThe three datasets used for pre-training are ILSVRC-2012 ImageNet, ImageNet-21k, and JFT. [参考文档2：Windows验收\\_ViT.pdf；第7页（物理页码）]\n\n- ILSVRC-2012 ImageNet dataset has 1k classes and 1.3M images.\n- ImageNet-21k dataset has 21k classes and 14M images.\n- JFT dataset has 18k classes. [参考文档2：Windows验收\\_ViT.pdf；第7页（物理页码）]\n\n## 参考来源\n- [参考文档2] Windows验收\\_ViT.pdf；第7页（物理页码）",
+                      "citations": [
+                        {
+                          "id": 2,
+                          "source_file": "Windows验收_ViT.pdf",
+                          "location": "第7页（物理页码）",
+                          "text": "Published as a conference paper at ICLR 2021\n90\nImageNet Top1 Accuracy [%]\n85\n80\nBiT\nViT-L/32\n75\nViT-B/32\nViT-L/16\nViT-B/16\nViT-H/14\n70\nImageNet\nImageNet-21k\nJFT-300M\nPre-training dataset\nFigure 3:\nTransfer to ImageNet.\nWhile\nlarge ViT models perform worse than BiT\nResNets (shaded area) when pre-trained on\nsmall datasets, they shine when pre-trained on\nlarger datasets. Similarly, larger ViT variants\novertake smaller ones as the dataset grows.\nAverage-5\n95\nTransfer accuracy [%]",
+                          "metadata": {
+                            "chunk_id": "216400db327daa09c6d69631c00a1e704bf170470507f9069f24e96216a93e92",
+                            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                            "file_type": ".pdf",
+                            "page": 6,
+                            "page_number": 7,
+                            "source": "E:\\工作\\RAG-Agent\\data\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+                            "source_file": "Windows验收_ViT.pdf"
+                          },
+                          "truncated": false,
+                          "score": 0.6560182571411133
+                        }
+                      ],
+                      "invalid_citation_ids": [],
+                      "missing_citations": false,
+                      "warnings": [],
+                      "evidence_quote_errors": [],
+                      "generation_mode": "grounded",
+                      "notice": "",
+                      "raw_answer": "## Answer\nThe three datasets used for pre-training are ILSVRC-2012 ImageNet, ImageNet-21k, and JFT. [参考文档2]\n\n- ILSVRC-2012 ImageNet dataset has 1k classes and 1.3M images.\n- ImageNet-21k dataset has 21k classes and 14M images.\n- JFT dataset has 18k classes. [参考文档2]\n\n## References\n[参考文档2]",
+                      "model": "qwen2.5:7b",
+                      "options": {
+                        "temperature": 0.1,
+                        "top_p": 0.9,
+                        "top_k": 40,
+                        "num_ctx": 8192,
+                        "num_predict": 512,
+                        "repeat_penalty": 1.0
+                      },
+                      "done_reason": "stop",
+                      "usage": {
+                        "prompt_eval_count": 1933,
+                        "eval_count": 111,
+                        "total_duration": 2994767300,
+                        "load_duration": 8948400,
+                        "prompt_eval_duration": 460972000,
+                        "eval_duration": 2453962000
+                      },
+                      "status": "answered",
+                      "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                      "sources": [
+                        "Windows验收_ViT.pdf"
+                      ],
+                      "top_score": 0.8066502809524536,
+                      "confirmed": false,
+                      "retrieval_seconds": 2.4142793999999412,
+                      "elapsed_seconds": 5.4470030000002225,
+                      "retrieval": {
+                        "request_id": "3fe8da16f3334ee387d5b3ba01bedb0b",
+                        "status": "success",
+                        "returned_chunks": 5
+                      }
+                    },
+                    "error": "",
+                    "error_kind": null,
+                    "usage": {
+                      "prompt_eval_count": 1933,
+                      "eval_count": 111
+                    },
+                    "usage_incomplete": false,
+                    "elapsed_seconds": 5.582798899999943,
+                    "attempts": [
+                      {
+                        "attempt": 1,
+                        "status": "success",
+                        "error": "",
+                        "error_kind": null,
+                        "elapsed_seconds": 5.582757299999685,
+                        "usage": {
+                          "prompt_eval_count": 1933,
+                          "eval_count": 111,
+                          "total_duration": 2994767300,
+                          "load_duration": 8948400,
+                          "prompt_eval_duration": 460972000,
+                          "eval_duration": 2453962000
+                        },
+                        "usage_incomplete": false
+                      }
+                    ],
+                    "execution_mode": "serial"
+                  }
+                ],
+                "last_observation": {
+                  "observation": "保留RAG工具答案、引用及实际检索状态。",
+                  "decision": "finish",
+                  "task_complete": true
+                }
+              },
+              "request_id": "399f2a96c9614f628ecbf41db3ae0ae8",
+              "metrics": {
+                "calls": [
+                  {
+                    "id": "thought:1",
+                    "iteration": 1,
+                    "phase": "Thought",
+                    "tool": "—",
+                    "tool_call_ids": [],
+                    "input": 0,
+                    "output": 0,
+                    "incomplete": false,
+                    "seconds": 0.00013450000005832408
+                  },
+                  {
+                    "id": "action:1",
+                    "iteration": 1,
+                    "phase": "Action",
+                    "tool": "paper_list",
+                    "tool_call_ids": [
+                      "14ab5b76b2364b05b9237eacc0f5de6e"
+                    ],
+                    "input": 0,
+                    "output": 0,
+                    "incomplete": false,
+                    "seconds": 0.0061397999998007435
+                  },
+                  {
+                    "id": "14ab5b76b2364b05b9237eacc0f5de6e",
+                    "iteration": 1,
+                    "phase": "工具内部",
+                    "tool": "paper_list",
+                    "tool_call_ids": [
+                      "14ab5b76b2364b05b9237eacc0f5de6e"
+                    ],
+                    "input": 0,
+                    "output": 0,
+                    "incomplete": false,
+                    "seconds": 0.11967000000004191
+                  },
+                  {
+                    "id": "observation:1",
+                    "iteration": 1,
+                    "phase": "Observation",
+                    "tool": "—",
+                    "tool_call_ids": [],
+                    "input": 0,
+                    "output": 0,
+                    "incomplete": false,
+                    "seconds": 0.00016229999982897425
+                  },
+                  {
+                    "id": "thought:2",
+                    "iteration": 2,
+                    "phase": "Thought",
+                    "tool": "—",
+                    "tool_call_ids": [],
+                    "input": 0,
+                    "output": 0,
+                    "incomplete": false,
+                    "seconds": 0.00011820000054285629
+                  },
+                  {
+                    "id": "action:2",
+                    "iteration": 2,
+                    "phase": "Action",
+                    "tool": "knowledge_base_search",
+                    "tool_call_ids": [
+                      "94c0faf0f13e45b1a022b4eb62c7a56b"
+                    ],
+                    "input": 2514,
+                    "output": 106,
+                    "incomplete": false,
+                    "seconds": 3.002416600000288
+                  },
+                  {
+                    "id": "94c0faf0f13e45b1a022b4eb62c7a56b",
+                    "iteration": 2,
+                    "phase": "工具内部",
+                    "tool": "knowledge_base_search",
+                    "tool_call_ids": [
+                      "94c0faf0f13e45b1a022b4eb62c7a56b"
+                    ],
+                    "input": 1933,
+                    "output": 111,
+                    "incomplete": false,
+                    "seconds": 5.582798899999943
+                  },
+                  {
+                    "id": "observation:2",
+                    "iteration": 2,
+                    "phase": "Observation",
+                    "tool": "—",
+                    "tool_call_ids": [],
+                    "input": 0,
+                    "output": 0,
+                    "incomplete": false,
+                    "seconds": 0.00018679999993764795
+                  }
+                ],
+                "trace": [
+                  {
+                    "type": "thought",
+                    "thought": "先获取已上传文献的真实ID，再执行论文工具。",
+                    "next_step": "tool",
+                    "tool_name": "paper_list",
+                    "parallel_tools": [],
+                    "route": "rule",
+                    "elapsed_seconds": 0.00013450000005832408,
+                    "iteration": 1
+                  },
+                  {
+                    "type": "tool_call",
+                    "name": "paper_list",
+                    "call_id": "14ab5b76b2364b05b9237eacc0f5de6e",
+                    "args": {},
+                    "elapsed_seconds": 0.0061397999998007435,
+                    "iteration": 1
+                  },
+                  {
+                    "type": "tool_result",
+                    "name": "paper_list",
+                    "call_id": "14ab5b76b2364b05b9237eacc0f5de6e",
+                    "args": {},
+                    "result": {
+                      "papers": [
+                        {
+                          "doc_id": "ef1a2a0c29a75f6a490e7e8a3ad2d07e64ec102fb2ad2cb3466c3079f448a2ad",
+                          "source_file": "Windows复测_DETR节选.pdf",
+                          "indexed_chunks": 13,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        },
+                        {
+                          "doc_id": "b308ae667c36aee4fc2632d9647925c2aa181f67ca755269a80c6543938d8ada",
+                          "source_file": "Windows复测_说明.docx",
+                          "indexed_chunks": 2,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        },
+                        {
+                          "doc_id": "6455abc0e87729a9bd5767f0fc835919c596456e7313a7fe0d1872ad6aa9c695",
+                          "source_file": "Windows复测_说明.md",
+                          "indexed_chunks": 1,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        },
+                        {
+                          "doc_id": "cb990ff1e44de00ba328e34169099d3f4704470d7d34fa9b71a586471d715baa",
+                          "source_file": "Windows复测_说明.txt",
+                          "indexed_chunks": 1,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        },
+                        {
+                          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                          "source_file": "Windows验收_ViT.pdf",
+                          "indexed_chunks": 165,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        },
+                        {
+                          "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+                          "source_file": "attention.pdf",
+                          "indexed_chunks": 94,
+                          "source_available": true,
+                          "index_status": "has_index"
+                        }
+                      ],
+                      "total": 6,
+                      "usage": {
+                        "prompt_eval_count": 0,
+                        "eval_count": 0
+                      }
+                    },
+                    "status": "success",
+                    "error": "",
+                    "error_kind": null,
+                    "attempts": [
+                      {
+                        "attempt": 1,
+                        "status": "success",
+                        "error": "",
+                        "error_kind": null,
+                        "elapsed_seconds": 0.11963680000008026,
+                        "usage": {
+                          "prompt_eval_count": 0,
+                          "eval_count": 0
+                        },
+                        "usage_incomplete": false
+                      }
+                    ],
+                    "execution_mode": "serial",
+                    "elapsed_seconds": 0.11967000000004191,
+                    "iteration": 1
+                  },
+                  {
+                    "type": "observation",
+                    "elapsed_seconds": 0.00016229999982897425,
+                    "observation": "文献列表已返回，继续执行指定的论文任务。",
+                    "decision": "continue",
+                    "task_complete": false,
+                    "iteration": 1
+                  },
+                  {
+                    "type": "thought",
+                    "thought": "论文资料问题优先查询实际知识库。",
+                    "next_step": "tool",
+                    "tool_name": "knowledge_base_search",
+                    "parallel_tools": [],
+                    "route": "rule",
+                    "elapsed_seconds": 0.00011820000054285629,
+                    "iteration": 2
+                  },
+                  {
+                    "type": "tool_call",
+                    "name": "knowledge_base_search",
+                    "call_id": "94c0faf0f13e45b1a022b4eb62c7a56b",
+                    "args": {
+                      "question": "According to Windows验收_ViT.pdf, which three datasets are used for pre-training, and how large are they?。Answer in English。",
+                      "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6"
+                    },
+                    "elapsed_seconds": 3.002416600000288,
+                    "iteration": 2
+                  },
+                  {
+                    "type": "tool_result",
+                    "name": "knowledge_base_search",
+                    "call_id": "94c0faf0f13e45b1a022b4eb62c7a56b",
+                    "args": {
+                      "question": "According to Windows验收_ViT.pdf, which three datasets are used for pre-training, and how large are they?。Answer in English。",
+                      "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6"
+                    },
+                    "result": {
+                      "answer": "## Answer\nThe three datasets used for pre-training are ILSVRC-2012 ImageNet, ImageNet-21k, and JFT. [参考文档2：Windows验收\\_ViT.pdf；第7页（物理页码）]\n\n- ILSVRC-2012 ImageNet dataset has 1k classes and 1.3M images.\n- ImageNet-21k dataset has 21k classes and 14M images.\n- JFT dataset has 18k classes. [参考文档2：Windows验收\\_ViT.pdf；第7页（物理页码）]\n\n## 参考来源\n- [参考文档2] Windows验收\\_ViT.pdf；第7页（物理页码）",
+                      "citations": [
+                        {
+                          "id": 2,
+                          "source_file": "Windows验收_ViT.pdf",
+                          "location": "第7页（物理页码）",
+                          "text": "Published as a conference paper at ICLR 2021\n90\nImageNet Top1 Accuracy [%]\n85\n80\nBiT\nViT-L/32\n75\nViT-B/32\nViT-L/16\nViT-B/16\nViT-H/14\n70\nImageNet\nImageNet-21k\nJFT-300M\nPre-training dataset\nFigure 3:\nTransfer to ImageNet.\nWhile\nlarge ViT models perform worse than BiT\nResNets (shaded area) when pre-trained on\nsmall datasets, they shine when pre-trained on\nlarger datasets. Similarly, larger ViT variants\novertake smaller ones as the dataset grows.\nAverage-5\n95\nTransfer accuracy [%]",
+                          "metadata": {
+                            "chunk_id": "216400db327daa09c6d69631c00a1e704bf170470507f9069f24e96216a93e92",
+                            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                            "file_type": ".pdf",
+                            "page": 6,
+                            "page_number": 7,
+                            "source": "E:\\工作\\RAG-Agent\\data\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+                            "source_file": "Windows验收_ViT.pdf"
+                          },
+                          "truncated": false,
+                          "score": 0.6560182571411133
+                        }
+                      ],
+                      "invalid_citation_ids": [],
+                      "missing_citations": false,
+                      "warnings": [],
+                      "evidence_quote_errors": [],
+                      "generation_mode": "grounded",
+                      "notice": "",
+                      "raw_answer": "## Answer\nThe three datasets used for pre-training are ILSVRC-2012 ImageNet, ImageNet-21k, and JFT. [参考文档2]\n\n- ILSVRC-2012 ImageNet dataset has 1k classes and 1.3M images.\n- ImageNet-21k dataset has 21k classes and 14M images.\n- JFT dataset has 18k classes. [参考文档2]\n\n## References\n[参考文档2]",
+                      "model": "qwen2.5:7b",
+                      "options": {
+                        "temperature": 0.1,
+                        "top_p": 0.9,
+                        "top_k": 40,
+                        "num_ctx": 8192,
+                        "num_predict": 512,
+                        "repeat_penalty": 1.0
+                      },
+                      "done_reason": "stop",
+                      "usage": {
+                        "prompt_eval_count": 1933,
+                        "eval_count": 111,
+                        "total_duration": 2994767300,
+                        "load_duration": 8948400,
+                        "prompt_eval_duration": 460972000,
+                        "eval_duration": 2453962000
+                      },
+                      "status": "answered",
+                      "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                      "sources": [
+                        "Windows验收_ViT.pdf"
+                      ],
+                      "top_score": 0.8066502809524536,
+                      "confirmed": false,
+                      "retrieval_seconds": 2.4142793999999412,
+                      "elapsed_seconds": 5.4470030000002225,
+                      "retrieval": {
+                        "request_id": "3fe8da16f3334ee387d5b3ba01bedb0b",
+                        "status": "success",
+                        "returned_chunks": 5
+                      }
+                    },
+                    "status": "success",
+                    "error": "",
+                    "error_kind": null,
+                    "attempts": [
+                      {
+                        "attempt": 1,
+                        "status": "success",
+                        "error": "",
+                        "error_kind": null,
+                        "elapsed_seconds": 5.582757299999685,
+                        "usage": {
+                          "prompt_eval_count": 1933,
+                          "eval_count": 111,
+                          "total_duration": 2994767300,
+                          "load_duration": 8948400,
+                          "prompt_eval_duration": 460972000,
+                          "eval_duration": 2453962000
+                        },
+                        "usage_incomplete": false
+                      }
+                    ],
+                    "execution_mode": "serial",
+                    "elapsed_seconds": 5.582798899999943,
+                    "iteration": 2
+                  },
+                  {
+                    "type": "observation",
+                    "elapsed_seconds": 0.00018679999993764795,
+                    "observation": "保留RAG工具答案、引用及实际检索状态。",
+                    "decision": "finish",
+                    "task_complete": true,
+                    "iteration": 2
+                  },
+                  {
+                    "type": "done",
+                    "task_complete": true,
+                    "stop_reason": "task_complete",
+                    "full_response": "## Answer\nThe three datasets used for pre-training are ILSVRC-2012 ImageNet, ImageNet-21k, and JFT. [参考文档2：Windows验收\\_ViT.pdf；第7页（物理页码）]\n\n- ILSVRC-2012 ImageNet dataset has 1k classes and 1.3M images.\n- ImageNet-21k dataset has 21k classes and 14M images.\n- JFT dataset has 18k classes. [参考文档2：Windows验收\\_ViT.pdf；第7页（物理页码）]\n\n## 参考来源\n- [参考文档2] Windows验收\\_ViT.pdf；第7页（物理页码）",
+                    "iteration": 2
+                  }
+                ],
+                "tool_calls": [
+                  {
+                    "call_id": "14ab5b76b2364b05b9237eacc0f5de6e",
+                    "name": "paper_list",
+                    "iteration": 1,
+                    "status": "success",
+                    "seconds": 0.11967000000004191,
+                    "attempts": 1,
+                    "execution_mode": "serial"
+                  },
+                  {
+                    "call_id": "94c0faf0f13e45b1a022b4eb62c7a56b",
+                    "name": "knowledge_base_search",
+                    "iteration": 2,
+                    "status": "success",
+                    "seconds": 5.582798899999943,
+                    "attempts": 1,
+                    "execution_mode": "serial"
+                  }
+                ],
+                "tools": {
+                  "started": 2,
+                  "completed": 2,
+                  "successes": 2,
+                  "failures": 0,
+                  "pending": 0,
+                  "success_rate": 1.0,
+                  "mean_seconds": 2.8512344499999926,
+                  "by_tool": [
+                    {
+                      "name": "paper_list",
+                      "started": 1,
+                      "completed": 1,
+                      "successes": 1,
+                      "failures": 0,
+                      "pending": 0,
+                      "success_rate": 1.0,
+                      "mean_seconds": 0.11967000000004191
+                    },
+                    {
+                      "name": "knowledge_base_search",
+                      "started": 1,
+                      "completed": 1,
+                      "successes": 1,
+                      "failures": 0,
+                      "pending": 0,
+                      "success_rate": 1.0,
+                      "mean_seconds": 5.582798899999943
+                    }
+                  ]
+                },
+                "tokens": {
+                  "input": 4447,
+                  "output": 217,
+                  "total": 4664,
+                  "known_total": 4664,
+                  "unknown_calls": 0
+                },
+                "response_seconds": 8.962704499999745,
+                "retrievals": [
+                  {
+                    "call_id": "94c0faf0f13e45b1a022b4eb62c7a56b",
+                    "request_id": "3fe8da16f3334ee387d5b3ba01bedb0b",
+                    "status": "success",
+                    "returned_chunks": 5,
+                    "seconds": 2.4142793999999412
+                  }
+                ]
+              },
+              "user_id": "70d3fd048a7a45c29a5bd7a436423824",
+              "session_id": "70587c6951b640c694eda4fb5bd3d5ba"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "active_chunks": 276,
+  "documents": [
+    {
+      "file": "Windows复测_说明.md",
+      "original_sha256_unchanged": true,
+      "chunks": 1,
+      "expected_ids_match": true,
+      "index_status": {
+        "index_directory": "E:\\工作\\RAG-Agent\\data\\index",
+        "collection": "paper_chunks",
+        "expected_ids": [
+          "103c8673a98b1824781776d046f4eb28de0fca617e44ff13e042e63bde4411e3"
+        ],
+        "complete": true
+      }
+    },
+    {
+      "file": "Windows验收_ViT.pdf",
+      "original_sha256_unchanged": true,
+      "chunks": 165,
+      "expected_ids_match": true,
+      "index_status": {
+        "index_directory": "E:\\工作\\RAG-Agent\\data\\index",
+        "collection": "paper_chunks",
+        "expected_ids": [
+          "00e38981ca11f5e18f982075b552c0876c07b5464ba31b8446557f2b7b808931",
+          "430cc231bdbc69326431224296bc2322c98c08f799fbc035245353f3ea158d1c",
+          "8ae84e98efc77b081095c132ff5b25129ef02ad76f29b56b3fb1f0d252607ed9",
+          "ac7ba3fd75f9d49f078479e0471530bf615e21b4b7568b6be99400031dcc058d",
+          "3fa2b491543f906078cf9b9d8a3e76dc0ec3bf6f0b4435106a32fcd1c9cda123",
+          "7624524ee966dcc7a0ea60c2ccb6a14e050e3a022d3339b778789ecd1b8309ad",
+          "24f092f31d91ecf039431f64844afbb8b4d0866ec62f095ccae1a5852eb9b467",
+          "29c261975c10b37f071fc26e384462d4496b38785c106f577cdeffaeef63bd9f",
+          "b2c5ca4a2c2da946904f823def4d3088f4efceca71e298d0027a09bddff4df1b",
+          "9b043bf909596310b3e93dd842ed1b2f1e77ab141d8616dee3c9f177be0dcea4",
+          "e89e7ad14445b6cfc07b73152e5a409efca9afe12d1ded0e4bb870f0dc6db96e",
+          "017e75122f3a26e5b0747195b7e237444b2a728f4a4243d0e29b958023792548",
+          "3af642c312d1422e30ad28112bff541068059408f9074eb682cec33f9dff0233",
+          "e6f32c7b359eecdb3e23cbda81d40f19e818b3d3f36f8d2643be59dcd7aa9962",
+          "bc46516c6e0b18d9e132003fd9468f6164c10bd39ae6dcb29e3f8f978ee5843d",
+          "843a208dcf9fa08654ce6c0337ede472c4359dce17f45f7fc02c70558fe539a0",
+          "a000f3f082394f8c4e5cbc7f02286a417ebcf2d27aa3336d80d125a7b71aa5a2",
+          "f6fa6b8498cbe06a80ccb7401f54986860e10549e6abf030701ed10e4039658b",
+          "ec26059f1a64b6a99a89ffa09534a8e071d913610056cad0138be39afebc728e",
+          "9e9acdbba6f720d3d5d743203fd149d3f8e84a050cd4d12cdbfebbb3782e62b3",
+          "e9421d560c4aef147dd3372395048bb2d712d95a5ac1e433dd7db157a0614db9",
+          "0f68818744e481c34b21217028a043b89a427b643fd241c0654a4186705846b8",
+          "86ba2115620a661a70986429a1a47b83847486a7be4485b5de6dfef2535af9cf",
+          "de306f230bef233d3c2829cdb31bc8d826bbe8b4747acd3592323bf8f3e3da17",
+          "adfb6984b369d505ff02e56c15427f023f3aa948ba48f18953308a737f6d37a8",
+          "56c572d97d6cbfa9c8b8f82fc7267ebe939d67376b0446627d387c56e3e9ba67",
+          "5bde2de08ea00d3f03efdc5dfd18f8243b492a6302bdcbddbc7e7a994839f45a",
+          "40f8d16aaec26221818e5cef5f5dfea9b8dbb10cc332121409640fa16a7ec23e",
+          "a7ae255f3607aabdd562ba133b18da62873bdcbf1c3e5fe047cb960c7a1d2d66",
+          "5b02dff2de83381b64c1bcade4448a3cc02e3a834d1532e4c2550c862d77233e",
+          "3d62a45b1688a76e6d2622f03cb8698b0077cffd1deb5d214efa765a706cdc66",
+          "1301ce16c312b1c3b88d9fd0b1a7a449f4afea57499e9b113d8f1590cf19ba9a",
+          "abe2f1d08bd659d3bfb96dc5918c09824c6db2b3b3ef1255557393dabfe91510",
+          "71d1107eb1e7d88dec55b00f63516d0ebcd05ac7eeceff95749963c14eca3296",
+          "43496e081499788d8192f66378fde30d1c09bd9478476b8a1ed583ea8d46a89f",
+          "d13062a8f78c10b09f4fff68876e8ba490719e0562b575ddba4217ad868a77be",
+          "ecc9b344943d7662ec6c547775afb037d011e13b2f0426e9c3e00f64d12468c9",
+          "46736c1e14478ddb05e26fae1f8466c203255285c1be8d58acb2a69dc1617857",
+          "2208b499bb24a306a8ced080e7e0e19b3329eb1bfb72534cf600537504661800",
+          "35cf30cef3f1df400f0ee381b47deb5fb79a02bd8e04d4c05d12ec943aaa4888",
+          "0fb0eae9597ce7ba7c515098582ac103eba2d1fa9fa994d51640ea0df0cbba0b",
+          "516333b23d46ae580600c9b906874a6909b61a94c19e51484aa72011ffe28f2e",
+          "4ddee78df6c08983d30deaaee5ca4570b98a246c376243dd5666ab0d34c07039",
+          "6d586c3e683ae17d15f8b698c2456b095140a14a46c74173035971adf5e240d6",
+          "da1f4c9e87398a4f1bb0298c35ea0b8e91fdb390bbba2f26c500023d275ff49e",
+          "6891d235ccc67687aa32bc79f551726354ca17dbfdf647acab3afcd68d84b242",
+          "0fe46e78ef5ef92ec1c8d4700ac77bf61b706e13d4da9a6a24230fa70ccc94b3",
+          "edcdd3e27926f0c3de401fe76a82e6acc7f4fb76621525e1f084b164e145ff13",
+          "dad5cfc3770eecbd3b0bbc301b45c2550559e92a016c44e8bd550e42c2a06080",
+          "f9a09d72c7bd3dae0d6eb13bf6133effdb60bf66e56d26e62e0bc43d4d843735",
+          "216400db327daa09c6d69631c00a1e704bf170470507f9069f24e96216a93e92",
+          "aaa1c0527abb16e2e59f7788b1948777b36c42dc3db3f5b68308a40417ee9bf4",
+          "b6eae6e9be7a7eb4b1b60935cec7c17338c5acc105f3e5ce644701d2387804d8",
+          "dad9a17d6e901586b3d86a92c90cfffc59b5ac9042a723580e06eb2c5c1d3d33",
+          "cacfd61ab6f74643c9bb97b6bcdce1a5e329377539b94ed223df13257eb1873a",
+          "e3ac137c2106d39ac1d1c58516330171bd52f86e5f827fb7c0f3b606187dd92f",
+          "77d5e11d574db72a4326cbf9e7ef46ed9010de521ba2a221a8bfdb6d17a44f9e",
+          "a784cbb4060fd0c39d299cb8dd3f17e3dd08236d459da3fb0ebcb20817489a86",
+          "40c9b2120ad1f2232c157edef134d694714b6b777cc4ac25d581bed39c953d92",
+          "69912204f0887d231c30ba3301594f7a0545463c95c337cafcd50fbe97404afa",
+          "71c0f9d80cc62439940c5f61bab42d30749a3e8b2e818b055400f585c85fb0f3",
+          "aaa7c07194a22b5daae708a2d187203291bee2b23fdade32fe25b4628fc0ea48",
+          "6d60780ea1201004ca209c9e1aa0f47e5be3dd6d161d0030e06eae4deca03baa",
+          "a4762fa16ea87a4f329823021b673cc443df62a67a94762ea9488ca22d480a51",
+          "605f8c14194d778e52ceff2f2f47ffebd1c68d68a993090fa6f58c92f31260d5",
+          "c3e2a30b774357177b2e429a39224025e6589ef7ed51e9674f47cad8e0538576",
+          "3a88a90fd9f1e55612d5519837b33c3e911ed8cea2032399976112be7dee747e",
+          "f0472597593cf240ff34571ed607fd5b5ac10cfe9f92c30d406c2c0fbbe0364b",
+          "4153e401fad459c09117689e42a54408b57d464e9596699ecea42f850b09a1cb",
+          "e5543bb8269a2712678abf48c80b896a240d038ecdbc4ee5b6e1e426b5cf5ad7",
+          "5b94a7819e50464ef67e4e46765090f2478fe83e24c8ac830e227b2e3f8db334",
+          "89290903d7fe3a527e802f4a66abf3e5e54cf5d73a713155c9ccac54031efa15",
+          "7593c26528636f0885f3eeaf396c05a2e9a7c8ed7e9b5529e413a65e21248d3f",
+          "d888898e51b59b38484c0a02a54974b960f0320776d290e44f2690e392239b3f",
+          "78c6efdcd9e221d8481adf978db80b0545906ff479d257ef38bbe111b952a71a",
+          "0d0c222cb082fd67af81e2e1584e1cd76e8b93caadb956a3ff0fcba7d1fdd21c",
+          "488bd252b1d4afc600131fe1c22b6315207c654bd5279ebbb898ec72e94482d8",
+          "c191794a741623ea730118cdc6b397379d6f8db4948a5ee979a93804a2d71792",
+          "56081f1dbe164a7d0c328a84def9061961c17924a6c6425ac6573d914b4804f3",
+          "461596c25d573478fa4c9d7e9dc92fff25ed067a674980c393b5b8a6153f73bd",
+          "e2572f6a4f6d7dee56f1a0d0c700b20fc4b5e27e5a389a93eca516b12c0bae7e",
+          "f9b221c961929e22d4f078fc14ac1473bf780834a1915aa74519dda4b1798bc5",
+          "bfe93ac452dbd6dafd5fb99ea31e53c273587bb49eb30f4aeb37f64871c76f15",
+          "5dedf543b6233a733e8b525ce35af81ddc18c1db0844066a6271ed545bb93758",
+          "67ce756c89dceaa805f4396a00f63366bd16197c999568273fa1b7b72da37c70",
+          "14f81cdeb8f94f02cd40e4891eef98fcac987e57f4bd1cb33c5402db498ee1f9",
+          "e80a41e80a0f70a7ddf962630b224ac2319c241c034e34ecc55cd9e38a40bf5d",
+          "bda0bfa0950e54b703cf5c5a67a66c064cb095162edae7af8252ead588318abf",
+          "3219431fc33e04e507fe9f71f5125d29c56335e468a1ffd0bebc5a8a1e1c5068",
+          "9f231b96c59896ad6faf869b0428bf9948ee4214b579f64ed7f08fb64ccb9fe3",
+          "2dc4c468ff2f90ba40dc76188828fe70bffbab36b6bf348246478bc63da9ce43",
+          "fe3c4e3ff3b0334a2242127ee417122512c203a8f5c921df4c426fa27a01e599",
+          "1711a2ce4ab8214ff8fa86242cbc3e3fefe8bf8902b3531a09d22e3c9b3cf2b5",
+          "2b2441083f11cacf50fed4b0e2a7df0743f859c3a30127108c1a611f37c7eb15",
+          "47a687f2be02e9bb45bf0c95103bff289afb33f7d7e6abf3fb4e987be849b9cb",
+          "a464f172f51e76a13fb093198e47f7774e2165ee7f9d0d3d63e8d656fa11681c",
+          "5c42ea231c10e8e890a22b2a2bbe068fa8c6068aebbab48fc9286d13d439d39c",
+          "a855446331e1203c24704903f00340c9bbfad7b57a2e8054300b22d950e99bd1",
+          "a89e16583d86881007594d4b3757c40bf7a62cf314070bbd9ef7c08564845364",
+          "35b8ef654a380ea45ef1b7ffd1e43d684631a2631267b5726ea857e8516d3b26",
+          "b776ec377954aba1d269e52a0ebd44bd57d27a269b4c63a975847a68b27a1100",
+          "e23937c3884d62835196afcf670e67260cc936feec3cf6f3fd8556a089acc068",
+          "2d8f375bf8a3ecc4c963c3793fb81978464db9488e73427148909582e9b0ee6a",
+          "5568f534363a1c7424b831630e41f587c7da18bfc14f2f3e6aa5a5452e08f8cb",
+          "a89c0259f5beeaa2202227c15baf72693f5d46303301b1aeee0a063622a5c1f1",
+          "e82d5b0d2e34818e8f2d5800c14248d454d8373f63fdc01ac9234b2fcdca98f3",
+          "9bc01b0a8891e0eb5455710aae700e335b6aefe0099f905afb2b5730c4249f46",
+          "d1344842381d336631de62e8a640e0f6c71a3546b9aca35b61348f0a8ed09b18",
+          "c8e30644e2de4b3727493dfaa00d809a4e61de5dcf2243580bd1bb8eefa1ab07",
+          "1649d42ecbf22236a358a32a91ebae460bf322e399ab2c61924f5fac4f5d75a8",
+          "2bbab13500ea8d963b0f120f11ddb535e335bdc502aedc5c873eca2d4aec236f",
+          "33008f3df5257e70536dde827274c45140dc76f438d214fbce0481660ebf5e8c",
+          "8dab66c4530e820db93ea5d7015b725bb780a083fc0c8de0e670fda1b6a729fc",
+          "cd54e6e82c20a3a8fad8740dce04471a16fe0259bac7392941319bf22cc8fcea",
+          "95bfe4ba3a65be5126fb6dfd69ef261100462258380d96c210fc70c7ac00e549",
+          "a921dfbbbaf60090c63ec877b3f3ba1fdb06103786acfc097b2f87ca7d71ec44",
+          "e0b1e365d6e2b3f5fd9c27771f51e676b8241272f16bf6c8c08f2ed67888cca0",
+          "6ba0363437dbf3cebfaa1c5d667004c54c3a17de651e2decf235411e64450c8d",
+          "c3365d80a491be3f3d814f82f986f0698950d7979d4208418b69f6a1eaf754be",
+          "f87b2b81f67dc887a83b937226c981ee0cb7ddce4ec67805d297da6261f96f84",
+          "260dae2cb2984dd23815eed3a1232084ef809b26684e269be80f5c55f462d24b",
+          "82da225c205a222b2e9eb5c3d8b21aab90549833a74be4625488971477e094b8",
+          "689a3c8da9731cb7b51718ab2484031c338f66346ad948a1a35c557bce70407e",
+          "7eb48c9359b31368f9e7b9ced51301b59b817d6fde989f9163338cee849838b7",
+          "0b0a9118833014f7297c7dda04fcd61eeaecc71babffcf0d9091ab100c6c0243",
+          "ff214723956bd2cc2ef882236083d2fede08de5eec2393be003c05e51cfd88e4",
+          "ea6aadd549aec7e12b32293bf8be7c8a6f4fc67a212506b92bd220340d43138d",
+          "8d39c0fd0ecd19f7c36db4b964114f6e1e825acaa004693905b569290913325d",
+          "45acfb2cfdb7e1408030648db30933f6f47b858f738b732eca9c076504003ce5",
+          "583e7238700e133e78f6743548f3eae27547feffb6d965a20f660d3ed495f51e",
+          "8c8caa8c9f8f62288f7d17d85b91fcadfb05dda60161a9154ac81cac9469f48e",
+          "5dfc694be5866eb09dbf0c59aafee3d13d60ca95e5ef3b02325087caad5cd37e",
+          "ecc8bf40bc434d4667406f1114fb174363fc64aae65a2a41c83b5d9665177c4c",
+          "6fcc98cec7331caf301911017d7378d1badf46da1d9c56bfcf91b68f2edfb8e4",
+          "5da14585d48bbccbbed9bd71da552ba1d33552beca435aedb420e89a80b4c7ac",
+          "9bb9cb71c3656c7c863ec2337db81dd76666fb0bd5d3f944d95569cc4961d667",
+          "5b9a68591e1615c148c5786aa0abbd5205b1966746eaf496a82249b44463387c",
+          "7f1d6111d701791b395489ca3805d463c10dd5ff7163d5b457c5934915cdf570",
+          "2fc14edd9bb349c8f2887700fd6657f0a0059b3863485763c22946f374d3d171",
+          "750420315ccd4a24a315e546cdbd30d900ad63b53a85c6693ffbec4641729778",
+          "416e6f7ccd680d3473b1d3591b96513001cb7a000fef4827c376d8cc43789b92",
+          "edfa9c56293b800c62a26d396014d660d2488ca8d13a17711d726364062981ff",
+          "0beaa3d7219355d27a873ebb5ef0ec6edb8ced1075b1c816cd16130b1ed5c1f6",
+          "f95f50b413d34eb277c4b9027a7ff5d43aae08ff65beebb0d76a07ec22b170c0",
+          "655ac0da640d2c76dd5ac0f603e61ac339dd5aaaa6e3dc3109e31fe2dce285c1",
+          "d314871298760649f248e51ab0b1e6f91001515de6c01d1c895ad5679868b1bf",
+          "e130dcce483a9e856fdcfc4736a33e07b764f541843b88c3f20a7b6e2e57341e",
+          "7d3d4842c158c64f882d6b4cfa5c5536edb37c40a46ad3577ed078bb1052667b",
+          "1f060d203a0ada0d5f089aa4b64934ffc4622397469e5fa76d616bd2e08a2a41",
+          "fcc5fb5ef32031afb2720f4b4122cc6fc5ddb5d417dffa5a9c83d63165114b3e",
+          "08a7a18d1ec479bd67a892fd16e263de9321b3b975544474b93f0c2b0cb5eac3",
+          "226b7e454abe2e3a0d98352d7c55959d2c17295dae1718ce774342a08c3e15f6",
+          "fac7a70695afc6ce41be650e27b31e42e30db41cc4949a78b2ee5763d05a6200",
+          "e3d3ab32c41d228338b1e3175bc8a85feac487189481f0ec31a3906a3a7c2109",
+          "5a9625b567b97da3341f808fd099b7c0834d5bb8fb9284b7139bb6db690cfa64",
+          "617e719638b5b26f7079185851f4c88faa59032afe9e3cfb76231c5e91d43b47",
+          "cc53676d33f6542791f25af413913ace20aca8488bffbffd7a57fcdfa077fc86",
+          "355624a97229cbbe795e06c19ea1bd8d22019c491ab91b15703f22778d84efc5",
+          "b00e0986ab39546125d258151e595c4100f30f2bb93e1bf39d39fa967ecb11b1",
+          "fef2906150ce44143a94c2797a40911d2d5e0e4ef390f14b50e0f0c6f370dc27",
+          "2100dde8b1e3890ca94fc32daf1b1a6d54561ae9c9fa7badbaf0c2cce8e2b045",
+          "050dba831c436978995bc6bb5bbadc33e95c2c594db0a8bdd583baf82a308674",
+          "16c65d443367b939f9c6bb48bf7e683f65bb6f8f34db6f235fa1880d9eaff426",
+          "c9aeda5a975da9b909df3d75968deb64508e11c9638ce5cfc23af11cfeb25a86",
+          "cadf80aa7a74c919070d115176635516f595aaa142c3ccaa19d7dfc419f0c85f"
+        ],
+        "complete": true
+      }
+    },
+    {
+      "file": "Windows复测_说明.docx",
+      "original_sha256_unchanged": true,
+      "chunks": 2,
+      "expected_ids_match": true,
+      "index_status": {
+        "index_directory": "E:\\工作\\RAG-Agent\\data\\index",
+        "collection": "paper_chunks",
+        "expected_ids": [
+          "e1073447c8ba00d7d229d41e3b62187dd5029c21ad417a320fc36e89e496bd52",
+          "1983b4cc5eca417fadf9033f5a2fa2f9d05c20c9b9a5360ea387672efde781a6"
+        ],
+        "complete": true
+      }
+    },
+    {
+      "file": "attention.pdf",
+      "original_sha256_unchanged": true,
+      "chunks": 94,
+      "expected_ids_match": true,
+      "index_status": {
+        "index_directory": "E:\\工作\\RAG-Agent\\data\\index",
+        "collection": "paper_chunks",
+        "expected_ids": [
+          "0687e5649013aa42b857a072116483a746ad4c45852d75e5f8f2943acab496e9",
+          "6d4649fec72c6bd3c6e0193cf04411309d67b07cafafea7a27b1cf03cab0a1c8",
+          "d71ae1e6ef8671942a5e3125b0913339b6e51106b3726acb06780f6798b818da",
+          "e667ca60ae655d4ffedf5a4ac644738e4e8ded90e894a4544181fdb9cef0a492",
+          "c73aea4168720bb45256a720a9fb785e9026f408ee112022acab85c9e8de25ba",
+          "6621493e5272cbfa81369806cd56e94ac1f049340ae80740ff79c148809e827b",
+          "811bd0d53904a89e6656f34e0204138207be01ba75155538108775f51ce2021f",
+          "70d16deffdf11ee83a5cdad0363a91456cc9393b0c7d4868ccaccc3914e610f5",
+          "6adea15018d2a3a7e7c8240149c6ead77b54b1a225893fd50e44eb860dfc0337",
+          "f0ee92251d85968f64b30edd188a7c82b24f464c99bea24111a210f811706e19",
+          "c0f7198e6e1d99c345d7d2bb9f496ce27a49013850df30d9cc5a385bd7ca617d",
+          "d60fcd987e925e7168c61fac3d275bb0c69f5f702ce6443540b7332ab95219a5",
+          "45f023e01607ac7c96d0a42b4c57934b1053a820cde69a6f6d933b2c77a1fe61",
+          "02e9f1fd3e3b534812114fde81d61932c2293b157f8d35fa673435a3a5747a11",
+          "4cb7090e355322d1783abbf85719dae3afc7e8c36837e19ae783a43879c86f7a",
+          "6b9eb1be935570c7abfdb5a7aa5445d0f9cc57acaccbd4c3dd332abde7fee634",
+          "ff8a9a87230c0abe15d98cae532419f596cefdae2af0f9a04fefabccec7f72e8",
+          "92f8ad03bc04d4226530a55ec8ac4aff0e5285e51375e4c4b9ce4644505637f2",
+          "3886ea477e1a0017784da198b3f729729854bd3f57d233ec1ca8c9a9df9429e1",
+          "6bf22889f3529dc02a90d47e81b007a34e244123a7af9110784c29b4d9f71c6c",
+          "59c17d4c9b041f54f7cd5ef4475a8909c9940ce946684ca148c76ec928a009fe",
+          "13c82fbbc8a5f42070574a30f35e4bd4afb854e8a2630a91a9639c3714d059f4",
+          "3fd9989f1094cdc70dd200d2647c6d9fe46d9f285b28976ac5d2616738451baa",
+          "d3fc82a0a82cb4bab1ebe2669db6b5c35bc465409e946c2745d5e40eb844f7a5",
+          "872d70445424916deec826968225549dee57a0cf70d799391856fd6294318499",
+          "ae6243042c190f5fe315a376217bbdf59cfc5baa6f9a8ad0178278996451f133",
+          "2eca80c08a795117adbdf67de440d3a2fe940d68ad27b17dfc3ef5d3b8f9c7bb",
+          "7ae52080397dbb9057812a4a75e07c5acad4f6c840d273176bd86d5138fb3b92",
+          "24be9fd29302ea14250272ebaf769b0ceb38ca69134eba0d9339da52d2d36894",
+          "9d7aacec547653a3b46b93725fad2f4af2367e9e9b5ee8bd8ccaa3e057e590fc",
+          "b1be54a299af4561dfd73462407dfd823f73a744f9542f1601ddb75f1086a1ee",
+          "66ba1ff8b27f1c1d8a75aacc22377ec30bd14bd6c58399080c584d5662105db6",
+          "81d21be78a3e6e977895e6f253847e913c81f07b041780f89ee4d2836e4dfdaa",
+          "37c1b833b7e6bbda8ea258b73073097923572d83ec9e53009f9233fc32c94a94",
+          "a7fd9c35104b29683c72a22bfd34e71f302b743d5d4c79ba69bcb0768d6d0bd7",
+          "c2d856b5bd28ea1c4cc640aee34d6c0357a2f667909c34a346d9aed9508a898d",
+          "2c13b9df6937f0541f20d0da230490deafc0affc321654d02eb325d918249336",
+          "e6d8d47c018314fed71e5e33431dc30c9b03dcb7b97e3f7ca48652aeb5e99fa2",
+          "91c50ae1ad159e042976dbd8f2e259accc57eaa5679d03639ebb647b4dbd8cee",
+          "6fa0d8afc8beec62fe8094a18dd3ad21ef4c129d4b505e59e3dc654b903c2541",
+          "b6c83d9657d06a326ed5fd5c932a8ba024fd03d0f8203072389017deb05e924c",
+          "114e314dda4a80d4d202a8f882a4523fb662a7b87232ec6520e346bb71a19dc7",
+          "f2de17903a06d0b378a724e3849330c2e2e85da30c72688d4cbd590b2b5310bc",
+          "059f45fe1dd9fdd88091eae68d5a087ca5830041b07febdee4b5923aec6da0c0",
+          "12b90829f29b21490b5ec622295ed4b00e2f25a4662752699c8a0450d9a00969",
+          "fd1289600827ffb0913b28e7a2c6d261f75babe48a02d2445bf429601c9ee4ff",
+          "7a41f9367af30035188ec5e30d7d8c201076e36a87a2d7dd41db66837ef7e77a",
+          "9047ed5ba1da7ac7c9a6b4dc44db2bfd3e0c46a34cfb7e30a6583de41fc2de82",
+          "9b08c0343adeeedabd4a472c8c03279ff7eb78776f2fc0790db17da90a853f65",
+          "a3f543d621e6f4b2e5ee228b1e85adb68e0856f82fc36f8ac11d08bb1842b1a4",
+          "841049c803e5ddacd92e91756855b7146a657b8165cb12450acb838b0b92d930",
+          "d0396c60a0a10ad74a98be665115b121a9c7379856bfb4cb8e1b7a99bfd74df9",
+          "061049af47295e9fe92e4a5518e3200c16528b5a1c413f0350ec592879e738fc",
+          "5c3387930c38036843912016a5882e75dc6ccb4505b422bc434c46cdd6bb4d6f",
+          "d56a59c4e1bc197b7a2cffb339fdfb10d7dc3d4a9382f7f6548c47bb56cc4685",
+          "9a42ec0d16c8856c3469f9362a1cbf16f3191e8e4186c3e07440dc0e8651651d",
+          "4e864784392bb57f10b3b12921ab05520f463c2354157adf3ca2ed999b68f907",
+          "211e7b5ec1092b5b2dda6cff64fd9207f136622bb968481ae4057f2508d4f19c",
+          "6959c9f08476afc9212e3b034092b545d4b16430819385922489fac6ca1eff2d",
+          "8fc271594dc54d548bcd2329a5bb1b0c4bb7d9fbdd925a125943d361af33038c",
+          "3c0d73d072170abbe3931b6ce7754587900527529950eeb159786692e28785c7",
+          "9f60425b6e942d58e6a6830e19884c08fab94531293b297c837ac75a051e8f84",
+          "5495fb82af899d6f56e6129da41d36477466c2a7f7fcd5b79e3efea1d8dfb4c0",
+          "97a4644f336f6b4c58e3ae2079ce57ace4a26cc61dcb5b9e7a616bae714d4b9a",
+          "076b3f1b7521f84b2245ddb1d3bb092480474af54448f55a871422f58195e826",
+          "6f706b0549216b7688eaceff91baaa88ef07c4e91b2953971b8f5bee555b5dc1",
+          "76c144c18e9aa8d4fa486eba9682dc531359bb1d0b0025b5926bc586d2566869",
+          "2a551a2cc25914e96478e9862f9cf327825bc768e730822791b0788480c8b203",
+          "df22d1023b8974e4bc2addc8b03067b462d62a70c6d6465755e1b13af9038095",
+          "1bb5be124c460f28cd2c99380bb7e6e488a376490c7c2c3390476c070a185370",
+          "a5773a3ec779bcb9f543a78a15fb521966b2f4daa624b774f504af62f307e3cd",
+          "5e7402060a2d041220d1c917ddcc16cede18446d04e6e2c67d8e47a24b9cb992",
+          "9ec493fbbe347d66e8be7820ffcf4b0ab7ff687a91ce0bff728b936df814764d",
+          "1df6314dfbbb6d4e04069dd91582dabb39cc460b2d0227a172d17c233f433e44",
+          "9f74d1fabaaf42a5ca44185b0f0d563111de521786c08b5bc28cc8d9f01c502e",
+          "a8c7dd23c353bbda42700d2dabe3e2571542dd6542e36ed79ac6ca2fe5f2525e",
+          "10a3baf8d4913daddfadec7e6f7c58e47f32525653280013aba85a78547e44bd",
+          "502ea64066af483c12efd10b7bb72fbafdbfa04c630daa518434a89b1c0d02e4",
+          "bb2d3aca24e3561127b9e5a6636fa6910deca6bb919d8514d33d5a6fb7d90013",
+          "6c5c514c515ede4016b91025a3f7161f418a20646a9b5a3dc072e0d0b623697e",
+          "a276d34647433fb181dd483f99599e31c3b0ba7385e65f5f548231d9068a98aa",
+          "3754cb9c4e07a37eb9c080e2dcfe3cbcbed704c9536a376787bf5b29fe8fcde3",
+          "bc413fa54206c2eba85be3eb624fdf2b5f838fb192d9bb63452d92ab10fb2e31",
+          "79aec83b29bc847de25f0f8dd7b5c1e6037229f2f8f847ff9313685cc947d040",
+          "6c195a9ba259186be82dde132858e6873502abeec551647145fc418adb52771d",
+          "c968c508bd93417437c2a39f06f1c5768612d37674af02c75469c34d22c4277b",
+          "18622ae0815c67fb7f0d372597015fbac6e3365dbe225d57a57321486001ce1b",
+          "7e4aa9e05737f464439c5753ce5b74fae6334cfb11deb1db47fa3fe88407b250",
+          "9e6c9400a815079fed225e880da06646d0e45934f4b4e324f6c3060793c00863",
+          "85d885459a5f48bf579afba6a25a7b29d77480539b94daa913230c48d3cdf109",
+          "d8649a4ae9064d1be5a1ea1d8bb967ec3915b5adfcc378b210a27e840898f28a",
+          "650848ccec2cb25cfea0a2a937179142d674bcc0cf8fa49dbf5ee4a795cf6cf0",
+          "51a5a062907acb9f6ec6924cf9561d6833e786fdeb127c420531f423a0114a5b",
+          "9236abd98e0be38121b96c4da462460ace988f2214769a165cb5e39d87ad63b8"
+        ],
+        "complete": true
+      }
+    },
+    {
+      "file": "Windows复测_说明.txt",
+      "original_sha256_unchanged": true,
+      "chunks": 1,
+      "expected_ids_match": true,
+      "index_status": {
+        "index_directory": "E:\\工作\\RAG-Agent\\data\\index",
+        "collection": "paper_chunks",
+        "expected_ids": [
+          "4ea79d1be8c687d5c4bb8ff395ec4b821bed3d20bbb3af73eabd2bbdbdcf84cb"
+        ],
+        "complete": true
+      }
+    },
+    {
+      "file": "Windows复测_DETR节选.pdf",
+      "original_sha256_unchanged": true,
+      "chunks": 13,
+      "expected_ids_match": true,
+      "index_status": {
+        "index_directory": "E:\\工作\\RAG-Agent\\data\\index",
+        "collection": "paper_chunks",
+        "expected_ids": [
+          "09c941dd11dfd0c2f347ac0fddcec38b3135afed3798c2cb996a7de8b0612278",
+          "bd1440ef1e952ab5cd026c5e98254777dfa6d89a0b6f7d407f56880f54844a38",
+          "131bf75557ef3990bc674f698c940e3abf4096f92c07f7fcd0aafd701669c490",
+          "b8c6d3ab4b349db796b6f3c8eda475dae20767fbd4c725cadf73b69fa247e848",
+          "9035a679376f0c40f5551f1d62b825a8e8c15ac2e858c10eded8f181e875f5c7",
+          "ae25da829a9f0a2e6cc727dfc5718c3918fd7a2a2c38d9c2ba4559aab554a06b",
+          "6b11a0b89b89d2517236b137c2acd555645969663b239067c9806c49a3ee913c",
+          "6c5b93ca16367c0974afe732222bddd11ce0f64883d1cbe2b52dd27d276f5d3d",
+          "6a14273ed595207bc29b51e0e887d52015d670e05d6771b23e3d6e84047c4a18",
+          "750aa6311d98ae077dc0dab4ce2b3ca7ae8d0755b19457036e7a160400cf0bdb",
+          "a3cf2dea52d2595d3fef8e782910de7cb0fa1eea623fec8340b0eb167b099700",
+          "cd11c2e5f0d6a28d80f9fcff65c7d0ecd176c7dbae537654fb5184a3455cbec0",
+          "590a49f96e4b9871991fc35fa01f4855848cfa1d6aafc5cc7517d97216fd59da"
+        ],
+        "complete": true
+      }
+    }
+  ],
+  "passed": true
+}

@@ -1,0 +1,67 @@
+{
+  "checked_at": "2026-10-08T22:22:02.098886+08:00",
+  "host": "192.168.31.23",
+  "source_revision": "c90ed95732bff1e272b5d411a2ab2fd8d9cb3ef0",
+  "engineering_passed": true,
+  "regression": {
+    "run": 815,
+    "elapsed_seconds": 207.83768610000016,
+    "files": 55,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "default_encoding": "cp936",
+    "utf8_mode": 0
+  },
+  "deployed_files": 119,
+  "container_python_sources": 36,
+  "image_id": "sha256:2edcdef0480747091cdef37dd41d5ae3d689dda17c0d97a932c531a92786798a",
+  "active_index": {
+    "documents": 6,
+    "chunks": 276,
+    "content_sha256": "d2a023aa4dcefc76cf38a80e612210adc23b0ec4dc52a40b93fb3a6a1d380adb",
+    "old_backup_chunks": 278,
+    "original_files_unchanged": true
+  },
+  "original_sessions_preserved": [
+    {
+      "table": "sessions",
+      "before_rows": 61,
+      "after_rows": 65,
+      "all_original_rows_preserved": true
+    },
+    {
+      "table": "messages",
+      "before_rows": 194,
+      "after_rows": 198,
+      "all_original_rows_preserved": true
+    },
+    {
+      "table": "summaries",
+      "before_rows": 1,
+      "after_rows": 1,
+      "all_original_rows_preserved": true
+    },
+    {
+      "table": "rag_history",
+      "before_rows": 5,
+      "after_rows": 5,
+      "all_original_rows_preserved": true
+    }
+  ],
+  "native_process_restarted": {
+    "before_pid": 30012,
+    "after_pid": 35020,
+    "new_process": true,
+    "health_status": 200
+  },
+  "container": {
+    "restart_restored": true,
+    "outbound_app_blocked": true,
+    "outbound_ollama_evidence": "bash: connect: Network is unreachable\nbash: line 1: /dev/tcp/1.1.1.1/443: Network is unreachable\n",
+    "synthetic_probe_answer": "## 回答\n容器本地复测代号是 AUDITDOCKER20261008。[参考文档1：容器探针.txt；行1–1]\n\n## 参考来源\n- [参考文档1] 容器探针.txt；行1–1",
+    "all_services_healthy_after_restart": true,
+    "test_containers_removed": true
+  },
+  "quality_boundary": "工程通过不等于科研答案全部验收；ViT样例漏答JFT图片数且数据规模引用页不支持，已记录为助手初评，待用户审核。"
+}

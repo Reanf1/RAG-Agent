@@ -1,0 +1,72 @@
+{
+  "checked_at": "2026-10-08T22:13:50.088491+08:00",
+  "phase": "seed",
+  "results": [
+    {
+      "command": [
+        "docker",
+        "exec",
+        "rag-win-audit-20261008-app-1",
+        "python",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "exit_code": 0,
+      "stdout": "No broken requirements found.\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "exec",
+        "rag-win-audit-20261008-app-1",
+        "python",
+        "-c",
+        "import json,hashlib,pathlib; e=json.load(open('/proof/源码指纹.json')); rows=[dict(path=r['path'],passed=hashlib.sha256(pathlib.Path('/app',r['path']).read_bytes().replace(b'\\r\\n',b'\\n')).hexdigest()==r['lf_sha256']) for r in e['files'] if r['path'].startswith('src/') and r['path'].endswith('.py')]; print(json.dumps(rows)); assert rows and all(r['passed'] for r in rows)"
+      ],
+      "exit_code": 0,
+      "stdout": "[{\"path\": \"src/__init__.py\", \"passed\": true}, {\"path\": \"src/agent/__init__.py\", \"passed\": true}, {\"path\": \"src/agent/memory.py\", \"passed\": true}, {\"path\": \"src/agent/react_loop.py\", \"passed\": true}, {\"path\": \"src/agent/router.py\", \"passed\": true}, {\"path\": \"src/agent/tools.py\", \"passed\": true}, {\"path\": \"src/chunking/__init__.py\", \"passed\": true}, {\"path\": \"src/chunking/fixed_chunk.py\", \"passed\": true}, {\"path\": \"src/chunking/recursive_chunk.py\", \"passed\": true}, {\"path\": \"src/chunking/semantic_chunk.py\", \"passed\": true}, {\"path\": \"src/data_loader/__init__.py\", \"passed\": true}, {\"path\": \"src/data_loader/docx_loader.py\", \"passed\": true}, {\"path\": \"src/data_loader/pdf_loader.py\", \"passed\": true}, {\"path\": \"src/data_loader/text_loader.py\", \"passed\": true}, {\"path\": \"src/frontend/__init__.py\", \"passed\": true}, {\"path\": \"src/frontend/app.py\", \"passed\": true}, {\"path\": \"src/frontend/components/documents.py\", \"passed\": true}, {\"path\": \"src/frontend/components/sessions.py\", \"passed\": true}, {\"path\": \"src/frontend/components/trace.py\", \"passed\": true}, {\"path\": \"src/generation/__init__.py\", \"passed\": true}, {\"path\": \"src/generation/cache.py\", \"passed\": true}, {\"path\": \"src/generation/prompt_template.py\", \"passed\": true}, {\"path\": \"src/generation/rag_pipeline.py\", \"passed\": true}, {\"path\": \"src/generation/streaming.py\", \"passed\": true}, {\"path\": \"src/retrieval/__init__.py\", \"passed\": true}, {\"path\": \"src/retrieval/bm25_retriever.py\", \"passed\": true}, {\"path\": \"src/retrieval/hybrid_retriever.py\", \"passed\": true}, {\"path\": \"src/retrieval/repair_index.py\", \"passed\": true}, {\"path\": \"src/retrieval/reranker.py\", \"passed\": true}, {\"path\": \"src/retrieval/vector_store.py\", \"passed\": true}, {\"path\": \"src/utils/__init__.py\", \"passed\": true}, {\"path\": \"src/utils/chroma_path.py\", \"passed\": true}, {\"path\": \"src/utils/config.py\", \"passed\": true}, {\"path\": \"src/utils/logger.py\", \"passed\": true}, {\"path\": \"src/utils/messages.py\", \"passed\": true}, {\"path\": \"src/utils/token_budget.py\", \"passed\": true}]\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "network",
+        "inspect",
+        "rag-win-audit-20261008_offline"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n    {\n        \"Name\": \"rag-win-audit-20261008_offline\",\n        \"Id\": \"a154fd08e44d56751efabbdfcaf348e42137767be4577c23183bc4d33ba378b1\",\n        \"Created\": \"2026-10-08T14:11:50.781306236Z\",\n        \"Scope\": \"local\",\n        \"Driver\": \"bridge\",\n        \"EnableIPv4\": true,\n        \"EnableIPv6\": false,\n        \"IPAM\": {\n            \"Driver\": \"default\",\n            \"Options\": null,\n            \"Config\": [\n                {\n                    \"Subnet\": \"172.20.0.0/16\",\n                    \"Gateway\": \"172.20.0.1\"\n                }\n            ]\n        },\n        \"Internal\": true,\n        \"Attachable\": false,\n        \"Ingress\": false,\n        \"ConfigFrom\": {\n            \"Network\": \"\"\n        },\n        \"ConfigOnly\": false,\n        \"Options\": {\n            \"com.docker.network.enable_ipv4\": \"true\",\n            \"com.docker.network.enable_ipv6\": \"false\"\n        },\n        \"Labels\": {\n            \"com.docker.compose.config-hash\": \"a56fdb5ad238859ceff24515b3425e41281db4bf444473daaf4c7b2f70f34208\",\n            \"com.docker.compose.network\": \"offline\",\n            \"com.docker.compose.project\": \"rag-win-audit-20261008\",\n            \"com.docker.compose.version\": \"5.2.0\"\n        },\n        \"Containers\": {\n            \"29029e19ac07d0d496e26b02d3085f345913023acba2f1abf6c70c8fb8f8dc10\": {\n                \"Name\": \"rag-win-audit-20261008-gateway-1\",\n                \"EndpointID\": \"97c5e3b8eb09499a52fe50b10c11ad2a4cfe2082c08ce246d322a298362b94a9\",\n                \"MacAddress\": \"5a:6f:46:64:62:89\",\n                \"IPv4Address\": \"172.20.0.4/16\",\n                \"IPv6Address\": \"\"\n            },\n            \"64c4d95bc86da59d7f9ce74772b1c543f5a13a60f71e6c9821dbbbb96f1f7d1a\": {\n                \"Name\": \"rag-win-audit-20261008-ollama-1\",\n                \"EndpointID\": \"31e6e9bc52f5cb209e0559e56a637f3ad5e449231be7f9d01b58f2783b9f92b6\",\n                \"MacAddress\": \"82:38:36:fb:fd:51\",\n                \"IPv4Address\": \"172.20.0.2/16\",\n                \"IPv6Address\": \"\"\n            },\n            \"bd8d7a9f8c92ff1b4f4f0e6758b79807f18b6c22cce7d231e3c011ce0f965d1d\": {\n                \"Name\": \"rag-win-audit-20261008-app-1\",\n                \"EndpointID\": \"9da5cb0e26690156afb4fed12a51bb8402df9631d24d700d1e53d36b9820b458\",\n                \"MacAddress\": \"4a:86:4f:4e:84:78\",\n                \"IPv4Address\": \"172.20.0.3/16\",\n                \"IPv6Address\": \"\"\n            }\n        },\n        \"Status\": {\n            \"IPAM\": {\n                \"Subnets\": {\n                    \"172.20.0.0/16\": {\n                        \"IPsInUse\": 6,\n                        \"DynamicIPsAvailable\": 65530\n                    }\n                }\n            }\n        }\n    }\n]\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "exec",
+        "rag-win-audit-20261008-app-1",
+        "python",
+        "/proof/verify_container_runtime.py",
+        "seed"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"phase\": \"seed\",\n  \"seconds\": 4.2794953580000765,\n  \"result\": {\n    \"added_chunks\": 1,\n    \"stored_chunks\": 1,\n    \"sqlite_version\": \"3.46.1\",\n    \"torch_version\": \"2.5.1+cpu\",\n    \"cuda_available\": false\n  },\n  \"boundary\": \"真实容器与本地M3E/BGE/Qwen，探针文字为合成数据；不代表论文质量或总体性能\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "compose",
+        "-p",
+        "rag-win-audit-20261008",
+        "-f",
+        "E:\\工作\\RAG-Agent\\.test-tmp\\win-audit-deploy-20261008\\docker-compose.windows-audit.yml",
+        "restart"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": " Container rag-win-audit-20261008-gateway-1 Restarting \n Container rag-win-audit-20261008-ollama-1 Restarting \n Container rag-win-audit-20261008-app-1 Restarting \n Container rag-win-audit-20261008-ollama-1 Started \n Container rag-win-audit-20261008-app-1 Started \n Container rag-win-audit-20261008-gateway-1 Started \n"
+    }
+  ],
+  "passed": true
+}

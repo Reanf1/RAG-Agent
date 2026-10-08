@@ -1,0 +1,35 @@
+ Network rag-win-audit-20261008_default Creating 
+ Network rag-win-audit-20261008_default Created 
+ Network rag-win-audit-20261008_offline Creating 
+ Network rag-win-audit-20261008_offline Created 
+ Container rag-win-audit-20261008-ollama-1 Creating 
+ Container rag-win-audit-20261008-ollama-1 Created 
+ Container rag-win-audit-20261008-app-1 Creating 
+ Container rag-win-audit-20261008-app-1 Created 
+ Container rag-win-audit-20261008-gateway-1 Creating 
+ Container rag-win-audit-20261008-gateway-1 Created 
+ Container rag-win-audit-20261008-ollama-1 Starting 
+ Container rag-win-audit-20261008-ollama-1 Started 
+ Container rag-win-audit-20261008-ollama-1 Waiting 
+ Container rag-win-audit-20261008-ollama-1 Healthy 
+ Container rag-win-audit-20261008-app-1 Starting 
+ Container rag-win-audit-20261008-app-1 Started 
+ Container rag-win-audit-20261008-app-1 Waiting 
+ Container rag-win-audit-20261008-app-1 Healthy 
+ Container rag-win-audit-20261008-gateway-1 Starting 
+ Container rag-win-audit-20261008-gateway-1 Started 
+ Container rag-win-audit-20261008-gateway-1 Waiting 
+ Container rag-win-audit-20261008-app-1 Waiting 
+ Container rag-win-audit-20261008-ollama-1 Waiting 
+ Container rag-win-audit-20261008-app-1 Healthy 
+ Container rag-win-audit-20261008-ollama-1 Healthy 
+ Container rag-win-audit-20261008-gateway-1 Healthy 
+{"Command":"\"python -m streamlit…\"","CreatedAt":"2026-10-08 22:11:50 +0800 CST","ExitCode":0,"Health":"healthy","ID":"bd8d7a9f8c92","Image":"rag-agent:win-audit-20261008","Labels":"desktop.docker.io/binds/2/Target=/app/data/models/qwen2.5-tokenizer,desktop.docker.io/ports.scheme=v2,desktop.docker.io/binds/2/Source=E:/工作/RAG-Agent/data/models/qwen2.5-tokenizer,desktop.docker.io/binds/3/SourceKind=hostFile,desktop.docker.io/binds/6/SourceKind=hostFile,com.docker.compose.project.working_dir=E:\\工作\\RAG-Agent\\.test-tmp\\win-audit-deploy-20261008,desktop.docker.io/binds/0/SourceKind=hostFile,desktop.docker.io/binds/3/Target=/app/config.yaml,desktop.docker.io/binds/4/SourceKind=hostFile,desktop.docker.io/binds/5/SourceKind=hostFile,com.docker.compose.depends_on=ollama:service_healthy:false,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=E:\\工作\\RAG-Agent\\.test-tmp\\win-audit-deploy-20261008\\docker-compose.windows-audit.yml,com.docker.compose.service=app,desktop.docker.io/binds/0/Source=E:/工作/RAG-Agent/data/models/m3e-base,desktop.docker.io/binds/2/SourceKind=hostFile,com.docker.compose.image=sha256:2edcdef0480747091cdef37dd41d5ae3d689dda17c0d97a932c531a92786798a,desktop.docker.io/binds/0/Target=/app/data/models/m3e-base,desktop.docker.io/binds/1/Source=E:/工作/RAG-Agent/data/models/bge-reranker-base,desktop.docker.io/binds/1/SourceKind=hostFile,desktop.docker.io/binds/1/Target=/app/data/models/bge-reranker-base,desktop.docker.io/binds/3/Source=E:/工作/RAG-Agent/config.yaml,desktop.docker.io/binds/5/Source=E:/工作/RAG-Agent/.test-tmp/win-audit-deploy-20261008/container-logs,com.docker.compose.config-hash=671cffa7075e8af9ee448ce20ed0ca23ccb93ccd19a49684d8f3e077588e9f73,desktop.docker.io/binds/4/Target=/app/data,desktop.docker.io/binds/5/Target=/app/logs,com.docker.compose.project=rag-win-audit-20261008,desktop.docker.io/binds/4/Source=E:/工作/RAG-Agent/.test-tmp/win-audit-deploy-20261008/container-data,desktop.docker.io/binds/6/Target=/proof,com.docker.compose.container-number=1,com.docker.compose.version=5.2.0,desktop.docker.io/binds/6/Source=E:/工作/RAG-Agent/.test-tmp/win-audit-deploy-20261008","LocalVolumes":"0","Mounts":"/run/desktop/m…,/run/desktop/m…,/run/desktop/m…,/run/desktop/m…,/run/desktop/m…,/run/desktop/m…,/run/desktop/m…","Name":"rag-win-audit-20261008-app-1","Names":"rag-win-audit-20261008-app-1","Networks":"rag-win-audit-20261008_offline","Ports":"8501/tcp","Project":"rag-win-audit-20261008","Publishers":[{"URL":"","TargetPort":8501,"PublishedPort":0,"Protocol":"tcp"}],"RunningFor":"18 seconds ago","Service":"app","Size":"0B","State":"running","Status":"Up 11 seconds (healthy)"}
+{"Command":"\"python docker/tcp_p…\"","CreatedAt":"2026-10-08 22:11:51 +0800 CST","ExitCode":0,"Health":"healthy","ID":"29029e19ac07","Image":"rag-agent:win-audit-20261008","Labels":"com.docker.compose.config-hash=9a55a315ee7671dc093e3bdaa1837c1f28477457a0cc73db800603a3c51323e3,com.docker.compose.container-number=1,com.docker.compose.image=sha256:2edcdef0480747091cdef37dd41d5ae3d689dda17c0d97a932c531a92786798a,com.docker.compose.oneoff=False,com.docker.compose.project=rag-win-audit-20261008,desktop.docker.io/ports.scheme=v2,com.docker.compose.depends_on=app:service_healthy:false,com.docker.compose.project.config_files=E:\\工作\\RAG-Agent\\.test-tmp\\win-audit-deploy-20261008\\docker-compose.windows-audit.yml,com.docker.compose.project.working_dir=E:\\工作\\RAG-Agent\\.test-tmp\\win-audit-deploy-20261008,com.docker.compose.service=gateway,com.docker.compose.version=5.2.0,desktop.docker.io/ports/8501/tcp=127.0.0.1:8502","LocalVolumes":"0","Mounts":"","Name":"rag-win-audit-20261008-gateway-1","Names":"rag-win-audit-20261008-gateway-1","Networks":"rag-win-audit-20261008_default,rag-win-audit-20261008_offline","Ports":"127.0.0.1:8502-\u003e8501/tcp","Project":"rag-win-audit-20261008","Publishers":[{"URL":"127.0.0.1","TargetPort":8501,"PublishedPort":8502,"Protocol":"tcp"}],"RunningFor":"17 seconds ago","Service":"gateway","Size":"0B","State":"running","Status":"Up 5 seconds (healthy)"}
+{"Command":"\"/bin/ollama serve\"","CreatedAt":"2026-10-08 22:11:50 +0800 CST","ExitCode":0,"Health":"healthy","ID":"64c4d95bc86d","Image":"ollama/ollama:0.34.0","Labels":"com.docker.compose.depends_on=,com.docker.compose.image=sha256:684d8674b4315fa18f4f0e973a118ec2652ed96f67563277839985175858e0ba,com.docker.compose.oneoff=False,com.docker.compose.project.config_files=E:\\工作\\RAG-Agent\\.test-tmp\\win-audit-deploy-20261008\\docker-compose.windows-audit.yml,com.docker.compose.project.working_dir=E:\\工作\\RAG-Agent\\.test-tmp\\win-audit-deploy-20261008,org.opencontainers.image.version=24.04,com.docker.compose.container-number=1,com.docker.compose.project=rag-win-audit-20261008,com.docker.compose.service=ollama,desktop.docker.io/binds/0/Source=C:/Users/asus/.ollama/models,com.docker.compose.config-hash=82cc71d0261715d488b391c59819c940d8fc02beb2f69f24f544b432ac847e71,desktop.docker.io/binds/0/SourceKind=hostFile,com.docker.compose.version=5.2.0,desktop.docker.io/binds/0/Target=/root/.ollama/models,desktop.docker.io/ports.scheme=v2","LocalVolumes":"0","Mounts":"/run/desktop/m…","Name":"rag-win-audit-20261008-ollama-1","Names":"rag-win-audit-20261008-ollama-1","Networks":"rag-win-audit-20261008_offline","Ports":"11434/tcp","Project":"rag-win-audit-20261008","Publishers":[{"URL":"","TargetPort":11434,"PublishedPort":0,"Protocol":"tcp"}],"RunningFor":"18 seconds ago","Service":"ollama","Size":"0B","State":"running","Status":"Up 17 seconds (healthy)"}
+{
+    "StatusCode":  200,
+    "Content":  "ok"
+}
+
+REMOTE_EXIT=0
