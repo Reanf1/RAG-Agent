@@ -194,14 +194,14 @@ def update_agent_metrics(metrics: dict, event: dict) -> dict:
         phase, tool, identifier = "工具内部", event["name"], event["call_id"]
         tool_call_ids = [identifier]
         payload = event.get("result")
-        usage = payload.get("usage") if isinstance(payload, dict) else None
-        uncertain = event.get("status") != "success" or len(event.get("attempts", [])) > 1
+        usage = event.get("usage") or (payload.get("usage") if isinstance(payload, dict) else None)
+        uncertain = event.get("usage_incomplete", len(event.get("attempts", [])) > 1)
         if tool == "knowledge_base_search":
             retrieval = (payload or {}).get("retrieval", {}) if isinstance(payload, dict) else {}
             result.setdefault("retrievals", []).append({"call_id": identifier, **retrieval,
                 "seconds": payload.get("retrieval_seconds") if isinstance(payload, dict) else None})
     elif kind == "error":
-        phase, identifier, uncertain = "失败阶段（用量未完整报告）", f"error:{iteration}", True
+        phase, identifier = "失败阶段", f"error:{iteration}"
     if phase:
         usage = usage if isinstance(usage, dict) else {}
         tokens = [usage.get(key) for key in ("prompt_eval_count", "eval_count")]

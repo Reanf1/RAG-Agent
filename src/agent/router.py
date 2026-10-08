@@ -96,7 +96,7 @@ def route_question(question: str, tools: list[BaseTool], context: dict | None = 
             if selected not in {"paper_metadata", "paper_summary", "knowledge_base_search", "keyword_extract"} or parallel_limit() < 2:
                 return None
             batch, reason = [selected], "分别处理两份已给定论文，Action可提出同一工具的独立调用。"
-    elif local or re.search(r"文献|论文|\bpapers?\b", question, re.I):
+    elif local or re.search(r"文献|论文|提出的|结构改进|消融实验|\b(?:papers?|proposed|ablation)\b", question, re.I):
         if "knowledge_base_search" not in names:
             return None
         selected, reason = "knowledge_base_search", "论文资料问题优先查询实际知识库。"
@@ -128,6 +128,18 @@ def recovery_limits() -> tuple[float, int, int]:
     return timeout, retries, repeats
 
 
+def _attempt_usage(attempts):
+    """合计已返回用量；仍运行或缺字段的尝试保持不完整，不抹去已知部分。"""
+    usages = [row.get("usage") or {} for row in attempts]
+    usage = {key: sum(row[key] for row in usages if type(row.get(key)) is int and row[key] >= 0)
+             if any(type(row.get(key)) is int and row[key] >= 0 for row in usages) else None
+             for key in ("prompt_eval_count", "eval_count")}
+    incomplete = any(row.get("usage_incomplete") for row in attempts) or any(
+        type(row.get(key)) is not int or row[key] < 0 for row in usages
+        for key in ("prompt_eval_count", "eval_count"))
+    return usage, incomplete
+
+
 def _execute_attempts(call, tools, retries, deadline, stopped, attempts, on_token=None):
     """同一线程串行重试；已返回的TimeoutError才可重试，关闭/到期后不能再启动。"""
     started = perf_counter()
@@ -140,10 +152,12 @@ def _execute_attempts(call, tools, retries, deadline, stopped, attempts, on_toke
         attempts.append({"attempt": attempt + 1, "status": "running"})
         result = execute_tool(call["name"], call["args"], tools, call["call_id"], on_token=on_token)
         attempts[-1] = {"attempt": attempt + 1, **{key: result[key] for key in
-                        ("status", "error", "error_kind", "elapsed_seconds")}}
+                        ("status", "error", "error_kind", "elapsed_seconds", "usage", "usage_incomplete")}}
         if result["error_kind"] != "timeout":
             break
-    return {**result, "attempts": deepcopy(attempts), "elapsed_seconds": perf_counter() - started,
+    usage, incomplete = _attempt_usage(attempts)
+    return {**result, "usage": usage, "usage_incomplete": incomplete,
+            "attempts": deepcopy(attempts), "elapsed_seconds": perf_counter() - started,
             "_finished_at": perf_counter()}
 
 
@@ -234,8 +248,10 @@ def execute_calls(calls: list[dict], tools: list[BaseTool], *, parallel: bool = 
                 stopped.set()
                 future.cancel()  # 仅能取消尚未开始的任务，不能取消已经执行的函数。
                 error = f"工具{call['name']}超过{timeout:g}秒等待上限，已跳过；后台函数可能仍在运行。"
+                completed_usage, _ = _attempt_usage(deepcopy(attempts))
                 result = {"type": "tool_result", **call, "status": "error", "result": None,
                           "error": error, "error_kind": "deadline", "pending": True,
+                          "usage": completed_usage, "usage_incomplete": True,
                           "attempts": deepcopy(attempts), "elapsed_seconds": perf_counter() - started,
                           "message": ToolMessage(content=error, tool_call_id=call["call_id"], name=call["name"], status="error")}
             yield {**result, "execution_mode": mode}

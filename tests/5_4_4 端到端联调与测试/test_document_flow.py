@@ -178,6 +178,23 @@ class TestImportFrontend(unittest.TestCase):
         app.run()
         self.assertEqual([t["attempts"] for t in app.session_state["import_tasks"]], [1, 2])
 
+    def test_retry_separates_current_progress_from_cumulative_results(self):
+        """六份混合导入后只重试两份，当前2/2与累计4成功2失败分别标明。"""
+        app = self.app
+        app.file_uploader[0].set_value([
+            *[(f"good-{i}.txt", f"正文{i}".encode(), "text/plain") for i in range(4)],
+            ("bad-a.txt", b"\xff", "text/plain"), ("bad-b.txt", b"\xfe", "text/plain"),
+        ]).run()
+        app.button(key="start_import").click().run()
+        app.button(key="retry_import").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(app.session_state["import_progress"], {"completed": 2, "total": 2})
+        self.assertEqual(app.get("progress")[0].proto.text, "本次操作已处理 2/2 份")
+        captions = [row.value for row in app.sidebar.caption]
+        self.assertIn("累计导入结果", captions)
+        self.assertIn("累计成功 4 份，失败 2 份。", captions)
+        self.assertEqual(len(app.sidebar.dataframe[0].value), 6)
+
     def test_oversized_upload_shows_failure_and_valid_file_still_indexes(self):
         """AppTest绕过浏览器大小限制，验证20MiB后端保护与页面失败/重试状态。"""
         app = self.app

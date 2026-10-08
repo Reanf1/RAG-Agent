@@ -1,13 +1,19 @@
 # 与课程开发环境一致；模型和用户数据通过挂载保存，不打进镜像。
 FROM python:3.10.10-slim
 
+ARG TARGETARCH
+# 当前SQLite替代驱动仅固定支持amd64；原生ARM构建提前给出可操作提示。
+RUN test "$TARGETARCH" = "amd64" || (echo "本项目镜像仅支持linux/amd64，请使用Docker Compose或--platform=linux/amd64构建" >&2; exit 1)
+
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 \
     HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 TOKENIZERS_PARALLELISM=false \
     TZ=Asia/Shanghai
 
 WORKDIR /app
 COPY requirements.txt ./
-RUN python -m pip install --no-cache-dir -r requirements.txt
+# 应用内Embedding/重排固定使用CPU；Ollama在独立容器推理，无需在应用镜像安装CUDA。
+RUN python -m pip install --no-cache-dir --no-deps torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu \
+    && python -m pip install --no-cache-dir -r requirements.txt
 
 # Python 3.10.10 基础镜像自带 SQLite 3.34.1，低于 Chroma 的要求。
 # 仅在 Linux amd64 镜像替换 SQLite 驱动，保留 Windows/Mac 原生环境。

@@ -3,6 +3,7 @@
 import math
 import os
 import re
+from copy import deepcopy
 from functools import lru_cache
 from threading import Lock
 from pathlib import Path
@@ -60,6 +61,7 @@ class Reranker:
         config = load_config()["retrieval"]
         self.top_k = config["top_k"]
         self.batch_size = config["reranker_batch_size"]
+        self.max_length = config["reranker_max_length"]
         for key in ("reranker_batch_size", "reranker_max_length"):
             if type(config[key]) is not int or config[key] <= 0:
                 raise ValueError(f"{key} 必须为正整数")
@@ -72,13 +74,60 @@ class Reranker:
             raise ValueError("k 必须为正整数")
         if not query.strip() or not candidates:
             return []
-        # 与参考项目相同：每个问题—正文对输出一个分数，sigmoid 对应 normalize=True。
-        pairs = [[query, document.page_content] for document, _ in candidates]
-        scores = get_reranker().predict(pairs, batch_size=self.batch_size, show_progress_bar=False)
-        if len(scores) != len(candidates):
+        model = get_reranker()
+        passages = [self._passages(query, document, model.tokenizer) for document, _ in candidates]
+        pairs = [[query, text] for windows in passages for text in windows]
+        scores = model.predict(pairs, batch_size=self.batch_size, show_progress_bar=False)
+        if len(scores) != len(pairs):
             raise ValueError("重排模型返回的分数数量与候选数量不一致")
-        scored = [(document, float(score)) for (document, _), score in zip(candidates, scores)]
+        scored, offset = [], 0
+        for (document, _), windows in zip(candidates, passages):
+            window_scores = [float(score) for score in scores[offset:offset + len(windows)]]
+            if not all(math.isfinite(score) for score in window_scores):
+                raise ValueError("重排模型返回非有限分数")
+            best = max(range(len(windows)), key=lambda index: window_scores[index])
+            if len(windows) > 1:
+                document = deepcopy(document)
+                # 仅作本次检索摘录；原索引、块ID和表格行来源保持不变。
+                document.metadata["rerank_excerpt"] = windows[best]
+                document.metadata["retrieval_warning"] = "长块按模型Token窗口精排，本次引用只覆盖选中的摘录；完整内容见原页。"
+            scored.append((document, window_scores[best]))
+            offset += len(windows)
         if not all(math.isfinite(score) for _, score in scored):
             raise ValueError("重排模型返回非有限分数")
         # sigmoid 只将分数映射到 0~1，不代表已经校准的命中概率。
         return sorted(scored, key=lambda item: item[1], reverse=True)[:k]
+
+    def _passages(self, query, document, tokenizer):
+        """长表逐行分窗并重复表头；正文按词表偏移分窗，不让模型静默丢掉表尾。"""
+        text = document.page_content
+        # 短正文沿用原成对输入，普通短块不增加模型调用。
+        if len(text) + len(query) < self.max_length // 4:
+            return [text]
+        query_tokens = len(tokenizer.encode(query, add_special_tokens=False))
+        budget = self.max_length - query_tokens - tokenizer.num_special_tokens_to_add(pair=True)
+        if budget <= 0:
+            raise ValueError("问题超过重排模型Token窗口，请缩短问题")
+        encoded = tokenizer(text, add_special_tokens=False, return_offsets_mapping=True)
+        if len(encoded["input_ids"]) <= budget:
+            return [text]
+        if document.metadata.get("content_type") == "table":
+            lines = text.splitlines(keepends=True)
+            separator = next((i for i, line in enumerate(lines) if re.match(r"\|\s*:?-", line)), None)
+            if separator is not None:
+                header = "".join(lines[:separator + 1])
+                windows, current = [], header
+                for row in lines[separator + 1:]:
+                    if len(tokenizer.encode(header + row, add_special_tokens=False)) > budget:
+                        raise ValueError("表格单行和表头超过重排Token窗口，请按原页核验")
+                    if len(tokenizer.encode(current + row, add_special_tokens=False)) > budget:
+                        windows.append(current)
+                        current = header
+                    current += row
+                if current != header:
+                    windows.append(current)
+                return windows
+        offsets = encoded["offset_mapping"]
+        step = max(1, budget - min(64, budget // 4))
+        return [text[offsets[start][0]:offsets[min(start + budget, len(offsets)) - 1][1]]
+                for start in range(0, len(offsets), step)]

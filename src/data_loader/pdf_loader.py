@@ -126,6 +126,16 @@ def _find_tables(page, lines):
               "columns": [cell[0] if cell else None for cell in t.rows[0].cells]}
              for t in page.find_tables(strategy="lines_strict", paths=drawings).tables]
     captions = [l for l in lines if re.match(r"(?:Table|续?表)\s*\d+", l["text"], re.I)]
+    # 距离使用完整标题段落，而非仅第一行；多行上置标题不能被下方另一标题抢占。
+    caption_bounds = {}
+    for block in page.get_text("blocks"):
+        if sum(bool(re.match(r"(?:Table|续?表)\s*\d+", line.strip(), re.I))
+               for line in block[4].splitlines()) != 1:
+            continue
+        for caption in captions:
+            if pymupdf.Rect(caption["bbox"]) in pymupdf.Rect(block[:4]):
+                # PDF有时把整张表和下置标题放进同一文本块；只取标题起始行之后。
+                caption_bounds[id(caption)] = (*caption["bbox"][:3], block[3])
     rules = {}
     for drawing in drawings:
         rect = drawing["rect"]
@@ -146,15 +156,33 @@ def _find_tables(page, lines):
             table = _three_line_table(page, clip, ys[1])
             if table is not None:
                 found.append(table)
+    caption_candidates = []
+    for line in captions:
+        bounds = caption_bounds.get(id(line), line["bbox"])
+        distances = [(max(table["bbox"][1] - bounds[3], bounds[1] - table["bbox"][3]), index)
+                     for index, table in enumerate(found)
+                     if bounds[0] < table["bbox"][2] and bounds[2] > table["bbox"][0]]
+        # 字形框的下伸部可能与表边界轻微重叠；标题中心仍须在表外。
+        center = (line["bbox"][1] + line["bbox"][3]) / 2
+        distances = sorted((max(0, distance), index) for distance, index in distances
+                           if -4 <= distance <= 65 and not found[index]["bbox"][1] <= center <= found[index]["bbox"][3])
+        if distances:
+            caption_candidates.append((distances, line["text"]))
+    # 先绑定只有一个候选的标题；相邻上置标题可转到下一表，不能挤掉已绑定标题。
+    # 一个标题只绑定一张表、一张表只接收一个标题；同候选数优先距离更近者。
+    assigned = {}
+    for distances, text in sorted(caption_candidates, key=lambda item: (len(item[0]), item[0][0])):
+        for _, index in distances:
+            if index not in assigned:
+                assigned[index] = text
+                break
     fragments = []
     for table in sorted(found, key=lambda t: (t["bbox"][1], t["bbox"][0])):
         rows = [[cell or "" for cell in row] for row in table["rows"]]
         rows = [row for row in rows if any(cell.strip() for cell in row)]
         if len(rows) < 2 or len(table["columns"]) < 2:
             continue
-        nearby = [l for l in captions if 0 <= table["bbox"][1] - l["bbox"][3] <= 65
-                  and l["bbox"][0] < table["bbox"][2] and l["bbox"][2] > table["bbox"][0]]
-        caption = max(nearby, key=lambda l: l["bbox"][3])["text"] if nearby else ""
+        caption = assigned.get(next(index for index, item in enumerate(found) if item is table), "")
         # 极稀疏的绘图网格不抽成表格，保留其原文本。
         if not caption and sum(bool(cell.strip()) for row in rows for cell in row) < len(rows) * len(table["columns"]) / 2:
             continue
@@ -193,9 +221,19 @@ def _join_tables(fragments, common):
     documents = []
     for index, group in enumerate(groups):
         first, last = group["fragments"][0], group["fragments"][-1]
+        # 有些PDF把多条模型数据合在一条网格行：各列等长、数字列逐行对齐时展开。
+        # 表头、换行说明及列数不齐的行原样保留，不填补缺值或推测跨行对应。
+        display_rows = []
+        for position, row in enumerate(group["rows"]):
+            cells = [cell.splitlines() for cell in row["cells"]]
+            aligned = (position > 0 and len(cells[0]) > 1
+                       and all(len(cell) == len(cells[0]) for cell in cells)
+                       and all(re.fullmatch(r"[\d\s.,+−–\-×^()%@]+", value)
+                               for cell in cells[1:] for value in cell))
+            display_rows.extend([list(values) for values in zip(*cells)] if aligned else [row["cells"]])
         # 空单元格原样保留，不用相邻行的值补齐；转义 Markdown 分隔符。
-        lines = ["| " + " | ".join(cell.replace("|", "\\|").replace("\n", "<br>") for cell in row["cells"]) + " |"
-                 for row in group["rows"]]
+        lines = ["| " + " | ".join(cell.replace("|", "\\|").replace("\n", "<br>") for cell in row) + " |"
+                 for row in display_rows]
         lines.insert(1, "| " + " | ".join("---" for _ in group["rows"][0]["cells"]) + " |")
         metadata = {**common, "page": first["page_number"] - 1,
                     "page_number": first["page_number"], "page_end": last["page_number"],

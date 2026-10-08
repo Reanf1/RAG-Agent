@@ -160,15 +160,16 @@ def show_import_status():
     finished = [t for t in tasks if t["status"] == "failed" or
                 (t["status"] == "success" and t.get("indexed", False))]
     with import_status.container():
-        st.subheader("本批导入状态")
+        st.subheader("导入状态")
         st.progress(progress["completed"] / total,
-                    text=f"已处理 {progress['completed']}/{total} 份")
+                    text=f"本次操作已处理 {progress['completed']}/{total} 份")
         if finished:
+            st.caption("累计导入结果")
             st.dataframe([{"文件": t["name"], "状态": "成功" if t["status"] == "success" else "失败"}
                           for t in finished], hide_index=True, width="stretch")
         successes = sum(t["status"] == "success" for t in finished)
         failures = len(finished) - successes
-        st.caption(f"成功 {successes} 份，失败 {failures} 份。")
+        st.caption(f"累计成功 {successes} 份，失败 {failures} 份。")
         if failures:
             with st.expander("失败详情"):
                 for task in finished:

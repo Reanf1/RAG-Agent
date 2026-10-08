@@ -245,6 +245,12 @@ def batch_build_index(tasks: list[dict], raw_dir: str | Path,
                     # 第一个有效文档才初始化本地模型/数据库，一批复用同一实例。
                     if vector_store is None:
                         vector_store = VectorStore()
+                    expected_ids = {chunk.metadata["chunk_id"] for chunk in chunks}
+                    existing_ids = {chunk.metadata["chunk_id"]
+                                    for chunk in vector_store.list_chunks(chunks[0].metadata["doc_id"])}
+                    if existing_ids - expected_ids:
+                        # 参数或解析结果变化时保留旧库和旧旁注，不能混入另一套块。
+                        raise ValueError("已有文档的分块或解析结果与本次不一致，请在新索引目录重建后启用；原索引未修改")
                     _write_index_status(task, chunks, vector_store, complete=False)
                     for offset in range(0, len(chunks), 500):
                         batch = chunks[offset:offset + 500]
@@ -252,6 +258,10 @@ def batch_build_index(tasks: list[dict], raw_dir: str | Path,
                         task["processed_chunks"] = offset + len(batch)
                         task["index_total"] = vector_store.count()
                         yield {"completed": index, "total": total}
+                    actual_ids = {chunk.metadata["chunk_id"]
+                                  for chunk in vector_store.list_chunks(chunks[0].metadata["doc_id"])}
+                    if actual_ids != expected_ids:
+                        raise ValueError("实际索引块与预期集合不一致，本次入库未完成")
                     _write_index_status(task, chunks, vector_store, complete=True)
                     task.update(status="success", indexed=True)
         except Exception as error:

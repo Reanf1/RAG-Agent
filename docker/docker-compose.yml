@@ -1,6 +1,7 @@
 # 单个Streamlit业务应用，本地Ollama负责推理；Chroma与SQLite仍为应用内文件。
 services:
   app:
+    platform: linux/amd64
     image: rag-agent:local
     build:
       context: ..
@@ -38,6 +39,7 @@ services:
   # Docker内部网络不发布宿主端口，独立TCP入口仅转发给Streamlit。
   # 复用业务镜像，不引入第二个业务应用或HTTP接口层。
   gateway:
+    platform: linux/amd64
     image: rag-agent:local
     command: ["python", "docker/tcp_proxy.py"]
     ports:

@@ -4,10 +4,12 @@ from copy import deepcopy
 import math
 import re
 import json
+import unicodedata
 from urllib.error import HTTPError, URLError
-from urllib.request import ProxyHandler, Request, build_opener
+from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
 
 from langchain_core.documents import Document
+from markdown_it import MarkdownIt
 
 from src.generation.prompt_template import NO_CONTEXT_TEXT, build_rag_messages
 from src.retrieval.reranker import is_image_placeholder
@@ -15,8 +17,15 @@ from src.utils.config import generation_options, load_config, ollama_base_url
 from src.utils.messages import messages_to_ollama
 from src.utils.token_budget import check_request_budget, request_tokens
 
-# 本机模型直接连接，避免系统 HTTP 代理改变故障类型或转发论文内容。
-urlopen = build_opener(ProxyHandler({})).open
+class _LocalModelRedirectHandler(HTTPRedirectHandler):
+    """本地模型接口无需重定向；阻止目标绕过初始地址校验。"""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
+# 本机模型直接连接，并拒绝所有重定向，不向新的地址发送论文请求。
+urlopen = build_opener(ProxyHandler({}), _LocalModelRedirectHandler()).open
 
 
 def focus_answer_evidence(question: str, results: list[tuple[Document, float]], *, chunks=()) -> list[tuple[Document, float]]:
@@ -177,13 +186,16 @@ def generate_answer(question: str, context: dict, *, options: dict | None = None
     options 仅供参数实验覆盖；不包含检索 top_k，不创建额外业务服务。
     """
     request, sampling = _build_generation_request(question, context, options)
+    result = None
     try:
         with urlopen(request, timeout=300) as response:
             result = json.load(response)
         return _finish_generation(result, context, sampling)
     except (OSError, ValueError, RuntimeError) as error:
         failure = generation_error(error)
-        raise RuntimeError(f"本地 Ollama 调用失败：{failure['message']}。{failure['retry_advice']}") from error
+        exception = RuntimeError(f"本地 Ollama 调用失败：{failure['message']}。{failure['retry_advice']}")
+        exception.usage = {key: result.get(key) for key in ("prompt_eval_count", "eval_count")} if isinstance(result, dict) else None
+        raise exception from error
 
 
 def _finish_generation(result: dict, context: dict, sampling: dict) -> dict:
@@ -193,11 +205,30 @@ def _finish_generation(result: dict, context: dict, sampling: dict) -> dict:
     raw_answer = result.get("message", {}).get("content", "")
     if result.get("error"):
         raise RuntimeError(f"本地 Ollama 返回错误：{result['error']}")
-    if not isinstance(raw_answer, str) or not result.get("done") or not raw_answer.strip():
+    if not isinstance(raw_answer, str) or result.get("done") is not True or not raw_answer.strip():
         raise RuntimeError("本地 Ollama 未返回完整的非空答案")
     if not isinstance(result.get("model"), str) or not result["model"]:
         raise ValueError("本地 Ollama 返回的数据格式无法解析：缺少模型名称")
-    resolved = _with_generation_notice(resolve_citations(raw_answer, context), context)
+    resolved = resolve_citations(raw_answer, context)
+    # 只核验模型明确声称逐字引用的句子；编号合法不代表解释语义正确。
+    # 只归一PDF排版，不猜测或修补事实，失败时保留raw_answer供审核。
+    references = {item["id"]: item["text"] for item in context["references"]}
+    def quote_text(text):
+        text = unicodedata.normalize("NFKC", text).casefold()
+        # 仅去掉行末断词的连字符；同一行的术语连字符和数字原样保留。
+        text = re.sub(r"(?<=\w)-\s*\n\s*(?=\w)", "", text)
+        return re.sub(r"\s+", "", text)
+    quote_errors = []
+    for quote in re.finditer(r'(?:原文依据|Source evidence|Original evidence)\s*[:：]\s*["“](.*?)["”][。.]?\s*((?:\[参考文档\d+\])+)', raw_answer, re.I | re.S):
+        text = quote_text(quote[1])
+        ids = [int(value) for value in re.findall(r"\[参考文档(\d+)\]", quote[2])]
+        if not text or not any(text in quote_text(references.get(value, "")) for value in ids):
+            quote_errors.append(ids)
+    if quote_errors:
+        resolved["warnings"].append("回答声称引用的原句无法在所引片段定位，已暂停展示结论；请核对原文后重试。")
+        resolved["answer"] = "当前回答的原文引句未通过定位校验，无法据此确认科研结论。请查看引用原文或补充相关片段。"
+    resolved["evidence_quote_errors"] = quote_errors
+    resolved = _with_generation_notice(resolved, context)
     if result.get("done_reason") == "length":
         resolved["warnings"].append("回答已达到生成 Token 上限，内容可能尚未完整。")
     return {**resolved, "raw_answer": raw_answer,
@@ -295,7 +326,7 @@ def _build_context_chars(question: str, results: list[tuple[Document, float]], *
         header = f"[参考文档{len(parts) + 1} - 来源: {filename}；原始块位置: {location}]\n"
         join_chars = len(separator) if parts else 0
         body_budget = budget - context_chars - join_chars - len(header)
-        text = document.page_content
+        text = metadata.get("rerank_excerpt", document.page_content)
         partial = len(text) > body_budget
         if partial:
             # 不能只放来源而没有正文，也不能截断来源标记。尝试后续较短来源的块。
@@ -378,7 +409,14 @@ def resolve_citations(answer: str, context: dict) -> dict:
     fence = None
     # 模型附在编号后的普通 Markdown 链接也不作为可信来源链接使用。
     citation_pattern = re.compile(r"(?<!\\)\[参考文档([0-9]+)\](?:[ \t]*\([^\n)]*\))?")
-    for line in answer.splitlines(keepends=True):
+    # 使用CommonMark位置判断缩进代码，四空格的嵌套列表正文仍可含有效引用。
+    code_lines = {index for token in MarkdownIt().parse(answer)
+                  if token.type in {"code_block", "fence"} and token.map
+                  for index in range(*token.map)}
+    for index, line in enumerate(answer.splitlines(keepends=True)):
+        if index in code_lines:
+            lines.append(line)
+            continue
         marker = re.match(r" {0,3}(`{3,}|~{3,})", line)
         if marker:
             run = marker.group(1)

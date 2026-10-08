@@ -117,6 +117,32 @@ class TestAcademicPDF(unittest.TestCase):
             pdf.save(self.path)
         self.assertEqual(sum(d.metadata.get("content_type") == "table" for d in load_pdf(self.path)), 2)
 
+    def test_below_captions_do_not_attach_to_the_next_table(self):
+        """相邻网格表下置标题分别绑定，不能把Table5赋给Table6。"""
+        with pymupdf.open() as pdf:
+            page = pdf.new_page(width=600, height=800)
+            self.draw_table(page, 100, [["Method", "Score"], ["FIRST", "90"]], caption="")
+            page.insert_text((50, 176), "Table 5: first results")
+            self.draw_table(page, 195, [["Method", "Score"], ["SECOND", "95"]], caption="")
+            page.insert_text((50, 271), "Table 6: second results")
+            pdf.save(self.path)
+        tables = [d for d in load_pdf(self.path) if d.metadata.get("content_type") == "table"]
+        self.assertEqual([t.page_content.splitlines()[0] for t in tables],
+                         ["Table 5: first results", "Table 6: second results"])
+
+    def test_multiline_top_caption_wins_over_next_tables_caption(self):
+        """上置标题最后一行最接近本表，不能只按第一行距离改绑下方标题。"""
+        with pymupdf.open() as pdf:
+            page = pdf.new_page(width=600, height=800)
+            page.insert_text((50, 60), "Table 3: model results\nTraining details line\nEvaluation details line", fontsize=11)
+            self.draw_table(page, 100, [["Method", "Score"], ["CAIT", "90"]], caption="")
+            page.insert_text((50, 177), "Table 4: ablation")
+            self.draw_table(page, 200, [["Method", "Score"], ["OTHER", "95"]], caption="")
+            pdf.save(self.path)
+        tables = [d for d in load_pdf(self.path) if d.metadata.get("content_type") == "table"]
+        self.assertEqual([t.page_content.splitlines()[0] for t in tables],
+                         ["Table 3: model results", "Table 4: ablation"])
+
     def test_nonadjacent_or_incompatible_tables_do_not_merge(self):
         """页码断开、表头或列结构不同、非页边续接均分别保留。"""
         for middle_page, top, rows in [(True,70,[["Method","Score"],["B","91"]]),
@@ -267,6 +293,26 @@ class TestAcademicPDF(unittest.TestCase):
         spans = [s for line in json.loads(document.metadata["formula_layout"]) for s in line["spans"]]
         self.assertTrue(any(s["text"] == "1" and s["origin"][1] == 119 for s in spans))
         self.assertTrue(any("1 + x" in s["text"] and s["origin"][1] == 140 for s in spans))
+
+    def test_aligned_multiline_numeric_rows_keep_model_units_and_values_together(self):
+        """明确模拟PDF网格提取结果；原始单元格仍留在元数据供原页核对。"""
+        from src.data_loader.pdf_loader import _join_tables
+        rows = [['Model', 'Params (M)', 'FLOPs (B)', 'Accuracy (%)'],
+                ['Small\nLarge', '12.0\n270.9', '9.6\n173.3', '80.4\n84.9']]
+        fragment = {'rows': rows, 'columns': [0, 50, 100, 150], 'bbox': [0, 20, 200, 100],
+                    'page_number': 1, 'height': 800, 'number': '1', 'caption': 'Table 1. Models', 'continued': False}
+        table = _join_tables([fragment], {'doc_id': 'probe'})[0]
+        self.assertIn('| Large | 270.9 | 173.3 | 84.9 |', table.page_content)
+        self.assertIn('| Small | 12.0 | 9.6 | 80.4 |', table.page_content)
+        self.assertEqual(json.loads(table.metadata['table_rows'])[1]['cells'], rows[1])
+
+    def test_unequal_multiline_columns_are_not_guessed_into_rows(self):
+        from src.data_loader.pdf_loader import _join_tables
+        rows = [['Model', 'Value'], ['Small\nLarge', '12.0']]
+        fragment = {'rows': rows, 'columns': [0, 100], 'bbox': [0, 20, 200, 100],
+                    'page_number': 1, 'height': 800, 'number': '1', 'caption': 'Table 1. Models', 'continued': False}
+        table = _join_tables([fragment], {'doc_id': 'probe'})[0]
+        self.assertIn('| Small<br>Large | 12.0 |', table.page_content)
 
     def test_image_formula_is_locatable_after_batch_save(self):
         """混合文本页的公式图片保留原文定位，批量保存后仍可裁剪查看。"""

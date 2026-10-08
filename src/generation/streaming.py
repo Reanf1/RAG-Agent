@@ -65,6 +65,7 @@ def stream_answer(question: str, context: dict, *, options: dict | None = None):
     关闭生成器或发生异常时 with 块关闭连接；不重试、补假答案或转云端。
     """
     raw, partial = "", render_partial_answer("", context)
+    packet = None
     try:
         request, sampling = _build_generation_request(question, context, options, stream=True)
         with urlopen(request, timeout=300) as response:
@@ -83,7 +84,9 @@ def stream_answer(question: str, context: dict, *, options: dict | None = None):
                     raw += content
                     partial = render_partial_answer(raw, context)
                     yield {"type": "token", "content": content, **partial}
-                if packet.get("done"):
+                if "done" in packet and type(packet["done"]) is not bool:
+                    raise ValueError("本地 Ollama 的done字段必须为布尔值")
+                if packet.get("done") is True:
                     # 末包通常不带正文；用累计文本，保留最后一包的真实统计。
                     visible = _visible_prefix(raw)
                     # 完整来源标题也会被暂存，但不属于损坏的尾部。
@@ -99,4 +102,7 @@ def stream_answer(question: str, context: dict, *, options: dict | None = None):
                     return
         raise RuntimeError("本地 Ollama 流已断开，未收到完成标记；回答尚未完成。")
     except (URLError, OSError, ValueError, RuntimeError) as error:
-        yield {"type": "error", **generation_error(error), "raw_answer": raw, **partial}
+        event = {"type": "error", **generation_error(error), "raw_answer": raw, **partial}
+        if isinstance(packet, dict) and any(key in packet for key in ("prompt_eval_count", "eval_count")):
+            event["usage"] = {key: packet.get(key) for key in ("prompt_eval_count", "eval_count")}
+        yield event

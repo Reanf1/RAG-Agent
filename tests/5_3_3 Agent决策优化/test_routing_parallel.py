@@ -86,6 +86,13 @@ class TestRoutingAndParallel(unittest.TestCase):
         self.assertEqual(route_question("什么是深度学习？", AVAILABLE_TOOLS)["next_step"], "answer")
         self.assertEqual(route_question("这篇论文中的深度学习是什么？", AVAILABLE_TOOLS)["tool_name"], "knowledge_base_search")
 
+    def test_structural_contribution_requires_evidence_without_literal_paper_word(self):
+        """科研事实不能因省略“论文”二字跳过证据；不硬编码论文名称或答案。"""
+        for question in ("T2T-ViT 针对普通 ViT 提出的两项主要结构改进是什么？",
+                         "模型的消融实验验证了什么？", "What architecture was proposed in this study?"):
+            with self.subTest(question=question):
+                self.assertEqual(route_question(question, AVAILABLE_TOOLS)["tool_name"], "knowledge_base_search")
+
     def test_ambiguous_dependent_negated_and_existing_state_fall_back(self):
         for question in ("当前时间并提取关键词", "先提取关键词，再用关键词查询知识库", "不要调用current_time", "帮我处理一下"):
             with self.subTest(question=question):
@@ -227,7 +234,8 @@ class TestRoutingAndParallel(unittest.TestCase):
         self.assertEqual([e["result"] for e in events[2:]], [6, 10])
         self.assertEqual(len(events[0]["message"].tool_calls), 2)
         self.assertNotIn("message", events[1])
-        self.assertEqual(sum(e.get("usage", {}).get("eval_count", 0) for e in events), 60)
+        # Action用量只归属一次共享调用，工具内部用量由tool_result单独记录。
+        self.assertEqual(sum(e["usage"]["eval_count"] for e in events if e["type"] == "tool_call"), 60)
         self.assertEqual(http.call_count, 1)
         for call, result in zip(events[:2], events[2:]):
             self.assertEqual(call["call_id"], result["message"].tool_call_id)
