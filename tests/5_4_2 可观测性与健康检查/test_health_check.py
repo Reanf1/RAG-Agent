@@ -95,7 +95,7 @@ class TestHealthCheck(unittest.TestCase):
         result = self.check()
         self.assertIn("响应超时", result["llm"]["detail"])
         self.http.assert_called_once_with(timeout=3, trust_env=False, follow_redirects=False)
-        self.get.assert_called_once_with("http://localhost:11434/api/tags")
+        self.get.assert_called_once_with(self.config["llm"]["base_url"].rstrip("/") + "/api/tags")
         self.assertGreaterEqual(result["llm"]["seconds"], 0)
 
     def test_reachable_service_missing_configured_model_is_not_ready(self):

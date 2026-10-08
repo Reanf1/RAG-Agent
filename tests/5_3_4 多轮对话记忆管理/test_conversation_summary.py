@@ -92,7 +92,7 @@ class TestConversationSummary(unittest.TestCase):
         _, http = self.compress()
         request = http.call_args.args[0]
         body = json.loads(request.data)
-        self.assertEqual(request.full_url, "http://localhost:11434/api/chat")
+        self.assertEqual(request.full_url, self.config["llm"]["base_url"].rstrip("/") + "/api/chat")
         self.assertEqual(body["format"]["required"], ["summary"])
         self.assertFalse(body["stream"])
         self.assertEqual(body["options"]["num_predict"], 248)

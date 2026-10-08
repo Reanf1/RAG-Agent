@@ -4,7 +4,7 @@ from langchain_core.messages import BaseMessage
 from langchain_core.prompts import ChatPromptTemplate
 
 
-PROMPT_VERSION = "rag-v9"  # 原句证据与解释分开呈现，不复用旧版答案。
+PROMPT_VERSION = "rag-v10"  # 在动态输入末尾重申原句与问题覆盖要求，不复用旧版答案。
 NO_CONTEXT_TEXT = "当前知识库中未找到相关文档。"
 
 # 沿用参考项目的角色、参考文档、Markdown 与来源要求，补充科研事实约束。
@@ -59,7 +59,9 @@ only X%先说明“只使用／保留X%”，不把X%称为减少比例。只解
 # 角色与规范保持在系统消息；检索文本和问题作为动态输入，不拼进系统角色。
 RAG_PROMPT = ChatPromptTemplate.from_messages([
     ("system", RAG_SYSTEM_PROMPT),
-    ("human", "【检索上下文】\n{context}\n\n【用户问题】\n{question}"),
+    ("human", "【检索上下文】\n{context}\n\n【用户问题】\n{question}\n\n"
+              "【作答提醒】逐项回应问题。每项使用“原文依据：\"逐字原句\"。[参考文档N]”后再解释；"
+              "原句必须能在该编号片段定位。缺少的项目写“当前片段不足以确认”，不得借其他编号补猜。"),
 ])
 
 

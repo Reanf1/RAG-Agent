@@ -91,7 +91,8 @@ def _tool_model_response(messages: list, schema: dict, name: str) -> tuple[dict,
 def _tool_references(references: list[dict]) -> list[dict]:
     """Agent保留正文、稳定ID与来源，版面字符坐标留在原文加载结果，不重复塞入模型窗口。"""
     keys = {"source", "source_file", "file_type", "doc_id", "chunk_id", "page", "page_number",
-            "page_end", "paragraph_index", "table_index", "line_start", "line_end", "retrieval_warning"}
+            "page_end", "paragraph_index", "table_index", "line_start", "line_end", "retrieval_warning",
+            "comparison_prior_work"}
     return [{**reference, "metadata": {key: value for key, value in reference["metadata"].items() if key in keys}}
             for reference in references]
 
@@ -177,10 +178,15 @@ def _knowledge_base_search(question: str, doc_id: str | None = None, *, cache=No
                                              for rank, (document, score) in enumerate(results, 1)]
             message["retrieval_status"] = "success" if results else "empty"
             from src.generation.rag_pipeline import focus_answer_evidence
+            chunks = retriever.vector_store.list_chunks(doc_id=doc_id)
+            expanded = [(_expand_paper_evidence(doc, chunks), score) for doc, score in results]
             if re.search(r"(?:如何|怎样|怎么).*?(?:使用|实现|工作)|\bhow\b.*?\b(?:use|work|implement)\w*", question, re.I):
-                chunks = retriever.vector_store.list_chunks(doc_id=doc_id)
-                expanded = [(_expand_paper_evidence(doc, chunks), score) for doc, score in results]
                 results = focus_answer_evidence(question, expanded, chunks=chunks)
+            elif any(doc.page_content != original.page_content for (doc, _), (original, _) in zip(expanded, results)):
+                # 数量或条件可能跨分块；只补同一页／段落的连续邻块，并对实际正文重新精排。
+                from src.retrieval.bm25_retriever import expand_academic_query
+                from src.retrieval.reranker import Reranker
+                results = Reranker().rerank(expand_academic_query(question), expanded, k=len(expanded))
             context = prepare_rag_context(question, results)
         message.update(context=context, generation_mode=context["generation_mode"],
                        retrieval_seconds=0.0 if confirmation is not None else perf_counter() - started)
@@ -446,12 +452,34 @@ def _has_quantitative_result(text):
     return False
 
 
+def _paper_section(document, chunks, offset=0):
+    """由编号标题确定原文位置的章节，不将相关工作中的前人结果归于本篇。"""
+    headings = []
+    for chunk in [*chunks, document]:
+        if chunk.metadata.get("doc_id") != document.metadata.get("doc_id"):
+            continue
+        for heading in re.finditer(r"(?m)^[ \t]*\d+(?:\.\d+)*[ \t]*(?:\n[ \t]*)?"
+                                   r"([A-Za-z\u4e00-\u9fff][A-Za-z\u4e00-\u9fff \t-]+)[ \t]*$", chunk.page_content):
+            position = (chunk.metadata.get("page_number", 1), chunk.metadata.get("start_index", 0) + heading.start())
+            headings.append((position, heading.group(1).strip().casefold()))
+    headings.sort()
+    position = (document.metadata.get("page_number", 1), document.metadata.get("start_index", 0) + offset)
+    return next((title for at, title in reversed(headings) if at <= position), "")
+
+
 def _quantitative_excerpt(document, chunks):
     """从同原文连续邻块选完整结果句，并保留紧邻的训练条件；不补写表头或数字。"""
     doc = _expand_paper_evidence(document, chunks)
     text = doc.page_content
     spans = list(re.finditer(r".*?(?:[.!?](?:\s+|$)|[。！？]\s*|$)", text, re.S))
-    matches = [i for i, match in enumerate(spans) if _has_quantitative_result(match.group())]
+    matches = []
+    for i, match in enumerate(spans):
+        if not _has_quantitative_result(match.group()):
+            continue
+        # 句子可能包含标题前缀，使用结果句结束位置确定所属章节。
+        section = _paper_section(doc, chunks, match.end() - 1)
+        if section not in {"related work", "相关工作"}:
+            matches.append(i)
     if not matches:
         return None
     first, last = matches[0], matches[-1]
@@ -606,6 +634,10 @@ def _paper_compare(paper_a_id: str, paper_b_id: str, *, session_id=None, pending
                 body = build_context(question, expanded, max_context_chars=body_budget // len(groups))
             bodies.append(body)
         body_refs = [ref for body in bodies for ref in body["references"]]
+        for ref in body_refs:
+            # 定性回退或其他维度召回的相关工作也不能重新进入实验结果候选。
+            doc = Document(page_content=ref["text"], metadata=ref["metadata"])
+            ref["metadata"]["comparison_prior_work"] = _paper_section(doc, chunks, len(ref["text"]) - 1) in {"related work", "相关工作"}
         references = [{**ref, "id": index} for index, ref in enumerate(lead["references"] + body_refs, 1)]
         context = {"references": references, "truncated": lead["truncated"] or any(body["truncated"] for body in bodies)}
         # 与模块二一致，按每篇实际入选证据的Top-1判断；单个维度的低分仍单独记录。
@@ -662,10 +694,14 @@ def _finish_paper_compare(context, base, paths, paper_a_id, paper_b_id, started,
             properties["method"]["enum"] = [*methods, None]
         complete_results = [ref["id"] for ref in refs if not ref["truncated"]
                             and ref["metadata"]["chunk_id"] not in partial_ids
+                            and not ref["metadata"].get("comparison_prior_work")
                             and _has_quantitative_result(ref["text"])]
         if complete_results:
             # 已有完整数值时，约束模型只从这些编号选择，避免仍选高分图轴或截断的表头。
             properties["results"]["enum"] = [*complete_results, None]
+        else:
+            properties["results"]["enum"] = [*[ref["id"] for ref in refs
+                                               if not ref["metadata"].get("comparison_prior_work")], None]
         schema = {"type": "object", "properties": properties, "required": list(properties), "additionalProperties": False}
         messages = [SystemMessage(content=prompt), HumanMessage(content=json.dumps({
             "source_file": path.name, "references": [{"id": ref["id"], "text": ref["text"]} for ref in refs]

@@ -94,7 +94,7 @@ class TestThought(unittest.TestCase):
             result = think("3.14乘以2.56", self.tools, context)
         request = http.call_args.args[0]
         payload = json.loads(request.data)
-        self.assertEqual(request.full_url, "http://localhost:11434/api/chat")
+        self.assertEqual(request.full_url, self.config["llm"]["base_url"].rstrip("/") + "/api/chat")
         self.assertFalse(payload["stream"])
         self.assertEqual(payload["model"], self.config["llm"]["model"])
         self.assertEqual(payload["options"]["temperature"], self.config["llm"]["temperature"])

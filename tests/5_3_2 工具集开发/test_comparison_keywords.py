@@ -171,6 +171,40 @@ class TestComparisonAndKeywords(unittest.TestCase):
         self.assertEqual(text[offset:offset + len(result.page_content)], result.page_content)
         self.assertEqual(doc, before)
 
+    def test_related_work_result_cannot_be_selected_as_this_paper_result(self):
+        """Windows复测：相关工作中的72%属于前人模型，不能用于本篇实验对比。"""
+        from src.agent.tools import _quantitative_excerpt
+        heading = deepcopy(self.documents[0])
+        heading.page_content = "2\nRELATED WORK\nChen et al. train a generative model."
+        heading.metadata.update(page_number=2, start_index=0, end_index=len(heading.page_content))
+        candidate = deepcopy(heading)
+        candidate.page_content = "The model achieves a maximal accuracy of 72% on ImageNet."
+        candidate.metadata.update(chunk_id="prior-model", start_index=300, end_index=300 + len(candidate.page_content))
+        self.assertIsNone(_quantitative_excerpt(candidate, [heading, candidate]))
+
+    def test_result_after_related_work_section_remains_available(self):
+        """按章节位置排除前人结果；同页后续实验及其他论文不受影响。"""
+        from src.agent.tools import _quantitative_excerpt
+        document = deepcopy(self.documents[0])
+        document.page_content = ("2\nRelated Work\nA previous model achieves accuracy 72% on ImageNet.\n"
+                                 "3\nExperiments\nOur model achieves accuracy 88.55% on ImageNet.")
+        document.metadata.update(page_number=2, start_index=0, end_index=len(document.page_content))
+        result = _quantitative_excerpt(document, [document])
+        self.assertIn("88.55%", result.page_content)
+        self.assertNotIn("72%", result.page_content)
+
+    def test_related_work_fallback_cannot_enter_result_selection(self):
+        """即使其他维度或定性回退召回前人结果，模型结果编号也不能选择它。"""
+        for document in self.documents:
+            document.page_content = "2\nRELATED WORK\nA previous model achieves accuracy 72% on ImageNet."
+            document.metadata.update(page_number=2, start_index=0, end_index=len(document.page_content))
+        result, _, http = self.compare()
+        for call in http.call_args_list:
+            self.assertEqual(json.loads(call.args[0].data)["format"]["properties"]["results"]["enum"], [None])
+        self.assertIsNone(result["comparison"][2]["a"])
+        self.assertIsNone(result["comparison"][2]["b"])
+        self.assertEqual(result["status"], "insufficient_evidence")
+
     def test_comparison_filters_each_paper_and_covers_three_dimensions(self):
         result, retriever, http = self.compare()
         calls = retriever.return_value.search.call_args_list

@@ -204,6 +204,33 @@ class TestResearchTools(unittest.TestCase):
         self.assertEqual(result["citations"], [])
         self.assertEqual(http.call_count, 1)
 
+    def test_rag_completes_same_page_dataset_sentence_and_rescores_actual_text(self):
+        """复现Windows中JFT数量跨块缺失；补连续正文、重排，仍不改原索引。"""
+        from langchain_core.documents import Document
+        first = "Datasets: ImageNet has 1.3M images, ImageNet-21k has 14M images, and JFT has "
+        tail = "and JFT has 303M high-resolution images."
+        metadata = {**self.document.metadata, "page": 3, "page_number": 4, "start_index": 0, "end_index": len(first)}
+        a = Document(page_content=first, metadata={**metadata, "chunk_id": "a"})
+        b = Document(page_content=tail, metadata={**metadata, "chunk_id": "b", "start_index": len(first)-12,
+                                                 "end_index": len(first)-12+len(tail)})
+        other = Document(page_content="另一页不能拼接。", metadata={**b.metadata, "page": 4, "page_number": 5})
+        before = deepcopy([a, b, other])
+        response = {**self.response, "message": {"content": '原文依据："JFT has 303M high-resolution images."。[参考文档1]'}}
+        with patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
+                patch("src.retrieval.reranker.Reranker") as reranker, \
+                patch("src.generation.rag_pipeline.urlopen", return_value=BytesIO(json.dumps(response).encode())) as http:
+            retriever.return_value.search.return_value = [(a, .01)]
+            retriever.return_value.vector_store.list_chunks.return_value = [a, b, other]
+            reranker.return_value.rerank.side_effect = lambda query, docs, k: [(doc, .9) for doc, _ in docs]
+            result = knowledge_base_search.invoke({"question": "What dataset image counts are used?", "doc_id": self.doc_id})
+        sent = json.loads(http.call_args.args[0].data)["messages"][1]["content"]
+        self.assertIn("JFT has 303M high-resolution images.", sent)
+        self.assertNotIn("另一页不能拼接", sent)
+        self.assertEqual(result["top_score"], .9)
+        self.assertEqual(result["citations"][0]["metadata"]["page_number"], 4)
+        self.assertEqual(result["evidence_quote_errors"], [])
+        self.assertEqual([a, b, other], before)
+
     def test_rag_validates_question_and_uploaded_document_before_retrieval(self):
         with patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever:
             for args in ({"question": " "}, {"question": "问题", "doc_id": "../private"},

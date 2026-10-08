@@ -12,7 +12,7 @@ import unittest
 from unittest.mock import patch
 from langchain_core.documents import Document
 from langchain_core.prompts import ChatPromptTemplate
-from src.generation.prompt_template import RAG_SYSTEM_PROMPT, build_rag_messages
+from src.generation.prompt_template import RAG_PROMPT, RAG_SYSTEM_PROMPT, build_rag_messages
 from src.generation.rag_pipeline import build_context
 
 
@@ -79,7 +79,8 @@ class TestContextBuilding(unittest.TestCase):
         baseline = build_context("问题", [])
         template = ChatPromptTemplate.from_messages([
             ("system", RAG_SYSTEM_PROMPT + "额外规范" * 20),
-            ("human", "【检索上下文】\n{context}\n\n【用户问题】\n{question}"),
+            # 只改变系统规范；保留当前动态模板，避免将提醒文本变化误算成系统预算。
+            RAG_PROMPT.messages[1],
         ])
         with patch("src.generation.prompt_template.RAG_PROMPT", template):
             changed = build_context("问题", [])
