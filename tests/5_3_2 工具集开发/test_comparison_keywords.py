@@ -486,9 +486,11 @@ class TestComparisonAndKeywords(unittest.TestCase):
             observe("关键词", AVAILABLE_TOOLS)
         schema = json.loads(http.call_args.args[0].data)["format"]
         finish, ongoing = schema["anyOf"]
-        for branch in (finish, ongoing):
-            self.assertEqual(set(branch["required"]), {"observation", "decision", "task_complete", "answer"})
-            self.assertEqual(set(branch["properties"]), set(branch["required"]))
+        # 分支继承对象的必填字段与类型，只补充继续/结束的不同约束。
+        self.assertEqual(set(schema["required"]), {"observation", "decision", "task_complete", "answer"})
+        self.assertFalse(schema["additionalProperties"])
+        self.assertEqual(schema["properties"]["answer"]["type"], "string")
+        self.assertEqual(schema["properties"]["task_complete"]["type"], "boolean")
         self.assertEqual(finish["properties"]["answer"]["minLength"], 1)
         self.assertEqual(ongoing["properties"]["answer"]["maxLength"], 0)
         self.assertFalse(ongoing["properties"]["task_complete"]["const"])

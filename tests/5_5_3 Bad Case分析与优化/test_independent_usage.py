@@ -40,8 +40,8 @@ class ActionFailureUsageAudit(unittest.TestCase):
 
     def test_keyword_validation_failure_preserves_already_reported_usage(self):
         """S08同类：拒绝扩展词正确，但已结束模型的用量不能随结果丢弃。"""
-        response = {'model': '明确报文替身', 'prompt_eval_count': 100, 'eval_count': 42, 'message': {'content': json.dumps({'keywords': ['image patches']})}}
-        with patch('src.agent.tools._tool_model_response', return_value=response):
+        response = {'model': '明确报文替身', 'done': True, 'done_reason': 'stop', 'prompt_eval_count': 100, 'eval_count': 42, 'message': {'content': json.dumps({'keywords': ['image patches']})}}
+        with patch('src.generation.rag_pipeline.urlopen', return_value=BytesIO(json.dumps(response).encode())):
             event = execute_tool('keyword_extract', {'text': 'split an image into patches'}, [keyword_extract])
         self.assertEqual(event['status'], 'error')
         self.assertIn('关键词不在输入原文', event['error'])
