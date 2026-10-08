@@ -292,6 +292,19 @@ class TestSessionIsolation(unittest.TestCase):
             self.assertNotIn("last_observation", context)
             self.assertTrue(context["history"])
 
+    def test_completed_response_timing_matches_reopened_history_and_log(self):
+        """落盘耗时不能让实时页与刷新后的同一请求使用不同指标。"""
+        event = {"type": "done", "task_complete": True, "stop_reason": "task_complete",
+                 "full_response": "回答", "metrics": {"response_seconds": 1.0}}
+        with patch("src.agent.react_loop.run_react", return_value=iter([event])), \
+             patch("src.agent.memory.perf_counter", side_effect=[10.0, 12.0, 12.019]), \
+             patch("src.utils.logger.record_agent_request") as log:
+            completed = list(run_session("问题", "alice", self.a1, tools=[], memory=self.memory))[-1]
+        restored = MemoryManager(self.path).get_messages("alice", self.a1)[-1].additional_kwargs["event"]
+        self.assertEqual(completed["metrics"]["response_seconds"], 2.0)
+        self.assertEqual(restored["metrics"], completed["metrics"])
+        self.assertEqual(log.call_args.args[1]["metrics"], completed["metrics"])
+
     def test_closing_agent_stream_saves_no_incomplete_turn(self):
         with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packets()[0]).encode())):
             stream = run_session("问题", "alice", self.a1, tools=[], memory=self.memory)

@@ -390,6 +390,7 @@ def run_session(question: str, user_id: str, session_id: str, tools=None, *, mem
     for event in events:
         if event["type"] == "done":
             if "metrics" in event:
+                # 回答完成时固定计时；实时页面、落盘历史和日志使用同一个值。
                 event["metrics"]["response_seconds"] = perf_counter() - started
             snapshot = {key: value for key, value in event.items() if key != "full_response"}
             snapshot.update(user_id=user_id, session_id=session_id)
@@ -398,7 +399,8 @@ def run_session(question: str, user_id: str, session_id: str, tools=None, *, mem
                                         "stop_reason": event["stop_reason"], "event": snapshot})
         event = {**event, "user_id": user_id, "session_id": session_id}
         if "metrics" in event and event["type"] != "token":
-            event["metrics"]["response_seconds"] = perf_counter() - started  # 包括记忆准备和最终保存。
+            if event["type"] != "done":
+                event["metrics"]["response_seconds"] = perf_counter() - started  # 包括记忆准备。
             try:
                 record_agent_request(question, event)
             except (OSError, ValueError, TypeError) as error:
