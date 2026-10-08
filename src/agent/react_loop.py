@@ -617,10 +617,10 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
     if any(item.get("status") == "error" or (isinstance(item.get("result"), dict) and
            item["result"].get("status") in {"needs_confirmation", "incomplete", "insufficient_evidence"}) for item in latest):
         schema["properties"]["task_complete"] = {"const": False}
-    # 真实关键词调用出现finish但答案为空；将已有Python约束同步到采样Schema。
+    # 本轮Ollama实调用未将外层必填项合入anyOf分支，分支必须完整；同时禁止空答案finish。
     schema["anyOf"] = [
-        {"properties": {"decision": {"const": "finish"}, "answer": {"minLength": 1}}},
-        {"properties": {"decision": {"const": "continue"}, "answer": {"maxLength": 0}, "task_complete": {"const": False}}},
+        {**schema, "properties": {**schema["properties"], "decision": {"const": "finish"}, "answer": {"type": "string", "minLength": 1}}},
+        {**schema, "properties": {**schema["properties"], "decision": {"const": "continue"}, "answer": {"type": "string", "maxLength": 0}, "task_complete": {"const": False}}},
     ]
     answering = thought is not None and thought.get("next_step") == "answer"
     if answering:

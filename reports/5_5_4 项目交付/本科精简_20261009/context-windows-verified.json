@@ -1,0 +1,189 @@
+{
+  "version": {
+    "version": "0.40.1"
+  },
+  "tags": {
+    "models": [
+      {
+        "name": "qwen2.5:7b",
+        "model": "qwen2.5:7b",
+        "modified_at": "2026-10-05T17:43:17.3307676+08:00",
+        "size": 4683087332,
+        "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen2",
+          "families": [
+            "qwen2"
+          ],
+          "parameter_size": "7.6B",
+          "quantization_level": "Q4_K_M",
+          "context_length": 32768,
+          "embedding_length": 3584,
+          "runner": "ggml"
+        },
+        "capabilities": [
+          "completion",
+          "tools"
+        ]
+      }
+    ]
+  },
+  "results": [],
+  "boundary": "串行孤立服务，未加载Embedding/Reranker，未重跑120条质量集或部署应用",
+  "current_full_evidence": {
+    "seconds": 15.94616060000044,
+    "input_file_sha256": "131b60314df4af246f268129a177d518e318968c25d014fb69de9cd2f4cfd6f0",
+    "response": {
+      "model": "qwen2.5:7b",
+      "created_at": "2026-10-08T16:40:10.0963825Z",
+      "message": {
+        "role": "assistant",
+        "content": "{\"observation\": \"已从上传文档中提取了关于DeiT训练数据集的相关信息，但未直接找到具体使用哪个数据集。\", \"decision\": \"continue\", \"task_complete\": false, \"answer\": \"\"}"
+      },
+      "done": true,
+      "done_reason": "stop",
+      "total_duration": 15922692500,
+      "load_duration": 2416539200,
+      "prompt_eval_count": 13589,
+      "prompt_eval_cached_count": 0,
+      "prompt_eval_duration": 11914058000,
+      "eval_count": 49,
+      "eval_duration": 1542728000
+    },
+    "loaded": {
+      "models": [
+        {
+          "name": "qwen2.5:7b",
+          "model": "qwen2.5:7b",
+          "size": 5465282968,
+          "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+          "details": {
+            "parent_model": "",
+            "format": "gguf",
+            "family": "qwen2",
+            "families": [
+              "qwen2"
+            ],
+            "parameter_size": "7.6B",
+            "quantization_level": "Q4_K_M"
+          },
+          "expires_at": "2026-10-09T00:45:10.0963825+08:00",
+          "size_vram": 5465282968,
+          "context_length": 16384,
+          "runner": "llamacpp"
+        }
+      ]
+    }
+  },
+  "native_decisions": [
+    {
+      "question": "3.14乘以2.56",
+      "seconds": 2.1205014000006486,
+      "response": {
+        "model": "qwen2.5:7b",
+        "created_at": "2026-10-08T16:40:12.2330539Z",
+        "message": {
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "id": "call_eojd7k0l",
+              "function": {
+                "index": 0,
+                "name": "calculator",
+                "arguments": {
+                  "expression": "3.14 * 2.56"
+                }
+              }
+            }
+          ]
+        },
+        "done": true,
+        "done_reason": "stop",
+        "total_duration": 2105709300,
+        "load_duration": 11332200,
+        "prompt_eval_count": 2987,
+        "prompt_eval_cached_count": 1581,
+        "prompt_eval_duration": 1129929000,
+        "eval_count": 28,
+        "eval_duration": 814886000
+      }
+    },
+    {
+      "question": "从这句话提取关键词：Transformer 使用 ImageNet 训练。",
+      "seconds": 0.8764642999994976,
+      "response": {
+        "model": "qwen2.5:7b",
+        "created_at": "2026-10-08T16:40:13.1105293Z",
+        "message": {
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "id": "call_hsvqaldz",
+              "function": {
+                "index": 0,
+                "name": "keyword_extract",
+                "arguments": {
+                  "text": "Transformer 使用 ImageNet 训练。"
+                }
+              }
+            }
+          ]
+        },
+        "done": true,
+        "done_reason": "stop",
+        "total_duration": 875187800,
+        "load_duration": 11755500,
+        "prompt_eval_count": 2990,
+        "prompt_eval_cached_count": 2971,
+        "prompt_eval_duration": 50885000,
+        "eval_count": 27,
+        "eval_duration": 796023000
+      }
+    },
+    {
+      "question": "计算3.14×2.56，同时告诉我当前时间。",
+      "seconds": 1.3491572000002634,
+      "response": {
+        "model": "qwen2.5:7b",
+        "created_at": "2026-10-08T16:40:14.4603679Z",
+        "message": {
+          "role": "assistant",
+          "content": "",
+          "tool_calls": [
+            {
+              "id": "call_z3lcee0m",
+              "function": {
+                "index": 0,
+                "name": "calculator",
+                "arguments": {
+                  "expression": "3.14*2.56"
+                }
+              }
+            },
+            {
+              "id": "call_ll7g730n",
+              "function": {
+                "index": 1,
+                "name": "current_time",
+                "arguments": {}
+              }
+            }
+          ]
+        },
+        "done": true,
+        "done_reason": "stop",
+        "total_duration": 1337730700,
+        "load_duration": 11427000,
+        "prompt_eval_count": 2993,
+        "prompt_eval_cached_count": 2971,
+        "prompt_eval_duration": 42824000,
+        "eval_count": 43,
+        "eval_duration": 1267701000
+      }
+    }
+  ]
+}

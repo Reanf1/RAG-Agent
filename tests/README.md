@@ -1,38 +1,30 @@
 # 自动化测试
 
-当前815个用例、18个小节、55个测试文件。2026-10-08本地集中修复后全量58.498秒，失败／错误／跳过／预期失败均0。[逐项结果](../reports/5_5_3%20Bad%20Case分析与优化/独立审计修复_20261008/全量最终验收回归.json)、[完整日志](../reports/5_5_3%20Bad%20Case分析与优化/独立审计修复_20261008/全量最终验收回归.log)及[真实模型/容器/质量边界](../reports/5_5_3%20Bad%20Case分析与优化/独立审计修复_20261008/README.md)分别归档。自动回归不代表论文语义质量通过；本轮未部署Windows。
+当前818个用例、18个小节、55个测试文件。2026-10-09本科精简后全量59.706秒，失败／错误／跳过／预期失败均0。[逐项结果](../reports/5_5_4%20项目交付/本科精简_20261009/final-full.json)、[完整日志](../reports/5_5_4%20项目交付/本科精简_20261009/final-full.log)与[精简及真实模型边界](../reports/5_5_4%20项目交付/本科精简_20261009/README.md)分别归档。自动回归不代表科研答案质量通过；本轮尚未部署Windows应用。
 
-10月7日历史Mac780项55.699秒、Windows780项193.988秒均通过。[历史Mac](../reports/5_5_2%20系统性能评估/Windows正式性能评测_20261007/I01_本地全量回归_UTF8修复.json)与[历史Windows](../reports/5_5_2%20系统性能评估/Windows正式性能评测_20261007/I01_Windows全量回归_2.json)保留；Windows默认GBK读取遗漏及首次770项/18错误另见原日志，不把历史780称为本轮815原生通过。
+最近一次Windows全量为10月8日的815项，207.838秒通过；[原生部署证据](../reports/5_4_4%20端到端联调与测试/Windows独立审计补丁部署_20261008/README.md)保留。本轮Windows临时Ollama只检验8K／16K容量、协议和三种原生工具决策，没有替代818项原生回归或整轮质量评测。[历史测试说明](../reports/5_5_4%20项目交付/本科精简_20261009/测试历史说明_20261006-08.md)保留旧成绩、失败与修复过程。
 
-此前769项新增2项方法摘要评分／覆盖状态与低分确认回归，[逐项结果](../reports/模块完整性验证/Windows维护与方法确认回归_20261007.json)及[完整日志](../reports/模块完整性验证/Windows维护与方法确认回归_20261007.log)保留。模型HTTP／小型模拟向量不代表真实质量或Windows性能。[Windows维护、问答与对比记录](../reports/5_4_4%20端到端联调与测试/Windows索引维护_20261007/Windows索引维护记录.md)另保留真实页面、初评及本地真实M3E／BGE确认入口；确认补丁当时尚未在Windows复测，本轮SSH已核验。
-
-此前767项集中补充4项真实Chroma维护、4项问答聚焦及3项定量证据回归，[逐项结果](../reports/模块完整性验证/四问题批量修复回归_20261007_最终复核.json)及[日志](../reports/模块完整性验证/四问题批量修复回归_20261007_最终复核.log)保留。标签损坏、重启后全部向量读取、HNSW查询及备份使用真实临时Chroma；真实Qwen／M3E／BGE样例及失败归档见[四问题批量修复报告](../reports/5_4_4%20端到端联调与测试/四问题批量修复_20261007/四问题批量修复报告.md)。
-
-此前[756项邻块保护](../reports/模块完整性验证/Windows邻块遮蔽修复回归_20261007.json)及[755项维度预算结果](../reports/模块完整性验证/Windows维度证据预算修复回归_20261007.json)保留；756项全量标准输出当时未完整存盘，以逐项JSON为证据。
-
-测试按“5_1_1 中文小节名”组织，目录含空格时命令路径加引号。2026-10-06为754个用例、18个小节、48个测试文件；2026-10-06新增输出要求剥离2项、对比恢复提示1项、请求内临时向量复用2项回归后全量通过，无失败／错误／跳过，见[当时完整日志](../reports/模块完整性验证/Windows真实问答问题修复回归_20261006_最终.log)及[逐项结果](../reports/模块完整性验证/Windows真实问答问题修复回归_20261006_最终.json)。[初轮754项结果](../reports/模块完整性验证/Windows真实问答问题修复回归_20261006.json)保留：新增提示使旧1000字符样例没有正文空间，调整测试为当前完整模板另留500字符，继续核验长问题挤占160字符及完整请求不超预算；产品预算未放宽。此前[最终749项](../reports/模块完整性验证/Windows标签读取与失败表述修复回归_20261006_最终.json)、[749项中的断流失败](../reports/模块完整性验证/Windows标签读取与失败表述修复回归_20261006.json)、[740项路由日志](../reports/模块完整性验证/Windows内容问答路由修复回归_20261006.log)、[737项路径日志](../reports/模块完整性验证/Windows中文索引入口修复回归_20261006.log)及[730项独立审查日志](../reports/模块完整性验证/独立审查修复回归_20261006_最终.log)仍保留。
-
-此前代码精简保持688项；2026-10-05新增19项实际缺陷回归至707项，本轮再新增23项，覆盖导入删除竞争、重复片段定位、请求预算、确认续跑、跨请求超时、模型初始化、核心RAG流式、旧历史及性能复用。初轮旧展示断言和新增测试漏导入的原始失败证据保留，见[独立审查修复记录](../reports/5_5_4%20项目交付/独立审查问题修复记录_20261006.md)。2026-10-05原有失败记录仍见[Windows问题修复记录](../reports/5_5_4%20项目交付/Windows问题修复记录_20261005.md)。
+测试按“5_1_1 中文小节名”组织，目录含空格时命令路径加引号。
 
 ## 小节与入口
 
 | 小节 | 用例数 | 测试文件 |
 | --- | ---: | --- |
 | 5_1_1 文档加载与批量导入 | 41 | [test_pdf_loader.py](5_1_1%20文档加载与批量导入/test_pdf_loader.py)、[test_docx_loader.py](5_1_1%20文档加载与批量导入/test_docx_loader.py)、[test_text_loader.py](5_1_1%20文档加载与批量导入/test_text_loader.py)、[test_batch_import.py](5_1_1%20文档加载与批量导入/test_batch_import.py) |
-| 5_1_2 文本分块策略 | 44 | [test_chunking.py](5_1_2%20文本分块策略/test_chunking.py)、[test_academic_pdf.py](5_1_2%20文本分块策略/test_academic_pdf.py) |
+| 5_1_2 文本分块策略 | 45 | [test_chunking.py](5_1_2%20文本分块策略/test_chunking.py)、[test_academic_pdf.py](5_1_2%20文本分块策略/test_academic_pdf.py) |
 | 5_1_3 向量化与存储 | 52 | [test_vector_store.py](5_1_3%20向量化与存储/test_vector_store.py)、[test_embeddings.py](5_1_3%20向量化与存储/test_embeddings.py)、[test_batch_index.py](5_1_3%20向量化与存储/test_batch_index.py)、[test_chroma_path.py](5_1_3%20向量化与存储/test_chroma_path.py)、[test_index_repair.py](5_1_3%20向量化与存储/test_index_repair.py) |
 | 5_1_4 混合检索与重排序 | 52 | [test_bm25.py](5_1_4%20混合检索与重排序/test_bm25.py)、[test_hybrid_retriever.py](5_1_4%20混合检索与重排序/test_hybrid_retriever.py)、[test_reranker.py](5_1_4%20混合检索与重排序/test_reranker.py)、[test_retrieval_evaluation.py](5_1_4%20混合检索与重排序/test_retrieval_evaluation.py)、[test_long_reranker.py](5_1_4%20混合检索与重排序/test_long_reranker.py) |
 | 5_2_1 Prompt工程与生成策略 | 65 | [test_prompt.py](5_2_1%20Prompt工程与生成策略/test_prompt.py)、[test_context.py](5_2_1%20Prompt工程与生成策略/test_context.py)、[test_citations.py](5_2_1%20Prompt工程与生成策略/test_citations.py)、[test_generation.py](5_2_1%20Prompt工程与生成策略/test_generation.py) |
 | 5_2_2 流式输出与引用 | 17 | [test_streaming.py](5_2_2%20流式输出与引用/test_streaming.py) |
 | 5_2_3 缓存与降级策略 | 33 | [test_degradation.py](5_2_3%20缓存与降级策略/test_degradation.py)、[test_cache.py](5_2_3%20缓存与降级策略/test_cache.py)、[test_agent_cache.py](5_2_3%20缓存与降级策略/test_agent_cache.py) |
 | 5_2_4 日志与可观测性 | 9 | [test_rag_logging.py](5_2_4%20日志与可观测性/test_rag_logging.py) |
-| 5_3_1 Agent核心循环 | 67 | [test_thought.py](5_3_1%20Agent核心循环/test_thought.py)、[test_action.py](5_3_1%20Agent核心循环/test_action.py)、[test_observation.py](5_3_1%20Agent核心循环/test_observation.py)、[test_system_prompt.py](5_3_1%20Agent核心循环/test_system_prompt.py) |
+| 5_3_1 Agent核心循环 | 68 | [test_thought.py](5_3_1%20Agent核心循环/test_thought.py)、[test_action.py](5_3_1%20Agent核心循环/test_action.py)、[test_observation.py](5_3_1%20Agent核心循环/test_observation.py)、[test_system_prompt.py](5_3_1%20Agent核心循环/test_system_prompt.py) |
 | 5_3_2 工具集开发 | 104 | [test_research_tools.py](5_3_2%20工具集开发/test_research_tools.py)、[test_comparison_keywords.py](5_3_2%20工具集开发/test_comparison_keywords.py)、[test_summary_time_search.py](5_3_2%20工具集开发/test_summary_time_search.py)、[test_calculator_paper_list.py](5_3_2%20工具集开发/test_calculator_paper_list.py) |
 | 5_3_3 Agent决策优化 | 51 | [test_routing_parallel.py](5_3_3%20Agent决策优化/test_routing_parallel.py)、[test_error_recovery.py](5_3_3%20Agent决策优化/test_error_recovery.py) |
 | 5_3_4 多轮对话记忆管理 | 55 | [test_session_isolation.py](5_3_4%20多轮对话记忆管理/test_session_isolation.py)、[test_history_window.py](5_3_4%20多轮对话记忆管理/test_history_window.py)、[test_conversation_summary.py](5_3_4%20多轮对话记忆管理/test_conversation_summary.py) |
 | 5_4_1 RAG与Agent深度融合 | 33 | [test_source_routing.py](5_4_1%20RAG与Agent深度融合/test_source_routing.py)、[test_memory_context.py](5_4_1%20RAG与Agent深度融合/test_memory_context.py) |
 | 5_4_2 可观测性与健康检查 | 59 | [test_health_check.py](5_4_2%20可观测性与健康检查/test_health_check.py)、[test_agent_metrics.py](5_4_2%20可观测性与健康检查/test_agent_metrics.py) |
-| 5_4_3 前端与会话管理 | 42 | [test_document_management.py](5_4_3%20前端与会话管理/test_document_management.py)、[test_chat_streaming.py](5_4_3%20前端与会话管理/test_chat_streaming.py)、[test_conversation_history.py](5_4_3%20前端与会话管理/test_conversation_history.py)、[test_agent_streaming.py](5_4_3%20前端与会话管理/test_agent_streaming.py)、[test_citation_page.py](5_4_3%20前端与会话管理/test_citation_page.py) |
+| 5_4_3 前端与会话管理 | 43 | [test_document_management.py](5_4_3%20前端与会话管理/test_document_management.py)、[test_chat_streaming.py](5_4_3%20前端与会话管理/test_chat_streaming.py)、[test_conversation_history.py](5_4_3%20前端与会话管理/test_conversation_history.py)、[test_agent_streaming.py](5_4_3%20前端与会话管理/test_agent_streaming.py)、[test_citation_page.py](5_4_3%20前端与会话管理/test_citation_page.py) |
 | 5_4_4 端到端联调与测试 | 36 | [test_document_flow.py](5_4_4%20端到端联调与测试/test_document_flow.py) |
 | 5_5_2 系统性能评估 | 10 | [test_system_evaluation.py](5_5_2%20系统性能评估/test_system_evaluation.py) |
 | 5_5_3 Bad Case分析与优化 | 45 | [test_bad_case_regression.py](5_5_3%20Bad%20Case分析与优化/test_bad_case_regression.py)、[Agent](5_5_3%20Bad%20Case分析与优化/test_independent_agent.py)、[缓存](5_5_3%20Bad%20Case分析与优化/test_independent_cache.py)、[生成](5_5_3%20Bad%20Case分析与优化/test_independent_generation.py)、[检索](5_5_3%20Bad%20Case分析与优化/test_independent_retrieval.py)、[用量](5_5_3%20Bad%20Case分析与优化/test_independent_usage.py) |
@@ -80,7 +72,7 @@ Windows使用已有JSON运行器；它把相对路径样例放到TEMP盘，并�
 ## 样例与验证边界
 
 - PDF／Word／文本样例由测试临时生成，加载／分块实际执行；Chroma、SQLite、线程和Streamlit AppTest使用真实临时资源。
-- [helpers.py](helpers.py)复用明确二维模拟向量、NDJSON和日志隔离。HTTP模型为mock，模拟向量不代表M3E效果，自动回归不测真实模型质量或性能；历史780项已在Windows原生解释器通过；本轮815项只在Mac运行。
+- [helpers.py](helpers.py)复用明确二维模拟向量、NDJSON和日志隔离。HTTP模型为mock，模拟向量不代表M3E效果，自动回归不测真实模型质量或性能；Windows历史815项已通过；本轮818项在Mac运行，真实Ollama协议另有独立记录。
 - 需项目依赖及本地Qwen词表；Agent测试前后隔离日志，测试不写默认用户知识库／会话。
 - 上传／索引／删除恢复AppTest归5.4.4，组件／聊天／会话UI归5.4.3，会话并发归5.3.4。专项入口按实际职责选用例，数量不能与全量相加。
 

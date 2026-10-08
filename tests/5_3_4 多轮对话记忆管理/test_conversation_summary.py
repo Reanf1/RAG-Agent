@@ -242,6 +242,8 @@ class TestConversationSummary(unittest.TestCase):
 
     def test_large_archive_uses_bounded_complete_pairs_and_three_call_limit(self):
         from src.agent.memory import count_memory_tokens
+        # 明确复现8K下单批只能容纳一轮的边界，不能依赖运行默认窗口。
+        self.config["llm"]["num_ctx"] = 8192
         for index in range(7):
             self.memory.append_turn("alice", self.session, f"问题{index}" + "word " * 1800, "答案")
         with patch("src.agent.react_loop.urlopen", side_effect=lambda *a, **k: self.packet()) as http:

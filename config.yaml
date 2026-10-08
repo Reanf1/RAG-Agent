@@ -17,7 +17,8 @@ llm:
   top_p: 0.9
   # 生成候选词数，不是 retrieval.top_k 的文档数；实测选型见生成参数 QA。
   top_k: 40
-  num_ctx: 8192
+  # Windows 8GB显存实测16K可保留多步证据；低显存可改回8192，输出/历史预算不变。
+  num_ctx: 16384
   num_predict: 512
   repeat_penalty: 1.0
 

@@ -1,0 +1,1009 @@
+{
+  "measured_at": "2026-10-09T00:45:29.942719+08:00",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "python": "3.10.10",
+  "manifest_sha256": "70bd8d162d8ca61b8da47d078e954c2aee8917a48c1d999408f37a83d9cc661f",
+  "method": "各库预先导入；固定顺序、单次全量基础文本提取，不测OCR、渲染和表格识别；原PDF哈希不变。",
+  "boundary": "43个既有锚点最初由PyMuPDF语料验证，不能当独立人工解析准确率；未命中可能由阅读顺序或空白差异造成。",
+  "results": [
+    {
+      "library": "PyPDF2",
+      "version": "3.0.1",
+      "papers": [
+        {
+          "paper_id": "vit",
+          "sha256": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "pages": 22,
+          "seconds": 0.28673416600031487,
+          "text_characters": 67024,
+          "anchors": [
+            {
+              "id": "V_ARCH",
+              "page_number": 3,
+              "found": true
+            },
+            {
+              "id": "V_POS",
+              "page_number": 3,
+              "found": true
+            },
+            {
+              "id": "V_DATA",
+              "page_number": 4,
+              "found": true
+            },
+            {
+              "id": "V_BIAS",
+              "page_number": 2,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "deit",
+          "sha256": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5",
+          "pages": 11,
+          "seconds": 0.20049104100144177,
+          "text_characters": 50637,
+          "anchors": [
+            {
+              "id": "D_DATA",
+              "page_number": 1,
+              "found": true
+            },
+            {
+              "id": "D_TOKEN",
+              "page_number": 4,
+              "found": true
+            },
+            {
+              "id": "D_TEACHER",
+              "page_number": 5,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "swin",
+          "sha256": "0f77d1635bdbb040bc5f9174ddbda63b5ca17ffab0459b55dfa4148f9916f833",
+          "pages": 11,
+          "seconds": 0.2514571249994333,
+          "text_characters": 55149,
+          "anchors": [
+            {
+              "id": "SW_PATCH",
+              "page_number": 3,
+              "found": true
+            },
+            {
+              "id": "SW_ATT",
+              "page_number": 4,
+              "found": true
+            },
+            {
+              "id": "SW_TASK",
+              "page_number": 1,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "pvt",
+          "sha256": "4fbd34d6bcad1ec75b62ce15bf9e54b0268570e446f8d889fed97b16152b86d1",
+          "pages": 11,
+          "seconds": 0.23847712499991758,
+          "text_characters": 55416,
+          "anchors": [
+            {
+              "id": "P_STAGE",
+              "page_number": 4,
+              "found": true
+            },
+            {
+              "id": "P_SRA",
+              "page_number": 5,
+              "found": true
+            },
+            {
+              "id": "P_COMPARE",
+              "page_number": 5,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "t2t_vit",
+          "sha256": "0efc583606acf67e3edfc81694411ddae417c4e94974de22872764ff28339911",
+          "pages": 10,
+          "seconds": 0.156629958000849,
+          "text_characters": 46568,
+          "anchors": [
+            {
+              "id": "T_TOKEN",
+              "page_number": 2,
+              "found": true
+            },
+            {
+              "id": "T_BACKBONE",
+              "page_number": 2,
+              "found": true
+            },
+            {
+              "id": "T_LOCAL",
+              "page_number": 1,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "cait",
+          "sha256": "d54045f3ee41a606f91851300c03accfd37075d4d416dcab77d97c871262e8bc",
+          "pages": 11,
+          "seconds": 0.1993896660005703,
+          "text_characters": 52467,
+          "anchors": [
+            {
+              "id": "CA_SCALE",
+              "page_number": 2,
+              "found": true
+            },
+            {
+              "id": "CA_CLASS",
+              "page_number": 3,
+              "found": true
+            },
+            {
+              "id": "CA_DATA",
+              "page_number": 1,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "detr",
+          "sha256": "d4b846bd44896e1d21527f48eddc422c263c9a4f8a3fa4be249750956882698d",
+          "pages": 26,
+          "seconds": 0.18566766699950676,
+          "text_characters": 65518,
+          "anchors": [
+            {
+              "id": "DE_SET",
+              "page_number": 5,
+              "found": true
+            },
+            {
+              "id": "DE_ARCH",
+              "page_number": 7,
+              "found": true
+            },
+            {
+              "id": "DE_DATA",
+              "page_number": 8,
+              "found": true
+            },
+            {
+              "id": "DE_TRAIN",
+              "page_number": 9,
+              "found": true
+            },
+            {
+              "id": "DE_LIMIT",
+              "page_number": 2,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "deformable_detr",
+          "sha256": "9bbba0cd4474e8e5e936187be81c93b938d2ce567bed38aee0ac262dc97dd7e2",
+          "pages": 16,
+          "seconds": 0.15561062499909895,
+          "text_characters": 50915,
+          "anchors": [
+            {
+              "id": "DF_CORE",
+              "page_number": 1,
+              "found": true
+            },
+            {
+              "id": "DF_TRAIN",
+              "page_number": 7,
+              "found": true
+            },
+            {
+              "id": "DF_MULTI",
+              "page_number": 6,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "conditional_detr",
+          "sha256": "f10cfc976b61006109447b97b6336424c60ac1c1989d85932b5c6572510fbf2b",
+          "pages": 10,
+          "seconds": 0.18626995899830945,
+          "text_characters": 46397,
+          "anchors": [
+            {
+              "id": "CO_CORE",
+              "page_number": 1,
+              "found": true
+            },
+            {
+              "id": "CO_METRIC",
+              "page_number": 7,
+              "found": true
+            },
+            {
+              "id": "CO_FAIR",
+              "page_number": 7,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "dab_detr",
+          "sha256": "65b00851b503763c15dd58e54b7424563ed70bdd06afa5b10b5d5a121ccb3232",
+          "pages": 19,
+          "seconds": 0.1888796250004816,
+          "text_characters": 57378,
+          "anchors": [
+            {
+              "id": "AB_CORE",
+              "page_number": 6,
+              "found": true
+            },
+            {
+              "id": "AB_SCALE",
+              "page_number": 5,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "dn_detr",
+          "sha256": "f22b21dc2368b1738b1ac5ded9327876925f3fee9366d77b6d79c2b4a3ac4fc9",
+          "pages": 9,
+          "seconds": 0.28658670900040306,
+          "text_characters": 39516,
+          "anchors": [
+            {
+              "id": "DN_CORE",
+              "page_number": 1,
+              "found": true
+            },
+            {
+              "id": "DN_SCORE",
+              "page_number": 1,
+              "found": true
+            },
+            {
+              "id": "DN_MASK",
+              "page_number": 5,
+              "found": true
+            },
+            {
+              "id": "DN_TEST",
+              "page_number": 5,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "dino",
+          "sha256": "2cda48e74a49e3552aedbf61bc6436767ed3867cb710bbd2b79e48624fd66126",
+          "pages": 23,
+          "seconds": 0.2324817909993726,
+          "text_characters": 57754,
+          "anchors": [
+            {
+              "id": "DI_SCORE",
+              "page_number": 1,
+              "found": false
+            },
+            {
+              "id": "DI_METHOD",
+              "page_number": 1,
+              "found": true
+            },
+            {
+              "id": "DI_CDN",
+              "page_number": 7,
+              "found": true
+            },
+            {
+              "id": "DI_CDN_REASON",
+              "page_number": 8,
+              "found": true
+            },
+            {
+              "id": "DI_STATIC",
+              "page_number": 9,
+              "found": true
+            },
+            {
+              "id": "DI_MIX",
+              "page_number": 10,
+              "found": true
+            },
+            {
+              "id": "DI_LOOK",
+              "page_number": 7,
+              "found": true
+            }
+          ]
+        }
+      ],
+      "seconds": 2.5686754569996992,
+      "pages": 179,
+      "anchor_hits": 42,
+      "anchor_total": 43
+    },
+    {
+      "library": "pdfplumber",
+      "version": "0.11.7",
+      "papers": [
+        {
+          "paper_id": "vit",
+          "sha256": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "pages": 22,
+          "seconds": 1.6745418339996831,
+          "text_characters": 62077,
+          "anchors": [
+            {
+              "id": "V_ARCH",
+              "page_number": 3,
+              "found": true
+            },
+            {
+              "id": "V_POS",
+              "page_number": 3,
+              "found": true
+            },
+            {
+              "id": "V_DATA",
+              "page_number": 4,
+              "found": true
+            },
+            {
+              "id": "V_BIAS",
+              "page_number": 2,
+              "found": false
+            }
+          ]
+        },
+        {
+          "paper_id": "deit",
+          "sha256": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5",
+          "pages": 11,
+          "seconds": 0.9929883749991859,
+          "text_characters": 45874,
+          "anchors": [
+            {
+              "id": "D_DATA",
+              "page_number": 1,
+              "found": true
+            },
+            {
+              "id": "D_TOKEN",
+              "page_number": 4,
+              "found": false
+            },
+            {
+              "id": "D_TEACHER",
+              "page_number": 5,
+              "found": false
+            }
+          ]
+        },
+        {
+          "paper_id": "swin",
+          "sha256": "0f77d1635bdbb040bc5f9174ddbda63b5ca17ffab0459b55dfa4148f9916f833",
+          "pages": 11,
+          "seconds": 1.2421699999995326,
+          "text_characters": 52197,
+          "anchors": [
+            {
+              "id": "SW_PATCH",
+              "page_number": 3,
+              "found": false
+            },
+            {
+              "id": "SW_ATT",
+              "page_number": 4,
+              "found": false
+            },
+            {
+              "id": "SW_TASK",
+              "page_number": 1,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "pvt",
+          "sha256": "4fbd34d6bcad1ec75b62ce15bf9e54b0268570e446f8d889fed97b16152b86d1",
+          "pages": 11,
+          "seconds": 1.2232517909997114,
+          "text_characters": 52027,
+          "anchors": [
+            {
+              "id": "P_STAGE",
+              "page_number": 4,
+              "found": true
+            },
+            {
+              "id": "P_SRA",
+              "page_number": 5,
+              "found": false
+            },
+            {
+              "id": "P_COMPARE",
+              "page_number": 5,
+              "found": false
+            }
+          ]
+        },
+        {
+          "paper_id": "t2t_vit",
+          "sha256": "0efc583606acf67e3edfc81694411ddae417c4e94974de22872764ff28339911",
+          "pages": 10,
+          "seconds": 0.9802873329990689,
+          "text_characters": 43479,
+          "anchors": [
+            {
+              "id": "T_TOKEN",
+              "page_number": 2,
+              "found": true
+            },
+            {
+              "id": "T_BACKBONE",
+              "page_number": 2,
+              "found": true
+            },
+            {
+              "id": "T_LOCAL",
+              "page_number": 1,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "cait",
+          "sha256": "d54045f3ee41a606f91851300c03accfd37075d4d416dcab77d97c871262e8bc",
+          "pages": 11,
+          "seconds": 1.0432911659991078,
+          "text_characters": 49067,
+          "anchors": [
+            {
+              "id": "CA_SCALE",
+              "page_number": 2,
+              "found": false
+            },
+            {
+              "id": "CA_CLASS",
+              "page_number": 3,
+              "found": true
+            },
+            {
+              "id": "CA_DATA",
+              "page_number": 1,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "detr",
+          "sha256": "d4b846bd44896e1d21527f48eddc422c263c9a4f8a3fa4be249750956882698d",
+          "pages": 26,
+          "seconds": 1.1233998330008035,
+          "text_characters": 64375,
+          "anchors": [
+            {
+              "id": "DE_SET",
+              "page_number": 5,
+              "found": true
+            },
+            {
+              "id": "DE_ARCH",
+              "page_number": 7,
+              "found": true
+            },
+            {
+              "id": "DE_DATA",
+              "page_number": 8,
+              "found": true
+            },
+            {
+              "id": "DE_TRAIN",
+              "page_number": 9,
+              "found": true
+            },
+            {
+              "id": "DE_LIMIT",
+              "page_number": 2,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "deformable_detr",
+          "sha256": "9bbba0cd4474e8e5e936187be81c93b938d2ce567bed38aee0ac262dc97dd7e2",
+          "pages": 16,
+          "seconds": 1.0834010840007977,
+          "text_characters": 47804,
+          "anchors": [
+            {
+              "id": "DF_CORE",
+              "page_number": 1,
+              "found": false
+            },
+            {
+              "id": "DF_TRAIN",
+              "page_number": 7,
+              "found": true
+            },
+            {
+              "id": "DF_MULTI",
+              "page_number": 6,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "conditional_detr",
+          "sha256": "f10cfc976b61006109447b97b6336424c60ac1c1989d85932b5c6572510fbf2b",
+          "pages": 10,
+          "seconds": 0.8945531669996853,
+          "text_characters": 42095,
+          "anchors": [
+            {
+              "id": "CO_CORE",
+              "page_number": 1,
+              "found": true
+            },
+            {
+              "id": "CO_METRIC",
+              "page_number": 7,
+              "found": true
+            },
+            {
+              "id": "CO_FAIR",
+              "page_number": 7,
+              "found": false
+            }
+          ]
+        },
+        {
+          "paper_id": "dab_detr",
+          "sha256": "65b00851b503763c15dd58e54b7424563ed70bdd06afa5b10b5d5a121ccb3232",
+          "pages": 19,
+          "seconds": 1.0674772920010582,
+          "text_characters": 52951,
+          "anchors": [
+            {
+              "id": "AB_CORE",
+              "page_number": 6,
+              "found": true
+            },
+            {
+              "id": "AB_SCALE",
+              "page_number": 5,
+              "found": false
+            }
+          ]
+        },
+        {
+          "paper_id": "dn_detr",
+          "sha256": "f22b21dc2368b1738b1ac5ded9327876925f3fee9366d77b6d79c2b4a3ac4fc9",
+          "pages": 9,
+          "seconds": 1.2710695839996333,
+          "text_characters": 36711,
+          "anchors": [
+            {
+              "id": "DN_CORE",
+              "page_number": 1,
+              "found": true
+            },
+            {
+              "id": "DN_SCORE",
+              "page_number": 1,
+              "found": true
+            },
+            {
+              "id": "DN_MASK",
+              "page_number": 5,
+              "found": false
+            },
+            {
+              "id": "DN_TEST",
+              "page_number": 5,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "dino",
+          "sha256": "2cda48e74a49e3552aedbf61bc6436767ed3867cb710bbd2b79e48624fd66126",
+          "pages": 23,
+          "seconds": 1.0662577920011245,
+          "text_characters": 56003,
+          "anchors": [
+            {
+              "id": "DI_SCORE",
+              "page_number": 1,
+              "found": true
+            },
+            {
+              "id": "DI_METHOD",
+              "page_number": 1,
+              "found": true
+            },
+            {
+              "id": "DI_CDN",
+              "page_number": 7,
+              "found": true
+            },
+            {
+              "id": "DI_CDN_REASON",
+              "page_number": 8,
+              "found": true
+            },
+            {
+              "id": "DI_STATIC",
+              "page_number": 9,
+              "found": false
+            },
+            {
+              "id": "DI_MIX",
+              "page_number": 10,
+              "found": true
+            },
+            {
+              "id": "DI_LOOK",
+              "page_number": 7,
+              "found": true
+            }
+          ]
+        }
+      ],
+      "seconds": 13.662689250999392,
+      "pages": 179,
+      "anchor_hits": 30,
+      "anchor_total": 43
+    },
+    {
+      "library": "PyMuPDF",
+      "version": "1.28.2",
+      "papers": [
+        {
+          "paper_id": "vit",
+          "sha256": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "pages": 22,
+          "seconds": 0.09738354200089816,
+          "text_characters": 67133,
+          "anchors": [
+            {
+              "id": "V_ARCH",
+              "page_number": 3,
+              "found": true
+            },
+            {
+              "id": "V_POS",
+              "page_number": 3,
+              "found": true
+            },
+            {
+              "id": "V_DATA",
+              "page_number": 4,
+              "found": true
+            },
+            {
+              "id": "V_BIAS",
+              "page_number": 2,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "deit",
+          "sha256": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5",
+          "pages": 11,
+          "seconds": 0.05242862500017509,
+          "text_characters": 50584,
+          "anchors": [
+            {
+              "id": "D_DATA",
+              "page_number": 1,
+              "found": true
+            },
+            {
+              "id": "D_TOKEN",
+              "page_number": 4,
+              "found": true
+            },
+            {
+              "id": "D_TEACHER",
+              "page_number": 5,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "swin",
+          "sha256": "0f77d1635bdbb040bc5f9174ddbda63b5ca17ffab0459b55dfa4148f9916f833",
+          "pages": 11,
+          "seconds": 0.07312466599978507,
+          "text_characters": 55307,
+          "anchors": [
+            {
+              "id": "SW_PATCH",
+              "page_number": 3,
+              "found": true
+            },
+            {
+              "id": "SW_ATT",
+              "page_number": 4,
+              "found": true
+            },
+            {
+              "id": "SW_TASK",
+              "page_number": 1,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "pvt",
+          "sha256": "4fbd34d6bcad1ec75b62ce15bf9e54b0268570e446f8d889fed97b16152b86d1",
+          "pages": 11,
+          "seconds": 0.056401207999442704,
+          "text_characters": 55938,
+          "anchors": [
+            {
+              "id": "P_STAGE",
+              "page_number": 4,
+              "found": true
+            },
+            {
+              "id": "P_SRA",
+              "page_number": 5,
+              "found": true
+            },
+            {
+              "id": "P_COMPARE",
+              "page_number": 5,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "t2t_vit",
+          "sha256": "0efc583606acf67e3edfc81694411ddae417c4e94974de22872764ff28339911",
+          "pages": 10,
+          "seconds": 0.05887099999927159,
+          "text_characters": 46627,
+          "anchors": [
+            {
+              "id": "T_TOKEN",
+              "page_number": 2,
+              "found": true
+            },
+            {
+              "id": "T_BACKBONE",
+              "page_number": 2,
+              "found": true
+            },
+            {
+              "id": "T_LOCAL",
+              "page_number": 1,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "cait",
+          "sha256": "d54045f3ee41a606f91851300c03accfd37075d4d416dcab77d97c871262e8bc",
+          "pages": 11,
+          "seconds": 0.05318050000096264,
+          "text_characters": 52442,
+          "anchors": [
+            {
+              "id": "CA_SCALE",
+              "page_number": 2,
+              "found": true
+            },
+            {
+              "id": "CA_CLASS",
+              "page_number": 3,
+              "found": true
+            },
+            {
+              "id": "CA_DATA",
+              "page_number": 1,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "detr",
+          "sha256": "d4b846bd44896e1d21527f48eddc422c263c9a4f8a3fa4be249750956882698d",
+          "pages": 26,
+          "seconds": 0.060066874999392894,
+          "text_characters": 65790,
+          "anchors": [
+            {
+              "id": "DE_SET",
+              "page_number": 5,
+              "found": true
+            },
+            {
+              "id": "DE_ARCH",
+              "page_number": 7,
+              "found": true
+            },
+            {
+              "id": "DE_DATA",
+              "page_number": 8,
+              "found": true
+            },
+            {
+              "id": "DE_TRAIN",
+              "page_number": 9,
+              "found": true
+            },
+            {
+              "id": "DE_LIMIT",
+              "page_number": 2,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "deformable_detr",
+          "sha256": "9bbba0cd4474e8e5e936187be81c93b938d2ce567bed38aee0ac262dc97dd7e2",
+          "pages": 16,
+          "seconds": 0.05215508299988869,
+          "text_characters": 51308,
+          "anchors": [
+            {
+              "id": "DF_CORE",
+              "page_number": 1,
+              "found": true
+            },
+            {
+              "id": "DF_TRAIN",
+              "page_number": 7,
+              "found": true
+            },
+            {
+              "id": "DF_MULTI",
+              "page_number": 6,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "conditional_detr",
+          "sha256": "f10cfc976b61006109447b97b6336424c60ac1c1989d85932b5c6572510fbf2b",
+          "pages": 10,
+          "seconds": 0.05167624999921827,
+          "text_characters": 46024,
+          "anchors": [
+            {
+              "id": "CO_CORE",
+              "page_number": 1,
+              "found": true
+            },
+            {
+              "id": "CO_METRIC",
+              "page_number": 7,
+              "found": true
+            },
+            {
+              "id": "CO_FAIR",
+              "page_number": 7,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "dab_detr",
+          "sha256": "65b00851b503763c15dd58e54b7424563ed70bdd06afa5b10b5d5a121ccb3232",
+          "pages": 19,
+          "seconds": 0.05586162500003411,
+          "text_characters": 57207,
+          "anchors": [
+            {
+              "id": "AB_CORE",
+              "page_number": 6,
+              "found": true
+            },
+            {
+              "id": "AB_SCALE",
+              "page_number": 5,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "dn_detr",
+          "sha256": "f22b21dc2368b1738b1ac5ded9327876925f3fee9366d77b6d79c2b4a3ac4fc9",
+          "pages": 9,
+          "seconds": 0.04652170800000022,
+          "text_characters": 40074,
+          "anchors": [
+            {
+              "id": "DN_CORE",
+              "page_number": 1,
+              "found": true
+            },
+            {
+              "id": "DN_SCORE",
+              "page_number": 1,
+              "found": true
+            },
+            {
+              "id": "DN_MASK",
+              "page_number": 5,
+              "found": true
+            },
+            {
+              "id": "DN_TEST",
+              "page_number": 5,
+              "found": true
+            }
+          ]
+        },
+        {
+          "paper_id": "dino",
+          "sha256": "2cda48e74a49e3552aedbf61bc6436767ed3867cb710bbd2b79e48624fd66126",
+          "pages": 23,
+          "seconds": 0.05761658300070849,
+          "text_characters": 58244,
+          "anchors": [
+            {
+              "id": "DI_SCORE",
+              "page_number": 1,
+              "found": true
+            },
+            {
+              "id": "DI_METHOD",
+              "page_number": 1,
+              "found": true
+            },
+            {
+              "id": "DI_CDN",
+              "page_number": 7,
+              "found": true
+            },
+            {
+              "id": "DI_CDN_REASON",
+              "page_number": 8,
+              "found": true
+            },
+            {
+              "id": "DI_STATIC",
+              "page_number": 9,
+              "found": true
+            },
+            {
+              "id": "DI_MIX",
+              "page_number": 10,
+              "found": true
+            },
+            {
+              "id": "DI_LOOK",
+              "page_number": 7,
+              "found": true
+            }
+          ]
+        }
+      ],
+      "seconds": 0.7152876649997779,
+      "pages": 179,
+      "anchor_hits": 43,
+      "anchor_total": 43
+    }
+  ]
+}

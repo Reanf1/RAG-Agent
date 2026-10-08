@@ -1,0 +1,67 @@
+{
+  "original_docs_unchanged": true,
+  "native_decisions": [
+    {
+      "question": "3.14乘以2.56",
+      "calls": [
+        {
+          "name": "calculator",
+          "arguments_valid": true
+        }
+      ]
+    },
+    {
+      "question": "从这句话提取关键词：Transformer 使用 ImageNet 训练。",
+      "calls": [
+        {
+          "name": "keyword_extract",
+          "arguments_valid": true
+        }
+      ]
+    },
+    {
+      "question": "计算3.14×2.56，同时告诉我当前时间。",
+      "calls": [
+        {
+          "name": "calculator",
+          "arguments_valid": true
+        },
+        {
+          "name": "current_time",
+          "arguments_valid": true
+        }
+      ]
+    }
+  ],
+  "current_full_schema_valid": true,
+  "long_request_task_complete": false,
+  "calculator_result": {
+    "expression": "3.14 * 2.56",
+    "result": "8.0384",
+    "usage": {
+      "prompt_eval_count": 0,
+      "eval_count": 0
+    }
+  },
+  "before_source_lines": 6426,
+  "after_source_lines": 6387,
+  "core_loop_lines": 164,
+  "changed_source_lines": [
+    {
+      "path": "src/agent/react_loop.py",
+      "before_lines": 975,
+      "after_lines": 937
+    },
+    {
+      "path": "src/agent/tools.py",
+      "before_lines": 1130,
+      "after_lines": 1121
+    },
+    {
+      "path": "src/chunking/__init__.py",
+      "before_lines": 105,
+      "after_lines": 113
+    }
+  ],
+  "boundary": "行数包含空行和注释；只核验三个真实模型决策的参数与本地计算器，未声称完整Windows工具链或质量通过。"
+}
