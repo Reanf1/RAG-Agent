@@ -524,6 +524,27 @@ def _structured_tool_observation(question: str, tools: list[BaseTool], observati
         return {"type": "observation", "observation": "文献列表已返回，继续执行指定的论文任务。",
                 "decision": "continue", "task_complete": False, "answer": "", "model": None,
                 "usage": {"prompt_eval_count": 0, "eval_count": 0}, "elapsed_seconds": 0.0}
+    if (plan and plan.get("parallel_tools") == ["paper_metadata", "paper_metadata"]
+            and re.search(r"标题", question) and re.search(r"来源", question)
+            and not re.search(r"作者|年份|摘要|DOI|解释|贡献|方法|比较|对比|推荐|然后|再|另外|\b(?:why|then|compare)\b", question, re.I)):
+        # 明确只问两篇标题与来源时，直接展示已核验字段，避免模型无缺项仍重复读取。
+        targets = set(re.findall(r"\b[0-9a-f]{64}\b", question))
+        results = {item.get("args", {}).get("doc_id"): item.get("result") for item in items
+                   if item.get("name") == "paper_metadata" and item.get("status") == "success"}
+        if len(targets) == 2 and set(results) == targets:
+            rows = []
+            for doc_id, value in results.items():
+                if not isinstance(value, dict) or value.get("doc_id") != doc_id or not value.get("title") or not value.get("source_file"):
+                    return None
+                evidence = value.get("evidence", {}).get("title", [])
+                locations = list(dict.fromkeys(row["location"] for row in evidence
+                    if row.get("location") and row.get("source_file") == value["source_file"]))
+                if not locations:
+                    return None
+                rows.append(f"标题：{value['title']}\n\n来源：{value['source_file']}；{'、'.join(locations)}；论文ID {doc_id}")
+            return {"type": "observation", "observation": "两篇论文的标题与原文来源已齐全，保留实际工具结果。",
+                    "decision": "finish", "task_complete": True, "answer": "\n\n".join(rows), "model": None,
+                    "usage": {"prompt_eval_count": 0, "eval_count": 0}, "elapsed_seconds": 0.0}
     if len(items) != 1 or items[0].get("status") != "success":
         return None
     item = items[0]

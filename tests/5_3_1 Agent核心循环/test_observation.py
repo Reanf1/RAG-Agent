@@ -108,6 +108,49 @@ class TestObservationAndLoop(unittest.TestCase):
         self.assertFalse(result["task_complete"])
         self.assertIn("尚未全部完成", result["answer"])
 
+    def test_two_verified_titles_and_sources_finish_without_repeat_generation(self):
+        """Windows实测：两篇标题与来源齐全后不再生成continue并重复调用。"""
+        from src.agent.tools import paper_metadata
+        a, b = "a" * 64, "b" * 64
+        question = f"分别读取论文ID {a} 和 {b} 的元信息，分别给出标题与来源。"
+        observations = [{"name": "paper_metadata", "args": {"doc_id": doc_id}, "status": "success",
+            "result": {"doc_id": doc_id, "title": title, "source_file": file, "doi": None,
+                       "evidence": {"title": [{"text": title, "source_file": file, "location": "第1页（物理页码）"}]}}}
+            for doc_id, title, file in ((a, "论文甲", "甲.pdf"), (b, "论文乙", "乙.pdf"))]
+        with patch("src.agent.react_loop.urlopen", return_value=self.http_responses([self.packet(self.pending)])[0]) as http:
+            result = observe(question, [paper_metadata], {"observations": observations})
+        http.assert_not_called()
+        self.assertTrue(result["task_complete"])
+        self.assertEqual(result["decision"], "finish")
+        for title, file, doc_id in (("论文甲", "甲.pdf", a), ("论文乙", "乙.pdf", b)):
+            self.assertIn(title, result["answer"])
+            self.assertIn(file, result["answer"])
+            self.assertIn(doc_id, result["answer"])
+        self.assertIn("第1页（物理页码）", result["answer"])
+
+    def test_metadata_fast_finish_requires_both_sources_and_no_followup_analysis(self):
+        """缺少来源证据、目标错配或另需分析时，保留模型观察流程。"""
+        from src.agent.tools import paper_metadata
+        a, b = "a" * 64, "b" * 64
+        question = f"分别读取论文ID {a} 和 {b} 的元信息，分别给出标题与来源。"
+        observations = [{"name": "paper_metadata", "args": {"doc_id": doc_id}, "status": "success",
+            "result": {"doc_id": doc_id, "title": "标题", "source_file": "论文.pdf",
+                       "evidence": {"title": [{"source_file": "论文.pdf", "location": "第1页"}]}}}
+            for doc_id in (a, b)]
+        variants = [(question + "然后比较研究方法。", observations),
+                    (question + "并解释各自研究贡献。", observations),
+                    (question + "并给出作者。", observations)]
+        for key, value in (("evidence", {}), ("doc_id", a)):
+            changed = deepcopy(observations)
+            changed[1]["result"][key] = value
+            variants.append((question, changed))
+        for text, items in variants:
+            with self.subTest(question=text, result=items[1]["result"]):
+                with patch("src.agent.react_loop.urlopen", return_value=self.http_responses([self.packet(self.pending)])[0]) as http:
+                    result = observe(text, [paper_metadata], {"observations": items})
+                self.assertEqual(http.call_count, 1)
+                self.assertFalse(result["task_complete"])
+
     def test_two_real_tools_feed_next_round_and_native_observation_messages(self):
         context = {"source": "原始资料", "observations": []}
         original = deepcopy(context)
