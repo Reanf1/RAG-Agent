@@ -114,7 +114,9 @@ def main():
             and any(event["name"] == "knowledge_base_search" and event.get("result", {}).get("citations") for event in results)))
         check("文档关键词", lambda: ask("keyword", "提取澄禾实验.txt的关键词", lambda end, results:
             end["task_complete"] and any(event["name"] == "keyword_extract" and event["status"] == "success"
-                and event["result"].get("doc_id") and event["result"].get("keywords") for event in results)))
+                and event["result"].get("doc_id") and event["result"].get("keywords")
+                and all(term in end["full_response"] for term in event["result"]["keywords"]) for event in results)
+            and all(event["name"] in {"paper_list", "keyword_extract"} for event in results)))
         check("两文档三维对比_两组数字", lambda: ask("compare", "比较澄禾实验.txt和雨田实验.txt两篇论文的方法、数据集、实验结果。",
             lambda end, results: end["task_complete"] and all(value in end["full_response"] for value in ("LeafGate", "DenseCrop", "91.6", "88.4"))))
         check("真实计算器", lambda: ask("calculator", "计算23乘以17", lambda end, results: end["task_complete"] and "391" in end["full_response"]))

@@ -171,14 +171,14 @@ class TestRoutingAndParallel(unittest.TestCase):
         self.assertEqual(events[1]["name"], "current_time")
         self.assertTrue(events[-1]["task_complete"])
 
-    def test_rule_only_applies_to_first_round(self):
-        pending = {**self.finished, "decision": "continue", "task_complete": False, "answer": ""}
+    def test_completed_single_task_answers_without_replanning(self):
         response = {**self.response, "message": {"tool_calls": [{"function": {"name": "current_time", "arguments": {}}}]}}
         with patch("src.agent.react_loop.think", return_value={"thought": "已有时间，可回答。", "next_step": "answer", "tool_name": None}) as think_mock, \
                 patch("src.agent.react_loop.urlopen", side_effect=[BytesIO(json.dumps(x).encode()) for x in
-                    (response, self.packet(pending), self.packet(self.finished))]):
+                    (response, self.packet(self.finished))]):
             events = list(run_react("返回当前时间", [current_time]))
-        self.assertEqual(think_mock.call_count, 1)
+        self.assertEqual(think_mock.call_count, 0)
+        self.assertTrue(events[-1]["task_complete"])
         self.assertEqual(len(events[-1]["context"]["observations"]), 1)
 
     def test_thought_binds_registered_tools_once_with_parallel_limit(self):
@@ -329,9 +329,9 @@ class TestRoutingAndParallel(unittest.TestCase):
         self.assertEqual([item["result"] for item in events[-1]["context"]["observations"]], [6, 10])
         self.assertTrue(events[-1]["task_complete"])
         native = json.loads(http.call_args_list[-1].args[0].data)["messages"]
-        self.assertEqual([m["role"] for m in native], ["system", "user", "assistant", "tool", "tool"])
+        self.assertEqual([m["role"] for m in native], ["system", "user", "assistant", "tool", "tool", "user"])
         self.assertEqual(len(native[2]["tool_calls"]), 2)
-        self.assertEqual([m["content"] for m in native[-2:]], ["6", "10"])
+        self.assertEqual([m["content"] for m in native if m["role"] == "tool"], ["6", "10"])
 
     def test_answer_plan_finishes_or_reports_insufficient_information_without_empty_loop(self):
         plan = {"thought": "已有结果可给出答复。", "next_step": "answer", "tool_name": None}

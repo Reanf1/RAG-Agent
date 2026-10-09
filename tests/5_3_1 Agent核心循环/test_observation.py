@@ -169,7 +169,7 @@ class TestObservationAndLoop(unittest.TestCase):
         self.assertEqual(done["context"]["source"], "原始资料")
         self.assertEqual(context, original)
         native = json.loads(http.call_args_list[1].args[0].data)["messages"]
-        self.assertEqual([m["role"] for m in native], ["system", "user", "assistant", "tool"])
+        self.assertEqual([m["role"] for m in native], ["system", "user", "assistant", "tool", "user"])
         self.assertEqual(native[2]["tool_calls"][0]["function"], {"name": "multiply", "arguments": {"a": 3, "b": 4}})
         self.assertEqual(native[3]["tool_name"], "multiply")
         self.assertEqual(native[3]["content"], "12.0")

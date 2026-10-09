@@ -699,7 +699,15 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
         {**schema, "properties": {**schema["properties"], "decision": {"const": "finish"}, "answer": {"type": "string", "minLength": 1}}},
         {**schema, "properties": {**schema["properties"], "decision": {"const": "continue"}, "answer": {"type": "string", "maxLength": 0}, "task_complete": {"const": False}}},
     ]
-    answering = thought is not None and thought.get("next_step") == "answer"
+    original_plan = route_question(question, tools or [])
+    # 明确单一任务的调用已经返回后，进入回答阶段；仍由模型如实说明缺项，不能继续重复调用。
+    single_result = content_items[0] if len(content_items) == 1 else None
+    answered_call = bool(original_plan and not original_plan.get("parallel_tools") and single_result
+                         and single_result.get("name") == original_plan.get("tool_name")
+                         and single_result.get("status") == "success" and not body_pending
+                         and (single_result.get("name") != "knowledge_base_search"
+                              or single_result.get("args", {}).get("question") == question))
+    answering = answered_call or thought is not None and thought.get("next_step") == "answer"
     if answering:
         # 规划已进入回答阶段；仍允许task_complete=false说明资料不足，不能无工具空转。
         schema.pop("anyOf")
@@ -707,6 +715,10 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
         schema["properties"]["answer"] = {"type": "string", "minLength": 1}
         if recovery.get("pending"):
             schema["properties"]["task_complete"] = {"const": False}
+    # 工具消息之后重申当前任务，避免模型沿用历史中已结束的问题；不重复塞入历史或工具正文。
+    prompt.append(HumanMessage(content="本轮用户问题：" + question + (
+        "\n请根据已返回的结果直接给出答案；若所需资料不足，请说明缺项并标记未完成。" if answering
+        else "\n请只核对本轮问题是否完成；历史问答仅用于理解追问，不是待办任务。")))
     request = _model_request(prompt, format=schema, stream=stream)
     started = perf_counter()
     result = None
@@ -766,7 +778,6 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
             raise ValueError("最后一次工具调用失败，不能将原任务标记为成功")
         if any(isinstance(item.get("result"), dict) and item["result"].get("status") in {"needs_confirmation", "incomplete", "insufficient_evidence"} for item in latest) and decision["task_complete"]:
             raise ValueError("工具资料不足或候选尚待用户确认，不能将原任务标记为成功")
-        original_plan = route_question(question, tools or [])
         if original_plan and original_plan.get("parallel_tools") and decision["task_complete"]:
             expected = Counter(original_plan["parallel_tools"])
             completed = [item for item in observations if item.get("status") == "success"

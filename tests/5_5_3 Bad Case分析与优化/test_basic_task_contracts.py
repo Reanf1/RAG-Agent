@@ -66,6 +66,24 @@ class TestBasicTaskContracts(unittest.TestCase):
         self.assertEqual(events[-1]["status"], "success")
         self.assertEqual(seen, [(None, DOC_ID)])
 
+    def test_completed_single_tool_enters_answer_stage_with_current_question(self):
+        # 工具已返回所需结果时只能收尾；历史任务不能让同一请求继续规划。
+        for question, name, result in [
+            ("提取澄禾实验.txt的关键词", "keyword_extract", {"keywords": ["LeafGate"], "doc_id": DOC_ID}),
+            ("查询澄禾实验.txt的论文元信息，只需标题、作者和年份。", "paper_metadata",
+             {"title": "澄禾实验", "authors": ["李禾"], "year": 2025, "doc_id": DOC_ID}),
+        ]:
+            with self.subTest(name=name):
+                context = {"history": [{"role": "human", "content": "比较两篇论文的数据集和准确率。"}],
+                    "observations": [{"name": name, "status": "success", "args": {"doc_id": DOC_ID}, "result": result}]}
+                answer = {"observation": "所需信息已齐全。", "decision": "finish", "task_complete": True, "answer": "有依据的结果"}
+                with patch.object(react_loop, "urlopen", return_value=BytesIO(json.dumps(packet(json.dumps(answer))).encode())) as http:
+                    react_loop.observe(question, tools.AVAILABLE_TOOLS, context)
+                request = json.loads(http.call_args.args[0].data)
+                self.assertEqual(request["format"]["properties"]["decision"], {"const": "finish"})
+                self.assertIn(question, request["messages"][-1]["content"])
+                self.assertNotIn("history", request["messages"][-1]["content"])
+
     def test_keywords_keep_verified_terms_when_model_adds_a_synonym(self):
         # 模型偶尔扩展一个词，不应丢弃其余已能定位的原文关键词。
         source = "通过图像分类识别水稻叶片病害。方法：LeafGate分类器。"
