@@ -239,7 +239,7 @@ def _finish_generation(result: dict, context: dict, sampling: dict) -> dict:
         resolved["warnings"].append("回答声称引用的原句无法在所引片段定位，已暂停展示结论；请核对原文后重试。")
         resolved["answer"] = "当前回答的原文引句未通过定位校验，无法据此确认科研结论。请查看引用原文或补充相关片段。"
     resolved["evidence_quote_errors"] = quote_errors
-    # 只核对带引用的“万／亿”数量换算；不能据此认定对象、条件或全部语义正确。
+    # 只核对带引用的“万／亿”数量与所引片段；不能据此认定对象、条件或全部语义正确。
     # Decimal 按十进制比较，避免 303M 与 3.03 亿出现浮点误差。
     units = {"M": 1000000, "million": 1000000, "B": 1000000000,
              "billion": 1000000000, "万": 10000, "亿": 100000000}
@@ -257,7 +257,7 @@ def _finish_generation(result: dict, context: dict, sampling: dict) -> dict:
                 number_errors.extend(value for value in ids if value not in number_errors)
     if number_errors:
         resolved["warnings"].append("回答中的万／亿数量与所引原文不一致，已暂停展示结论；请核对原文数值与单位。")
-        resolved["answer"] = "当前回答的数量换算未通过原文核对，无法据此确认科研结论。请查看引用原文中的数值与单位。"
+        resolved["answer"] = "当前回答的数量与所引片段未通过一致性核对，无法据此确认科研结论。请检查数值、单位和引用来源。"
         # 有已定位的引句时仍展示原文供核对，不改写模型的错误数量或冒充任务完成。
         excerpts = [text for text, ids in verified_quotes if set(ids) & set(number_errors)]
         if excerpts:

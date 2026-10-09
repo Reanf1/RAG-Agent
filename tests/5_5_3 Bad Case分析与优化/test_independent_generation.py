@@ -94,6 +94,25 @@ class GenerationAudit(unittest.TestCase):
         result = _finish_generation({**self.done, "message": {"content": raw}}, self.context, {})
         self.assertEqual(result["evidence_number_errors"], [1])
 
+    def test_correct_conversion_with_wrong_citation_is_still_rejected(self):
+        """复现Windows数量正确却引用错页；提示不能将错引一概称为算错。"""
+        self.context["references"][0]["text"] = "Larger datasets contain 14M-300M images."
+        self.context["references"].append({**self.context["references"][0], "id": 2,
+                                            "text": "JFT has 303M high-resolution images."})
+        for citation, errors in ((1, [1]), (2, [])):
+            with self.subTest(citation=citation):
+                raw = f"JFT包含30300万张图像。[参考文档{citation}]"
+                result = _finish_generation({**self.done, "message": {"content": raw}}, self.context, {})
+                self.assertEqual(result["evidence_number_errors"], errors)
+                self.assertEqual(result["raw_answer"], raw)
+                if errors:
+                    self.assertIn("数量与所引片段", result["answer"])
+                    self.assertNotIn("数量换算", result["answer"])
+                    self.assertNotIn("30300万", result["answer"])
+                    self.assertFalse(SemanticCache().put("JFT数量", {"type": "done", **result}, "范围"))
+                else:
+                    self.assertIn("30300万", result["answer"])
+
     def test_failed_conversion_preserves_only_verified_source_quote(self):
         self.context["references"][0]["text"] = "JFT has 303M images."
         raw = '原文依据："JFT has 303M images."。[参考文档1]\nJFT有30.3亿图像。[参考文档1]'
