@@ -116,6 +116,7 @@ with st.sidebar:
         st.session_state.health_result = check_health()
         st.session_state.runtime_checks = {}
     health = st.session_state.health_result
+    runtime_captions = {}
     for name, key, selected in (("LLM服务", "llm", config["llm"]["model"]),
                                 ("向量数据库", "vector_database", "Chroma")):
         component = health[key]
@@ -129,7 +130,8 @@ with st.sidebar:
                 st.error(text)
         action = "推理" if key == "llm" else "向量检索"
         tested_at = st.session_state.runtime_checks.get(key)
-        st.caption(f"最近实际{action}成功：{tested_at}" if tested_at else f"本页尚无实际{action}记录。")
+        runtime_captions[key] = st.empty()
+        runtime_captions[key].caption(f"最近实际{action}成功：{tested_at}" if tested_at else f"本页尚无实际{action}记录。")
     st.caption("连接检查与最近业务记录分别展示；成功执行不代表答案质量已通过审核。")
     if st.button("刷新状态", key="check_health"):
         st.session_state.health_result = check_health()
@@ -541,6 +543,9 @@ with retrieval_tab:
                         results = retriever.search(query, k=top_k, doc_id=selected_id)
                     if method != "BM25 关键词":
                         st.session_state.runtime_checks["vector_database"] = request_time()
+                        # 侧栏先于检索表单绘制，原位更新才能在本次提交立即显示成功时间。
+                        runtime_captions["vector_database"].caption(
+                            f"最近实际向量检索成功：{st.session_state.runtime_checks['vector_database']}")
             except Exception as error:
                 st.error(f"检索失败：{type(error).__name__}: {error}。请根据错误信息检查配置后重新检索。")
             else:
