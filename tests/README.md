@@ -1,79 +1,25 @@
-# 自动化测试
+# 测试说明
 
-当前853个用例、18个小节、55个测试文件。业务补丁2c0353c、部署c3b0fda；本地59.191秒／Windows315.808秒，失败／错误／跳过／预期失败／意外成功均0。[本地逐项结果](../reports/5_5_3%20Bad%20Case分析与优化/最终质量收尾_20261009/本地集中补丁回归.json)与[Windows逐项结果](../reports/5_5_3%20Bad%20Case分析与优化/最终质量收尾_20261009/Windows补丁复测/regression.json)分别归档。新增4项正文恢复／问题关键词完成保护、2项共享分词与异常释放验证。历史847项和前批843／829项及真实页面核验保持原日期，自动通过不代表科研答案质量通过。
-
-本科精简首轮818项和Windows10月8日815项保留原证据；[历史测试说明](../reports/5_5_4%20项目交付/本科精简_20261009/测试历史说明_20261006-08.md)保留旧成绩、失败与修复过程。最新真实模型样例、预算、缓存及容器结论见集中部署记录，不混入120条正式质量初评。
-
-测试按“5_1_1 中文小节名”组织，目录含空格时命令路径加引号。
-
-## 小节与入口
-
-| 小节 | 用例数 | 测试文件 |
-| --- | ---: | --- |
-| 5_1_1 文档加载与批量导入 | 41 | [test_pdf_loader.py](5_1_1%20文档加载与批量导入/test_pdf_loader.py)、[test_docx_loader.py](5_1_1%20文档加载与批量导入/test_docx_loader.py)、[test_text_loader.py](5_1_1%20文档加载与批量导入/test_text_loader.py)、[test_batch_import.py](5_1_1%20文档加载与批量导入/test_batch_import.py) |
-| 5_1_2 文本分块策略 | 45 | [test_chunking.py](5_1_2%20文本分块策略/test_chunking.py)、[test_academic_pdf.py](5_1_2%20文本分块策略/test_academic_pdf.py) |
-| 5_1_3 向量化与存储 | 52 | [test_vector_store.py](5_1_3%20向量化与存储/test_vector_store.py)、[test_embeddings.py](5_1_3%20向量化与存储/test_embeddings.py)、[test_batch_index.py](5_1_3%20向量化与存储/test_batch_index.py)、[test_chroma_path.py](5_1_3%20向量化与存储/test_chroma_path.py)、[test_index_repair.py](5_1_3%20向量化与存储/test_index_repair.py) |
-| 5_1_4 混合检索与重排序 | 55 | [test_bm25.py](5_1_4%20混合检索与重排序/test_bm25.py)、[test_hybrid_retriever.py](5_1_4%20混合检索与重排序/test_hybrid_retriever.py)、[test_reranker.py](5_1_4%20混合检索与重排序/test_reranker.py)、[test_retrieval_evaluation.py](5_1_4%20混合检索与重排序/test_retrieval_evaluation.py)、[test_long_reranker.py](5_1_4%20混合检索与重排序/test_long_reranker.py) |
-| 5_2_1 Prompt工程与生成策略 | 69 | [test_prompt.py](5_2_1%20Prompt工程与生成策略/test_prompt.py)、[test_context.py](5_2_1%20Prompt工程与生成策略/test_context.py)、[test_citations.py](5_2_1%20Prompt工程与生成策略/test_citations.py)、[test_generation.py](5_2_1%20Prompt工程与生成策略/test_generation.py) |
-| 5_2_2 流式输出与引用 | 17 | [test_streaming.py](5_2_2%20流式输出与引用/test_streaming.py) |
-| 5_2_3 缓存与降级策略 | 33 | [test_degradation.py](5_2_3%20缓存与降级策略/test_degradation.py)、[test_cache.py](5_2_3%20缓存与降级策略/test_cache.py)、[test_agent_cache.py](5_2_3%20缓存与降级策略/test_agent_cache.py) |
-| 5_2_4 日志与可观测性 | 9 | [test_rag_logging.py](5_2_4%20日志与可观测性/test_rag_logging.py) |
-| 5_3_1 Agent核心循环 | 75 | [test_thought.py](5_3_1%20Agent核心循环/test_thought.py)、[test_action.py](5_3_1%20Agent核心循环/test_action.py)、[test_observation.py](5_3_1%20Agent核心循环/test_observation.py)、[test_system_prompt.py](5_3_1%20Agent核心循环/test_system_prompt.py) |
-| 5_3_2 工具集开发 | 109 | [test_research_tools.py](5_3_2%20工具集开发/test_research_tools.py)、[test_comparison_keywords.py](5_3_2%20工具集开发/test_comparison_keywords.py)、[test_summary_time_search.py](5_3_2%20工具集开发/test_summary_time_search.py)、[test_calculator_paper_list.py](5_3_2%20工具集开发/test_calculator_paper_list.py) |
-| 5_3_3 Agent决策优化 | 52 | [test_routing_parallel.py](5_3_3%20Agent决策优化/test_routing_parallel.py)、[test_error_recovery.py](5_3_3%20Agent决策优化/test_error_recovery.py) |
-| 5_3_4 多轮对话记忆管理 | 56 | [test_session_isolation.py](5_3_4%20多轮对话记忆管理/test_session_isolation.py)、[test_history_window.py](5_3_4%20多轮对话记忆管理/test_history_window.py)、[test_conversation_summary.py](5_3_4%20多轮对话记忆管理/test_conversation_summary.py) |
-| 5_4_1 RAG与Agent深度融合 | 33 | [test_source_routing.py](5_4_1%20RAG与Agent深度融合/test_source_routing.py)、[test_memory_context.py](5_4_1%20RAG与Agent深度融合/test_memory_context.py) |
-| 5_4_2 可观测性与健康检查 | 62 | [test_health_check.py](5_4_2%20可观测性与健康检查/test_health_check.py)、[test_agent_metrics.py](5_4_2%20可观测性与健康检查/test_agent_metrics.py) |
-| 5_4_3 前端与会话管理 | 43 | [test_document_management.py](5_4_3%20前端与会话管理/test_document_management.py)、[test_chat_streaming.py](5_4_3%20前端与会话管理/test_chat_streaming.py)、[test_conversation_history.py](5_4_3%20前端与会话管理/test_conversation_history.py)、[test_agent_streaming.py](5_4_3%20前端与会话管理/test_agent_streaming.py)、[test_citation_page.py](5_4_3%20前端与会话管理/test_citation_page.py) |
-| 5_4_4 端到端联调与测试 | 36 | [test_document_flow.py](5_4_4%20端到端联调与测试/test_document_flow.py) |
-| 5_5_2 系统性能评估 | 10 | [test_system_evaluation.py](5_5_2%20系统性能评估/test_system_evaluation.py) |
-| 5_5_3 Bad Case分析与优化 | 56 | [test_bad_case_regression.py](5_5_3%20Bad%20Case分析与优化/test_bad_case_regression.py)、[Agent](5_5_3%20Bad%20Case分析与优化/test_independent_agent.py)、[缓存](5_5_3%20Bad%20Case分析与优化/test_independent_cache.py)、[生成](5_5_3%20Bad%20Case分析与优化/test_independent_generation.py)、[检索](5_5_3%20Bad%20Case分析与优化/test_independent_retrieval.py)、[用量](5_5_3%20Bad%20Case分析与优化/test_independent_usage.py) |
-
-## 运行方式
-
-在项目根目录执行全部测试：
+按课程5.1.1–5.4.4小节组织测试，共享样例见[helpers.py](helpers.py)。在项目根目录执行，结果输出使用新路径。
 
 ```bash
+# macOS / Linux全量回归
 .venv/bin/python -m unittest discover -s tests -p 'test_*.py' -v
+# 单模块示例
+.venv/bin/python 'tests/5_3_1 Agent核心循环/test_action.py' -v
 ```
-
-只运行一个课程小节（此例 41 项）：
-
-```bash
-.venv/bin/python -m unittest discover -s 'tests/5_1_1 文档加载与批量导入' -p 'test_*.py' -v
-```
-
-直接运行一个文件，或指定该文件中的测试类：
-
-```bash
-.venv/bin/python 'tests/5_1_1 文档加载与批量导入/test_pdf_loader.py' -v
-.venv/bin/python 'tests/5_3_1 Agent核心循环/test_action.py' TestAction -v
-```
-
-从 `src/`、`/private/tmp` 等项目外目录执行时使用绝对路径。每个测试文件按自身位置加入项目根目录，避免 `ModuleNotFoundError: No module named 'src'`：
-
-```bash
-/Users/rean/github/RAG+Agent/.venv/bin/python '/Users/rean/github/RAG+Agent/tests/5_1_1 文档加载与批量导入/test_pdf_loader.py' -v
-```
-
-模块四专项或带 JSON 记录的全量回归继续使用已有入口，输出路径须不存在：
-
-```bash
-.venv/bin/python reports/模块完整性验证/verify_completeness_tests.py --scope module4 --output reports/模块完整性验证/模块四专项_新时间.json
-.venv/bin/python reports/模块完整性验证/verify_completeness_tests.py --scope all --output reports/模块完整性验证/全量回归_新时间.json
-```
-
-Windows使用已有JSON运行器；它把相对路径样例放到TEMP盘，并在临时目录清理前停止属于该目录的Chroma实例，随后正常删除。不同盘符和打开的持久句柄不会通过忽略错误掩盖：
 
 ```powershell
-.\.venv\Scripts\python.exe reports\模块完整性验证\verify_completeness_tests.py --scope all --output "$env:TEMP\rag-regression-新时间.json"
+# Windows：JSON运行器处理跨盘临时目录与Chroma句柄清理。
+.\.venv\Scripts\python.exe reports\模块完整性验证\verify_completeness_tests.py --scope all --output "$env:TEMP\rag-regression-new.json"
 ```
 
-## 样例与验证边界
+macOS也可使用同一JSON运行器；`--scope module4`用于模块四专项，数量不与全量相加。项目外执行须使用测试文件及虚拟环境的绝对路径。
 
-- PDF／Word／文本样例由测试临时生成，加载／分块实际执行；Chroma、SQLite、线程和Streamlit AppTest使用真实临时资源。
-- [helpers.py](helpers.py)复用明确二维模拟向量、NDJSON和日志隔离。HTTP模型为mock，模拟向量不代表M3E效果，自动回归不测真实模型质量或性能；前一批829项在Mac与Windows均通过；本轮最新数量和对应版本见本文开头，真实Ollama与容器验证另有独立记录。
-- 需项目依赖及本地Qwen词表；Agent测试前后隔离日志，测试不写默认用户知识库／会话。
-- 上传／索引／删除恢复AppTest归5.4.4，组件／聊天／会话UI归5.4.3，会话并发归5.3.4。专项入口按实际职责选用例，数量不能与全量相加。
+## 结果与边界
 
-旧test_retrieval.py／test_generation.py／test_agent.py已经拆分，不再作入口。历史迁移与633／654／668阶段日志保留在[报告目录](../reports/README.md)，无需在此重复累计。真实模型、浏览器与质量缺陷见[完整性说明](../docs/QA/完整性验证.md)，修复前后与提交见[Mac修复记录](../reports/5_5_4%20项目交付/Mac可修复问题记录_20261004.md)。
+2026-10-09业务补丁2c0353c：macOS与Windows各853项通过，无失败/跳过；分别59.191秒、315.808秒。记录：[本地回归](../reports/5_5_3%20Bad%20Case%E5%88%86%E6%9E%90%E4%B8%8E%E4%BC%98%E5%8C%96/%E6%9C%80%E7%BB%88%E8%B4%A8%E9%87%8F%E6%94%B6%E5%B0%BE_20261009/%E6%9C%AC%E5%9C%B0%E5%85%A8%E9%87%8F%E5%9B%9E%E5%BD%92_%E4%BF%AE%E5%A4%8D%E5%90%8E.json)、[Windows回归](../reports/5_5_3%20Bad%20Case%E5%88%86%E6%9E%90%E4%B8%8E%E4%BC%98%E5%8C%96/%E6%9C%80%E7%BB%88%E8%B4%A8%E9%87%8F%E6%94%B6%E5%B0%BE_20261009/Windows%E8%A1%A5%E4%B8%81%E5%A4%8D%E6%B5%8B/regression.json)。
+
+加载/分块、Chroma、SQLite、线程与Streamlit AppTest使用真实临时资源；模型HTTP与部分向量使用mock，不能说明真实M3E/BGE/Ollama质量或性能。需项目依赖和本地Qwen计数词表；测试隔离日志和用户数据库。
+
+真实模型、浏览器、并发和容器另见[课程实验记录](../reports/%E8%AF%BE%E7%A8%8B%E5%AE%9E%E9%AA%8C%E8%AE%B0%E5%BD%95.md)。最新56次真实并发0异常用于验证线程/分词器修复，不是吞吐量实验；8条定向问答仍有缺引用/语义失败，见[Bad Case报告](../reports/Bad_Case%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A.md)。
