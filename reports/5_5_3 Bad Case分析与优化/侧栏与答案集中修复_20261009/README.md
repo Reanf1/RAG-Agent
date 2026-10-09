@@ -17,7 +17,7 @@
 
 Windows上一批840项287.487秒、双论文修复后842项287.454秒均通过，分别保存为`windows-final.json`与`windows-tools-final.json`。侧栏即时更新版本842项296.151秒通过，另存为`windows-sidebar-final.json`；数量错引提示的最终版本843项293.372秒也全部通过，见[Windows最终结果](windows-consistency-final.json)，失败、错误、跳过、预期失败、意外成功均0。`metadata-repeat-before.log`复现额外模型调用，修复后26项观察专项通过；`sidebar-search-before.log`复现同次提交未显示检索时间，随后全量通过。
 
-本地与Windows逐项用例名称完全一致；最终源码为54a5705，Windows应用已重启为PID19408，8501实际监听见[进程记录](consistency-process.json)。
+本地与Windows逐项用例名称完全一致；最终源码为54a5705，回归阶段Windows应用曾重启为PID19408，8501实际监听见[进程记录](consistency-process.json)。文档提交1b60dac同步后的最终核对见下文。
 
 ## Windows原生与网页复测
 
@@ -35,6 +35,12 @@ Windows上一批840项287.487秒、双论文修复后842项287.454秒均通过�
 本轮原生样例与自动回归曾同时运行；耗时仅报告实际观测，不作无负载性能提升对照。[原生样例助手复核](原生样例助手复核.json)为局部初评，用户尚未审核。[7项网页行为核对](browser-checks.json)与[展开侧栏截图](sidebar-visible-final.png)保存当前页面结果。重新载入后又执行396计算及向量查询，证明两项时间独立更新。上述模型响应原样保存；数量错引后的提示文案修复由源码回归验证，不替换旧JSON内的真实旧提示。13条冻结输入生成与这些原生样例分开统计。
 
 [最终原数据保护核验](preserve-final.json)：原有71会话、212消息、1摘要和5条RAG记录全部保留；6文档、276块、原文文件哈希及索引内容摘要未变。SQLite完整备份只留在Windows本机，不导出用户历史正文。
+
+## 最终同步与运行恢复
+
+文档提交1b60dac已同步Windows。[当前提交指纹复核](deployed-docs-verified.json)的119个文件全部对应本地。旧54a5705清单仅因本轮更新tests/README.md产生一项文档指纹差异，运行源码未变；按当前提交重新核对，而非忽略差异。
+
+结束部署检查发现8501无监听，既有启动任务返回0xC000013A。该状态只能确认任务被中断，现有证据不足以认定应用崩溃或推断中断来源。保留此前启动日志，使用独立日志名称恢复原启动任务；[最终运行状态](docs-final-state.json)记录PID34992、健康检查ok和119项指纹通过。浏览器重新加载后正确恢复原会话答案与9410累计Token，本页实际执行记录从空开始。随后真实计算返回558、6031 Token／8.478秒，只有推理时间更新；再次向量查询返回Markdown标记、行1–6及0.8210分数，检索时间立即独立更新。保存[计算页面](browser-restored-calculator.txt)、[检索页面](browser-restored-vector.txt)与[恢复后的侧栏截图](sidebar-restored-final.png)。
 
 ## 13条答案局部复评
 

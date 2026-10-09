@@ -1,0 +1,113 @@
+Browser tab: 3, Title: "智能科研助理", URL: "http://192.168.31.23:8501/?visitor=3438619ab88048bf9f76a957d5c9c34c&conversation=ba7cd1081c784323b9817bca68fa4590".
+1 AXWebArea 智能科研助理, URL: 192.168.31.23:8501/?visitor=3438619ab88048bf9f76a957d5c9c34c&conversation=ba7cd1081c784323b9817bca68fa4590
+	2 container
+		3 container
+			4 container
+				5 heading 系统状态, Value: 2
+					6 text 系统状态
+				13 container
+					14 text 系统时间：2026-10-09 10:49 :43
+				15 container
+					16 text LLM服务：可连接，模型已安装（qwen2.5 :7b ）
+				80 container
+					81 text 最近实际推理成功：2026-10-09T10:49 :22 .853129+08 :00
+				18 text 向量数据库：索引可读取（Chroma）
+				101 container
+					102 text 最近实际向量检索成功：2026-10-09T10:49 :49 .420845+08 :00
+				20 text 连接检查与最近业务记录分别展示；成功执行不代表答案质量已通过审核。
+				21 button 刷新状态
+					22 text 刷新状态
+				23 heading 文档上传与管理, Value: 2
+					24 text 文档上传与管理
+				25 container 上传文档
+					26 button file upload
+					27 button upload Upload
+						28 text upload
+						29 text Upload
+					30 text 20MB per file
+					31 text  • PDF, DOCX, TXT, MD, MARKDOWN
+				32 text 支持 PDF、Word、TXT/Markdown，单份最大 20 MB。
+				33 button (disabled) 开始导入
+					34 text 开始导入
+				35 button (disabled) 重试失败项
+					36 text 重试失败项
+				37 heading 对话历史管理, Value: 2
+					38 text 对话历史管理
+				39 button 新建会话
+					40 text 新建会话
+				41 text 最近
+				42 button 知识库中文档ID 6455abc0e87729a
+					43 text 知识库中文档ID 6455abc0e87729a
+				44 button 删除当前会话
+					45 text 删除当前会话
+			7 pop up button (collapsed) Description: Main menu, Secondary Actions: Expand
+			8 container
+				9 heading 智能科研助理, Value: 1, ID: 2d7dc4e4
+					10 text 智能科研助理
+					11 link Description: Link to heading, Value: 192.168.31.23:8501/?visitor=3438619ab88048bf9f76a957d5c9c34c&conversation=ba7cd1081c784323b9817bca68fa4590#2d7dc4e4
+				12 text 基于 RAG + Agent 的论文知识库问答系统
+				46 tab group react-aria3916166895-:r6:
+					47 tab (selectable, settable, boolean) 科研对话, ID: react-aria3916166895-:r6:-tab-0, Value: 0
+科研对话
+					48 tab (selected, settable, boolean) 文档检索, ID: react-aria3916166895-:r6:-tab-1, Value: 1
+文档检索
+					49 tab (selectable, settable, boolean) 知识库, ID: react-aria3916166895-:r6:-tab-2, Value: 0
+知识库
+				83 container Description: 文档检索, ID: react-aria3916166895-:r6:-tabpanel-1
+					84 heading 文档 Top-K 检索, Value: 3, ID: top-k
+						85 text 文档 Top-K 检索
+						86 link Description: Link to heading, Value: 192.168.31.23:8501/?visitor=3438619ab88048bf9f76a957d5c9c34c&conversation=ba7cd1081c784323b9817bca68fa4590#top-k
+					87 container
+						88 combo box (collapsed, settable) Description: 检索方式, Value: 向量相似度, ID: react-aria3916166895-:r2q:, Secondary Actions: Expand
+						89 pop up button (collapsed) Description: Open, ID: react-aria3916166895-:r2m:, Secondary Actions: Expand
+					90 container
+						91 stepper (settable, integer) Description: Top-k, Value: 5, ID: :r33:
+						92 button Decrement
+						93 button Increment
+					94 container
+						95 button Help for 文档ID
+						96 text field (settable) Description: 文档ID, Value: 6455abc0, ID: :r39:
+					97 container
+						98 text field (settable) Description: 查询内容, Value: Markdown标记, ID: :r3h:
+					99 button 检索
+						100 text 检索
+					103 text 返回 1 个文档块（Top-K=5）。
+					104 container
+						105 button (expanded) keyboard_arrow_down 1. Windows复测_说明.md · 余弦相似度 0.8210, Secondary Actions: Collapse
+							106 text keyboard_arrow_down
+							107 text 1. Windows复测_说明.md · 余弦相似度 0.8210
+						108 text 来源：Windows复测_说明.md；行范围：1–6
+						109 text 文档 ID：6455abc0；块 ID：103c8673
+						110 text # 科研助理Markdown复测
+
+Markdown标记是WINMD20261005。
+
+- 引用必须对应本地文件和行号。
+- 对比两篇论文时保留方法、数据集、实验结果。
+					111 heading 检索分数分布, Value: 3, ID: cf661d5
+						112 text 检索分数分布
+						113 link Description: Link to heading, Value: 192.168.31.23:8501/?visitor=3438619ab88048bf9f76a957d5c9c34c&conversation=ba7cd1081c784323b9817bca68fa4590#cf661d5
+					114 text 请求 43 · 缓存命中 2 · 空结果 3 · 检索失败 5
+					115 text BAAI/bge-reranker-base · 版本 2cfc18c9 · 样本 32 · 均值 0.5872 · 范围 0.0000–0.9994
+					116 container
+						117 button Show data
+						118 button Download as PNG
+						119 button Fullscreen
+						120 container Vega visualization
+							121 image
+								122 container X-axis titled 'Top-1 分数区间' for a discrete scale with 10 values: 0.0–0.1, 0.1–0.2, 0.2–0.3, 0.3–0.4, 0.4–0.5, ending with 0.9–1.0 Y-axis titled '实际检索次数' for a linear scale with values from 0 to 12 Top-1 分数区间: 0.0–0.1; 实际检索次数: 7; range: 0.0–0.1; count: 7 Top-1 分数区间: 0.1–0.2; 实际检索次数: 3; range: 0.1–0.2; count: 3 Top-1 分数区间: 0.2–0.3; 实际检索次数: 1; range: 0.2–0.3; count: 1 Top-1 分数区间: 0.3–0.4; 实际检索次数: 1; range: 0.3–0.4; count: 1 Top-1 分数区间: 0.4–0.5; 实际检索次数: 0; range: 0.4–0.5; count: 0 Top-1 分数区间: 0.5–0.6; 实际检索次数: 2; range: 0.5–0.6; count: 2 Top-1 分数区间: 0.6–0.7; 实际检索次数: 0; range: 0.6–0.7; count: 0 Top-1 分数区间: 0.7–0.8; 实际检索次数: 1; range: 0.7–0.8; count: 1 Top-1 分数区间: 0.8–0.9; 实际检索次数: 5; range: 0.8–0.9; count: 5 Top-1 分数区间: 0.9–1.0; 实际检索次数: 12; range: 0.9–1.0; count: 12
+									123 axis X-axis titled 'Top-1 分数区间' for a discrete scale with 10 values: 0.0–0.1, 0.1–0.2, 0.2–0.3, 0.3–0.4, 0.4–0.5, ending with 0.9–1.0
+									124 axis Y-axis titled '实际检索次数' for a linear scale with values from 0 to 12
+									125 container Top-1 分数区间: 0.0–0.1; 实际检索次数: 7; range: 0.0–0.1; count: 7 Top-1 分数区间: 0.1–0.2; 实际检索次数: 3; range: 0.1–0.2; count: 3 Top-1 分数区间: 0.2–0.3; 实际检索次数: 1; range: 0.2–0.3; count: 1 Top-1 分数区间: 0.3–0.4; 实际检索次数: 1; range: 0.3–0.4; count: 1 Top-1 分数区间: 0.4–0.5; 实际检索次数: 0; range: 0.4–0.5; count: 0 Top-1 分数区间: 0.5–0.6; 实际检索次数: 2; range: 0.5–0.6; count: 2 Top-1 分数区间: 0.6–0.7; 实际检索次数: 0; range: 0.6–0.7; count: 0 Top-1 分数区间: 0.7–0.8; 实际检索次数: 1; range: 0.7–0.8; count: 1 Top-1 分数区间: 0.8–0.9; 实际检索次数: 5; range: 0.8–0.9; count: 5 Top-1 分数区间: 0.9–1.0; 实际检索次数: 12; range: 0.9–1.0; count: 12
+										126 bar Top-1 分数区间: 0.0–0.1; 实际检索次数: 7; range: 0.0–0.1; count: 7
+										127 bar Top-1 分数区间: 0.1–0.2; 实际检索次数: 3; range: 0.1–0.2; count: 3
+										128 bar Top-1 分数区间: 0.2–0.3; 实际检索次数: 1; range: 0.2–0.3; count: 1
+										129 bar Top-1 分数区间: 0.3–0.4; 实际检索次数: 1; range: 0.3–0.4; count: 1
+										130 bar Top-1 分数区间: 0.4–0.5; 实际检索次数: 0; range: 0.4–0.5; count: 0
+										131 bar Top-1 分数区间: 0.5–0.6; 实际检索次数: 2; range: 0.5–0.6; count: 2
+										132 bar Top-1 分数区间: 0.6–0.7; 实际检索次数: 0; range: 0.6–0.7; count: 0
+										133 bar Top-1 分数区间: 0.7–0.8; 实际检索次数: 1; range: 0.7–0.8; count: 1
+										134 bar Top-1 分数区间: 0.8–0.9; 实际检索次数: 5; range: 0.8–0.9; count: 5
+										135 bar Top-1 分数区间: 0.9–1.0; 实际检索次数: 12; range: 0.9–1.0; count: 12
+
+The focused UI element is 99 button 检索
