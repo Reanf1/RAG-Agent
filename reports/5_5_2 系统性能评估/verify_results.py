@@ -15,12 +15,14 @@ def main():
     parser.add_argument("--retrieval", type=Path, required=True)
     parser.add_argument("--agent", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--retrieval-preparation-only", action="store_true", help="检索阶段仅1题建库检查，Agent仍须60题两组")
     args = parser.parse_args()
     if args.output.exists():
         raise FileExistsError("复核报告不能覆盖历史结果")
     retrieval, agent = [json.loads(p.read_text(encoding="utf-8")) for p in (args.retrieval, args.agent)]
     assert retrieval["status"] == agent["status"] == "completed"
-    assert retrieval["question_count"] == agent["question_count"] == 60
+    assert agent["question_count"] == 60
+    assert retrieval["question_count"] == (1 if args.retrieval_preparation_only else 60)
     assert retrieval["inputs"] == agent["inputs"]
     manifest = json.loads((ROOT / "reports/5_5_1 评测集构建/论文清单.json").read_text(encoding="utf-8"))
     ids = {p["id"]: p["doc_id"] for p in manifest["papers"]}
@@ -34,10 +36,11 @@ def main():
     for name, expected in retrieval["inputs"]["source_sha256"].items():
         # Windows归档用反斜杠，在Mac复核同一相对源码路径时统一分隔符。
         assert hashlib.sha256((ROOT / name.replace("\\", "/")).read_bytes()).hexdigest() == expected, name
-    assert len(retrieval["rows"]) == 300 and len(agent["rows"]) == 120
+    assert len(retrieval["rows"]) == (5 if args.retrieval_preparation_only else 300) and len(agent["rows"]) == 120
+    retrieval_ids = {next(iter(questions))} if args.retrieval_preparation_only else questions.keys()
     for key in retrieval["profiles"]:
         rows = [r for r in retrieval["rows"] if r["profile"] == key]
-        assert {r["id"] for r in rows} == questions.keys() and len(rows) == 60
+        assert {r["id"] for r in rows} == retrieval_ids and len(rows) == retrieval["question_count"]
         for row in rows:
             gold = {(ids[e["paper_id"]], e["page_number"]) for e in questions[row["id"]]["evidence"]}
             hits, ranks = set(), []
@@ -95,6 +98,7 @@ def main():
         assert expected["tokens_total"] == sum(r["tokens"]["total"] or 0 for r in rows)
         assert expected["stop_reasons"] == dict(Counter(r["stop_reason"] for r in rows))
     output = {"passed": True, "retrieval_rows": len(retrieval["rows"]), "agent_rows": len(agent["rows"]),
+              "retrieval_scope": "1题五配置仅用于建库核验" if args.retrieval_preparation_only else "60题五配置正式检索实验",
               "actual_model_calls": len(calls), "source_and_input_hashes_unchanged": True,
               "checks": "逐题页级匹配、排名倒数、跨论文覆盖、轨迹工具路径、均值、实际HTTP Token、失败分母、固定种子及源码哈希",
               "human_quality": "独立人工评分待填写，不以结构核验通过冒充答案质量通过"}

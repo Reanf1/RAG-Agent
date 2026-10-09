@@ -13,8 +13,10 @@ HERE = Path(__file__).resolve().parent
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--judgments', type=Path, required=True)
 parser.add_argument('--additional-pages', type=Path, required=True)
+parser.add_argument('--agent', type=Path, default=HERE / 'agent.json')
+parser.add_argument('--output', type=Path, default=HERE / '助手逐题初评.json')
 args = parser.parse_args()
-agent = json.loads((HERE / 'agent.json').read_text(encoding='utf-8'))
+agent = json.loads(args.agent.read_text(encoding='utf-8'))
 notes = json.loads(args.judgments.read_text(encoding='utf-8'))
 questions = {q['id']: q for q in json.loads((ROOT / 'reports/评测集.json').read_text(encoding='utf-8'))}
 keys = {(q, p) for q in questions for p in ('default', 'no_rules')}
@@ -45,21 +47,31 @@ for profile in ('default', 'no_rules'):
                         'core_unanswered_or_wrong': sum(r['assistant_scores']['correctness'] == 0 for r in selected),
                         'without_valid_citation': sum(r['assistant_scores']['citation_accuracy'] == 0 for r in selected)}
 old_pages = ROOT / 'reports/5_5_2 系统性能评估/助手初评原文证据_20261006.json'
-pages = json.loads(old_pages.read_text(encoding='utf-8'))['pages'] + json.loads(args.additional_pages.read_text(encoding='utf-8'))
+additional = json.loads(args.additional_pages.read_text(encoding='utf-8'))
+new_run = args.agent.resolve() != (HERE / 'agent.json').resolve()
+# 新轮只使用本轮原文核验，不把历史已读页数当成本轮核验量。
+pages = additional['pages'] if isinstance(additional, dict) else additional
+if not new_run:
+    pages = json.loads(old_pages.read_text(encoding='utf-8'))['pages'] + pages
+papers = {p['id']: p for p in json.loads((ROOT / 'reports/5_5_1 评测集构建/论文清单.json').read_text(encoding='utf-8'))['papers']}
 for page in pages:
-    assert sha256((ROOT / page['source_path']).read_bytes()).hexdigest() == page['pdf_sha256']
-sources = [HERE / 'agent.json', ROOT / 'reports/评测集.json', old_pages,
+    source = page.get('source_path', papers[page['paper_id']]['local_path'])
+    assert sha256((ROOT / source).read_bytes()).hexdigest() == page['pdf_sha256']
+sources = [args.agent, ROOT / 'reports/评测集.json',
            args.judgments, args.additional_pages]
-result = {'reviewer': 'Codex助手逐题初评，用户终审待进行', 'date': '2026-10-07',
-          'scope': '本轮Windows冻结源码120条实际最终答案；修复前失败保留，不是修复后全量重跑或独立盲评',
+if not new_run:
+    sources.append(old_pages)
+result = {'reviewer': 'Codex助手逐题初评，用户终审待进行', 'date': agent['completed_at'][:10],
+          'scope': ('本轮Windows rag-v20、16K窗口、1024输出，120条重新检索与生成的最终答案；失败保留，用户审核待进行' if new_run else
+                    '本轮Windows冻结源码120条实际最终答案；修复前失败保留，不是修复后全量重跑或独立盲评'),
           'method': ['逐条阅读原答案、评分要点和对应原论文物理页后显式给分。',
                      '脚本只核验指纹与汇总，不自动判断质量；工具中间结果不代替最终答案。',
                      '助手参与了评测集构建，初评不是独立盲评；用户审核栏全部空白。'],
           'source_fingerprints': {str(p.relative_to(ROOT)) if p.is_relative_to(ROOT) else p.name:
                                   sha256(p.read_bytes()).hexdigest() for p in sources},
-          'pdf_evidence_pages': len({(p['paper_id'], p['physical_page']) for p in pages}),
+          'pdf_evidence_pages': len({(p['paper_id'], p.get('physical_page', p.get('page_number'))) for p in pages}),
           'summary': summary, 'rows': rows}
-output = HERE / '助手逐题初评.json'
+output = args.output
 if output.exists():
     raise FileExistsError('不覆盖已归档初评')
 assert Counter(r['category'] for r in rows) == dict.fromkeys(('fact', 'comparison', 'synthesis', 'reasoning'), 30)
