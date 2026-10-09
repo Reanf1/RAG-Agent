@@ -87,6 +87,47 @@ class TestReranker(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "推理失败"):
                 self.reranker.rerank("query", self.candidates)
 
+    def test_shared_tokenizer_is_serialized_across_reranker_instances(self):
+        """复现Windows分词器借用冲突：分窗和预测共享同一互斥范围。"""
+        from concurrent.futures import ThreadPoolExecutor
+        from threading import Barrier, Lock
+        from time import sleep
+        from types import SimpleNamespace
+
+        busy, gate = Lock(), Barrier(2)
+
+        def encode(*args, **kwargs):
+            if not busy.acquire(blocking=False):
+                raise RuntimeError("Already borrowed")
+            try:
+                sleep(.03)
+                return [1]
+            finally:
+                busy.release()
+
+        tokenizer = SimpleNamespace(encode=encode, num_special_tokens_to_add=lambda **kwargs: 3)
+        model = SimpleNamespace(tokenizer=tokenizer, predict=lambda pairs, **kwargs:
+                                (encode(pairs) and [.9] * len(pairs)))
+        candidates = [(Document(page_content="正文" * 100), 1)]
+
+        def request():
+            gate.wait(timeout=2)
+            return Reranker().rerank("query", candidates)
+
+        with patch("src.retrieval.reranker.get_reranker", return_value=model), \
+                patch.object(Reranker, "_passages", side_effect=lambda query, doc, tok:
+                             (tok.encode(query) and [doc.page_content])), ThreadPoolExecutor(2) as pool:
+            futures = [pool.submit(request) for _ in range(2)]
+            self.assertTrue(all(future.result(timeout=3)[0][1] == .9 for future in futures))
+
+    def test_failed_prediction_does_not_block_next_request(self):
+        """预测异常仍释放共享互斥，下次请求保留正常排序。"""
+        with patch("src.retrieval.reranker.get_reranker") as model:
+            model.return_value.predict.side_effect = [RuntimeError("推理失败"), [.9]]
+            with self.assertRaisesRegex(RuntimeError, "推理失败"):
+                self.reranker.rerank("query", self.candidates[:1])
+            self.assertEqual(self.reranker.rerank("query", self.candidates[:1])[0][1], .9)
+
 
 class TestLocalReranker(unittest.TestCase):
     """核验本地权重加载、缓存与失败恢复，测试不下载真实模型。"""

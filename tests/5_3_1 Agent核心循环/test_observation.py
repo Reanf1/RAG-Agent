@@ -282,6 +282,49 @@ class TestObservationAndLoop(unittest.TestCase):
         self.assertTrue(result["task_complete"])
         self.assertIn("当前知识库中未找到相关文档", result["answer"])
 
+    def test_unrouted_paper_failure_cannot_be_recovered_by_keywords(self):
+        """复现C013：无规则路由时，关键词/列表成功不能替代失败的正文检索。"""
+        question = "How do two models produce the image-level prediction?"
+        context = {"observations": [
+            {"name": "knowledge_base_search", "args": {"doc_id": "a" * 64},
+             "status": "error", "error": "RuntimeError: Already borrowed"},
+            {"name": "keyword_extract", "status": "success", "result": {"keywords": ["models"]}},
+            {"name": "paper_list", "status": "success", "result": {"documents": []}}]}
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(self.finished)).encode())):
+            result = observe(question, [knowledge_base_search], context)
+        self.assertFalse(result["task_complete"])
+        self.assertIn("正文任务尚未恢复", result["answer"])
+
+    def test_later_body_evidence_must_cover_failed_paper(self):
+        """替代工具真正覆盖失败论文后允许完成，另一篇论文成功不能消除缺项。"""
+        for target, complete in (("a" * 64, True), ("b" * 64, False)):
+            with self.subTest(target=target):
+                context = {"observations": [
+                    {"name": "knowledge_base_search", "args": {"doc_id": "a" * 64},
+                     "status": "success", "result": {"status": "insufficient_evidence"}},
+                    {"name": "paper_summary", "status": "success", "result": {
+                        "status": "answered", "answer": "原文机制", "citations": [{"metadata": {"doc_id": target}}]}}]}
+                with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(self.finished)).encode())):
+                    result = observe("Explain the architectural mechanisms", [knowledge_base_search], context)
+                self.assertEqual(result["task_complete"], complete)
+
+    def test_question_keywords_cannot_complete_paper_synthesis(self):
+        """复现S005：只提取问题的词语，没有读取论文正文，不能冒充机制归纳。"""
+        context = {"observations": [{"name": "keyword_extract", "status": "success", "result": {
+            "keywords": ["视觉模型"], "source_file": None, "doc_id": None}}]}
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(self.finished)).encode())):
+            result = observe("归纳空间查询设计的变化", [], context)
+        self.assertFalse(result["task_complete"])
+        self.assertIn("仅提取了问题关键词", result["answer"])
+
+    def test_explicit_question_keyword_task_can_complete(self):
+        """真正要求提取关键词时无需论文检索，仍可正常完成。"""
+        context = {"observations": [{"name": "keyword_extract", "status": "success", "result": {
+            "keywords": ["视觉模型"], "source_file": None, "doc_id": None}}]}
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(self.finished)).encode())):
+            result = observe("Extract the keywords from this question", [], context)
+        self.assertTrue(result["task_complete"])
+
     def test_pending_candidates_preserve_vector_recovery_notice(self):
         """等候相关性确认时保留恢复限制，不被固定结束语覆盖。"""
         notice = "本次临时计算指定文档向量，未修改原索引。"

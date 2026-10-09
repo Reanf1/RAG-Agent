@@ -60,6 +60,7 @@ THOUGHT_SYSTEM_PROMPT = """【阶段职责】
 根据用户问题、Context及实际工具结果，决定紧接着的一步。
 本地论文事实优先知识库；外部信息仅在联网可用时查询。已有结果足够时直接回答。
 recovery中的失败工具不可再调用；只有适用的剩余工具才能完成同一任务，不能用无关工具冒充恢复。
+提取问题关键词不能回答论文机制、对比或归纳；这些任务仍须读取原论文正文。
 只可选择 available_tools 中的工具。工具列表为空时选择answer，说明结果或资料不足。
 【输出格式约束】
 需要工具时返回原生tool_calls，function.name属于可用工具，function.arguments按Schema填写。
@@ -434,6 +435,8 @@ OBSERVATION_SYSTEM_PROMPT = """【阶段职责】
 你负责ReAct的Observation阶段。根据用户的完整任务和实际工具返回结果，
 判断是否还需要下一步。工具成功只说明本次调用成功，不代表多步骤任务已经完成。
 observations中的result/error以及tool消息是实际执行结果；不能虚构结果或把错误当作成功。
+正文任务失败后，只有后续工具提供同一论文的有效正文证据才算恢复；关键词和文献列表不能替代。
+只提取了问题关键词时，除非用户原本要求关键词提取，否则不能宣告论文任务完成。
 知识库工具返回needs_confirmation时，必须请求用户确认候选原文，不能自行确认或标记任务完成。
 知识库返回insufficient_evidence且无有效引用时，结束并说明尚未溯源，不重复查询同一问题或标记完成。
 论文对比返回insufficient_evidence时，说明需先入库两篇原文，不能将对比标记为完成。
@@ -592,6 +595,32 @@ def _structured_tool_observation(question: str, tools: list[BaseTool], observati
             "answer": answer, "model": None, "usage": {"prompt_eval_count": 0, "eval_count": 0}, "elapsed_seconds": 0.0}
 
 
+def _paper_content_pending(observations: list[dict]) -> bool:
+    """逐项核对失败后的正文证据，另一篇论文成功不能消除原目标的缺项。"""
+    body_tools = {"knowledge_base_search", "paper_summary", "paper_compare"}
+    for index, item in enumerate(observations):
+        result = item.get("result") or {}
+        if item.get("name") not in body_tools or not (item.get("status") == "error" or
+                isinstance(result, dict) and result.get("status") in {
+                    "needs_confirmation", "incomplete", "insufficient_evidence"}):
+            continue
+        targets = {item.get("args", {}).get(key) for key in ("doc_id", "paper_a_id", "paper_b_id")}
+        targets.discard(None)
+        covered, recovered = set(), False
+        for later in observations[index + 1:]:
+            value = later.get("result")
+            if (later.get("name") not in body_tools or later.get("status") != "success"
+                    or not isinstance(value, dict) or value.get("status") != "answered"
+                    or not value.get("answer") or value.get("invalid_citation_ids")):
+                continue
+            citations = value.get("citations", [])
+            covered.update(ref.get("metadata", {}).get("doc_id") for ref in citations)
+            recovered |= bool(citations or not targets and value.get("generation_mode") == "empty")
+        if not recovered or targets and not targets <= covered:
+            return True
+    return False
+
+
 def _observe_events(question: str, tools: list[BaseTool] | None = None, context: dict | None = None,
                     messages: list | None = None, *, thought: dict | None = None, stream: bool = False):
     """观察真实结果并决定继续或结束；完成标志与答案必须相互一致。"""
@@ -612,6 +641,13 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
         raise ValueError("recovery必须为恢复状态字典")
     count = sum(isinstance(item, ToolMessage) for item in (messages or []))
     latest = observations[-count:] if count else observations[-1:]
+    body_pending = _paper_content_pending(observations)
+    content_items = [item for item in observations if item.get("name") != "paper_list"]
+    question_keywords_only = bool(content_items) and all(
+        item.get("name") == "keyword_extract" and item.get("status") == "success"
+        and isinstance(item.get("result"), dict) and not item["result"].get("doc_id")
+        and not item["result"].get("source_file") for item in content_items
+    ) and not re.search(r"关键词|关键字|\bkeywords?\b|\bkey terms?\b", question, re.I)
     waiting = [item for item in latest if item.get("status") == "success" and isinstance(item.get("result"), dict)
                and item["result"].get("status") == "needs_confirmation" and item["result"].get("references")]
     if waiting:
@@ -640,7 +676,7 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
         "decision": {"enum": ["continue", "finish"]},
         "task_complete": {"type": "boolean"}, "answer": {"type": "string"}},
         "required": ["observation", "decision", "task_complete", "answer"], "additionalProperties": False}
-    if any(item.get("status") == "error" or (isinstance(item.get("result"), dict) and
+    if body_pending or question_keywords_only or any(item.get("status") == "error" or (isinstance(item.get("result"), dict) and
            item["result"].get("status") in {"needs_confirmation", "incomplete", "insufficient_evidence"}) for item in latest):
         schema["properties"]["task_complete"] = {"const": False}
     # 本轮Ollama实调用未将外层必填项合入anyOf分支，分支必须完整；同时禁止空答案finish。
@@ -738,6 +774,13 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
             if not complete_comparison:
                 decision["task_complete"] = False
                 decision["answer"] += "\n\n原对比任务尚未完成：需要两篇论文的方法、数据集、实验结果及对应引用。"
+        if body_pending or question_keywords_only:
+            decision["task_complete"] = False
+            if decision["decision"] == "finish":
+                notice = ("正文任务尚未恢复：需要失败目标论文的有效正文证据；其他工具成功不能代替。"
+                          "检索异常或证据不足不表示论文不存在。"
+                          if body_pending else "仅提取了问题关键词，尚未核验原论文内容，论文任务未完成。")
+                decision["answer"] += "\n\n" + notice
         if decision["decision"] == "finish" and decision["task_complete"] and len(observations) == 1:
             item = observations[0]
             evidence = item.get("result", {})
@@ -917,7 +960,7 @@ def _run_react(question: str, tools: list[BaseTool] | None = None, context: dict
                                                                     (not external_only or item.name == "web_search")],
                                          "pending": True}
                 elif blocked and messages:
-                    state["recovery"]["pending"] = False
+                    state["recovery"]["pending"] = _paper_content_pending(state["observations"])
                 # 仅当Action正常结束，才观察结果；直接回答计划也会进入此处。
                 if stream:
                     for event in _observe_events(question, tools, state, messages, thought=thought, stream=True):

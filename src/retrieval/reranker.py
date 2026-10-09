@@ -23,6 +23,7 @@ def is_image_placeholder(text: str) -> bool:
 
 
 _reranker_load_lock = Lock()
+_reranker_inference_lock = Lock()
 
 
 def get_reranker():
@@ -75,9 +76,11 @@ class Reranker:
         if not query.strip() or not candidates:
             return []
         model = get_reranker()
-        passages = [self._passages(query, document, model.tokenizer) for document, _ in candidates]
-        pairs = [[query, text] for windows in passages for text in windows]
-        scores = model.predict(pairs, batch_size=self.batch_size, show_progress_bar=False)
+        # 缓存模型共享快速分词器；分窗与预测都会修改其截断状态，必须一起互斥。
+        with _reranker_inference_lock:
+            passages = [self._passages(query, document, model.tokenizer) for document, _ in candidates]
+            pairs = [[query, text] for windows in passages for text in windows]
+            scores = model.predict(pairs, batch_size=self.batch_size, show_progress_bar=False)
         if len(scores) != len(pairs):
             raise ValueError("重排模型返回的分数数量与候选数量不一致")
         scored, offset = [], 0
