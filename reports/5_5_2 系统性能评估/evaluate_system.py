@@ -134,7 +134,9 @@ def main():
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     corpus = json.loads(CORPUS.read_text(encoding="utf-8"))
     assert corpus["manifest_sha256"] == digest(MANIFEST)
-    assert len(corpus["corpus"]) == 1694
+    # 片段数量由冻结加载器实际生成，不能把历史1694块当作当前版本的固定数量。
+    assert corpus["corpus"] and len({row["id"] for row in corpus["corpus"]}) == len(corpus["corpus"])
+    assert {row["paper_id"] for row in corpus["corpus"]} == {paper["id"] for paper in manifest["papers"]}
     fingerprint = {"dataset_sha256": digest(DATASET), "manifest_sha256": digest(MANIFEST),
                    "corpus_sha256": digest(CORPUS), "config_sha256": digest(ROOT / "config.yaml")}
     fingerprint["evaluation_script_sha256"] = digest(Path(__file__))
