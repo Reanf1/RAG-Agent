@@ -1,0 +1,49 @@
+Agent 1/4 F010 default：34.63秒，2轮，22720已知Token，incomplete
+Agent 1/4 F010 no_rules：22.40秒，1轮，11933已知Token，task_complete
+Agent 2/4 F012 no_rules：20.66秒，1轮，9966已知Token，task_complete
+Agent 2/4 F012 default：12.45秒，1轮，2930已知Token，task_complete
+Agent 3/4 C013 default：29.20秒，3轮，28689已知Token，incomplete
+Token indices sequence length is longer than the specified maximum sequence length for this model (654 > 512). Running this sequence through the model will result in indexing errors
+Agent 3/4 C013 no_rules：89.84秒，2轮，11304已知Token，incomplete
+Agent 4/4 S005 no_rules：3.46秒，1轮，6029已知Token，incomplete
+Agent 4/4 S005 default：4.40秒，1轮，6021已知Token，incomplete
+{
+  "default": {
+    "label": "默认规则路由+ReAct",
+    "rule_routing": true,
+    "questions": 4,
+    "tool_selection_accuracy": 0.75,
+    "iterations_mean": 1.75,
+    "latency_mean_seconds": 20.170340974999817,
+    "task_complete_rate": 0.25,
+    "tokens_total": 60360,
+    "tokens_mean_known_requests": 15090,
+    "token_complete_requests": 4,
+    "token_unknown_requests": 0,
+    "input_tokens_known": 59149,
+    "output_tokens_known": 1211,
+    "stop_reasons": {
+      "incomplete": 3,
+      "task_complete": 1
+    }
+  },
+  "no_rules": {
+    "label": "关闭规则路由的ReAct",
+    "rule_routing": false,
+    "questions": 4,
+    "tool_selection_accuracy": 0.5,
+    "iterations_mean": 1.25,
+    "latency_mean_seconds": 34.09211777499968,
+    "task_complete_rate": 0.5,
+    "tokens_total": 39232,
+    "tokens_mean_known_requests": 9808,
+    "token_complete_requests": 4,
+    "token_unknown_requests": 0,
+    "input_tokens_known": 38271,
+    "output_tokens_known": 961,
+    "stop_reasons": {
+      "task_complete": 2,
+      "incomplete": 2
+    }
+  }
+}

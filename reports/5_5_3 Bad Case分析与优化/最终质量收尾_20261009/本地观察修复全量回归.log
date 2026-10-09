@@ -1,0 +1,402 @@
+..文档导入失败：paper.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 92, in batch_import
+    raise ValueError("保存位置已有不同内容的文件，未覆盖")
+ValueError: 保存位置已有不同内容的文件，未覆盖
+.文档导入失败：bad.pdf
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/pymupdf/__init__.py", line 2981, in __init__
+    doc = mupdf.fz_open_document_with_stream_and_dir(filetype if filetype else '', fz_stream, archive.this)
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/pymupdf/mupdf.py", line 53426, in fz_open_document_with_stream_and_dir
+    return _mupdf.fz_open_document_with_stream_and_dir(magic, stream, dir)
+pymupdf.mupdf.FzErrorFormat: code=7: no objects found
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/pdf_loader.py", line 265, in load_pdf
+    pdf = pymupdf.open(stream=data, filetype="pdf")
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/pymupdf/__init__.py", line 2984, in __init__
+    raise FileDataError('Failed to open stream') from e
+pymupdf.FileDataError: Failed to open stream
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/pdf_loader.py", line 267, in load_pdf
+    raise pymupdf.FileDataError(f"PDF 文件损坏或不是有效的 PDF：{path.name}") from error
+pymupdf.FileDataError: PDF 文件损坏或不是有效的 PDF：bad.pdf
+..文档导入失败：bad.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+文档导入失败：bad.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+..文档导入失败：retry.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1114, in __call__
+    return self._mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1118, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1179, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "/Users/rean/github/RAG+Agent/tests/5_1_1 文档加载与批量导入/test_batch_import.py", line 73, in fail_once
+    raise OSError("临时读取失败")
+OSError: 临时读取失败
+..文档导入失败：large.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 80, in batch_import
+    raise ValueError(f"文件过大，单份最大支持 {max_file_size_mb} MB")
+ValueError: 文件过大，单份最大支持 1 MB
+.文档导入失败：ok.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 89, in batch_import
+    destination.parent.mkdir(parents=True, exist_ok=True)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/pathlib.py", line 1175, in mkdir
+    self._accessor.mkdir(self, mode)
+NotADirectoryError: [Errno 20] Not a directory: '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmpp8om95fc/raw/71988c4d8e0803ba4519f0b2864c1331c14a1890bf8694e251379177bfedb5c3'
+.文档导入失败：../escape.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 76, in batch_import
+    raise ValueError("文件名不能包含目录路径")
+ValueError: 文件名不能包含目录路径
+文档导入失败：/tmp/escape.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 76, in batch_import
+    raise ValueError("文件名不能包含目录路径")
+ValueError: 文件名不能包含目录路径
+文档导入失败：folder\escape.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 76, in batch_import
+    raise ValueError("文件名不能包含目录路径")
+ValueError: 文件名不能包含目录路径
+文档导入失败：paper.exe
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 78, in batch_import
+    raise ValueError(f"不支持的文件格式：{Path(name).suffix}")
+ValueError: 不支持的文件格式：.exe
+.........................................................................../Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+......文档导入失败：bad.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+文档导入失败：bad.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+....文档导入失败：too_large.pdf
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 80, in batch_import
+    raise ValueError(f"文件过大，单份最大支持 {max_file_size_mb} MB")
+ValueError: 文件过大，单份最大支持 1 MB
+文档导入失败：too_large.pdf
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 80, in batch_import
+    raise ValueError(f"文件过大，单份最大支持 {max_file_size_mb} MB")
+ValueError: 文件过大，单份最大支持 1 MB
+....................................持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+..持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+.............................................................................................................................................../Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+./Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+./Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+./Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+./Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+./Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+./Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+./Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+./Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+./Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+./Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+./Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+................................................................................................................/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+................................................................................................Consider using the pymupdf_layout package for a greatly improved page layout analysis.
+warning: The `fitz` API is deprecated and will be removed in future. Use `import pymupdf` instead.
+................................................................................................................................................................2026-10-09 17:16:58.406 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:16:59.702 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+..2026-10-09 17:17:00.157 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:00.620 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+..2026-10-09 17:17:00.921 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 17:17:01.103 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+..2026-10-09 17:17:01.438 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:02.124 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:02.403 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:02.816 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:03.222 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:03.503 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 17:17:03.817 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+...2026-10-09 17:17:04.089 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.........../Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+................2026-10-09 17:17:05.044 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 17:17:05.227 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:05.438 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:05.702 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:06.112 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:06.435 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 17:17:06.728 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 17:17:06.728 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:06.825 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.............2026-10-09 17:17:07.228 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 17:17:07.401 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:07.466 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 17:17:07.640 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 17:17:07.640 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 17:17:07.768 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:08.060 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 17:17:08.229 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 17:17:08.229 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 17:17:08.350 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 17:17:08.350 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:08.552 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:08.924 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 17:17:09.093 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:09.155 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 17:17:09.327 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 17:17:09.327 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:09.458 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:09.896 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:10.068 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:10.451 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+...........2026-10-09 17:17:10.820 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+............2026-10-09 17:17:10.974 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+.2026-10-09 17:17:11.838 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 17:17:12.066 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+文档导入失败：bad.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+文档导入失败：bad.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+.2026-10-09 17:17:12.423 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+.2026-10-09 17:17:12.744 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:13.480 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:13.804 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:14.439 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+.2026-10-09 17:17:15.028 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+文档导入失败：retry.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1114, in __call__
+    return self._mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1118, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1173, in _execute_mock_call
+    raise effect
+OSError: 暂时失败
+.2026-10-09 17:17:15.415 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+.2026-10-09 17:17:15.675 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:16.071 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:16.374 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+.2026-10-09 17:17:16.824 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+.2026-10-09 17:17:17.350 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+2026-10-09 17:17:17.764 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+.2026-10-09 17:17:18.035 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+2026-10-09 17:17:18.432 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+.2026-10-09 17:17:18.694 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+.2026-10-09 17:17:19.414 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:20.260 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 17:17:20.583 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:20.878 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:21.339 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:21.602 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:22.177 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:22.800 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:23.481 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+文档导入失败：oversized.pdf
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 80, in batch_import
+    raise ValueError(f"文件过大，单份最大支持 {max_file_size_mb} MB")
+ValueError: 文件过大，单份最大支持 20 MB
+文档导入失败：oversized.pdf
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 80, in batch_import
+    raise ValueError(f"文件过大，单份最大支持 {max_file_size_mb} MB")
+ValueError: 文件过大，单份最大支持 20 MB
+.2026-10-09 17:17:23.925 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+.2026-10-09 17:17:24.623 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+文档导入失败：old.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1114, in __call__
+    return self._mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1118, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1173, in _execute_mock_call
+    raise effect
+OSError: 暂时失败
+.2026-10-09 17:17:25.214 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+文档导入失败：bad-a.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+文档导入失败：bad-b.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xfe in position 0: invalid start byte
+文档导入失败：bad-a.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+文档导入失败：bad-b.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xfe in position 0: invalid start byte
+.2026-10-09 17:17:25.665 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+.2026-10-09 17:17:26.174 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:26.856 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:27.177 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:27.350 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:27.723 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:28.175 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:28.563 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+.2026-10-09 17:17:28.890 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+............................................................./Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+......
+----------------------------------------------------------------------
+Ran 851 tests in 58.385s
+
+OK
+G01 observed: {"redirect_target_requests": []}
+G02 observed: {"citation_count": 0, "missing_citations": true, "warnings": ["回答未提供有效文献引用，不能作为已溯源答案。"], "cached": false}
+G03 observed: {"done_value": "false", "event_types": ["token", "error"], "final_reason": null}

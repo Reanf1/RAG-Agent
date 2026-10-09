@@ -1,0 +1,3264 @@
+{
+  "started_at": "2026-10-09T18:00:02.245690+08:00",
+  "status": "completed",
+  "stage": "agent",
+  "environment": {
+    "platform": "Windows-10-10.0.26300-SP0",
+    "python": "3.10.10",
+    "torch_threads": 4
+  },
+  "inputs": {
+    "dataset_sha256": "b72e6f91ccecb40d9fd3c80ed7fc28619d94bf03f92321fb6da8ae0bda0c5369",
+    "manifest_sha256": "00c231f7bdd9a571a0880d7b25b64beb95eae47f8c696fa70efe8ac72f19230f",
+    "corpus_sha256": "7a310092fef82efc4d61ce9ffae46f63662b916d41db99100010b2ae287c4c5b",
+    "config_sha256": "fb06b2f9435400be3582fa20d46c5191887d303649fa931e61934d540de746f0",
+    "evaluation_script_sha256": "c8a0ffd863666510927602361f36fb2ccae091534e5b80973afa6ccc2f915268",
+    "source_sha256": {
+      "src\\__init__.py": "b6a03a53872966ad0d5dc08ebd493b32db6e022213d852823caf4a23d68a01ca",
+      "src\\agent\\__init__.py": "31233773975c0d9e830575bcdab4ded0fd34e0029b14b44c2879930f9727efd0",
+      "src\\agent\\memory.py": "3b155344390f42f986f0088d829ee5dc218561e6bc72c86e3937946898dd4cf3",
+      "src\\agent\\react_loop.py": "d4edd7f1bdf80e18c56418c41d002e473d917b741528e4e69aeddd8db41915ad",
+      "src\\agent\\router.py": "23a7067a60e511cadf559d6a999d60647741780475832ff2cbb0cc4b8df3d3a0",
+      "src\\agent\\tools.py": "fd66dc8694779b65162b527eedbdc0ba2928e01be8ef555e2ae3593f1154b3f2",
+      "src\\chunking\\__init__.py": "904ffa7a68e4a8972d2559bfdb0fce2197ed445aa56d13fba0133b8fa173c8eb",
+      "src\\chunking\\fixed_chunk.py": "4d277f34d08440d2f264aafa54e67fa339585bc325c4fbcec705c8b353832e70",
+      "src\\chunking\\recursive_chunk.py": "45569726cd2fbf1bd157a2b71745f1d158e8f3d5f0cbba9221a112d56d634303",
+      "src\\chunking\\semantic_chunk.py": "8d72e96d4349e29a461ba09e7ed19f75e990a876a3d348fd1d80f32f1a17a0a0",
+      "src\\data_loader\\__init__.py": "6e147bf4c5ff56a01114b7bb278f14ce6a46c22009ea25c72a0b066b71cd4ab2",
+      "src\\data_loader\\docx_loader.py": "349e9e764989da8e49e9f9cb5cba6fd9b8db79f175cbd5774aa78319350161cf",
+      "src\\data_loader\\pdf_loader.py": "53599fb6cd9db67944b251a1f4f6f7b74f1dafdf5250911774011ec53ce2ca80",
+      "src\\data_loader\\text_loader.py": "f598ac5bc8c9e6c901536862f3c05272a2ccf4b781e6327fdc9bc71a22dc45e8",
+      "src\\frontend\\__init__.py": "1527315971de9592c0309a0116e238dcd3009e16a4abc7ca292fecb47d17a914",
+      "src\\frontend\\app.py": "531dd4b3aeff4b25c925eca0dba346b7fbfd507b09ab14d2342db09f7110f54c",
+      "src\\frontend\\components\\documents.py": "d672022f930f0e2148b23ed67610a53b7c7eab09f852223b3077055aed9c3d7d",
+      "src\\frontend\\components\\sessions.py": "95b0bc0205e52ab56c058fcb746a63fc9cc748e2baef5399e9d60cad8b2c2157",
+      "src\\frontend\\components\\trace.py": "88cb87d8e6fe0a4265ea21537a7665d4e3a3f08805d2008413622e3edf8f1219",
+      "src\\generation\\__init__.py": "84badd529e4b3b33f86547035c8582451b056a1d73709acfa73ddb021ea1d9ac",
+      "src\\generation\\cache.py": "407740dc2ce08894b22a11ecac86f4aa5ecf27123ce516ffa73083e3c68e178d",
+      "src\\generation\\prompt_template.py": "688420d24f5ead132e8a8da0b4ad4f352fb7184bf2cc9e690a2c305217fbfdff",
+      "src\\generation\\rag_pipeline.py": "14e8d1c70a0b32d941385ce24f5d7f7ab31c179618b4c1a6d73d158a8e92a92f",
+      "src\\generation\\streaming.py": "fe6136ca8ab929818acbfb8adad5e00641a8b149a5215e00daddac525bd4bc72",
+      "src\\retrieval\\__init__.py": "c376b9a2ff1abf4459d6850f9e4eefd4975c7f769e75c37a6ad1741b6162a8a2",
+      "src\\retrieval\\bm25_retriever.py": "369ae8ac4c1f425278c2417bf3bc37d91700c3a51a9f201fc6f04b78b45aee4d",
+      "src\\retrieval\\hybrid_retriever.py": "12edf43e711c2d0cb6c85f55c5d236b70387a7e35828e53864488569999f780e",
+      "src\\retrieval\\repair_index.py": "7d3d473f181bc85cfa32e0bcd070f7c0d3f842a3c09687ce9a777e95f8da4bc2",
+      "src\\retrieval\\reranker.py": "59a3a5a15af5137387c96e7c46e8d1343013940095d6ccd849ff94e2ba03d5ff",
+      "src\\retrieval\\vector_store.py": "b8d960d2da9f941ed11a4a0a538dba9d831a242009ce64a568cabd6459fba697",
+      "src\\utils\\__init__.py": "dd763da62033d724d7242ab10c2d8a428bcfe225c76c816891d5cc9308a20096",
+      "src\\utils\\chroma_path.py": "5221f30d4620103a8ea3d66cd59eaa0ca5eca44c61af8360b15813f0675c26ba",
+      "src\\utils\\config.py": "cf73ab536d4df79f4b2a18f039be5deb6cad1db36d654c3e37694838962a0abb",
+      "src\\utils\\logger.py": "57a257eafe469fc4707cf1a24687edc8bdbe1cc8214cfecf12cdb9ffdf43589e",
+      "src\\utils\\messages.py": "61fd82fa467c8fc47b25914eac781a3f015e47e34c91c22f7c757d7d37a9cedf",
+      "src\\utils\\token_budget.py": "b8f2153ba8ac4f3f653faed7fe8fb0a1befb5f063c715adb7337d598d7660e99"
+    }
+  },
+  "business_config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://127.0.0.1:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 16384,
+      "num_predict": 1024,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 9000,
+      "max_prompt_chars": 18000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "max_parallel_calls": 2,
+      "tool_timeout_seconds": 300,
+      "max_tool_retries": 1,
+      "max_repeated_calls": 2,
+      "online_search_enabled": false
+    },
+    "memory": {
+      "max_history_tokens": 2000,
+      "tokenizer_path": "data/models/qwen2.5-tokenizer/tokenizer.json",
+      "summary_trigger_turns": 10,
+      "summary_keep_recent_turns": 4,
+      "summary_max_tokens": 400
+    },
+    "paths": {
+      "raw_documents": "data/raw",
+      "vector_index": "data/index",
+      "logs": "logs",
+      "session_db": "data/sessions/memory.sqlite3"
+    }
+  },
+  "experiment_config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://127.0.0.1:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 16384,
+      "num_predict": 1024,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 9000,
+      "max_prompt_chars": 18000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "max_parallel_calls": 2,
+      "tool_timeout_seconds": 300,
+      "max_tool_retries": 1,
+      "max_repeated_calls": 2,
+      "online_search_enabled": false
+    },
+    "memory": {
+      "max_history_tokens": 2000,
+      "tokenizer_path": "data/models/qwen2.5-tokenizer/tokenizer.json",
+      "summary_trigger_turns": 10,
+      "summary_keep_recent_turns": 4,
+      "summary_max_tokens": 400
+    },
+    "paths": {
+      "raw_documents": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-final-patch-20261009-c3b0fda\\targeted-agent-runtime\\raw",
+      "vector_index": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-final-patch-20261009-c3b0fda\\targeted-agent-runtime\\index",
+      "logs": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-final-patch-20261009-c3b0fda\\targeted-agent-runtime\\logs",
+      "session_db": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-final-patch-20261009-c3b0fda\\targeted-agent-runtime\\sessions.sqlite3"
+    }
+  },
+  "question_count": 4,
+  "profiles": {
+    "default": {
+      "label": "默认规则路由+ReAct",
+      "rule_routing": true,
+      "questions": 4,
+      "tool_selection_accuracy": 0.75,
+      "iterations_mean": 1.75,
+      "latency_mean_seconds": 20.170340974999817,
+      "task_complete_rate": 0.25,
+      "tokens_total": 60360,
+      "tokens_mean_known_requests": 15090,
+      "token_complete_requests": 4,
+      "token_unknown_requests": 0,
+      "input_tokens_known": 59149,
+      "output_tokens_known": 1211,
+      "stop_reasons": {
+        "incomplete": 3,
+        "task_complete": 1
+      }
+    },
+    "no_rules": {
+      "label": "关闭规则路由的ReAct",
+      "rule_routing": false,
+      "questions": 4,
+      "tool_selection_accuracy": 0.5,
+      "iterations_mean": 1.25,
+      "latency_mean_seconds": 34.09211777499968,
+      "task_complete_rate": 0.5,
+      "tokens_total": 39232,
+      "tokens_mean_known_requests": 9808,
+      "token_complete_requests": 4,
+      "token_unknown_requests": 0,
+      "input_tokens_known": 38271,
+      "output_tokens_known": 961,
+      "stop_reasons": {
+        "task_complete": 2,
+        "incomplete": 2
+      }
+    }
+  },
+  "rows": [
+    {
+      "id": "F010",
+      "profile": "default",
+      "category": "fact",
+      "language": "en",
+      "answer": "在DAB-DETR锚查询中，四个坐标(x, y, w, h)分别代表框的中心坐标和对应的宽度和高度。x和y坐标指定框的中心位置，而w和h表示框的宽度和高度。\n\n正文任务尚未恢复：需要失败目标论文的有效正文证据；其他工具成功不能代替。检索异常或证据不足不表示论文不存在。",
+      "task_complete": false,
+      "stop_reason": "incomplete",
+      "iterations": 2,
+      "seconds": 34.6257308000022,
+      "model_calls": 5,
+      "tokens": {
+        "input_known": 22068,
+        "output_known": 652,
+        "total": 22720,
+        "unknown_calls": 0,
+        "source": "actual_ollama_responses"
+      },
+      "tool_calls": [
+        {
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "What do the four coordinates in a DAB-DETR anchor query represent?"
+          },
+          "iteration": 1
+        }
+      ],
+      "tool_selection_correct": true,
+      "event_types": [
+        "thought",
+        "tool_call",
+        "tool_result",
+        "observation",
+        "thought",
+        "action_skipped",
+        "observation",
+        "done"
+      ],
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 3023,
+            "output": 36,
+            "incomplete": false,
+            "seconds": 1.6203783999990264
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "7a8edcd47bfd4ecf9f9d4179a029d06f"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0007963999996718485
+          },
+          {
+            "id": "7a8edcd47bfd4ecf9f9d4179a029d06f",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "7a8edcd47bfd4ecf9f9d4179a029d06f"
+            ],
+            "input": 3168,
+            "output": 254,
+            "incomplete": false,
+            "seconds": 16.487887499999488
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 5041,
+            "output": 40,
+            "incomplete": false,
+            "seconds": 3.3535493000017595
+          },
+          {
+            "id": "thought:2",
+            "iteration": 2,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 5823,
+            "output": 228,
+            "incomplete": false,
+            "seconds": 7.859971699999733
+          },
+          {
+            "id": "observation:2",
+            "iteration": 2,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 5013,
+            "output": 94,
+            "incomplete": false,
+            "seconds": 4.75863599999866
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "调用knowledge_base_search获取所需信息。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "elapsed_seconds": 1.6203783999990264,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "7a8edcd47bfd4ecf9f9d4179a029d06f",
+            "args": {
+              "question": "What do the four coordinates in a DAB-DETR anchor query represent?"
+            },
+            "elapsed_seconds": 0.0007963999996718485,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "7a8edcd47bfd4ecf9f9d4179a029d06f",
+            "args": {
+              "question": "What do the four coordinates in a DAB-DETR anchor query represent?"
+            },
+            "result": {
+              "answer": "当前回答的原文引句未通过定位校验，无法据此确认科研结论。请查看引用原文或补充相关片段。",
+              "citations": [
+                {
+                  "id": 2,
+                  "source_file": "dn_detr.pdf",
+                  "location": "第4页（物理页码）",
+                  "text": "\nIn the following, we abuse the notations to denote the\ndenoising part as q = {q_{0}, q_{1}, ..., q_{K}_{−}_{1}} and the matching\npart as Q = {Q0, Q1, ..., QL−1}. So the formulation of our\nmethod becomes\n\\mat hb f {o}=D(\\mathbf {q},\\mathbf {Q},F|A) \\vspace {-0.2cm}\n(4)\nTo increase the denoising efficiency, we propose to use mul-\ntiple versions of noised GT objects in the denoising part.\nFurther more, we utilize an attention mask to prevent infor-\nmation leakage from the denoising part to the matching part\nand among different noised versions of the same GT object.\n4.2. Intro to DAB-DETR\nMany recent works associate DETR queries with differ-\nent positional information. DAB-DETR follows this anal-\nysis and explicitly formulates each query as 4D anchor co-\nordinates. As shown in Fig. 3(a), a query is specified as\na tuple (x, y, w, h), where x, y are the center coordinates\nand w, h are the corresponding width and height of each\nbox. In addition, the anchor coordinates are dynamically\nupdated layer by layer. The output of each decoder layer\ncontains a tuple (∆x, ∆y, ∆w, ∆h) and the anchor is up-\ndated to (x + ∆x, y + ∆y, w + ∆w, h + ∆h).\nNote that our proposed method is mainly a training\nmethod which can be integrated into any DETR-like mod-\nels. To test on DAB-DETR, we only add minimal modifi-\ncations: specifying the decoder embedding as label embed-",
+                  "metadata": {
+                    "chunk_id": "f5332403748e31a0809af55fbebcfad61cfbf4bfb37604a7b552c7687d26b306",
+                    "doc_id": "f22b21dc2368b1738b1ac5ded9327876925f3fee9366d77b6d79c2b4a3ac4fc9",
+                    "page_number": 4,
+                    "source_file": "dn_detr.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.9104171991348267
+                },
+                {
+                  "id": 4,
+                  "source_file": "dn_detr.pdf",
+                  "location": "第4页（物理页码）",
+                  "text": "\nmation leakage from the denoising part to the matching part\nand among different noised versions of the same GT object.\n4.2. Intro to DAB-DETR\nMany recent works associate DETR queries with differ-\nent positional information. DAB-DETR follows this anal-\nysis and explicitly formulates each query as 4D anchor co-\nordinates. As shown in Fig. 3(a), a query is specified as\na tuple (x, y, w, h), where x, y are the center coordinates\nand w, h are the corresponding width and height of each\nbox. In addition, the anchor coordinates are dynamically\nupdated layer by layer. The output of each decoder layer\ncontains a tuple (∆x, ∆y, ∆w, ∆h) and the anchor is up-\ndated to (x + ∆x, y + ∆y, w + ∆w, h + ∆h).\nNote that our proposed method is mainly a training\nmethod which can be integrated into any DETR-like mod-\nels. To test on DAB-DETR, we only add minimal modifi-\ncations: specifying the decoder embedding as label embed-\nding, as shown in Fig. 3(b).\n4.3. Denoising\nFor each image, we collect all GT objects and add ran-\ndom noises to both their bounding boxes and class labels.\nTo maximize the utility of denoising learning, we use mul-\ntiple noised versions for each GT object.\nWe consider adding noise to boxes in two ways: cen-\nter shifting and box scaling. We define λ1 and λ2 as the\nnoise scale of these 2 noises. For center shifting, we add a",
+                  "metadata": {
+                    "chunk_id": "40492ae4c92784930d79e977adade555a9b4d7c1a12d3ba6a65a81cf1dd61dee",
+                    "doc_id": "f22b21dc2368b1738b1ac5ded9327876925f3fee9366d77b6d79c2b4a3ac4fc9",
+                    "page_number": 4,
+                    "source_file": "dn_detr.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.8769412636756897
+                },
+                {
+                  "id": 3,
+                  "source_file": "dino.pdf",
+                  "location": "第5页（物理页码）",
+                  "text": "\ntrains its backbone with 900M privately curated image-text pairs and then pre-\ntrains its detector with 9M images with annotated or pseudo boxes. In contrast,\nDINO achieves the SOTA result with a publicly available SwinL [23] backbone\nand a public dataset Objects365 [33] (1.7M annotated images) only.\n3\nDINO: DETR with Improved DeNoising Anchor Boxes\n3.1\nPreliminaries\nAs studied in Conditional DETR [25] and DAB-DETR [21], it becomes clear that\nqueries in DETR [3] are formed by two parts: a positional part and a content\npart, which are referred to as positional queries and content queries in this paper.\nDAB-DETR [21] explicitly formulates each positional query in DETR as a 4D\nanchor box (x, y, w, h), where x and y are the center coordinates of the box\nand w and h correspond to its width and height. Such an explicit anchor box\nformulation makes it easy to dynamically refine anchor boxes layer by layer in\nthe decoder.\nDN-DETR [17] introduces a denoising (DN) training method to accelerate the\ntraining convergence of DETR-like models. It shows that the slow convergence\nproblem in DETR is caused by the instability of bipartite matching. To mitigate\nthis problem, DN-DETR proposes to additionally feed noised ground-truth (GT)\nlabels and boxes into the Transformer decoder and train the model to reconstruct\nthe ground-truth ones. The added noise (∆x, ∆y, ∆w, ∆h) is constrained by\n|∆x| < ^{λw}",
+                  "metadata": {
+                    "chunk_id": "77fb9a4dfa8f832923e83c84203d4ab20f2231d6d98dc2a7c383d60f2ce40e8b",
+                    "doc_id": "2cda48e74a49e3552aedbf61bc6436767ed3867cb710bbd2b79e48624fd66126",
+                    "page_number": 5,
+                    "source_file": "dino.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.8953716158866882
+                }
+              ],
+              "invalid_citation_ids": [],
+              "missing_citations": false,
+              "warnings": [
+                "回答声称引用的原句无法在所引片段定位，已暂停展示结论；请核对原文后重试。"
+              ],
+              "evidence_quote_errors": [
+                [
+                  3
+                ]
+              ],
+              "evidence_number_errors": [],
+              "generation_mode": "grounded",
+              "notice": "",
+              "raw_answer": "## 回答\nSource evidence: \"As shown in Fig. 3(a), a query is specified as a tuple (x, y, w, h), where x, y are the center coordinates and w, h are the corresponding width and height of each box.\" [参考文档2][参考文档4]\nExplanation: In a DAB-DETR anchor query, the four coordinates (x, y, w, h) represent the center coordinates of the box and the corresponding width and height, respectively. The x and y coordinates specify the center position of the box, while w and h denote the width and height of the box.\n\nSource evidence: \"As shown in Fig. 3(a), a query is specified as a tuple (x, y, w, h), where x, y are the center coordinates of the box and w, h correspond to its width and height.\" [参考文档3]\nExplanation: In a DAB-DETR anchor query, the four coordinates (x, y, w, h) represent the center coordinates of the box and the corresponding width and height, respectively. The x and y coordinates specify the center position of the box, while w and h denote the width and height of the box.",
+              "model": "qwen2.5:7b",
+              "options": {
+                "temperature": 0.1,
+                "top_p": 0.9,
+                "top_k": 40,
+                "num_ctx": 16384,
+                "num_predict": 1024,
+                "repeat_penalty": 1.0
+              },
+              "done_reason": "stop",
+              "usage": {
+                "prompt_eval_count": 3168,
+                "eval_count": 254,
+                "total_duration": 7771214300,
+                "load_duration": 16812000,
+                "prompt_eval_duration": 1794289000,
+                "eval_duration": 5894824000
+              },
+              "status": "insufficient_evidence",
+              "doc_id": null,
+              "sources": [
+                "dino.pdf",
+                "dn_detr.pdf",
+                "dab_detr.pdf"
+              ],
+              "top_score": 0.9360717535018921,
+              "confirmed": false,
+              "retrieval_seconds": 8.662747999998828,
+              "elapsed_seconds": 16.47086759999729,
+              "retrieval": {
+                "request_id": "5a1fedce16344a1d9cc4cf2e4156fb01",
+                "status": "success",
+                "returned_chunks": 5
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 16.48783790000016,
+                "usage": {
+                  "prompt_eval_count": 3168,
+                  "eval_count": 254,
+                  "total_duration": 7771214300,
+                  "load_duration": 16812000,
+                  "prompt_eval_duration": 1794289000,
+                  "eval_duration": 5894824000
+                },
+                "usage_incomplete": false
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 16.487887499999488,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 3.3535493000017595,
+            "observation": "找到了相关文档，但部分引用未通过定位校验，需进一步确认。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 1
+          },
+          {
+            "type": "thought",
+            "thought": "依据现有资料回答或说明不足。",
+            "next_step": "answer",
+            "tool_name": null,
+            "parallel_tools": [],
+            "elapsed_seconds": 7.859971699999733,
+            "iteration": 2
+          },
+          {
+            "type": "action_skipped",
+            "reason": "Thought规划直接回答，无需执行工具。",
+            "iteration": 2
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 4.75863599999866,
+            "observation": "已找到相关文档，但部分引用未通过定位校验，需进一步确认。",
+            "decision": "finish",
+            "task_complete": false,
+            "iteration": 2
+          },
+          {
+            "type": "done",
+            "task_complete": false,
+            "stop_reason": "incomplete",
+            "full_response": "在DAB-DETR锚查询中，四个坐标(x, y, w, h)分别代表框的中心坐标和对应的宽度和高度。x和y坐标指定框的中心位置，而w和h表示框的宽度和高度。\n\n正文任务尚未恢复：需要失败目标论文的有效正文证据；其他工具成功不能代替。检索异常或证据不足不表示论文不存在。",
+            "iteration": 2
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "7a8edcd47bfd4ecf9f9d4179a029d06f",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 16.487887499999488,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 1,
+          "successes": 1,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": 1.0,
+          "mean_seconds": 16.487887499999488,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 16.487887499999488
+            }
+          ]
+        },
+        "tokens": {
+          "input": 22068,
+          "output": 652,
+          "total": 22720,
+          "known_total": 22720,
+          "unknown_calls": 0
+        },
+        "response_seconds": 34.62543540000115,
+        "retrievals": [
+          {
+            "call_id": "7a8edcd47bfd4ecf9f9d4179a029d06f",
+            "request_id": "5a1fedce16344a1d9cc4cf2e4156fb01",
+            "status": "success",
+            "returned_chunks": 5,
+            "seconds": 8.662747999998828
+          }
+        ]
+      }
+    },
+    {
+      "id": "F010",
+      "profile": "no_rules",
+      "category": "fact",
+      "language": "en",
+      "answer": "## 回答\nSource evidence: \"As shown in Fig. 3(a), a query is specified as a tuple (x, y, w, h), where x, y are the center coordinates and w, h are the corresponding width and height of each box.\" [参考文档2：dn\\_detr.pdf；第4页（物理页码）][参考文档4：dn\\_detr.pdf；第4页（物理页码）]\nExplanation: In a DAB-DETR anchor query, the four coordinates (x, y, w, h) represent the center coordinates of the box and the corresponding width and height, respectively. The x and y coordinates specify the center position of the box, while w and h denote the width and height of the box.\n\nSource evidence: \"DAB-DETR [21] explicitly formulates each positional query in DETR as a 4D anchor box (x, y, w, h), where x and y are the center coordinates of the box and w and h correspond to its width and height.\" [参考文档3：dino.pdf；第5页（物理页码）]\nExplanation: Similarly, DAB-DETR explicitly formulates each positional query as a 4D anchor box with coordinates (x, y, w, h), where x and y indicate the center coordinates of the box, and w and h represent the width and height of the box.\n\n## 参考来源\n- [参考文档2] dn\\_detr.pdf；第4页（物理页码）\n- [参考文档4] dn\\_detr.pdf；第4页（物理页码）\n- [参考文档3] dino.pdf；第5页（物理页码）",
+      "task_complete": true,
+      "stop_reason": "task_complete",
+      "iterations": 1,
+      "seconds": 22.403378999999404,
+      "model_calls": 3,
+      "tokens": {
+        "input_known": 11551,
+        "output_known": 382,
+        "total": 11933,
+        "unknown_calls": 0,
+        "source": "actual_ollama_responses"
+      },
+      "tool_calls": [
+        {
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "What do the four coordinates in a DAB-DETR anchor query represent?"
+          },
+          "iteration": 1
+        }
+      ],
+      "tool_selection_correct": true,
+      "event_types": [
+        "thought",
+        "tool_call",
+        "tool_result",
+        "observation",
+        "done"
+      ],
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 3023,
+            "output": 36,
+            "incomplete": false,
+            "seconds": 1.1121048999993945
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "db92b1ea543f4736abe00e232a841be3"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.00027380000028642826
+          },
+          {
+            "id": "db92b1ea543f4736abe00e232a841be3",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "db92b1ea543f4736abe00e232a841be3"
+            ],
+            "input": 3168,
+            "output": 255,
+            "incomplete": false,
+            "seconds": 15.605641999998625
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 5360,
+            "output": 91,
+            "incomplete": false,
+            "seconds": 5.622136399997544
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "调用knowledge_base_search获取所需信息。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "elapsed_seconds": 1.1121048999993945,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "db92b1ea543f4736abe00e232a841be3",
+            "args": {
+              "question": "What do the four coordinates in a DAB-DETR anchor query represent?"
+            },
+            "elapsed_seconds": 0.00027380000028642826,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "db92b1ea543f4736abe00e232a841be3",
+            "args": {
+              "question": "What do the four coordinates in a DAB-DETR anchor query represent?"
+            },
+            "result": {
+              "answer": "## 回答\nSource evidence: \"As shown in Fig. 3(a), a query is specified as a tuple (x, y, w, h), where x, y are the center coordinates and w, h are the corresponding width and height of each box.\" [参考文档2：dn\\_detr.pdf；第4页（物理页码）][参考文档4：dn\\_detr.pdf；第4页（物理页码）]\nExplanation: In a DAB-DETR anchor query, the four coordinates (x, y, w, h) represent the center coordinates of the box and the corresponding width and height, respectively. The x and y coordinates specify the center position of the box, while w and h denote the width and height of the box.\n\nSource evidence: \"DAB-DETR [21] explicitly formulates each positional query in DETR as a 4D anchor box (x, y, w, h), where x and y are the center coordinates of the box and w and h correspond to its width and height.\" [参考文档3：dino.pdf；第5页（物理页码）]\nExplanation: Similarly, DAB-DETR explicitly formulates each positional query as a 4D anchor box with coordinates (x, y, w, h), where x and y indicate the center coordinates of the box, and w and h represent the width and height of the box.\n\n## 参考来源\n- [参考文档2] dn\\_detr.pdf；第4页（物理页码）\n- [参考文档4] dn\\_detr.pdf；第4页（物理页码）\n- [参考文档3] dino.pdf；第5页（物理页码）",
+              "citations": [
+                {
+                  "id": 2,
+                  "source_file": "dn_detr.pdf",
+                  "location": "第4页（物理页码）",
+                  "text": "\nIn the following, we abuse the notations to denote the\ndenoising part as q = {q_{0}, q_{1}, ..., q_{K}_{−}_{1}} and the matching\npart as Q = {Q0, Q1, ..., QL−1}. So the formulation of our\nmethod becomes\n\\mat hb f {o}=D(\\mathbf {q},\\mathbf {Q},F|A) \\vspace {-0.2cm}\n(4)\nTo increase the denoising efficiency, we propose to use mul-\ntiple versions of noised GT objects in the denoising part.\nFurther more, we utilize an attention mask to prevent infor-\nmation leakage from the denoising part to the matching part\nand among different noised versions of the same GT object.\n4.2. Intro to DAB-DETR\nMany recent works associate DETR queries with differ-\nent positional information. DAB-DETR follows this anal-\nysis and explicitly formulates each query as 4D anchor co-\nordinates. As shown in Fig. 3(a), a query is specified as\na tuple (x, y, w, h), where x, y are the center coordinates\nand w, h are the corresponding width and height of each\nbox. In addition, the anchor coordinates are dynamically\nupdated layer by layer. The output of each decoder layer\ncontains a tuple (∆x, ∆y, ∆w, ∆h) and the anchor is up-\ndated to (x + ∆x, y + ∆y, w + ∆w, h + ∆h).\nNote that our proposed method is mainly a training\nmethod which can be integrated into any DETR-like mod-\nels. To test on DAB-DETR, we only add minimal modifi-\ncations: specifying the decoder embedding as label embed-",
+                  "metadata": {
+                    "chunk_id": "f5332403748e31a0809af55fbebcfad61cfbf4bfb37604a7b552c7687d26b306",
+                    "doc_id": "f22b21dc2368b1738b1ac5ded9327876925f3fee9366d77b6d79c2b4a3ac4fc9",
+                    "page_number": 4,
+                    "source_file": "dn_detr.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.9104171991348267
+                },
+                {
+                  "id": 4,
+                  "source_file": "dn_detr.pdf",
+                  "location": "第4页（物理页码）",
+                  "text": "\nmation leakage from the denoising part to the matching part\nand among different noised versions of the same GT object.\n4.2. Intro to DAB-DETR\nMany recent works associate DETR queries with differ-\nent positional information. DAB-DETR follows this anal-\nysis and explicitly formulates each query as 4D anchor co-\nordinates. As shown in Fig. 3(a), a query is specified as\na tuple (x, y, w, h), where x, y are the center coordinates\nand w, h are the corresponding width and height of each\nbox. In addition, the anchor coordinates are dynamically\nupdated layer by layer. The output of each decoder layer\ncontains a tuple (∆x, ∆y, ∆w, ∆h) and the anchor is up-\ndated to (x + ∆x, y + ∆y, w + ∆w, h + ∆h).\nNote that our proposed method is mainly a training\nmethod which can be integrated into any DETR-like mod-\nels. To test on DAB-DETR, we only add minimal modifi-\ncations: specifying the decoder embedding as label embed-\nding, as shown in Fig. 3(b).\n4.3. Denoising\nFor each image, we collect all GT objects and add ran-\ndom noises to both their bounding boxes and class labels.\nTo maximize the utility of denoising learning, we use mul-\ntiple noised versions for each GT object.\nWe consider adding noise to boxes in two ways: cen-\nter shifting and box scaling. We define λ1 and λ2 as the\nnoise scale of these 2 noises. For center shifting, we add a",
+                  "metadata": {
+                    "chunk_id": "40492ae4c92784930d79e977adade555a9b4d7c1a12d3ba6a65a81cf1dd61dee",
+                    "doc_id": "f22b21dc2368b1738b1ac5ded9327876925f3fee9366d77b6d79c2b4a3ac4fc9",
+                    "page_number": 4,
+                    "source_file": "dn_detr.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.8769412636756897
+                },
+                {
+                  "id": 3,
+                  "source_file": "dino.pdf",
+                  "location": "第5页（物理页码）",
+                  "text": "\ntrains its backbone with 900M privately curated image-text pairs and then pre-\ntrains its detector with 9M images with annotated or pseudo boxes. In contrast,\nDINO achieves the SOTA result with a publicly available SwinL [23] backbone\nand a public dataset Objects365 [33] (1.7M annotated images) only.\n3\nDINO: DETR with Improved DeNoising Anchor Boxes\n3.1\nPreliminaries\nAs studied in Conditional DETR [25] and DAB-DETR [21], it becomes clear that\nqueries in DETR [3] are formed by two parts: a positional part and a content\npart, which are referred to as positional queries and content queries in this paper.\nDAB-DETR [21] explicitly formulates each positional query in DETR as a 4D\nanchor box (x, y, w, h), where x and y are the center coordinates of the box\nand w and h correspond to its width and height. Such an explicit anchor box\nformulation makes it easy to dynamically refine anchor boxes layer by layer in\nthe decoder.\nDN-DETR [17] introduces a denoising (DN) training method to accelerate the\ntraining convergence of DETR-like models. It shows that the slow convergence\nproblem in DETR is caused by the instability of bipartite matching. To mitigate\nthis problem, DN-DETR proposes to additionally feed noised ground-truth (GT)\nlabels and boxes into the Transformer decoder and train the model to reconstruct\nthe ground-truth ones. The added noise (∆x, ∆y, ∆w, ∆h) is constrained by\n|∆x| < ^{λw}",
+                  "metadata": {
+                    "chunk_id": "77fb9a4dfa8f832923e83c84203d4ab20f2231d6d98dc2a7c383d60f2ce40e8b",
+                    "doc_id": "2cda48e74a49e3552aedbf61bc6436767ed3867cb710bbd2b79e48624fd66126",
+                    "page_number": 5,
+                    "source_file": "dino.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.8953716158866882
+                }
+              ],
+              "invalid_citation_ids": [],
+              "missing_citations": false,
+              "warnings": [],
+              "evidence_quote_errors": [],
+              "evidence_number_errors": [],
+              "generation_mode": "grounded",
+              "notice": "",
+              "raw_answer": "## 回答\nSource evidence: \"As shown in Fig. 3(a), a query is specified as a tuple (x, y, w, h), where x, y are the center coordinates and w, h are the corresponding width and height of each box.\" [参考文档2][参考文档4]\nExplanation: In a DAB-DETR anchor query, the four coordinates (x, y, w, h) represent the center coordinates of the box and the corresponding width and height, respectively. The x and y coordinates specify the center position of the box, while w and h denote the width and height of the box.\n\nSource evidence: \"DAB-DETR [21] explicitly formulates each positional query in DETR as a 4D anchor box (x, y, w, h), where x and y are the center coordinates of the box and w and h correspond to its width and height.\" [参考文档3]\nExplanation: Similarly, DAB-DETR explicitly formulates each positional query as a 4D anchor box with coordinates (x, y, w, h), where x and y indicate the center coordinates of the box, and w and h represent the width and height of the box.",
+              "model": "qwen2.5:7b",
+              "options": {
+                "temperature": 0.1,
+                "top_p": 0.9,
+                "top_k": 40,
+                "num_ctx": 16384,
+                "num_predict": 1024,
+                "repeat_penalty": 1.0
+              },
+              "done_reason": "stop",
+              "usage": {
+                "prompt_eval_count": 3168,
+                "eval_count": 255,
+                "total_duration": 6844386600,
+                "load_duration": 13089600,
+                "prompt_eval_duration": 26341000,
+                "eval_duration": 6717162000
+              },
+              "status": "answered",
+              "doc_id": null,
+              "sources": [
+                "dino.pdf",
+                "dn_detr.pdf",
+                "dab_detr.pdf"
+              ],
+              "top_score": 0.9360717535018921,
+              "confirmed": false,
+              "retrieval_seconds": 8.707978099999309,
+              "elapsed_seconds": 15.587456599998404,
+              "retrieval": {
+                "request_id": "7991a8fc8e1041c38e9d76876fd4f615",
+                "status": "success",
+                "returned_chunks": 5
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 15.605590600000141,
+                "usage": {
+                  "prompt_eval_count": 3168,
+                  "eval_count": 255,
+                  "total_duration": 6844386600,
+                  "load_duration": 13089600,
+                  "prompt_eval_duration": 26341000,
+                  "eval_duration": 6717162000
+                },
+                "usage_incomplete": false
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 15.605641999998625,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 5.622136399997544,
+            "observation": "已找到相关文档并提取了答案。",
+            "decision": "finish",
+            "task_complete": true,
+            "iteration": 1
+          },
+          {
+            "type": "done",
+            "task_complete": true,
+            "stop_reason": "task_complete",
+            "full_response": "## 回答\nSource evidence: \"As shown in Fig. 3(a), a query is specified as a tuple (x, y, w, h), where x, y are the center coordinates and w, h are the corresponding width and height of each box.\" [参考文档2：dn\\_detr.pdf；第4页（物理页码）][参考文档4：dn\\_detr.pdf；第4页（物理页码）]\nExplanation: In a DAB-DETR anchor query, the four coordinates (x, y, w, h) represent the center coordinates of the box and the corresponding width and height, respectively. The x and y coordinates specify the center position of the box, while w and h denote the width and height of the box.\n\nSource evidence: \"DAB-DETR [21] explicitly formulates each positional query in DETR as a 4D anchor box (x, y, w, h), where x and y are the center coordinates of the box and w and h correspond to its width and height.\" [参考文档3：dino.pdf；第5页（物理页码）]\nExplanation: Similarly, DAB-DETR explicitly formulates each positional query as a 4D anchor box with coordinates (x, y, w, h), where x and y indicate the center coordinates of the box, and w and h represent the width and height of the box.\n\n## 参考来源\n- [参考文档2] dn\\_detr.pdf；第4页（物理页码）\n- [参考文档4] dn\\_detr.pdf；第4页（物理页码）\n- [参考文档3] dino.pdf；第5页（物理页码）",
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "db92b1ea543f4736abe00e232a841be3",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 15.605641999998625,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 1,
+          "successes": 1,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": 1.0,
+          "mean_seconds": 15.605641999998625,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 15.605641999998625
+            }
+          ]
+        },
+        "tokens": {
+          "input": 11551,
+          "output": 382,
+          "total": 11933,
+          "known_total": 11933,
+          "unknown_calls": 0
+        },
+        "response_seconds": 22.403108300000895,
+        "retrievals": [
+          {
+            "call_id": "db92b1ea543f4736abe00e232a841be3",
+            "request_id": "7991a8fc8e1041c38e9d76876fd4f615",
+            "status": "success",
+            "returned_chunks": 5,
+            "seconds": 8.707978099999309
+          }
+        ]
+      }
+    },
+    {
+      "id": "F012",
+      "profile": "no_rules",
+      "category": "fact",
+      "language": "en",
+      "answer": "## 回答\n原文依据：\"by using a contrastive way for denoising training, a mixed query selection method for anchor initialization, and a look forward twice scheme for box prediction.\"。[参考文档1：dino.pdf；第1页（物理页码）]\n说明：DINO通过对比方式的去噪训练、混合查询选择方法的锚初始化以及预测框的向前看两次方案这三种改进，提高了性能和效率。[参考文档1：dino.pdf；第1页（物理页码）]\n\n## 参考来源\n- [参考文档1] dino.pdf；第1页（物理页码）",
+      "task_complete": true,
+      "stop_reason": "task_complete",
+      "iterations": 1,
+      "seconds": 20.659487699998863,
+      "model_calls": 3,
+      "tokens": {
+        "input_known": 9734,
+        "output_known": 232,
+        "total": 9966,
+        "unknown_calls": 0,
+        "source": "actual_ollama_responses"
+      },
+      "tool_calls": [
+        {
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "Which three improvements are named in the DINO detection paper?"
+          },
+          "iteration": 1
+        }
+      ],
+      "tool_selection_correct": true,
+      "event_types": [
+        "thought",
+        "tool_call",
+        "tool_result",
+        "observation",
+        "done"
+      ],
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 3019,
+            "output": 32,
+            "incomplete": false,
+            "seconds": 1.1080375000019558
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "720d7267842d4a739fc286d63599793f"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.00029290000020409934
+          },
+          {
+            "id": "720d7267842d4a739fc286d63599793f",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "720d7267842d4a739fc286d63599793f"
+            ],
+            "input": 2844,
+            "output": 87,
+            "incomplete": false,
+            "seconds": 14.37800470000002
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 3871,
+            "output": 113,
+            "incomplete": false,
+            "seconds": 5.121726699999272
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "调用knowledge_base_search获取所需信息。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "elapsed_seconds": 1.1080375000019558,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "720d7267842d4a739fc286d63599793f",
+            "args": {
+              "question": "Which three improvements are named in the DINO detection paper?"
+            },
+            "elapsed_seconds": 0.00029290000020409934,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "720d7267842d4a739fc286d63599793f",
+            "args": {
+              "question": "Which three improvements are named in the DINO detection paper?"
+            },
+            "result": {
+              "answer": "## 回答\n原文依据：\"by using a contrastive way for denoising training, a mixed query selection method for anchor initialization, and a look forward twice scheme for box prediction.\"。[参考文档1：dino.pdf；第1页（物理页码）]\n说明：DINO通过对比方式的去噪训练、混合查询选择方法的锚初始化以及预测框的向前看两次方案这三种改进，提高了性能和效率。[参考文档1：dino.pdf；第1页（物理页码）]\n\n## 参考来源\n- [参考文档1] dino.pdf；第1页（物理页码）",
+              "citations": [
+                {
+                  "id": 1,
+                  "source_file": "dino.pdf",
+                  "location": "第1页（物理页码）",
+                  "text": "DINO: DETR with Improved DeNoising Anchor\narXiv:2203.03605v4  [cs.CV]  11 Jul 2022\nBoxes for End-to-End Object Detection\nHao Zhang^{1}^{,}^{3}^{∗†}, Feng Li^{1}^{,}^{3}^{∗†}, Shilong Liu^{2}^{,}^{3}^{∗†}, Lei Zhang^{3}^{‡},\nHang Su^{2}, Jun Zhu^{2}, Lionel M. Ni^{1}^{,}^{4}, Heung-Yeung Shum^{1}^{,}^{3}\n^{1}The Hong Kong University of Science and Technology.\n^{2}Dept. of CST., BNRist Center, Institute for AI, Tsinghua University.\n^{3}International Digital Economy Academy (IDEA).\n^{4}The Hong Kong University of Science and Technology (Guangzhou).\n{hzhangcx,fliay}@connect.ust.hk\n{liusl20}@mails.tsinghua.edu.cn\n{suhangss,dcszj}@mail.tsinghua.edu.cn\n{ni,hshum}@ust.hk\n{leizhang}@idea.edu.cn\nAbstract. We present DINO (DETR with Improved deNoising anchOr\nboxes), a state-of-the-art end-to-end object detector. DINO improves\nover previous DETR-like models in performance and efficiency by using\na contrastive way for denoising training, a mixed query selection method\nfor anchor initialization, and a look forward twice scheme for box pre-\ndiction. DINO achieves 49.4AP in 12 epochs and 51.3AP in 24 epochs\non COCO with a ResNet-50 backbone and multi-scale features, yield-\ning a significant improvement of +6.0AP and +2.7AP, respectively,\ncompared to DN-DETR, the previous best DETR-like model. DINO\nscales well in both model size and",
+                  "metadata": {
+                    "chunk_id": "f0aed5b515845c7326a50624c305fa079e465c9762c1a50e0914f153f8ca8355",
+                    "doc_id": "2cda48e74a49e3552aedbf61bc6436767ed3867cb710bbd2b79e48624fd66126",
+                    "page_number": 1,
+                    "source_file": "dino.pdf",
+                    "retrieval_warning": "长块按模型Token窗口精排，本次引用只覆盖选中的摘录；完整内容见原页。"
+                  },
+                  "truncated": false,
+                  "score": 0.9148867130279541
+                }
+              ],
+              "invalid_citation_ids": [],
+              "missing_citations": false,
+              "warnings": [
+                "长块按模型Token窗口精排，本次引用只覆盖选中的摘录；完整内容见原页。"
+              ],
+              "evidence_quote_errors": [],
+              "evidence_number_errors": [],
+              "generation_mode": "grounded",
+              "notice": "",
+              "raw_answer": "## 回答\n原文依据：\"by using a contrastive way for denoising training, a mixed query selection method for anchor initialization, and a look forward twice scheme for box prediction.\"。[参考文档1]\n说明：DINO通过对比方式的去噪训练、混合查询选择方法的锚初始化以及预测框的向前看两次方案这三种改进，提高了性能和效率。[参考文档1]",
+              "model": "qwen2.5:7b",
+              "options": {
+                "temperature": 0.1,
+                "top_p": 0.9,
+                "top_k": 40,
+                "num_ctx": 16384,
+                "num_predict": 1024,
+                "repeat_penalty": 1.0
+              },
+              "done_reason": "stop",
+              "usage": {
+                "prompt_eval_count": 2844,
+                "eval_count": 87,
+                "total_duration": 4273657200,
+                "load_duration": 12020400,
+                "prompt_eval_duration": 1942612000,
+                "eval_duration": 2263693000
+              },
+              "status": "answered",
+              "doc_id": null,
+              "sources": [
+                "dino.pdf"
+              ],
+              "top_score": 0.9148867130279541,
+              "confirmed": false,
+              "retrieval_seconds": 10.067805399998178,
+              "elapsed_seconds": 14.357418600000528,
+              "retrieval": {
+                "request_id": "ec6cc6e1ea364570a59212fc58bd1403",
+                "status": "success",
+                "returned_chunks": 5
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 14.377963400002045,
+                "usage": {
+                  "prompt_eval_count": 2844,
+                  "eval_count": 87,
+                  "total_duration": 4273657200,
+                  "load_duration": 12020400,
+                  "prompt_eval_duration": 1942612000,
+                  "eval_duration": 2263693000
+                },
+                "usage_incomplete": false
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 14.37800470000002,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 5.121726699999272,
+            "observation": "已从DINO检测论文中找到三种改进：对比方式的去噪训练、混合查询选择方法的锚初始化以及预测框的向前看两次方案。",
+            "decision": "finish",
+            "task_complete": true,
+            "iteration": 1
+          },
+          {
+            "type": "done",
+            "task_complete": true,
+            "stop_reason": "task_complete",
+            "full_response": "## 回答\n原文依据：\"by using a contrastive way for denoising training, a mixed query selection method for anchor initialization, and a look forward twice scheme for box prediction.\"。[参考文档1：dino.pdf；第1页（物理页码）]\n说明：DINO通过对比方式的去噪训练、混合查询选择方法的锚初始化以及预测框的向前看两次方案这三种改进，提高了性能和效率。[参考文档1：dino.pdf；第1页（物理页码）]\n\n## 参考来源\n- [参考文档1] dino.pdf；第1页（物理页码）",
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "720d7267842d4a739fc286d63599793f",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 14.37800470000002,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 1,
+          "successes": 1,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": 1.0,
+          "mean_seconds": 14.37800470000002,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 14.37800470000002
+            }
+          ]
+        },
+        "tokens": {
+          "input": 9734,
+          "output": 232,
+          "total": 9966,
+          "known_total": 9966,
+          "unknown_calls": 0
+        },
+        "response_seconds": 20.659256700000697,
+        "retrievals": [
+          {
+            "call_id": "720d7267842d4a739fc286d63599793f",
+            "request_id": "ec6cc6e1ea364570a59212fc58bd1403",
+            "status": "success",
+            "returned_chunks": 5,
+            "seconds": 10.067805399998178
+          }
+        ]
+      }
+    },
+    {
+      "id": "F012",
+      "profile": "default",
+      "category": "fact",
+      "language": "en",
+      "answer": "## 回答\n原文依据：\"by using a contrastive way for denoising training, a mixed query selection method for anchor initialization, and a look forward twice scheme for box prediction.\"。[参考文档1：dino.pdf；第1页（物理页码）]\n说明：DINO通过对比方式的去噪训练、混合查询选择方法的锚初始化以及预测框的向前两次方案这三种改进，提高了性能和效率。[参考文档1：dino.pdf；第1页（物理页码）]\n\n## 参考来源\n- [参考文档1] dino.pdf；第1页（物理页码）\n\n长块按模型Token窗口精排，本次引用只覆盖选中的摘录；完整内容见原页。",
+      "task_complete": true,
+      "stop_reason": "task_complete",
+      "iterations": 1,
+      "seconds": 12.454866000000038,
+      "model_calls": 1,
+      "tokens": {
+        "input_known": 2844,
+        "output_known": 86,
+        "total": 2930,
+        "unknown_calls": 0,
+        "source": "actual_ollama_responses"
+      },
+      "tool_calls": [
+        {
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "Which three improvements are named in the DINO detection paper?"
+          },
+          "iteration": 1
+        }
+      ],
+      "tool_selection_correct": true,
+      "event_types": [
+        "thought",
+        "tool_call",
+        "tool_result",
+        "observation",
+        "done"
+      ],
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0001311999985773582
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "ca94f1604f7a4a02bcca67ea13a6bd6d"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.00016830000095069408
+          },
+          {
+            "id": "ca94f1604f7a4a02bcca67ea13a6bd6d",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "ca94f1604f7a4a02bcca67ea13a6bd6d"
+            ],
+            "input": 2844,
+            "output": 86,
+            "incomplete": false,
+            "seconds": 12.450126499999897
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0003104999996139668
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "论文资料问题优先查询实际知识库。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "route": "rule",
+            "elapsed_seconds": 0.0001311999985773582,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "ca94f1604f7a4a02bcca67ea13a6bd6d",
+            "args": {
+              "question": "Which three improvements are named in the DINO detection paper?"
+            },
+            "elapsed_seconds": 0.00016830000095069408,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "ca94f1604f7a4a02bcca67ea13a6bd6d",
+            "args": {
+              "question": "Which three improvements are named in the DINO detection paper?"
+            },
+            "result": {
+              "answer": "## 回答\n原文依据：\"by using a contrastive way for denoising training, a mixed query selection method for anchor initialization, and a look forward twice scheme for box prediction.\"。[参考文档1：dino.pdf；第1页（物理页码）]\n说明：DINO通过对比方式的去噪训练、混合查询选择方法的锚初始化以及预测框的向前两次方案这三种改进，提高了性能和效率。[参考文档1：dino.pdf；第1页（物理页码）]\n\n## 参考来源\n- [参考文档1] dino.pdf；第1页（物理页码）",
+              "citations": [
+                {
+                  "id": 1,
+                  "source_file": "dino.pdf",
+                  "location": "第1页（物理页码）",
+                  "text": "DINO: DETR with Improved DeNoising Anchor\narXiv:2203.03605v4  [cs.CV]  11 Jul 2022\nBoxes for End-to-End Object Detection\nHao Zhang^{1}^{,}^{3}^{∗†}, Feng Li^{1}^{,}^{3}^{∗†}, Shilong Liu^{2}^{,}^{3}^{∗†}, Lei Zhang^{3}^{‡},\nHang Su^{2}, Jun Zhu^{2}, Lionel M. Ni^{1}^{,}^{4}, Heung-Yeung Shum^{1}^{,}^{3}\n^{1}The Hong Kong University of Science and Technology.\n^{2}Dept. of CST., BNRist Center, Institute for AI, Tsinghua University.\n^{3}International Digital Economy Academy (IDEA).\n^{4}The Hong Kong University of Science and Technology (Guangzhou).\n{hzhangcx,fliay}@connect.ust.hk\n{liusl20}@mails.tsinghua.edu.cn\n{suhangss,dcszj}@mail.tsinghua.edu.cn\n{ni,hshum}@ust.hk\n{leizhang}@idea.edu.cn\nAbstract. We present DINO (DETR with Improved deNoising anchOr\nboxes), a state-of-the-art end-to-end object detector. DINO improves\nover previous DETR-like models in performance and efficiency by using\na contrastive way for denoising training, a mixed query selection method\nfor anchor initialization, and a look forward twice scheme for box pre-\ndiction. DINO achieves 49.4AP in 12 epochs and 51.3AP in 24 epochs\non COCO with a ResNet-50 backbone and multi-scale features, yield-\ning a significant improvement of +6.0AP and +2.7AP, respectively,\ncompared to DN-DETR, the previous best DETR-like model. DINO\nscales well in both model size and",
+                  "metadata": {
+                    "chunk_id": "f0aed5b515845c7326a50624c305fa079e465c9762c1a50e0914f153f8ca8355",
+                    "doc_id": "2cda48e74a49e3552aedbf61bc6436767ed3867cb710bbd2b79e48624fd66126",
+                    "page_number": 1,
+                    "source_file": "dino.pdf",
+                    "retrieval_warning": "长块按模型Token窗口精排，本次引用只覆盖选中的摘录；完整内容见原页。"
+                  },
+                  "truncated": false,
+                  "score": 0.9148867130279541
+                }
+              ],
+              "invalid_citation_ids": [],
+              "missing_citations": false,
+              "warnings": [
+                "长块按模型Token窗口精排，本次引用只覆盖选中的摘录；完整内容见原页。"
+              ],
+              "evidence_quote_errors": [],
+              "evidence_number_errors": [],
+              "generation_mode": "grounded",
+              "notice": "",
+              "raw_answer": "## 回答\n原文依据：\"by using a contrastive way for denoising training, a mixed query selection method for anchor initialization, and a look forward twice scheme for box prediction.\"。[参考文档1]\n说明：DINO通过对比方式的去噪训练、混合查询选择方法的锚初始化以及预测框的向前两次方案这三种改进，提高了性能和效率。[参考文档1]",
+              "model": "qwen2.5:7b",
+              "options": {
+                "temperature": 0.1,
+                "top_p": 0.9,
+                "top_k": 40,
+                "num_ctx": 16384,
+                "num_predict": 1024,
+                "repeat_penalty": 1.0
+              },
+              "done_reason": "stop",
+              "usage": {
+                "prompt_eval_count": 2844,
+                "eval_count": 86,
+                "total_duration": 2329635900,
+                "load_duration": 13926300,
+                "prompt_eval_duration": 26778000,
+                "eval_duration": 2197197000
+              },
+              "status": "answered",
+              "doc_id": null,
+              "sources": [
+                "dino.pdf"
+              ],
+              "top_score": 0.9148867130279541,
+              "confirmed": false,
+              "retrieval_seconds": 10.07261970000036,
+              "elapsed_seconds": 12.431467900001735,
+              "retrieval": {
+                "request_id": "e4891a402da04507ae0461ca804a0832",
+                "status": "success",
+                "returned_chunks": 5
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 12.45007600000099,
+                "usage": {
+                  "prompt_eval_count": 2844,
+                  "eval_count": 86,
+                  "total_duration": 2329635900,
+                  "load_duration": 13926300,
+                  "prompt_eval_duration": 26778000,
+                  "eval_duration": 2197197000
+                },
+                "usage_incomplete": false
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 12.450126499999897,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 0.0003104999996139668,
+            "observation": "保留RAG工具答案、引用及实际检索状态。",
+            "decision": "finish",
+            "task_complete": true,
+            "iteration": 1
+          },
+          {
+            "type": "done",
+            "task_complete": true,
+            "stop_reason": "task_complete",
+            "full_response": "## 回答\n原文依据：\"by using a contrastive way for denoising training, a mixed query selection method for anchor initialization, and a look forward twice scheme for box prediction.\"。[参考文档1：dino.pdf；第1页（物理页码）]\n说明：DINO通过对比方式的去噪训练、混合查询选择方法的锚初始化以及预测框的向前两次方案这三种改进，提高了性能和效率。[参考文档1：dino.pdf；第1页（物理页码）]\n\n## 参考来源\n- [参考文档1] dino.pdf；第1页（物理页码）\n\n长块按模型Token窗口精排，本次引用只覆盖选中的摘录；完整内容见原页。",
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "ca94f1604f7a4a02bcca67ea13a6bd6d",
+            "name": "knowledge_base_search",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 12.450126499999897,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 1,
+          "successes": 1,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": 1.0,
+          "mean_seconds": 12.450126499999897,
+          "by_tool": [
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 12.450126499999897
+            }
+          ]
+        },
+        "tokens": {
+          "input": 2844,
+          "output": 86,
+          "total": 2930,
+          "known_total": 2930,
+          "unknown_calls": 0
+        },
+        "response_seconds": 12.454492200002278,
+        "retrievals": [
+          {
+            "call_id": "ca94f1604f7a4a02bcca67ea13a6bd6d",
+            "request_id": "e4891a402da04507ae0461ca804a0832",
+            "status": "success",
+            "returned_chunks": 5,
+            "seconds": 10.07261970000036
+          }
+        ]
+      }
+    },
+    {
+      "id": "C013",
+      "profile": "default",
+      "category": "comparison",
+      "language": "en",
+      "answer": "当前知识库中未找到关于DeiT和CaiT的相关文档，无法回答它们如何添加机制以生成图像级别的预测。\n\n正文任务尚未恢复：需要失败目标论文的有效正文证据；其他工具成功不能代替。检索异常或证据不足不表示论文不存在。",
+      "task_complete": false,
+      "stop_reason": "incomplete",
+      "iterations": 3,
+      "seconds": 29.200405699997646,
+      "model_calls": 7,
+      "tokens": {
+        "input_known": 28335,
+        "output_known": 354,
+        "total": 28689,
+        "unknown_calls": 0,
+        "source": "actual_ollama_responses"
+      },
+      "tool_calls": [
+        {
+          "name": "paper_list",
+          "args": {},
+          "iteration": 1
+        },
+        {
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "How do DeiT and CaiT add mechanisms for producing the image-level prediction?",
+            "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5"
+          },
+          "iteration": 2
+        }
+      ],
+      "tool_selection_correct": true,
+      "event_types": [
+        "thought",
+        "tool_call",
+        "tool_result",
+        "observation",
+        "thought",
+        "tool_call",
+        "tool_result",
+        "observation",
+        "thought",
+        "action_skipped",
+        "observation",
+        "done"
+      ],
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 3024,
+            "output": 36,
+            "incomplete": false,
+            "seconds": 1.1186792999978934
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "paper_list",
+            "tool_call_ids": [
+              "4951e287855343a081583ee014562f47"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0006223000018508174
+          },
+          {
+            "id": "4951e287855343a081583ee014562f47",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "paper_list",
+            "tool_call_ids": [
+              "4951e287855343a081583ee014562f47"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.7867943000019295
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 3628,
+            "output": 36,
+            "incomplete": false,
+            "seconds": 2.4894633000003523
+          },
+          {
+            "id": "thought:2",
+            "iteration": 2,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 4422,
+            "output": 96,
+            "incomplete": false,
+            "seconds": 5.873582200001692
+          },
+          {
+            "id": "action:2",
+            "iteration": 2,
+            "phase": "Action",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "7ca105d5e69d45b09f1073937f36be12"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.002591600001323968
+          },
+          {
+            "id": "7ca105d5e69d45b09f1073937f36be12",
+            "iteration": 2,
+            "phase": "工具内部",
+            "tool": "knowledge_base_search",
+            "tool_call_ids": [
+              "7ca105d5e69d45b09f1073937f36be12"
+            ],
+            "input": 2973,
+            "output": 25,
+            "incomplete": false,
+            "seconds": 10.392277800001466
+          },
+          {
+            "id": "observation:2",
+            "iteration": 2,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 4575,
+            "output": 38,
+            "incomplete": false,
+            "seconds": 3.1245092999997723
+          },
+          {
+            "id": "thought:3",
+            "iteration": 3,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 5262,
+            "output": 56,
+            "incomplete": false,
+            "seconds": 2.465579899999284
+          },
+          {
+            "id": "observation:3",
+            "iteration": 3,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 4451,
+            "output": 67,
+            "incomplete": false,
+            "seconds": 2.7701562000002014
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "先获取已上传文献的真实ID，再执行论文工具。",
+            "next_step": "tool",
+            "tool_name": "paper_list",
+            "parallel_tools": [],
+            "elapsed_seconds": 1.1186792999978934,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "paper_list",
+            "call_id": "4951e287855343a081583ee014562f47",
+            "args": {},
+            "elapsed_seconds": 0.0006223000018508174,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "paper_list",
+            "call_id": "4951e287855343a081583ee014562f47",
+            "args": {},
+            "result": {
+              "papers": [
+                {
+                  "doc_id": "d54045f3ee41a606f91851300c03accfd37075d4d416dcab77d97c871262e8bc",
+                  "source_file": "cait.pdf",
+                  "indexed_chunks": 126,
+                  "source_available": true,
+                  "index_status": "has_index"
+                },
+                {
+                  "doc_id": "f10cfc976b61006109447b97b6336424c60ac1c1989d85932b5c6572510fbf2b",
+                  "source_file": "conditional_detr.pdf",
+                  "indexed_chunks": 112,
+                  "source_available": true,
+                  "index_status": "has_index"
+                },
+                {
+                  "doc_id": "65b00851b503763c15dd58e54b7424563ed70bdd06afa5b10b5d5a121ccb3232",
+                  "source_file": "dab_detr.pdf",
+                  "indexed_chunks": 140,
+                  "source_available": true,
+                  "index_status": "has_index"
+                },
+                {
+                  "doc_id": "9bbba0cd4474e8e5e936187be81c93b938d2ce567bed38aee0ac262dc97dd7e2",
+                  "source_file": "deformable_detr.pdf",
+                  "indexed_chunks": 122,
+                  "source_available": true,
+                  "index_status": "has_index"
+                },
+                {
+                  "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5",
+                  "source_file": "deit.pdf",
+                  "indexed_chunks": 123,
+                  "source_available": true,
+                  "index_status": "has_index"
+                },
+                {
+                  "doc_id": "d4b846bd44896e1d21527f48eddc422c263c9a4f8a3fa4be249750956882698d",
+                  "source_file": "detr.pdf",
+                  "indexed_chunks": 156,
+                  "source_available": true,
+                  "index_status": "has_index"
+                },
+                {
+                  "doc_id": "2cda48e74a49e3552aedbf61bc6436767ed3867cb710bbd2b79e48624fd66126",
+                  "source_file": "dino.pdf",
+                  "indexed_chunks": 139,
+                  "source_available": true,
+                  "index_status": "has_index"
+                },
+                {
+                  "doc_id": "f22b21dc2368b1738b1ac5ded9327876925f3fee9366d77b6d79c2b4a3ac4fc9",
+                  "source_file": "dn_detr.pdf",
+                  "indexed_chunks": 96,
+                  "source_available": true,
+                  "index_status": "has_index"
+                },
+                {
+                  "doc_id": "4fbd34d6bcad1ec75b62ce15bf9e54b0268570e446f8d889fed97b16152b86d1",
+                  "source_file": "pvt.pdf",
+                  "indexed_chunks": 136,
+                  "source_available": true,
+                  "index_status": "has_index"
+                },
+                {
+                  "doc_id": "0f77d1635bdbb040bc5f9174ddbda63b5ca17ffab0459b55dfa4148f9916f833",
+                  "source_file": "swin.pdf",
+                  "indexed_chunks": 133,
+                  "source_available": true,
+                  "index_status": "has_index"
+                },
+                {
+                  "doc_id": "0efc583606acf67e3edfc81694411ddae417c4e94974de22872764ff28339911",
+                  "source_file": "t2t_vit.pdf",
+                  "indexed_chunks": 244,
+                  "source_available": true,
+                  "index_status": "has_index"
+                },
+                {
+                  "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                  "source_file": "vit.pdf",
+                  "indexed_chunks": 165,
+                  "source_available": true,
+                  "index_status": "has_index"
+                }
+              ],
+              "total": 12,
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.7867476999999781,
+                "usage": {
+                  "prompt_eval_count": 0,
+                  "eval_count": 0
+                },
+                "usage_incomplete": false
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.7867943000019295,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 2.4894633000003523,
+            "observation": "已获取到12篇文献的ID和文件名。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 1
+          },
+          {
+            "type": "thought",
+            "thought": "调用knowledge_base_search获取所需信息。",
+            "next_step": "tool",
+            "tool_name": "knowledge_base_search",
+            "parallel_tools": [],
+            "elapsed_seconds": 5.873582200001692,
+            "iteration": 2
+          },
+          {
+            "type": "tool_call",
+            "name": "knowledge_base_search",
+            "call_id": "7ca105d5e69d45b09f1073937f36be12",
+            "args": {
+              "question": "How do DeiT and CaiT add mechanisms for producing the image-level prediction?",
+              "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5"
+            },
+            "elapsed_seconds": 0.002591600001323968,
+            "iteration": 2
+          },
+          {
+            "type": "tool_result",
+            "name": "knowledge_base_search",
+            "call_id": "7ca105d5e69d45b09f1073937f36be12",
+            "args": {
+              "question": "How do DeiT and CaiT add mechanisms for producing the image-level prediction?",
+              "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5"
+            },
+            "result": {
+              "answer": "## 回答\n当前知识库中未找到相关文档。\n\n## 参考来源\n无可引用来源",
+              "citations": [],
+              "invalid_citation_ids": [],
+              "missing_citations": true,
+              "warnings": [
+                "回答未提供有效文献引用，不能作为已溯源答案。"
+              ],
+              "evidence_quote_errors": [],
+              "evidence_number_errors": [],
+              "generation_mode": "grounded",
+              "notice": "",
+              "raw_answer": "## 回答\n当前知识库中未找到相关文档。\n\n## 参考来源\n无可引用来源。",
+              "model": "qwen2.5:7b",
+              "options": {
+                "temperature": 0.1,
+                "top_p": 0.9,
+                "top_k": 40,
+                "num_ctx": 16384,
+                "num_predict": 1024,
+                "repeat_penalty": 1.0
+              },
+              "done_reason": "stop",
+              "usage": {
+                "prompt_eval_count": 2973,
+                "eval_count": 25,
+                "total_duration": 2168785300,
+                "load_duration": 15893700,
+                "prompt_eval_duration": 1465701000,
+                "eval_duration": 592380000
+              },
+              "status": "insufficient_evidence",
+              "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5",
+              "sources": [
+                "deit.pdf"
+              ],
+              "top_score": 0.13192735612392426,
+              "confirmed": false,
+              "retrieval_seconds": 8.190279999998893,
+              "elapsed_seconds": 10.374901899998804,
+              "retrieval": {
+                "request_id": "ce6aea858c36464da3fc1d1aca920ee0",
+                "status": "success",
+                "returned_chunks": 5
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 10.39222659999723,
+                "usage": {
+                  "prompt_eval_count": 2973,
+                  "eval_count": 25,
+                  "total_duration": 2168785300,
+                  "load_duration": 15893700,
+                  "prompt_eval_duration": 1465701000,
+                  "eval_duration": 592380000
+                },
+                "usage_incomplete": false
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 10.392277800001466,
+            "iteration": 2
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 3.1245092999997723,
+            "observation": "知识库中未找到关于DeiT和CaiT的相关文档。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 2
+          },
+          {
+            "type": "thought",
+            "thought": "依据现有资料回答或说明不足。",
+            "next_step": "answer",
+            "tool_name": null,
+            "parallel_tools": [],
+            "elapsed_seconds": 2.465579899999284,
+            "iteration": 3
+          },
+          {
+            "type": "action_skipped",
+            "reason": "Thought规划直接回答，无需执行工具。",
+            "iteration": 3
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 2.7701562000002014,
+            "observation": "当前知识库中未找到关于DeiT和CaiT的相关文档。",
+            "decision": "finish",
+            "task_complete": false,
+            "iteration": 3
+          },
+          {
+            "type": "done",
+            "task_complete": false,
+            "stop_reason": "incomplete",
+            "full_response": "当前知识库中未找到关于DeiT和CaiT的相关文档，无法回答它们如何添加机制以生成图像级别的预测。\n\n正文任务尚未恢复：需要失败目标论文的有效正文证据；其他工具成功不能代替。检索异常或证据不足不表示论文不存在。",
+            "iteration": 3
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "4951e287855343a081583ee014562f47",
+            "name": "paper_list",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 0.7867943000019295,
+            "attempts": 1,
+            "execution_mode": "serial"
+          },
+          {
+            "call_id": "7ca105d5e69d45b09f1073937f36be12",
+            "name": "knowledge_base_search",
+            "iteration": 2,
+            "status": "success",
+            "seconds": 10.392277800001466,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 2,
+          "successes": 2,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": 1.0,
+          "mean_seconds": 5.589536050001698,
+          "by_tool": [
+            {
+              "name": "paper_list",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.7867943000019295
+            },
+            {
+              "name": "knowledge_base_search",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 10.392277800001466
+            }
+          ]
+        },
+        "tokens": {
+          "input": 28335,
+          "output": 354,
+          "total": 28689,
+          "known_total": 28689,
+          "unknown_calls": 0
+        },
+        "response_seconds": 29.199799000001804,
+        "retrievals": [
+          {
+            "call_id": "7ca105d5e69d45b09f1073937f36be12",
+            "request_id": "ce6aea858c36464da3fc1d1aca920ee0",
+            "status": "success",
+            "returned_chunks": 5,
+            "seconds": 8.190279999998893
+          }
+        ]
+      }
+    },
+    {
+      "id": "C013",
+      "profile": "no_rules",
+      "category": "comparison",
+      "language": "en",
+      "answer": "检索结果相关性低，请查看候选原文后确认是否使用；尚未调用生成模型。",
+      "task_complete": false,
+      "stop_reason": "incomplete",
+      "iterations": 2,
+      "seconds": 89.84203020000132,
+      "model_calls": 3,
+      "tokens": {
+        "input_known": 11078,
+        "output_known": 226,
+        "total": 11304,
+        "unknown_calls": 0,
+        "source": "actual_ollama_responses"
+      },
+      "tool_calls": [
+        {
+          "name": "paper_list",
+          "args": {},
+          "iteration": 1
+        },
+        {
+          "name": "paper_compare",
+          "args": {
+            "paper_a_id": "f10cfc976b61006109447b97b6336424c60ac1c1989d85932b5c6572510fbf2b",
+            "paper_b_id": "d54045f3ee41a606f91851300c03accfd37075d4d416dcab77d97c871262e8bc"
+          },
+          "iteration": 2
+        }
+      ],
+      "tool_selection_correct": false,
+      "event_types": [
+        "thought",
+        "tool_call",
+        "tool_result",
+        "observation",
+        "thought",
+        "tool_call",
+        "tool_result",
+        "observation",
+        "done"
+      ],
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 3024,
+            "output": 36,
+            "incomplete": false,
+            "seconds": 1.1897389000005205
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "paper_list",
+            "tool_call_ids": [
+              "8d491dfaaa05422d8c0dbc7666a076e7"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.00047540000014123507
+          },
+          {
+            "id": "8d491dfaaa05422d8c0dbc7666a076e7",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "paper_list",
+            "tool_call_ids": [
+              "8d491dfaaa05422d8c0dbc7666a076e7"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.17704820000290056
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 3626,
+            "output": 44,
+            "incomplete": false,
+            "seconds": 3.180977100000746
+          },
+          {
+            "id": "thought:2",
+            "iteration": 2,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 4428,
+            "output": 146,
+            "incomplete": false,
+            "seconds": 7.467747599999711
+          },
+          {
+            "id": "action:2",
+            "iteration": 2,
+            "phase": "Action",
+            "tool": "paper_compare",
+            "tool_call_ids": [
+              "518f57d6ffdf4fe6b13ab2edbfd8e1a6"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.0004800000024260953
+          },
+          {
+            "id": "518f57d6ffdf4fe6b13ab2edbfd8e1a6",
+            "iteration": 2,
+            "phase": "工具内部",
+            "tool": "paper_compare",
+            "tool_call_ids": [
+              "518f57d6ffdf4fe6b13ab2edbfd8e1a6"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 77.73709270000109
+          },
+          {
+            "id": "observation:2",
+            "iteration": 2,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 2.5299999833805487e-05
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "先获取已上传文献的真实ID，再执行论文工具。",
+            "next_step": "tool",
+            "tool_name": "paper_list",
+            "parallel_tools": [],
+            "elapsed_seconds": 1.1897389000005205,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "paper_list",
+            "call_id": "8d491dfaaa05422d8c0dbc7666a076e7",
+            "args": {},
+            "elapsed_seconds": 0.00047540000014123507,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "paper_list",
+            "call_id": "8d491dfaaa05422d8c0dbc7666a076e7",
+            "args": {},
+            "result": {
+              "papers": [
+                {
+                  "doc_id": "d54045f3ee41a606f91851300c03accfd37075d4d416dcab77d97c871262e8bc",
+                  "source_file": "cait.pdf",
+                  "indexed_chunks": 126,
+                  "source_available": true,
+                  "index_status": "has_index"
+                },
+                {
+                  "doc_id": "f10cfc976b61006109447b97b6336424c60ac1c1989d85932b5c6572510fbf2b",
+                  "source_file": "conditional_detr.pdf",
+                  "indexed_chunks": 112,
+                  "source_available": true,
+                  "index_status": "has_index"
+                },
+                {
+                  "doc_id": "65b00851b503763c15dd58e54b7424563ed70bdd06afa5b10b5d5a121ccb3232",
+                  "source_file": "dab_detr.pdf",
+                  "indexed_chunks": 140,
+                  "source_available": true,
+                  "index_status": "has_index"
+                },
+                {
+                  "doc_id": "9bbba0cd4474e8e5e936187be81c93b938d2ce567bed38aee0ac262dc97dd7e2",
+                  "source_file": "deformable_detr.pdf",
+                  "indexed_chunks": 122,
+                  "source_available": true,
+                  "index_status": "has_index"
+                },
+                {
+                  "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5",
+                  "source_file": "deit.pdf",
+                  "indexed_chunks": 123,
+                  "source_available": true,
+                  "index_status": "has_index"
+                },
+                {
+                  "doc_id": "d4b846bd44896e1d21527f48eddc422c263c9a4f8a3fa4be249750956882698d",
+                  "source_file": "detr.pdf",
+                  "indexed_chunks": 156,
+                  "source_available": true,
+                  "index_status": "has_index"
+                },
+                {
+                  "doc_id": "2cda48e74a49e3552aedbf61bc6436767ed3867cb710bbd2b79e48624fd66126",
+                  "source_file": "dino.pdf",
+                  "indexed_chunks": 139,
+                  "source_available": true,
+                  "index_status": "has_index"
+                },
+                {
+                  "doc_id": "f22b21dc2368b1738b1ac5ded9327876925f3fee9366d77b6d79c2b4a3ac4fc9",
+                  "source_file": "dn_detr.pdf",
+                  "indexed_chunks": 96,
+                  "source_available": true,
+                  "index_status": "has_index"
+                },
+                {
+                  "doc_id": "4fbd34d6bcad1ec75b62ce15bf9e54b0268570e446f8d889fed97b16152b86d1",
+                  "source_file": "pvt.pdf",
+                  "indexed_chunks": 136,
+                  "source_available": true,
+                  "index_status": "has_index"
+                },
+                {
+                  "doc_id": "0f77d1635bdbb040bc5f9174ddbda63b5ca17ffab0459b55dfa4148f9916f833",
+                  "source_file": "swin.pdf",
+                  "indexed_chunks": 133,
+                  "source_available": true,
+                  "index_status": "has_index"
+                },
+                {
+                  "doc_id": "0efc583606acf67e3edfc81694411ddae417c4e94974de22872764ff28339911",
+                  "source_file": "t2t_vit.pdf",
+                  "indexed_chunks": 244,
+                  "source_available": true,
+                  "index_status": "has_index"
+                },
+                {
+                  "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+                  "source_file": "vit.pdf",
+                  "indexed_chunks": 165,
+                  "source_available": true,
+                  "index_status": "has_index"
+                }
+              ],
+              "total": 12,
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.17699410000204807,
+                "usage": {
+                  "prompt_eval_count": 0,
+                  "eval_count": 0
+                },
+                "usage_incomplete": false
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.17704820000290056,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 3.180977100000746,
+            "observation": "获取了12篇文献的ID和文件名，下一步将使用这些ID进行论文对比。",
+            "decision": "continue",
+            "task_complete": false,
+            "iteration": 1
+          },
+          {
+            "type": "thought",
+            "thought": "调用paper_compare获取所需信息。",
+            "next_step": "tool",
+            "tool_name": "paper_compare",
+            "parallel_tools": [],
+            "elapsed_seconds": 7.467747599999711,
+            "iteration": 2
+          },
+          {
+            "type": "tool_call",
+            "name": "paper_compare",
+            "call_id": "518f57d6ffdf4fe6b13ab2edbfd8e1a6",
+            "args": {
+              "paper_a_id": "f10cfc976b61006109447b97b6336424c60ac1c1989d85932b5c6572510fbf2b",
+              "paper_b_id": "d54045f3ee41a606f91851300c03accfd37075d4d416dcab77d97c871262e8bc"
+            },
+            "elapsed_seconds": 0.0004800000024260953,
+            "iteration": 2
+          },
+          {
+            "type": "tool_result",
+            "name": "paper_compare",
+            "call_id": "518f57d6ffdf4fe6b13ab2edbfd8e1a6",
+            "args": {
+              "paper_a_id": "f10cfc976b61006109447b97b6336424c60ac1c1989d85932b5c6572510fbf2b",
+              "paper_b_id": "d54045f3ee41a606f91851300c03accfd37075d4d416dcab77d97c871262e8bc"
+            },
+            "result": {
+              "papers": [
+                {
+                  "label": "A",
+                  "doc_id": "f10cfc976b61006109447b97b6336424c60ac1c1989d85932b5c6572510fbf2b",
+                  "source_file": "conditional_detr.pdf",
+                  "coverage": {
+                    "方法": {
+                      "generation_mode": "low",
+                      "top_score": 0.002476030495017767
+                    },
+                    "数据集": {
+                      "generation_mode": "grounded",
+                      "top_score": 0.8137568831443787
+                    },
+                    "实验结果": {
+                      "generation_mode": "low",
+                      "top_score": 0.0013767495984211564
+                    }
+                  },
+                  "top_score": 0.8137568831443787,
+                  "references": [
+                    {
+                      "id": 1,
+                      "source_file": "conditional_detr.pdf",
+                      "location": "第1页（物理页码）",
+                      "text": "Abstract\nThe recently-developed DETR approach applies the\ntransformer encoder and decoder architecture to object de-\ntection and achieves promising performance. In this pa-\nper, we handle the critical issue, slow training convergence,\nand present a conditional cross-attention mechanism for\nfast DETR training. Our approach is motivated by that the\ncross-attention in DETR relies highly on the content embed-\ndings for localizing the four extremities and predicting the\nbox, which increases the need for high-quality content em-\nbeddings and thus the training difficulty.\nOur approach, named conditional DETR, learns a con-\nditional spatial query from the decoder embedding for\ndecoder multi-head cross-attention.\nThe benefit is that",
+                      "metadata": {
+                        "chunk_id": "fa8cf74279eadebda71205d4f015259a40ae5ac6e553b0b396b8d0698f743383",
+                        "doc_id": "f10cfc976b61006109447b97b6336424c60ac1c1989d85932b5c6572510fbf2b",
+                        "page_number": 1,
+                        "source_file": "conditional_detr.pdf"
+                      },
+                      "truncated": false,
+                      "score": 0.002476030495017767
+                    },
+                    {
+                      "id": 2,
+                      "source_file": "conditional_detr.pdf",
+                      "location": "第9页（物理页码）",
+                      "text": "\n[23] Yanghao Li, Yuntao Chen, Naiyan Wang, and Zhaoxiang\nZhang. Scale-aware trident networks for object detection.\nIn ICCV, pages 6054–6063, 2019. 2\n[24] Tsung-Yi Lin, Priya Goyal, Ross B. Girshick, Kaiming He,\nand Piotr Doll´ar.\nFocal loss for dense object detection.\nTPAMI, 2020. 2, 6\n[25] Tsung-Yi Lin, Michael Maire, Serge J. Belongie, James\nHays, Pietro Perona, Deva Ramanan, Piotr Doll´ar, and\nC. Lawrence Zitnick. Microsoft COCO: common objects in\ncontext. In ECCV, 2014. 6\n[26] Wei Liu, Dragomir Anguelov, Dumitru Erhan, Christian\nSzegedy, Scott E. Reed, Cheng-Yang Fu, and Alexander C.\nBerg. SSD: single shot multibox detector. In ECCV, 2016. 2\n[27] Ilya Loshchilov and Frank Hutter. Fixing weight decay reg-\nularization in adam. In ICLR, 2017. 6\n[28] Xin Lu, Buyu Li, Yuxin Yue, Quanquan Li, and Junjie Yan.\nGrid R-CNN. In CVPR, 2019. 2\n[29] Jiangmiao Pang, Kai Chen, Jianping Shi, Huajun Feng,\nWanli Ouyang, and Dahua Lin. Libra R-CNN: towards bal-\nanced learning for object detection. In CVPR, 2019. 2\n[30] Joseph Redmon, Santosh Kumar Divvala, Ross B. Girshick,\nand Ali Farhadi. You only look once: Unified, real-time ob-\nject detection. In CVPR, 2016. 2\n[31] Joseph Redmon and Ali Farhadi. YOLO9000: better, faster,\nstronger. In CVPR, 2017. 2\n[32] Joseph Redmon and Ali Farhadi. Yolov3: An incremental\nimprovement. CoRR, abs/1804.02767, 2018. 2",
+                      "metadata": {
+                        "chunk_id": "8ad539755125fa0d04bb750b0291b1ff58a3b02ac7870ed9f9b43b92bf7098c7",
+                        "doc_id": "f10cfc976b61006109447b97b6336424c60ac1c1989d85932b5c6572510fbf2b",
+                        "page_number": 9,
+                        "source_file": "conditional_detr.pdf",
+                        "comparison_prior_work": false
+                      },
+                      "truncated": false,
+                      "score": 0.8137568831443787
+                    },
+                    {
+                      "id": 3,
+                      "source_file": "conditional_detr.pdf",
+                      "location": "第6页（物理页码）",
+                      "text": "\n2017 [25] detection d",
+                      "metadata": {
+                        "chunk_id": "9075b492ed7056e27bd0a7bf085bbbab9aeb9b5648f960ac56dfaf9179ea3034",
+                        "doc_id": "f10cfc976b61006109447b97b6336424c60ac1c1989d85932b5c6572510fbf2b",
+                        "page_number": 6,
+                        "source_file": "conditional_detr.pdf",
+                        "comparison_prior_work": false
+                      },
+                      "truncated": true,
+                      "score": 0.6786274313926697
+                    },
+                    {
+                      "id": 4,
+                      "source_file": "conditional_detr.pdf",
+                      "location": "第8页（物理页码）",
+                      "text": "The AP scores are 36.8, 40.7, and 40.9, suggesting\nthat (ii) and (iii) perform on par and better than (i).\n",
+                      "metadata": {
+                        "chunk_id": "79be15200cb35d468248feb9106326c318a298aa6207da585d520168853e38a8",
+                        "doc_id": "f10cfc976b61006109447b97b6336424c60ac1c1989d85932b5c6572510fbf2b",
+                        "page_number": 8,
+                        "source_file": "conditional_detr.pdf",
+                        "comparison_prior_work": false
+                      },
+                      "truncated": false,
+                      "score": 0.0013767495984211564
+                    },
+                    {
+                      "id": 5,
+                      "source_file": "conditional_detr.pdf",
+                      "location": "第8页（物理页码）",
+                      "text": "The AP scores are 36.8, 40.7, and 40.9, suggesting\nthat (ii) and (iii) perform on par and better than (i).\n",
+                      "metadata": {
+                        "chunk_id": "1560dd0d6c312b59f7e23adc5205c54364c5dc20351491fdbd4563ead1680446",
+                        "doc_id": "f10cfc976b61006109447b97b6336424c60ac1c1989d85932b5c6572510fbf2b",
+                        "page_number": 8,
+                        "source_file": "conditional_detr.pdf",
+                        "comparison_prior_work": false
+                      },
+                      "truncated": false,
+                      "score": 0.0006202674121595919
+                    }
+                  ],
+                  "truncated": true
+                },
+                {
+                  "label": "B",
+                  "doc_id": "d54045f3ee41a606f91851300c03accfd37075d4d416dcab77d97c871262e8bc",
+                  "source_file": "cait.pdf",
+                  "coverage": {
+                    "方法": {
+                      "generation_mode": "low",
+                      "top_score": 0.00012950864038430154
+                    },
+                    "数据集": {
+                      "generation_mode": "grounded",
+                      "top_score": 0.12097374349832535
+                    },
+                    "实验结果": {
+                      "generation_mode": "low",
+                      "top_score": 0.004971527960151434
+                    }
+                  },
+                  "top_score": 0.12097374349832535,
+                  "references": [
+                    {
+                      "id": 1,
+                      "source_file": "cait.pdf",
+                      "location": "第1页（物理页码）",
+                      "text": "Abstract\nTransformers have been recently adapted for large scale\nimage classiﬁcation, achieving high scores shaking up the\nlong supremacy of convolutional neural networks. However\nthe optimization of vision transformers has been little stud-\nied so far. In this work, we build and optimize deeper trans-\nformer networks for image classiﬁcation. In particular, we\ninvestigate the interplay of architecture and optimization\nof such dedicated transformers.\nWe make two architec-\nture changes that signiﬁcantly improve the accuracy of deep\ntransformers. This leads us to produce models whose per-\nformance does not saturate early with more depth, for in-\nstance we obtain 86.5% top-1 accuracy on Imagenet when\ntraining with no external data, we thus attain the current",
+                      "metadata": {
+                        "chunk_id": "1d19b11618683cd6ecfc7cadb5128e93e69b2ea9b9b5272eeefae0adbf5156ce",
+                        "doc_id": "d54045f3ee41a606f91851300c03accfd37075d4d416dcab77d97c871262e8bc",
+                        "page_number": 1,
+                        "source_file": "cait.pdf"
+                      },
+                      "truncated": false,
+                      "score": 0.00012950864038430154
+                    },
+                    {
+                      "id": 2,
+                      "source_file": "cait.pdf",
+                      "location": "第9页（物理页码）",
+                      "text": "\nRecognition, pages 248–255, 2009.\n[18] Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina\nToutanova.\nBert:\nPre-training of deep bidirectional\narXiv preprint\ntransformers for language understanding.\narXiv:1810.04805, 2018.\n[19] Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov,\nDirk Weissenborn, Xiaohua Zhai, Thomas Unterthiner,\nMostafa Dehghani, Matthias Minderer, Georg Heigold, Syl-\nvain Gelly, et al. An image is worth 16x16 words: Trans-\nformers for image recognition at scale. International Con-\nference on Learning Representations, 2021.\n[20] Alaaeldin El-Nouby, Natalia Neverova, Ivan Laptev, and\nHerv´e J´egou.\nTraining vision transformers for image re-\ntrieval. arXiv preprint arXiv:2102.05644, 2021.\n[21] Angela Fan, Edouard Grave, and Armand Joulin. Reducing\ntransformer depth on demand with structured dropout. arXiv\npreprint arXiv:1909.11556, 2019. ICLR 2020.\n[22] Angela Fan, Pierre Stock, Benjamin Graham, Edouard\nGrave, R´emi Gribonval, Herv´e J´egou, and Armand Joulin.\nTraining with quantization noise for extreme model com-\npression. arXiv preprint arXiv:2004.07320, 2020.\n[23] Jonathan Frankle and Michael Carbin. The lottery ticket hy-\npothesis: Finding sparse, trainable neural networks. arXiv\npreprint arXiv:1803.03635, 2018.\n[24] Xavier Glorot and Yoshua Bengio. Understanding the difﬁ-\nculty of training deep feedforward neural networks. In AIS-\nTATS, 2010.",
+                      "metadata": {
+                        "chunk_id": "819ef932a86640af32ab81977fe806c960f8ccb8d220ff60f2411f5d11f50739",
+                        "doc_id": "d54045f3ee41a606f91851300c03accfd37075d4d416dcab77d97c871262e8bc",
+                        "page_number": 9,
+                        "source_file": "cait.pdf",
+                        "comparison_prior_work": false
+                      },
+                      "truncated": false,
+                      "score": 0.12097374349832535
+                    },
+                    {
+                      "id": 3,
+                      "source_file": "cait.pdf",
+                      "location": "第9页（物理页码）",
+                      "text": "\n[30] Grant",
+                      "metadata": {
+                        "chunk_id": "4e69641409c4637a6d7b062e7bda065e77185310b29af911f14d4de37409af21",
+                        "doc_id": "d54045f3ee41a606f91851300c03accfd37075d4d416dcab77d97c871262e8bc",
+                        "page_number": 9,
+                        "source_file": "cait.pdf",
+                        "comparison_prior_work": false
+                      },
+                      "truncated": true,
+                      "score": 0.04077262431383133
+                    },
+                    {
+                      "id": 4,
+                      "source_file": "cait.pdf",
+                      "location": "第7页（物理页码）",
+                      "text": "On Imagenet-val, we achieve 86.5% of top-1 accuracy,\nwhich is a signiﬁcant improvement over DeiT (85.2%). It\nis the state of the art except for a very recent concurrent\nwork [8] that also reports a top-1 accuracy of 86.5%. Our\nCaiT-M36↑384Υ model obtains 85.9% top-1 accuracy on\nImagenet-1k-val: this network is more efﬁcient that the best\nperforming NFNet convnets w.r.t. ",
+                      "metadata": {
+                        "chunk_id": "ab828127d47739e2c386ffd4a7901cdc2af6afbda87d8341889c774a4c2f4b18",
+                        "doc_id": "d54045f3ee41a606f91851300c03accfd37075d4d416dcab77d97c871262e8bc",
+                        "page_number": 7,
+                        "source_file": "cait.pdf",
+                        "comparison_prior_work": false
+                      },
+                      "truncated": false,
+                      "score": 0.004971527960151434
+                    },
+                    {
+                      "id": 5,
+                      "source_file": "cait.pdf",
+                      "location": "第7页（物理页码）",
+                      "text": "On Imagenet-val, we achieve 86.5% of top-1 accuracy,\nwhich is a signiﬁcant improvement over DeiT (85.2%). It\nis the state of the art except for a very recent concurrent\nwork [8] that also reports a top-1 accuracy of 86.5%. Our\nCaiT-M36↑384Υ model obtains 85.9% top-1 accuracy on\nImagenet-1k-val: this network is more efﬁcient that the best\nperforming NFNet convnets w.r.t. ",
+                      "metadata": {
+                        "chunk_id": "a40c126a7f2411e9d75c563971478ae50bfb0daf574c9477cda0c010f1c62375",
+                        "doc_id": "d54045f3ee41a606f91851300c03accfd37075d4d416dcab77d97c871262e8bc",
+                        "page_number": 7,
+                        "source_file": "cait.pdf",
+                        "comparison_prior_work": false
+                      },
+                      "truncated": false,
+                      "score": 0.003228142624720931
+                    }
+                  ],
+                  "truncated": true
+                }
+              ],
+              "missing_dimensions": [],
+              "low_relevance_dimensions": [
+                "论文A：方法",
+                "论文A：实验结果",
+                "论文B：方法",
+                "论文B：实验结果"
+              ],
+              "low_relevance_papers": [],
+              "status": "needs_confirmation",
+              "answer": "检索相关性低，请用户核对候选原文。",
+              "references": [
+                {
+                  "id": 1,
+                  "source_file": "conditional_detr.pdf",
+                  "location": "第9页（物理页码）",
+                  "text": "\n[23] Yanghao Li, Yuntao Chen, Naiyan Wang, and Zhaoxiang\nZhang. Scale-aware trident networks for object detection.\nIn ICCV, pages 6054–6063, 2019. 2\n[24] Tsung-Yi Lin, Priya Goyal, Ross B. Girshick, Kaiming He,\nand Piotr Doll´ar.\nFocal loss for dense object detection.\nTPAMI, 2020. 2, 6\n[25] Tsung-Yi Lin, Michael Maire, Serge J. Belongie, James\nHays, Pietro Perona, Deva Ramanan, Piotr Doll´ar, and\nC. Lawrence Zitnick. Microsoft COCO: common objects in\ncontext. In ECCV, 2014. 6\n[26] Wei Liu, Dragomir Anguelov, Dumitru Erhan, Christian\nSzegedy, Scott E. Reed, Cheng-Yang Fu, and Alexander C.\nBerg. SSD: single shot multibox detector. In ECCV, 2016. 2\n[27] Ilya Loshchilov and Frank Hutter. Fixing weight decay reg-\nularization in adam. In ICLR, 2017. 6\n[28] Xin Lu, Buyu Li, Yuxin Yue, Quanquan Li, and Junjie Yan.\nGrid R-CNN. In CVPR, 2019. 2\n[29] Jiangmiao Pang, Kai Chen, Jianping Shi, Huajun Feng,\nWanli Ouyang, and Dahua Lin. Libra R-CNN: towards bal-\nanced learning for object detection. In CVPR, 2019. 2\n[30] Joseph Redmon, Santosh Kumar Divvala, Ross B. Girshick,\nand Ali Farhadi. You only look once: Unified, real-time ob-\nject detection. In CVPR, 2016. 2\n[31] Joseph Redmon and Ali Farhadi. YOLO9000: better, faster,\nstronger. In CVPR, 2017. 2\n[32] Joseph Redmon and Ali Farhadi. Yolov3: An incremental\nimprovement. CoRR, abs/1804.02767, 2018. 2",
+                  "metadata": {
+                    "chunk_id": "8ad539755125fa0d04bb750b0291b1ff58a3b02ac7870ed9f9b43b92bf7098c7",
+                    "doc_id": "f10cfc976b61006109447b97b6336424c60ac1c1989d85932b5c6572510fbf2b",
+                    "page_number": 9,
+                    "source_file": "conditional_detr.pdf",
+                    "comparison_prior_work": false
+                  },
+                  "truncated": false,
+                  "score": 0.8137568831443787
+                },
+                {
+                  "id": 2,
+                  "source_file": "conditional_detr.pdf",
+                  "location": "第6页（物理页码）",
+                  "text": "\n2017 [25] detection d",
+                  "metadata": {
+                    "chunk_id": "9075b492ed7056e27bd0a7bf085bbbab9aeb9b5648f960ac56dfaf9179ea3034",
+                    "doc_id": "f10cfc976b61006109447b97b6336424c60ac1c1989d85932b5c6572510fbf2b",
+                    "page_number": 6,
+                    "source_file": "conditional_detr.pdf",
+                    "comparison_prior_work": false
+                  },
+                  "truncated": false,
+                  "score": 0.6786274313926697
+                },
+                {
+                  "id": 3,
+                  "source_file": "cait.pdf",
+                  "location": "第9页（物理页码）",
+                  "text": "\nRecognition, pages 248–255, 2009.\n[18] Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina\nToutanova.\nBert:\nPre-training of deep bidirectional\narXiv preprint\ntransformers for language understanding.\narXiv:1810.04805, 2018.\n[19] Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov,\nDirk Weissenborn, Xiaohua Zhai, Thomas Unterthiner,\nMostafa Dehghani, Matthias Minderer, Georg Heigold, Syl-\nvain Gelly, et al. An image is worth 16x16 words: Trans-\nformers for image recognition at scale. International Con-\nference on Learning Representations, 2021.\n[20] Alaaeldin El-Nouby, Natalia Neverova, Ivan Laptev, and\nHerv´e J´egou.\nTraining vision transformers for image re-\ntrieval. arXiv preprint arXiv:2102.05644, 2021.\n[21] Angela Fan, Edouard Grave, and Armand Joulin. Reducing\ntransformer depth on demand with structured dropout. arXiv\npreprint arXiv:1909.11556, 2019. ICLR 2020.\n[22] Angela Fan, Pierre Stock, Benjamin Graham, Edouard\nGrave, R´emi Gribonval, Herv´e J´egou, and Armand Joulin.\nTraining with quantization noise for extreme model com-\npression. arXiv preprint arXiv:2004.07320, 2020.\n[23] Jonathan Frankle and Michael Carbin. The lottery ticket hy-\npothesis: Finding sparse, trainable neural networks. arXiv\npreprint arXiv:1803.03635, 2018.\n[24] Xavier Glorot and Yoshua Bengio. Understanding the difﬁ-\nculty of training deep feedforward neural networks. In AIS-\nTATS, 2010.",
+                  "metadata": {
+                    "chunk_id": "819ef932a86640af32ab81977fe806c960f8ccb8d220ff60f2411f5d11f50739",
+                    "doc_id": "d54045f3ee41a606f91851300c03accfd37075d4d416dcab77d97c871262e8bc",
+                    "page_number": 9,
+                    "source_file": "cait.pdf",
+                    "comparison_prior_work": false
+                  },
+                  "truncated": false,
+                  "score": 0.12097374349832535
+                },
+                {
+                  "id": 4,
+                  "source_file": "cait.pdf",
+                  "location": "第9页（物理页码）",
+                  "text": "\n[30] Grant",
+                  "metadata": {
+                    "chunk_id": "4e69641409c4637a6d7b062e7bda065e77185310b29af911f14d4de37409af21",
+                    "doc_id": "d54045f3ee41a606f91851300c03accfd37075d4d416dcab77d97c871262e8bc",
+                    "page_number": 9,
+                    "source_file": "cait.pdf",
+                    "comparison_prior_work": false
+                  },
+                  "truncated": false,
+                  "score": 0.04077262431383133
+                },
+                {
+                  "id": 5,
+                  "source_file": "cait.pdf",
+                  "location": "第7页（物理页码）",
+                  "text": "On Imagenet-val, we achieve 86.5% of top-1 accuracy,\nwhich is a signiﬁcant improvement over DeiT (85.2%). It\nis the state of the art except for a very recent concurrent\nwork [8] that also reports a top-1 accuracy of 86.5%. Our\nCaiT-M36↑384Υ model obtains 85.9% top-1 accuracy on\nImagenet-1k-val: this network is more efﬁcient that the best\nperforming NFNet convnets w.r.t. ",
+                  "metadata": {
+                    "chunk_id": "ab828127d47739e2c386ffd4a7901cdc2af6afbda87d8341889c774a4c2f4b18",
+                    "doc_id": "d54045f3ee41a606f91851300c03accfd37075d4d416dcab77d97c871262e8bc",
+                    "page_number": 7,
+                    "source_file": "cait.pdf",
+                    "comparison_prior_work": false
+                  },
+                  "truncated": false,
+                  "score": 0.004971527960151434
+                },
+                {
+                  "id": 6,
+                  "source_file": "cait.pdf",
+                  "location": "第7页（物理页码）",
+                  "text": "On Imagenet-val, we achieve 86.5% of top-1 accuracy,\nwhich is a signiﬁcant improvement over DeiT (85.2%). It\nis the state of the art except for a very recent concurrent\nwork [8] that also reports a top-1 accuracy of 86.5%. Our\nCaiT-M36↑384Υ model obtains 85.9% top-1 accuracy on\nImagenet-1k-val: this network is more efﬁcient that the best\nperforming NFNet convnets w.r.t. ",
+                  "metadata": {
+                    "chunk_id": "a40c126a7f2411e9d75c563971478ae50bfb0daf574c9477cda0c010f1c62375",
+                    "doc_id": "d54045f3ee41a606f91851300c03accfd37075d4d416dcab77d97c871262e8bc",
+                    "page_number": 7,
+                    "source_file": "cait.pdf",
+                    "comparison_prior_work": false
+                  },
+                  "truncated": false,
+                  "score": 0.003228142624720931
+                },
+                {
+                  "id": 7,
+                  "source_file": "conditional_detr.pdf",
+                  "location": "第1页（物理页码）",
+                  "text": "Abstract\nThe recently-developed DETR approach applies the\ntransformer encoder and decoder architecture to object de-\ntection and achieves promising performance. In this pa-\nper, we handle the critical issue, slow training convergence,\nand present a conditional cross-attention mechanism for\nfast DETR training. Our approach is motivated by that the\ncross-attention in DETR relies highly on the content embed-\ndings for localizing the four extremities and predicting the\nbox, which increases the need for high-quality content em-\nbeddings and thus the training difficulty.\nOur approach, named conditional DETR, learns a con-\nditional spatial query from the decoder embedding for\ndecoder multi-head cross-attention.\nThe benefit is that",
+                  "metadata": {
+                    "chunk_id": "fa8cf74279eadebda71205d4f015259a40ae5ac6e553b0b396b8d0698f743383",
+                    "doc_id": "f10cfc976b61006109447b97b6336424c60ac1c1989d85932b5c6572510fbf2b",
+                    "page_number": 1,
+                    "source_file": "conditional_detr.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.002476030495017767
+                },
+                {
+                  "id": 8,
+                  "source_file": "conditional_detr.pdf",
+                  "location": "第8页（物理页码）",
+                  "text": "The AP scores are 36.8, 40.7, and 40.9, suggesting\nthat (ii) and (iii) perform on par and better than (i).\n",
+                  "metadata": {
+                    "chunk_id": "79be15200cb35d468248feb9106326c318a298aa6207da585d520168853e38a8",
+                    "doc_id": "f10cfc976b61006109447b97b6336424c60ac1c1989d85932b5c6572510fbf2b",
+                    "page_number": 8,
+                    "source_file": "conditional_detr.pdf",
+                    "comparison_prior_work": false
+                  },
+                  "truncated": false,
+                  "score": 0.0013767495984211564
+                },
+                {
+                  "id": 9,
+                  "source_file": "conditional_detr.pdf",
+                  "location": "第8页（物理页码）",
+                  "text": "The AP scores are 36.8, 40.7, and 40.9, suggesting\nthat (ii) and (iii) perform on par and better than (i).\n",
+                  "metadata": {
+                    "chunk_id": "1560dd0d6c312b59f7e23adc5205c54364c5dc20351491fdbd4563ead1680446",
+                    "doc_id": "f10cfc976b61006109447b97b6336424c60ac1c1989d85932b5c6572510fbf2b",
+                    "page_number": 8,
+                    "source_file": "conditional_detr.pdf",
+                    "comparison_prior_work": false
+                  },
+                  "truncated": false,
+                  "score": 0.0006202674121595919
+                },
+                {
+                  "id": 10,
+                  "source_file": "cait.pdf",
+                  "location": "第1页（物理页码）",
+                  "text": "Abstract\nTransformers have been recently adapted for large scale\nimage classiﬁcation, achieving high scores shaking up the\nlong supremacy of convolutional neural networks. However\nthe optimization of vision transformers has been little stud-\nied so far. In this work, we build and optimize deeper trans-\nformer networks for image classiﬁcation. In particular, we\ninvestigate the interplay of architecture and optimization\nof such dedicated transformers.\nWe make two architec-\nture changes that signiﬁcantly improve the accuracy of deep\ntransformers. This leads us to produce models whose per-\nformance does not saturate early with more depth, for in-\nstance we obtain 86.5% top-1 accuracy on Imagenet when\ntraining with no external data, we thus attain the current",
+                  "metadata": {
+                    "chunk_id": "1d19b11618683cd6ecfc7cadb5128e93e69b2ea9b9b5272eeefae0adbf5156ce",
+                    "doc_id": "d54045f3ee41a606f91851300c03accfd37075d4d416dcab77d97c871262e8bc",
+                    "page_number": 1,
+                    "source_file": "cait.pdf"
+                  },
+                  "truncated": false,
+                  "score": 0.00012950864038430154
+                }
+              ],
+              "generation_mode": "low",
+              "citations": [],
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              },
+              "warnings": [],
+              "elapsed_seconds": 77.73411800000031
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 77.73704240000006,
+                "usage": {
+                  "prompt_eval_count": 0,
+                  "eval_count": 0
+                },
+                "usage_incomplete": false
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 77.73709270000109,
+            "iteration": 2
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 2.5299999833805487e-05,
+            "observation": "等待用户确认候选。",
+            "decision": "finish",
+            "task_complete": false,
+            "iteration": 2
+          },
+          {
+            "type": "done",
+            "task_complete": false,
+            "stop_reason": "incomplete",
+            "full_response": "检索结果相关性低，请查看候选原文后确认是否使用；尚未调用生成模型。",
+            "iteration": 2
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "8d491dfaaa05422d8c0dbc7666a076e7",
+            "name": "paper_list",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 0.17704820000290056,
+            "attempts": 1,
+            "execution_mode": "serial"
+          },
+          {
+            "call_id": "518f57d6ffdf4fe6b13ab2edbfd8e1a6",
+            "name": "paper_compare",
+            "iteration": 2,
+            "status": "success",
+            "seconds": 77.73709270000109,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 2,
+          "successes": 2,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": 1.0,
+          "mean_seconds": 38.95707045000199,
+          "by_tool": [
+            {
+              "name": "paper_list",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.17704820000290056
+            },
+            {
+              "name": "paper_compare",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 77.73709270000109
+            }
+          ]
+        },
+        "tokens": {
+          "input": 11078,
+          "output": 226,
+          "total": 11304,
+          "known_total": 11304,
+          "unknown_calls": 0
+        },
+        "response_seconds": 89.84110040000087
+      }
+    },
+    {
+      "id": "S005",
+      "profile": "no_rules",
+      "category": "synthesis",
+      "language": "zh",
+      "answer": "关键词为：Conditional DETR、DAB-DETR、DINO。\n\n仅提取了问题关键词，尚未核验原论文内容，论文任务未完成。",
+      "task_complete": false,
+      "stop_reason": "incomplete",
+      "iterations": 1,
+      "seconds": 3.4635741999991296,
+      "model_calls": 3,
+      "tokens": {
+        "input_known": 5908,
+        "output_known": 121,
+        "total": 6029,
+        "unknown_calls": 0,
+        "source": "actual_ollama_responses"
+      },
+      "tool_calls": [
+        {
+          "name": "keyword_extract",
+          "args": {
+            "text": "按Conditional DETR、DAB-DETR、DINO归纳空间查询逐渐增强的设计信息。"
+          },
+          "iteration": 1
+        }
+      ],
+      "tool_selection_correct": false,
+      "event_types": [
+        "thought",
+        "tool_call",
+        "tool_result",
+        "observation",
+        "done"
+      ],
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 3028,
+            "output": 40,
+            "incomplete": false,
+            "seconds": 0.9478557999973418
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "keyword_extract",
+            "tool_call_ids": [
+              "e562b2386f9b427db9b0d85a7bd1729d"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.00026900000011664815
+          },
+          {
+            "id": "e562b2386f9b427db9b0d85a7bd1729d",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "keyword_extract",
+            "tool_call_ids": [
+              "e562b2386f9b427db9b0d85a7bd1729d"
+            ],
+            "input": 106,
+            "output": 23,
+            "incomplete": false,
+            "seconds": 0.590518199998769
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2774,
+            "output": 58,
+            "incomplete": false,
+            "seconds": 1.8726989999995567
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "调用keyword_extract获取所需信息。",
+            "next_step": "tool",
+            "tool_name": "keyword_extract",
+            "parallel_tools": [],
+            "elapsed_seconds": 0.9478557999973418,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "keyword_extract",
+            "call_id": "e562b2386f9b427db9b0d85a7bd1729d",
+            "args": {
+              "text": "按Conditional DETR、DAB-DETR、DINO归纳空间查询逐渐增强的设计信息。"
+            },
+            "elapsed_seconds": 0.00026900000011664815,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "keyword_extract",
+            "call_id": "e562b2386f9b427db9b0d85a7bd1729d",
+            "args": {
+              "text": "按Conditional DETR、DAB-DETR、DINO归纳空间查询逐渐增强的设计信息。"
+            },
+            "result": {
+              "keywords": [
+                "Conditional DETR",
+                "DAB-DETR",
+                "DINO"
+              ],
+              "evidence": [
+                {
+                  "keyword": "Conditional DETR",
+                  "locations": [
+                    {
+                      "text": "按Conditional DETR、DAB-DETR、DINO归纳空间查询逐渐增强的设计信息。",
+                      "location": "问题第1行",
+                      "source_file": null
+                    }
+                  ]
+                },
+                {
+                  "keyword": "DAB-DETR",
+                  "locations": [
+                    {
+                      "text": "按Conditional DETR、DAB-DETR、DINO归纳空间查询逐渐增强的设计信息。",
+                      "location": "问题第1行",
+                      "source_file": null
+                    }
+                  ]
+                },
+                {
+                  "keyword": "DINO",
+                  "locations": [
+                    {
+                      "text": "按Conditional DETR、DAB-DETR、DINO归纳空间查询逐渐增强的设计信息。",
+                      "location": "问题第1行",
+                      "source_file": null
+                    }
+                  ]
+                }
+              ],
+              "doc_id": null,
+              "source_file": null,
+              "input_truncated": false,
+              "model": "qwen2.5:7b",
+              "usage": {
+                "prompt_eval_count": 106,
+                "eval_count": 23
+              },
+              "elapsed_seconds": 0.5878028999977687
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.5904494000023988,
+                "usage": {
+                  "prompt_eval_count": 106,
+                  "eval_count": 23
+                },
+                "usage_incomplete": false
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.590518199998769,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 1.8726989999995567,
+            "observation": "提取到了所需的关键词：Conditional DETR、DAB-DETR、DINO。",
+            "decision": "finish",
+            "task_complete": false,
+            "iteration": 1
+          },
+          {
+            "type": "done",
+            "task_complete": false,
+            "stop_reason": "incomplete",
+            "full_response": "关键词为：Conditional DETR、DAB-DETR、DINO。\n\n仅提取了问题关键词，尚未核验原论文内容，论文任务未完成。",
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "e562b2386f9b427db9b0d85a7bd1729d",
+            "name": "keyword_extract",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 0.590518199998769,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 1,
+          "successes": 1,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": 1.0,
+          "mean_seconds": 0.590518199998769,
+          "by_tool": [
+            {
+              "name": "keyword_extract",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.590518199998769
+            }
+          ]
+        },
+        "tokens": {
+          "input": 5908,
+          "output": 121,
+          "total": 6029,
+          "known_total": 6029,
+          "unknown_calls": 0
+        },
+        "response_seconds": 3.4632969000012963
+      }
+    },
+    {
+      "id": "S005",
+      "profile": "default",
+      "category": "synthesis",
+      "language": "zh",
+      "answer": "关键词为：Conditional DETR、DAB-DETR、DINO。\n\n仅提取了问题关键词，尚未核验原论文内容，论文任务未完成。",
+      "task_complete": false,
+      "stop_reason": "incomplete",
+      "iterations": 1,
+      "seconds": 4.400361399999383,
+      "model_calls": 3,
+      "tokens": {
+        "input_known": 5902,
+        "output_known": 119,
+        "total": 6021,
+        "unknown_calls": 0,
+        "source": "actual_ollama_responses"
+      },
+      "tool_calls": [
+        {
+          "name": "keyword_extract",
+          "args": {
+            "text": "按Conditional DETR、DAB-DETR、DINO归纳空间查询逐渐增强的设计信息。"
+          },
+          "iteration": 1
+        }
+      ],
+      "tool_selection_correct": false,
+      "event_types": [
+        "thought",
+        "tool_call",
+        "tool_result",
+        "observation",
+        "done"
+      ],
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 3028,
+            "output": 40,
+            "incomplete": false,
+            "seconds": 1.9071966000010434
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action",
+            "tool": "keyword_extract",
+            "tool_call_ids": [
+              "5fccf18ada414d328a99c27ffabad664"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.000289100000372855
+          },
+          {
+            "id": "5fccf18ada414d328a99c27ffabad664",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "keyword_extract",
+            "tool_call_ids": [
+              "5fccf18ada414d328a99c27ffabad664"
+            ],
+            "input": 106,
+            "output": 23,
+            "incomplete": false,
+            "seconds": 0.5760537999994995
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2768,
+            "output": 56,
+            "incomplete": false,
+            "seconds": 1.8726960999993025
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "调用keyword_extract获取所需信息。",
+            "next_step": "tool",
+            "tool_name": "keyword_extract",
+            "parallel_tools": [],
+            "elapsed_seconds": 1.9071966000010434,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "keyword_extract",
+            "call_id": "5fccf18ada414d328a99c27ffabad664",
+            "args": {
+              "text": "按Conditional DETR、DAB-DETR、DINO归纳空间查询逐渐增强的设计信息。"
+            },
+            "elapsed_seconds": 0.000289100000372855,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "keyword_extract",
+            "call_id": "5fccf18ada414d328a99c27ffabad664",
+            "args": {
+              "text": "按Conditional DETR、DAB-DETR、DINO归纳空间查询逐渐增强的设计信息。"
+            },
+            "result": {
+              "keywords": [
+                "Conditional DETR",
+                "DAB-DETR",
+                "DINO"
+              ],
+              "evidence": [
+                {
+                  "keyword": "Conditional DETR",
+                  "locations": [
+                    {
+                      "text": "按Conditional DETR、DAB-DETR、DINO归纳空间查询逐渐增强的设计信息。",
+                      "location": "问题第1行",
+                      "source_file": null
+                    }
+                  ]
+                },
+                {
+                  "keyword": "DAB-DETR",
+                  "locations": [
+                    {
+                      "text": "按Conditional DETR、DAB-DETR、DINO归纳空间查询逐渐增强的设计信息。",
+                      "location": "问题第1行",
+                      "source_file": null
+                    }
+                  ]
+                },
+                {
+                  "keyword": "DINO",
+                  "locations": [
+                    {
+                      "text": "按Conditional DETR、DAB-DETR、DINO归纳空间查询逐渐增强的设计信息。",
+                      "location": "问题第1行",
+                      "source_file": null
+                    }
+                  ]
+                }
+              ],
+              "doc_id": null,
+              "source_file": null,
+              "input_truncated": false,
+              "model": "qwen2.5:7b",
+              "usage": {
+                "prompt_eval_count": 106,
+                "eval_count": 23
+              },
+              "elapsed_seconds": 0.5730293000015081
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.576001699999324,
+                "usage": {
+                  "prompt_eval_count": 106,
+                  "eval_count": 23
+                },
+                "usage_incomplete": false
+              }
+            ],
+            "execution_mode": "serial",
+            "elapsed_seconds": 0.5760537999994995,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 1.8726960999993025,
+            "observation": "提取到关键词：Conditional DETR、DAB-DETR、DINO。",
+            "decision": "finish",
+            "task_complete": false,
+            "iteration": 1
+          },
+          {
+            "type": "done",
+            "task_complete": false,
+            "stop_reason": "incomplete",
+            "full_response": "关键词为：Conditional DETR、DAB-DETR、DINO。\n\n仅提取了问题关键词，尚未核验原论文内容，论文任务未完成。",
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "5fccf18ada414d328a99c27ffabad664",
+            "name": "keyword_extract",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 0.5760537999994995,
+            "attempts": 1,
+            "execution_mode": "serial"
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 1,
+          "successes": 1,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": 1.0,
+          "mean_seconds": 0.5760537999994995,
+          "by_tool": [
+            {
+              "name": "keyword_extract",
+              "started": 1,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.5760537999994995
+            }
+          ]
+        },
+        "tokens": {
+          "input": 5902,
+          "output": 119,
+          "total": 6021,
+          "known_total": 6021,
+          "unknown_calls": 0
+        },
+        "response_seconds": 4.400151399997412
+      }
+    }
+  ],
+  "model_seed": 20261003,
+  "human_scoring": "pending_independent_review",
+  "annotation": "论文+物理页；非完整chunk金标准；ViT来源与开发集重叠",
+  "model_tags": {
+    "models": [
+      {
+        "name": "qwen2.5:7b",
+        "model": "qwen2.5:7b",
+        "modified_at": "2026-10-05T17:43:17.3307676+08:00",
+        "size": 4683087332,
+        "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen2",
+          "families": [
+            "qwen2"
+          ],
+          "parameter_size": "7.6B",
+          "quantization_level": "Q4_K_M",
+          "context_length": 32768,
+          "embedding_length": 3584,
+          "runner": "ggml"
+        },
+        "capabilities": [
+          "completion",
+          "tools"
+        ]
+      }
+    ]
+  },
+  "server": {
+    "version": "0.40.1"
+  },
+  "warmup_response": {
+    "model": "qwen2.5:7b",
+    "created_at": "2026-10-09T10:00:02.8141928Z",
+    "message": {
+      "role": "assistant",
+      "content": "好"
+    },
+    "done": true,
+    "done_reason": "stop",
+    "total_duration": 111990000,
+    "load_duration": 11797600,
+    "prompt_eval_count": 33,
+    "prompt_eval_cached_count": 3,
+    "prompt_eval_duration": 36091000,
+    "eval_count": 2,
+    "eval_duration": 23072000
+  },
+  "warmup_seconds": 0.1323432999997749,
+  "retrieval_warmup_seconds": 11.293046900002082,
+  "completed_at": "2026-10-09T18:03:51.208735+08:00"
+}

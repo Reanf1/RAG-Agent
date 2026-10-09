@@ -1,0 +1,663 @@
+{
+  "scope": "本轮120条真实最终答案对应轨迹；工具路径不等于答案质量。",
+  "source_sha256": "6b595a937252830b1536da14674ac9e7dff7c16e8ad5707c8a59eca5420f1594",
+  "profiles": {
+    "default": {
+      "requests": 60,
+      "by_category": {
+        "comparison": {
+          "correct": 13,
+          "total": 15,
+          "accuracy": 0.8666666666666667
+        },
+        "fact": {
+          "correct": 9,
+          "total": 15,
+          "accuracy": 0.6
+        },
+        "reasoning": {
+          "correct": 13,
+          "total": 15,
+          "accuracy": 0.8666666666666667
+        },
+        "synthesis": {
+          "correct": 6,
+          "total": 15,
+          "accuracy": 0.4
+        }
+      },
+      "sequences": {
+        "knowledge_base_search": 34,
+        "paper_list → knowledge_base_search": 2,
+        "keyword_extract → knowledge_base_search": 1,
+        "无工具": 5,
+        "knowledge_base_search → keyword_extract": 3,
+        "paper_list → paper_compare": 8,
+        "paper_list → knowledge_base_search → knowledge_base_search → paper_metadata → keyword_extract → paper_list": 1,
+        "knowledge_base_search → knowledge_base_search": 1,
+        "knowledge_base_search → paper_summary → knowledge_base_search": 1,
+        "keyword_extract": 2,
+        "knowledge_base_search → paper_metadata": 1,
+        "knowledge_base_search → keyword_extract → paper_summary → knowledge_base_search": 1
+      },
+      "distinct_tool_combinations": {
+        "knowledge_base_search + paper_list": 2,
+        "keyword_extract + knowledge_base_search": 4,
+        "paper_compare + paper_list": 8,
+        "keyword_extract + knowledge_base_search + paper_list + paper_metadata": 1,
+        "knowledge_base_search + paper_summary": 1,
+        "knowledge_base_search + paper_metadata": 1,
+        "keyword_extract + knowledge_base_search + paper_summary": 1
+      },
+      "combination_outcomes": [
+        {
+          "id": "F002",
+          "stop_reason": "task_complete",
+          "results": [
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "knowledge_base_search",
+              "status": "success",
+              "business_status": "answered"
+            }
+          ]
+        },
+        {
+          "id": "F003",
+          "stop_reason": "task_complete",
+          "results": [
+            {
+              "name": "keyword_extract",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "knowledge_base_search",
+              "status": "success",
+              "business_status": "answered"
+            }
+          ]
+        },
+        {
+          "id": "F006",
+          "stop_reason": "task_complete",
+          "results": [
+            {
+              "name": "knowledge_base_search",
+              "status": "success",
+              "business_status": "insufficient_evidence"
+            },
+            {
+              "name": "keyword_extract",
+              "status": "success",
+              "business_status": null
+            }
+          ]
+        },
+        {
+          "id": "C002",
+          "stop_reason": "incomplete",
+          "results": [
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "paper_compare",
+              "status": "success",
+              "business_status": "needs_confirmation"
+            }
+          ]
+        },
+        {
+          "id": "C006",
+          "stop_reason": "task_complete",
+          "results": [
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "knowledge_base_search",
+              "status": "success",
+              "business_status": "answered"
+            }
+          ]
+        },
+        {
+          "id": "C008",
+          "stop_reason": "incomplete",
+          "results": [
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "paper_compare",
+              "status": "success",
+              "business_status": "needs_confirmation"
+            }
+          ]
+        },
+        {
+          "id": "C010",
+          "stop_reason": "incomplete",
+          "results": [
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "paper_compare",
+              "status": "success",
+              "business_status": "needs_confirmation"
+            }
+          ]
+        },
+        {
+          "id": "C013",
+          "stop_reason": "task_complete",
+          "results": [
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "knowledge_base_search",
+              "status": "success",
+              "business_status": "insufficient_evidence"
+            },
+            {
+              "name": "knowledge_base_search",
+              "status": "error",
+              "business_status": null
+            },
+            {
+              "name": "paper_metadata",
+              "status": "error",
+              "business_status": null
+            },
+            {
+              "name": "keyword_extract",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            }
+          ]
+        },
+        {
+          "id": "C014",
+          "stop_reason": "incomplete",
+          "results": [
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "paper_compare",
+              "status": "success",
+              "business_status": "needs_confirmation"
+            }
+          ]
+        },
+        {
+          "id": "C015",
+          "stop_reason": "incomplete",
+          "results": [
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "paper_compare",
+              "status": "success",
+              "business_status": "needs_confirmation"
+            }
+          ]
+        },
+        {
+          "id": "S001",
+          "stop_reason": "incomplete",
+          "results": [
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "paper_compare",
+              "status": "success",
+              "business_status": "needs_confirmation"
+            }
+          ]
+        },
+        {
+          "id": "S002",
+          "stop_reason": "incomplete",
+          "results": [
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "paper_compare",
+              "status": "success",
+              "business_status": "needs_confirmation"
+            }
+          ]
+        },
+        {
+          "id": "S004",
+          "stop_reason": "task_complete",
+          "results": [
+            {
+              "name": "knowledge_base_search",
+              "status": "success",
+              "business_status": "insufficient_evidence"
+            },
+            {
+              "name": "paper_summary",
+              "status": "success",
+              "business_status": "answered"
+            },
+            {
+              "name": "knowledge_base_search",
+              "status": "success",
+              "business_status": "answered"
+            }
+          ]
+        },
+        {
+          "id": "S006",
+          "stop_reason": "incomplete",
+          "results": [
+            {
+              "name": "knowledge_base_search",
+              "status": "success",
+              "business_status": "insufficient_evidence"
+            },
+            {
+              "name": "paper_metadata",
+              "status": "error",
+              "business_status": null
+            }
+          ]
+        },
+        {
+          "id": "S008",
+          "stop_reason": "incomplete",
+          "results": [
+            {
+              "name": "knowledge_base_search",
+              "status": "success",
+              "business_status": "insufficient_evidence"
+            },
+            {
+              "name": "keyword_extract",
+              "status": "success",
+              "business_status": null
+            }
+          ]
+        },
+        {
+          "id": "S009",
+          "stop_reason": "incomplete",
+          "results": [
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "paper_compare",
+              "status": "success",
+              "business_status": "needs_confirmation"
+            }
+          ]
+        },
+        {
+          "id": "R003",
+          "stop_reason": "incomplete",
+          "results": [
+            {
+              "name": "knowledge_base_search",
+              "status": "success",
+              "business_status": "insufficient_evidence"
+            },
+            {
+              "name": "keyword_extract",
+              "status": "error",
+              "business_status": null
+            }
+          ]
+        },
+        {
+          "id": "R012",
+          "stop_reason": "incomplete",
+          "results": [
+            {
+              "name": "knowledge_base_search",
+              "status": "success",
+              "business_status": "insufficient_evidence"
+            },
+            {
+              "name": "keyword_extract",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "paper_summary",
+              "status": "success",
+              "business_status": "answered"
+            },
+            {
+              "name": "knowledge_base_search",
+              "status": "success",
+              "business_status": "needs_confirmation"
+            }
+          ]
+        }
+      ]
+    },
+    "no_rules": {
+      "requests": 60,
+      "by_category": {
+        "comparison": {
+          "correct": 12,
+          "total": 15,
+          "accuracy": 0.8
+        },
+        "fact": {
+          "correct": 11,
+          "total": 15,
+          "accuracy": 0.7333333333333333
+        },
+        "reasoning": {
+          "correct": 14,
+          "total": 15,
+          "accuracy": 0.9333333333333333
+        },
+        "synthesis": {
+          "correct": 9,
+          "total": 15,
+          "accuracy": 0.6
+        }
+      },
+      "sequences": {
+        "knowledge_base_search": 40,
+        "paper_list → knowledge_base_search": 2,
+        "keyword_extract → knowledge_base_search": 1,
+        "无工具": 4,
+        "paper_list → paper_compare": 8,
+        "knowledge_base_search → paper_compare → keyword_extract": 1,
+        "keyword_extract": 2,
+        "paper_list → paper_compare → paper_compare → knowledge_base_search": 1,
+        "knowledge_base_search → keyword_extract": 1
+      },
+      "distinct_tool_combinations": {
+        "knowledge_base_search + paper_list": 2,
+        "keyword_extract + knowledge_base_search": 2,
+        "paper_compare + paper_list": 8,
+        "keyword_extract + knowledge_base_search + paper_compare": 1,
+        "knowledge_base_search + paper_compare + paper_list": 1
+      },
+      "combination_outcomes": [
+        {
+          "id": "F002",
+          "stop_reason": "task_complete",
+          "results": [
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "knowledge_base_search",
+              "status": "success",
+              "business_status": "answered"
+            }
+          ]
+        },
+        {
+          "id": "F003",
+          "stop_reason": "task_complete",
+          "results": [
+            {
+              "name": "keyword_extract",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "knowledge_base_search",
+              "status": "success",
+              "business_status": "answered"
+            }
+          ]
+        },
+        {
+          "id": "C002",
+          "stop_reason": "incomplete",
+          "results": [
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "paper_compare",
+              "status": "success",
+              "business_status": "needs_confirmation"
+            }
+          ]
+        },
+        {
+          "id": "C004",
+          "stop_reason": "task_complete",
+          "results": [
+            {
+              "name": "knowledge_base_search",
+              "status": "success",
+              "business_status": "answered"
+            },
+            {
+              "name": "paper_compare",
+              "status": "error",
+              "business_status": null
+            },
+            {
+              "name": "keyword_extract",
+              "status": "success",
+              "business_status": null
+            }
+          ]
+        },
+        {
+          "id": "C006",
+          "stop_reason": "task_complete",
+          "results": [
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "knowledge_base_search",
+              "status": "success",
+              "business_status": "answered"
+            }
+          ]
+        },
+        {
+          "id": "C008",
+          "stop_reason": "incomplete",
+          "results": [
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "paper_compare",
+              "status": "success",
+              "business_status": "needs_confirmation"
+            }
+          ]
+        },
+        {
+          "id": "C010",
+          "stop_reason": "incomplete",
+          "results": [
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "paper_compare",
+              "status": "success",
+              "business_status": "needs_confirmation"
+            }
+          ]
+        },
+        {
+          "id": "C013",
+          "stop_reason": "incomplete",
+          "results": [
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "paper_compare",
+              "status": "success",
+              "business_status": "needs_confirmation"
+            }
+          ]
+        },
+        {
+          "id": "C014",
+          "stop_reason": "incomplete",
+          "results": [
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "paper_compare",
+              "status": "success",
+              "business_status": "needs_confirmation"
+            }
+          ]
+        },
+        {
+          "id": "C015",
+          "stop_reason": "incomplete",
+          "results": [
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "paper_compare",
+              "status": "success",
+              "business_status": "needs_confirmation"
+            }
+          ]
+        },
+        {
+          "id": "S001",
+          "stop_reason": "incomplete",
+          "results": [
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "paper_compare",
+              "status": "success",
+              "business_status": "needs_confirmation"
+            }
+          ]
+        },
+        {
+          "id": "S002",
+          "stop_reason": "incomplete",
+          "results": [
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "paper_compare",
+              "status": "success",
+              "business_status": "needs_confirmation"
+            }
+          ]
+        },
+        {
+          "id": "S009",
+          "stop_reason": "task_complete",
+          "results": [
+            {
+              "name": "paper_list",
+              "status": "success",
+              "business_status": null
+            },
+            {
+              "name": "paper_compare",
+              "status": "success",
+              "business_status": "needs_confirmation"
+            },
+            {
+              "name": "paper_compare",
+              "status": "error",
+              "business_status": null
+            },
+            {
+              "name": "knowledge_base_search",
+              "status": "success",
+              "business_status": "answered"
+            }
+          ]
+        },
+        {
+          "id": "R012",
+          "stop_reason": "task_complete",
+          "results": [
+            {
+              "name": "knowledge_base_search",
+              "status": "success",
+              "business_status": "insufficient_evidence"
+            },
+            {
+              "name": "keyword_extract",
+              "status": "success",
+              "business_status": null
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

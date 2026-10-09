@@ -1,0 +1,118 @@
+[
+  {
+    "id": "F010",
+    "category": "fact",
+    "language": "en",
+    "question": "What do the four coordinates in a DAB-DETR anchor query represent?",
+    "reference_answer": "The coordinates (x,y,w,h) represent box center and width/height; they are updated across decoder layers.",
+    "answer_points": [
+      "x/y are center",
+      "w/h are width/height",
+      "Layer-wise update"
+    ],
+    "answer_basis": "原文直接陈述",
+    "paper_ids": [
+      "dab_detr"
+    ],
+    "evidence": [
+      {
+        "evidence_id": "AB_CORE",
+        "paper_id": "dab_detr",
+        "page_number": 6,
+        "section": "4.1 Overview / 4.2 Learning Anchor Boxes Directly"
+      }
+    ]
+  },
+  {
+    "id": "F012",
+    "category": "fact",
+    "language": "en",
+    "question": "Which three improvements are named in the DINO detection paper?",
+    "reference_answer": "Contrastive denoising, mixed query selection, and look forward twice.",
+    "answer_points": [
+      "Contrastive denoising",
+      "Mixed query selection",
+      "Look forward twice"
+    ],
+    "answer_basis": "原文直接陈述",
+    "paper_ids": [
+      "dino"
+    ],
+    "evidence": [
+      {
+        "evidence_id": "DI_METHOD",
+        "paper_id": "dino",
+        "page_number": 1,
+        "section": "Abstract"
+      }
+    ]
+  },
+  {
+    "id": "C013",
+    "category": "comparison",
+    "language": "en",
+    "question": "How do DeiT and CaiT add mechanisms for producing the image-level prediction?",
+    "reference_answer": "DeiT adds a teacher-supervised distillation token alongside the class token; CaiT separates patch processing from class-attention summarization.",
+    "answer_points": [
+      "Teacher-supervised token in DeiT",
+      "Separate class-attention in CaiT"
+    ],
+    "answer_basis": "原文直接陈述",
+    "paper_ids": [
+      "deit",
+      "cait"
+    ],
+    "evidence": [
+      {
+        "evidence_id": "D_TOKEN",
+        "paper_id": "deit",
+        "page_number": 4,
+        "section": "4 Distillation through attention"
+      },
+      {
+        "evidence_id": "CA_CLASS",
+        "paper_id": "cait",
+        "page_number": 3,
+        "section": "3 Specializing layers for class attention"
+      }
+    ]
+  },
+  {
+    "id": "S005",
+    "category": "synthesis",
+    "language": "zh",
+    "question": "按Conditional DETR、DAB-DETR、DINO归纳空间查询逐渐增强的设计信息。",
+    "reference_answer": "Conditional使用条件空间查询；DAB加入框中心与宽高并逐层更新；DINO再用encoder选中的位置初始化anchor。",
+    "answer_points": [
+      "Conditional spatial query",
+      "DAB center/size and iterative updates",
+      "DINO encoder-selected anchor initialization"
+    ],
+    "answer_basis": "原文直接陈述",
+    "paper_ids": [
+      "conditional_detr",
+      "dab_detr",
+      "dino"
+    ],
+    "evidence": [
+      {
+        "evidence_id": "CO_CORE",
+        "paper_id": "conditional_detr",
+        "page_number": 1,
+        "section": "Abstract"
+      },
+      {
+        "evidence_id": "AB_CORE",
+        "paper_id": "dab_detr",
+        "page_number": 6,
+        "section": "4.1 Overview / 4.2 Learning Anchor Boxes Directly"
+      },
+      {
+        "evidence_id": "DI_MIX",
+        "paper_id": "dino",
+        "page_number": 10,
+        "section": "3.4 Mixed Query Selection"
+      }
+    ]
+  }
+]

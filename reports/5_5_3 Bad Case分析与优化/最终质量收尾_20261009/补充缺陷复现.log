@@ -1,0 +1,114 @@
+F<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+
+======================================================================
+FAIL: test_short_body_rerank_does_not_reuse_previous_excerpt (tests.5_1_4 混合检索与重排序.test_long_reranker.TestLongReranker)
+正文已聚焦后重新评分，生成输入须采用本次正文，原候选保持不变。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_1_4 混合检索与重排序/test_long_reranker.py", line 68, in test_short_body_rerank_does_not_reuse_previous_excerpt
+    self.assertNotIn("rerank_excerpt", found[0][0].metadata)
+AssertionError: 'rerank_excerpt' unexpectedly found in {'rerank_excerpt': '上次无关摘录', 'retrieval_warning': '长块按模型Token窗口精排，本次引用只覆盖选中的摘录；完整内容见原页。'}
+
+======================================================================
+FAIL: test_quoted_evidence_without_fixed_label_is_still_checked (tests.5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit) (prefix='', quote='We use external data.')
+复现真实回答改用Original Source或省略标签时，译文和错页仍必须被拒绝。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_independent_generation.py", line 85, in test_quoted_evidence_without_fixed_label_is_still_checked
+    self.assertEqual(result["evidence_quote_errors"], expected)
+AssertionError: Lists differ: [] != [[1]]
+
+Second list contains 1 additional elements.
+First extra element 0:
+[1]
+
+- []
++ [[1]]
+
+======================================================================
+FAIL: test_quoted_evidence_without_fixed_label_is_still_checked (tests.5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit) (prefix='', quote='我们不使用外部数据。')
+复现真实回答改用Original Source或省略标签时，译文和错页仍必须被拒绝。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_independent_generation.py", line 85, in test_quoted_evidence_without_fixed_label_is_still_checked
+    self.assertEqual(result["evidence_quote_errors"], expected)
+AssertionError: Lists differ: [] != [[1]]
+
+Second list contains 1 additional elements.
+First extra element 0:
+[1]
+
+- []
++ [[1]]
+
+======================================================================
+FAIL: test_quoted_evidence_without_fixed_label_is_still_checked (tests.5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit) (prefix='Original Source: ', quote='We use external data.')
+复现真实回答改用Original Source或省略标签时，译文和错页仍必须被拒绝。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_independent_generation.py", line 85, in test_quoted_evidence_without_fixed_label_is_still_checked
+    self.assertEqual(result["evidence_quote_errors"], expected)
+AssertionError: Lists differ: [] != [[1]]
+
+Second list contains 1 additional elements.
+First extra element 0:
+[1]
+
+- []
++ [[1]]
+
+======================================================================
+FAIL: test_quoted_evidence_without_fixed_label_is_still_checked (tests.5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit) (prefix='Original Source: ', quote='我们不使用外部数据。')
+复现真实回答改用Original Source或省略标签时，译文和错页仍必须被拒绝。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_independent_generation.py", line 85, in test_quoted_evidence_without_fixed_label_is_still_checked
+    self.assertEqual(result["evidence_quote_errors"], expected)
+AssertionError: Lists differ: [] != [[1]]
+
+Second list contains 1 additional elements.
+First extra element 0:
+[1]
+
+- []
++ [[1]]
+
+======================================================================
+FAIL: test_quoted_evidence_without_fixed_label_is_still_checked (tests.5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit) (prefix='**原文**：', quote='We use external data.')
+复现真实回答改用Original Source或省略标签时，译文和错页仍必须被拒绝。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_independent_generation.py", line 85, in test_quoted_evidence_without_fixed_label_is_still_checked
+    self.assertEqual(result["evidence_quote_errors"], expected)
+AssertionError: Lists differ: [] != [[1]]
+
+Second list contains 1 additional elements.
+First extra element 0:
+[1]
+
+- []
++ [[1]]
+
+======================================================================
+FAIL: test_quoted_evidence_without_fixed_label_is_still_checked (tests.5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit) (prefix='**原文**：', quote='我们不使用外部数据。')
+复现真实回答改用Original Source或省略标签时，译文和错页仍必须被拒绝。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_independent_generation.py", line 85, in test_quoted_evidence_without_fixed_label_is_still_checked
+    self.assertEqual(result["evidence_quote_errors"], expected)
+AssertionError: Lists differ: [] != [[1]]
+
+Second list contains 1 additional elements.
+First extra element 0:
+[1]
+
+- []
++ [[1]]
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.181s
+
+FAILED (failures=7)
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

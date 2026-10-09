@@ -1,6 +1,6 @@
 # 自动化测试
 
-当前843个用例、18个小节、55个测试文件。本轮本地59.880秒、Windows293.372秒，失败／错误／跳过／预期失败／意外成功均0；两端最终结果见[集中修复记录](../reports/5_5_3%20Bad%20Case分析与优化/侧栏与答案集中修复_20261009/README.md)。最新源码54a5705；119个源码／配置／测试指纹按LF统一后逐文件匹配。[本地逐项结果](../reports/5_5_3%20Bad%20Case分析与优化/侧栏与答案集中修复_20261009/local-consistency-final.json)、[Windows逐项结果](../reports/5_5_3%20Bad%20Case分析与优化/侧栏与答案集中修复_20261009/windows-consistency-final.json)分别归档。自动回归不代表科研答案质量全通过。
+当前853个用例、18个小节、55个测试文件。业务补丁2c0353c、部署c3b0fda；本地59.191秒／Windows315.808秒，失败／错误／跳过／预期失败／意外成功均0。[本地逐项结果](../reports/5_5_3%20Bad%20Case分析与优化/最终质量收尾_20261009/本地集中补丁回归.json)与[Windows逐项结果](../reports/5_5_3%20Bad%20Case分析与优化/最终质量收尾_20261009/Windows补丁复测/regression.json)分别归档。新增4项正文恢复／问题关键词完成保护、2项共享分词与异常释放验证。历史847项和前批843／829项及真实页面核验保持原日期，自动通过不代表科研答案质量通过。
 
 本科精简首轮818项和Windows10月8日815项保留原证据；[历史测试说明](../reports/5_5_4%20项目交付/本科精简_20261009/测试历史说明_20261006-08.md)保留旧成绩、失败与修复过程。最新真实模型样例、预算、缓存及容器结论见集中部署记录，不混入120条正式质量初评。
 
@@ -13,12 +13,12 @@
 | 5_1_1 文档加载与批量导入 | 41 | [test_pdf_loader.py](5_1_1%20文档加载与批量导入/test_pdf_loader.py)、[test_docx_loader.py](5_1_1%20文档加载与批量导入/test_docx_loader.py)、[test_text_loader.py](5_1_1%20文档加载与批量导入/test_text_loader.py)、[test_batch_import.py](5_1_1%20文档加载与批量导入/test_batch_import.py) |
 | 5_1_2 文本分块策略 | 45 | [test_chunking.py](5_1_2%20文本分块策略/test_chunking.py)、[test_academic_pdf.py](5_1_2%20文本分块策略/test_academic_pdf.py) |
 | 5_1_3 向量化与存储 | 52 | [test_vector_store.py](5_1_3%20向量化与存储/test_vector_store.py)、[test_embeddings.py](5_1_3%20向量化与存储/test_embeddings.py)、[test_batch_index.py](5_1_3%20向量化与存储/test_batch_index.py)、[test_chroma_path.py](5_1_3%20向量化与存储/test_chroma_path.py)、[test_index_repair.py](5_1_3%20向量化与存储/test_index_repair.py) |
-| 5_1_4 混合检索与重排序 | 52 | [test_bm25.py](5_1_4%20混合检索与重排序/test_bm25.py)、[test_hybrid_retriever.py](5_1_4%20混合检索与重排序/test_hybrid_retriever.py)、[test_reranker.py](5_1_4%20混合检索与重排序/test_reranker.py)、[test_retrieval_evaluation.py](5_1_4%20混合检索与重排序/test_retrieval_evaluation.py)、[test_long_reranker.py](5_1_4%20混合检索与重排序/test_long_reranker.py) |
+| 5_1_4 混合检索与重排序 | 55 | [test_bm25.py](5_1_4%20混合检索与重排序/test_bm25.py)、[test_hybrid_retriever.py](5_1_4%20混合检索与重排序/test_hybrid_retriever.py)、[test_reranker.py](5_1_4%20混合检索与重排序/test_reranker.py)、[test_retrieval_evaluation.py](5_1_4%20混合检索与重排序/test_retrieval_evaluation.py)、[test_long_reranker.py](5_1_4%20混合检索与重排序/test_long_reranker.py) |
 | 5_2_1 Prompt工程与生成策略 | 69 | [test_prompt.py](5_2_1%20Prompt工程与生成策略/test_prompt.py)、[test_context.py](5_2_1%20Prompt工程与生成策略/test_context.py)、[test_citations.py](5_2_1%20Prompt工程与生成策略/test_citations.py)、[test_generation.py](5_2_1%20Prompt工程与生成策略/test_generation.py) |
 | 5_2_2 流式输出与引用 | 17 | [test_streaming.py](5_2_2%20流式输出与引用/test_streaming.py) |
 | 5_2_3 缓存与降级策略 | 33 | [test_degradation.py](5_2_3%20缓存与降级策略/test_degradation.py)、[test_cache.py](5_2_3%20缓存与降级策略/test_cache.py)、[test_agent_cache.py](5_2_3%20缓存与降级策略/test_agent_cache.py) |
 | 5_2_4 日志与可观测性 | 9 | [test_rag_logging.py](5_2_4%20日志与可观测性/test_rag_logging.py) |
-| 5_3_1 Agent核心循环 | 71 | [test_thought.py](5_3_1%20Agent核心循环/test_thought.py)、[test_action.py](5_3_1%20Agent核心循环/test_action.py)、[test_observation.py](5_3_1%20Agent核心循环/test_observation.py)、[test_system_prompt.py](5_3_1%20Agent核心循环/test_system_prompt.py) |
+| 5_3_1 Agent核心循环 | 75 | [test_thought.py](5_3_1%20Agent核心循环/test_thought.py)、[test_action.py](5_3_1%20Agent核心循环/test_action.py)、[test_observation.py](5_3_1%20Agent核心循环/test_observation.py)、[test_system_prompt.py](5_3_1%20Agent核心循环/test_system_prompt.py) |
 | 5_3_2 工具集开发 | 109 | [test_research_tools.py](5_3_2%20工具集开发/test_research_tools.py)、[test_comparison_keywords.py](5_3_2%20工具集开发/test_comparison_keywords.py)、[test_summary_time_search.py](5_3_2%20工具集开发/test_summary_time_search.py)、[test_calculator_paper_list.py](5_3_2%20工具集开发/test_calculator_paper_list.py) |
 | 5_3_3 Agent决策优化 | 52 | [test_routing_parallel.py](5_3_3%20Agent决策优化/test_routing_parallel.py)、[test_error_recovery.py](5_3_3%20Agent决策优化/test_error_recovery.py) |
 | 5_3_4 多轮对话记忆管理 | 56 | [test_session_isolation.py](5_3_4%20多轮对话记忆管理/test_session_isolation.py)、[test_history_window.py](5_3_4%20多轮对话记忆管理/test_history_window.py)、[test_conversation_summary.py](5_3_4%20多轮对话记忆管理/test_conversation_summary.py) |
@@ -27,7 +27,7 @@
 | 5_4_3 前端与会话管理 | 43 | [test_document_management.py](5_4_3%20前端与会话管理/test_document_management.py)、[test_chat_streaming.py](5_4_3%20前端与会话管理/test_chat_streaming.py)、[test_conversation_history.py](5_4_3%20前端与会话管理/test_conversation_history.py)、[test_agent_streaming.py](5_4_3%20前端与会话管理/test_agent_streaming.py)、[test_citation_page.py](5_4_3%20前端与会话管理/test_citation_page.py) |
 | 5_4_4 端到端联调与测试 | 36 | [test_document_flow.py](5_4_4%20端到端联调与测试/test_document_flow.py) |
 | 5_5_2 系统性能评估 | 10 | [test_system_evaluation.py](5_5_2%20系统性能评估/test_system_evaluation.py) |
-| 5_5_3 Bad Case分析与优化 | 53 | [test_bad_case_regression.py](5_5_3%20Bad%20Case分析与优化/test_bad_case_regression.py)、[Agent](5_5_3%20Bad%20Case分析与优化/test_independent_agent.py)、[缓存](5_5_3%20Bad%20Case分析与优化/test_independent_cache.py)、[生成](5_5_3%20Bad%20Case分析与优化/test_independent_generation.py)、[检索](5_5_3%20Bad%20Case分析与优化/test_independent_retrieval.py)、[用量](5_5_3%20Bad%20Case分析与优化/test_independent_usage.py) |
+| 5_5_3 Bad Case分析与优化 | 56 | [test_bad_case_regression.py](5_5_3%20Bad%20Case分析与优化/test_bad_case_regression.py)、[Agent](5_5_3%20Bad%20Case分析与优化/test_independent_agent.py)、[缓存](5_5_3%20Bad%20Case分析与优化/test_independent_cache.py)、[生成](5_5_3%20Bad%20Case分析与优化/test_independent_generation.py)、[检索](5_5_3%20Bad%20Case分析与优化/test_independent_retrieval.py)、[用量](5_5_3%20Bad%20Case分析与优化/test_independent_usage.py) |
 
 ## 运行方式
 

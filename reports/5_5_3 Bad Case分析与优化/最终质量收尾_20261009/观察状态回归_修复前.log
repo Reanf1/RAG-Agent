@@ -1,0 +1,32 @@
+.................F..........F
+======================================================================
+FAIL: test_later_body_evidence_must_cover_failed_paper (test_observation.TestObservationAndLoop) (target='bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb')
+替代工具真正覆盖失败论文后允许完成，另一篇论文成功不能消除缺项。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_1 Agent核心循环/test_observation.py", line 309, in test_later_body_evidence_must_cover_failed_paper
+    self.assertEqual(result["task_complete"], complete)
+AssertionError: True != False
+
+======================================================================
+FAIL: test_question_keywords_cannot_complete_paper_synthesis (test_observation.TestObservationAndLoop)
+复现S005：只提取问题的词语，没有读取论文正文，不能冒充机制归纳。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_1 Agent核心循环/test_observation.py", line 317, in test_question_keywords_cannot_complete_paper_synthesis
+    self.assertFalse(result["task_complete"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_unrouted_paper_failure_cannot_be_recovered_by_keywords (test_observation.TestObservationAndLoop)
+复现C013：无规则路由时，关键词/列表成功不能替代失败的正文检索。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_1 Agent核心循环/test_observation.py", line 295, in test_unrouted_paper_failure_cannot_be_recovered_by_keywords
+    self.assertFalse(result["task_complete"])
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 30 tests in 1.055s
+
+FAILED (failures=3)

@@ -1,0 +1,131 @@
+{
+  "scope": "仅复算2026-10-07的冻结轨迹；两项实验分别统计，不合并重复论文题。",
+  "definition": "工具选择沿用原预先约定的可接受路径，不等于参数、任务完成或答案语义正确。",
+  "sources": {
+    "reports/5_5_2 系统性能评估/Windows正式性能评测_20261007/agent.json": "37961b7755f0ecccd1a722a7f523940bdba3044b5182efb94129e1e271c61383",
+    "reports/5_5_2 系统性能评估/Windows正式性能评测_20261007/routing.json": "5f6e7d1a452b54f46c8754581b1ef56ed15cb30322084a4864b56f77768d1662"
+  },
+  "experiments": {
+    "agent.json:default": {
+      "requests": 60,
+      "by_category": {
+        "comparison": {
+          "correct": 15,
+          "total": 15,
+          "accuracy": 1.0
+        },
+        "fact": {
+          "correct": 14,
+          "total": 15,
+          "accuracy": 0.9333333333333333
+        },
+        "reasoning": {
+          "correct": 15,
+          "total": 15,
+          "accuracy": 1.0
+        },
+        "synthesis": {
+          "correct": 12,
+          "total": 15,
+          "accuracy": 0.8
+        }
+      },
+      "sequences": {
+        "knowledge_base_search": 55,
+        "无工具": 3,
+        "knowledge_base_search → knowledge_base_search": 1,
+        "paper_list → paper_compare": 1
+      },
+      "distinct_tool_combinations": {
+        "paper_compare + paper_list": 1
+      }
+    },
+    "agent.json:no_rules": {
+      "requests": 60,
+      "by_category": {
+        "comparison": {
+          "correct": 14,
+          "total": 15,
+          "accuracy": 0.9333333333333333
+        },
+        "fact": {
+          "correct": 14,
+          "total": 15,
+          "accuracy": 0.9333333333333333
+        },
+        "reasoning": {
+          "correct": 15,
+          "total": 15,
+          "accuracy": 1.0
+        },
+        "synthesis": {
+          "correct": 13,
+          "total": 15,
+          "accuracy": 0.8666666666666667
+        }
+      },
+      "sequences": {
+        "knowledge_base_search": 54,
+        "knowledge_base_search → paper_summary": 1,
+        "knowledge_base_search → knowledge_base_search": 2,
+        "无工具": 2,
+        "paper_list → paper_compare": 1
+      },
+      "distinct_tool_combinations": {
+        "knowledge_base_search + paper_summary": 1,
+        "paper_compare + paper_list": 1
+      }
+    },
+    "routing.json:agent": {
+      "requests": 72,
+      "by_category": {
+        "calculator": {
+          "correct": 4,
+          "total": 4,
+          "accuracy": 1.0
+        },
+        "comparison": {
+          "correct": 15,
+          "total": 15,
+          "accuracy": 1.0
+        },
+        "concept": {
+          "correct": 4,
+          "total": 4,
+          "accuracy": 1.0
+        },
+        "fact": {
+          "correct": 14,
+          "total": 15,
+          "accuracy": 0.9333333333333333
+        },
+        "reasoning": {
+          "correct": 15,
+          "total": 15,
+          "accuracy": 1.0
+        },
+        "synthesis": {
+          "correct": 12,
+          "total": 15,
+          "accuracy": 0.8
+        },
+        "time": {
+          "correct": 4,
+          "total": 4,
+          "accuracy": 1.0
+        }
+      },
+      "sequences": {
+        "knowledge_base_search": 54,
+        "paper_list → paper_compare": 1,
+        "无工具": 7,
+        "calculator": 4,
+        "current_time": 4,
+        "knowledge_base_search → knowledge_base_search": 2
+      },
+      "distinct_tool_combinations": {
+        "paper_compare + paper_list": 1
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+...........E.
+======================================================================
+ERROR: test_shared_tokenizer_is_serialized_across_reranker_instances (__main__.TestReranker)
+复现Windows分词器借用冲突：分窗和预测共享同一互斥范围。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_1_4 混合检索与重排序/test_reranker.py", line 121, in test_shared_tokenizer_is_serialized_across_reranker_instances
+    self.assertTrue(all(future.result(timeout=3)[0][1] == .9 for future in futures))
+  File "/Users/rean/github/RAG+Agent/tests/5_1_4 混合检索与重排序/test_reranker.py", line 121, in <genexpr>
+    self.assertTrue(all(future.result(timeout=3)[0][1] == .9 for future in futures))
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/concurrent/futures/_base.py", line 458, in result
+    return self.__get_result()
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/concurrent/futures/_base.py", line 403, in __get_result
+    raise self._exception
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Users/rean/github/RAG+Agent/tests/5_1_4 混合检索与重排序/test_reranker.py", line 115, in request
+    return Reranker().rerank("query", candidates)
+  File "/Users/rean/github/RAG+Agent/src/retrieval/reranker.py", line 78, in rerank
+    passages = [self._passages(query, document, model.tokenizer) for document, _ in candidates]
+  File "/Users/rean/github/RAG+Agent/src/retrieval/reranker.py", line 78, in <listcomp>
+    passages = [self._passages(query, document, model.tokenizer) for document, _ in candidates]
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1114, in __call__
+    return self._mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1118, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1179, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "/Users/rean/github/RAG+Agent/tests/5_1_4 混合检索与重排序/test_reranker.py", line 119, in <lambda>
+    (tok.encode(query) and [doc.page_content])), ThreadPoolExecutor(2) as pool:
+  File "/Users/rean/github/RAG+Agent/tests/5_1_4 混合检索与重排序/test_reranker.py", line 101, in encode
+    raise RuntimeError("Already borrowed")
+RuntimeError: Already borrowed
+
+----------------------------------------------------------------------
+Ran 13 tests in 2.351s
+
+FAILED (errors=1)

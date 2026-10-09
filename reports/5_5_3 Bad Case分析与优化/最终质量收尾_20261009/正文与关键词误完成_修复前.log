@@ -1,0 +1,24 @@
+[
+  {
+    "id": "C013",
+    "profile": "default",
+    "task_complete": true,
+    "answer": "当前知识库中未找到关于DeiT和CaiT的具体文档。关键词提取显示问题涉及DeiT、CaiT和图像级预测机制。"
+  },
+  {
+    "id": "S005",
+    "profile": "default",
+    "task_complete": true,
+    "answer": "关键词为：Conditional DETR、DAB-DETR、DINO。"
+  },
+  {
+    "id": "S005",
+    "profile": "no_rules",
+    "task_complete": true,
+    "answer": "关键词为：Conditional DETR、DAB-DETR、DINO。"
+  }
+]
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/reports/5_5_3 Bad Case分析与优化/最终质量收尾_20261009/replay_incomplete_observation.py", line 30, in <module>
+    assert all(not row["task_complete"] for row in checks), "无正文证据或只提取问题关键词仍被标记完成"
+AssertionError: 无正文证据或只提取问题关键词仍被标记完成

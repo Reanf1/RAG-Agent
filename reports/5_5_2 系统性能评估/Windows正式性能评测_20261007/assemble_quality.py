@@ -71,6 +71,8 @@ result = {'reviewer': 'Codex助手逐题初评，用户终审待进行', 'date':
                                   sha256(p.read_bytes()).hexdigest() for p in sources},
           'pdf_evidence_pages': len({(p['paper_id'], p.get('physical_page', p.get('page_number'))) for p in pages}),
           'summary': summary, 'rows': rows}
+if new_run:
+    result['method'].append('评测说明要求按问题语言回答，但入口未显式传入language字段，系统默认中文；本轮三项初评分针对论文内容，语言一致性未验收。')
 output = args.output
 if output.exists():
     raise FileExistsError('不覆盖已归档初评')

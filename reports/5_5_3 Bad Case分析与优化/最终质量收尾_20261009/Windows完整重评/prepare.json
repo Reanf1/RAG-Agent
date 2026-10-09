@@ -1,0 +1,755 @@
+{
+  "started_at": "2026-10-09T16:07:07.496641+08:00",
+  "status": "completed",
+  "stage": "retrieval",
+  "environment": {
+    "platform": "Windows-10-10.0.26300-SP0",
+    "python": "3.10.10",
+    "torch_threads": 4
+  },
+  "inputs": {
+    "dataset_sha256": "8d2404290de9e79c6861f86cacf10cd306180010189db0353baf37e851d621a3",
+    "manifest_sha256": "00c231f7bdd9a571a0880d7b25b64beb95eae47f8c696fa70efe8ac72f19230f",
+    "corpus_sha256": "7a310092fef82efc4d61ce9ffae46f63662b916d41db99100010b2ae287c4c5b",
+    "config_sha256": "fb06b2f9435400be3582fa20d46c5191887d303649fa931e61934d540de746f0",
+    "evaluation_script_sha256": "c8a0ffd863666510927602361f36fb2ccae091534e5b80973afa6ccc2f915268",
+    "source_sha256": {
+      "src\\__init__.py": "b6a03a53872966ad0d5dc08ebd493b32db6e022213d852823caf4a23d68a01ca",
+      "src\\agent\\__init__.py": "31233773975c0d9e830575bcdab4ded0fd34e0029b14b44c2879930f9727efd0",
+      "src\\agent\\memory.py": "3b155344390f42f986f0088d829ee5dc218561e6bc72c86e3937946898dd4cf3",
+      "src\\agent\\react_loop.py": "76c00c9dc6d33166e01bc2b60f95234fc16494be4fe829368d1068acf774e659",
+      "src\\agent\\router.py": "23a7067a60e511cadf559d6a999d60647741780475832ff2cbb0cc4b8df3d3a0",
+      "src\\agent\\tools.py": "fd66dc8694779b65162b527eedbdc0ba2928e01be8ef555e2ae3593f1154b3f2",
+      "src\\chunking\\__init__.py": "904ffa7a68e4a8972d2559bfdb0fce2197ed445aa56d13fba0133b8fa173c8eb",
+      "src\\chunking\\fixed_chunk.py": "4d277f34d08440d2f264aafa54e67fa339585bc325c4fbcec705c8b353832e70",
+      "src\\chunking\\recursive_chunk.py": "45569726cd2fbf1bd157a2b71745f1d158e8f3d5f0cbba9221a112d56d634303",
+      "src\\chunking\\semantic_chunk.py": "8d72e96d4349e29a461ba09e7ed19f75e990a876a3d348fd1d80f32f1a17a0a0",
+      "src\\data_loader\\__init__.py": "6e147bf4c5ff56a01114b7bb278f14ce6a46c22009ea25c72a0b066b71cd4ab2",
+      "src\\data_loader\\docx_loader.py": "349e9e764989da8e49e9f9cb5cba6fd9b8db79f175cbd5774aa78319350161cf",
+      "src\\data_loader\\pdf_loader.py": "53599fb6cd9db67944b251a1f4f6f7b74f1dafdf5250911774011ec53ce2ca80",
+      "src\\data_loader\\text_loader.py": "f598ac5bc8c9e6c901536862f3c05272a2ccf4b781e6327fdc9bc71a22dc45e8",
+      "src\\frontend\\__init__.py": "1527315971de9592c0309a0116e238dcd3009e16a4abc7ca292fecb47d17a914",
+      "src\\frontend\\app.py": "531dd4b3aeff4b25c925eca0dba346b7fbfd507b09ab14d2342db09f7110f54c",
+      "src\\frontend\\components\\documents.py": "d672022f930f0e2148b23ed67610a53b7c7eab09f852223b3077055aed9c3d7d",
+      "src\\frontend\\components\\sessions.py": "95b0bc0205e52ab56c058fcb746a63fc9cc748e2baef5399e9d60cad8b2c2157",
+      "src\\frontend\\components\\trace.py": "88cb87d8e6fe0a4265ea21537a7665d4e3a3f08805d2008413622e3edf8f1219",
+      "src\\generation\\__init__.py": "84badd529e4b3b33f86547035c8582451b056a1d73709acfa73ddb021ea1d9ac",
+      "src\\generation\\cache.py": "407740dc2ce08894b22a11ecac86f4aa5ecf27123ce516ffa73083e3c68e178d",
+      "src\\generation\\prompt_template.py": "688420d24f5ead132e8a8da0b4ad4f352fb7184bf2cc9e690a2c305217fbfdff",
+      "src\\generation\\rag_pipeline.py": "14e8d1c70a0b32d941385ce24f5d7f7ab31c179618b4c1a6d73d158a8e92a92f",
+      "src\\generation\\streaming.py": "fe6136ca8ab929818acbfb8adad5e00641a8b149a5215e00daddac525bd4bc72",
+      "src\\retrieval\\__init__.py": "c376b9a2ff1abf4459d6850f9e4eefd4975c7f769e75c37a6ad1741b6162a8a2",
+      "src\\retrieval\\bm25_retriever.py": "369ae8ac4c1f425278c2417bf3bc37d91700c3a51a9f201fc6f04b78b45aee4d",
+      "src\\retrieval\\hybrid_retriever.py": "12edf43e711c2d0cb6c85f55c5d236b70387a7e35828e53864488569999f780e",
+      "src\\retrieval\\repair_index.py": "7d3d473f181bc85cfa32e0bcd070f7c0d3f842a3c09687ce9a777e95f8da4bc2",
+      "src\\retrieval\\reranker.py": "9e88edec3d3a79f23e9bc5f8732015ab6dbbc91173e90600412562731b30a3d1",
+      "src\\retrieval\\vector_store.py": "b8d960d2da9f941ed11a4a0a538dba9d831a242009ce64a568cabd6459fba697",
+      "src\\utils\\__init__.py": "dd763da62033d724d7242ab10c2d8a428bcfe225c76c816891d5cc9308a20096",
+      "src\\utils\\chroma_path.py": "5221f30d4620103a8ea3d66cd59eaa0ca5eca44c61af8360b15813f0675c26ba",
+      "src\\utils\\config.py": "cf73ab536d4df79f4b2a18f039be5deb6cad1db36d654c3e37694838962a0abb",
+      "src\\utils\\logger.py": "57a257eafe469fc4707cf1a24687edc8bdbe1cc8214cfecf12cdb9ffdf43589e",
+      "src\\utils\\messages.py": "61fd82fa467c8fc47b25914eac781a3f015e47e34c91c22f7c757d7d37a9cedf",
+      "src\\utils\\token_budget.py": "b8f2153ba8ac4f3f653faed7fe8fb0a1befb5f063c715adb7337d598d7660e99"
+    }
+  },
+  "business_config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://127.0.0.1:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 16384,
+      "num_predict": 1024,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 9000,
+      "max_prompt_chars": 18000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "max_parallel_calls": 2,
+      "tool_timeout_seconds": 300,
+      "max_tool_retries": 1,
+      "max_repeated_calls": 2,
+      "online_search_enabled": false
+    },
+    "memory": {
+      "max_history_tokens": 2000,
+      "tokenizer_path": "data/models/qwen2.5-tokenizer/tokenizer.json",
+      "summary_trigger_turns": 10,
+      "summary_keep_recent_turns": 4,
+      "summary_max_tokens": 400
+    },
+    "paths": {
+      "raw_documents": "data/raw",
+      "vector_index": "data/index",
+      "logs": "logs",
+      "session_db": "data/sessions/memory.sqlite3"
+    }
+  },
+  "experiment_config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://127.0.0.1:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 16384,
+      "num_predict": 1024,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 9000,
+      "max_prompt_chars": 18000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "max_parallel_calls": 2,
+      "tool_timeout_seconds": 300,
+      "max_tool_retries": 1,
+      "max_repeated_calls": 2,
+      "online_search_enabled": false
+    },
+    "memory": {
+      "max_history_tokens": 2000,
+      "tokenizer_path": "data/models/qwen2.5-tokenizer/tokenizer.json",
+      "summary_trigger_turns": 10,
+      "summary_keep_recent_turns": 4,
+      "summary_max_tokens": 400
+    },
+    "paths": {
+      "raw_documents": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-final-quality-20261009-5117f57-corpus1692\\runtime\\raw",
+      "vector_index": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-final-quality-20261009-5117f57-corpus1692\\runtime\\index",
+      "logs": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-final-quality-20261009-5117f57-corpus1692\\runtime\\logs",
+      "session_db": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-final-quality-20261009-5117f57-corpus1692\\runtime\\sessions.sqlite3"
+    }
+  },
+  "question_count": 1,
+  "profiles": {
+    "vector": {
+      "label": "纯向量",
+      "candidate_k": 20,
+      "rerank": false,
+      "questions": 1,
+      "hit_at_5": 0,
+      "mrr_at_5": 0,
+      "recall_at_5": 0.0,
+      "paper_coverage_at_5": 0.0,
+      "all_papers_hit_at_5": 0,
+      "latency_mean_ms": 66.43690000055358,
+      "by_category": {
+        "fact": {
+          "hit_at_5": 0,
+          "mrr_at_5": 0,
+          "recall_at_5": 0.0,
+          "paper_coverage_at_5": 0.0,
+          "all_papers_hit_at_5": 0
+        }
+      },
+      "by_language": {
+        "zh": {
+          "hit_at_5": 0,
+          "mrr_at_5": 0,
+          "recall_at_5": 0.0,
+          "paper_coverage_at_5": 0.0,
+          "all_papers_hit_at_5": 0
+        }
+      }
+    },
+    "hybrid": {
+      "label": "混合检索",
+      "candidate_k": 20,
+      "rerank": false,
+      "questions": 1,
+      "hit_at_5": 0,
+      "mrr_at_5": 0,
+      "recall_at_5": 0.0,
+      "paper_coverage_at_5": 0.0,
+      "all_papers_hit_at_5": 0,
+      "latency_mean_ms": 121.64119999943068,
+      "by_category": {
+        "fact": {
+          "hit_at_5": 0,
+          "mrr_at_5": 0,
+          "recall_at_5": 0.0,
+          "paper_coverage_at_5": 0.0,
+          "all_papers_hit_at_5": 0
+        }
+      },
+      "by_language": {
+        "zh": {
+          "hit_at_5": 0,
+          "mrr_at_5": 0,
+          "recall_at_5": 0.0,
+          "paper_coverage_at_5": 0.0,
+          "all_papers_hit_at_5": 0
+        }
+      }
+    },
+    "rerank20": {
+      "label": "混合+重排/候选20",
+      "candidate_k": 20,
+      "rerank": true,
+      "questions": 1,
+      "hit_at_5": 1,
+      "mrr_at_5": 0.2,
+      "recall_at_5": 1.0,
+      "paper_coverage_at_5": 1.0,
+      "all_papers_hit_at_5": 1,
+      "latency_mean_ms": 3881.928800001333,
+      "by_category": {
+        "fact": {
+          "hit_at_5": 1,
+          "mrr_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "paper_coverage_at_5": 1.0,
+          "all_papers_hit_at_5": 1
+        }
+      },
+      "by_language": {
+        "zh": {
+          "hit_at_5": 1,
+          "mrr_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "paper_coverage_at_5": 1.0,
+          "all_papers_hit_at_5": 1
+        }
+      }
+    },
+    "rerank10": {
+      "label": "混合+重排/候选10",
+      "candidate_k": 10,
+      "rerank": true,
+      "questions": 1,
+      "hit_at_5": 0,
+      "mrr_at_5": 0,
+      "recall_at_5": 0.0,
+      "paper_coverage_at_5": 0.0,
+      "all_papers_hit_at_5": 0,
+      "latency_mean_ms": 1962.9356000004918,
+      "by_category": {
+        "fact": {
+          "hit_at_5": 0,
+          "mrr_at_5": 0,
+          "recall_at_5": 0.0,
+          "paper_coverage_at_5": 0.0,
+          "all_papers_hit_at_5": 0
+        }
+      },
+      "by_language": {
+        "zh": {
+          "hit_at_5": 0,
+          "mrr_at_5": 0,
+          "recall_at_5": 0.0,
+          "paper_coverage_at_5": 0.0,
+          "all_papers_hit_at_5": 0
+        }
+      }
+    },
+    "rerank40": {
+      "label": "混合+重排/候选40",
+      "candidate_k": 40,
+      "rerank": true,
+      "questions": 1,
+      "hit_at_5": 0,
+      "mrr_at_5": 0,
+      "recall_at_5": 0.0,
+      "paper_coverage_at_5": 0.0,
+      "all_papers_hit_at_5": 0,
+      "latency_mean_ms": 7578.634800000145,
+      "by_category": {
+        "fact": {
+          "hit_at_5": 0,
+          "mrr_at_5": 0,
+          "recall_at_5": 0.0,
+          "paper_coverage_at_5": 0.0,
+          "all_papers_hit_at_5": 0
+        }
+      },
+      "by_language": {
+        "zh": {
+          "hit_at_5": 0,
+          "mrr_at_5": 0,
+          "recall_at_5": 0.0,
+          "paper_coverage_at_5": 0.0,
+          "all_papers_hit_at_5": 0
+        }
+      }
+    }
+  },
+  "rows": [
+    {
+      "id": "F001",
+      "profile": "vector",
+      "category": "fact",
+      "language": "zh",
+      "seconds": 0.06643690000055358,
+      "top5": [
+        {
+          "metadata": {
+            "chunk_id": "1649d42ecbf22236a358a32a91ebae460bf322e399ab2c61924f5fac4f5d75a8",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "end_index": 3865,
+            "page_number": 14,
+            "source_file": "vit.pdf",
+            "start_index": 3545
+          },
+          "score": 0.79824298620224,
+          "text": "\nImageNet.\nC\nADDITIONAL RESULTS\nWe report detailed results corresponding to the ﬁgures presented in the paper. Table 5 corresponds\nto Figure 3 from the paper and shows transfer performance of different ViT models pre-trained\non datasets of increasing size: ImageNet, ImageNet-21k, and JFT-300M. Table 6 corresponds to\n14"
+        },
+        {
+          "metadata": {
+            "chunk_id": "cd54e6e82c20a3a8fad8740dce04471a16fe0259bac7392941319bf22cc8fcea",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "end_index": 1704,
+            "page_number": 15,
+            "source_file": "vit.pdf",
+            "start_index": 1248
+          },
+          "score": 0.7975647449493408,
+          "text": "\n[表格：原文第 15 页，数据见独立表格内容]\nTable 6: Detailed results of model scaling experiments. These correspond to Figure 5 in the main\npaper. We show transfer accuracy on several datasets, as well as the pre-training compute (in ex-\naFLOPs).\nFigure 5 from the paper and shows the transfer performance of ViT, ResNet, and hybrid models of\nvarying size, as well as the estimated computational cost of their pre-training.\nD\nADDITIONAL ANALYSES\nD.1\nSGD VS. ADAM FOR RESNETS"
+        },
+        {
+          "metadata": {
+            "chunk_id": "722b89ff50023d7e109305aecf5230dbe76fa61b1c9a01310a643c6484437f5b",
+            "doc_id": "0efc583606acf67e3edfc81694411ddae417c4e94974de22872764ff28339911",
+            "end_index": 1355,
+            "page_number": 6,
+            "source_file": "t2t_vit.pdf",
+            "start_index": 862
+          },
+          "score": 0.7905557155609131,
+          "text": "\ncutmix [11, 51] for both CNN and ViT&T2T-ViT model\ntraining, because ViT models need more training data to\nreach reasonable performance. We train these models for\n310 epochs, using AdamW [25] as the optimizer and co-\nsine learning rate decay [24]. The details of experiment set-\nting are given in appendix. We also use both Transformer\nlayer and Performer layer in T2T module for our models, re-\nsulting in T2T-ViT_{t}-14/19/24 (Transformer) and T2T-ViT-\n14/19/24 (Performer).\nT2T-ViT vs. ViT"
+        },
+        {
+          "metadata": {
+            "chunk_id": "dad5cfc3770eecbd3b0bbc301b45c2550559e92a016c44e8bd550e42c2a06080",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "end_index": 1845,
+            "page_number": 6,
+            "source_file": "vit.pdf",
+            "start_index": 1353
+          },
+          "score": 0.7892920970916748,
+          "text": "\ntuning to ImageNet (results on other datasets are shown in Table 5)^{2}. When pre-trained on the\nsmallest dataset, ImageNet, ViT-Large models underperform compared to ViT-Base models, despite\n(moderate) regularization. With ImageNet-21k pre-training, their performances are similar. Only\nwith JFT-300M, do we see the full beneﬁt of larger models. Figure 3 also shows the performance\n^{2}Note that the ImageNet pre-trained models are also ﬁne-tuned, but again on ImageNet. This is because the"
+        },
+        {
+          "metadata": {
+            "chunk_id": "35b8ef654a380ea45ef1b7ffd1e43d684631a2631267b5726ea857e8516d3b26",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "end_index": 2734,
+            "page_number": 13,
+            "source_file": "vit.pdf",
+            "start_index": 2289
+          },
+          "score": 0.783592700958252,
+          "text": "\nembeddings. Hybrid models are trained with the exact setup as their ViT counterparts. Finally, all\ntraining is done on resolution 224.\nB.1.1\nFINE-TUNING\nWe ﬁne-tune all ViT models using SGD with a momentum of 0.9. We run a small grid search over\nlearning rates, see learning rate ranges in Table 4. To do so, we use small sub-splits from the training\nset (10% for Pets and Flowers, 2% for CIFAR, 1% ImageNet) as development set and train on the"
+        }
+      ],
+      "hit_at_5": false,
+      "mrr_at_5": 0,
+      "recall_at_5": 0.0,
+      "first_relevant_rank": null,
+      "gold_pages": 1,
+      "matched_pages": 0,
+      "paper_coverage_at_5": 0.0,
+      "all_papers_hit_at_5": false
+    },
+    {
+      "id": "F001",
+      "profile": "hybrid",
+      "category": "fact",
+      "language": "zh",
+      "seconds": 0.12164119999943068,
+      "top5": [
+        {
+          "metadata": {
+            "chunk_id": "cd54e6e82c20a3a8fad8740dce04471a16fe0259bac7392941319bf22cc8fcea",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "end_index": 1704,
+            "page_number": 15,
+            "source_file": "vit.pdf",
+            "start_index": 1248
+          },
+          "score": 0.03225806451612903,
+          "text": "\n[表格：原文第 15 页，数据见独立表格内容]\nTable 6: Detailed results of model scaling experiments. These correspond to Figure 5 in the main\npaper. We show transfer accuracy on several datasets, as well as the pre-training compute (in ex-\naFLOPs).\nFigure 5 from the paper and shows the transfer performance of ViT, ResNet, and hybrid models of\nvarying size, as well as the estimated computational cost of their pre-training.\nD\nADDITIONAL ANALYSES\nD.1\nSGD VS. ADAM FOR RESNETS"
+        },
+        {
+          "metadata": {
+            "chunk_id": "216400db327daa09c6d69631c00a1e704bf170470507f9069f24e96216a93e92",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "end_index": 481,
+            "page_number": 7,
+            "source_file": "vit.pdf",
+            "start_index": 0
+          },
+          "score": 0.031024531024531024,
+          "text": "Published as a conference paper at ICLR 2021\n90\nImageNet Top1 Accuracy [%]\n85\n80\nBiT\nViT-L/32\n75\nViT-B/32\nViT-L/16\nViT-B/16\nViT-H/14\n70\nImageNet\nImageNet-21k\nJFT-300M\nPre-training dataset\nFigure 3:\nTransfer to ImageNet.\nWhile\nlarge ViT models perform worse than BiT\nResNets (shaded area) when pre-trained on\nsmall datasets, they shine when pre-trained on\nlarger datasets. Similarly, larger ViT variants\novertake smaller ones as the dataset grows.\nAverage-5\n95\nTransfer accuracy [%]"
+        },
+        {
+          "metadata": {
+            "chunk_id": "d0238234f862c01f1d88d3d37771c88d39df24334ff4c5f489ec17a88ee53bde",
+            "doc_id": "0f77d1635bdbb040bc5f9174ddbda63b5ca17ffab0459b55dfa4148f9916f833",
+            "end_index": 2700,
+            "page_number": 6,
+            "source_file": "swin.pdf",
+            "start_index": 2217
+          },
+          "score": 0.029211087420042643,
+          "text": "\nthan that of ViT with similar inference throughput (84.7\nvs. 85.9 images/sec) and slightly lower FLOPs (47.0G vs.\n55.4G). The larger Swin-L model achieves 87.3% top-1 ac-\ncuracy, +0.9% better than that of the Swin-B model.\n4.2. Object Detection on COCO\nSettings\nObject detection and instance segmentation ex-\nperiments are conducted on COCO 2017, which contains\n(a) Regular ImageNet-1K trained models\n[表格：原文第 6 页，数据见独立表格内容]\n(b) ImageNet-22K pre-trained models\n[表格：原文第 6 页，数据见独立表格内容]"
+        },
+        {
+          "metadata": {
+            "chunk_id": "da373fe6e93fc7c5fb7f37d6e4214bf4be6fceaee89da8efe2fdc7f89a42da1b",
+            "doc_id": "cda84d183eaf19db264264a3627bf51643852ef437d71ca6af36409cee8ac2d5",
+            "end_index": 1409,
+            "page_number": 5,
+            "source_file": "deit.pdf",
+            "start_index": 916
+          },
+          "score": 0.027242401779095628,
+          "text": "\nfrom another transformer with comparable performance.\nTeacher\nStudent: DeiT-B\n[表格：原文第 5 页，数据见独立表格内容]\nperforms the best Vit-B model pre-trained on JFT-300M\nand ﬁne-tuned on ImageNet-1k at resolution 384 (84.15%).\nNote, the current state of the art of 88.55% achieved with\nextra training data is the ViT-H model (632M parameters)\ntrained on JFT-300M and ﬁne-tuned at resolution 512. Here-\nafter we provide several analysis and observations.\nConvnets teachers.\nWe have observed that using a con-"
+        },
+        {
+          "metadata": {
+            "chunk_id": "1649d42ecbf22236a358a32a91ebae460bf322e399ab2c61924f5fac4f5d75a8",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "end_index": 3865,
+            "page_number": 14,
+            "source_file": "vit.pdf",
+            "start_index": 3545
+          },
+          "score": 0.01639344262295082,
+          "text": "\nImageNet.\nC\nADDITIONAL RESULTS\nWe report detailed results corresponding to the ﬁgures presented in the paper. Table 5 corresponds\nto Figure 3 from the paper and shows transfer performance of different ViT models pre-trained\non datasets of increasing size: ImageNet, ImageNet-21k, and JFT-300M. Table 6 corresponds to\n14"
+        }
+      ],
+      "hit_at_5": false,
+      "mrr_at_5": 0,
+      "recall_at_5": 0.0,
+      "first_relevant_rank": null,
+      "gold_pages": 1,
+      "matched_pages": 0,
+      "paper_coverage_at_5": 0.0,
+      "all_papers_hit_at_5": false
+    },
+    {
+      "id": "F001",
+      "profile": "rerank20",
+      "category": "fact",
+      "language": "zh",
+      "seconds": 3.881928800001333,
+      "top5": [
+        {
+          "metadata": {
+            "chunk_id": "216400db327daa09c6d69631c00a1e704bf170470507f9069f24e96216a93e92",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "end_index": 481,
+            "page_number": 7,
+            "source_file": "vit.pdf",
+            "start_index": 0
+          },
+          "score": 0.9918756484985352,
+          "text": "Published as a conference paper at ICLR 2021\n90\nImageNet Top1 Accuracy [%]\n85\n80\nBiT\nViT-L/32\n75\nViT-B/32\nViT-L/16\nViT-B/16\nViT-H/14\n70\nImageNet\nImageNet-21k\nJFT-300M\nPre-training dataset\nFigure 3:\nTransfer to ImageNet.\nWhile\nlarge ViT models perform worse than BiT\nResNets (shaded area) when pre-trained on\nsmall datasets, they shine when pre-trained on\nlarger datasets. Similarly, larger ViT variants\novertake smaller ones as the dataset grows.\nAverage-5\n95\nTransfer accuracy [%]"
+        },
+        {
+          "metadata": {
+            "chunk_id": "1649d42ecbf22236a358a32a91ebae460bf322e399ab2c61924f5fac4f5d75a8",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "end_index": 3865,
+            "page_number": 14,
+            "source_file": "vit.pdf",
+            "start_index": 3545
+          },
+          "score": 0.9890166521072388,
+          "text": "\nImageNet.\nC\nADDITIONAL RESULTS\nWe report detailed results corresponding to the ﬁgures presented in the paper. Table 5 corresponds\nto Figure 3 from the paper and shows transfer performance of different ViT models pre-trained\non datasets of increasing size: ImageNet, ImageNet-21k, and JFT-300M. Table 6 corresponds to\n14"
+        },
+        {
+          "metadata": {
+            "chunk_id": "cd54e6e82c20a3a8fad8740dce04471a16fe0259bac7392941319bf22cc8fcea",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "end_index": 1704,
+            "page_number": 15,
+            "source_file": "vit.pdf",
+            "start_index": 1248
+          },
+          "score": 0.979253888130188,
+          "text": "\n[表格：原文第 15 页，数据见独立表格内容]\nTable 6: Detailed results of model scaling experiments. These correspond to Figure 5 in the main\npaper. We show transfer accuracy on several datasets, as well as the pre-training compute (in ex-\naFLOPs).\nFigure 5 from the paper and shows the transfer performance of ViT, ResNet, and hybrid models of\nvarying size, as well as the estimated computational cost of their pre-training.\nD\nADDITIONAL ANALYSES\nD.1\nSGD VS. ADAM FOR RESNETS"
+        },
+        {
+          "metadata": {
+            "chunk_id": "5ed6f25f1bf8abfcb477278f364dd67e0a42bd271d33f0db4a05d31ae59315a4",
+            "doc_id": "0f77d1635bdbb040bc5f9174ddbda63b5ca17ffab0459b55dfa4148f9916f833",
+            "end_index": 3046,
+            "page_number": 3,
+            "source_file": "swin.pdf",
+            "start_index": 2583
+          },
+          "score": 0.9726899862289429,
+          "text": "\nworks.\nWhile ViT requires large-scale training datasets\n(i.e., JFT-300M) to perform well, DeiT [57] introduces sev-\neral training strategies that allow ViT to also be effective\nusing the smaller ImageNet-1K dataset. The results of ViT\non image classiﬁcation are encouraging, but its architec-\nture is unsuitable for use as a general-purpose backbone\nnetwork on dense vision tasks or when the input image\nresolution is high, due to its low-resolution feature maps"
+        },
+        {
+          "metadata": {
+            "chunk_id": "abe2f1d08bd659d3bfb96dc5918c09824c6db2b3b3ef1255557393dabfe91510",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "end_index": 3673,
+            "page_number": 4,
+            "source_file": "vit.pdf",
+            "start_index": 3225
+          },
+          "score": 0.9353809952735901,
+          "text": "\na lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show\nthat self-supervised ViT holds promise for the future.\n4.1\nSETUP\nDatasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes\nand 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with\n21k classes and 14M images (Deng et al., 2009), and JFT (Sun et al., 2017) with 18k classes and"
+        }
+      ],
+      "hit_at_5": true,
+      "mrr_at_5": 0.2,
+      "recall_at_5": 1.0,
+      "first_relevant_rank": 5,
+      "gold_pages": 1,
+      "matched_pages": 1,
+      "paper_coverage_at_5": 1.0,
+      "all_papers_hit_at_5": true
+    },
+    {
+      "id": "F001",
+      "profile": "rerank10",
+      "category": "fact",
+      "language": "zh",
+      "seconds": 1.9629356000004918,
+      "top5": [
+        {
+          "metadata": {
+            "chunk_id": "216400db327daa09c6d69631c00a1e704bf170470507f9069f24e96216a93e92",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "end_index": 481,
+            "page_number": 7,
+            "source_file": "vit.pdf",
+            "start_index": 0
+          },
+          "score": 0.9918756484985352,
+          "text": "Published as a conference paper at ICLR 2021\n90\nImageNet Top1 Accuracy [%]\n85\n80\nBiT\nViT-L/32\n75\nViT-B/32\nViT-L/16\nViT-B/16\nViT-H/14\n70\nImageNet\nImageNet-21k\nJFT-300M\nPre-training dataset\nFigure 3:\nTransfer to ImageNet.\nWhile\nlarge ViT models perform worse than BiT\nResNets (shaded area) when pre-trained on\nsmall datasets, they shine when pre-trained on\nlarger datasets. Similarly, larger ViT variants\novertake smaller ones as the dataset grows.\nAverage-5\n95\nTransfer accuracy [%]"
+        },
+        {
+          "metadata": {
+            "chunk_id": "1649d42ecbf22236a358a32a91ebae460bf322e399ab2c61924f5fac4f5d75a8",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "end_index": 3865,
+            "page_number": 14,
+            "source_file": "vit.pdf",
+            "start_index": 3545
+          },
+          "score": 0.9890166521072388,
+          "text": "\nImageNet.\nC\nADDITIONAL RESULTS\nWe report detailed results corresponding to the ﬁgures presented in the paper. Table 5 corresponds\nto Figure 3 from the paper and shows transfer performance of different ViT models pre-trained\non datasets of increasing size: ImageNet, ImageNet-21k, and JFT-300M. Table 6 corresponds to\n14"
+        },
+        {
+          "metadata": {
+            "chunk_id": "cd54e6e82c20a3a8fad8740dce04471a16fe0259bac7392941319bf22cc8fcea",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "end_index": 1704,
+            "page_number": 15,
+            "source_file": "vit.pdf",
+            "start_index": 1248
+          },
+          "score": 0.979253888130188,
+          "text": "\n[表格：原文第 15 页，数据见独立表格内容]\nTable 6: Detailed results of model scaling experiments. These correspond to Figure 5 in the main\npaper. We show transfer accuracy on several datasets, as well as the pre-training compute (in ex-\naFLOPs).\nFigure 5 from the paper and shows the transfer performance of ViT, ResNet, and hybrid models of\nvarying size, as well as the estimated computational cost of their pre-training.\nD\nADDITIONAL ANALYSES\nD.1\nSGD VS. ADAM FOR RESNETS"
+        },
+        {
+          "metadata": {
+            "chunk_id": "722b89ff50023d7e109305aecf5230dbe76fa61b1c9a01310a643c6484437f5b",
+            "doc_id": "0efc583606acf67e3edfc81694411ddae417c4e94974de22872764ff28339911",
+            "end_index": 1355,
+            "page_number": 6,
+            "source_file": "t2t_vit.pdf",
+            "start_index": 862
+          },
+          "score": 0.8892960548400879,
+          "text": "\ncutmix [11, 51] for both CNN and ViT&T2T-ViT model\ntraining, because ViT models need more training data to\nreach reasonable performance. We train these models for\n310 epochs, using AdamW [25] as the optimizer and co-\nsine learning rate decay [24]. The details of experiment set-\nting are given in appendix. We also use both Transformer\nlayer and Performer layer in T2T module for our models, re-\nsulting in T2T-ViT_{t}-14/19/24 (Transformer) and T2T-ViT-\n14/19/24 (Performer).\nT2T-ViT vs. ViT"
+        },
+        {
+          "metadata": {
+            "chunk_id": "edcdd3e27926f0c3de401fe76a82e6acc7f4fb76621525e1f084b164e145ff13",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "end_index": 1353,
+            "page_number": 6,
+            "source_file": "vit.pdf",
+            "start_index": 869
+          },
+          "score": 0.8424127697944641,
+          "text": "\nTransformer models pre-trained on the JFT-300M dataset outperform ResNet-based baselines on all\ndatasets, while taking substantially less computational resources to pre-train. ViT pre-trained on the\nsmaller public ImageNet-21k dataset performs well too. ^{∗}Slightly improved 88.5% result reported\nin Touvron et al. (2020).\n80\n[表格：原文第 6 页，数据见独立表格内容]\nAccuracy [%]\n75\n70\n65\n4.3\nexperiments.\nparameters – weight decay, dropout, and label smoothing. Figure 3 shows the results after ﬁne-"
+        }
+      ],
+      "hit_at_5": false,
+      "mrr_at_5": 0,
+      "recall_at_5": 0.0,
+      "first_relevant_rank": null,
+      "gold_pages": 1,
+      "matched_pages": 0,
+      "paper_coverage_at_5": 0.0,
+      "all_papers_hit_at_5": false
+    },
+    {
+      "id": "F001",
+      "profile": "rerank40",
+      "category": "fact",
+      "language": "zh",
+      "seconds": 7.578634800000145,
+      "top5": [
+        {
+          "metadata": {
+            "chunk_id": "216400db327daa09c6d69631c00a1e704bf170470507f9069f24e96216a93e92",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "end_index": 481,
+            "page_number": 7,
+            "source_file": "vit.pdf",
+            "start_index": 0
+          },
+          "score": 0.9918756484985352,
+          "text": "Published as a conference paper at ICLR 2021\n90\nImageNet Top1 Accuracy [%]\n85\n80\nBiT\nViT-L/32\n75\nViT-B/32\nViT-L/16\nViT-B/16\nViT-H/14\n70\nImageNet\nImageNet-21k\nJFT-300M\nPre-training dataset\nFigure 3:\nTransfer to ImageNet.\nWhile\nlarge ViT models perform worse than BiT\nResNets (shaded area) when pre-trained on\nsmall datasets, they shine when pre-trained on\nlarger datasets. Similarly, larger ViT variants\novertake smaller ones as the dataset grows.\nAverage-5\n95\nTransfer accuracy [%]"
+        },
+        {
+          "metadata": {
+            "chunk_id": "1649d42ecbf22236a358a32a91ebae460bf322e399ab2c61924f5fac4f5d75a8",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "end_index": 3865,
+            "page_number": 14,
+            "source_file": "vit.pdf",
+            "start_index": 3545
+          },
+          "score": 0.9890166521072388,
+          "text": "\nImageNet.\nC\nADDITIONAL RESULTS\nWe report detailed results corresponding to the ﬁgures presented in the paper. Table 5 corresponds\nto Figure 3 from the paper and shows transfer performance of different ViT models pre-trained\non datasets of increasing size: ImageNet, ImageNet-21k, and JFT-300M. Table 6 corresponds to\n14"
+        },
+        {
+          "metadata": {
+            "chunk_id": "da1f4c9e87398a4f1bb0298c35ea0b8e91fdb390bbba2f26c500023d275ff49e",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "end_index": 4525,
+            "page_number": 5,
+            "source_file": "vit.pdf",
+            "start_index": 4226
+          },
+          "score": 0.9854398369789124,
+          "text": "\n(which is pre-trained on the same dataset) on all tasks, while requiring substantially less computa-\ntional resources to train. The larger model, ViT-H/14, further improves the performance, especially\non the more challenging datasets – ImageNet, CIFAR-100, and the VTAB suite. Interestingly, this\n5"
+        },
+        {
+          "metadata": {
+            "chunk_id": "cd54e6e82c20a3a8fad8740dce04471a16fe0259bac7392941319bf22cc8fcea",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "end_index": 1704,
+            "page_number": 15,
+            "source_file": "vit.pdf",
+            "start_index": 1248
+          },
+          "score": 0.979253888130188,
+          "text": "\n[表格：原文第 15 页，数据见独立表格内容]\nTable 6: Detailed results of model scaling experiments. These correspond to Figure 5 in the main\npaper. We show transfer accuracy on several datasets, as well as the pre-training compute (in ex-\naFLOPs).\nFigure 5 from the paper and shows the transfer performance of ViT, ResNet, and hybrid models of\nvarying size, as well as the estimated computational cost of their pre-training.\nD\nADDITIONAL ANALYSES\nD.1\nSGD VS. ADAM FOR RESNETS"
+        },
+        {
+          "metadata": {
+            "chunk_id": "5ed6f25f1bf8abfcb477278f364dd67e0a42bd271d33f0db4a05d31ae59315a4",
+            "doc_id": "0f77d1635bdbb040bc5f9174ddbda63b5ca17ffab0459b55dfa4148f9916f833",
+            "end_index": 3046,
+            "page_number": 3,
+            "source_file": "swin.pdf",
+            "start_index": 2583
+          },
+          "score": 0.9726898670196533,
+          "text": "\nworks.\nWhile ViT requires large-scale training datasets\n(i.e., JFT-300M) to perform well, DeiT [57] introduces sev-\neral training strategies that allow ViT to also be effective\nusing the smaller ImageNet-1K dataset. The results of ViT\non image classiﬁcation are encouraging, but its architec-\nture is unsuitable for use as a general-purpose backbone\nnetwork on dense vision tasks or when the input image\nresolution is high, due to its low-resolution feature maps"
+        }
+      ],
+      "hit_at_5": false,
+      "mrr_at_5": 0,
+      "recall_at_5": 0.0,
+      "first_relevant_rank": null,
+      "gold_pages": 1,
+      "matched_pages": 0,
+      "paper_coverage_at_5": 0.0,
+      "all_papers_hit_at_5": false
+    }
+  ],
+  "model_seed": 20261003,
+  "human_scoring": "pending_independent_review",
+  "annotation": "论文+物理页；非完整chunk金标准；ViT来源与开发集重叠",
+  "build_seconds": 496.84027589999823,
+  "warmup_seconds": 16.684825999996974,
+  "completed_at": "2026-10-09T16:15:55.495069+08:00"
+}

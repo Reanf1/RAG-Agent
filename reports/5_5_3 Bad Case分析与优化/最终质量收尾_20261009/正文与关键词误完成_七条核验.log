@@ -1,0 +1,44 @@
+[
+  {
+    "id": "F006",
+    "profile": "default",
+    "task_complete": false,
+    "answer": "在CaiT的class-attention阶段，只有类嵌入（class embedding）通过残差在CA和FFN处理中被更新。[参考文档1]\n\n正文任务尚未恢复：需要失败目标论文的有效正文证据；其他工具成功不能代替。检索异常或证据不足不表示论文不存在。"
+  },
+  {
+    "id": "C004",
+    "profile": "no_rules",
+    "task_complete": false,
+    "answer": "当前文献表明，ViT在图像分类任务上表现令人鼓舞，但其架构不适合用于密集视觉任务或高分辨率输入图像的一般性骨干网络，因为其低分辨率特征图和随图像大小二次增加的复杂性。Swin Transformer则在这些方面有所改进，使用滑动窗口方法比滑动窗口实现更高效。然而，具体在注意力范围和层级结构上的区别尚不明确，需要进一步查阅相关文献。[参考文档1：swin.pdf；第3页（物理页码）][参考文档4：swin.pdf；第8页（物理页码）]\n\n正文任务尚未恢复：需要失败目标论文的有效正文证据；其他工具成功不能代替。检索异常或证据不足不表示论文不存在。"
+  },
+  {
+    "id": "C013",
+    "profile": "default",
+    "task_complete": false,
+    "answer": "当前知识库中未找到关于DeiT和CaiT的具体文档。关键词提取显示问题涉及DeiT、CaiT和图像级预测机制。\n\n正文任务尚未恢复：需要失败目标论文的有效正文证据；其他工具成功不能代替。检索异常或证据不足不表示论文不存在。"
+  },
+  {
+    "id": "S005",
+    "profile": "default",
+    "task_complete": false,
+    "answer": "关键词为：Conditional DETR、DAB-DETR、DINO。\n\n仅提取了问题关键词，尚未核验原论文内容，论文任务未完成。"
+  },
+  {
+    "id": "S005",
+    "profile": "no_rules",
+    "task_complete": false,
+    "answer": "关键词为：Conditional DETR、DAB-DETR、DINO。\n\n仅提取了问题关键词，尚未核验原论文内容，论文任务未完成。"
+  },
+  {
+    "id": "S009",
+    "profile": "no_rules",
+    "task_complete": false,
+    "answer": "综合ViT、DINO与Conditional DETR的实验结果时，至少需要核对以下设置：1. COCO数据集的评估指标（AP）；2. 使用的骨干网络和数据集的具体配置，如DINO使用的是SwinL和Objects365；3. 运行时间和硬件配置，如DAB-DETR在Nvidia A100 GPU上的运行时间；4. 模型超参数的具体设置。参考文献包括dino.pdf、dab_detr.pdf。\n\n原对比任务尚未完成：需要两篇论文的方法、数据集、实验结果及对应引用。\n\n正文任务尚未恢复：需要失败目标论文的有效正文证据；其他工具成功不能代替。检索异常或证据不足不表示论文不存在。"
+  },
+  {
+    "id": "R012",
+    "profile": "no_rules",
+    "task_complete": false,
+    "answer": "DN-DETR通过明确将解码器嵌入指定为标签嵌入，并引入去噪训练来解决匹配的不稳定性问题。去噪训练通过在解码器中添加指示符来区分去噪任务和匹配任务，从而实现去噪查询不会访问匹配查询对，同时去噪组之间的访问也被屏蔽，以提高训练效率和性能。然而，当前文档片段不足以确认去噪组之间的访问被屏蔽的具体原因。\n\n正文任务尚未恢复：需要失败目标论文的有效正文证据；其他工具成功不能代替。检索异常或证据不足不表示论文不存在。"
+  }
+]

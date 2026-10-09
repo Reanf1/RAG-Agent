@@ -1,0 +1,78 @@
+test_narrow_question_focus_excludes_unrelated_object_and_preserves_source (tests.5_2_1 Prompt工程与生成策略.test_generation.TestLocalGeneration)
+位置编码相邻的分类头语句不能一起进入聚焦证据，引用仍为真实连续原文。 ... FAIL
+test_original_units_and_countless_citations_cannot_bypass_quantity_check (tests.5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit)
+保留M单位或错引无数量的页，仍须核验同一片段；数据集名称不是数量。 ... <frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+
+======================================================================
+FAIL: test_narrow_question_focus_excludes_unrelated_object_and_preserves_source (tests.5_2_1 Prompt工程与生成策略.test_generation.TestLocalGeneration)
+位置编码相邻的分类头语句不能一起进入聚焦证据，引用仍为真实连续原文。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_2_1 Prompt工程与生成策略/test_generation.py", line 115, in test_narrow_question_focus_excludes_unrelated_object_and_preserves_source
+    self.assertEqual(context["references"][0]["text"], focused.page_content)
+AssertionError: 'The classification head is a linear layer[17 chars]ime.' != 'Position embeddings are added to patch em[56 chars]gs. '
+- The classification head is a linear layer at fine-tuning time.
++ Position embeddings are added to patch embeddings. We use standard learnable 1D position embeddings. 
+
+
+======================================================================
+FAIL: test_original_units_and_countless_citations_cannot_bypass_quantity_check (tests.5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit) (raw='JFT包含304M张图像。[参考文档1]')
+保留M单位或错引无数量的页，仍须核验同一片段；数据集名称不是数量。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_independent_generation.py", line 147, in test_original_units_and_countless_citations_cannot_bypass_quantity_check
+    self.assertEqual(result["evidence_number_errors"], expected)
+AssertionError: Lists differ: [] != [1]
+
+Second list contains 1 additional elements.
+First extra element 0:
+1
+
+- []
++ [1]
+?  +
+
+
+======================================================================
+FAIL: test_original_units_and_countless_citations_cannot_bypass_quantity_check (tests.5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit) (raw='JFT包含303M张图像。[参考文档2]')
+保留M单位或错引无数量的页，仍须核验同一片段；数据集名称不是数量。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_independent_generation.py", line 147, in test_original_units_and_countless_citations_cannot_bypass_quantity_check
+    self.assertEqual(result["evidence_number_errors"], expected)
+AssertionError: Lists differ: [] != [2]
+
+Second list contains 1 additional elements.
+First extra element 0:
+2
+
+- []
++ [2]
+?  +
+
+
+======================================================================
+FAIL: test_original_units_and_countless_citations_cannot_bypass_quantity_check (tests.5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit) (raw='JFT包含30300万张图像。[参考文档2]')
+保留M单位或错引无数量的页，仍须核验同一片段；数据集名称不是数量。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_independent_generation.py", line 147, in test_original_units_and_countless_citations_cannot_bypass_quantity_check
+    self.assertEqual(result["evidence_number_errors"], expected)
+AssertionError: Lists differ: [] != [2]
+
+Second list contains 1 additional elements.
+First extra element 0:
+2
+
+- []
++ [2]
+?  +
+
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.322s
+
+FAILED (failures=4)
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
