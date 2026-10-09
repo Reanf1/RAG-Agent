@@ -1,0 +1,317 @@
+{
+  "scope": "Windows真实权重和RAG缓存复测；只使用独立索引，耗时不作为性能基准。",
+  "started_at": "2026-10-09T01:47:32.591104+08:00",
+  "model_initialization": [
+    {
+      "model": "M3E",
+      "threads": 3,
+      "constructions": 1,
+      "same_instance": true
+    },
+    {
+      "model": "BGE",
+      "threads": 3,
+      "constructions": 1,
+      "same_instance": true
+    }
+  ],
+  "cache_pairs": [
+    {
+      "cached_question": "模型准确率是否超过80%？",
+      "query": "模型准确率是否低于80%？",
+      "expected_hit": false,
+      "actual_hit": false,
+      "cache": null
+    },
+    {
+      "cached_question": "模型准确率大于80%吗？",
+      "query": "模型准确率小于80%吗？",
+      "expected_hit": false,
+      "actual_hit": false,
+      "cache": null
+    },
+    {
+      "cached_question": "BERT使用15%的掩码比例吗？",
+      "query": "BERT使用15‰的掩码比例吗？",
+      "expected_hit": false,
+      "actual_hit": false,
+      "cache": null
+    },
+    {
+      "cached_question": "指标是否>=80？",
+      "query": "指标是否<=80？",
+      "expected_hit": false,
+      "actual_hit": false,
+      "cache": null
+    },
+    {
+      "cached_question": "指标至少80吗？",
+      "query": "指标至多80吗？",
+      "expected_hit": false,
+      "actual_hit": false,
+      "cache": null
+    },
+    {
+      "cached_question": "Is accuracy greater than 80%?",
+      "query": "Is accuracy less than 80%?",
+      "expected_hit": false,
+      "actual_hit": false,
+      "cache": null
+    },
+    {
+      "cached_question": "指标为-5吗？",
+      "query": "指标为5吗？",
+      "expected_hit": false,
+      "actual_hit": false,
+      "cache": null
+    },
+    {
+      "cached_question": "ViT采用什么输入？",
+      "query": "ViT使用什么输入？",
+      "expected_hit": true,
+      "actual_hit": true,
+      "cache": {
+        "hit": true,
+        "mode": "semantic",
+        "similarity": 0.989517255630011,
+        "question": "ViT采用什么输入？"
+      }
+    },
+    {
+      "cached_question": "模型准确率是否超过80%？",
+      "query": "模型的准确率是否超过80%？",
+      "expected_hit": true,
+      "actual_hit": true,
+      "cache": {
+        "hit": true,
+        "mode": "semantic",
+        "similarity": 0.9966072070847988,
+        "question": "模型准确率是否超过80%？"
+      }
+    }
+  ],
+  "rag": {
+    "first": {
+      "answer": "## 回答\n复测代号是WINCHECK20261005。[参考文档1：Windows复测\\_说明.txt；行1–3]\n说明：TXT文件中的复测代号为“WINCHECK20261005”。\n\n## 参考来源\n- [参考文档1] Windows复测\\_说明.txt；行1–3",
+      "citations": [
+        {
+          "id": 1,
+          "source_file": "Windows复测_说明.txt",
+          "location": "行1–3",
+          "text": "Windows科研助理功能复测资料\n复测代号是WINCHECK20261005，测试指标是Hit@5、MRR和Recall。\n这是人工编写的测试文档，不是学术论文的实验结论。仅用于验证中文原文检索、引用和批量增量入库。\n",
+          "metadata": {
+            "chunk_id": "4ea79d1be8c687d5c4bb8ff395ec4b821bed3d20bbb3af73eabd2bbdbdcf84cb",
+            "doc_id": "cb990ff1e44de00ba328e34169099d3f4704470d7d34fa9b71a586471d715baa",
+            "file_type": ".txt",
+            "line_end": 3,
+            "line_start": 1,
+            "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\cb990ff1e44de00ba328e34169099d3f4704470d7d34fa9b71a586471d715baa\\Windows复测_说明.txt",
+            "source_file": "Windows复测_说明.txt"
+          },
+          "truncated": false,
+          "score": 0.7861884832382202
+        }
+      ],
+      "invalid_citation_ids": [],
+      "missing_citations": false,
+      "warnings": [],
+      "evidence_quote_errors": [],
+      "evidence_number_errors": [],
+      "generation_mode": "grounded",
+      "notice": "",
+      "raw_answer": "## 回答\n复测代号是WINCHECK20261005。[参考文档1]\n说明：TXT文件中的复测代号为“WINCHECK20261005”。\n\n## 参考来源\n[参考文档1]",
+      "model": "qwen2.5:7b",
+      "options": {
+        "temperature": 0.1,
+        "top_p": 0.9,
+        "top_k": 40,
+        "num_ctx": 16384,
+        "num_predict": 1024,
+        "repeat_penalty": 1.0
+      },
+      "done_reason": "stop",
+      "usage": {
+        "prompt_eval_count": 1287,
+        "eval_count": 60,
+        "total_duration": 1536061800,
+        "load_duration": 14088200,
+        "prompt_eval_duration": 109878000,
+        "eval_duration": 1398482000
+      },
+      "status": "answered",
+      "doc_id": "cb990ff1e44de00ba328e34169099d3f4704470d7d34fa9b71a586471d715baa",
+      "sources": [
+        "Windows复测_说明.txt"
+      ],
+      "top_score": 0.7861884832382202,
+      "confirmed": false,
+      "retrieval_seconds": 1.3782960000025923,
+      "elapsed_seconds": 5.01165200000105,
+      "retrieval": {
+        "request_id": "c6acc79c5aca4279a60d53b06a872728",
+        "status": "success",
+        "returned_chunks": 1
+      }
+    },
+    "exact": {
+      "type": "done",
+      "answer": "## 回答\n复测代号是WINCHECK20261005。[参考文档1：Windows复测\\_说明.txt；行1–3]\n说明：TXT文件中的复测代号为“WINCHECK20261005”。\n\n## 参考来源\n- [参考文档1] Windows复测\\_说明.txt；行1–3",
+      "citations": [
+        {
+          "id": 1,
+          "source_file": "Windows复测_说明.txt",
+          "location": "行1–3",
+          "text": "Windows科研助理功能复测资料\n复测代号是WINCHECK20261005，测试指标是Hit@5、MRR和Recall。\n这是人工编写的测试文档，不是学术论文的实验结论。仅用于验证中文原文检索、引用和批量增量入库。\n",
+          "metadata": {
+            "chunk_id": "4ea79d1be8c687d5c4bb8ff395ec4b821bed3d20bbb3af73eabd2bbdbdcf84cb",
+            "doc_id": "cb990ff1e44de00ba328e34169099d3f4704470d7d34fa9b71a586471d715baa",
+            "file_type": ".txt",
+            "line_end": 3,
+            "line_start": 1,
+            "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\cb990ff1e44de00ba328e34169099d3f4704470d7d34fa9b71a586471d715baa\\Windows复测_说明.txt",
+            "source_file": "Windows复测_说明.txt"
+          },
+          "truncated": false,
+          "score": 0.7861884832382202
+        }
+      ],
+      "invalid_citation_ids": [],
+      "missing_citations": false,
+      "warnings": [],
+      "evidence_quote_errors": [],
+      "evidence_number_errors": [],
+      "generation_mode": "grounded",
+      "notice": "",
+      "raw_answer": "## 回答\n复测代号是WINCHECK20261005。[参考文档1]\n说明：TXT文件中的复测代号为“WINCHECK20261005”。\n\n## 参考来源\n[参考文档1]",
+      "model": "qwen2.5:7b",
+      "options": {
+        "temperature": 0.1,
+        "top_p": 0.9,
+        "top_k": 40,
+        "num_ctx": 16384,
+        "num_predict": 1024,
+        "repeat_penalty": 1.0
+      },
+      "done_reason": "stop",
+      "usage": {
+        "prompt_eval_count": 0,
+        "eval_count": 0,
+        "total_duration": 0,
+        "load_duration": 0,
+        "prompt_eval_duration": 0,
+        "eval_duration": 0
+      },
+      "status": "answered",
+      "doc_id": "cb990ff1e44de00ba328e34169099d3f4704470d7d34fa9b71a586471d715baa",
+      "sources": [
+        "Windows复测_说明.txt"
+      ],
+      "top_score": 0.7861884832382202,
+      "confirmed": false,
+      "retrieval_seconds": 0.0,
+      "elapsed_seconds": 0.1309179000018048,
+      "retrieval": {
+        "request_id": "402fef835c0344e79df93920809d9732",
+        "status": "cache",
+        "returned_chunks": 0
+      },
+      "original_usage": {
+        "prompt_eval_count": 1287,
+        "eval_count": 60,
+        "total_duration": 1536061800,
+        "load_duration": 14088200,
+        "prompt_eval_duration": 109878000,
+        "eval_duration": 1398482000
+      },
+      "cache": {
+        "hit": true,
+        "mode": "exact",
+        "similarity": 1.0,
+        "question": "TXT文件中的复测代号是什么？"
+      }
+    },
+    "semantic": {
+      "type": "done",
+      "answer": "## 回答\n复测代号是WINCHECK20261005。[参考文档1：Windows复测\\_说明.txt；行1–3]\n说明：TXT文件中的复测代号为“WINCHECK20261005”。\n\n## 参考来源\n- [参考文档1] Windows复测\\_说明.txt；行1–3",
+      "citations": [
+        {
+          "id": 1,
+          "source_file": "Windows复测_说明.txt",
+          "location": "行1–3",
+          "text": "Windows科研助理功能复测资料\n复测代号是WINCHECK20261005，测试指标是Hit@5、MRR和Recall。\n这是人工编写的测试文档，不是学术论文的实验结论。仅用于验证中文原文检索、引用和批量增量入库。\n",
+          "metadata": {
+            "chunk_id": "4ea79d1be8c687d5c4bb8ff395ec4b821bed3d20bbb3af73eabd2bbdbdcf84cb",
+            "doc_id": "cb990ff1e44de00ba328e34169099d3f4704470d7d34fa9b71a586471d715baa",
+            "file_type": ".txt",
+            "line_end": 3,
+            "line_start": 1,
+            "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\cb990ff1e44de00ba328e34169099d3f4704470d7d34fa9b71a586471d715baa\\Windows复测_说明.txt",
+            "source_file": "Windows复测_说明.txt"
+          },
+          "truncated": false,
+          "score": 0.7861884832382202
+        }
+      ],
+      "invalid_citation_ids": [],
+      "missing_citations": false,
+      "warnings": [],
+      "evidence_quote_errors": [],
+      "evidence_number_errors": [],
+      "generation_mode": "grounded",
+      "notice": "",
+      "raw_answer": "## 回答\n复测代号是WINCHECK20261005。[参考文档1]\n说明：TXT文件中的复测代号为“WINCHECK20261005”。\n\n## 参考来源\n[参考文档1]",
+      "model": "qwen2.5:7b",
+      "options": {
+        "temperature": 0.1,
+        "top_p": 0.9,
+        "top_k": 40,
+        "num_ctx": 16384,
+        "num_predict": 1024,
+        "repeat_penalty": 1.0
+      },
+      "done_reason": "stop",
+      "usage": {
+        "prompt_eval_count": 0,
+        "eval_count": 0,
+        "total_duration": 0,
+        "load_duration": 0,
+        "prompt_eval_duration": 0,
+        "eval_duration": 0
+      },
+      "status": "answered",
+      "doc_id": "cb990ff1e44de00ba328e34169099d3f4704470d7d34fa9b71a586471d715baa",
+      "sources": [
+        "Windows复测_说明.txt"
+      ],
+      "top_score": 0.7861884832382202,
+      "confirmed": false,
+      "retrieval_seconds": 0.0,
+      "elapsed_seconds": 0.16664179999861517,
+      "retrieval": {
+        "request_id": "e94a2e90dcbd4ea4b3188641e7d822b3",
+        "status": "cache",
+        "returned_chunks": 0
+      },
+      "original_usage": {
+        "prompt_eval_count": 1287,
+        "eval_count": 60,
+        "total_duration": 1536061800,
+        "load_duration": 14088200,
+        "prompt_eval_duration": 109878000,
+        "eval_duration": 1398482000
+      },
+      "cache": {
+        "hit": true,
+        "mode": "semantic",
+        "similarity": 0.9957053648618472,
+        "question": "TXT文件中的复测代号是什么？"
+      }
+    },
+    "generation_calls": 1,
+    "document_scope_invalidated": true,
+    "config_invalidated": true,
+    "same_count_corpus_invalidated": true
+  },
+  "passed": true,
+  "finished_at": "2026-10-09T01:47:41.992211+08:00"
+}

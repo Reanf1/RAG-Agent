@@ -1,0 +1,746 @@
+{
+  "started_at": "2026-10-09T01:21:32.436059+08:00",
+  "name": "fact-repair-1024-9000",
+  "case": "fact",
+  "source_revision": "e0155e1c39f0170771fce4553b67ed8163057fcd",
+  "config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://localhost:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 16384,
+      "num_predict": 1024,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 9000,
+      "max_prompt_chars": 18000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "max_parallel_calls": 2,
+      "tool_timeout_seconds": 300,
+      "max_tool_retries": 1,
+      "max_repeated_calls": 2,
+      "online_search_enabled": false
+    },
+    "memory": {
+      "max_history_tokens": 2000,
+      "tokenizer_path": "data/models/qwen2.5-tokenizer/tokenizer.json",
+      "summary_trigger_turns": 10,
+      "summary_keep_recent_turns": 4,
+      "summary_max_tokens": 400
+    },
+    "paths": {
+      "raw_documents": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw",
+      "vector_index": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\index",
+      "logs": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\case-logs",
+      "session_db": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\case-memory.sqlite3"
+    }
+  },
+  "calls": [
+    {
+      "seconds": 7.308598199999324,
+      "actual_input_tokens": 3182,
+      "actual_output_tokens": 214,
+      "done_reason": "stop",
+      "done": true
+    }
+  ],
+  "resources": [
+    {
+      "at": "2026-10-09T01:21:32.507654+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 4 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:26:29.0889802+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:21:33.594594+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 4 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:26:29.0889802+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:21:34.671867+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 4 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:26:29.0889802+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:21:35.774287+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 8 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:26:29.0889802+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:21:36.860920+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:26:29.0889802+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:21:37.953604+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:26:29.0889802+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:21:39.050687+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:26:29.0889802+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:21:40.156528+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:26:29.0889802+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:21:41.243469+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 8 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:26:29.0889802+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:21:42.708925+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 5 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:26:29.0889802+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:21:44.732783+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 8 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:26:29.0889802+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:21:45.826871+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 8 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:26:29.0889802+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:21:46.931439+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:26:29.0889802+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:21:48.036209+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 8 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:26:29.0889802+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:21:49.115996+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 8 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:26:29.0889802+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:21:50.205245+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 9 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:26:29.0889802+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:21:51.284467+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 97 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:26:29.0889802+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:21:52.387191+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 97 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:26:29.0889802+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:21:53.472156+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 96 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:26:29.0889802+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:21:54.545919+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 96 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:26:29.0889802+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:21:55.632823+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 97 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:26:29.0889802+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    }
+  ],
+  "boundary": "真实 Windows 预算对照：仅替换配置中的预算和副本路径，不替换检索、模型或工具。",
+  "result": {
+    "answer": "## 回答\n原文依据：To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes and 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with 21k classes and 14M images (Deng et al., 2009), and JFT (Sun et al., 2017) with 18k classes and 303M high-resolution images. [参考文档4：Windows验收\\_ViT.pdf；第4页（物理页码）]\n\nImageNet数据集包含1000个类别和130万张图像。[参考文档4：Windows验收\\_ViT.pdf；第4页（物理页码）]\nImageNet-21k数据集包含21000个类别和1400万张图像。[参考文档4：Windows验收\\_ViT.pdf；第4页（物理页码）]\nJFT数据集包含18000个类别和30.3亿张高分辨率图像。[参考文档4：Windows验收\\_ViT.pdf；第4页（物理页码）]\n\n## 参考来源\n- [参考文档4] Windows验收\\_ViT.pdf；第4页（物理页码）",
+    "citations": [
+      {
+        "id": 4,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第4页（物理页码）",
+        "text": "\ninductive bias about the 2D structure of the images is manually injected into the Vision Transformer.\n4\nEXPERIMENTS\nWe evaluate the representation learning capabilities of ResNet, Vision Transformer (ViT), and the\nhybrid. To understand the data requirements of each model, we pre-train on datasets of varying size\nand evaluate many benchmark tasks. When considering the computational cost of pre-training the\nmodel, ViT performs very favourably, attaining state of the art on most recognition benchmarks at\na lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show\nthat self-supervised ViT holds promise for the future.\n4.1\nSETUP\nDatasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes\nand 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with\n21k classes and 14M images (Deng et al., 2009), and JFT (Sun et al., 2017) with 18k classes and\n303M high-resolution images. We de-duplicate the pre-training datasets w.r.t. the test sets of the\ndownstream tasks following Kolesnikov et al. (2020). We transfer the models trained on these\ndataset to several benchmark tasks: ImageNet on the original validation labels and the cleaned-up\nReaL labels (Beyer et al., 2020), CIFAR-10/100 (Krizhevsky, 2009), Oxford-IIIT Pets (Parkhi et al.,\n2012), and Oxford Flowers-102 (Nilsback & Zisserman, 2008). For these datasets, pre-processing",
+        "metadata": {
+          "chunk_id": "abe2f1d08bd659d3bfb96dc5918c09824c6db2b3b3ef1255557393dabfe91510",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "file_type": ".pdf",
+          "page": 3,
+          "page_number": 4,
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf"
+        },
+        "truncated": false,
+        "score": 0.9618138670921326
+      }
+    ],
+    "invalid_citation_ids": [],
+    "missing_citations": false,
+    "warnings": [],
+    "evidence_quote_errors": [],
+    "generation_mode": "grounded",
+    "notice": "",
+    "raw_answer": "## 回答\n原文依据：To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes and 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with 21k classes and 14M images (Deng et al., 2009), and JFT (Sun et al., 2017) with 18k classes and 303M high-resolution images. [参考文档4]\n\nImageNet数据集包含1000个类别和130万张图像。[参考文档4]\nImageNet-21k数据集包含21000个类别和1400万张图像。[参考文档4]\nJFT数据集包含18000个类别和30.3亿张高分辨率图像。[参考文档4]\n\n## 参考来源\n[参考文档4]",
+    "model": "qwen2.5:7b",
+    "options": {
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 16384,
+      "num_predict": 1024,
+      "repeat_penalty": 1.0
+    },
+    "done_reason": "stop",
+    "usage": {
+      "prompt_eval_count": 3182,
+      "eval_count": 214,
+      "total_duration": 5264727100,
+      "load_duration": 17508500,
+      "prompt_eval_duration": 33191000,
+      "eval_duration": 5188367000
+    },
+    "status": "answered",
+    "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+    "sources": [
+      "Windows验收_ViT.pdf"
+    ],
+    "top_score": 0.9830554723739624,
+    "confirmed": false,
+    "retrieval_seconds": 16.271749599998657,
+    "elapsed_seconds": 23.592011699998693,
+    "retrieval": {
+      "request_id": "7f54222c621a41bcb0bc40a568c1c2cc",
+      "status": "success",
+      "returned_chunks": 5
+    }
+  },
+  "seconds": 23.83959959999993,
+  "finished_at": "2026-10-09T01:21:56.347999+08:00"
+}

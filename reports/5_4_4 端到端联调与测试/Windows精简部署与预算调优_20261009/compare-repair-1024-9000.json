@@ -1,0 +1,2243 @@
+{
+  "started_at": "2026-10-09T01:26:01.198599+08:00",
+  "name": "compare-repair-1024-9000",
+  "case": "compare",
+  "source_revision": "e0155e1c39f0170771fce4553b67ed8163057fcd",
+  "config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://localhost:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 16384,
+      "num_predict": 1024,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 9000,
+      "max_prompt_chars": 18000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "max_parallel_calls": 2,
+      "tool_timeout_seconds": 300,
+      "max_tool_retries": 1,
+      "max_repeated_calls": 2,
+      "online_search_enabled": false
+    },
+    "memory": {
+      "max_history_tokens": 2000,
+      "tokenizer_path": "data/models/qwen2.5-tokenizer/tokenizer.json",
+      "summary_trigger_turns": 10,
+      "summary_keep_recent_turns": 4,
+      "summary_max_tokens": 400
+    },
+    "paths": {
+      "raw_documents": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw",
+      "vector_index": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\index",
+      "logs": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\case-logs",
+      "session_db": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\case-memory.sqlite3"
+    }
+  },
+  "calls": [
+    {
+      "seconds": 2.737660599999799,
+      "actual_input_tokens": 923,
+      "actual_output_tokens": 19,
+      "done_reason": "stop",
+      "done": true
+    },
+    {
+      "seconds": 2.868917700001475,
+      "actual_input_tokens": 868,
+      "actual_output_tokens": 19,
+      "done_reason": "stop",
+      "done": true
+    }
+  ],
+  "resources": [
+    {
+      "at": "2026-10-09T01:26:01.288344+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:02.406029+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 8 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:03.482323+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 8 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:04.590479+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 8 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:05.668315+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 8 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:06.847690+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:07.946076+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 6 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:09.021441+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 8 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:10.160483+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:12.025678+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:13.132366+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:14.228788+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:15.346022+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:16.440911+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:17.541891+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:18.623687+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:19.709392+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 8 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:20.813732+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 6 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:21.899971+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 5 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:23.000791+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 4 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:24.088336+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 6 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:25.186768+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 5 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:26.286777+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 8 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:27.390386+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:28.475022+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 8 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:29.558610+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:30.645738+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:31.727752+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:32.837245+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 5 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:33.917198+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 4 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:34.994015+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 5 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:36.079606+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 5 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:37.179278+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 4 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:38.280817+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 5 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:39.396084+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:40.491289+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 6 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:41.588888+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:42.669835+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:43.755833+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:44.844912+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 6 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:45.945664+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 6 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:47.029471+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:48.130542+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:49.235583+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:50.308856+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 97 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:30:57.8770648+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:51.383935+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 6 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:31:50.4503785+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:26:52.483338+08:00",
+      "gpu": "6681 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:31:50.4503785+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    }
+  ],
+  "boundary": "真实 Windows 预算对照：仅替换配置中的预算和副本路径，不替换检索、模型或工具。",
+  "result": {
+    "answer": "## 回答\n以下按三个维度并列展示两篇论文的原文证据，不改写实验数字或条件。\n| 维度 | 论文A | 论文B |\n| --- | --- | --- |\n| 方法 | 原文摘录：Abstract The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English- to-German translation task, improving over the existing best results, including [参考文档7：attention.pdf；第1页（物理页码）] | 原文摘录：ABSTRACT While the Transformer architecture has become the de-facto standard for natural language processing tasks, its applications to computer vision remain limited. In vision, attention is either applied in conjunction with convolutional networks, or used to replace certain components of convolutional networks while keeping their overall structure in place. We show that this reliance on CNNs is not necessary and a pure transformer applied directly to sequences of image patches can perform very well on image classiﬁcation tasks. When pre-trained on large amounts of data and transferred to multiple mid-sized or small image recognition benchmarks \\(ImageNet, CIFAR-100, VTAB, etc.\\), Vision Transformer \\(ViT\\) attains excellent results compared to state-of-the-art convolutional networks while requiring sub- stantially fewer computational resources to train.^\\{1\\} [参考文档8：Windows验收\\_ViT.pdf；第1页（物理页码）] |\n| 数据集 | 原文摘录：from our models and present and discuss examples in the appendix. Not only do individual attention heads clearly learn to perform different tasks, many appear to exhibit behavior related to the syntactic and semantic structure of the sentences. 5 Training This section describes the training regime for our models. 5.1 Training Data and Batching We trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million sentence pairs. Sentences were encoded using byte-pair encoding \\[3\\], which has a shared source- target vocabulary of about 37000 tokens. For English-French, we used the significantly larger WMT 2014 English-French dataset consisting of 36M sentences and split tokens into a 32000 word-piece vocabulary \\[38\\]. Sentence pairs were batched together by approximate sequence length. Each training batch contained a set of sentence pairs containing approximately 25000 source tokens and 25000 target tokens. 5.2 Hardware and Schedule We trained our models on one machine with 8 NVIDIA P100 GPUs. For our base models using the hyperparameters described throughout the paper, each training step took about 0.4 seconds. We trained the base models for a total of 100,000 steps or 12 hours. For our big models,\\(described on the bottom line of table 3\\), step time was 1.0 seconds. The big models were trained for 300,000 steps \\(3.5 days\\). 5.3 Optimizer [参考文档3：attention.pdf；第7页（物理页码）] | 原文摘录：inductive bias about the 2D structure of the images is manually injected into the Vision Transformer. 4 EXPERIMENTS We evaluate the representation learning capabilities of ResNet, Vision Transformer \\(ViT\\), and the hybrid. To understand the data requirements of each model, we pre-train on datasets of varying size and evaluate many benchmark tasks. When considering the computational cost of pre-training the model, ViT performs very favourably, attaining state of the art on most recognition benchmarks at a lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show that self-supervised ViT holds promise for the future. 4.1 SETUP Datasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes and 1.3M images \\(we refer to it as ImageNet in what follows\\), its superset ImageNet-21k with 21k classes and 14M images \\(Deng et al., 2009\\), and JFT \\(Sun et al., 2017\\) with 18k classes and 303M high-resolution images. We de-duplicate the pre-training datasets w.r.t. the test sets of the downstream tasks following Kolesnikov et al. \\(2020\\). We transfer the models trained on these dataset to several benchmark tasks: ImageNet on the original validation labels and the cleaned-up ReaL labels \\(Beyer et al., 2020\\), CIFAR-10/100 \\(Krizhevsky, 2009\\), Oxford-IIIT Pets \\(Parkhi et al., 2012\\), and Oxford Flowers-102 \\(Nilsback & Zisserman, 2008\\). For these datasets, pre-processing [参考文档4：Windows验收\\_ViT.pdf；第4页（物理页码）] |\n| 实验结果 | 原文摘录：Our model achieves 28.4 BLEU on the WMT 2014 English- to-German translation task, improving over the existing best results, including ensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.8 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the best models from the literature. [参考文档1：attention.pdf；第1页（物理页码）] | 原文摘录：When pre-trained on the public ImageNet-21k dataset or the in-house JFT-300M dataset, ViT approaches or beats state of the art on multiple image recognition benchmarks. In particular, the best model reaches the accuracy of 88.55% on ImageNet, 90.72% on ImageNet-ReaL, 94.55% on CIFAR-100, and 77.63% on the VTAB suite of 19 tasks. [参考文档6：Windows验收\\_ViT.pdf；第2页（物理页码）] |\n\n不同任务、数据集和实验条件的指标不可直接比较优劣；证据选择的语义适用性仍需对照原文核验。\n\n## 参考来源\n- [参考文档7] attention.pdf；第1页（物理页码）\n- [参考文档8] Windows验收\\_ViT.pdf；第1页（物理页码）\n- [参考文档3] attention.pdf；第7页（物理页码）\n- [参考文档4] Windows验收\\_ViT.pdf；第4页（物理页码）\n- [参考文档1] attention.pdf；第1页（物理页码）\n- [参考文档6] Windows验收\\_ViT.pdf；第2页（物理页码）",
+    "citations": [
+      {
+        "id": 7,
+        "source_file": "attention.pdf",
+        "location": "第1页（物理页码）",
+        "text": "Abstract\nThe dominant sequence transduction models are based on complex recurrent or\nconvolutional neural networks that include an encoder and a decoder. The best\nperforming models also connect the encoder and decoder through an attention\nmechanism. We propose a new simple network architecture, the Transformer,\nbased solely on attention mechanisms, dispensing with recurrence and convolutions\nentirely. Experiments on two machine translation tasks show these models to\nbe superior in quality while being more parallelizable and requiring significantly\nless time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-\nto-German translation task, improving over the existing best results, including",
+        "metadata": {
+          "chunk_id": "6d4649fec72c6bd3c6e0193cf04411309d67b07cafafea7a27b1cf03cab0a1c8",
+          "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+          "file_type": ".pdf",
+          "page": 0,
+          "page_number": 1,
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697\\attention.pdf",
+          "source_file": "attention.pdf"
+        },
+        "truncated": false,
+        "score": 0.013683239929378033
+      },
+      {
+        "id": 8,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第1页（物理页码）",
+        "text": "ABSTRACT\nWhile the Transformer architecture has become the de-facto standard for natural\nlanguage processing tasks, its applications to computer vision remain limited. In\nvision, attention is either applied in conjunction with convolutional networks, or\nused to replace certain components of convolutional networks while keeping their\noverall structure in place. We show that this reliance on CNNs is not necessary\nand a pure transformer applied directly to sequences of image patches can perform\nvery well on image classiﬁcation tasks. When pre-trained on large amounts of\ndata and transferred to multiple mid-sized or small image recognition benchmarks\n(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent\nresults compared to state-of-the-art convolutional networks while requiring sub-\nstantially fewer computational resources to train.^{1}",
+        "metadata": {
+          "chunk_id": "430cc231bdbc69326431224296bc2322c98c08f799fbc035245353f3ea158d1c",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "file_type": ".pdf",
+          "page": 0,
+          "page_number": 1,
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf"
+        },
+        "truncated": false,
+        "score": 0.0025631177704781294
+      },
+      {
+        "id": 3,
+        "source_file": "attention.pdf",
+        "location": "第7页（物理页码）",
+        "text": "\nfrom our models and present and discuss examples in the appendix. Not only do individual attention\nheads clearly learn to perform different tasks, many appear to exhibit behavior related to the syntactic\nand semantic structure of the sentences.\n5\nTraining\nThis section describes the training regime for our models.\n5.1\nTraining Data and Batching\nWe trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million\nsentence pairs. Sentences were encoded using byte-pair encoding [3], which has a shared source-\ntarget vocabulary of about 37000 tokens. For English-French, we used the significantly larger WMT\n2014 English-French dataset consisting of 36M sentences and split tokens into a 32000 word-piece\nvocabulary [38]. Sentence pairs were batched together by approximate sequence length. Each training\nbatch contained a set of sentence pairs containing approximately 25000 source tokens and 25000\ntarget tokens.\n5.2\nHardware and Schedule\nWe trained our models on one machine with 8 NVIDIA P100 GPUs. For our base models using\nthe hyperparameters described throughout the paper, each training step took about 0.4 seconds. We\ntrained the base models for a total of 100,000 steps or 12 hours. For our big models,(described on the\nbottom line of table 3), step time was 1.0 seconds. The big models were trained for 300,000 steps\n(3.5 days).\n5.3\nOptimizer",
+        "metadata": {
+          "chunk_id": "9047ed5ba1da7ac7c9a6b4dc44db2bfd3e0c46a34cfb7e30a6583de41fc2de82",
+          "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+          "file_type": ".pdf",
+          "page": 6,
+          "page_number": 7,
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697\\attention.pdf",
+          "source_file": "attention.pdf",
+          "comparison_prior_work": false
+        },
+        "truncated": false,
+        "score": 0.6605190634727478
+      },
+      {
+        "id": 4,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第4页（物理页码）",
+        "text": "\ninductive bias about the 2D structure of the images is manually injected into the Vision Transformer.\n4\nEXPERIMENTS\nWe evaluate the representation learning capabilities of ResNet, Vision Transformer (ViT), and the\nhybrid. To understand the data requirements of each model, we pre-train on datasets of varying size\nand evaluate many benchmark tasks. When considering the computational cost of pre-training the\nmodel, ViT performs very favourably, attaining state of the art on most recognition benchmarks at\na lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show\nthat self-supervised ViT holds promise for the future.\n4.1\nSETUP\nDatasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes\nand 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with\n21k classes and 14M images (Deng et al., 2009), and JFT (Sun et al., 2017) with 18k classes and\n303M high-resolution images. We de-duplicate the pre-training datasets w.r.t. the test sets of the\ndownstream tasks following Kolesnikov et al. (2020). We transfer the models trained on these\ndataset to several benchmark tasks: ImageNet on the original validation labels and the cleaned-up\nReaL labels (Beyer et al., 2020), CIFAR-10/100 (Krizhevsky, 2009), Oxford-IIIT Pets (Parkhi et al.,\n2012), and Oxford Flowers-102 (Nilsback & Zisserman, 2008). For these datasets, pre-processing",
+        "metadata": {
+          "chunk_id": "abe2f1d08bd659d3bfb96dc5918c09824c6db2b3b3ef1255557393dabfe91510",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "file_type": ".pdf",
+          "page": 3,
+          "page_number": 4,
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "comparison_prior_work": false
+        },
+        "truncated": false,
+        "score": 0.5689737796783447
+      },
+      {
+        "id": 1,
+        "source_file": "attention.pdf",
+        "location": "第1页（物理页码）",
+        "text": "Our model achieves 28.4 BLEU on the WMT 2014 English-\nto-German translation task, improving over the existing best results, including\nensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,\nour model establishes a new single-model state-of-the-art BLEU score of 41.8 after\ntraining for 3.5 days on eight GPUs, a small fraction of the training costs of the\nbest models from the literature. ",
+        "metadata": {
+          "chunk_id": "e667ca60ae655d4ffedf5a4ac644738e4e8ded90e894a4544181fdb9cef0a492",
+          "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+          "file_type": ".pdf",
+          "page": 0,
+          "page_number": 1,
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697\\attention.pdf",
+          "source_file": "attention.pdf",
+          "comparison_prior_work": false
+        },
+        "truncated": false,
+        "score": 0.9546092748641968
+      },
+      {
+        "id": 6,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第2页（物理页码）",
+        "text": "When\npre-trained on the public ImageNet-21k dataset or the in-house JFT-300M dataset, ViT approaches\nor beats state of the art on multiple image recognition benchmarks. In particular, the best model\nreaches the accuracy of 88.55% on ImageNet, 90.72% on ImageNet-ReaL, 94.55% on CIFAR-100,\nand 77.63% on the VTAB suite of 19 tasks.\n",
+        "metadata": {
+          "chunk_id": "9b043bf909596310b3e93dd842ed1b2f1e77ab141d8616dee3c9f177be0dcea4",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "file_type": ".pdf",
+          "page": 1,
+          "page_number": 2,
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "comparison_prior_work": false
+        },
+        "truncated": false,
+        "score": 0.04625356197357178
+      }
+    ],
+    "invalid_citation_ids": [],
+    "missing_citations": false,
+    "warnings": [
+      "部分维度的检索相关性低，相关陈述需对照原文核验：论文A：方法、论文B：方法、论文B：实验结果",
+      "单篇原文已按对比预算截断，结论仅依据返回的可见证据。"
+    ],
+    "comparison": [
+      {
+        "dimension": "方法",
+        "a": {
+          "id": 7,
+          "source_file": "attention.pdf",
+          "location": "第1页（物理页码）",
+          "text": "Abstract\nThe dominant sequence transduction models are based on complex recurrent or\nconvolutional neural networks that include an encoder and a decoder. The best\nperforming models also connect the encoder and decoder through an attention\nmechanism. We propose a new simple network architecture, the Transformer,\nbased solely on attention mechanisms, dispensing with recurrence and convolutions\nentirely. Experiments on two machine translation tasks show these models to\nbe superior in quality while being more parallelizable and requiring significantly\nless time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-\nto-German translation task, improving over the existing best results, including",
+          "metadata": {
+            "chunk_id": "6d4649fec72c6bd3c6e0193cf04411309d67b07cafafea7a27b1cf03cab0a1c8",
+            "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+            "file_type": ".pdf",
+            "page": 0,
+            "page_number": 1,
+            "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697\\attention.pdf",
+            "source_file": "attention.pdf"
+          },
+          "truncated": false,
+          "score": 0.013683239929378033
+        },
+        "b": {
+          "id": 8,
+          "source_file": "Windows验收_ViT.pdf",
+          "location": "第1页（物理页码）",
+          "text": "ABSTRACT\nWhile the Transformer architecture has become the de-facto standard for natural\nlanguage processing tasks, its applications to computer vision remain limited. In\nvision, attention is either applied in conjunction with convolutional networks, or\nused to replace certain components of convolutional networks while keeping their\noverall structure in place. We show that this reliance on CNNs is not necessary\nand a pure transformer applied directly to sequences of image patches can perform\nvery well on image classiﬁcation tasks. When pre-trained on large amounts of\ndata and transferred to multiple mid-sized or small image recognition benchmarks\n(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent\nresults compared to state-of-the-art convolutional networks while requiring sub-\nstantially fewer computational resources to train.^{1}",
+          "metadata": {
+            "chunk_id": "430cc231bdbc69326431224296bc2322c98c08f799fbc035245353f3ea158d1c",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "file_type": ".pdf",
+            "page": 0,
+            "page_number": 1,
+            "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+            "source_file": "Windows验收_ViT.pdf"
+          },
+          "truncated": false,
+          "score": 0.0025631177704781294
+        }
+      },
+      {
+        "dimension": "数据集",
+        "a": {
+          "id": 3,
+          "source_file": "attention.pdf",
+          "location": "第7页（物理页码）",
+          "text": "\nfrom our models and present and discuss examples in the appendix. Not only do individual attention\nheads clearly learn to perform different tasks, many appear to exhibit behavior related to the syntactic\nand semantic structure of the sentences.\n5\nTraining\nThis section describes the training regime for our models.\n5.1\nTraining Data and Batching\nWe trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million\nsentence pairs. Sentences were encoded using byte-pair encoding [3], which has a shared source-\ntarget vocabulary of about 37000 tokens. For English-French, we used the significantly larger WMT\n2014 English-French dataset consisting of 36M sentences and split tokens into a 32000 word-piece\nvocabulary [38]. Sentence pairs were batched together by approximate sequence length. Each training\nbatch contained a set of sentence pairs containing approximately 25000 source tokens and 25000\ntarget tokens.\n5.2\nHardware and Schedule\nWe trained our models on one machine with 8 NVIDIA P100 GPUs. For our base models using\nthe hyperparameters described throughout the paper, each training step took about 0.4 seconds. We\ntrained the base models for a total of 100,000 steps or 12 hours. For our big models,(described on the\nbottom line of table 3), step time was 1.0 seconds. The big models were trained for 300,000 steps\n(3.5 days).\n5.3\nOptimizer",
+          "metadata": {
+            "chunk_id": "9047ed5ba1da7ac7c9a6b4dc44db2bfd3e0c46a34cfb7e30a6583de41fc2de82",
+            "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+            "file_type": ".pdf",
+            "page": 6,
+            "page_number": 7,
+            "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697\\attention.pdf",
+            "source_file": "attention.pdf",
+            "comparison_prior_work": false
+          },
+          "truncated": false,
+          "score": 0.6605190634727478
+        },
+        "b": {
+          "id": 4,
+          "source_file": "Windows验收_ViT.pdf",
+          "location": "第4页（物理页码）",
+          "text": "\ninductive bias about the 2D structure of the images is manually injected into the Vision Transformer.\n4\nEXPERIMENTS\nWe evaluate the representation learning capabilities of ResNet, Vision Transformer (ViT), and the\nhybrid. To understand the data requirements of each model, we pre-train on datasets of varying size\nand evaluate many benchmark tasks. When considering the computational cost of pre-training the\nmodel, ViT performs very favourably, attaining state of the art on most recognition benchmarks at\na lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show\nthat self-supervised ViT holds promise for the future.\n4.1\nSETUP\nDatasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes\nand 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with\n21k classes and 14M images (Deng et al., 2009), and JFT (Sun et al., 2017) with 18k classes and\n303M high-resolution images. We de-duplicate the pre-training datasets w.r.t. the test sets of the\ndownstream tasks following Kolesnikov et al. (2020). We transfer the models trained on these\ndataset to several benchmark tasks: ImageNet on the original validation labels and the cleaned-up\nReaL labels (Beyer et al., 2020), CIFAR-10/100 (Krizhevsky, 2009), Oxford-IIIT Pets (Parkhi et al.,\n2012), and Oxford Flowers-102 (Nilsback & Zisserman, 2008). For these datasets, pre-processing",
+          "metadata": {
+            "chunk_id": "abe2f1d08bd659d3bfb96dc5918c09824c6db2b3b3ef1255557393dabfe91510",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "file_type": ".pdf",
+            "page": 3,
+            "page_number": 4,
+            "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+            "source_file": "Windows验收_ViT.pdf",
+            "comparison_prior_work": false
+          },
+          "truncated": false,
+          "score": 0.5689737796783447
+        }
+      },
+      {
+        "dimension": "实验结果",
+        "a": {
+          "id": 1,
+          "source_file": "attention.pdf",
+          "location": "第1页（物理页码）",
+          "text": "Our model achieves 28.4 BLEU on the WMT 2014 English-\nto-German translation task, improving over the existing best results, including\nensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,\nour model establishes a new single-model state-of-the-art BLEU score of 41.8 after\ntraining for 3.5 days on eight GPUs, a small fraction of the training costs of the\nbest models from the literature. ",
+          "metadata": {
+            "chunk_id": "e667ca60ae655d4ffedf5a4ac644738e4e8ded90e894a4544181fdb9cef0a492",
+            "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+            "file_type": ".pdf",
+            "page": 0,
+            "page_number": 1,
+            "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697\\attention.pdf",
+            "source_file": "attention.pdf",
+            "comparison_prior_work": false
+          },
+          "truncated": false,
+          "score": 0.9546092748641968
+        },
+        "b": {
+          "id": 6,
+          "source_file": "Windows验收_ViT.pdf",
+          "location": "第2页（物理页码）",
+          "text": "When\npre-trained on the public ImageNet-21k dataset or the in-house JFT-300M dataset, ViT approaches\nor beats state of the art on multiple image recognition benchmarks. In particular, the best model\nreaches the accuracy of 88.55% on ImageNet, 90.72% on ImageNet-ReaL, 94.55% on CIFAR-100,\nand 77.63% on the VTAB suite of 19 tasks.\n",
+          "metadata": {
+            "chunk_id": "9b043bf909596310b3e93dd842ed1b2f1e77ab141d8616dee3c9f177be0dcea4",
+            "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+            "file_type": ".pdf",
+            "page": 1,
+            "page_number": 2,
+            "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+            "source_file": "Windows验收_ViT.pdf",
+            "comparison_prior_work": false
+          },
+          "truncated": false,
+          "score": 0.04625356197357178
+        }
+      }
+    ],
+    "model": "qwen2.5:7b",
+    "done_reason": "stop",
+    "model_calls": [
+      {
+        "paper": "A",
+        "model": "qwen2.5:7b",
+        "choice": {
+          "method": 7,
+          "datasets": 3,
+          "results": 1
+        },
+        "usage": {
+          "prompt_eval_count": 923,
+          "eval_count": 19
+        }
+      },
+      {
+        "paper": "B",
+        "model": "qwen2.5:7b",
+        "choice": {
+          "method": 8,
+          "datasets": 4,
+          "results": 6
+        },
+        "usage": {
+          "prompt_eval_count": 868,
+          "eval_count": 19
+        }
+      }
+    ],
+    "usage": {
+      "prompt_eval_count": 1791,
+      "eval_count": 38
+    },
+    "papers": [
+      {
+        "label": "A",
+        "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+        "source_file": "attention.pdf",
+        "coverage": {
+          "方法": {
+            "generation_mode": "low",
+            "top_score": 0.013683239929378033
+          },
+          "数据集": {
+            "generation_mode": "grounded",
+            "top_score": 0.6605190634727478
+          },
+          "实验结果": {
+            "generation_mode": "grounded",
+            "top_score": 0.9546092748641968
+          }
+        },
+        "top_score": 0.9546092748641968,
+        "references": [
+          {
+            "id": 1,
+            "source_file": "attention.pdf",
+            "location": "第1页（物理页码）",
+            "text": "Abstract\nThe dominant sequence transduction models are based on complex recurrent or\nconvolutional neural networks that include an encoder and a decoder. The best\nperforming models also connect the encoder and decoder through an attention\nmechanism. We propose a new simple network architecture, the Transformer,\nbased solely on attention mechanisms, dispensing with recurrence and convolutions\nentirely. Experiments on two machine translation tasks show these models to\nbe superior in quality while being more parallelizable and requiring significantly\nless time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-\nto-German translation task, improving over the existing best results, including",
+            "metadata": {
+              "chunk_id": "6d4649fec72c6bd3c6e0193cf04411309d67b07cafafea7a27b1cf03cab0a1c8",
+              "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+              "file_type": ".pdf",
+              "page": 0,
+              "page_number": 1,
+              "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697\\attention.pdf",
+              "source_file": "attention.pdf"
+            },
+            "truncated": false,
+            "score": 0.013683239929378033
+          },
+          {
+            "id": 2,
+            "source_file": "attention.pdf",
+            "location": "第7页（物理页码）",
+            "text": "\nfrom our models and present and discuss examples in the appendix. Not only do individual attention\nheads clearly learn to perform different tasks, many appear to exhibit behavior related to the syntactic\nand semantic structure of the sentences.\n5\nTraining\nThis section describes the training regime for our models.\n5.1\nTraining Data and Batching\nWe trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million\nsentence pairs. Sentences were encoded using byte-pair encoding [3], which has a shared source-\ntarget vocabulary of about 37000 tokens. For English-French, we used the significantly larger WMT\n2014 English-French dataset consisting of 36M sentences and split tokens into a 32000 word-piece\nvocabulary [38]. Sentence pairs were batched together by approximate sequence length. Each training\nbatch contained a set of sentence pairs containing approximately 25000 source tokens and 25000\ntarget tokens.\n5.2\nHardware and Schedule\nWe trained our models on one machine with 8 NVIDIA P100 GPUs. For our base models using\nthe hyperparameters described throughout the paper, each training step took about 0.4 seconds. We\ntrained the base models for a total of 100,000 steps or 12 hours. For our big models,(described on the\nbottom line of table 3), step time was 1.0 seconds. The big models were trained for 300,000 steps\n(3.5 days).\n5.3\nOptimizer",
+            "metadata": {
+              "chunk_id": "9047ed5ba1da7ac7c9a6b4dc44db2bfd3e0c46a34cfb7e30a6583de41fc2de82",
+              "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+              "file_type": ".pdf",
+              "page": 6,
+              "page_number": 7,
+              "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697\\attention.pdf",
+              "source_file": "attention.pdf",
+              "comparison_prior_work": false
+            },
+            "truncated": false,
+            "score": 0.6605190634727478
+          },
+          {
+            "id": 3,
+            "source_file": "attention.pdf",
+            "location": "第7页（物理页码）",
+            "text": "\nfrom our models a",
+            "metadata": {
+              "chunk_id": "7a41f9367af30035188ec5e30d7d8c201076e36a87a2d7dd41db66837ef7e77a",
+              "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+              "file_type": ".pdf",
+              "page": 6,
+              "page_number": 7,
+              "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697\\attention.pdf",
+              "source_file": "attention.pdf",
+              "comparison_prior_work": false
+            },
+            "truncated": true,
+            "score": 0.42618101835250854
+          },
+          {
+            "id": 4,
+            "source_file": "attention.pdf",
+            "location": "第1页（物理页码）",
+            "text": "Our model achieves 28.4 BLEU on the WMT 2014 English-\nto-German translation task, improving over the existing best results, including\nensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,\nour model establishes a new single-model state-of-the-art BLEU score of 41.8 after\ntraining for 3.5 days on eight GPUs, a small fraction of the training costs of the\nbest models from the literature. ",
+            "metadata": {
+              "chunk_id": "e667ca60ae655d4ffedf5a4ac644738e4e8ded90e894a4544181fdb9cef0a492",
+              "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+              "file_type": ".pdf",
+              "page": 0,
+              "page_number": 1,
+              "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697\\attention.pdf",
+              "source_file": "attention.pdf",
+              "comparison_prior_work": false
+            },
+            "truncated": false,
+            "score": 0.9546092748641968
+          },
+          {
+            "id": 5,
+            "source_file": "attention.pdf",
+            "location": "第1页（物理页码）",
+            "text": "Our model achieves 28.4 BLEU on the WMT 2014 English-\nto-German translation task, improving over the existing best results, including\nensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,\nour model establishes a new single-model state-of-the-art BLEU score of 41.8 after\ntraining for 3.5 days on eight GPUs, a small fraction of the training costs of the\nbest models from the literature. ",
+            "metadata": {
+              "chunk_id": "d71ae1e6ef8671942a5e3125b0913339b6e51106b3726acb06780f6798b818da",
+              "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+              "file_type": ".pdf",
+              "page": 0,
+              "page_number": 1,
+              "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697\\attention.pdf",
+              "source_file": "attention.pdf",
+              "comparison_prior_work": false
+            },
+            "truncated": false,
+            "score": 0.8296178579330444
+          }
+        ],
+        "truncated": true
+      },
+      {
+        "label": "B",
+        "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+        "source_file": "Windows验收_ViT.pdf",
+        "coverage": {
+          "方法": {
+            "generation_mode": "low",
+            "top_score": 0.0025631177704781294
+          },
+          "数据集": {
+            "generation_mode": "grounded",
+            "top_score": 0.5689737796783447
+          },
+          "实验结果": {
+            "generation_mode": "low",
+            "top_score": 0.04625356197357178
+          }
+        },
+        "top_score": 0.5689737796783447,
+        "references": [
+          {
+            "id": 1,
+            "source_file": "Windows验收_ViT.pdf",
+            "location": "第1页（物理页码）",
+            "text": "ABSTRACT\nWhile the Transformer architecture has become the de-facto standard for natural\nlanguage processing tasks, its applications to computer vision remain limited. In\nvision, attention is either applied in conjunction with convolutional networks, or\nused to replace certain components of convolutional networks while keeping their\noverall structure in place. We show that this reliance on CNNs is not necessary\nand a pure transformer applied directly to sequences of image patches can perform\nvery well on image classiﬁcation tasks. When pre-trained on large amounts of\ndata and transferred to multiple mid-sized or small image recognition benchmarks\n(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent\nresults compared to state-of-the-art convolutional networks while requiring sub-\nstantially fewer computational resources to train.^{1}",
+            "metadata": {
+              "chunk_id": "430cc231bdbc69326431224296bc2322c98c08f799fbc035245353f3ea158d1c",
+              "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+              "file_type": ".pdf",
+              "page": 0,
+              "page_number": 1,
+              "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+              "source_file": "Windows验收_ViT.pdf"
+            },
+            "truncated": false,
+            "score": 0.0025631177704781294
+          },
+          {
+            "id": 2,
+            "source_file": "Windows验收_ViT.pdf",
+            "location": "第4页（物理页码）",
+            "text": "\ninductive bias about the 2D structure of the images is manually injected into the Vision Transformer.\n4\nEXPERIMENTS\nWe evaluate the representation learning capabilities of ResNet, Vision Transformer (ViT), and the\nhybrid. To understand the data requirements of each model, we pre-train on datasets of varying size\nand evaluate many benchmark tasks. When considering the computational cost of pre-training the\nmodel, ViT performs very favourably, attaining state of the art on most recognition benchmarks at\na lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show\nthat self-supervised ViT holds promise for the future.\n4.1\nSETUP\nDatasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes\nand 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with\n21k classes and 14M images (Deng et al., 2009), and JFT (Sun et al., 2017) with 18k classes and\n303M high-resolution images. We de-duplicate the pre-training datasets w.r.t. the test sets of the\ndownstream tasks following Kolesnikov et al. (2020). We transfer the models trained on these\ndataset to several benchmark tasks: ImageNet on the original validation labels and the cleaned-up\nReaL labels (Beyer et al., 2020), CIFAR-10/100 (Krizhevsky, 2009), Oxford-IIIT Pets (Parkhi et al.,\n2012), and Oxford Flowers-102 (Nilsback & Zisserman, 2008). For these datasets, pre-processing",
+            "metadata": {
+              "chunk_id": "abe2f1d08bd659d3bfb96dc5918c09824c6db2b3b3ef1255557393dabfe91510",
+              "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+              "file_type": ".pdf",
+              "page": 3,
+              "page_number": 4,
+              "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+              "source_file": "Windows验收_ViT.pdf",
+              "comparison_prior_work": false
+            },
+            "truncated": false,
+            "score": 0.5689737796783447
+          },
+          {
+            "id": 3,
+            "source_file": "Windows验收_ViT.pdf",
+            "location": "第2页（物理页码）",
+            "text": "When\npre-trained on the public ImageNet-21k dataset or the in-house JFT-300M dataset, ViT approaches\nor beats state of the art on multiple image recognition benchmarks. In particular, the best model\nreaches the accuracy of 88.55% on ImageNet, 90.72% on ImageNet-ReaL, 94.55% on CIFAR-100,\nand 77.63% on the VTAB suite of 19 tasks.\n",
+            "metadata": {
+              "chunk_id": "9b043bf909596310b3e93dd842ed1b2f1e77ab141d8616dee3c9f177be0dcea4",
+              "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+              "file_type": ".pdf",
+              "page": 1,
+              "page_number": 2,
+              "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+              "source_file": "Windows验收_ViT.pdf",
+              "comparison_prior_work": false
+            },
+            "truncated": false,
+            "score": 0.04625356197357178
+          }
+        ],
+        "truncated": true
+      }
+    ],
+    "missing_dimensions": [],
+    "low_relevance_dimensions": [
+      "论文A：方法",
+      "论文B：方法",
+      "论文B：实验结果"
+    ],
+    "low_relevance_papers": [],
+    "confirmed": true,
+    "status": "answered",
+    "elapsed_seconds": 5.747506499999872
+  },
+  "initial_result": {
+    "papers": [
+      {
+        "label": "A",
+        "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+        "source_file": "attention.pdf",
+        "coverage": {
+          "方法": {
+            "generation_mode": "low",
+            "top_score": 0.013683239929378033
+          },
+          "数据集": {
+            "generation_mode": "grounded",
+            "top_score": 0.6605190634727478
+          },
+          "实验结果": {
+            "generation_mode": "grounded",
+            "top_score": 0.9546092748641968
+          }
+        },
+        "top_score": 0.9546092748641968,
+        "references": [
+          {
+            "id": 1,
+            "source_file": "attention.pdf",
+            "location": "第1页（物理页码）",
+            "text": "Abstract\nThe dominant sequence transduction models are based on complex recurrent or\nconvolutional neural networks that include an encoder and a decoder. The best\nperforming models also connect the encoder and decoder through an attention\nmechanism. We propose a new simple network architecture, the Transformer,\nbased solely on attention mechanisms, dispensing with recurrence and convolutions\nentirely. Experiments on two machine translation tasks show these models to\nbe superior in quality while being more parallelizable and requiring significantly\nless time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-\nto-German translation task, improving over the existing best results, including",
+            "metadata": {
+              "chunk_id": "6d4649fec72c6bd3c6e0193cf04411309d67b07cafafea7a27b1cf03cab0a1c8",
+              "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+              "file_type": ".pdf",
+              "page": 0,
+              "page_number": 1,
+              "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697\\attention.pdf",
+              "source_file": "attention.pdf"
+            },
+            "truncated": false,
+            "score": 0.013683239929378033
+          },
+          {
+            "id": 2,
+            "source_file": "attention.pdf",
+            "location": "第7页（物理页码）",
+            "text": "\nfrom our models and present and discuss examples in the appendix. Not only do individual attention\nheads clearly learn to perform different tasks, many appear to exhibit behavior related to the syntactic\nand semantic structure of the sentences.\n5\nTraining\nThis section describes the training regime for our models.\n5.1\nTraining Data and Batching\nWe trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million\nsentence pairs. Sentences were encoded using byte-pair encoding [3], which has a shared source-\ntarget vocabulary of about 37000 tokens. For English-French, we used the significantly larger WMT\n2014 English-French dataset consisting of 36M sentences and split tokens into a 32000 word-piece\nvocabulary [38]. Sentence pairs were batched together by approximate sequence length. Each training\nbatch contained a set of sentence pairs containing approximately 25000 source tokens and 25000\ntarget tokens.\n5.2\nHardware and Schedule\nWe trained our models on one machine with 8 NVIDIA P100 GPUs. For our base models using\nthe hyperparameters described throughout the paper, each training step took about 0.4 seconds. We\ntrained the base models for a total of 100,000 steps or 12 hours. For our big models,(described on the\nbottom line of table 3), step time was 1.0 seconds. The big models were trained for 300,000 steps\n(3.5 days).\n5.3\nOptimizer",
+            "metadata": {
+              "chunk_id": "9047ed5ba1da7ac7c9a6b4dc44db2bfd3e0c46a34cfb7e30a6583de41fc2de82",
+              "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+              "file_type": ".pdf",
+              "page": 6,
+              "page_number": 7,
+              "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697\\attention.pdf",
+              "source_file": "attention.pdf",
+              "comparison_prior_work": false
+            },
+            "truncated": false,
+            "score": 0.6605190634727478
+          },
+          {
+            "id": 3,
+            "source_file": "attention.pdf",
+            "location": "第7页（物理页码）",
+            "text": "\nfrom our models a",
+            "metadata": {
+              "chunk_id": "7a41f9367af30035188ec5e30d7d8c201076e36a87a2d7dd41db66837ef7e77a",
+              "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+              "file_type": ".pdf",
+              "page": 6,
+              "page_number": 7,
+              "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697\\attention.pdf",
+              "source_file": "attention.pdf",
+              "comparison_prior_work": false
+            },
+            "truncated": true,
+            "score": 0.42618101835250854
+          },
+          {
+            "id": 4,
+            "source_file": "attention.pdf",
+            "location": "第1页（物理页码）",
+            "text": "Our model achieves 28.4 BLEU on the WMT 2014 English-\nto-German translation task, improving over the existing best results, including\nensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,\nour model establishes a new single-model state-of-the-art BLEU score of 41.8 after\ntraining for 3.5 days on eight GPUs, a small fraction of the training costs of the\nbest models from the literature. ",
+            "metadata": {
+              "chunk_id": "e667ca60ae655d4ffedf5a4ac644738e4e8ded90e894a4544181fdb9cef0a492",
+              "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+              "file_type": ".pdf",
+              "page": 0,
+              "page_number": 1,
+              "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697\\attention.pdf",
+              "source_file": "attention.pdf",
+              "comparison_prior_work": false
+            },
+            "truncated": false,
+            "score": 0.9546092748641968
+          },
+          {
+            "id": 5,
+            "source_file": "attention.pdf",
+            "location": "第1页（物理页码）",
+            "text": "Our model achieves 28.4 BLEU on the WMT 2014 English-\nto-German translation task, improving over the existing best results, including\nensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,\nour model establishes a new single-model state-of-the-art BLEU score of 41.8 after\ntraining for 3.5 days on eight GPUs, a small fraction of the training costs of the\nbest models from the literature. ",
+            "metadata": {
+              "chunk_id": "d71ae1e6ef8671942a5e3125b0913339b6e51106b3726acb06780f6798b818da",
+              "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+              "file_type": ".pdf",
+              "page": 0,
+              "page_number": 1,
+              "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697\\attention.pdf",
+              "source_file": "attention.pdf",
+              "comparison_prior_work": false
+            },
+            "truncated": false,
+            "score": 0.8296178579330444
+          }
+        ],
+        "truncated": true
+      },
+      {
+        "label": "B",
+        "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+        "source_file": "Windows验收_ViT.pdf",
+        "coverage": {
+          "方法": {
+            "generation_mode": "low",
+            "top_score": 0.0025631177704781294
+          },
+          "数据集": {
+            "generation_mode": "grounded",
+            "top_score": 0.5689737796783447
+          },
+          "实验结果": {
+            "generation_mode": "low",
+            "top_score": 0.04625356197357178
+          }
+        },
+        "top_score": 0.5689737796783447,
+        "references": [
+          {
+            "id": 1,
+            "source_file": "Windows验收_ViT.pdf",
+            "location": "第1页（物理页码）",
+            "text": "ABSTRACT\nWhile the Transformer architecture has become the de-facto standard for natural\nlanguage processing tasks, its applications to computer vision remain limited. In\nvision, attention is either applied in conjunction with convolutional networks, or\nused to replace certain components of convolutional networks while keeping their\noverall structure in place. We show that this reliance on CNNs is not necessary\nand a pure transformer applied directly to sequences of image patches can perform\nvery well on image classiﬁcation tasks. When pre-trained on large amounts of\ndata and transferred to multiple mid-sized or small image recognition benchmarks\n(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent\nresults compared to state-of-the-art convolutional networks while requiring sub-\nstantially fewer computational resources to train.^{1}",
+            "metadata": {
+              "chunk_id": "430cc231bdbc69326431224296bc2322c98c08f799fbc035245353f3ea158d1c",
+              "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+              "file_type": ".pdf",
+              "page": 0,
+              "page_number": 1,
+              "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+              "source_file": "Windows验收_ViT.pdf"
+            },
+            "truncated": false,
+            "score": 0.0025631177704781294
+          },
+          {
+            "id": 2,
+            "source_file": "Windows验收_ViT.pdf",
+            "location": "第4页（物理页码）",
+            "text": "\ninductive bias about the 2D structure of the images is manually injected into the Vision Transformer.\n4\nEXPERIMENTS\nWe evaluate the representation learning capabilities of ResNet, Vision Transformer (ViT), and the\nhybrid. To understand the data requirements of each model, we pre-train on datasets of varying size\nand evaluate many benchmark tasks. When considering the computational cost of pre-training the\nmodel, ViT performs very favourably, attaining state of the art on most recognition benchmarks at\na lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show\nthat self-supervised ViT holds promise for the future.\n4.1\nSETUP\nDatasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes\nand 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with\n21k classes and 14M images (Deng et al., 2009), and JFT (Sun et al., 2017) with 18k classes and\n303M high-resolution images. We de-duplicate the pre-training datasets w.r.t. the test sets of the\ndownstream tasks following Kolesnikov et al. (2020). We transfer the models trained on these\ndataset to several benchmark tasks: ImageNet on the original validation labels and the cleaned-up\nReaL labels (Beyer et al., 2020), CIFAR-10/100 (Krizhevsky, 2009), Oxford-IIIT Pets (Parkhi et al.,\n2012), and Oxford Flowers-102 (Nilsback & Zisserman, 2008). For these datasets, pre-processing",
+            "metadata": {
+              "chunk_id": "abe2f1d08bd659d3bfb96dc5918c09824c6db2b3b3ef1255557393dabfe91510",
+              "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+              "file_type": ".pdf",
+              "page": 3,
+              "page_number": 4,
+              "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+              "source_file": "Windows验收_ViT.pdf",
+              "comparison_prior_work": false
+            },
+            "truncated": false,
+            "score": 0.5689737796783447
+          },
+          {
+            "id": 3,
+            "source_file": "Windows验收_ViT.pdf",
+            "location": "第2页（物理页码）",
+            "text": "When\npre-trained on the public ImageNet-21k dataset or the in-house JFT-300M dataset, ViT approaches\nor beats state of the art on multiple image recognition benchmarks. In particular, the best model\nreaches the accuracy of 88.55% on ImageNet, 90.72% on ImageNet-ReaL, 94.55% on CIFAR-100,\nand 77.63% on the VTAB suite of 19 tasks.\n",
+            "metadata": {
+              "chunk_id": "9b043bf909596310b3e93dd842ed1b2f1e77ab141d8616dee3c9f177be0dcea4",
+              "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+              "file_type": ".pdf",
+              "page": 1,
+              "page_number": 2,
+              "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+              "source_file": "Windows验收_ViT.pdf",
+              "comparison_prior_work": false
+            },
+            "truncated": false,
+            "score": 0.04625356197357178
+          }
+        ],
+        "truncated": true
+      }
+    ],
+    "missing_dimensions": [],
+    "low_relevance_dimensions": [
+      "论文A：方法",
+      "论文B：方法",
+      "论文B：实验结果"
+    ],
+    "low_relevance_papers": [],
+    "status": "needs_confirmation",
+    "answer": "检索相关性低，请用户核对候选原文。",
+    "references": [
+      {
+        "id": 1,
+        "source_file": "attention.pdf",
+        "location": "第1页（物理页码）",
+        "text": "Our model achieves 28.4 BLEU on the WMT 2014 English-\nto-German translation task, improving over the existing best results, including\nensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,\nour model establishes a new single-model state-of-the-art BLEU score of 41.8 after\ntraining for 3.5 days on eight GPUs, a small fraction of the training costs of the\nbest models from the literature. ",
+        "metadata": {
+          "chunk_id": "e667ca60ae655d4ffedf5a4ac644738e4e8ded90e894a4544181fdb9cef0a492",
+          "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+          "file_type": ".pdf",
+          "page": 0,
+          "page_number": 1,
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697\\attention.pdf",
+          "source_file": "attention.pdf",
+          "comparison_prior_work": false
+        },
+        "truncated": false,
+        "score": 0.9546092748641968
+      },
+      {
+        "id": 2,
+        "source_file": "attention.pdf",
+        "location": "第1页（物理页码）",
+        "text": "Our model achieves 28.4 BLEU on the WMT 2014 English-\nto-German translation task, improving over the existing best results, including\nensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task,\nour model establishes a new single-model state-of-the-art BLEU score of 41.8 after\ntraining for 3.5 days on eight GPUs, a small fraction of the training costs of the\nbest models from the literature. ",
+        "metadata": {
+          "chunk_id": "d71ae1e6ef8671942a5e3125b0913339b6e51106b3726acb06780f6798b818da",
+          "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+          "file_type": ".pdf",
+          "page": 0,
+          "page_number": 1,
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697\\attention.pdf",
+          "source_file": "attention.pdf",
+          "comparison_prior_work": false
+        },
+        "truncated": false,
+        "score": 0.8296178579330444
+      },
+      {
+        "id": 3,
+        "source_file": "attention.pdf",
+        "location": "第7页（物理页码）",
+        "text": "\nfrom our models and present and discuss examples in the appendix. Not only do individual attention\nheads clearly learn to perform different tasks, many appear to exhibit behavior related to the syntactic\nand semantic structure of the sentences.\n5\nTraining\nThis section describes the training regime for our models.\n5.1\nTraining Data and Batching\nWe trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million\nsentence pairs. Sentences were encoded using byte-pair encoding [3], which has a shared source-\ntarget vocabulary of about 37000 tokens. For English-French, we used the significantly larger WMT\n2014 English-French dataset consisting of 36M sentences and split tokens into a 32000 word-piece\nvocabulary [38]. Sentence pairs were batched together by approximate sequence length. Each training\nbatch contained a set of sentence pairs containing approximately 25000 source tokens and 25000\ntarget tokens.\n5.2\nHardware and Schedule\nWe trained our models on one machine with 8 NVIDIA P100 GPUs. For our base models using\nthe hyperparameters described throughout the paper, each training step took about 0.4 seconds. We\ntrained the base models for a total of 100,000 steps or 12 hours. For our big models,(described on the\nbottom line of table 3), step time was 1.0 seconds. The big models were trained for 300,000 steps\n(3.5 days).\n5.3\nOptimizer",
+        "metadata": {
+          "chunk_id": "9047ed5ba1da7ac7c9a6b4dc44db2bfd3e0c46a34cfb7e30a6583de41fc2de82",
+          "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+          "file_type": ".pdf",
+          "page": 6,
+          "page_number": 7,
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697\\attention.pdf",
+          "source_file": "attention.pdf",
+          "comparison_prior_work": false
+        },
+        "truncated": false,
+        "score": 0.6605190634727478
+      },
+      {
+        "id": 4,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第4页（物理页码）",
+        "text": "\ninductive bias about the 2D structure of the images is manually injected into the Vision Transformer.\n4\nEXPERIMENTS\nWe evaluate the representation learning capabilities of ResNet, Vision Transformer (ViT), and the\nhybrid. To understand the data requirements of each model, we pre-train on datasets of varying size\nand evaluate many benchmark tasks. When considering the computational cost of pre-training the\nmodel, ViT performs very favourably, attaining state of the art on most recognition benchmarks at\na lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show\nthat self-supervised ViT holds promise for the future.\n4.1\nSETUP\nDatasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes\nand 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with\n21k classes and 14M images (Deng et al., 2009), and JFT (Sun et al., 2017) with 18k classes and\n303M high-resolution images. We de-duplicate the pre-training datasets w.r.t. the test sets of the\ndownstream tasks following Kolesnikov et al. (2020). We transfer the models trained on these\ndataset to several benchmark tasks: ImageNet on the original validation labels and the cleaned-up\nReaL labels (Beyer et al., 2020), CIFAR-10/100 (Krizhevsky, 2009), Oxford-IIIT Pets (Parkhi et al.,\n2012), and Oxford Flowers-102 (Nilsback & Zisserman, 2008). For these datasets, pre-processing",
+        "metadata": {
+          "chunk_id": "abe2f1d08bd659d3bfb96dc5918c09824c6db2b3b3ef1255557393dabfe91510",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "file_type": ".pdf",
+          "page": 3,
+          "page_number": 4,
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "comparison_prior_work": false
+        },
+        "truncated": false,
+        "score": 0.5689737796783447
+      },
+      {
+        "id": 5,
+        "source_file": "attention.pdf",
+        "location": "第7页（物理页码）",
+        "text": "\nfrom our models a",
+        "metadata": {
+          "chunk_id": "7a41f9367af30035188ec5e30d7d8c201076e36a87a2d7dd41db66837ef7e77a",
+          "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+          "file_type": ".pdf",
+          "page": 6,
+          "page_number": 7,
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697\\attention.pdf",
+          "source_file": "attention.pdf",
+          "comparison_prior_work": false
+        },
+        "truncated": false,
+        "score": 0.42618101835250854
+      },
+      {
+        "id": 6,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第2页（物理页码）",
+        "text": "When\npre-trained on the public ImageNet-21k dataset or the in-house JFT-300M dataset, ViT approaches\nor beats state of the art on multiple image recognition benchmarks. In particular, the best model\nreaches the accuracy of 88.55% on ImageNet, 90.72% on ImageNet-ReaL, 94.55% on CIFAR-100,\nand 77.63% on the VTAB suite of 19 tasks.\n",
+        "metadata": {
+          "chunk_id": "9b043bf909596310b3e93dd842ed1b2f1e77ab141d8616dee3c9f177be0dcea4",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "file_type": ".pdf",
+          "page": 1,
+          "page_number": 2,
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "comparison_prior_work": false
+        },
+        "truncated": false,
+        "score": 0.04625356197357178
+      },
+      {
+        "id": 7,
+        "source_file": "attention.pdf",
+        "location": "第1页（物理页码）",
+        "text": "Abstract\nThe dominant sequence transduction models are based on complex recurrent or\nconvolutional neural networks that include an encoder and a decoder. The best\nperforming models also connect the encoder and decoder through an attention\nmechanism. We propose a new simple network architecture, the Transformer,\nbased solely on attention mechanisms, dispensing with recurrence and convolutions\nentirely. Experiments on two machine translation tasks show these models to\nbe superior in quality while being more parallelizable and requiring significantly\nless time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-\nto-German translation task, improving over the existing best results, including",
+        "metadata": {
+          "chunk_id": "6d4649fec72c6bd3c6e0193cf04411309d67b07cafafea7a27b1cf03cab0a1c8",
+          "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+          "file_type": ".pdf",
+          "page": 0,
+          "page_number": 1,
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697\\attention.pdf",
+          "source_file": "attention.pdf"
+        },
+        "truncated": false,
+        "score": 0.013683239929378033
+      },
+      {
+        "id": 8,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第1页（物理页码）",
+        "text": "ABSTRACT\nWhile the Transformer architecture has become the de-facto standard for natural\nlanguage processing tasks, its applications to computer vision remain limited. In\nvision, attention is either applied in conjunction with convolutional networks, or\nused to replace certain components of convolutional networks while keeping their\noverall structure in place. We show that this reliance on CNNs is not necessary\nand a pure transformer applied directly to sequences of image patches can perform\nvery well on image classiﬁcation tasks. When pre-trained on large amounts of\ndata and transferred to multiple mid-sized or small image recognition benchmarks\n(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent\nresults compared to state-of-the-art convolutional networks while requiring sub-\nstantially fewer computational resources to train.^{1}",
+        "metadata": {
+          "chunk_id": "430cc231bdbc69326431224296bc2322c98c08f799fbc035245353f3ea158d1c",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "file_type": ".pdf",
+          "page": 0,
+          "page_number": 1,
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf"
+        },
+        "truncated": false,
+        "score": 0.0025631177704781294
+      }
+    ],
+    "generation_mode": "low",
+    "citations": [],
+    "usage": {
+      "prompt_eval_count": 0,
+      "eval_count": 0
+    },
+    "warnings": [],
+    "elapsed_seconds": 46.14523399999962,
+    "confirmation_id": "e27bb93c9fa243eea97da7229e3ecc00"
+  },
+  "test_confirmation": "测试脚本按显式参数复用已记录候选；不代表用户质量审核通过。",
+  "seconds": 52.041283000002295,
+  "finished_at": "2026-10-09T01:26:53.329583+08:00"
+}

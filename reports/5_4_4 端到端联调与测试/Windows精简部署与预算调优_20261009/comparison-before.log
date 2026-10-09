@@ -1,0 +1,31 @@
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+................................./Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/load/serializable.py:194: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  if (k not in self.model_fields or try_neq_default(v, k, self))
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/langchain_core/load/serializable.py:81: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  field = model.model_fields[key]
+FF..
+======================================================================
+FAIL: test_related_work_result_cannot_be_selected_as_this_paper_result (test_comparison_keywords.TestComparisonAndKeywords)
+Windows复测：相关工作中的72%属于前人模型，不能用于本篇实验对比。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_2 工具集开发/test_comparison_keywords.py", line 183, in test_related_work_result_cannot_be_selected_as_this_paper_result
+    self.assertIsNone(_quantitative_excerpt(candidate, [heading, candidate]))
+AssertionError: Document(metadata={'source': '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmp4zne99gw/87c03818402c04705d18b7ecc606cc5728bb01d20b52938abc6ac9f05c031443/同名.md', 'source_file': '同名.md', 'file_type': '.md', 'doc_id': '87c03818402c04705d18b7ecc606cc5728bb01d20b52938abc6ac9f05c031443', 'line_start': 1, 'line_end': 1, 'chunk_id': 'prior-model', 'chunk_index': 0, 'chunk_strategy': 'recursive', 'chunk_size': 512, 'chunk_overlap': 64, 'start_index': 300, 'end_index': 357, 'page_number': 2, 'evidence_excerpt': True}, page_content='The model achieves a maximal accuracy of 72% on ImageNet.') is not None
+
+======================================================================
+FAIL: test_result_after_related_work_section_remains_available (test_comparison_keywords.TestComparisonAndKeywords)
+按章节位置排除前人结果；同页后续实验及其他论文不受影响。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_2 工具集开发/test_comparison_keywords.py", line 194, in test_result_after_related_work_section_remains_available
+    self.assertNotIn("72%", result.page_content)
+AssertionError: '72%' unexpectedly found in '2\nRelated Work\nA previous model achieves accuracy 72% on ImageNet.\n3\nExperiments\nOur model achieves accuracy 88.55% on ImageNet.'
+
+----------------------------------------------------------------------
+Ran 37 tests in 4.001s
+
+FAILED (failures=2)
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

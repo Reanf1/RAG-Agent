@@ -1,6 +1,6 @@
 # Windows部署教程
 
-适用于Windows x64原生部署，命令使用PowerShell，示例目录为`D:\projects\RAG+Agent`。2026-10-07已在用户实际目录`E:\工作\RAG-Agent`完成原生业务复测和隔离Docker离线运行验收；原生Python3.10.10、Ollama0.35.1、Qwen2.5:7b，容器Ollama固定0.34.0。Embedding/BGE仍用CPU，原生Qwen用RTX4060 Laptop GPU；正式性能正在按冻结评测集执行。
+适用于Windows x64原生部署，命令使用PowerShell，示例目录为`D:\projects\RAG+Agent`。2026-10-07已在用户实际目录`E:\工作\RAG-Agent`完成原生业务复测和隔离Docker离线运行验收；原生Python3.10.10、Ollama0.35.1、Qwen2.5:7b，容器Ollama固定0.34.0。Embedding/BGE仍用CPU，原生Qwen用RTX4060 Laptop GPU；这是2026-10-07环境记录；正式性能初评已归档，用户审核待完成。2026-10-09集中复测使用现有原生Ollama0.40.1，默认16K窗口／1024输出，具体性能及边界见[集中部署记录](../reports/5_4_4%20端到端联调与测试/Windows精简部署与预算调优_20261009/README.md)，不为了教程版本覆盖已有服务。
 
 ## 1 部署流程与机器准备
 
@@ -77,7 +77,7 @@ $env:OLLAMA_MODELS = "$PWD\data\models\ollama\models"
 $env:OLLAMA_HOST = '127.0.0.1:11434'
 $env:OLLAMA_NO_CLOUD = '1'
 $env:OLLAMA_NUM_PARALLEL = '1'
-$env:OLLAMA_CONTEXT_LENGTH = '8192'
+$env:OLLAMA_CONTEXT_LENGTH = '16384'
 & .\data\models\ollama\runtime_windows\ollama.exe serve
 ```
 
@@ -158,6 +158,8 @@ data/models/
 网络访问Hugging Face受限时，可以使用第2步的已准备模型复制方案。不要把不完整的下载目录当已准备；也不要为了下载失败而更换固定revision。
 
 ## 6 启动应用
+
+更新代码后要完整退出旧Streamlit，再重新启动。前台运行可用Ctrl+C；若由计划任务的Python启动器运行，只停止任务可能留下子进程。本轮出现过“Port 8501 is not available”，因此应检查8501的实际监听进程及命令行，确认是本项目的Streamlit后停止该PID，等待端口释放，再启动并核验新PID。不要按进程名结束所有Python，否则会影响其它程序。Git提交一致不代表仍在运行的Python进程已加载新代码。
 
 保留终端A的Ollama进程，在终端B执行：
 

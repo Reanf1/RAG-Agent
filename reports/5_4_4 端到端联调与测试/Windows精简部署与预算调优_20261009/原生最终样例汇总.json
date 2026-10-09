@@ -1,0 +1,78 @@
+{
+  "rows": [
+    {
+      "case": "fact-unit",
+      "seconds": 27.296251100000518,
+      "calls": [
+        {
+          "seconds": 11.903516400001536,
+          "actual_input_tokens": 3269,
+          "actual_output_tokens": 207,
+          "done_reason": "stop",
+          "done": true
+        }
+      ],
+      "peak_gpu_mib": 6698,
+      "ollama_vram_bytes": 5465282968,
+      "task_complete": null,
+      "status": "insufficient_evidence",
+      "answer": "当前回答的数量换算未通过原文核对，无法据此确认科研结论。请查看引用原文中的数值与单位。\n\n原文依据：We use the ILSVRC-2012 ImageNet dataset with 1k classes and 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with 21k classes and 14M images (Deng et al., 2009), and JFT (Sun et al., 2017) with 18k classes and 303M high-resolution images. [参考文档4：Windows验收\\_ViT.pdf；第4页（物理页码）]\n\n## 参考来源\n- [参考文档4] Windows验收\\_ViT.pdf；第4页（物理页码）",
+      "warnings": [
+        "回答中的万／亿数量与所引原文不一致，已暂停展示结论；请核对原文数值与单位。"
+      ]
+    },
+    {
+      "case": "multitool-unit",
+      "seconds": 9.581692300002032,
+      "calls": [
+        {
+          "seconds": 4.986244299998361,
+          "actual_input_tokens": 3006,
+          "actual_output_tokens": 51,
+          "done_reason": "stop",
+          "done": true
+        },
+        {
+          "seconds": 4.2435861000012665,
+          "actual_input_tokens": 2778,
+          "actual_output_tokens": 63,
+          "done_reason": "stop",
+          "done": true
+        }
+      ],
+      "peak_gpu_mib": 6698,
+      "ollama_vram_bytes": 5465282968,
+      "task_complete": true,
+      "status": null,
+      "answer": "计算结果为：3.14*2.56=8.0384，12.5/2=6.25。",
+      "warnings": []
+    },
+    {
+      "case": "markdown-unit",
+      "seconds": 21.70893480000086,
+      "calls": [
+        {
+          "seconds": 6.161192200001096,
+          "actual_input_tokens": 1616,
+          "actual_output_tokens": 153,
+          "done_reason": "stop",
+          "done": true
+        },
+        {
+          "seconds": 3.5534114000001864,
+          "actual_input_tokens": 1336,
+          "actual_output_tokens": 56,
+          "done_reason": "stop",
+          "done": true
+        }
+      ],
+      "peak_gpu_mib": 6698,
+      "ollama_vram_bytes": 5465282968,
+      "task_complete": true,
+      "status": null,
+      "answer": "## 回答\nMarkdown标记是WINMD20261005。[参考文档1：Windows复测\\_说明.md；行1–6]\n说明：文档中明确指出了Markdown标记的具体内容及其行号。[参考文档1：Windows复测\\_说明.md；行1–6]\n\n## 参考来源\n- [参考文档1] Windows复测\\_说明.md；行1–6",
+      "warnings": []
+    }
+  ],
+  "boundary": "单次各独立进程，包含检索和初始化；事实样例防护成功但模型单位解释失败，不计为正确答案。"
+}

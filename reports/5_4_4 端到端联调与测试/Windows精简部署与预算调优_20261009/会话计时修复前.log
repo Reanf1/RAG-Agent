@@ -1,0 +1,14 @@
+F
+======================================================================
+FAIL: test_completed_response_timing_matches_reopened_history_and_log (tests.5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation)
+落盘耗时不能让实时页与刷新后的同一请求使用不同指标。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_4 多轮对话记忆管理/test_session_isolation.py", line 304, in test_completed_response_timing_matches_reopened_history_and_log
+    self.assertEqual(completed["metrics"]["response_seconds"], 2.0)
+AssertionError: 2.019 != 2.0
+
+----------------------------------------------------------------------
+Ran 1 test in 0.259s
+
+FAILED (failures=1)

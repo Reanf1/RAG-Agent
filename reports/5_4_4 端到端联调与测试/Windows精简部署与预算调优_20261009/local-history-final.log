@@ -1,0 +1,1443 @@
+test_all_formats_saved_with_correct_sources (5_1_1 文档加载与批量导入.test_batch_import.TestBatchImport)
+四类文档均实际解析和保存，来源指向持久文件而非临时文件。 ... ok
+test_empty_batch_and_duplicate_inputs (5_1_1 文档加载与批量导入.test_batch_import.TestBatchImport)
+空批次不创建目录，相同文件名和内容的重复项合并。 ... ok
+test_existing_file_with_different_bytes_is_not_overwritten (5_1_1 文档加载与批量导入.test_batch_import.TestBatchImport)
+已有保存位置被外部修改时明确失败，保留其内容。 ... 文档导入失败：paper.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 92, in batch_import
+    raise ValueError("保存位置已有不同内容的文件，未覆盖")
+ValueError: 保存位置已有不同内容的文件，未覆盖
+ok
+test_failure_does_not_stop_later_files_or_leave_failed_file (5_1_1 文档加载与批量导入.test_batch_import.TestBatchImport)
+中间文件损坏也继续导入后续文件，完成进度包含失败项。 ... 文档导入失败：bad.pdf
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/pymupdf/__init__.py", line 2981, in __init__
+    doc = mupdf.fz_open_document_with_stream_and_dir(filetype if filetype else '', fz_stream, archive.this)
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/pymupdf/mupdf.py", line 53426, in fz_open_document_with_stream_and_dir
+    return _mupdf.fz_open_document_with_stream_and_dir(magic, stream, dir)
+pymupdf.mupdf.FzErrorFormat: code=7: no objects found
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/pdf_loader.py", line 265, in load_pdf
+    pdf = pymupdf.open(stream=data, filetype="pdf")
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/pymupdf/__init__.py", line 2984, in __init__
+    raise FileDataError('Failed to open stream') from e
+pymupdf.FileDataError: Failed to open stream
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/pdf_loader.py", line 267, in load_pdf
+    raise pymupdf.FileDataError(f"PDF 文件损坏或不是有效的 PDF：{path.name}") from error
+pymupdf.FileDataError: PDF 文件损坏或不是有效的 PDF：bad.pdf
+ok
+test_interrupted_loading_task_can_resume (5_1_1 文档加载与批量导入.test_batch_import.TestBatchImport)
+页面中断后遗留的处理中任务可继续处理。 ... ok
+test_persistent_failure_is_bounded (5_1_1 文档加载与批量导入.test_batch_import.TestBatchImport)
+每次重试只处理一轮，永久错误不会产生无限循环。 ... 文档导入失败：bad.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+文档导入失败：bad.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+ok
+test_repeated_run_skips_completed_tasks (5_1_1 文档加载与批量导入.test_batch_import.TestBatchImport)
+成功后再次调用不会重复加载或重复保存。 ... ok
+test_retry_failed_recovers_without_reloading_success (5_1_1 文档加载与批量导入.test_batch_import.TestBatchImport)
+模拟一次临时错误，手动重试仅失败项，成功项尝试次数不增加。 ... 文档导入失败：retry.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1114, in __call__
+    return self._mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1118, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1179, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "/Users/rean/github/RAG+Agent/tests/5_1_1 文档加载与批量导入/test_batch_import.py", line 73, in fail_once
+    raise OSError("临时读取失败")
+OSError: 临时读取失败
+ok
+test_same_name_different_content_is_preserved (5_1_1 文档加载与批量导入.test_batch_import.TestBatchImport)
+不同内容的同名文献独立保存，不覆盖旧内容。 ... ok
+test_size_limit (5_1_1 文档加载与批量导入.test_batch_import.TestBatchImport)
+前端之外的调用也核验单份文档大小。 ... 文档导入失败：large.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 80, in batch_import
+    raise ValueError(f"文件过大，单份最大支持 {max_file_size_mb} MB")
+ValueError: 文件过大，单份最大支持 1 MB
+ok
+test_storage_failure_is_retryable (5_1_1 文档加载与批量导入.test_batch_import.TestBatchImport)
+保存位置暂时不可用时记录错误，恢复后可重试成功。 ... 文档导入失败：ok.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 89, in batch_import
+    destination.parent.mkdir(parents=True, exist_ok=True)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/pathlib.py", line 1175, in mkdir
+    self._accessor.mkdir(self, mode)
+NotADirectoryError: [Errno 20] Not a directory: '/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/tmp5q3byt58/raw/71988c4d8e0803ba4519f0b2864c1331c14a1890bf8694e251379177bfedb5c3'
+ok
+test_unsupported_format_and_unsafe_names (5_1_1 文档加载与批量导入.test_batch_import.TestBatchImport)
+路径名和不支持格式记录失败，不写到导入目录之外。 ... 文档导入失败：../escape.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 76, in batch_import
+    raise ValueError("文件名不能包含目录路径")
+ValueError: 文件名不能包含目录路径
+文档导入失败：/tmp/escape.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 76, in batch_import
+    raise ValueError("文件名不能包含目录路径")
+ValueError: 文件名不能包含目录路径
+文档导入失败：folder\escape.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 76, in batch_import
+    raise ValueError("文件名不能包含目录路径")
+ValueError: 文件名不能包含目录路径
+文档导入失败：paper.exe
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 78, in batch_import
+    raise ValueError(f"不支持的文件格式：{Path(name).suffix}")
+ValueError: 不支持的文件格式：.exe
+ok
+test_blank_blocks_do_not_shift_positions (5_1_1 文档加载与批量导入.test_docx_loader.TestDOCXLoader)
+空段落和空表格跳过，但后续段落/表格编号不偏移。 ... ok
+test_damaged_document (5_1_1 文档加载与批量导入.test_docx_loader.TestDOCXLoader)
+损坏文件的解析错误向上传递。 ... ok
+test_document_id_is_stable_shared_and_changes (5_1_1 文档加载与批量导入.test_docx_loader.TestDOCXLoader)
+同文件各块共用内容 ID，重复读取稳定，内容变化后更新。 ... ok
+test_empty_document (5_1_1 文档加载与批量导入.test_docx_loader.TestDOCXLoader)
+仅有空段落和空表格时明确报错。 ... ok
+test_legacy_doc_extension (5_1_1 文档加载与批量导入.test_docx_loader.TestDOCXLoader)
+旧版 .doc 格式需转换后导入。 ... ok
+test_missing_file (5_1_1 文档加载与批量导入.test_docx_loader.TestDOCXLoader)
+缺失文件不会被当成空文档。 ... ok
+test_paragraph_table_order_and_metadata (5_1_1 文档加载与批量导入.test_docx_loader.TestDOCXLoader)
+表格保留在正文原位置，中文段落与单元格内容均可读取。 ... ok
+test_table_empty_cells_and_multiple_paragraphs (5_1_1 文档加载与批量导入.test_docx_loader.TestDOCXLoader)
+空单元格保留分隔符，单元格内的多个段落不丢失。 ... ok
+test_blank_page_does_not_shift_page_numbers (5_1_1 文档加载与批量导入.test_pdf_loader.TestPDFLoader)
+跳过中间空白页仍保留原始物理页码，避免引用错页。 ... ok
+test_chinese_text_and_page_metadata (5_1_1 文档加载与批量导入.test_pdf_loader.TestPDFLoader)
+每页正文与来源完整，页码同时提供索引和展示值。 ... ok
+test_corrupt_pdf_reports_file_error_without_temporary_path (5_1_1 文档加载与批量导入.test_pdf_loader.TestPDFLoader)
+W06损坏内容应明确是PDF文件问题，原始解析异常通过cause保留。 ... ok
+test_damaged_pdf (5_1_1 文档加载与批量导入.test_pdf_loader.TestPDFLoader)
+损坏文件的解析错误向上传递，不返回空列表掩盖失败。 ... ok
+test_document_id_changes_with_file_content (5_1_1 文档加载与批量导入.test_pdf_loader.TestPDFLoader)
+文件内容改变后标识也改变，避免误用旧索引。 ... ok
+test_document_id_is_stable_and_shared (5_1_1 文档加载与批量导入.test_pdf_loader.TestPDFLoader)
+重复导入与文件副本共用内容标识，各页不会随机生成不同 ID。 ... ok
+test_image_only_pdf_is_not_silently_accepted (5_1_1 文档加载与批量导入.test_pdf_loader.TestPDFLoader)
+将文字渲染为图片，验证没有文本层的扫描页不会伪装为导入成功。 ... ok
+test_missing_file (5_1_1 文档加载与批量导入.test_pdf_loader.TestPDFLoader)
+不存在的文件明确报错。 ... ok
+test_password_protected_pdf (5_1_1 文档加载与批量导入.test_pdf_loader.TestPDFLoader)
+需要打开密码的文件明确提示先解密。 ... ok
+test_pdf_parser_uses_bytes_and_does_not_hold_source_file_handle (5_1_1 文档加载与批量导入.test_pdf_loader.TestPDFLoader)
+用真实解析器核对字节加载，避免Windows文件句柄影响临时目录清理。 ... ok
+test_position_sorting (5_1_1 文档加载与批量导入.test_pdf_loader.TestPDFLoader)
+内容流先写下方再写上方时，正文仍按页面位置排序。 ... ok
+test_relative_string_path (5_1_1 文档加载与批量导入.test_pdf_loader.TestPDFLoader)
+字符串相对路径也能加载，来源统一为绝对路径。 ... ok
+test_unsupported_extension (5_1_1 文档加载与批量导入.test_pdf_loader.TestPDFLoader)
+其他加载器的格式不能误入 PDF 解析流程。 ... ok
+test_document_id_is_stable_and_changes (5_1_1 文档加载与批量导入.test_text_loader.TestTextLoader)
+内容指纹由原始字节生成，重复读取稳定，文本变化后更新。 ... ok
+test_empty_or_whitespace_only_file (5_1_1 文档加载与批量导入.test_text_loader.TestTextLoader)
+空字节、仅 BOM 和纯空白都不视为有效内容。 ... ok
+test_invalid_utf8 (5_1_1 文档加载与批量导入.test_text_loader.TestTextLoader)
+不静默替换错误字符，也不猜测 GBK 等其他编码。 ... ok
+test_markdown_preserves_syntax_and_indentation (5_1_1 文档加载与批量导入.test_text_loader.TestTextLoader)
+Markdown 标题、链接、表格和代码块不被转换或清理。 ... ok
+test_missing_file (5_1_1 文档加载与批量导入.test_text_loader.TestTextLoader)
+缺失文件明确报错。 ... ok
+test_unsupported_extension (5_1_1 文档加载与批量导入.test_text_loader.TestTextLoader)
+二进制格式不能被当作纯文本导入。 ... ok
+test_utf8_bom_and_crlf (5_1_1 文档加载与批量导入.test_text_loader.TestTextLoader)
+移除 BOM，但保留 Windows 的 CRLF 换行。 ... ok
+test_utf8_text_and_line_metadata (5_1_1 文档加载与批量导入.test_text_loader.TestTextLoader)
+中文正文保留首尾空白与空行，来源和行号完整。 ... ok
+test_aligned_multiline_numeric_rows_keep_model_units_and_values_together (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+明确模拟PDF网格提取结果；原始单元格仍留在元数据供原页核对。 ... ok
+test_ambiguous_three_line_header_keeps_original_text (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+父表头横跨两个子列时不输出错误结构，正文和原文位置仍保留。 ... ok
+test_below_captions_do_not_attach_to_the_next_table (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+相邻网格表下置标题分别绑定，不能把Table5赋给Table6。 ... ok
+test_chinese_continuation_and_unnumbered_tables (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+中文续表无重复表头时可合并；无编号的独立表不凭同表头合并。 ... ok
+test_continuation_without_repeated_header (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+明确同编号续表可无重复表头，下一页首行数据不可丢失。 ... ok
+test_cross_page_table_merges_rows_and_keeps_row_sources (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+相邻页同一续表合并，重复表头去重，每行记录真实来源页。 ... ok
+test_dense_formula_rows_do_not_leak_into_neighbors (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+上标边缘与邻行相交时，不能向表头或邻行复制残留字符。 ... ok
+test_different_numbered_tables_do_not_merge (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+几何位置和表头相同也不能合并不同编号的独立表。 ... ok
+test_formula_symbols_and_scripts_are_preserved (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+公式符号与上下标保持，不能把 x 的平方压成普通 x2。 ... ok
+test_fraction_layout_retains_original_positions (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+不猜测二维分式的 LaTeX，保留分子/分母位置以回看原文。 ... ok
+test_full_width_separator_between_column_sections (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+页中通栏内容将双栏分为上下区域，避免跨区域串读。 ... ok
+test_image_formula_is_locatable_after_batch_save (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+混合文本页的公式图片保留原文定位，批量保存后仍可裁剪查看。 ... ok
+test_indented_single_column_is_not_reordered (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+上下分离的缩进段落不能被误当作同时并排的两栏。 ... ok
+test_multiline_top_caption_wins_over_next_tables_caption (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+上置标题最后一行最接近本表，不能只按第一行距离改绑下方标题。 ... ok
+test_multiple_table_styles_on_same_page (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+同页网格表与三线表分别保留，不把横线范围或单元格混在一起。 ... ok
+test_nonadjacent_or_incompatible_tables_do_not_merge (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+页码断开、表头或列结构不同、非页边续接均分别保留。 ... ok
+test_three_line_formula_cells_and_header_words (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+多词表头和公式中的间隔不拆成虚假的列。 ... ok
+test_three_line_table_and_empty_cells (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+三线表在规则围出的区域内识别，空单元格不从相邻行填值。 ... ok
+test_three_page_table_keeps_first_caption_identity (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+中间续页不重复标题时，仍保留整张表的编号和第三页数据。 ... ok
+test_two_columns_with_full_width_heading (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+先通栏标题，再完整左栏、完整右栏，最后页脚。 ... ok
+test_unequal_multiline_columns_are_not_guessed_into_rows (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF) ... ok
+test_config_defaults_and_overrides (5_1_2 文本分块策略.test_chunking.TestChunking)
+统一入口读取唯一配置，显式参数可覆盖实验值。 ... ok
+test_empty_documents (5_1_2 文本分块策略.test_chunking.TestChunking)
+空列表、空文本和仅空白文档不生成无效块。 ... ok
+test_fixed_course_sizes (5_1_2 文本分块策略.test_chunking.TestChunking)
+课程规定的 256/512/1024 都可切分，正文长度不超过设置。 ... ok
+test_fixed_exact_overlap (5_1_2 文本分块策略.test_chunking.TestChunking)
+固定窗口按字符数切分，相邻正文块精确重叠。 ... ok
+test_fixed_no_redundant_tail (5_1_2 文本分块策略.test_chunking.TestChunking)
+末尾已被覆盖时不再输出完全包含在上一块中的尾块。 ... ok
+test_image_layout_is_stored_once_per_page_with_stable_source (5_1_2 文本分块策略.test_chunking.TestChunking)
+三种分块不重复整页图片坐标；每页来源独立，重做ID稳定，原文不修改。 ... ok
+test_invalid_parameters (5_1_2 文本分块策略.test_chunking.TestChunking)
+拒绝不合法大小和重叠，避免零步长或负数切片。 ... ok
+test_layout_is_localized_without_losing_cross_chunk_or_unlocated_lines (5_1_2 文本分块策略.test_chunking.TestChunking)
+布局按字符相交保留，跨块公式、重复文本和不在正文的表格坐标均不丢。 ... ok
+test_loaded_text_line_numbers (5_1_2 文本分块策略.test_chunking.TestChunking)
+真实 TXT 加载后细化 CRLF 行范围；块内原文和文件来源保持一致。 ... ok
+test_loaded_word_and_pdf (5_1_2 文本分块策略.test_chunking.TestChunking)
+真实 Word/PDF 加载结果可直接分块，来源位置与表格不丢失。 ... ok
+test_pdf_and_word_tables_remain_whole (5_1_2 文本分块策略.test_chunking.TestChunking)
+独立表格不拆，即使超长也保留跨页行信息和保护标记。 ... ok
+test_preserves_metadata_without_mutating_input (5_1_2 文本分块策略.test_chunking.TestChunking)
+保留 PDF 页码、版面和公式原位置，并复制元数据。 ... ok
+test_ranges_cover_original_content (5_1_2 文本分块策略.test_chunking.TestChunking)
+不同大小和重叠下，区间准确、向前推进，所有非空白字符均被覆盖。 ... ok
+test_recursive_character_fallback (5_1_2 文本分块策略.test_chunking.TestChunking)
+没有分隔符的长文本仍能限长并保留重叠。 ... ok
+test_recursive_paragraph_boundaries (5_1_2 文本分块策略.test_chunking.TestChunking)
+优先按段落分隔符切分，并保留分隔符原文。 ... ok
+test_recursive_repeated_punctuation_advances_and_covers_source (5_1_2 文本分块策略.test_chunking.TestChunking)
+默认重叠下，短重复分隔符不能回指旧片段或漏掉句号。 ... ok
+test_semantic_chinese_sentences_and_quotes (5_1_2 文本分块策略.test_chunking.TestChunking)
+长段落拆句，结束引号与标点跟随原句。 ... ok
+test_semantic_complete_unit_overlap (5_1_2 文本分块策略.test_chunking.TestChunking)
+重叠复用完整句子；不足容纳整句时不截出半句。 ... ok
+test_semantic_english_decimal_and_doi (5_1_2 文本分块策略.test_chunking.TestChunking)
+英文句号可拆句，小数和 DOI 内部的点不误拆。 ... ok
+test_semantic_keeps_paragraphs (5_1_2 文本分块策略.test_chunking.TestChunking)
+短段落整体保留，空行跟随原段落。 ... ok
+test_semantic_long_sentence_fallback (5_1_2 文本分块策略.test_chunking.TestChunking)
+超长单句按字符兜底，最后短片段不丢失。 ... ok
+test_short_document (5_1_2 文本分块策略.test_chunking.TestChunking)
+短文档保持原文，包括缩进与尾部换行。 ... ok
+test_stable_distinct_chunk_ids (5_1_2 文本分块策略.test_chunking.TestChunking)
+重复执行 ID 不变，重复正文在不同页/段落及不同配置中不会混淆。 ... ok
+test_unknown_strategy (5_1_2 文本分块策略.test_chunking.TestChunking)
+未知策略明确报错，不悄悄回退。 ... ok
+test_all_formats_complete_index_and_keep_sources (5_1_3 向量化与存储.test_batch_index.TestBatchIndex)
+四类真实文件完成整个流程，只有写入索引后才标记成功。 ... ok
+test_delete_waits_for_import_and_removes_its_last_write (5_1_3 向量化与存储.test_batch_index.TestBatchIndex)
+阻塞真实入库编码，再并发删除；删除完成后不能留下迟到块。 ... ok
+test_deleted_loaded_task_cannot_resume_old_index (5_1_3 向量化与存储.test_batch_index.TestBatchIndex)
+已加载任务被删除后，旧任务重试不能利用内存正文复活索引。 ... ok
+test_empty_content_after_loading_is_not_index_success (5_1_3 向量化与存储.test_batch_index.TestBatchIndex)
+加载后没有有效分块不能算索引成功；保留原文供用户核对。 ... ok
+test_index_error_keeps_loaded_file_and_retry_skips_loading (5_1_3 向量化与存储.test_batch_index.TestBatchIndex)
+一个索引错误不阻断下一文档，重试保留加载结果并跳过成功任务。 ... ok
+test_loaded_documents_can_be_indexed_without_reload (5_1_3 向量化与存储.test_batch_index.TestBatchIndex)
+原始加载接口的成功任务也可继续进入索引阶段。 ... ok
+test_loading_failures_and_empty_batch_do_not_initialize_model (5_1_3 向量化与存储.test_batch_index.TestBatchIndex)
+空批次/解码失败无需模型，也不创建索引；加载错误仍可有界重试。 ... 文档导入失败：bad.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+文档导入失败：bad.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+ok
+test_new_document_keeps_old_index_and_only_encodes_new (5_1_3 向量化与存储.test_batch_index.TestBatchIndex)
+新增一篇文献保留旧块，重新构造客户端不重算旧向量。 ... ok
+test_partial_batch_failure_only_retries_missing_chunks (5_1_3 向量化与存储.test_batch_index.TestBatchIndex)
+第 501 块故障后保留前 500 块，下一次只编码剩余块。 ... ok
+test_repeated_and_recreated_tasks_do_not_encode_old_chunks (5_1_3 向量化与存储.test_batch_index.TestBatchIndex)
+页面重跑跳过完成任务，重新上传相同原文也不重新编码。 ... ok
+test_size_boundary_rejects_before_parse_and_keeps_next_valid_document (5_1_3 向量化与存储.test_batch_index.TestBatchIndex)
+真实PDF刚好1MiB可入库；超1字节先拒绝，重试不污染已有向量。 ... 文档导入失败：too_large.pdf
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 80, in batch_import
+    raise ValueError(f"文件过大，单份最大支持 {max_file_size_mb} MB")
+ValueError: 文件过大，单份最大支持 1 MB
+文档导入失败：too_large.pdf
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 80, in batch_import
+    raise ValueError(f"文件过大，单份最大支持 {max_file_size_mb} MB")
+ValueError: 文件过大，单份最大支持 1 MB
+ok
+test_stage_progress_and_interrupted_index_resume (5_1_3 向量化与存储.test_batch_index.TestBatchIndex)
+观察分块/索引阶段；进度中断后可恢复，不误标为成功。 ... ok
+test_alias_conflict_never_opens_another_index (5_1_3 向量化与存储.test_chroma_path.TestChromaPath) ... ok
+test_other_path_error_is_not_treated_as_untrusted_mount (5_1_3 向量化与存储.test_chroma_path.TestChromaPath) ... ok
+test_other_platform_keeps_original_path (5_1_3 向量化与存储.test_chroma_path.TestChromaPath) ... ok
+test_unicode_alias_is_same_index_and_reused (5_1_3 向量化与存储.test_chroma_path.TestChromaPath) ... ok
+test_unicode_temp_path_is_rejected_without_creating_index (5_1_3 向量化与存储.test_chroma_path.TestChromaPath) ... ok
+test_untrusted_alias_uses_new_verified_entry_without_removing_old (5_1_3 向量化与存储.test_chroma_path.TestChromaPath)
+Windows 448只更换当前进程入口；原入口及原索引都保留。 ... ok
+test_untrusted_conflicting_target_is_rejected (5_1_3 向量化与存储.test_chroma_path.TestChromaPath)
+入口报448仍须核验不跟随的目标字符串，不能换入口后掩盖冲突。 ... ok
+test_windows_ascii_path_needs_no_alias (5_1_3 向量化与存储.test_chroma_path.TestChromaPath) ... ok
+test_hit_recall_and_mrr_cutoffs (5_1_3 向量化与存储.test_embeddings.TestEmbeddingEvaluation)
+排名六的相关项不算 Hit@5，排名十一的项不算 MRR@10。 ... ok
+test_language_groups_use_equal_weight_macro_average (5_1_3 向量化与存储.test_embeddings.TestEmbeddingEvaluation)
+问题数不等时宏平均仍等权，并保留表现较差的语言组。 ... ok
+test_local_loading_and_normalization_arguments (5_1_3 向量化与存储.test_embeddings.TestLocalEmbeddings)
+只从本地目录加载，关闭远程代码，文档编码开启归一化。 ... ok
+test_missing_model_does_not_initialize_remote_client (5_1_3 向量化与存储.test_embeddings.TestLocalEmbeddings)
+缺少权重明确报错，不构造模型客户端或回退在线模式。 ... ok
+test_parallel_first_load_constructs_only_once (5_1_3 向量化与存储.test_embeddings.TestLocalEmbeddings)
+三线程同时首次调用，构造器只执行一次；失败不锁死后续请求。 ... ok
+test_repeated_calls_reuse_model (5_1_3 向量化与存储.test_embeddings.TestLocalEmbeddings)
+多次调用复用已加载模型，不在每次提问时加载权重。 ... ok
+test_changed_original_is_not_replaced_with_stale_snapshot (5_1_3 向量化与存储.test_index_repair.TestIndexRepair) ... ok
+test_failed_encoding_keeps_original_and_refuses_existing_output (5_1_3 向量化与存储.test_index_repair.TestIndexRepair) ... ok
+test_locked_target_rolls_back_directory_replacement (5_1_3 向量化与存储.test_index_repair.TestIndexRepair) ... ok
+test_native_label_damage_is_rebuilt_verified_after_restart_and_backed_up (5_1_3 向量化与存储.test_index_repair.TestIndexRepair) ... ok
+test_blank_query_does_not_read_database (5_1_3 向量化与存储.test_vector_store.TestVectorStore)
+空问题直接结束，不依赖数据库连接或查询编码。 ... ok
+test_changed_model_or_index_parameters_are_rejected (5_1_3 向量化与存储.test_vector_store.TestVectorStore) ... ok
+test_chroma_receives_alias_without_resolving_it_back (5_1_3 向量化与存储.test_vector_store.TestVectorStore)
+实际客户端保留英文入口；对外目录仍为原索引，便于状态旁注核对。 ... ok
+test_cosine_order_and_negative_score (5_1_3 向量化与存储.test_vector_store.TestVectorStore) ... ok
+test_default_top_k_and_query_change_without_reembedding_documents (5_1_3 向量化与存储.test_vector_store.TestVectorStore)
+默认 K 来自配置；新查询只编码问题，沿用持久化文档向量。 ... ok
+test_delete_document_and_repeat_delete (5_1_3 向量化与存储.test_vector_store.TestVectorStore) ... ok
+test_document_filter_and_top_k (5_1_3 向量化与存储.test_vector_store.TestVectorStore) ... ok
+test_duplicate_import_does_not_encode_again (5_1_3 向量化与存储.test_vector_store.TestVectorStore) ... ok
+test_empty_store_and_empty_query (5_1_3 向量化与存储.test_vector_store.TestVectorStore) ... ok
+test_filtered_search_uses_persisted_vectors_without_hnsw (5_1_3 向量化与存储.test_vector_store.TestVectorStore)
+小文档过滤绕开HNSW图；使用已有向量，不能重算文档或返回其他文档。 ... ok
+test_incremental_import_only_encodes_new_chunks (5_1_3 向量化与存储.test_vector_store.TestVectorStore) ... ok
+test_invalid_ids_are_rejected_before_any_write (5_1_3 向量化与存储.test_vector_store.TestVectorStore) ... ok
+test_missing_hnsw_label_recovers_only_selected_document_without_writing (5_1_3 向量化与存储.test_vector_store.TestVectorStore)
+Windows复测：原文可读但向量Label缺失，只读临时恢复并保留来源与提示。 ... ok
+test_readonly_operations_do_not_load_model (5_1_3 向量化与存储.test_vector_store.TestVectorStore)
+只读正文、重复块和无有效向量查询无需权重，真正查询才加载。 ... ok
+test_real_text_loading_and_batches_over_500 (5_1_3 向量化与存储.test_vector_store.TestVectorStore) ... ok
+test_recovery_model_failure_is_not_an_empty_result (5_1_3 向量化与存储.test_vector_store.TestVectorStore)
+恢复依赖同版本本地模型，编码失败仍上报，原文和块数保留。 ... ok
+test_recovery_rechecks_current_text_and_returns_to_persisted_vectors (5_1_3 向量化与存储.test_vector_store.TestVectorStore)
+块ID和数量相同但正文替换时重新编码；标签恢复后优先读持久化向量。 ... 持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+ok
+test_reopen_preserves_content_without_reembedding (5_1_3 向量化与存储.test_vector_store.TestVectorStore) ... ok
+test_repeated_recovery_queries_reuse_document_vectors_only_in_current_instance (5_1_3 向量化与存储.test_vector_store.TestVectorStore)
+对比中的六次查询只编码一篇正文一次；新实例仍重新核验和恢复。 ... 持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+ok
+test_same_text_in_different_documents_keeps_both_sources (5_1_3 向量化与存储.test_vector_store.TestVectorStore) ... ok
+test_text_and_source_roundtrip (5_1_3 向量化与存储.test_vector_store.TestVectorStore) ... ok
+test_unrelated_vector_error_is_not_hidden_by_recovery (5_1_3 向量化与存储.test_vector_store.TestVectorStore)
+只匹配已复现的Label异常，其他读取故障必须保留。 ... ok
+test_chinese_academic_query_matches_english_position_terms (5_1_4 混合检索与重排序.test_bm25.TestBM25Retriever)
+英文论文的位置编码可以通过中英学术术语匹配，原文不修改。 ... ok
+test_chinese_and_source_preservation (5_1_4 混合检索与重排序.test_bm25.TestBM25Retriever)
+中文单字组合可检索，对应原文、位置和稳定 ID 全部保留。 ... ok
+test_default_k_override_and_document_filter (5_1_4 混合检索与重排序.test_bm25.TestBM25Retriever)
+继承存储配置 K；文档过滤先于截断，分数仍基于完整语料。 ... ok
+test_empty_and_punctuation_only_corpus (5_1_4 混合检索与重排序.test_bm25.TestBM25Retriever)
+空库和全无词语料不构造 BM25，混入标点块不影响有效块查询。 ... ok
+test_empty_and_unknown_queries_do_not_return_unrelated_documents (5_1_4 混合检索与重排序.test_bm25.TestBM25Retriever)
+无匹配时返回空列表，英文术语按词匹配而非子串匹配。 ... ok
+test_fullwidth_pdf_terms_match_without_changing_original_text (5_1_4 混合检索与重排序.test_bm25.TestBM25Retriever)
+全角英文/数字常见于论文 PDF，词项归一化后可查且原文不变。 ... ok
+test_invalid_k_and_database_errors_are_not_hidden (5_1_4 混合检索与重排序.test_bm25.TestBM25Retriever)
+参数错误与正文读取失败直接上报，不静默回退向量查询。 ... ok
+test_rebuild_after_add_delete_and_reopen (5_1_4 混合检索与重排序.test_bm25.TestBM25Retriever)
+新增/删除后从当前正文重建，重开自动恢复，不重新编码文档。 ... ok
+test_same_content_keeps_separate_document_sources (5_1_4 混合检索与重排序.test_bm25.TestBM25Retriever)
+不同来源的相同正文保留各自 ID，供后续按块融合使用。 ... ok
+test_same_corpus_reuses_index_and_same_count_replacement_is_fresh (5_1_4 混合检索与重排序.test_bm25.TestBM25Retriever)
+复用计算而非旧Document：正文同数量替换和仅来源改变也能即时读回。 ... ok
+test_scores_follow_term_frequency_and_length_normalization (5_1_4 混合检索与重排序.test_bm25.TestBM25Retriever)
+用已知词频、文档频次和长度独立计算 BM25 分数，核验排序。 ... ok
+test_tokenize_chinese_english_and_numbers (5_1_4 混合检索与重排序.test_bm25.TestBM25Retriever)
+沿用上游分词，保留完整英文术语，忽略标点，文档/问题统一小写。 ... ok
+test_zero_and_negative_scores_still_keep_keyword_matches (5_1_4 混合检索与重排序.test_bm25.TestBM25Retriever)
+复现上游 >0 过滤的漏检：单文档负分、两文档零分均应命中。 ... ok
+test_blank_query_and_empty_store_do_not_load_model (5_1_4 混合检索与重排序.test_hybrid_retriever.TestHybridRetriever)
+空问题不调用两路，空库不会初始化 Embedding。 ... ok
+test_both_routes_take_candidates_before_final_top_k (5_1_4 混合检索与重排序.test_hybrid_retriever.TestHybridRetriever)
+最终只取 1 个也先各召回 20 个候选，不提前把两路截为 Top-1。 ... ok
+test_default_k_large_k_and_yaml_smoothing (5_1_4 混合检索与重排序.test_hybrid_retriever.TestHybridRetriever)
+默认 K 与存储一致；更大的 K 扩大召回，平滑常数从 YAML 读取。 ... ok
+test_document_filter_and_empty_bm25_route (5_1_4 混合检索与重排序.test_hybrid_retriever.TestHybridRetriever)
+两路共同过滤文档，BM25 无匹配时保留向量路的排名贡献。 ... ok
+test_image_markers_do_not_compete_with_actual_paper_evidence (5_1_4 混合检索与重排序.test_hybrid_retriever.TestHybridRetriever)
+复现W08：图片区的占位描述曾被模型排在1D位置编码原文之前。 ... ok
+test_invalid_parameters_and_route_errors_do_not_silently_degrade (5_1_4 混合检索与重排序.test_hybrid_retriever.TestHybridRetriever)
+参数错误直接拒绝，两路异常明确上报，不能以半成品冒充混合检索。 ... ok
+test_model_reranking_respects_filter_and_empty_results (5_1_4 混合检索与重排序.test_hybrid_retriever.TestHybridRetriever)
+过滤先应用于两路，单条候选也精排；空结果和空问题不加载模型。 ... ok
+test_model_reranks_fused_candidates_before_final_top_k (5_1_4 混合检索与重排序.test_hybrid_retriever.TestHybridRetriever)
+模型先看到融合 Top-20；候选末项也能经模型升到最终 Top-1。 ... ok
+test_output_language_and_citation_suffix_does_not_change_retrieval (5_1_4 混合检索与重排序.test_hybrid_retriever.TestHybridRetriever)
+同一科研问题附加输出要求时，三路使用同一内容问题，避免核心证据掉出候选。 ... ok
+test_output_suffix_cleanup_preserves_content_questions (5_1_4 混合检索与重排序.test_hybrid_retriever.TestHybridRetriever)
+不删除实体、数字、否定、多问句或语言本身作为研究对象的文字。 ... ok
+test_plain_rrf_does_not_load_model_and_model_failure_is_reported (5_1_4 混合检索与重排序.test_hybrid_retriever.TestHybridRetriever)
+不启用精排时不依赖重排权重；启用后失败不得返回未经重排的候选。 ... ok
+test_reused_retriever_reads_current_corpus_after_add_and_delete (5_1_4 混合检索与重排序.test_hybrid_retriever.TestHybridRetriever)
+同一个混合检索实例也读取最新正文，新增和删除后无陈旧 BM25 块。 ... ok
+test_duplicate_within_one_route_counts_only_once (5_1_4 混合检索与重排序.test_hybrid_retriever.TestRRFFusion)
+单路重复不多次加分，保留首次出现的位置，两路贡献仍可叠加。 ... ok
+test_empty_routes_and_zero_smoothing (5_1_4 混合检索与重排序.test_hybrid_retriever.TestRRFFusion)
+单路为空时只使用另一支，双空返回空；k=0 时分母从 1 开始。 ... ok
+test_equal_scores_have_stable_chunk_id_order (5_1_4 混合检索与重排序.test_hybrid_retriever.TestRRFFusion)
+两路交换同分候选的输入顺序，仍按稳定块 ID 打破平分。 ... ok
+test_missing_ids_and_invalid_smoothing_are_rejected (5_1_4 混合检索与重排序.test_hybrid_retriever.TestRRFFusion)
+身份缺失不能退回按正文合并；平滑常数的错误输入明确报错。 ... ok
+test_one_based_rank_formula_and_shared_chunk_bonus (5_1_4 混合检索与重排序.test_hybrid_retriever.TestRRFFusion)
+两路共同命中的块分数累加，第一名贡献为 1/61。 ... ok
+test_raw_score_scale_does_not_affect_fusion (5_1_4 混合检索与重排序.test_hybrid_retriever.TestRRFFusion)
+负分、零分与大数的原始值都不参与 RRF，排名相同则结果相同。 ... ok
+test_same_content_in_different_sources_is_not_merged (5_1_4 混合检索与重排序.test_hybrid_retriever.TestRRFFusion)
+合并键是 chunk_id，正文相同也保留不同文件与页码。 ... ok
+test_long_body_keeps_tail_and_window_boundaries (5_1_4 混合检索与重排序.test_long_reranker.TestLongReranker) ... ok
+test_oversized_query_is_not_silently_truncated (5_1_4 混合检索与重排序.test_long_reranker.TestLongReranker) ... ok
+test_oversized_single_row_is_explicit_error_before_inference (5_1_4 混合检索与重排序.test_long_reranker.TestLongReranker) ... ok
+test_tail_row_scored_with_header_and_actual_excerpt_sent_to_prompt (5_1_4 混合检索与重排序.test_long_reranker.TestLongReranker)
+所有行进入窗口；末行最高分的摘录与引用正文一致，原索引文档不变。 ... ok
+test_failed_loading_is_not_cached_and_can_retry (5_1_4 混合检索与重排序.test_reranker.TestLocalReranker)
+损坏权重错误保留，修复后下次调用重新加载而不是缓存失败。 ... ok
+test_local_loading_and_reuse (5_1_4 混合检索与重排序.test_reranker.TestLocalReranker)
+配置/模型/Tokenizer 均只读本地文件，不执行远程代码，重复调用只加载一次。 ... ok
+test_missing_model_does_not_initialize_remote_client (5_1_4 混合检索与重排序.test_reranker.TestLocalReranker) ... ok
+test_parallel_first_load_constructs_only_once (5_1_4 混合检索与重排序.test_reranker.TestLocalReranker)
+三线程同时首次调用，构造器只执行一次；失败不锁死后续请求。 ... ok
+test_empty_query_or_candidates_do_not_load_model (5_1_4 混合检索与重排序.test_reranker.TestReranker) ... ok
+test_inference_error_is_not_silently_replaced_by_rrf (5_1_4 混合检索与重排序.test_reranker.TestReranker) ... ok
+test_invalid_batch_and_token_length_are_rejected (5_1_4 混合检索与重排序.test_reranker.TestReranker) ... ok
+test_invalid_k_is_rejected_before_loading_model (5_1_4 混合检索与重排序.test_reranker.TestReranker) ... ok
+test_pairs_model_scores_order_and_sources (5_1_4 混合检索与重排序.test_reranker.TestReranker)
+只用模型分数精排，同分保持原候选顺序，正文和来源不修改。 ... ok
+test_score_count_and_nonfinite_values_are_rejected (5_1_4 混合检索与重排序.test_reranker.TestReranker) ... ok
+test_single_candidate_zero_score_and_large_k (5_1_4 混合检索与重排序.test_reranker.TestReranker)
+单候选结果仍为列表，零分保留，K 超出候选数不补齐或重复。 ... ok
+test_empty_annotations_and_duplicate_results_are_errors (5_1_4 混合检索与重排序.test_retrieval_evaluation.TestRetrievalEvaluation) ... ok
+test_multiple_relevant_short_and_empty_results (5_1_4 混合检索与重排序.test_retrieval_evaluation.TestRetrievalEvaluation) ... ok
+test_rank_five_counts_and_rank_six_does_not (5_1_4 混合检索与重排序.test_retrieval_evaluation.TestRetrievalEvaluation) ... ok
+test_sample_ids_and_annotation_membership_are_validated (5_1_4 混合检索与重排序.test_retrieval_evaluation.TestRetrievalEvaluation) ... ok
+test_unequal_groups_and_repeated_timing_are_not_duplicate_queries (5_1_4 混合检索与重排序.test_retrieval_evaluation.TestRetrievalEvaluation) ... ok
+test_blank_answer_is_rejected (5_2_1 Prompt工程与生成策略.test_citations.TestCitations) ... ok
+test_code_examples_and_escaped_markers_are_not_evidence (5_2_1 Prompt工程与生成策略.test_citations.TestCitations) ... ok
+test_context_is_not_modified_by_resolution_or_returned_evidence (5_2_1 Prompt工程与生成策略.test_citations.TestCitations) ... ok
+test_context_references_follow_sorting_and_budget (5_2_1 Prompt工程与生成策略.test_citations.TestCitations) ... ok
+test_cross_page_table_location_is_kept (5_2_1 Prompt工程与生成策略.test_citations.TestCitations) ... ok
+test_empty_context_cannot_resolve_a_document (5_2_1 Prompt工程与生成策略.test_citations.TestCitations) ... ok
+test_inline_pdf_location_and_authoritative_footer (5_2_1 Prompt工程与生成策略.test_citations.TestCitations) ... ok
+test_markdown_characters_in_filename_are_escaped (5_2_1 Prompt工程与生成策略.test_citations.TestCitations) ... ok
+test_missing_source_information_is_flagged (5_2_1 Prompt工程与生成策略.test_citations.TestCitations) ... ok
+test_model_supplied_link_is_not_a_source_link (5_2_1 Prompt工程与生成策略.test_citations.TestCitations) ... ok
+test_real_multi_format_loaders_and_chunks_keep_traceable_positions (5_2_1 Prompt工程与生成策略.test_citations.TestCitations) ... ok
+test_reference_metadata_is_an_independent_snapshot (5_2_1 Prompt工程与生成策略.test_citations.TestCitations) ... ok
+test_truncated_evidence_does_not_include_unseen_tail (5_2_1 Prompt工程与生成策略.test_citations.TestCitations) ... ok
+test_uncited_answer_does_not_add_retrieved_sources (5_2_1 Prompt工程与生成策略.test_citations.TestCitations) ... ok
+test_unknown_ids_are_marked_and_never_assigned_sources (5_2_1 Prompt工程与生成策略.test_citations.TestCitations) ... ok
+test_used_order_repeated_citations_and_unused_blocks (5_2_1 Prompt工程与生成策略.test_citations.TestCitations) ... ok
+test_vector_recovery_notice_survives_citation_resolution (5_2_1 Prompt工程与生成策略.test_citations.TestCitations)
+向量只读恢复不能被答案生成或引用映射静默丢弃。 ... ok
+test_word_and_text_do_not_get_invented_pdf_pages (5_2_1 Prompt工程与生成策略.test_citations.TestCitations) ... ok
+test_config_and_question_validation (5_2_1 Prompt工程与生成策略.test_context.TestContextBuilding) ... ok
+test_empty_and_whitespace_results_use_existing_empty_prompt (5_2_1 Prompt工程与生成策略.test_context.TestContextBuilding) ... ok
+test_exact_limit_keeps_full_block_and_drops_lower_rank (5_2_1 Prompt工程与生成策略.test_context.TestContextBuilding) ... ok
+test_full_text_and_sources_are_preserved (5_2_1 Prompt工程与生成策略.test_context.TestContextBuilding) ... ok
+test_image_only_placeholder_cannot_become_citation_evidence (5_2_1 Prompt工程与生成策略.test_context.TestContextBuilding)
+旧索引、直接候选入口也过滤图片占位；带正文、公式和表格的块保留。 ... ok
+test_inputs_remain_unchanged_after_sorting_and_truncation (5_2_1 Prompt工程与生成策略.test_context.TestContextBuilding) ... ok
+test_missing_metadata_does_not_invent_source_or_page (5_2_1 Prompt工程与生成策略.test_context.TestContextBuilding) ... ok
+test_nonfinite_scores_are_rejected (5_2_1 Prompt工程与生成策略.test_context.TestContextBuilding) ... ok
+test_oversized_header_is_skipped_without_broken_reference_number (5_2_1 Prompt工程与生成策略.test_context.TestContextBuilding) ... ok
+test_question_length_reduces_available_context (5_2_1 Prompt工程与生成策略.test_context.TestContextBuilding) ... ok
+test_real_location_fields_for_each_format (5_2_1 Prompt工程与生成策略.test_context.TestContextBuilding) ... ok
+test_score_order_ties_and_negative_scores (5_2_1 Prompt工程与生成策略.test_context.TestContextBuilding) ... ok
+test_separator_and_all_headers_count_toward_limit (5_2_1 Prompt工程与生成策略.test_context.TestContextBuilding) ... ok
+test_system_prompt_changes_are_included_in_budget (5_2_1 Prompt工程与生成策略.test_context.TestContextBuilding) ... ok
+test_too_small_budget_does_not_report_false_empty_knowledge_base (5_2_1 Prompt工程与生成策略.test_context.TestContextBuilding) ... ok
+test_truncation_prefers_late_sentence_or_paragraph_boundary (5_2_1 Prompt工程与生成策略.test_context.TestContextBuilding) ... ok
+test_unbroken_unicode_text_is_cut_with_visible_marker (5_2_1 Prompt工程与生成策略.test_context.TestContextBuilding) ... ok
+test_unicode_token_budget_preserves_matching_reference_prefix (5_2_1 Prompt工程与生成策略.test_context.TestContextBuilding)
+实际词表裁剪高Token密度正文，引用只含真实送入的前缀。 ... ok
+test_complete_answer_passes_and_footer_does_not_fill_facts (5_2_1 Prompt工程与生成策略.test_generation.TestGenerationEvaluation) ... ok
+test_english_source_footer_is_not_a_body_citation (5_2_1 Prompt工程与生成策略.test_generation.TestGenerationEvaluation) ... ok
+test_equal_weight_summary_with_two_seeds (5_2_1 Prompt工程与生成策略.test_generation.TestGenerationEvaluation) ... ok
+test_incomplete_output_is_not_a_pass (5_2_1 Prompt工程与生成策略.test_generation.TestGenerationEvaluation) ... ok
+test_missing_expected_and_invalid_citations_fail (5_2_1 Prompt工程与生成策略.test_generation.TestGenerationEvaluation) ... ok
+test_template_no_document_notice_counts_as_refusal (5_2_1 Prompt工程与生成策略.test_generation.TestGenerationEvaluation) ... ok
+test_blank_or_unfinished_response_is_rejected (5_2_1 Prompt工程与生成策略.test_generation.TestLocalGeneration) ... ok
+test_broad_question_does_not_focus_away_requested_details (5_2_1 Prompt工程与生成策略.test_generation.TestLocalGeneration) ... ok
+test_cloud_and_non_http_configuration_is_rejected (5_2_1 Prompt工程与生成策略.test_generation.TestLocalGeneration) ... ok
+test_config_reaches_native_ollama_and_citations (5_2_1 Prompt工程与生成策略.test_generation.TestLocalGeneration) ... ok
+test_default_usage_prefers_main_setting_over_high_scored_appendix (5_2_1 Prompt工程与生成策略.test_generation.TestLocalGeneration)
+高分附录消融不能覆盖正文主设置；明确问附录时仍能访问原文。 ... ok
+test_empty_fallback_is_explicit_even_when_model_omits_notice (5_2_1 Prompt工程与生成策略.test_generation.TestLocalGeneration) ... ok
+test_empty_question_does_not_call_network (5_2_1 Prompt工程与生成策略.test_generation.TestLocalGeneration) ... ok
+test_experiment_options_do_not_mutate_config (5_2_1 Prompt工程与生成策略.test_generation.TestLocalGeneration) ... ok
+test_http_failure_has_specific_advice_and_original_cause (5_2_1 Prompt工程与生成策略.test_generation.TestLocalGeneration) ... ok
+test_invalid_sampling_is_rejected_before_network (5_2_1 Prompt工程与生成策略.test_generation.TestLocalGeneration) ... ok
+test_length_stop_is_preserved_for_evaluation (5_2_1 Prompt工程与生成策略.test_generation.TestLocalGeneration) ... ok
+test_narrow_question_focus_excludes_unrelated_object_and_preserves_source (5_2_1 Prompt工程与生成策略.test_generation.TestLocalGeneration)
+位置编码相邻的分类头语句不能一起进入聚焦证据，引用仍为真实连续原文。 ... ok
+test_network_failure_is_explicit_without_fallback (5_2_1 Prompt工程与生成策略.test_generation.TestLocalGeneration) ... ok
+test_token_overflow_is_rejected_before_network (5_2_1 Prompt工程与生成策略.test_generation.TestLocalGeneration)
+稀有Unicode字符的Token数远大于字符数，最终请求不能照常放行。 ... ok
+test_usage_prefers_explicit_operation_over_similarity_visualization (5_2_1 Prompt工程与生成策略.test_generation.TestLocalGeneration)
+Figure7的相似性观察不能代替正文明确的实际使用方式。 ... ok
+test_blank_question_is_rejected (5_2_1 Prompt工程与生成策略.test_prompt.TestRAGPrompt) ... ok
+test_braces_formula_and_markdown_are_not_reformatted (5_2_1 Prompt工程与生成策略.test_prompt.TestRAGPrompt) ... ok
+test_calls_do_not_share_context_or_mutate_previous_messages (5_2_1 Prompt工程与生成策略.test_prompt.TestRAGPrompt) ... ok
+test_dynamic_text_cannot_create_system_messages (5_2_1 Prompt工程与生成策略.test_prompt.TestRAGPrompt) ... ok
+test_empty_context_has_explicit_notice (5_2_1 Prompt工程与生成策略.test_prompt.TestRAGPrompt) ... ok
+test_four_parts_and_message_roles (5_2_1 Prompt工程与生成策略.test_prompt.TestRAGPrompt) ... ok
+test_long_context_and_whitespace_are_preserved (5_2_1 Prompt工程与生成策略.test_prompt.TestRAGPrompt) ... ok
+test_template_variables_match_retrieval_context_contract (5_2_1 Prompt工程与生成策略.test_prompt.TestRAGPrompt) ... ok
+test_bad_response_shape_and_service_error_keep_partial_answer (5_2_2 流式输出与引用.test_streaming.TestStreaming) ... ok
+test_blank_done_is_error_and_done_packet_content_is_not_lost (5_2_2 流式输出与引用.test_streaming.TestStreaming) ... ok
+test_closing_consumer_closes_http_connection_without_reading_rest (5_2_2 流式输出与引用.test_streaming.TestStreaming) ... ok
+test_complete_footer_heading_does_not_warn_about_broken_tail (5_2_2 流式输出与引用.test_streaming.TestStreaming) ... ok
+test_empty_context_and_context_snapshot_remain_explicit (5_2_2 流式输出与引用.test_streaming.TestStreaming) ... ok
+test_empty_notice_is_visible_during_stream_and_in_final_answer (5_2_2 流式输出与引用.test_streaming.TestStreaming) ... ok
+test_english_footer_is_not_counted_as_body_evidence (5_2_2 流式输出与引用.test_streaming.TestStreaming) ... ok
+test_eof_without_done_keeps_partial_text_and_never_returns_done (5_2_2 流式输出与引用.test_streaming.TestStreaming) ... ok
+test_error_categories_provide_retry_advice_without_retry_or_usage (5_2_2 流式输出与引用.test_streaming.TestStreaming) ... ok
+test_every_citation_split_updates_exact_position_before_done (5_2_2 流式输出与引用.test_streaming.TestStreaming) ... ok
+test_first_token_precedes_later_packets_and_uses_streaming_config (5_2_2 流式输出与引用.test_streaming.TestStreaming) ... ok
+test_invalid_request_returns_error_before_network (5_2_2 流式输出与引用.test_streaming.TestStreaming) ... ok
+test_malformed_ndjson_and_server_errors_preserve_prior_text (5_2_2 流式输出与引用.test_streaming.TestStreaming) ... ok
+test_network_failure_is_not_retried_or_returned_as_answer (5_2_2 流式输出与引用.test_streaming.TestStreaming) ... ok
+test_single_character_chunks_keep_code_escape_and_hide_fake_link (5_2_2 流式输出与引用.test_streaming.TestStreaming) ... ok
+test_unfinished_tail_and_length_limit_both_warn (5_2_2 流式输出与引用.test_streaming.TestStreaming) ... ok
+test_unknown_number_is_flagged_at_closing_bracket (5_2_2 流式输出与引用.test_streaming.TestStreaming) ... ok
+test_cache_write_failure_preserves_generated_answer (5_2_3 缓存与降级策略.test_agent_cache.TestAgentCache) ... ok
+test_changed_corpus_or_session_rejects_confirmation_before_generation (5_2_3 缓存与降级策略.test_agent_cache.TestAgentCache) ... ok
+test_confirmation_does_not_approve_a_different_followup_query (5_2_3 缓存与降级策略.test_agent_cache.TestAgentCache) ... ok
+test_confirmation_session_entry_fixes_action_args_and_preserves_memory (5_2_3 缓存与降级策略.test_agent_cache.TestAgentCache) ... ok
+test_confirmed_low_candidate_uses_reviewed_snapshot_without_second_retrieval (5_2_3 缓存与降级策略.test_agent_cache.TestAgentCache) ... ok
+test_corpus_change_invalidates_and_contextual_question_bypasses_cache (5_2_3 缓存与降级策略.test_agent_cache.TestAgentCache) ... ok
+test_exact_and_semantic_hits_skip_retrieval_generation_and_current_tokens (5_2_3 缓存与降级策略.test_agent_cache.TestAgentCache) ... ok
+test_length_stop_is_incomplete_in_tool_and_log_and_never_cached (5_2_3 缓存与降级策略.test_agent_cache.TestAgentCache)
+服务length终止保留部分答案，但工具、日志和缓存均不得认定完成。 ... ok
+test_low_relevance_is_not_cached (5_2_3 缓存与降级策略.test_agent_cache.TestAgentCache) ... ok
+test_other_session_or_document_filter_never_reuses_answer (5_2_3 缓存与降级策略.test_agent_cache.TestAgentCache) ... ok
+test_pending_and_cache_share_start_scope_but_recheck_at_finish (5_2_3 缓存与降级策略.test_agent_cache.TestAgentCache)
+同次请求只计算起止两次范围，结束仍能发现生成期间的语料变化。 ... ok
+test_waiting_observation_does_not_ask_model_to_approve_candidate (5_2_3 缓存与降级策略.test_agent_cache.TestAgentCache) ... ok
+test_cache_input_and_returned_source_snapshots_are_independent (5_2_3 缓存与降级策略.test_cache.TestSemanticCache) ... ok
+test_capacity_eviction_replacement_and_clear (5_2_3 缓存与降级策略.test_cache.TestSemanticCache) ... ok
+test_changed_comparison_or_numeric_sign_and_scale_never_reuses_answer (5_2_3 缓存与降级策略.test_cache.TestSemanticCache)
+真实M3E会忽略比较方向及百分／千分符号，即使同向量也不能复用答案。 ... ok
+test_changed_numbers_models_negation_and_language_never_reuse_identical_vectors (5_2_3 缓存与降级策略.test_cache.TestSemanticCache) ... ok
+test_degraded_answer_is_not_cached_even_after_user_confirmation (5_2_3 缓存与降级策略.test_cache.TestSemanticCache) ... ok
+test_empty_and_blank_requests_never_load_model (5_2_3 缓存与降级策略.test_cache.TestSemanticCache) ... ok
+test_errors_length_missing_or_invalid_sources_and_empty_answers_are_not_stored (5_2_3 缓存与降级策略.test_cache.TestSemanticCache) ... ok
+test_exact_hit_skips_embedding_preserves_answer_and_uses_zero_current_tokens (5_2_3 缓存与降级策略.test_cache.TestSemanticCache) ... ok
+test_invalid_configuration_and_vectors_are_explicit (5_2_3 缓存与降级策略.test_cache.TestSemanticCache) ... ok
+test_long_questions_are_exact_only_to_avoid_embedding_tail_truncation (5_2_3 缓存与降级策略.test_cache.TestSemanticCache) ... ok
+test_scope_change_and_session_instances_are_isolated (5_2_3 缓存与降级策略.test_cache.TestSemanticCache) ... ok
+test_scope_detects_add_delete_same_count_replacement_and_position_changes (5_2_3 缓存与降级策略.test_cache.TestSemanticCache) ... ok
+test_scope_ignores_corpus_order_but_invalidates_prompt_and_model_parameters (5_2_3 缓存与降级策略.test_cache.TestSemanticCache) ... ok
+test_semantic_matching_normalizes_vectors_and_selects_highest_score (5_2_3 缓存与降级策略.test_cache.TestSemanticCache) ... ok
+test_threshold_includes_boundary_and_rejects_lower_score (5_2_3 缓存与降级策略.test_cache.TestSemanticCache) ... ok
+test_empty_and_blank_documents_use_pure_model_mode (5_2_3 缓存与降级策略.test_degradation.TestDegradationContext) ... ok
+test_invalid_scores_and_threshold_never_become_empty_results (5_2_3 缓存与降级策略.test_degradation.TestDegradationContext) ... ok
+test_local_api_bypasses_environment_proxy_in_both_modes (5_2_3 缓存与降级策略.test_degradation.TestDegradationContext) ... ok
+test_low_score_boundary_and_unsorted_top_score (5_2_3 缓存与降级策略.test_degradation.TestDegradationContext) ... ok
+test_relevance_uses_only_chunks_that_fit_context_budget (5_2_3 缓存与降级策略.test_degradation.TestDegradationContext) ... ok
+test_unconfirmed_low_context_cannot_call_either_model_interface (5_2_3 缓存与降级策略.test_degradation.TestDegradationContext) ... ok
+test_agent_corrupted_tail_preserves_new_record_and_rejects_invalid_data (5_2_4 日志与可观测性.test_rag_logging.TestRAGLogging)
+共用写入器后，Agent也必须隔开断电半行，非法快照不能损坏文件。 ... ok
+test_corrupted_tail_is_preserved_and_next_record_remains_readable (5_2_4 日志与可观测性.test_rag_logging.TestRAGLogging) ... ok
+test_daily_files_and_confirmation_snapshots_count_one_request (5_2_4 日志与可观测性.test_rag_logging.TestRAGLogging) ... ok
+test_empty_failed_and_cache_requests_do_not_add_zero_score_samples (5_2_4 日志与可观测性.test_rag_logging.TestRAGLogging) ... ok
+test_full_utf8_record_preserves_original_text_metadata_and_actual_usage (5_2_4 日志与可观测性.test_rag_logging.TestRAGLogging) ... ok
+test_histogram_boundaries_and_model_revisions_are_separate (5_2_4 日志与可观测性.test_rag_logging.TestRAGLogging) ... ok
+test_serialization_failure_does_not_damage_previous_records (5_2_4 日志与可观测性.test_rag_logging.TestRAGLogging) ... ok
+test_threaded_appends_keep_complete_independent_lines (5_2_4 日志与可观测性.test_rag_logging.TestRAGLogging) ... ok
+test_unavailable_tokens_remain_unknown_and_not_called_is_zero (5_2_4 日志与可观测性.test_rag_logging.TestRAGLogging) ... ok
+test_answer_plan_skips_model_and_tool_execution (5_3_1 Agent核心循环.test_action.TestAction) ... ok
+test_closing_after_call_event_does_not_execute_tool (5_3_1 Agent核心循环.test_action.TestAction) ... ok
+test_current_document_filter_cannot_be_omitted_by_action (5_3_1 Agent核心循环.test_action.TestAction)
+最新问题的单个完整ID必须成为检索过滤，不扩展为全库查询。 ... ok
+test_current_paper_id_overrides_model_choice_from_old_history (5_3_1 Agent核心循环.test_action.TestAction)
+复现W09：最新问题指定ViT，模型Action却填了历史DETR的真实ID。 ... ok
+test_empty_multiple_wrong_name_and_non_dict_arguments_do_not_execute (5_3_1 Agent核心循环.test_action.TestAction) ... ok
+test_execution_keeps_selected_tool_when_caller_changes_registry_after_call_event (5_3_1 Agent核心循环.test_action.TestAction) ... ok
+test_executor_rejects_unknown_duplicate_and_non_dict_arguments (5_3_1 Agent核心循环.test_action.TestAction) ... ok
+test_filename_only_rule_search_passes_question_without_model_or_invented_id (5_3_1 Agent核心循环.test_action.TestAction) ... ok
+test_filename_preflight_uses_declared_empty_paper_list_arguments (5_3_1 Agent核心循环.test_action.TestAction)
+复现W01：模型曾把文件名塞入无参数文献列表的query字段。 ... ok
+test_invalid_thought_and_duplicate_tools_do_not_call_model (5_3_1 Agent核心循环.test_action.TestAction) ... ok
+test_keyword_document_filename_preflight_and_alias (5_3_1 Agent核心循环.test_action.TestAction)
+文档关键词入口先查列表，再将唯一文件名映射为真实ID。 ... ok
+test_native_call_executes_selected_tool_and_correlates_messages (5_3_1 Agent核心循环.test_action.TestAction) ... ok
+test_network_failure_and_cloud_configuration_do_not_execute (5_3_1 Agent核心循环.test_action.TestAction) ... ok
+test_no_argument_and_optional_default_tools_execute (5_3_1 Agent核心循环.test_action.TestAction) ... ok
+test_only_selected_tool_is_exposed_even_when_other_tools_are_available (5_3_1 Agent核心循环.test_action.TestAction) ... ok
+test_partial_response_service_errors_and_malformed_json_do_not_execute (5_3_1 Agent核心循环.test_action.TestAction) ... ok
+test_provided_fingerprint_in_question_or_tool_context_keeps_document_filter (5_3_1 Agent核心循环.test_action.TestAction) ... ok
+test_required_type_and_extra_argument_errors_are_tool_results_without_side_effects (5_3_1 Agent核心循环.test_action.TestAction) ... ok
+test_structured_results_and_mutating_tools_preserve_original_parameters (5_3_1 Agent核心循环.test_action.TestAction) ... ok
+test_text_keyword_input_is_not_changed_to_conflicting_document_input (5_3_1 Agent核心循环.test_action.TestAction)
+关键词处理已给定文本时，即使问题提到ID，也不能自动再补doc_id。 ... ok
+test_tool_exception_is_preserved_and_not_retried (5_3_1 Agent核心循环.test_action.TestAction) ... ok
+test_unprovided_or_invalid_fingerprint_never_executes_tool (5_3_1 Agent核心循环.test_action.TestAction) ... ok
+test_closing_loop_and_mutating_events_do_not_execute_or_change_state (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop) ... ok
+test_continue_stops_at_limit_without_extra_model_or_tool_calls (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop) ... ok
+test_direct_answer_finishes_without_tool_calling_request (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop) ... ok
+test_empty_library_notice_survives_observation_rewriting (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop)
+复现W05：工具已声明空库，Observation却只返回纯模型正文。 ... ok
+test_failed_rag_followed_by_missing_metadata_is_not_empty_library (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop)
+f5b26c7真实复测：检索Label失败，元字段缺项不能改写为文档不存在。 ... ok
+test_failed_tool_cannot_be_marked_successful (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop) ... ok
+test_invalid_limits_and_context_stop_before_model_calls (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop) ... ok
+test_missing_information_can_finish_without_claiming_completion (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop) ... ok
+test_model_errors_stop_in_each_stage_and_preserve_actual_results (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop) ... ok
+test_observation_rejects_inconsistent_decisions (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop) ... ok
+test_observation_rejects_partial_malformed_and_service_responses (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop) ... ok
+test_observation_unknown_usage_and_boundary_description (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop) ... ok
+test_observation_validates_state_before_call_and_never_uses_cloud (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop) ... ok
+test_pending_candidates_preserve_vector_recovery_notice (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop)
+等候相关性确认时保留恢复限制，不被固定结束语覆盖。 ... ok
+test_requested_missing_doi_is_explicit_in_final_metadata_answer (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop)
+复现W02：工具已返回DOI缺失，最终回答不得省略用户请求的字段。 ... ok
+test_retrieved_text_without_citation_is_not_rewritten_as_empty_library (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop)
+复现W07：无有效引用不等于检索无文档，保留真实工具状态。 ... ok
+test_single_rag_preserves_citations_after_action_shortens_question (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop)
+单一RAG任务的查询改写不能导致Observation再次生成和丢失引用。 ... ok
+test_single_summary_after_failed_comparison_cannot_complete_original_task (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop)
+W13回归：最后一个摘要成功不代表两篇论文对比已完成。 ... ok
+test_source_url_followed_by_chinese_has_explicit_markdown_boundary (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop)
+W11只修复原文真实URL的裸链接边界，不猜测未知网址。 ... ok
+test_successful_retrieval_after_failure_can_still_report_real_empty_result (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop)
+失败与后续真正空结果不同，不能全面禁止已经核验的空库说明。 ... ok
+test_tool_error_can_continue_to_a_real_alternative (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop) ... ok
+test_tool_failure_is_observed_and_stops_honestly (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop) ... ok
+test_two_real_tools_feed_next_round_and_native_observation_messages (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop) ... ok
+test_all_stages_preserve_actual_tool_description_without_duplicate_schema (5_3_1 Agent核心循环.test_system_prompt.TestAgentSystemPrompt) ... ok
+test_empty_registry_constrains_model_plan_to_answer (5_3_1 Agent核心循环.test_system_prompt.TestAgentSystemPrompt) ... ok
+test_empty_registry_is_explicit_and_does_not_add_planned_production_tools (5_3_1 Agent核心循环.test_system_prompt.TestAgentSystemPrompt) ... ok
+test_large_observation_request_fits_without_mutating_original (5_3_1 Agent核心循环.test_system_prompt.TestAgentSystemPrompt)
+超窗口工具证据只裁剪发送副本，当前问题、真实ID和原始结果保留。 ... ok
+test_long_windows_metadata_preserves_text_positions_and_parameters (5_3_1 Agent核心循环.test_system_prompt.TestAgentSystemPrompt)
+长Windows路径超预算时精简辅助字段，正文、定位和原始日志不改写。 ... ok
+test_native_tool_message_is_json_and_can_fit_full_request_budget (5_3_1 Agent核心循环.test_system_prompt.TestAgentSystemPrompt)
+执行器返回的原生ToolMessage也必须可裁剪，不能只处理Human Context。 ... ok
+test_oversized_current_question_remains_rejected (5_3_1 Agent核心循环.test_system_prompt.TestAgentSystemPrompt)
+当前任务自身超限仍明确拒绝，不能通过删除问题掩盖。 ... ok
+test_small_request_keeps_all_metadata (5_3_1 Agent核心循环.test_system_prompt.TestAgentSystemPrompt)
+未超预算时不改变任何来源字段。 ... ok
+test_unknown_stage_is_rejected_without_model_or_tool_execution (5_3_1 Agent核心循环.test_system_prompt.TestAgentSystemPrompt) ... ok
+test_user_documents_observations_and_thought_cannot_replace_system_rules (5_3_1 Agent核心循环.test_system_prompt.TestAgentSystemPrompt) ... ok
+test_action_reuses_decision_and_validates_args_without_second_http (5_3_1 Agent核心循环.test_thought.TestThought)
+同一次决策同时选工具和参数，校验与实际执行仍在Action。 ... ok
+test_cloud_and_invalid_addresses_are_rejected_before_network (5_3_1 Agent核心循环.test_thought.TestThought) ... ok
+test_direct_answer_without_tools_has_no_tool_calls (5_3_1 Agent核心循环.test_thought.TestThought) ... ok
+test_dynamic_instructions_do_not_change_system_message (5_3_1 Agent核心循环.test_thought.TestThought) ... ok
+test_empty_or_non_text_answer_is_explicit_error (5_3_1 Agent核心循环.test_thought.TestThought) ... ok
+test_input_errors_do_not_call_model (5_3_1 Agent核心循环.test_thought.TestThought) ... ok
+test_invalid_native_tool_decisions_are_rejected (5_3_1 Agent核心循环.test_thought.TestThought) ... ok
+test_local_model_failure_is_not_retried (5_3_1 Agent核心循环.test_thought.TestThought) ... ok
+test_message_roles_tools_schema_and_current_state_are_preserved (5_3_1 Agent核心循环.test_thought.TestThought) ... ok
+test_no_tools_cannot_select_tool (5_3_1 Agent核心循环.test_thought.TestThought) ... ok
+test_plan_only_selects_registered_tool_and_uses_llm_config (5_3_1 Agent核心循环.test_thought.TestThought) ... ok
+test_unfinished_length_stops_service_errors_and_bad_shapes_are_rejected (5_3_1 Agent核心循环.test_thought.TestThought) ... ok
+test_unknown_usage_is_not_estimated (5_3_1 Agent核心循环.test_thought.TestThought) ... ok
+test_agent_action_really_executes_both_registered_utility_tools (5_3_2 工具集开发.test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_calculator_decimal_accuracy_and_precedence (5_3_2 工具集开发.test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_calculator_empty_syntax_length_and_depth_limits (5_3_2 工具集开发.test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_calculator_negative_unary_chinese_and_symbols (5_3_2 工具集开发.test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_calculator_rejects_non_arithmetic_and_unsupported_operators (5_3_2 工具集开发.test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_calculator_zero_division_is_real_input_error (5_3_2 工具集开发.test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_duplicate_content_with_alias_names_is_one_canonical_paper (5_3_2 工具集开发.test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_empty_library_does_not_create_raw_directory_or_chroma (5_3_2 工具集开发.test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_index_deletion_updates_list_and_preserves_uploaded_source (5_3_2 工具集开发.test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_index_read_error_propagates_instead_of_reporting_empty_library (5_3_2 工具集开发.test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_missing_original_keeps_index_record_with_explicit_status (5_3_2 工具集开发.test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_partial_index_means_has_chunks_not_complete_import (5_3_2 工具集开发.test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_real_index_counts_chunks_without_loading_embedding_or_querying (5_3_2 工具集开发.test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_real_tools_route_correctly_and_paper_fact_queries_still_use_rag (5_3_2 工具集开发.test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_registry_has_eight_unique_local_tools_with_real_schemas (5_3_2 工具集开发.test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_same_name_different_content_keeps_distinct_paper_ids (5_3_2 工具集开发.test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_source_corruption_and_symlink_escape_are_not_fake_empty_lists (5_3_2 工具集开发.test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_unrelated_raw_files_are_not_uploaded_papers (5_3_2 工具集开发.test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_uploaded_not_indexed_paper_has_usable_id_and_name (5_3_2 工具集开发.test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_utility_tools_validate_arguments_without_model_or_network (5_3_2 工具集开发.test_calculator_paper_list.TestCalculatorAndPaperList) ... ok
+test_adjacent_prefix_cannot_displace_retrieved_dataset_evidence (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords)
+前置邻块不能占满维度预算；实际模型输入须保留已命中的数据集正文。 ... ok
+test_comparison_balances_budget_and_reports_truncated_evidence (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_comparison_deduplicates_chunks_without_mutating_source (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_comparison_dimension_low_score_cannot_be_hidden_by_paper_top_score (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_comparison_filters_each_paper_and_covers_three_dimensions (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_comparison_low_relevance_cannot_generate_or_auto_confirm (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_comparison_missing_one_paper_citation_is_warned (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_comparison_missing_paper_takes_priority_over_other_paper_low_score (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_comparison_network_failure_is_a_real_error_without_retry (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_comparison_preserves_vector_recovery_notice_in_answer_and_confirmation (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords)
+重建对比Context和低相关确认不能丢掉临时向量恢复限制。 ... ok
+test_comparison_reads_and_scores_opening_chunks_with_real_reranker_contract (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_comparison_rejects_wrong_paper_ids_missing_fields_and_partial_model_choice (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_comparison_same_missing_or_invalid_id_fails_before_retrieval (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_comparison_unindexed_paper_has_no_model_fallback (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_cropped_abstract_replaces_stale_method_coverage_and_score (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords)
+裁剪后摘要必须按方法重排，不能借用同块的数据集分数或旧缺失状态。 ... ok
+test_dimension_budget_keeps_lower_scored_method_evidence (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords)
+不同查询的分数不能混排挤掉已召回的主方法；总预算仍不放宽。 ... ok
+test_insufficient_comparison_cannot_be_marked_complete (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_keyword_cross_line_phrase_has_real_line_evidence (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_keyword_deduplication_empty_result_and_unknown_usage (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_keyword_document_uses_uploaded_original_and_locations (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_keyword_invalid_expanded_or_embedded_terms_are_rejected (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_keyword_question_preserves_bilingual_terms_and_evidence (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_keyword_rejects_ambiguous_empty_and_invalid_input_before_model (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_keyword_truncation_does_not_accept_terms_outside_input (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_keyword_unfinished_malformed_and_network_response_fails (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_low_comparison_confirmation_reuses_reviewed_candidates (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords)
+确认只复用本会话、同索引版本的证据；不二次检索更换原文。 ... ok
+test_low_method_dimension_exposes_confirmation_without_auto_generation (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords)
+整篇高分不能绕过方法低分；复用现有候选确认入口，确认后不换证据。 ... ok
+test_method_evidence_keeps_adjacent_actual_architecture_text (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords)
+孤立背景块补入同原文相邻块，避免本篇方法只剩背景概述。 ... ok
+test_new_tools_have_real_registered_parameter_schemas (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_numeric_excerpt_keeps_pretraining_and_dataset_metric_relation (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_numeric_result_below_chart_rank_is_recalled_without_neighbor_truncation (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords)
+Top-2是图轴时继续检查Top-20，完整数值原文不能被扩展前缀截断。 ... ok
+test_observation_schema_prevents_empty_finish_seen_in_real_keyword_call (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords) ... ok
+test_qualitative_excerpt_explicitly_reports_missing_experiment_numbers (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords)
+W04节选只有定性结果时，不把年份或页码当成实验指标数值。 ... ok
+test_related_work_fallback_cannot_enter_result_selection (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords)
+即使其他维度或定性回退召回前人结果，模型结果编号也不能选择它。 ... ok
+test_related_work_result_cannot_be_selected_as_this_paper_result (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords)
+Windows复测：相关工作中的72%属于前人模型，不能用于本篇实验对比。 ... ok
+test_result_after_related_work_section_remains_available (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords)
+按章节位置排除前人结果；同页后续实验及其他论文不受影响。 ... ok
+test_table_tail_with_numbers_and_caption_is_not_complete_result (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords)
+实测Table5尾块没有模型列，caption中的accuracy不能把孤立数字变成完整结果。 ... ok
+test_truncated_result_does_not_display_isolated_model_scores (5_3_2 工具集开发.test_comparison_keywords.TestComparisonAndKeywords)
+上下文截断后不能只列半行数值，丢失模型、数据集和对应列。 ... ok
+test_default_agent_can_execute_registered_rag_and_preserve_citations (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_generation_failure_is_real_tool_error_without_retry (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_main_rag_stream_disconnect_keeps_partial_and_marks_incomplete (5_3_2 工具集开发.test_research_tools.TestResearchTools)
+主链未收到done时不能完成或覆盖部分正文，真实会话保存失败状态。 ... ok
+test_metadata_abstract_word_inside_sentence_is_not_a_heading (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_metadata_character_budget_preserves_contiguous_prefix (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_metadata_hallucinated_author_year_or_doi_is_rejected (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_metadata_inline_abstract_punctuation_keeps_original_body (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_metadata_missing_fields_are_null_not_guessed_from_filename (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_metadata_rejects_invalid_types_ranges_and_extra_fields (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_metadata_returns_original_fields_and_real_evidence (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_metadata_reuses_pdf_and_word_loaders_with_real_locations (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_metadata_unfinished_or_malformed_model_results_do_not_return_partial_fields (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_metadata_unknown_usage_stays_unknown_and_cloud_is_rejected (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_rag_completes_same_page_dataset_sentence_and_rescores_actual_text (5_3_2 工具集开发.test_research_tools.TestResearchTools)
+复现Windows中JFT数量跨块缺失；补连续正文、重排，仍不改原索引。 ... ok
+test_rag_does_not_mark_failed_unit_conversion_as_answered (5_3_2 工具集开发.test_research_tools.TestResearchTools)
+HTTP仅为错误报文替身；工具状态必须阻止Agent把失败结论计为完成。 ... ok
+test_rag_empty_library_preserves_explicit_fallback_notice (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_rag_filters_by_existing_uploaded_fingerprint (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_rag_logging_failure_warns_without_discarding_actual_answer (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_rag_low_relevance_returns_candidates_without_generation (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_rag_stream_emits_before_tool_finishes_and_saves_only_final_answer (5_3_2 工具集开发.test_research_tools.TestResearchTools)
+核心RAG真实读取NDJSON，首包在末包之前进入会话事件，最终才保存整轮。 ... ok
+test_rag_tool_keeps_sources_without_repeating_large_pdf_layout (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_rag_tool_logs_success_confirmation_and_model_error_with_real_usage (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_rag_uses_hybrid_rerank_and_real_module_two_citations (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_rag_validates_question_and_uploaded_document_before_retrieval (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_recovered_vector_notice_is_kept_for_answers_and_pending_candidates (5_3_2 工具集开发.test_research_tools.TestResearchTools)
+正常答案和低相关确认都显示索引恢复提示；低相关仍不启动生成。 ... ok
+test_registry_contains_real_tools_with_schemas (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_unconfirmed_rag_candidates_cannot_be_marked_complete (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_unknown_fingerprint_stale_file_and_outside_symlink_never_call_model (5_3_2 工具集开发.test_research_tools.TestResearchTools) ... ok
+test_current_time_is_real_timezone_aware_and_uses_no_model (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_current_time_uses_system_timezone_without_hardcoding (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_default_agent_registers_enabled_search_and_explicit_empty_stays_empty (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_disabled_search_is_not_registered_and_cannot_call_http (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_missing_section_is_explicit_and_cannot_complete_task (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_search_challenge_or_unrecognized_page_is_error (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_search_distinguishes_legitimate_empty_results (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_search_empty_query_rejected_before_network (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_search_http_error_is_not_empty_result (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_search_parses_top_five_titles_snippets_and_unwraps_redirects (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_search_registration_reads_current_boolean_switch (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_search_skips_invalid_links_and_allows_missing_snippet (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_search_timeout_is_execution_error_without_retry (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_summary_api_failure_is_tool_error_without_retry (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_summary_generates_four_sections_with_true_sources_and_usage (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_summary_omits_author_only_chunks_before_abstract (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_summary_preserves_pdf_physical_page_and_word_paragraph (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... Consider using the pymupdf_layout package for a greatly improved page layout analysis.
+warning: The `fitz` API is deprecated and will be removed in future. Use `import pymupdf` instead.
+ok
+test_summary_prioritizes_conclusion_and_reports_truncation (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_summary_rejects_empty_loaded_content_before_model (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_summary_rejects_incomplete_or_invalid_model_packets (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_summary_rejects_malformed_sections_and_fabricated_references (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_summary_rejects_unknown_or_changed_uploaded_ids_before_model (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_summary_unknown_tokens_are_not_zero (5_3_2 工具集开发.test_summary_time_search.TestSummaryTimeSearch) ... ok
+test_agent_deadline_stops_without_observation_model_or_next_round (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_all_alternatives_fail_and_stop_without_reusing_failed_tools (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_alternating_cycle_is_also_stopped (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_closing_batch_does_not_wait_or_allow_late_retry (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_completed_timeout_retries_once_and_preserves_both_attempts (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_deadline_returns_before_worker_exits_and_ignores_late_result (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_deadline_workers_remain_bounded_across_requests (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery)
+连续请求的迟到线程仍占共享执行额度，不能每次超时再开一条线程。 ... ok
+test_different_arguments_and_separate_requests_are_not_a_cycle (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_execution_error_forces_alternative_planning_and_preserves_failed_result (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_exhausted_timeout_can_use_alternative (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_exhausted_timeout_returns_real_error_without_third_attempt (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_expired_request_never_starts_delayed_first_attempt (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery)
+线程已提交但未进入工具时请求到期，之后恢复调度不能再启动首次调用。 ... ok
+test_failed_tool_cannot_be_reselected_in_recovery_round (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_input_error_does_not_force_unrelated_alternative (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_invalid_recovery_limits_stop_before_model_or_tools (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_late_timeout_does_not_start_background_retry (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_no_alternative_reports_failure_and_does_not_invent_tools (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_no_suitable_alternative_finishes_incomplete_without_a_tool (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_non_timeout_input_or_execution_error_is_not_retried (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_parallel_timeout_preserves_success_and_shared_deadline (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_recovery_cannot_exceed_last_iteration (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_retry_can_be_disabled (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_same_call_is_stopped_before_third_execution (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_unrecovered_answer_cannot_claim_completion (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_wrapped_timeout_is_classified_without_guessing_from_text (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_ambiguous_dependent_negated_and_existing_state_fall_back (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_answer_plan_finishes_or_reports_insufficient_information_without_empty_loop (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_batch_cannot_omit_selected_tool_or_mismatch_primary_name (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_batch_limit_duplicate_ids_and_invalid_config_are_rejected (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_batch_supports_different_selected_tools_only (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_calculator_rule_requires_actual_registered_tool (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_call_compare_results_is_not_a_dependent_use_of_results (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel)
+Windows现场：调用工具比较实验结果，不能误判为使用前一步结果。 ... ok
+test_clear_question_types_route_only_to_registered_tools_without_model (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_closing_during_batch_call_events_starts_no_tools (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_error_or_confirmation_anywhere_in_current_batch_cannot_complete (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_explicit_tool_does_not_hide_second_semantic_intent (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_explicit_tool_names_and_two_papers_use_same_tool_batch (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_general_concept_routes_to_answer_but_paper_question_uses_knowledge (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_individual_failure_preserves_other_independent_result (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_invalid_batch_protocol_rejected_before_any_execution (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_loop_observes_entire_batch_and_preserves_native_input_order (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_missing_or_disabled_tools_fall_back_without_fake_registry (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_native_batch_has_one_ai_message_two_linked_results_and_one_usage (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_rule_only_applies_to_first_round (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_rule_path_skips_thought_model_but_keeps_action_and_observation (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_same_tool_two_inputs_reuse_decision_without_second_request (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_serial_path_and_single_call_keep_true_results_and_order (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_structural_contribution_requires_evidence_without_literal_paper_word (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel)
+科研事实不能因省略“论文”二字跳过证据；不硬编码论文名称或答案。 ... ok
+test_thought_binds_registered_tools_once_with_parallel_limit (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_thought_rejects_unknown_or_excessive_native_calls (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_two_threads_reach_barrier_and_return_stable_order (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_agent_receives_summary_as_data_in_all_stages_not_old_original_history (5_3_4 多轮对话记忆管理.test_conversation_summary.TestConversationSummary) ... ok
+test_below_threshold_no_summary_or_model_call (5_3_4 多轮对话记忆管理.test_conversation_summary.TestConversationSummary) ... ok
+test_clear_during_generation_discards_stale_summary_and_returns_empty_context (5_3_4 多轮对话记忆管理.test_conversation_summary.TestConversationSummary) ... ok
+test_incremental_compression_merges_previous_summary_only_with_new_old_pairs (5_3_4 多轮对话记忆管理.test_conversation_summary.TestConversationSummary) ... ok
+test_invalid_and_partial_responses_keep_archive_and_do_not_commit (5_3_4 多轮对话记忆管理.test_conversation_summary.TestConversationSummary) ... ok
+test_invalid_summary_settings_refused_before_model_call (5_3_4 多轮对话记忆管理.test_conversation_summary.TestConversationSummary) ... ok
+test_large_archive_uses_bounded_complete_pairs_and_three_call_limit (5_3_4 多轮对话记忆管理.test_conversation_summary.TestConversationSummary) ... ok
+test_model_timeout_preserves_previous_summary_and_retries_next_request (5_3_4 多轮对话记忆管理.test_conversation_summary.TestConversationSummary) ... ok
+test_native_prompt_schema_local_endpoint_and_input_output_limits (5_3_4 多轮对话记忆管理.test_conversation_summary.TestConversationSummary) ... ok
+test_oversized_single_source_is_not_silently_truncated_or_marked_compressed (5_3_4 多轮对话记忆管理.test_conversation_summary.TestConversationSummary) ... ok
+test_owned_clear_removes_summary_and_history_but_other_session_stays (5_3_4 多轮对话记忆管理.test_conversation_summary.TestConversationSummary) ... ok
+test_persistent_summary_reused_without_repeated_model_call (5_3_4 多轮对话记忆管理.test_conversation_summary.TestConversationSummary) ... ok
+test_simultaneous_summaries_cannot_overwrite_same_boundary (5_3_4 多轮对话记忆管理.test_conversation_summary.TestConversationSummary) ... ok
+test_smaller_budget_omits_whole_summary_without_destroying_saved_text (5_3_4 多轮对话记忆管理.test_conversation_summary.TestConversationSummary) ... ok
+test_summary_and_recent_history_share_real_token_budget (5_3_4 多轮对话记忆管理.test_conversation_summary.TestConversationSummary) ... ok
+test_summary_database_failure_rolls_back_without_losing_raw_history (5_3_4 多轮对话记忆管理.test_conversation_summary.TestConversationSummary) ... ok
+test_summary_request_contains_no_other_user_or_same_user_other_session (5_3_4 多轮对话记忆管理.test_conversation_summary.TestConversationSummary) ... ok
+test_threshold_replaces_only_old_pairs_and_keeps_full_archive (5_3_4 多轮对话记忆管理.test_conversation_summary.TestConversationSummary) ... ok
+test_agent_sends_only_window_in_every_actual_request_and_keeps_original_archive (5_3_4 多轮对话记忆管理.test_history_window.TestHistoryTokenWindow) ... ok
+test_empty_history_uses_zero_budget_even_with_minimum_limit (5_3_4 多轮对话记忆管理.test_history_window.TestHistoryTokenWindow) ... ok
+test_exact_limit_keeps_all_and_one_token_less_removes_complete_oldest_turn (5_3_4 多轮对话记忆管理.test_history_window.TestHistoryTokenWindow) ... ok
+test_invalid_limits_refused_before_model_or_archive_changes (5_3_4 多轮对话记忆管理.test_history_window.TestHistoryTokenWindow) ... ok
+test_missing_tokenizer_refuses_model_without_network_or_character_fallback (5_3_4 多轮对话记忆管理.test_history_window.TestHistoryTokenWindow) ... ok
+test_one_oversized_latest_turn_leaves_empty_window_without_orphan_answer (5_3_4 多轮对话记忆管理.test_history_window.TestHistoryTokenWindow) ... ok
+test_other_model_cannot_silently_use_qwen_tokenizer (5_3_4 多轮对话记忆管理.test_history_window.TestHistoryTokenWindow) ... ok
+test_over_limit_keeps_contiguous_recent_pairs_and_recounts_exact_suffix (5_3_4 多轮对话记忆管理.test_history_window.TestHistoryTokenWindow) ... ok
+test_oversized_old_turn_is_removed_and_recent_formula_citation_unchanged (5_3_4 多轮对话记忆管理.test_history_window.TestHistoryTokenWindow) ... ok
+test_reopened_manager_and_changed_budget_recompute_window_without_losing_archive (5_3_4 多轮对话记忆管理.test_history_window.TestHistoryTokenWindow) ... ok
+test_runtime_count_needs_no_network_or_llm (5_3_4 多轮对话记忆管理.test_history_window.TestHistoryTokenWindow) ... ok
+test_token_count_matches_real_qwen_json_not_character_count (5_3_4 多轮对话记忆管理.test_history_window.TestHistoryTokenWindow) ... ok
+test_under_budget_keeps_original_roles_content_order_and_archive (5_3_4 多轮对话记忆管理.test_history_window.TestHistoryTokenWindow) ... ok
+test_window_isolated_from_same_user_other_session_and_other_user (5_3_4 多轮对话记忆管理.test_history_window.TestHistoryTokenWindow) ... ok
+test_agent_foreign_access_fails_before_any_model_or_tool_call (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_agent_persistence_failure_does_not_emit_successful_done_or_save_half_turn (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_agent_request_context_is_fresh_and_does_not_reuse_prior_tool_state (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_agent_requests_only_current_session_history_and_saves_finished_pair (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_clear_only_current_owned_session_and_keep_identifier (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_closing_agent_stream_saves_no_incomplete_turn (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_completed_response_timing_matches_reopened_history_and_log (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation)
+落盘耗时不能让实时页与刷新后的同一请求使用不同指标。 ... ok
+test_concurrent_agent_requests_keep_model_context_history_and_logs_owned (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation)
+真实Agent/SQLite/日志并发；仅模型HTTP构造，屏障要求两请求同时到达。 ... ok
+test_default_manager_uses_configured_path (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_different_users_keep_independent_history (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_foreign_session_read_append_and_clear_are_rejected_without_changes (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_incomplete_answer_is_saved_as_real_response_without_claiming_success (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_invalid_identity_or_message_does_not_save_half_turn (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_messages_keep_role_order_unicode_formula_and_markdown (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_new_python_process_restores_persistent_history (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_new_sessions_are_unique_empty_and_owned_lists_include_no_foreign_session (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_reopening_manager_restores_both_users_without_shared_message_cache (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_returned_message_mutation_does_not_modify_store_or_other_session (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_same_session_concurrent_appends_do_not_overwrite_or_split_turns (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_same_user_different_sessions_have_independent_history (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_second_insert_failure_rolls_back_entire_turn (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_sql_metacharacters_are_literal_identity_values (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_threads_and_manager_instances_append_owned_sessions_without_cross_contamination (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_unknown_session_is_not_implicitly_created (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_all_stages_receive_same_history_summary_and_rag_references (5_4_1 RAG与Agent深度融合.test_memory_context.TestAgentMemoryContext) ... ok
+test_direct_message_history_is_usable_by_react_and_done_is_json_ready (5_4_1 RAG与Agent深度融合.test_memory_context.TestAgentMemoryContext) ... ok
+test_invalid_context_stops_before_model_and_tool_io (5_4_1 RAG与Agent深度融合.test_memory_context.TestAgentMemoryContext) ... ok
+test_invalid_history_roles_and_intermediate_calls_are_not_archived (5_4_1 RAG与Agent深度融合.test_memory_context.TestAgentMemoryContext) ... ok
+test_langchain_and_native_role_history_normalize_to_same_snapshot (5_4_1 RAG与Agent深度融合.test_memory_context.TestAgentMemoryContext) ... ok
+test_native_messages_keep_roles_tool_name_and_argument_copy (5_4_1 RAG与Agent深度融合.test_memory_context.TestAgentMemoryContext) ... ok
+test_plain_dict_and_multimodal_native_messages_are_rejected (5_4_1 RAG与Agent深度融合.test_memory_context.TestAgentMemoryContext) ... ok
+test_rag_and_agent_native_requests_use_identical_message_conversion (5_4_1 RAG与Agent深度融合.test_memory_context.TestAgentMemoryContext) ... ok
+test_reopened_memory_context_keeps_budget_and_other_users_out (5_4_1 RAG与Agent深度融合.test_memory_context.TestAgentMemoryContext) ... ok
+test_two_round_public_entry_uses_memory_for_calculator_action (5_4_1 RAG与Agent深度融合.test_memory_context.TestAgentMemoryContext) ... ok
+test_disabled_latest_request_finishes_incomplete_without_tools (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting) ... ok
+test_disabled_latest_request_with_history_still_skips_all_io (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting) ... ok
+test_disabled_search_never_routes_latest_query_to_local_rag (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting) ... ok
+test_disabled_search_policy_uses_actual_registry (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting) ... ok
+test_enabled_search_policy_reports_availability (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting) ... ok
+test_enabled_search_runs_real_parser_without_touching_rag (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting) ... ok
+test_existing_context_and_negation_are_not_overridden (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting) ... ok
+test_existing_local_and_general_concept_routes_still_work (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting) ... ok
+test_explicit_current_document_and_tool_route_despite_old_history (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting)
+复现W09/W10：不能把新指定文档或强制检索替换为旧答案。 ... ok
+test_explicit_registered_tool_is_not_replaced_by_freshness (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting) ... ok
+test_external_search_phrases_route_when_enabled (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting) ... ok
+test_filename_preflight_continues_to_requested_knowledge_tool (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting) ... ok
+test_grounded_rag_without_valid_citations_is_not_completed (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting) ... ok
+test_latest_external_papers_route_to_enabled_search (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting) ... ok
+test_local_scope_beats_freshness_words (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting) ... ok
+test_missing_or_ambiguous_filename_does_not_search_other_documents (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting) ... ok
+test_missing_tools_do_not_create_fake_routes (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting) ... ok
+test_mixed_local_and_external_sources_need_model_planning (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting) ... ok
+test_named_local_file_content_routes_to_search_with_or_without_history (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting)
+复现Windows代号问题：TXT文件名本身就是本地资料目标。 ... ok
+test_rag_action_observation_keeps_actual_sources_and_calls_retrieval_once (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting) ... ok
+test_search_failure_cannot_recover_via_local_old_papers (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting) ... ok
+test_source_policy_is_present_in_all_stages (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting) ... ok
+test_windows_named_file_question_lists_then_searches_same_document (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting)
+走完整循环；列表之后不能重新选择关键词或元数据工具。 ... ok
+test_failure_and_timeout_cannot_report_zero_tokens (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetrics) ... ok
+test_invalid_usage_is_not_zero_or_negative_consumption (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetrics) ... ok
+test_memory_summary_only_counts_current_calls_and_request_ids_change (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetrics) ... ok
+test_missing_usage_preserves_known_part_and_unknown_total (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetrics) ... ok
+test_no_retrieval_samples_do_not_show_zero_percent (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetrics) ... ok
+test_parallel_action_only_once_and_tool_usage_separate (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetrics) ... ok
+test_pending_generation_is_not_a_finished_response_latency (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetrics) ... ok
+test_rag_result_records_returned_count_and_real_retrieval_time (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetrics) ... ok
+test_retrieval_hit_rate_excludes_cache_not_called_and_failure (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetrics) ... ok
+test_retry_does_not_claim_only_final_usage_as_total (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetrics) ... ok
+test_rule_and_non_model_tool_can_report_true_zero (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetrics) ... ok
+test_snapshot_does_not_mutate_previous_event_or_input (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetrics) ... ok
+test_cancel_delete_archive_restore_preserve_history (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetricsEntryAndPage) ... 2026-10-09 01:56:45.446 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_central_chat_survives_rerun_without_duplicate_or_graph (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetricsEntryAndPage)
+中央展示真实问答且无轨迹图；页面重跑不重复生成或追加历史。 ... 2026-10-09 01:56:46.726 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_close_after_first_event_logs_partial_request_without_half_turn (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetricsEntryAndPage) ... ok
+test_delete_database_failure_keeps_current_session_and_retry_works (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetricsEntryAndPage) ... 2026-10-09 01:56:47.234 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_display_ids_are_short_without_changing_saved_events (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetricsEntryAndPage)
+轨迹/JSON仅显示前八位，持久化的调用和参数仍为完整ID。 ... 2026-10-09 01:56:47.624 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_failed_summary_is_not_hidden_from_request_usage (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetricsEntryAndPage) ... ok
+test_last_deleted_session_is_replaced_and_foreign_url_is_not_loaded (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetricsEntryAndPage) ... 2026-10-09 01:56:47.975 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 01:56:48.149 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_log_failure_does_not_destroy_successful_answer (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetricsEntryAndPage) ... ok
+test_new_switch_and_followup_use_only_selected_history (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetricsEntryAndPage)
+新会话无旧轨迹；切回A后续问的Context只包含A原始问答。 ... 2026-10-09 01:56:48.476 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_page_direct_answer_has_trace_and_no_tool_rate (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetricsEntryAndPage) ... 2026-10-09 01:56:49.218 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_page_is_lazy_and_shows_tool_tokens_without_reexecuting_on_rerun (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetricsEntryAndPage) ... 2026-10-09 01:56:49.487 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_page_shows_round_trace_stats_and_actual_error_without_reexecution (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetricsEntryAndPage) ... 2026-10-09 01:56:49.826 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_page_unknown_usage_and_incomplete_answer_are_both_visible (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetricsEntryAndPage) ... 2026-10-09 01:56:50.176 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_refresh_keeps_identity_history_incomplete_status_and_trace (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetricsEntryAndPage) ... 2026-10-09 01:56:50.514 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 01:56:50.786 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_session_log_trace_is_incremental_and_request_isolated (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetricsEntryAndPage) ... ok
+test_session_persists_incremental_metrics_identity_and_answer (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetricsEntryAndPage) ... ok
+test_switch_and_new_session_reset_delete_confirmation (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetricsEntryAndPage)
+切换或新建会话取消待删除状态，不能误删另一会话。 ... 2026-10-09 01:56:50.987 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_deadline_failure_preserves_background_pending_fact (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentTraceMetrics) ... ok
+test_missing_or_invalid_time_is_not_reported_as_zero (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentTraceMetrics) ... ok
+test_no_tools_and_skipped_action_keep_no_samples (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentTraceMetrics) ... ok
+test_parallel_pending_calls_do_not_enter_success_rate_denominator (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentTraceMetrics) ... ok
+test_real_completed_timeout_retry_keeps_attempts_and_one_success (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentTraceMetrics) ... ok
+test_real_parallel_calls_keep_ids_modes_and_individual_time (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentTraceMetrics) ... ok
+test_retry_success_is_one_call_and_not_task_completion (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentTraceMetrics) ... ok
+test_same_tool_different_ids_and_duplicate_snapshot_count_once (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentTraceMetrics) ... ok
+test_snapshots_and_new_requests_do_not_share_trace (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentTraceMetrics) ... ok
+test_trace_keeps_all_parallel_actions_and_public_fields_only (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentTraceMetrics) ... ok
+test_cloud_or_wrong_provider_is_rejected_without_network (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheck) ... ok
+test_connection_failure_does_not_skip_database_check (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheck) ... ok
+test_corrupt_sqlite_file_is_reported_as_database_error (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheck) ... ok
+test_database_heartbeat_failure_keeps_independent_llm_status (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheck) ... ok
+test_existing_empty_database_is_available_not_missing (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheck) ... ok
+test_health_uses_same_index_alias_as_business_client (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheck)
+不能在中文原路径另开一个Chroma客户端；英文入口指向同一索引。 ... ok
+test_http_error_and_redirect_do_not_report_reachable_service (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheck) ... ok
+test_index_version_or_parameters_mismatch_is_not_available (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheck) ... ok
+test_invalid_directory_or_backend_is_reported_as_database_error (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheck) ... ok
+test_invalid_json_or_model_list_is_error_not_model_missing (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheck) ... ok
+test_missing_collection_never_creates_a_new_collection (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheck) ... ok
+test_missing_index_never_creates_directory_or_database (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheck) ... ok
+test_model_without_tag_matches_latest_only (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheck) ... ok
+test_network_timeout_has_friendly_error_and_three_second_limit (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheck) ... ok
+test_nonempty_database_keeps_chunks_metadata_and_no_embedding_calls (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheck) ... ok
+test_reachable_service_missing_configured_model_is_not_ready (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheck) ... ok
+test_failed_llm_and_missing_index_are_visible_independently (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheckPage) ... 2026-10-09 01:56:51.969 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_manual_check_shows_both_results_and_rerun_does_not_probe_again (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheckPage) ... 2026-10-09 01:56:52.224 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_missing_model_and_database_failure_are_not_green (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheckPage) ... 2026-10-09 01:56:52.616 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_page_startup_shows_sidebar_status_and_rerun_reuses_snapshot (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheckPage) ... 2026-10-09 01:56:52.868 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_close_during_stream_closes_network_without_final_event (5_4_3 前端与会话管理.test_agent_streaming.TestAgentStreaming) ... ok
+test_disconnect_keeps_partial_but_does_not_complete (5_4_3 前端与会话管理.test_agent_streaming.TestAgentStreaming) ... ok
+test_length_cutoff_and_invalid_finish_are_not_success (5_4_3 前端与会话管理.test_agent_streaming.TestAgentStreaming) ... ok
+test_null_message_keeps_partial_and_closes_response (5_4_3 前端与会话管理.test_agent_streaming.TestAgentStreaming)
+损坏的分包不能抛出未处理异常，也不能把已输出片段当完整答案。 ... ok
+test_partial_parser_does_not_leak_json_or_observation (5_4_3 前端与会话管理.test_agent_streaming.TestAgentStreaming) ... ok
+test_stream_tokens_do_not_duplicate_token_cost_or_trace (5_4_3 前端与会话管理.test_agent_streaming.TestAgentStreaming) ... ok
+test_tokens_arrive_before_last_packet_and_response_closes (5_4_3 前端与会话管理.test_agent_streaming.TestAgentStreaming) ... ok
+test_cache_and_confirmation_reuse_are_not_new_retrieval_samples (5_4_3 前端与会话管理.test_chat_streaming.TestConversationStatistics) ... ok
+test_shared_action_does_not_assign_tokens_twice_and_pending_is_visible (5_4_3 前端与会话管理.test_chat_streaming.TestConversationStatistics) ... ok
+test_skipped_action_precedes_observation (5_4_3 前端与会话管理.test_chat_streaming.TestConversationStatistics) ... ok
+test_totals_rates_and_unknown_legacy_samples (5_4_3 前端与会话管理.test_chat_streaming.TestConversationStatistics) ... ok
+test_agent_history_renders_separate_source_buttons_for_parallel_calls (5_4_3 前端与会话管理.test_chat_streaming.TestStreamingFrontend) ... 2026-10-09 01:56:53.242 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 01:56:53.474 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_comparison_confirmation_runs_real_tool_and_agent_completion (5_4_3 前端与会话管理.test_chat_streaming.TestStreamingFrontend)
+页面确认贯通真实工具、Agent与会话；仅模型HTTP和索引版本为受控样例。 ... 2026-10-09 01:56:53.535 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 01:56:53.700 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 01:56:53.700 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 01:56:53.820 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_low_candidate_confirm_and_cancel_do_not_rely_on_model_permission (5_4_3 前端与会话管理.test_chat_streaming.TestStreamingFrontend) ... 2026-10-09 01:56:54.042 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 01:56:54.207 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 01:56:54.208 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 01:56:54.323 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 01:56:54.323 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_rag_cache_is_bound_to_current_session_and_passed_to_agent (5_4_3 前端与会话管理.test_chat_streaming.TestStreamingFrontend) ... 2026-10-09 01:56:54.583 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_same_document_page_has_one_source_button_per_answer (5_4_3 前端与会话管理.test_chat_streaming.TestStreamingFrontend)
+W08同页多块引用只展示一个原文按钮，不合并不同内容ID的同名文档。 ... 2026-10-09 01:56:54.880 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 01:56:55.044 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_session_switch_invalidates_pending_candidates (5_4_3 前端与会话管理.test_chat_streaming.TestStreamingFrontend) ... 2026-10-09 01:56:55.103 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 01:56:55.266 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 01:56:55.266 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_stream_exception_preserves_partial_answer_and_failed_round (5_4_3 前端与会话管理.test_chat_streaming.TestStreamingFrontend) ... 2026-10-09 01:56:55.387 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_three_tabs_and_inline_chat_input_replace_single_rag (5_4_3 前端与会话管理.test_chat_streaming.TestStreamingFrontend) ... 2026-10-09 01:56:55.816 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_two_turns_clear_input_keep_history_and_accumulate_once (5_4_3 前端与会话管理.test_chat_streaming.TestStreamingFrontend) ... 2026-10-09 01:56:55.983 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_unknown_usage_stays_unknown_and_new_session_resets_statistics (5_4_3 前端与会话管理.test_chat_streaming.TestStreamingFrontend) ... 2026-10-09 01:56:56.355 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_rejects_paths_wrong_pages_changed_and_deleted_sources (5_4_3 前端与会话管理.test_citation_page.TestCitationPage) ... ok
+test_rejects_symlink (5_4_3 前端与会话管理.test_citation_page.TestCitationPage) ... ok
+test_returns_actual_second_page_and_unchanged_pdf (5_4_3 前端与会话管理.test_citation_page.TestCitationPage) ... ok
+test_container_service_requires_container_and_never_accepts_cloud (5_4_3 前端与会话管理.test_citation_page.TestContainerLocalAddress) ... ok
+test_environment_override_does_not_modify_yaml (5_4_3 前端与会话管理.test_citation_page.TestContainerLocalAddress) ... ok
+test_archive_restore_keeps_turn_citations_and_summary (5_4_3 前端与会话管理.test_conversation_history.TestConversationHistory) ... ok
+test_archive_title_keeps_owner_check_and_supports_agent_rag_empty (5_4_3 前端与会话管理.test_conversation_history.TestConversationHistory)
+归档仅开放本用户标题；完整历史和执行仍要求先恢复。 ... ok
+test_deleted_session_rejects_reads_writes_and_generation (5_4_3 前端与会话管理.test_conversation_history.TestConversationHistory) ... ok
+test_invalid_details_never_save_half_turn (5_4_3 前端与会话管理.test_conversation_history.TestConversationHistory) ... ok
+test_old_database_migration_keeps_ids_messages_and_summary (5_4_3 前端与会话管理.test_conversation_history.TestConversationHistory) ... ok
+test_page_replays_legacy_rag_and_agent_without_generation (5_4_3 前端与会话管理.test_conversation_history.TestConversationHistory)
+旧RAG正文进入页面，保持来源记录；重绘不执行工具或生成。 ... 2026-10-09 01:56:56.711 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_rag_and_trace_do_not_enter_agent_context_and_clear_is_scoped (5_4_3 前端与会话管理.test_conversation_history.TestConversationHistory) ... ok
+test_archive_conflict_preserves_source (5_4_3 前端与会话管理.test_document_management.TestDocumentManagement) ... ok
+test_missing_source_never_deletes_index (5_4_3 前端与会话管理.test_document_management.TestDocumentManagement) ... ok
+test_original_parse_reused_without_sharing_results_or_hiding_changes (5_4_3 前端与会话管理.test_document_management.TestDocumentManagement)
+重绘复用解析，返回对象独立；原文改变或回收后不得显示缓存旧资料。 ... ok
+test_read_complete_text_and_markdown_without_index (5_4_3 前端与会话管理.test_document_management.TestDocumentManagement) ... ok
+test_read_pdf_keeps_both_pages (5_4_3 前端与会话管理.test_document_management.TestDocumentManagement) ... ok
+test_read_rejects_missing_changed_and_symlink_sources (5_4_3 前端与会话管理.test_document_management.TestDocumentManagement) ... ok
+test_read_word_preserves_paragraph_and_table (5_4_3 前端与会话管理.test_document_management.TestDocumentManagement) ... ok
+test_reject_path_and_symlink (5_4_3 前端与会话管理.test_document_management.TestDocumentManagement) ... ok
+test_restore_rejects_changed_content_and_no_overwrite (5_4_3 前端与会话管理.test_document_management.TestDocumentManagement) ... ok
+test_unindexed_list_delete_restore_without_creating_database (5_4_3 前端与会话管理.test_document_management.TestDocumentManagement) ... ok
+test_archive_selection_restores_only_selected_document (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+归档区选择另一份原文，恢复按钮只重建所选文档。 ... 2026-10-09 01:56:56.863 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_batch_upload_progress_state_and_rerun (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+实际操作上传/按钮，核验混合结果、完整进度和重跑不重复执行。 ... 2026-10-09 01:56:57.700 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 01:56:57.866 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+文档导入失败：bad.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+文档导入失败：bad.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+ok
+test_bm25_database_error_is_visible_and_retryable (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+语料读取异常明确提示，恢复后重新提交可查，不静默切换检索方式。 ... 2026-10-09 01:56:58.273 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_bm25_search_reflects_upload_and_delete (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+上传后每次查询读取当前语料，新文档立即可查，已删除文档不再出现。 ... 2026-10-09 01:56:58.581 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_bm25_search_without_model_and_with_document_filter (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+页面 BM25 不加载权重，单文献负分仍展示正文、位置与 ID。 ... 2026-10-09 01:56:59.306 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_delete_only_selected_document_keeps_other_index_and_progress (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+删除一份文献不会清空全库，保留任务的进度与真实列表一致。 ... 2026-10-09 01:56:59.614 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_eight_character_document_filter_uses_full_identity (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+真实上传文献的八位ID可检索，重名简写拒绝执行，完整ID仍有效。 ... 2026-10-09 01:57:00.169 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_failed_upload_recovers_and_disables_retry (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+页面通过失败按钮恢复成功，之后重试按钮禁用且文献存在。 ... 2026-10-09 01:57:00.746 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+文档导入失败：retry.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1114, in __call__
+    return self._mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1118, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1173, in _execute_mock_call
+    raise effect
+OSError: 暂时失败
+ok
+test_filtered_vector_label_recovery_displays_warning_and_real_source (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+页面实际经Chroma读取Label异常恢复，提示限制并展示原文行号。 ... 2026-10-09 01:57:01.118 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，未修改原索引；原索引完整性仍待核验。
+ok
+test_knowledge_panel_content_alias_keeps_both_batch_results (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+同内容异名按指纹合并，仍保留一个成功和另一个失败的实际结果。 ... 2026-10-09 01:57:01.372 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_knowledge_panel_empty_is_read_only (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+空库显示真实零值，刷新不会建向量库、编码或改变当前会话。 ... 2026-10-09 01:57:01.760 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_knowledge_panel_index_error_is_unknown_not_zero (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+索引不可读不显示正常空库或捏造零统计，修复后刷新重新读取。 ... 2026-10-09 01:57:01.986 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_knowledge_panel_missing_source_and_external_index_change (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+只剩索引时明确原文缺失；外部移除块后刷新显示未向量化，不沿用旧批次成功。 ... 2026-10-09 01:57:02.421 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_knowledge_panel_partial_index_does_not_claim_import_success (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+第二批失败时面板显示实际500块，左侧保留失败详情，重试补全。 ... 2026-10-09 01:57:02.938 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 01:57:03.344 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_knowledge_panel_tracks_failed_unindexed_and_refresh (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+成功与写入失败并存，刷新后磁盘状态仍准确但不补造本页批次结果。 ... 2026-10-09 01:57:03.612 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 01:57:03.938 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_knowledge_selection_shows_full_original_and_short_id (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+两份原文切换只展示选中文件，删除后不遗留另一份文件的内容。 ... 2026-10-09 01:57:04.270 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_layout_library_delete_cancel_restore (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+真实页面上传、取消删除、删除和恢复均核验原文及Chroma。 ... 2026-10-09 01:57:04.929 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_library_persists_without_upload_and_failure_keeps_original (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+页面重载读全库；索引删除失败会回滚原文且允许重试。 ... 2026-10-09 01:57:05.782 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-09 01:57:06.100 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_model_error_keeps_file_and_retry_completes_index (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+缺失本地模型时不误报成功，恢复模型后仅重试索引。 ... 2026-10-09 01:57:06.384 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_model_reranking_displays_new_order_score_and_sources (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+页面使用模型分数重新排列，保留 Word 段落与 TXT 行范围。 ... 2026-10-09 01:57:06.839 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_model_reranking_empty_cases_and_error_recovery (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+空问题/空库无需模型，模型缺失或推理失败有错误提示，修复后可重新提交。 ... 2026-10-09 01:57:07.092 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_model_reranking_uploaded_document_filter_and_delete (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+新文献可精排，文档 ID 限定在模型评分前生效，删除后不加载重排模型。 ... 2026-10-09 01:57:07.584 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_new_upload_is_incremental_and_repeat_upload_skips_encoding (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+改变文件选择新增文献，重新选原文也不重算已有向量。 ... 2026-10-09 01:57:08.253 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_oversized_upload_shows_failure_and_valid_file_still_indexes (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+AppTest绕过浏览器大小限制，验证20MiB后端保护与页面失败/重试状态。 ... 2026-10-09 01:57:08.847 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+文档导入失败：oversized.pdf
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 80, in batch_import
+    raise ValueError(f"文件过大，单份最大支持 {max_file_size_mb} MB")
+ValueError: 文件过大，单份最大支持 20 MB
+文档导入失败：oversized.pdf
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 80, in batch_import
+    raise ValueError(f"文件过大，单份最大支持 {max_file_size_mb} MB")
+ValueError: 文件过大，单份最大支持 20 MB
+ok
+test_restore_index_failure_can_retry (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+回收原文恢复后模型失败，不冒充入库成功；现有失败重试补全索引。 ... 2026-10-09 01:57:09.357 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_retry_keeps_new_unimported_selection (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+重试旧失败文件时，不清空用户新选但尚未导入的其他文件。 ... 2026-10-09 01:57:10.023 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+文档导入失败：old.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1114, in __call__
+    return self._mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1118, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1173, in _execute_mock_call
+    raise effect
+OSError: 暂时失败
+ok
+test_retry_separates_current_progress_from_cumulative_results (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+六份混合导入后只重试两份，当前2/2与累计4成功2失败分别标明。 ... 2026-10-09 01:57:10.635 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+文档导入失败：bad-a.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+文档导入失败：bad-b.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xfe in position 0: invalid start byte
+文档导入失败：bad-a.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+文档导入失败：bad-b.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xfe in position 0: invalid start byte
+ok
+test_rrf_empty_input_empty_store_and_model_error (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+空问题/空库无需权重；有数据但模型失败不静默改为 BM25。 ... 2026-10-09 01:57:11.087 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_rrf_search_after_upload_and_database_recovery (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+新上传文档参加两路召回，数据库异常恢复后可查，删除过滤无陈旧块。 ... 2026-10-09 01:57:11.528 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_rrf_search_displays_fused_score_and_original_source (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+页面切换混合检索，共同命中的块排序提高，并保留 Word 位置。 ... 2026-10-09 01:57:12.267 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_sidebar_titles_and_upload_label_are_consistent (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+三个侧栏标题同用header，上传组件更名但保持批量能力。 ... 2026-10-09 01:57:12.519 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_vector_search_blank_input_and_empty_index (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+启动/空问题不初始化模型，空库明确提示且不计算查询向量。 ... 2026-10-09 01:57:12.690 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_vector_search_document_filter_and_non_pdf_locations (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+文档过滤生效，Word 显示段落/表格、TXT 显示行号，不伪造页码。 ... 2026-10-09 01:57:13.113 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_vector_search_errors_are_visible_and_retryable (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+模型/数据库失败明确报错，修复后重新提交可检索，不当作空库。 ... 2026-10-09 01:57:13.490 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_vector_search_uses_persisted_index_and_top_k (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+页面没有上传任务也能查旧库，展示排序、跨页来源与负相似度。 ... 2026-10-09 01:57:13.865 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_workbench_tabs_keep_features_in_their_sections (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+三个工作区分别承载问答、检索和原文管理。 ... 2026-10-09 01:57:14.266 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_all_required_papers_are_covered (5_5_2 系统性能评估.test_system_evaluation.EvaluationMetricTests) ... ok
+test_comparison_needs_correct_paper_ids (5_5_2 系统性能评估.test_system_evaluation.EvaluationMetricTests) ... ok
+test_cross_page_block_includes_evidence_page (5_5_2 系统性能评估.test_system_evaluation.EvaluationMetricTests) ... ok
+test_failure_keeps_denominator_and_unknown_tokens (5_5_2 系统性能评估.test_system_evaluation.EvaluationMetricTests) ... ok
+test_no_tool_and_unrelated_tool_are_wrong (5_5_2 系统性能评估.test_system_evaluation.EvaluationMetricTests) ... ok
+test_page_number_requires_same_paper (5_5_2 系统性能评估.test_system_evaluation.EvaluationMetricTests) ... ok
+test_paper_list_alone_does_not_answer_fact (5_5_2 系统性能评估.test_system_evaluation.EvaluationMetricTests) ... ok
+test_same_page_is_not_counted_twice (5_5_2 系统性能评估.test_system_evaluation.EvaluationMetricTests) ... ok
+test_second_rank_has_reciprocal_half (5_5_2 系统性能评估.test_system_evaluation.EvaluationMetricTests) ... ok
+test_sixth_rank_does_not_count (5_5_2 系统性能评估.test_system_evaluation.EvaluationMetricTests) ... ok
+test_incomplete_decision_is_not_turned_into_success (5_5_3 Bad Case分析与优化.test_bad_case_regression.TestCitationRetention) ... ok
+test_insufficient_evidence_cannot_be_marked_complete (5_5_3 Bad Case分析与优化.test_bad_case_regression.TestCitationRetention) ... ok
+test_missing_citations_or_fallback_keeps_observation_answer (5_5_3 Bad Case分析与优化.test_bad_case_regression.TestCitationRetention) ... ok
+test_multi_tool_or_multi_step_never_substitutes_single_answer (5_5_3 Bad Case分析与优化.test_bad_case_regression.TestCitationRetention) ... ok
+test_partial_or_different_question_keeps_observation_answer (5_5_3 Bad Case分析与优化.test_bad_case_regression.TestCitationRetention) ... ok
+test_real_f001_preserves_source_filename_and_physical_pages (5_5_3 Bad Case分析与优化.test_bad_case_regression.TestCitationRetention) ... ok
+test_exact_filename_and_stem_resolve_only_from_successful_list (5_5_3 Bad Case分析与优化.test_bad_case_regression.TestPaperIdentifiers) ... ok
+test_failed_list_does_not_authorize_alias_resolution (5_5_3 Bad Case分析与优化.test_bad_case_regression.TestPaperIdentifiers) ... ok
+test_knowledge_filename_resolves_from_real_list_and_keeps_filter (5_5_3 Bad Case分析与优化.test_bad_case_regression.TestPaperIdentifiers) ... ok
+test_knowledge_filename_with_history_lists_before_action (5_5_3 Bad Case分析与优化.test_bad_case_regression.TestPaperIdentifiers) ... ok
+test_knowledge_unknown_or_failed_list_cannot_authorize_filename (5_5_3 Bad Case分析与优化.test_bad_case_regression.TestPaperIdentifiers) ... ok
+test_missing_ids_plan_lists_before_comparing (5_5_3 Bad Case分析与优化.test_bad_case_regression.TestPaperIdentifiers) ... ok
+test_real_identifiers_are_not_replaced (5_5_3 Bad Case分析与优化.test_bad_case_regression.TestPaperIdentifiers) ... ok
+test_unknown_or_ambiguous_alias_is_not_guessed (5_5_3 Bad Case分析与优化.test_bad_case_regression.TestPaperIdentifiers) ... ok
+test_combined_task_and_unrelated_tool_do_not_early_finish (5_5_3 Bad Case分析与优化.test_bad_case_regression.TestStructuredToolRetention) ... ok
+test_comparison_keeps_all_dimensions_and_limitations (5_5_3 Bad Case分析与优化.test_bad_case_regression.TestStructuredToolRetention) ... ok
+test_complete_summary_finishes_without_model_continuation (5_5_3 Bad Case分析与优化.test_bad_case_regression.TestStructuredToolRetention) ... ok
+test_confirmed_compare_call_preserves_report_without_second_generation (5_5_3 Bad Case分析与优化.test_bad_case_regression.TestStructuredToolRetention)
+调用＋实验结果曾误入模型观察，真实报告超预算；确认结果应直接保留。 ... ok
+test_missing_dimension_keeps_report_but_is_incomplete (5_5_3 Bad Case分析与优化.test_bad_case_regression.TestStructuredToolRetention) ... ok
+test_streaming_summary_after_list_has_same_final_answer (5_5_3 Bad Case分析与优化.test_bad_case_regression.TestStructuredToolRetention) ... ok
+test_open_issue_agent_01_previous_tool_evidence_survives_observation (5_5_3 Bad Case分析与优化.test_independent_agent.AgentAudit)
+缺陷：第二轮Observation把第一轮结果删掉，却只附第二轮ToolMessage。 ... ok
+test_open_issue_agent_02_suffix_filename_does_not_select_wrong_paper (5_5_3 Bad Case分析与优化.test_independent_agent.AgentAudit)
+缺陷：paper.pdf被当作mypaper.pdf的匹配项，错误ID不能被当前目标纠正。 ... ok
+test_open_issue_agent_03_nonserializable_result_is_recorded_as_tool_error (5_5_3 Bad Case分析与优化.test_independent_agent.AgentAudit)
+缺陷：输出JSON序列化在异常处理外，错误结果绕过tool_result和恢复逻辑。 ... ok
+test_rewritten_search_keeps_explicit_answer_language (5_5_3 Bad Case分析与优化.test_independent_agent.AgentAudit)
+真实F14/S06改写查询丢掉语言要求；检索子问题仍应保留原输出要求。 ... ok
+test_arabic_numbers_block_even_high_similarity (5_5_3 Bad Case分析与优化.test_independent_cache.ExtendedAgentBoundaryAudit) ... ok
+test_changed_negation_target_does_not_reuse_old_answer (5_5_3 Bad Case分析与优化.test_independent_cache.ExtendedAgentBoundaryAudit) ... ok
+test_chinese_number_change_does_not_reuse_old_answer (5_5_3 Bad Case分析与优化.test_independent_cache.ExtendedAgentBoundaryAudit) ... ok
+test_same_user_sessions_remain_isolated_after_reopen_and_clear (5_5_3 Bad Case分析与优化.test_independent_cache.ExtendedAgentBoundaryAudit)
+真实SQLite，只替代Token计数；不同会话不得互读或一起清空。 ... ok
+test_G01_redirect_must_not_bypass_local_host_allowlist (5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit)
+两个端口都在127.0.0.1；127.1是同一本机的缩写，但不在配置允许名单。 ... ok
+test_G02_indented_code_citation_must_not_validate_or_enter_cache (5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit) ... ok
+test_G03_nonboolean_done_must_not_end_stream_successfully (5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit) ... ok
+test_cited_chinese_unit_conversion_must_match_original_amount (5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit)
+复现真实303M→30.3亿，正确换算仍可展示；只核验带引用的数量。 ... ok
+test_claimed_quote_must_exist_in_its_cited_excerpt (5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit)
+模型输出为替身，只检验引句定位及缓存拒绝，不冒充语义质量评测。 ... ok
+test_failed_conversion_preserves_only_verified_source_quote (5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit) ... ok
+test_literal_hyphen_and_changed_number_remain_distinct (5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit) ... ok
+test_nonstream_validation_failure_preserves_returned_usage (5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit) ... ok
+test_pdf_line_break_and_ligature_must_not_reject_real_quote (5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit)
+只消除PDF排版差异，不能改写事实数字或匹配其他来源。 ... ok
+test_quote_from_another_reference_does_not_validate (5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit) ... ok
+test_spelled_out_million_and_original_chinese_amounts (5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit)
+英文全称和原有中文单位可核对；不将保留原单位的陈述误判为换算。 ... ok
+test_stream_validation_failure_preserves_returned_usage (5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit) ... ok
+test_unit_conversion_cannot_borrow_another_citation (5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit) ... ok
+test_unquoted_source_evidence_still_checks_numbers_and_reference (5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit)
+真实模型有时省略引号；不能让数字改写绕过原句定位。 ... ok
+test_whitespace_in_original_quote_is_preserved_as_evidence (5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit) ... ok
+test_hybrid_should_refill_after_discarding_twenty_image_placeholders (5_5_3 Bad Case分析与优化.test_independent_retrieval.RetrievalAudit)
+候选补位边界 R2：用排名桩证明过滤后不补取，不能据此推断真实召回率。 ... ok
+test_reindex_after_chunk_config_change_should_not_mix_old_strategy (5_5_3 Bad Case分析与优化.test_independent_retrieval.RetrievalAudit)
+已知缺陷 R1：再次导入新策略后旧块仍在，成功状态与列表冲突。 ... ok
+test_calculator_input_error_has_known_zero_model_usage (5_5_3 Bad Case分析与优化.test_independent_usage.ActionFailureUsageAudit)
+I05同类：纯四则工具输入校验失败没有LLM调用，应保留确定的零。 ... ok
+test_completed_model_usage_survives_batch_count_validation_error (5_5_3 Bad Case分析与优化.test_independent_usage.ActionFailureUsageAudit)
+已收到的真实用量应随错误事件保留；当前实现丢弃此字段。 ... ok
+test_invalid_thought_and_observation_keep_completed_response_usage (5_5_3 Bad Case分析与优化.test_independent_usage.ActionFailureUsageAudit)
+参数校验失败发生在响应之后；两阶段均保留服务返回的真实账目。 ... ok
+test_keyword_validation_failure_preserves_already_reported_usage (5_5_3 Bad Case分析与优化.test_independent_usage.ActionFailureUsageAudit)
+S08同类：拒绝扩展词正确，但已结束模型的用量不能随结果丢弃。 ... ok
+test_retry_deadline_preserves_first_completed_usage_and_marks_unknown_tail (5_5_3 Bad Case分析与优化.test_independent_usage.ActionFailureUsageAudit)
+第二次仍运行时结束等待，保留第一次失败的用量，不接收迟到响应。 ... ok
+
+----------------------------------------------------------------------
+Ran 829 tests in 56.273s
+
+OK
+G01 observed: {"redirect_target_requests": []}
+G02 observed: {"citation_count": 0, "missing_citations": true, "warnings": ["回答未提供有效文献引用，不能作为已溯源答案。"], "cached": false}
+G03 observed: {"done_value": "false", "event_types": ["token", "error"], "final_reason": null}
+{"scope": "all", "run": 829, "classes": {"TestBatchImport": 12, "TestDOCXLoader": 8, "TestPDFLoader": 13, "TestTextLoader": 8, "TestAcademicPDF": 21, "TestChunking": 24, "TestBatchIndex": 12, "TestChromaPath": 8, "TestEmbeddingEvaluation": 2, "TestLocalEmbeddings": 4, "TestIndexRepair": 4, "TestVectorStore": 22, "TestBM25Retriever": 13, "TestHybridRetriever": 12, "TestRRFFusion": 7, "TestLongReranker": 4, "TestLocalReranker": 4, "TestReranker": 7, "TestRetrievalEvaluation": 5, "TestCitations": 18, "TestContextBuilding": 18, "TestGenerationEvaluation": 6, "TestLocalGeneration": 15, "TestRAGPrompt": 8, "TestStreaming": 17, "TestAgentCache": 12, "TestSemanticCache": 15, "TestDegradationContext": 6, "TestRAGLogging": 9, "TestAction": 22, "TestObservationAndLoop": 23, "TestAgentSystemPrompt": 10, "TestThought": 13, "TestCalculatorAndPaperList": 20, "TestComparisonAndKeywords": 38, "TestResearchTools": 28, "TestSummaryTimeSearch": 23, "TestErrorRecovery": 25, "TestRoutingAndParallel": 26, "TestConversationSummary": 18, "TestHistoryTokenWindow": 14, "TestSessionIsolation": 24, "TestAgentMemoryContext": 10, "TestRAGSearchRouting": 23, "TestAgentMetrics": 12, "TestAgentMetricsEntryAndPage": 17, "TestAgentTraceMetrics": 10, "TestHealthCheck": 16, "TestHealthCheckPage": 4, "TestAgentStreaming": 7, "TestConversationStatistics": 4, "TestStreamingFrontend": 10, "TestCitationPage": 3, "TestContainerLocalAddress": 2, "TestConversationHistory": 7, "TestDocumentManagement": 10, "TestImportFrontend": 36, "EvaluationMetricTests": 10, "TestCitationRetention": 6, "TestPaperIdentifiers": 8, "TestStructuredToolRetention": 6, "AgentAudit": 4, "ExtendedAgentBoundaryAudit": 4, "GenerationAudit": 15, "RetrievalAudit": 2, "ActionFailureUsageAudit": 5}, "elapsed_seconds": 56.27290712499962, "passed": true}

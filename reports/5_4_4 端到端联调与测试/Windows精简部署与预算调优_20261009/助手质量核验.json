@@ -1,0 +1,116 @@
+{
+  "boundary": "少量公开论文样例的助手核对，不改写120条冻结初评；用户审核0。",
+  "reviews": [
+    {
+      "case": "fact-repair-512-9000",
+      "assistant_review": "样例范围内通过，仍需用户审核",
+      "review_basis": "所引物理第4页明示1.3M、14M、303M；303M应为3.03亿或30300万。",
+      "source_revision": "e0155e1c39f0170771fce4553b67ed8163057fcd",
+      "user_review": null,
+      "warnings": [],
+      "seconds": 27.360656499999095
+    },
+    {
+      "case": "fact-repair-1024-9000",
+      "assistant_review": "失败：303M换算成30.3亿",
+      "review_basis": "所引物理第4页明示1.3M、14M、303M；303M应为3.03亿或30300万。",
+      "source_revision": "e0155e1c39f0170771fce4553b67ed8163057fcd",
+      "user_review": null,
+      "warnings": [],
+      "seconds": 23.83959959999993
+    },
+    {
+      "case": "summary-repair-512-9000",
+      "assistant_review": "样例范围内通过，仍需用户审核",
+      "review_basis": "核对四栏、补丁Transformer、预训练结果与展望；仅可见证据，不是全文评审。",
+      "source_revision": "e0155e1c39f0170771fce4553b67ed8163057fcd",
+      "user_review": null,
+      "warnings": [
+        "原文已按预算选取并截断；摘要仅依据返回的可见原文，并非全文精读。"
+      ],
+      "seconds": 14.721798399999898
+    },
+    {
+      "case": "summary-repair-1024-9000",
+      "assistant_review": "样例范围内通过，仍需用户审核",
+      "review_basis": "核对四栏、补丁Transformer、预训练结果与展望；仅可见证据，不是全文评审。",
+      "source_revision": "e0155e1c39f0170771fce4553b67ed8163057fcd",
+      "user_review": null,
+      "warnings": [
+        "原文已按预算选取并截断；摘要仅依据返回的可见原文，并非全文精读。"
+      ],
+      "seconds": 14.484695000001011
+    },
+    {
+      "case": "compare-repair-512-6000",
+      "assistant_review": "样例范围内通过，仍需用户审核",
+      "review_basis": "核对两论文方法／数据集／结果各维度，保留原数值及条件，不用前人iGPT72%填本篇结果。",
+      "source_revision": "e0155e1c39f0170771fce4553b67ed8163057fcd",
+      "user_review": null,
+      "warnings": [
+        "部分维度的检索相关性低，相关陈述需对照原文核验：论文A：方法、论文B：方法、论文B：实验结果",
+        "单篇原文已按对比预算截断，结论仅依据返回的可见证据。"
+      ],
+      "seconds": 53.49725860000035
+    },
+    {
+      "case": "compare-repair-1024-9000",
+      "assistant_review": "样例范围内通过，仍需用户审核",
+      "review_basis": "核对两论文方法／数据集／结果各维度，保留原数值及条件，不用前人iGPT72%填本篇结果。",
+      "source_revision": "e0155e1c39f0170771fce4553b67ed8163057fcd",
+      "user_review": null,
+      "warnings": [
+        "部分维度的检索相关性低，相关陈述需对照原文核验：论文A：方法、论文B：方法、论文B：实验结果",
+        "单篇原文已按对比预算截断，结论仅依据返回的可见证据。"
+      ],
+      "seconds": 52.041283000002295
+    },
+    {
+      "case": "fact-final",
+      "assistant_review": "失败：303M换算成30.3亿",
+      "review_basis": "所引物理第4页明示1.3M、14M、303M；303M应为3.03亿或30300万。",
+      "source_revision": "0b4011637e25180e8fcd80cc8417fc7e71c206b7",
+      "user_review": null,
+      "warnings": [],
+      "seconds": 26.929581100001087
+    },
+    {
+      "case": "fact-unit",
+      "assistant_review": "模型质量失败；防护与原文回退通过",
+      "review_basis": "原文1.3M／14M／303M仍正确，但模型解释30.3亿；程序核对阻止展示并标为资料不足。",
+      "source_revision": "7b5ee2bba17654992a959aedcbaac35d0b56c527",
+      "user_review": null,
+      "warnings": [
+        "回答中的万／亿数量与所引原文不一致，已暂停展示结论；请核对原文数值与单位。"
+      ],
+      "seconds": 27.296251100000518
+    },
+    {
+      "case": "multitool-unit",
+      "assistant_review": "样例范围内通过，仍需用户审核",
+      "review_basis": "真实两个calculator分别8.0384和6.25；最终原样正确，task_complete=true。",
+      "source_revision": "7b5ee2bba17654992a959aedcbaac35d0b56c527",
+      "user_review": null,
+      "warnings": [],
+      "seconds": 9.581692300002032
+    },
+    {
+      "case": "markdown-unit",
+      "assistant_review": "样例范围内通过，仍需用户审核",
+      "review_basis": "真实标记WINMD20261005，引用Windows复测_说明.md行1–6，task_complete=true。",
+      "source_revision": "7b5ee2bba17654992a959aedcbaac35d0b56c527",
+      "user_review": null,
+      "warnings": [],
+      "seconds": 21.70893480000086
+    },
+    {
+      "case": "browser-history-final",
+      "assistant_review": "样例范围内通过；实时／历史／日志指标一致，仍需用户审核",
+      "review_basis": "实际原文WINMD20261005，引用Windows复测_说明.md行1–6；网页刷新前后3214 Token／16.291秒一致，SQLite与日志原始值相同。",
+      "source_revision": "1d41c63d251616f22fb10ba3af8451933662a0c5",
+      "user_review": null,
+      "warnings": [],
+      "seconds": 16.290971999998874
+    }
+  ]
+}

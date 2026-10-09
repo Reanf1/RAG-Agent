@@ -1,0 +1,914 @@
+{
+  "started_at": "2026-10-09T01:22:17.067444+08:00",
+  "name": "summary-repair-1024-9000",
+  "case": "summary",
+  "source_revision": "e0155e1c39f0170771fce4553b67ed8163057fcd",
+  "config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://localhost:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 16384,
+      "num_predict": 1024,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 9000,
+      "max_prompt_chars": 18000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "max_parallel_calls": 2,
+      "tool_timeout_seconds": 300,
+      "max_tool_retries": 1,
+      "max_repeated_calls": 2,
+      "online_search_enabled": false
+    },
+    "memory": {
+      "max_history_tokens": 2000,
+      "tokenizer_path": "data/models/qwen2.5-tokenizer/tokenizer.json",
+      "summary_trigger_turns": 10,
+      "summary_keep_recent_turns": 4,
+      "summary_max_tokens": 400
+    },
+    "paths": {
+      "raw_documents": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw",
+      "vector_index": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\index",
+      "logs": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\case-logs",
+      "session_db": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\case-memory.sqlite3"
+    }
+  },
+  "calls": [
+    {
+      "seconds": 7.740730999999869,
+      "actual_input_tokens": 2688,
+      "actual_output_tokens": 226,
+      "done_reason": "stop",
+      "done": true
+    }
+  ],
+  "resources": [
+    {
+      "at": "2026-10-09T01:22:17.133549+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:27:14.7106396+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:22:18.262072+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:27:14.7106396+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:22:19.547037+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:27:14.7106396+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:22:20.890358+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 8 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:27:14.7106396+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:22:22.238477+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:27:14.7106396+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:22:23.818859+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 7 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:27:14.7106396+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:22:24.928174+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 6 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:27:14.7106396+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:22:26.035510+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 6 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:27:14.7106396+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:22:27.139475+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 95 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:27:14.7106396+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:22:28.225614+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 96 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:27:14.7106396+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:22:29.330218+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 96 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:27:14.7106396+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:22:30.414965+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 96 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:27:14.7106396+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T01:22:31.500332+08:00",
+      "gpu": "6676 MiB, 8188 MiB, 97 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T01:27:14.7106396+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    }
+  ],
+  "boundary": "真实 Windows 预算对照：仅替换配置中的预算和副本路径，不替换检索、模型或工具。",
+  "result": {
+    "answer": "### 背景\n\n传统的卷积神经网络（CNN）在计算机视觉中占主导地位，而自注意力机制在自然语言处理中取得了成功，但将其直接应用于图像识别仍面临挑战。 [参考文档1：Windows验收\\_ViT.pdf；第1页（物理页码）][参考文档2：Windows验收\\_ViT.pdf；第1页（物理页码）]\n\n### 方法\n\n研究通过将图像分割成补丁，并将这些补丁的线性嵌入序列输入标准的Transformer编码器，直接将Transformer应用于图像识别。 [参考文档9：Windows验收\\_ViT.pdf；第1页（物理页码）][参考文档10：Windows验收\\_ViT.pdf；第1页（物理页码）]\n\n### 结果\n\nVision Transformer在大规模预训练后，在多个图像分类基准上达到了与最先进的CNN相当或更好的性能，同时训练成本较低。 [参考文档7：Windows验收\\_ViT.pdf；第9页（物理页码）][参考文档11：Windows验收\\_ViT.pdf；第2页（物理页码）]\n\n### 结论\n\n尽管初始结果令人鼓舞，但Vision Transformer仍面临在其他计算机视觉任务中的应用挑战，以及进一步的自监督预训练方法探索。 [参考文档7：Windows验收\\_ViT.pdf；第9页（物理页码）][参考文档8：Windows验收\\_ViT.pdf；第9页（物理页码）]\n\n## 参考来源\n- [参考文档1] Windows验收\\_ViT.pdf；第1页（物理页码）\n- [参考文档2] Windows验收\\_ViT.pdf；第1页（物理页码）\n- [参考文档9] Windows验收\\_ViT.pdf；第1页（物理页码）\n- [参考文档10] Windows验收\\_ViT.pdf；第1页（物理页码）\n- [参考文档7] Windows验收\\_ViT.pdf；第9页（物理页码）\n- [参考文档11] Windows验收\\_ViT.pdf；第2页（物理页码）\n- [参考文档8] Windows验收\\_ViT.pdf；第9页（物理页码）",
+    "citations": [
+      {
+        "id": 1,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第1页（物理页码）",
+        "text": "\n{adosovitskiy, neilhoulsby}@google.com\narXiv:2010.11929v2  [cs.CV]  3 Jun 2021\nABSTRACT\nWhile the Transformer architecture has become the de-facto standard for natural\nlanguage processing tasks, its applications to computer vision remain limited. In\nvision, attention is either applied in conjunction with convolutional networks, or\nused to replace certain components of convolutional networks while keeping their\noverall structure in place. We show that this reliance on CNNs is not necessary",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 0,
+          "page_number": 1,
+          "chunk_id": "430cc231bdbc69326431224296bc2322c98c08f799fbc035245353f3ea158d1c"
+        },
+        "truncated": false
+      },
+      {
+        "id": 2,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第1页（物理页码）",
+        "text": "\nand a pure transformer applied directly to sequences of image patches can perform\nvery well on image classiﬁcation tasks. When pre-trained on large amounts of\ndata and transferred to multiple mid-sized or small image recognition benchmarks\n(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent\nresults compared to state-of-the-art convolutional networks while requiring sub-\nstantially fewer computational resources to train.^{1}\n1\nINTRODUCTION",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 0,
+          "page_number": 1,
+          "chunk_id": "8ae84e98efc77b081095c132ff5b25129ef02ad76f29b56b3fb1f0d252607ed9"
+        },
+        "truncated": false
+      },
+      {
+        "id": 9,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第1页（物理页码）",
+        "text": "\nTransformer directly to images, with the fewest possible modiﬁcations. To do so, we split an image\ninto patches and provide the sequence of linear embeddings of these patches as an input to a Trans-\nformer. Image patches are treated the same way as tokens (words) in an NLP application. We train\nthe model on image classiﬁcation in supervised fashion.\nWhen trained on mid-sized datasets such as ImageNet without strong regularization, these mod-",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 0,
+          "page_number": 1,
+          "chunk_id": "24f092f31d91ecf039431f64844afbb8b4d0866ec62f095ccae1a5852eb9b467"
+        },
+        "truncated": false
+      },
+      {
+        "id": 10,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第1页（物理页码）",
+        "text": "\nels yield modest accuracies of a few percentage points below ResNets of comparable size. This\nseemingly discouraging outcome may be expected: Transformers lack some of the inductive biases\n^{1}Fine-tuning\nhttps://github.com/\ncode\nand\npre-trained\nmodels\nare\navailable\nat\ngoogle-research/vision_transformer\n1",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 0,
+          "page_number": 1,
+          "chunk_id": "29c261975c10b37f071fc26e384462d4496b38785c106f577cdeffaeef63bd9f"
+        },
+        "truncated": false
+      },
+      {
+        "id": 7,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第9页（物理页码）",
+        "text": "\nsequence of patches and process it by a standard Transformer encoder as used in NLP. This simple,\nyet scalable, strategy works surprisingly well when coupled with pre-training on large datasets.\nThus, Vision Transformer matches or exceeds the state of the art on many image classiﬁcation\ndatasets, whilst being relatively cheap to pre-train.\nWhile these initial results are encouraging, many challenges remain. One is to apply ViT to other",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 8,
+          "page_number": 9,
+          "chunk_id": "5b94a7819e50464ef67e4e46765090f2478fe83e24c8ac830e227b2e3f8db334"
+        },
+        "truncated": false
+      },
+      {
+        "id": 11,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第2页（物理页码）",
+        "text": "Published as a conference paper at ICLR 2021\ninherent to CNNs, such as translation equivariance and locality, and therefore do not generalize well\nwhen trained on insufﬁcient amounts of data.\nHowever, the picture changes if the models are trained on larger datasets (14M-300M images). We\nﬁnd that large scale training trumps inductive bias. Our Vision Transformer (ViT) attains excellent\nresults when pre-trained at sufﬁcient scale and transferred to tasks with fewer datapoints. When",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 1,
+          "page_number": 2,
+          "chunk_id": "b2c5ca4a2c2da946904f823def4d3088f4efceca71e298d0027a09bddff4df1b"
+        },
+        "truncated": false
+      },
+      {
+        "id": 8,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第9页（物理页码）",
+        "text": "\ncomputer vision tasks, such as detection and segmentation. Our results, coupled with those in Carion\net al. (2020), indicate the promise of this approach. Another challenge is to continue exploring self-\nsupervised pre-training methods. Our initial experiments show improvement from self-supervised\npre-training, but there is still large gap between self-supervised and large-scale supervised pre-\ntraining. Finally, further scaling of ViT would likely lead to improved performance.\nACKNOWLEDGEMENTS",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 8,
+          "page_number": 9,
+          "chunk_id": "89290903d7fe3a527e802f4a66abf3e5e54cf5d73a713155c9ccac54031efa15"
+        },
+        "truncated": false
+      }
+    ],
+    "invalid_citation_ids": [],
+    "missing_citations": false,
+    "warnings": [
+      "原文已按预算选取并截断；摘要仅依据返回的可见原文，并非全文精读。"
+    ],
+    "status": "answered",
+    "sections": {
+      "background": {
+        "text": "传统的卷积神经网络（CNN）在计算机视觉中占主导地位，而自注意力机制在自然语言处理中取得了成功，但将其直接应用于图像识别仍面临挑战。",
+        "reference_ids": [
+          1,
+          2
+        ]
+      },
+      "method": {
+        "text": "研究通过将图像分割成补丁，并将这些补丁的线性嵌入序列输入标准的Transformer编码器，直接将Transformer应用于图像识别。",
+        "reference_ids": [
+          9,
+          10
+        ]
+      },
+      "results": {
+        "text": "Vision Transformer在大规模预训练后，在多个图像分类基准上达到了与最先进的CNN相当或更好的性能，同时训练成本较低。",
+        "reference_ids": [
+          7,
+          11
+        ]
+      },
+      "conclusion": {
+        "text": "尽管初始结果令人鼓舞，但Vision Transformer仍面临在其他计算机视觉任务中的应用挑战，以及进一步的自监督预训练方法探索。",
+        "reference_ids": [
+          7,
+          8
+        ]
+      }
+    },
+    "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+    "source_file": "Windows验收_ViT.pdf",
+    "missing_fields": [],
+    "references": [
+      {
+        "id": 1,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第1页（物理页码）",
+        "text": "\n{adosovitskiy, neilhoulsby}@google.com\narXiv:2010.11929v2  [cs.CV]  3 Jun 2021\nABSTRACT\nWhile the Transformer architecture has become the de-facto standard for natural\nlanguage processing tasks, its applications to computer vision remain limited. In\nvision, attention is either applied in conjunction with convolutional networks, or\nused to replace certain components of convolutional networks while keeping their\noverall structure in place. We show that this reliance on CNNs is not necessary",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 0,
+          "page_number": 1,
+          "chunk_id": "430cc231bdbc69326431224296bc2322c98c08f799fbc035245353f3ea158d1c"
+        },
+        "truncated": false
+      },
+      {
+        "id": 2,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第1页（物理页码）",
+        "text": "\nand a pure transformer applied directly to sequences of image patches can perform\nvery well on image classiﬁcation tasks. When pre-trained on large amounts of\ndata and transferred to multiple mid-sized or small image recognition benchmarks\n(ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent\nresults compared to state-of-the-art convolutional networks while requiring sub-\nstantially fewer computational resources to train.^{1}\n1\nINTRODUCTION",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 0,
+          "page_number": 1,
+          "chunk_id": "8ae84e98efc77b081095c132ff5b25129ef02ad76f29b56b3fb1f0d252607ed9"
+        },
+        "truncated": false
+      },
+      {
+        "id": 3,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第1页（物理页码）",
+        "text": "\n1\nINTRODUCTION\nSelf-attention-based architectures, in particular Transformers (Vaswani et al., 2017), have become\nthe model of choice in natural language processing (NLP). The dominant approach is to pre-train on\na large text corpus and then ﬁne-tune on a smaller task-speciﬁc dataset (Devlin et al., 2019). Thanks\nto Transformers’ computational efﬁciency and scalability, it has become possible to train models of",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 0,
+          "page_number": 1,
+          "chunk_id": "ac7ba3fd75f9d49f078479e0471530bf615e21b4b7568b6be99400031dcc058d"
+        },
+        "truncated": false
+      },
+      {
+        "id": 4,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第1页（物理页码）",
+        "text": "\nunprecedented size, with over 100B parameters (Brown et al., 2020; Lepikhin et al., 2020). With the\nmodels and datasets growing, there is still no sign of saturating performance.\nIn computer vision, however, convolutional architectures remain dominant (LeCun et al., 1989;\nKrizhevsky et al., 2012; He et al., 2016). Inspired by NLP successes, multiple works try combining\nCNN-like architectures with self-attention (Wang et al., 2018; Carion et al., 2020), some replacing",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 0,
+          "page_number": 1,
+          "chunk_id": "3fa2b491543f906078cf9b9d8a3e76dc0ec3bf6f0b4435106a32fcd1c9cda123"
+        },
+        "truncated": false
+      },
+      {
+        "id": 5,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第1页（物理页码）",
+        "text": "\nthe convolutions entirely (Ramachandran et al., 2019; Wang et al., 2020a). The latter models, while\ntheoretically efﬁcient, have not yet been scaled effectively on modern hardware accelerators due to\nthe use of specialized attention patterns. Therefore, in large-scale image recognition, classic ResNet-\nlike architectures are still state of the art (Mahajan et al., 2018; Xie et al., 2020; Kolesnikov et al.,\n2020).\nInspired by the Transformer scaling successes in NLP, we experiment with applying a standard",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 0,
+          "page_number": 1,
+          "chunk_id": "7624524ee966dcc7a0ea60c2ccb6a14e050e3a022d3339b778789ecd1b8309ad"
+        },
+        "truncated": false
+      },
+      {
+        "id": 6,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第9页（物理页码）",
+        "text": "\nAppendix B.1.2 contains further details. We leave exploration of contrastive pre-training (Chen\net al., 2020b; He et al., 2020; Bachman et al., 2019; H´enaff et al., 2020) to future work.\n5\nCONCLUSION\nWe have explored the direct application of Transformers to image recognition. Unlike prior works\nusing self-attention in computer vision, we do not introduce image-speciﬁc inductive biases into\nthe architecture apart from the initial patch extraction step. Instead, we interpret an image as a",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 8,
+          "page_number": 9,
+          "chunk_id": "e5543bb8269a2712678abf48c80b896a240d038ecdbc4ee5b6e1e426b5cf5ad7"
+        },
+        "truncated": false
+      },
+      {
+        "id": 7,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第9页（物理页码）",
+        "text": "\nsequence of patches and process it by a standard Transformer encoder as used in NLP. This simple,\nyet scalable, strategy works surprisingly well when coupled with pre-training on large datasets.\nThus, Vision Transformer matches or exceeds the state of the art on many image classiﬁcation\ndatasets, whilst being relatively cheap to pre-train.\nWhile these initial results are encouraging, many challenges remain. One is to apply ViT to other",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 8,
+          "page_number": 9,
+          "chunk_id": "5b94a7819e50464ef67e4e46765090f2478fe83e24c8ac830e227b2e3f8db334"
+        },
+        "truncated": false
+      },
+      {
+        "id": 8,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第9页（物理页码）",
+        "text": "\ncomputer vision tasks, such as detection and segmentation. Our results, coupled with those in Carion\net al. (2020), indicate the promise of this approach. Another challenge is to continue exploring self-\nsupervised pre-training methods. Our initial experiments show improvement from self-supervised\npre-training, but there is still large gap between self-supervised and large-scale supervised pre-\ntraining. Finally, further scaling of ViT would likely lead to improved performance.\nACKNOWLEDGEMENTS",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 8,
+          "page_number": 9,
+          "chunk_id": "89290903d7fe3a527e802f4a66abf3e5e54cf5d73a713155c9ccac54031efa15"
+        },
+        "truncated": false
+      },
+      {
+        "id": 9,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第1页（物理页码）",
+        "text": "\nTransformer directly to images, with the fewest possible modiﬁcations. To do so, we split an image\ninto patches and provide the sequence of linear embeddings of these patches as an input to a Trans-\nformer. Image patches are treated the same way as tokens (words) in an NLP application. We train\nthe model on image classiﬁcation in supervised fashion.\nWhen trained on mid-sized datasets such as ImageNet without strong regularization, these mod-",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 0,
+          "page_number": 1,
+          "chunk_id": "24f092f31d91ecf039431f64844afbb8b4d0866ec62f095ccae1a5852eb9b467"
+        },
+        "truncated": false
+      },
+      {
+        "id": 10,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第1页（物理页码）",
+        "text": "\nels yield modest accuracies of a few percentage points below ResNets of comparable size. This\nseemingly discouraging outcome may be expected: Transformers lack some of the inductive biases\n^{1}Fine-tuning\nhttps://github.com/\ncode\nand\npre-trained\nmodels\nare\navailable\nat\ngoogle-research/vision_transformer\n1",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 0,
+          "page_number": 1,
+          "chunk_id": "29c261975c10b37f071fc26e384462d4496b38785c106f577cdeffaeef63bd9f"
+        },
+        "truncated": false
+      },
+      {
+        "id": 11,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第2页（物理页码）",
+        "text": "Published as a conference paper at ICLR 2021\ninherent to CNNs, such as translation equivariance and locality, and therefore do not generalize well\nwhen trained on insufﬁcient amounts of data.\nHowever, the picture changes if the models are trained on larger datasets (14M-300M images). We\nﬁnd that large scale training trumps inductive bias. Our Vision Transformer (ViT) attains excellent\nresults when pre-trained at sufﬁcient scale and transferred to tasks with fewer datapoints. When",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 1,
+          "page_number": 2,
+          "chunk_id": "b2c5ca4a2c2da946904f823def4d3088f4efceca71e298d0027a09bddff4df1b"
+        },
+        "truncated": false
+      },
+      {
+        "id": 12,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第2页（物理页码）",
+        "text": "\npre-trained on the public ImageNet-21k dataset or the in-house JFT-300M dataset, ViT approaches\nor beats state of the art on multiple image recognition benchmarks. In particular, the best model\nreaches the accuracy of 88.55% on ImageNet, 90.72% on ImageNet-ReaL, 94.55% on CIFAR-100,\nand 77.63% on the VTAB suite of 19 tasks.\n2\nRELATED WORK\nTransformers were proposed by Vaswani et al. (2017) for machine translation, and have since be-",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 1,
+          "page_number": 2,
+          "chunk_id": "9b043bf909596310b3e93dd842ed1b2f1e77ab141d8616dee3c9f177be0dcea4"
+        },
+        "truncated": false
+      },
+      {
+        "id": 13,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第2页（物理页码）",
+        "text": "\ncome the state of the art method in many NLP tasks. Large Transformer-based models are often\npre-trained on large corpora and then ﬁne-tuned for the task at hand: BERT (Devlin et al., 2019)\nuses a denoising self-supervised pre-training task, while the GPT line of work uses language mod-\neling as its pre-training task (Radford et al., 2018; 2019; Brown et al., 2020).\nNaive application of self-attention to images would require that each pixel attends to every other",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 1,
+          "page_number": 2,
+          "chunk_id": "e89e7ad14445b6cfc07b73152e5a409efca9afe12d1ded0e4bb870f0dc6db96e"
+        },
+        "truncated": false
+      },
+      {
+        "id": 14,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第2页（物理页码）",
+        "text": "\npixel. With quadratic cost in the number of pixels, this does not scale to realistic input sizes. Thus,\nto apply Transformers in the context of image processing, several approximations have been tried in\nthe past. Parmar et al. (2018) applied the self-attention only in local neighborhoods for each query\npixel instead of globally. Such local multi-head dot-product self attention blocks can completely\nreplace convolutions (Hu et al., 2019; Ramachandran et al., 2019; Zhao et al., 2020). In a different",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 1,
+          "page_number": 2,
+          "chunk_id": "017e75122f3a26e5b0747195b7e237444b2a728f4a4243d0e29b958023792548"
+        },
+        "truncated": false
+      },
+      {
+        "id": 15,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第2页（物理页码）",
+        "text": "\nline of work, Sparse Transformers (Child et al., 2019) employ scalable approximations to global self-\nattention in order to be applicable to images. An alternative way to scale attention is to apply it in\nblocks of varying sizes (Weissenborn et al., 2019), in the extreme case only along individual axes (Ho\net al., 2019; Wang et al., 2020a). Many of these specialized attention architectures demonstrate\npromising results on computer vision tasks, but require complex engineering to be implemented",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 1,
+          "page_number": 2,
+          "chunk_id": "3af642c312d1422e30ad28112bff541068059408f9074eb682cec33f9dff0233"
+        },
+        "truncated": false
+      },
+      {
+        "id": 16,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第2页（物理页码）",
+        "text": "\nefﬁciently on hardware accelerators.\nMost related to ours is the model of Cordonnier et al. (2020), which extracts patches of size 2 × 2\nfrom the input image and applies full self-attention on top. This model is very similar to ViT,\nbut our work goes further to demonstrate that large scale pre-training makes vanilla transformers\ncompetitive with (or even better than) state-of-the-art CNNs. Moreover, Cordonnier et al. (2020)",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 1,
+          "page_number": 2,
+          "chunk_id": "e6f32c7b359eecdb3e23cbda81d40f19e818b3d3f36f8d2643be59dcd7aa9962"
+        },
+        "truncated": false
+      },
+      {
+        "id": 17,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第2页（物理页码）",
+        "text": "\nuse a small patch size of 2 × 2 pixels, which makes the model applicable only to small-resolution\nimages, while we handle medium-resolution images as well.\nThere has also been a lot of interest in combining convolutional neural networks (CNNs) with forms\nof self-attention, e.g. by augmenting feature maps for image classiﬁcation (Bello et al., 2019) or by\nfurther processing the output of a CNN using self-attention, e.g. for object detection (Hu et al., 2018;",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 1,
+          "page_number": 2,
+          "chunk_id": "bc46516c6e0b18d9e132003fd9468f6164c10bd39ae6dcb29e3f8f978ee5843d"
+        },
+        "truncated": false
+      },
+      {
+        "id": 18,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第2页（物理页码）",
+        "text": "\nCarion et al., 2020), video processing (Wang et al., 2018; Sun et al., 2019), image classiﬁcation (Wu",
+        "metadata": {
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf",
+          "file_type": ".pdf",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "page": 1,
+          "page_number": 2,
+          "chunk_id": "843a208dcf9fa08654ce6c0337ede472c4359dce17f45f7fc02c70558fe539a0"
+        },
+        "truncated": true
+      }
+    ],
+    "input_truncated": true,
+    "model": "qwen2.5:7b",
+    "usage": {
+      "prompt_eval_count": 2688,
+      "eval_count": 226
+    },
+    "elapsed_seconds": 14.25239909999982
+  },
+  "seconds": 14.484695000001011,
+  "finished_at": "2026-10-09T01:22:31.619045+08:00"
+}

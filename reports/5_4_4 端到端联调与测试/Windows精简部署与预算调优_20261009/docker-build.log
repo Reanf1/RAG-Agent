@@ -1,0 +1,19 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.01kB 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.10.10-slim
+#2 ERROR: error getting credentials - err: exit status 1, out: `A specified logon session does not exist. It may already have been terminated.`
+------
+ > [internal] load metadata for docker.io/library/python:3.10.10-slim:
+------
+Dockerfile:2
+--------------------
+   1 |     # 与课程开发环境一致；模型和用户数据通过挂载保存，不打进镜像。
+   2 | >>> FROM python:3.10.10-slim
+   3 |     
+   4 |     ARG TARGETARCH
+--------------------
+ERROR: failed to build: failed to solve: error getting credentials - err: exit status 1, out: `A specified logon session does not exist. It may already have been terminated.`

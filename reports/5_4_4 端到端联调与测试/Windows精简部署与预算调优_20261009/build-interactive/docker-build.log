@@ -1,0 +1,60 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.01kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.10.10-slim
+#2 DONE 3.3s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 403.27kB 0.0s done
+#4 DONE 0.1s
+
+#5 [ 1/10] FROM docker.io/library/python:3.10.10-slim@sha256:7b0a5cefbcdd085faa21533c21549e55a7e66f5aed40f8d1f4de13a017e352cd
+#5 resolve docker.io/library/python:3.10.10-slim@sha256:7b0a5cefbcdd085faa21533c21549e55a7e66f5aed40f8d1f4de13a017e352cd 0.1s done
+#5 DONE 0.1s
+
+#6 [ 2/10] RUN test "amd64" = "amd64" || (echo "本项目镜像仅支持linux/amd64，请使用Docker Compose或--platform=linux/amd64构建" >&2; exit 1)
+#6 CACHED
+
+#7 [ 4/10] COPY requirements.txt ./
+#7 CACHED
+
+#8 [ 5/10] RUN python -m pip install --no-cache-dir --no-deps torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu     && python -m pip install --no-cache-dir -r requirements.txt
+#8 CACHED
+
+#9 [ 6/10] RUN python -m pip install --no-cache-dir pysqlite3-binary==0.5.4     && python -c "import site; from pathlib import Path; Path(site.getsitepackages()[0], 'rag_sqlite.pth').write_text("import sys, pysqlite3; sys.modules['sqlite3'] = pysqlite3\n", encoding='utf-8')"
+#9 CACHED
+
+#10 [ 3/10] WORKDIR /app
+#10 CACHED
+
+#11 [ 7/10] RUN python -c "import sqlite3, chromadb; assert sqlite3.sqlite_version_info >= (3, 35, 0); print('SQLite', sqlite3.sqlite_version, 'Chroma', chromadb.__version__)"
+#11 CACHED
+
+#12 [ 8/10] COPY config.yaml ./
+#12 DONE 0.1s
+
+#13 [ 9/10] COPY src ./src
+#13 DONE 0.1s
+
+#14 [10/10] COPY docker/tcp_proxy.py ./docker/tcp_proxy.py
+#14 DONE 0.1s
+
+#15 exporting to image
+#15 exporting layers
+#15 exporting layers 0.8s done
+#15 exporting manifest sha256:8b2d929574e007f191562e59526e0ac301e09378020e98dacbcd65a43327e213 0.0s done
+#15 exporting config sha256:faa976003840760e0918c5ea6610a21062adad40be97347d7dbc0bc5ae454ccd 0.0s done
+#15 exporting attestation manifest sha256:f800d8e4e2be6ecc9798973806116dd730185c41847a320de5b5a92b582aa8fd
+#15 exporting attestation manifest sha256:f800d8e4e2be6ecc9798973806116dd730185c41847a320de5b5a92b582aa8fd 0.1s done
+#15 exporting manifest list sha256:f8d4ef74ff6cac31b6344c8a606d6b148729ba963c67394a113754b68b7fa3af 0.0s done
+#15 naming to docker.io/library/rag-agent:win-simplify-20261009
+#15 naming to docker.io/library/rag-agent:win-simplify-20261009 0.0s done
+#15 unpacking to docker.io/library/rag-agent:win-simplify-20261009 0.1s done
+#15 DONE 1.3s

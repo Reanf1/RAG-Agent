@@ -1,0 +1,56 @@
+{
+  "result": {
+    "answer": "当前回答的数量换算未通过原文核对，无法据此确认科研结论。请查看引用原文中的数值与单位。\n\n原文依据：We use the ILSVRC-2012 ImageNet dataset with 1k classes and 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with 21k classes and 14M images (Deng et al., 2009), and JFT (Sun et al., 2017) with 18k classes and 303M high-resolution images. [参考文档4：Windows验收\\_ViT.pdf；第4页（物理页码）]\n\n## 参考来源\n- [参考文档4] Windows验收\\_ViT.pdf；第4页（物理页码）",
+    "citations": [
+      {
+        "id": 4,
+        "source_file": "Windows验收_ViT.pdf",
+        "location": "第4页（物理页码）",
+        "text": "\ninductive bias about the 2D structure of the images is manually injected into the Vision Transformer.\n4\nEXPERIMENTS\nWe evaluate the representation learning capabilities of ResNet, Vision Transformer (ViT), and the\nhybrid. To understand the data requirements of each model, we pre-train on datasets of varying size\nand evaluate many benchmark tasks. When considering the computational cost of pre-training the\nmodel, ViT performs very favourably, attaining state of the art on most recognition benchmarks at\na lower pre-training cost. Lastly, we perform a small experiment using self-supervision, and show\nthat self-supervised ViT holds promise for the future.\n4.1\nSETUP\nDatasets. To explore model scalability, we use the ILSVRC-2012 ImageNet dataset with 1k classes\nand 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with\n21k classes and 14M images (Deng et al., 2009), and JFT (Sun et al., 2017) with 18k classes and\n303M high-resolution images. We de-duplicate the pre-training datasets w.r.t. the test sets of the\ndownstream tasks following Kolesnikov et al. (2020). We transfer the models trained on these\ndataset to several benchmark tasks: ImageNet on the original validation labels and the cleaned-up\nReaL labels (Beyer et al., 2020), CIFAR-10/100 (Krizhevsky, 2009), Oxford-IIIT Pets (Parkhi et al.,\n2012), and Oxford Flowers-102 (Nilsback & Zisserman, 2008). For these datasets, pre-processing",
+        "metadata": {
+          "chunk_id": "abe2f1d08bd659d3bfb96dc5918c09824c6db2b3b3ef1255557393dabfe91510",
+          "doc_id": "8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6",
+          "file_type": ".pdf",
+          "page": 3,
+          "page_number": 4,
+          "source": "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\probe\\raw\\8ce7b83971a14508ca711a27c875c9b6914c4f6767cf3150fb1ca6c07aa056d6\\Windows验收_ViT.pdf",
+          "source_file": "Windows验收_ViT.pdf"
+        },
+        "truncated": false,
+        "score": 0.9618138670921326
+      }
+    ],
+    "invalid_citation_ids": [],
+    "missing_citations": false,
+    "warnings": [
+      "回答中的万／亿数量与所引原文不一致，已暂停展示结论；请核对原文数值与单位。"
+    ],
+    "evidence_quote_errors": [],
+    "evidence_number_errors": [
+      4
+    ],
+    "generation_mode": "grounded",
+    "notice": "",
+    "raw_answer": "## 回答\n原文依据：We use the ILSVRC-2012 ImageNet dataset with 1k classes and 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with 21k classes and 14M images (Deng et al., 2009), and JFT (Sun et al., 2017) with 18k classes and 303M high-resolution images. [参考文档4]\n\nImageNet的数据集包含1000个类别和130万张图像。[参考文档4]\nImageNet-21k的数据集包含21000个类别和1400万张图像。[参考文档4]\nJFT的数据集包含18000个类别和30.3亿张高分辨率图像。[参考文档4]\n\n## 参考来源\n[参考文档4]",
+    "model": "qwen2.5:7b",
+    "options": {
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 16384,
+      "num_predict": 1024,
+      "repeat_penalty": 1.0,
+      "seed": 42
+    },
+    "done_reason": "stop",
+    "usage": {
+      "prompt_eval_count": 3235,
+      "eval_count": 209,
+      "total_duration": 9899796900,
+      "load_duration": 3178016400,
+      "prompt_eval_duration": 1704814000,
+      "eval_duration": 4997264000
+    }
+  },
+  "boundary": "实际Windows fact-final报文在修复代码中回放，不是新模型质量成绩。"
+}

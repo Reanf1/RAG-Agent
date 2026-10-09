@@ -1,0 +1,19 @@
+{"name": "fact-final", "seconds": 26.929581100001087, "error": null, "calls": [{"seconds": 11.946873500000947, "actual_input_tokens": 3235, "actual_output_tokens": 209, "done_reason": "stop", "done": true}], "status": "answered", "task_complete": null, "answer": "## 回答\n原文依据：We use the ILSVRC-2012 ImageNet dataset with 1k classes and 1.3M images (we refer to it as ImageNet in what follows), its superset ImageNet-21k with 21k classes and 14M images (Deng et al., 2009), and JFT (Sun et al., 2017) with 18k classes and 303M high-resolution images. [参考文档4：Windows验收\\_ViT.pdf；第4页（物理页码）]\n\nImageNet的数据集包含1000个类别和130万张图像。[参考文档4：Windows验收\\_ViT.pdf；第4页（物理页码）]\nImageNet-21k的数据集包含21000个类别和1400万张图像。[参考文档4：Windows验收\\_ViT.pdf；第4页（物理页码）]\nJFT的数据集包含18000个类别和30.3亿张高分辨率图像。[参考文档4：Windows验收\\_ViT.pdf；第4页（物理页码）]\n\n## 参考来源\n- [参考文档4] Windows验收\\_ViT.pdf；第4页（物理页码）", "warnings": []}
+Traceback (most recent call last):
+  File "E:\工作\RAG-Agent\.test-tmp\win-simplify-20261009\run_budget_cases.py", line 153, in <module>
+    json.dump(report, stream, ensure_ascii=False, indent=2)
+  File "C:\Users\asus\AppData\Local\Programs\Python\Python310\lib\json\__init__.py", line 179, in dump
+    for chunk in iterable:
+  File "C:\Users\asus\AppData\Local\Programs\Python\Python310\lib\json\encoder.py", line 431, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "C:\Users\asus\AppData\Local\Programs\Python\Python310\lib\json\encoder.py", line 405, in _iterencode_dict
+    yield from chunks
+  File "C:\Users\asus\AppData\Local\Programs\Python\Python310\lib\json\encoder.py", line 325, in _iterencode_list
+    yield from chunks
+  File "C:\Users\asus\AppData\Local\Programs\Python\Python310\lib\json\encoder.py", line 405, in _iterencode_dict
+    yield from chunks
+  File "C:\Users\asus\AppData\Local\Programs\Python\Python310\lib\json\encoder.py", line 438, in _iterencode
+    o = _default(o)
+  File "C:\Users\asus\AppData\Local\Programs\Python\Python310\lib\json\encoder.py", line 179, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type AIMessage is not JSON serializable

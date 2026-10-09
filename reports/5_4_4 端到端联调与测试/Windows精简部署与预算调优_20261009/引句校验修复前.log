@@ -1,0 +1,60 @@
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+..........
+======================================================================
+FAIL: test_unquoted_source_evidence_still_checks_numbers_and_reference (tests.5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit) (label='原文依据', count='304')
+真实模型有时省略引号；不能让数字改写绕过原句定位。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_independent_generation.py", line 72, in test_unquoted_source_evidence_still_checks_numbers_and_reference
+    self.assertEqual(result["evidence_quote_errors"], expected)
+AssertionError: Lists differ: [] != [[1]]
+
+Second list contains 1 additional elements.
+First extra element 0:
+[1]
+
+- []
++ [[1]]
+
+======================================================================
+FAIL: test_unquoted_source_evidence_still_checks_numbers_and_reference (tests.5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit) (label='Source evidence', count='304')
+真实模型有时省略引号；不能让数字改写绕过原句定位。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_independent_generation.py", line 72, in test_unquoted_source_evidence_still_checks_numbers_and_reference
+    self.assertEqual(result["evidence_quote_errors"], expected)
+AssertionError: Lists differ: [] != [[1]]
+
+Second list contains 1 additional elements.
+First extra element 0:
+[1]
+
+- []
++ [[1]]
+
+======================================================================
+FAIL: test_unquoted_source_evidence_still_checks_numbers_and_reference (tests.5_5_3 Bad Case分析与优化.test_independent_generation.GenerationAudit) (label='Original evidence', count='304')
+真实模型有时省略引号；不能让数字改写绕过原句定位。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_independent_generation.py", line 72, in test_unquoted_source_evidence_still_checks_numbers_and_reference
+    self.assertEqual(result["evidence_quote_errors"], expected)
+AssertionError: Lists differ: [] != [[1]]
+
+Second list contains 1 additional elements.
+First extra element 0:
+[1]
+
+- []
++ [[1]]
+
+----------------------------------------------------------------------
+Ran 11 tests in 1.344s
+
+FAILED (failures=3)
+G01 observed: {"redirect_target_requests": []}
+G02 observed: {"citation_count": 0, "missing_citations": true, "warnings": ["回答未提供有效文献引用，不能作为已溯源答案。"], "cached": false}
+G03 observed: {"done_value": "false", "event_types": ["token", "error"], "final_reason": null}
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

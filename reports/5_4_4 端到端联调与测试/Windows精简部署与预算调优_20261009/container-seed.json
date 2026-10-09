@@ -1,0 +1,72 @@
+{
+  "checked_at": "2026-10-09T01:48:36.564579+08:00",
+  "phase": "seed",
+  "results": [
+    {
+      "command": [
+        "docker",
+        "exec",
+        "rag-win-simplify-20261009-app-1",
+        "python",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "exit_code": 0,
+      "stdout": "No broken requirements found.\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "exec",
+        "rag-win-simplify-20261009-app-1",
+        "python",
+        "-c",
+        "import json,hashlib,pathlib; e=json.load(open('/proof/source-unit-committed.json')); rows=[dict(path=r['path'],passed=hashlib.sha256(pathlib.Path('/app',r['path']).read_bytes().replace(b'\\r\\n',b'\\n')).hexdigest()==r['lf_sha256']) for r in e['files'] if r['path'].startswith('src/') and r['path'].endswith('.py') or r['path']=='config.yaml']; print(json.dumps(rows)); assert rows and all(r['passed'] for r in rows)"
+      ],
+      "exit_code": 0,
+      "stdout": "[{\"path\": \"config.yaml\", \"passed\": true}, {\"path\": \"src/__init__.py\", \"passed\": true}, {\"path\": \"src/agent/__init__.py\", \"passed\": true}, {\"path\": \"src/agent/memory.py\", \"passed\": true}, {\"path\": \"src/agent/react_loop.py\", \"passed\": true}, {\"path\": \"src/agent/router.py\", \"passed\": true}, {\"path\": \"src/agent/tools.py\", \"passed\": true}, {\"path\": \"src/chunking/__init__.py\", \"passed\": true}, {\"path\": \"src/chunking/fixed_chunk.py\", \"passed\": true}, {\"path\": \"src/chunking/recursive_chunk.py\", \"passed\": true}, {\"path\": \"src/chunking/semantic_chunk.py\", \"passed\": true}, {\"path\": \"src/data_loader/__init__.py\", \"passed\": true}, {\"path\": \"src/data_loader/docx_loader.py\", \"passed\": true}, {\"path\": \"src/data_loader/pdf_loader.py\", \"passed\": true}, {\"path\": \"src/data_loader/text_loader.py\", \"passed\": true}, {\"path\": \"src/frontend/__init__.py\", \"passed\": true}, {\"path\": \"src/frontend/app.py\", \"passed\": true}, {\"path\": \"src/frontend/components/documents.py\", \"passed\": true}, {\"path\": \"src/frontend/components/sessions.py\", \"passed\": true}, {\"path\": \"src/frontend/components/trace.py\", \"passed\": true}, {\"path\": \"src/generation/__init__.py\", \"passed\": true}, {\"path\": \"src/generation/cache.py\", \"passed\": true}, {\"path\": \"src/generation/prompt_template.py\", \"passed\": true}, {\"path\": \"src/generation/rag_pipeline.py\", \"passed\": true}, {\"path\": \"src/generation/streaming.py\", \"passed\": true}, {\"path\": \"src/retrieval/__init__.py\", \"passed\": true}, {\"path\": \"src/retrieval/bm25_retriever.py\", \"passed\": true}, {\"path\": \"src/retrieval/hybrid_retriever.py\", \"passed\": true}, {\"path\": \"src/retrieval/repair_index.py\", \"passed\": true}, {\"path\": \"src/retrieval/reranker.py\", \"passed\": true}, {\"path\": \"src/retrieval/vector_store.py\", \"passed\": true}, {\"path\": \"src/utils/__init__.py\", \"passed\": true}, {\"path\": \"src/utils/chroma_path.py\", \"passed\": true}, {\"path\": \"src/utils/config.py\", \"passed\": true}, {\"path\": \"src/utils/logger.py\", \"passed\": true}, {\"path\": \"src/utils/messages.py\", \"passed\": true}, {\"path\": \"src/utils/token_budget.py\", \"passed\": true}]\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "network",
+        "inspect",
+        "rag-win-simplify-20261009_offline"
+      ],
+      "exit_code": 0,
+      "stdout": "[\n    {\n        \"Name\": \"rag-win-simplify-20261009_offline\",\n        \"Id\": \"09de35c0760f4fb0d1b82b07aef8da74c263552868f7aa67050ef9f8332851fe\",\n        \"Created\": \"2026-10-08T17:44:47.995237133Z\",\n        \"Scope\": \"local\",\n        \"Driver\": \"bridge\",\n        \"EnableIPv4\": true,\n        \"EnableIPv6\": false,\n        \"IPAM\": {\n            \"Driver\": \"default\",\n            \"Options\": null,\n            \"Config\": [\n                {\n                    \"Subnet\": \"172.19.0.0/16\",\n                    \"Gateway\": \"172.19.0.1\"\n                }\n            ]\n        },\n        \"Internal\": true,\n        \"Attachable\": false,\n        \"Ingress\": false,\n        \"ConfigFrom\": {\n            \"Network\": \"\"\n        },\n        \"ConfigOnly\": false,\n        \"Options\": {\n            \"com.docker.network.enable_ipv4\": \"true\",\n            \"com.docker.network.enable_ipv6\": \"false\"\n        },\n        \"Labels\": {\n            \"com.docker.compose.config-hash\": \"3496472017b7282815272c33d7b24abf97f93c4dd5046f45b3aefd7eeb6d717b\",\n            \"com.docker.compose.network\": \"offline\",\n            \"com.docker.compose.project\": \"rag-win-simplify-20261009\",\n            \"com.docker.compose.version\": \"5.2.0\"\n        },\n        \"Containers\": {\n            \"2225556a4b6ac526071ddae99d008f77499c2b8a4322ce0efb533f89079bc708\": {\n                \"Name\": \"rag-win-simplify-20261009-app-1\",\n                \"EndpointID\": \"698a0674fd24172ac33ea40423ec923ed1c0d4338f4eca431136787111054d7b\",\n                \"MacAddress\": \"4a:0a:b2:89:b3:e8\",\n                \"IPv4Address\": \"172.19.0.3/16\",\n                \"IPv6Address\": \"\"\n            },\n            \"399ec4dc2032b10cdf74b1645b2e74a839ac982b85248526f66674431b41c918\": {\n                \"Name\": \"rag-win-simplify-20261009-ollama-1\",\n                \"EndpointID\": \"50db47c74866aeb8d0f88a64ad4480a447d50822ef37e536d25f88e37a2e5856\",\n                \"MacAddress\": \"06:2f:d2:c6:6f:a0\",\n                \"IPv4Address\": \"172.19.0.2/16\",\n                \"IPv6Address\": \"\"\n            },\n            \"4ed482f16507a97ba7224ad80760f5461d4ee1407e5d349f0a51d3a917abefb4\": {\n                \"Name\": \"rag-win-simplify-20261009-gateway-1\",\n                \"EndpointID\": \"90fdad9562d35a56e24e3bb4124e5e3ca7982fc8a7c7fe03eb1d1ddbfc0221a1\",\n                \"MacAddress\": \"be:b3:39:27:ab:21\",\n                \"IPv4Address\": \"172.19.0.4/16\",\n                \"IPv6Address\": \"\"\n            }\n        },\n        \"Status\": {\n            \"IPAM\": {\n                \"Subnets\": {\n                    \"172.19.0.0/16\": {\n                        \"IPsInUse\": 6,\n                        \"DynamicIPsAvailable\": 65530\n                    }\n                }\n            }\n        }\n    }\n]\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "exec",
+        "rag-win-simplify-20261009-app-1",
+        "python",
+        "/proof/verify_container_runtime.py",
+        "seed"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"phase\": \"seed\",\n  \"seconds\": 7.822676717000149,\n  \"result\": {\n    \"added_chunks\": 1,\n    \"stored_chunks\": 1,\n    \"sqlite_version\": \"3.46.1\",\n    \"torch_version\": \"2.5.1+cpu\",\n    \"cuda_available\": false\n  },\n  \"boundary\": \"真实容器与本地M3E/BGE/Qwen，探针文字为合成数据；不代表论文质量或总体性能\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "compose",
+        "-p",
+        "rag-win-simplify-20261009",
+        "-f",
+        "E:\\工作\\RAG-Agent\\.test-tmp\\win-simplify-20261009\\docker-compose.windows-simplify.yml",
+        "restart"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": " Container rag-win-simplify-20261009-ollama-1 Restarting \n Container rag-win-simplify-20261009-gateway-1 Restarting \n Container rag-win-simplify-20261009-app-1 Restarting \n Container rag-win-simplify-20261009-ollama-1 Started \n Container rag-win-simplify-20261009-app-1 Started \n Container rag-win-simplify-20261009-gateway-1 Started \n"
+    }
+  ],
+  "passed": true
+}
