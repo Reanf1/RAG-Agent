@@ -2,6 +2,7 @@
 
 import argparse
 from contextlib import ExitStack
+from datetime import datetime, timezone
 import hashlib
 import importlib
 import json
@@ -119,6 +120,17 @@ def main():
         check("真实计算器", lambda: ask("calculator", "计算23乘以17", lambda end, results: end["task_complete"] and "391" in end["full_response"]))
         check("多轮历史", lambda: ask("history", "刚才让我计算的算式和结果是什么？", lambda end, results:
             end["task_complete"] and all(value in end["full_response"] for value in ("23", "17", "391"))))
+        # 覆盖其余本地工具；文献列表已在文件名预检中真实执行。
+        check("文档元信息", lambda: ask("metadata", "查询澄禾实验.txt的论文元信息，只需标题、作者和年份。",
+            lambda end, results: end["task_complete"] and all(value in end["full_response"] for value in ("李禾", "王澄", "2025"))
+            and any(event["name"] == "paper_metadata" and event["status"] == "success" for event in results)))
+        check("结构化摘要", lambda: ask("summary", "生成澄禾实验.txt的结构化摘要。", lambda end, results:
+            end["task_complete"] and all(value in end["full_response"] for value in ("背景", "方法", "结果", "结论", "91.6"))
+            and any(event["name"] == "paper_summary" and event["result"].get("citations") for event in results)))
+        check("系统时间工具", lambda: ask("time", "查询当前系统时间。", lambda end, results:
+            end["task_complete"] and any(event["name"] == "current_time" and event["status"] == "success"
+                and abs((datetime.now(timezone.utc) - datetime.fromisoformat(event["result"]["system_time"])).total_seconds()) < 120
+                for event in results)))
 
         def ui():
             from streamlit.testing.v1 import AppTest

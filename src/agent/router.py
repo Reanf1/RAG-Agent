@@ -56,7 +56,8 @@ def route_question(question: str, tools: list[BaseTool], context: dict | None = 
         "keyword_extract": r"提取[^。！？;；\n]*(?:关键词|关键字)|\bextract[^!?;\n]*keywords?\b",
         "paper_summary": r"(?:生成|结构化).{0,8}摘要|(?:总结|概括).{0,15}(?:论文|文献)|\bsummari[sz]e.{0,25}(?:paper|document)",
         "paper_metadata": r"元信息|元数据|论文.{0,8}(?:标题|作者|年份|DOI)|\bpaper metadata\b",
-        "paper_compare": r"(?:对比|比较).{0,20}(?:论文|文献)|两篇论文.{0,12}(?:区别|差异)|\bcompare.{0,25}papers?\b",
+        # 快捷路由只接受直接的对比请求，文档问句中提到“比较论文”仍按原题检索。
+        "paper_compare": r"^\s*(?:请\s*)?(?:对比|比较).{0,20}(?:论文|文献)|^\s*两篇论文.{0,12}(?:区别|差异)|^\s*(?:please\s+)?compare.{0,25}papers?\b",
         "web_search": r"(?:联网|上网|网上|网络).{0,8}(?:搜索|查询|查找|检索)|\bsearch (?:the )?(?:web|internet)\b|\bsearch online\b",
     }
     # “本文最新实验”属于本地证据；“最新论文”属于需要外部核验的信息。

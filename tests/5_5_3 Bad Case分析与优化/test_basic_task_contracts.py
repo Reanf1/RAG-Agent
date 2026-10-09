@@ -32,6 +32,14 @@ def packet(content="", calls=None):
 
 
 class TestBasicTaskContracts(unittest.TestCase):
+    def test_document_question_about_comparison_is_not_a_compare_command(self):
+        question = "Windows复测_说明.md中的Markdown标记是什么？对比两篇论文时需要保留哪三个方面？请给出来源。"
+        plan = router.route_question(question, tools.AVAILABLE_TOOLS)
+        self.assertEqual(plan["tool_name"], "knowledge_base_search")
+        for question in ("对比两篇论文", "请比较甲.txt和乙.txt两篇论文的方法和结果", "Compare these two papers"):
+            with self.subTest(question=question):
+                self.assertEqual(router.route_question(question, tools.AVAILABLE_TOOLS)["tool_name"], "paper_compare")
+
     def test_keyword_route_does_not_depend_on_filename_length(self):
         for filename in ("甲叶脉.txt", "澄禾实验.txt", "课程实践中的作物病害识别实验说明.md"):
             with self.subTest(filename=filename):
