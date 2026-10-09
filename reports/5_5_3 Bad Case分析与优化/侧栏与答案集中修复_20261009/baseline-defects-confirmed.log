@@ -1,0 +1,73 @@
+test_one_paper_result_cannot_complete_two_paper_request (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop)
+数量校验之外，最终观察也要防止只读一篇却宣称分别处理完成。 ... FAIL
+test_two_paper_rule_rejects_missing_or_wrong_target_before_execution (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel)
+两个调用名相同也要核验数量及本轮目标，不能只读取一篇或借用历史ID。 ... FAIL
+test_page_startup_shows_sidebar_status_and_rerun_reuses_snapshot (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheckPage) ... 2026-10-09 09:58:26.447 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+FAIL
+
+======================================================================
+FAIL: test_one_paper_result_cannot_complete_two_paper_request (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop)
+数量校验之外，最终观察也要防止只读一篇却宣称分别处理完成。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-mi8r9qmf/tests/5_3_1 Agent核心循环/test_observation.py", line 108, in test_one_paper_result_cannot_complete_two_paper_request
+    self.assertFalse(result["task_complete"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_two_paper_rule_rejects_missing_or_wrong_target_before_execution (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) (targets=['aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'])
+两个调用名相同也要核验数量及本轮目标，不能只读取一篇或借用历史ID。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-mi8r9qmf/tests/5_3_3 Agent决策优化/test_routing_parallel.py", line 147, in test_two_paper_rule_rejects_missing_or_wrong_target_before_execution
+    self.assertEqual(events[-1]["type"], "error")
+AssertionError: 'tool_result' != 'error'
+- tool_result
++ error
+
+
+======================================================================
+FAIL: test_two_paper_rule_rejects_missing_or_wrong_target_before_execution (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) (targets=['aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc'])
+两个调用名相同也要核验数量及本轮目标，不能只读取一篇或借用历史ID。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-mi8r9qmf/tests/5_3_3 Agent决策优化/test_routing_parallel.py", line 147, in test_two_paper_rule_rejects_missing_or_wrong_target_before_execution
+    self.assertEqual(events[-1]["type"], "error")
+AssertionError: 'tool_result' != 'error'
+- tool_result
++ error
+
+
+======================================================================
+FAIL: test_two_paper_rule_rejects_missing_or_wrong_target_before_execution (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel)
+两个调用名相同也要核验数量及本轮目标，不能只读取一篇或借用历史ID。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-mi8r9qmf/tests/5_3_3 Agent决策优化/test_routing_parallel.py", line 152, in test_two_paper_rule_rejects_missing_or_wrong_target_before_execution
+    self.assertEqual(set(seen), {a, b})
+AssertionError: Items in the first set but not the second:
+'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc'
+
+======================================================================
+FAIL: test_page_startup_shows_sidebar_status_and_rerun_reuses_snapshot (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheckPage)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-mi8r9qmf/tests/5_4_2 可观测性与健康检查/test_health_check.py", line 223, in test_page_startup_shows_sidebar_status_and_rerun_reuses_snapshot
+    self.assertEqual([row.value for row in app.sidebar.success],
+AssertionError: Lists differ: ['LLM服务：可连接，推理未验证（qwen2.5:7b）', '向量数据库：可读取，检索未验证（Chroma）'] != ['LLM服务：可连接，模型已安装（qwen2.5:7b）', '向量数据库：索引可读取（Chroma）']
+
+First differing element 0:
+'LLM服务：可连接，推理未验证（qwen2.5:7b）'
+'LLM服务：可连接，模型已安装（qwen2.5:7b）'
+
+- ['LLM服务：可连接，推理未验证（qwen2.5:7b）', '向量数据库：可读取，检索未验证（Chroma）']
+?             ^^^^^                         ------
+
++ ['LLM服务：可连接，模型已安装（qwen2.5:7b）', '向量数据库：索引可读取（Chroma）']
+?             ^^^^^                      ++
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.538s
+
+FAILED (failures=5)

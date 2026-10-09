@@ -1,0 +1,17 @@
+F
+======================================================================
+FAIL: test_two_verified_titles_and_sources_finish_without_repeat_generation (tests.5_3_1 Agent核心循环.test_observation.TestObservationAndLoop)
+Windows实测：两篇标题与来源齐全后不再生成continue并重复调用。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_3_1 Agent核心循环/test_observation.py", line 122, in test_two_verified_titles_and_sources_finish_without_repeat_generation
+    http.assert_not_called()
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 890, in assert_not_called
+    raise AssertionError(msg)
+AssertionError: Expected 'urlopen' to not have been called. Called 1 times.
+Calls: [call(<urllib.request.Request object at 0x10a6c5660>, timeout=300)].
+
+----------------------------------------------------------------------
+Ran 1 test in 0.141s
+
+FAILED (failures=1)

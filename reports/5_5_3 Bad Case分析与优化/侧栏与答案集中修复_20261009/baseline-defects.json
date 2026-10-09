@@ -1,0 +1,26 @@
+{
+  "revision": "4a9e6c3",
+  "run": 3,
+  "tests": [
+    "5_3_1 Agent核心循环.test_observation.TestObservationAndLoop.test_one_paper_result_cannot_complete_two_paper_request",
+    "5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel.test_two_paper_rule_rejects_missing_or_wrong_target_before_execution",
+    "5_4_2 可观测性与健康检查.test_health_check.TestHealthCheckPage.test_page_startup_shows_sidebar_status_and_rerun_reuses_snapshot"
+  ],
+  "failures": [
+    [
+      "5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel.test_two_paper_rule_rejects_missing_or_wrong_target_before_execution",
+      "Traceback (most recent call last):\n  File \"/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-cep_qq60/tests/5_3_3 Agent决策优化/test_routing_parallel.py\", line 152, in test_two_paper_rule_rejects_missing_or_wrong_target_before_execution\n    self.assertEqual(set(seen), {a, b})\nAssertionError: Items in the second set but not the first:\n'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'\n'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'\n"
+    ],
+    [
+      "5_4_2 可观测性与健康检查.test_health_check.TestHealthCheckPage.test_page_startup_shows_sidebar_status_and_rerun_reuses_snapshot",
+      "Traceback (most recent call last):\n  File \"/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-cep_qq60/tests/5_4_2 可观测性与健康检查/test_health_check.py\", line 223, in test_page_startup_shows_sidebar_status_and_rerun_reuses_snapshot\n    self.assertEqual([row.value for row in app.sidebar.success],\nAssertionError: Lists differ: ['LLM服务：可连接，推理未验证（qwen2.5:7b）', '向量数据库：可读取，检索未验证（Chroma）'] != ['LLM服务：可连接，模型已安装（qwen2.5:7b）', '向量数据库：索引可读取（Chroma）']\n\nFirst differing element 0:\n'LLM服务：可连接，推理未验证（qwen2.5:7b）'\n'LLM服务：可连接，模型已安装（qwen2.5:7b）'\n\n- ['LLM服务：可连接，推理未验证（qwen2.5:7b）', '向量数据库：可读取，检索未验证（Chroma）']\n?             ^^^^^                         ------\n\n+ ['LLM服务：可连接，模型已安装（qwen2.5:7b）', '向量数据库：索引可读取（Chroma）']\n?             ^^^^^                      ++\n\n"
+    ]
+  ],
+  "errors": [
+    [
+      "5_3_1 Agent核心循环.test_observation.TestObservationAndLoop.test_one_paper_result_cannot_complete_two_paper_request",
+      "Traceback (most recent call last):\n  File \"/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-cep_qq60/tests/5_3_1 Agent核心循环/test_observation.py\", line 107, in test_one_paper_result_cannot_complete_two_paper_request\n    result = observe(question, [paper_metadata], context)\n  File \"/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-cep_qq60/src/agent/react_loop.py\", line 755, in observe\n    return next(_observe_events(question, tools, context, messages, thought=thought))\n  File \"/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-cep_qq60/src/agent/react_loop.py\", line 633, in _observe_events\n    request = _model_request(prompt, format=schema, stream=stream)\n  File \"/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-cep_qq60/src/agent/react_loop.py\", line 180, in _model_request\n    _fit_agent_payload(payload)\n  File \"/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-cep_qq60/src/agent/react_loop.py\", line 118, in _fit_agent_payload\n    while request_tokens(payload) > budget:\n  File \"/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-cep_qq60/src/utils/token_budget.py\", line 11, in request_tokens\n    return count_history_tokens(inputs) + 16 * len(payload.get(\"messages\", [])) + 64\n  File \"/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-cep_qq60/src/agent/memory.py\", line 45, in count_history_tokens\n    raise FileNotFoundError(f\"缺少本地Qwen分词器：{path}；请先准备分词器，不会自动联网下载\")\nFileNotFoundError: 缺少本地Qwen分词器：/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-cep_qq60/data/models/qwen2.5-tokenizer/tokenizer.json；请先准备分词器，不会自动联网下载\n"
+    ]
+  ],
+  "boundary": "旧提交真实源码与本轮缺陷用例，模型响应隔离；预期复现失败，不作为成功回归。"
+}

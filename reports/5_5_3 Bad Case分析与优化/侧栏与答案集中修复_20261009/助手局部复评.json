@@ -1,0 +1,126 @@
+{
+  "prompt_version": "rag-v17",
+  "scope": "13条冻结上下文真实Windows模型生成，不是全链路或独立盲评；不改120题成绩",
+  "user_reviewed": 0,
+  "cases": [
+    {
+      "case": "quantity",
+      "initial_review": "未通过",
+      "reason": "1300万误替1.3M，且303M错绑到其他页；程序拦截，不能记为答对。",
+      "source": "model-v17/quantity.json",
+      "context_sha256": "c53ff91a4dadfce02ac1cf15fd3e055dbd0bedfb0e8d44a3b6d3996834edf440",
+      "warnings": [
+        "回答中的万／亿数量与所引原文不一致，已暂停展示结论；请核对原文数值与单位。"
+      ],
+      "user_review": "待审核"
+    },
+    {
+      "case": "F02",
+      "initial_review": "部分改善",
+      "reason": "86M、83.1%、ImageNet和无外部数据正确；仍遗漏用户问到的single-crop条件。",
+      "source": "model-v17/F02.json",
+      "context_sha256": "49ad1eb8d601240b3dc85a24891eea381e63e724031ce7c0a9ac483dff4ca3c3",
+      "warnings": [],
+      "user_review": "待审核"
+    },
+    {
+      "case": "F11",
+      "initial_review": "局部初评通过",
+      "reason": "附加任务为带噪真实边界框重建；所标原文引句可定位。",
+      "source": "model-v17/F11.json",
+      "context_sha256": "1f6604e59aeb5f9ae8ea90ec0044575c4262e2a1d6d09cacc05b6356b00b756b",
+      "warnings": [],
+      "user_review": "待审核"
+    },
+    {
+      "case": "F14",
+      "initial_review": "局部初评通过",
+      "reason": "两组329B/356M与377B/438M及86.5%条件均保留。",
+      "source": "model-v17/F14.json",
+      "context_sha256": "64266687888321b7ef1818dacef2d13ebcb1c11bd351b912fb4d6bb79c9d18da",
+      "warnings": [],
+      "user_review": "待审核"
+    },
+    {
+      "case": "C05",
+      "initial_review": "局部初评通过",
+      "reason": "区分Conditional条件空间查询与DAB动态锚框的位置及尺寸；不推出FPS。",
+      "source": "model-v17/C05.json",
+      "context_sha256": "273c92a982c60c96bbf6251f6e9b554f44dab0d79403676f74a7364e56e58e48",
+      "warnings": [],
+      "user_review": "待审核"
+    },
+    {
+      "case": "C06",
+      "initial_review": "未完整回答",
+      "reason": "列出DINO三项改进，但遗漏DN-DETR侧的机制和对应比较。",
+      "source": "model-v17/C06.json",
+      "context_sha256": "860e5f536f296a6c036ce7671a4d1261e63c2c79464962ae47e66fe8c1266ba9",
+      "warnings": [],
+      "user_review": "待审核"
+    },
+    {
+      "case": "C14",
+      "initial_review": "部分改善",
+      "reason": "不再把两篇论文互相串用；DeiT蒸馏和T2T机制出现，但T2T骨干仍表述为CNN结构，蒸馏token与深窄结构不完整。",
+      "source": "model-v17/C14.json",
+      "context_sha256": "bac517c78ebfbc1dc844ec9c5b830fc37e53b08f37c6968092177bededbff906",
+      "warnings": [],
+      "user_review": "待审核"
+    },
+    {
+      "case": "S05",
+      "initial_review": "局部初评通过",
+      "reason": "局部结构、骨干冗余、递归聚合和深窄结构及收益对应原文；还包含题目未要求的示例细节。",
+      "source": "model-v17/S05.json",
+      "context_sha256": "321c634c8326c077b74fc8253e671b48b1f593c3d2a6a52eb0ab95663b8b3122",
+      "warnings": [],
+      "user_review": "待审核"
+    },
+    {
+      "case": "S06",
+      "initial_review": "部分改善",
+      "reason": "两项贡献、329B/356M与377B/438M均出现；LayerScale的可学习对角缩放及初始化机制仍不充分。",
+      "source": "model-v17/S06.json",
+      "context_sha256": "f0978a33b226bfb5a4efcb1b3fc47f70b95724e2707ef1c8a34e53e7bf6fea6d",
+      "warnings": [],
+      "user_review": "待审核"
+    },
+    {
+      "case": "R001",
+      "initial_review": "未通过",
+      "reason": "冻结片段有大规模训练与归纳偏置的论述，但模型仍只答资料不足，未形成所问解释。",
+      "source": "model-v17/R001.json",
+      "context_sha256": "6aac95d58eee7fadaf15b07f9164ddc60ba4c6c70fe448c8ebfcc22faaf14d70",
+      "warnings": [],
+      "user_review": "待审核"
+    },
+    {
+      "case": "R007",
+      "initial_review": "资料不足，任务未完成",
+      "reason": "冻结检索片段不足以说明训练中一对一匹配如何形成NMS-free预测；拒绝补猜不是正确完整答案。",
+      "source": "model-v17/R007.json",
+      "context_sha256": "5dc92db05c6aabecd500eb01faeff69220c2f2ce84b14abaee52ec483a50a067",
+      "warnings": [],
+      "user_review": "待审核"
+    },
+    {
+      "case": "R009",
+      "initial_review": "局部初评通过",
+      "reason": "空间查询缩小定位范围并降低对内容嵌入依赖；原句可定位，无R152加速倍数串用。",
+      "source": "model-v17/R009.json",
+      "context_sha256": "eb861445cf4d0ca99bdb6a50026bf59236d5362ee3e3a23ae2828693b194790f",
+      "warnings": [],
+      "user_review": "待审核"
+    },
+    {
+      "case": "R015",
+      "initial_review": "未通过",
+      "reason": "将包含JFT预训练的ViT成绩解释为仅ImageNet的起点；ImageNet-21k也不能代替题目only ImageNet。",
+      "source": "model-v17/R015.json",
+      "context_sha256": "ae1cd9b2d40c04cb4346f228ba49ff4c039faccdadd8716696542c3fabc7725c",
+      "warnings": [],
+      "user_review": "待审核"
+    }
+  ]
+}

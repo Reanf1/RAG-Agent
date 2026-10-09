@@ -1,0 +1,62 @@
+test_one_paper_result_cannot_complete_two_paper_request (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop)
+数量校验之外，最终观察也要防止只读一篇却宣称分别处理完成。 ... ERROR
+test_two_paper_rule_rejects_missing_or_wrong_target_before_execution (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel)
+两个调用名相同也要核验数量及本轮目标，不能只读取一篇或借用历史ID。 ... FAIL
+test_page_startup_shows_sidebar_status_and_rerun_reuses_snapshot (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheckPage) ... 2026-10-09 09:57:45.797 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+FAIL
+
+======================================================================
+ERROR: test_one_paper_result_cannot_complete_two_paper_request (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop)
+数量校验之外，最终观察也要防止只读一篇却宣称分别处理完成。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-cep_qq60/tests/5_3_1 Agent核心循环/test_observation.py", line 107, in test_one_paper_result_cannot_complete_two_paper_request
+    result = observe(question, [paper_metadata], context)
+  File "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-cep_qq60/src/agent/react_loop.py", line 755, in observe
+    return next(_observe_events(question, tools, context, messages, thought=thought))
+  File "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-cep_qq60/src/agent/react_loop.py", line 633, in _observe_events
+    request = _model_request(prompt, format=schema, stream=stream)
+  File "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-cep_qq60/src/agent/react_loop.py", line 180, in _model_request
+    _fit_agent_payload(payload)
+  File "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-cep_qq60/src/agent/react_loop.py", line 118, in _fit_agent_payload
+    while request_tokens(payload) > budget:
+  File "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-cep_qq60/src/utils/token_budget.py", line 11, in request_tokens
+    return count_history_tokens(inputs) + 16 * len(payload.get("messages", [])) + 64
+  File "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-cep_qq60/src/agent/memory.py", line 45, in count_history_tokens
+    raise FileNotFoundError(f"缺少本地Qwen分词器：{path}；请先准备分词器，不会自动联网下载")
+FileNotFoundError: 缺少本地Qwen分词器：/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-cep_qq60/data/models/qwen2.5-tokenizer/tokenizer.json；请先准备分词器，不会自动联网下载
+
+======================================================================
+FAIL: test_two_paper_rule_rejects_missing_or_wrong_target_before_execution (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel)
+两个调用名相同也要核验数量及本轮目标，不能只读取一篇或借用历史ID。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-cep_qq60/tests/5_3_3 Agent决策优化/test_routing_parallel.py", line 152, in test_two_paper_rule_rejects_missing_or_wrong_target_before_execution
+    self.assertEqual(set(seen), {a, b})
+AssertionError: Items in the second set but not the first:
+'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
+
+======================================================================
+FAIL: test_page_startup_shows_sidebar_status_and_rerun_reuses_snapshot (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheckPage)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-cep_qq60/tests/5_4_2 可观测性与健康检查/test_health_check.py", line 223, in test_page_startup_shows_sidebar_status_and_rerun_reuses_snapshot
+    self.assertEqual([row.value for row in app.sidebar.success],
+AssertionError: Lists differ: ['LLM服务：可连接，推理未验证（qwen2.5:7b）', '向量数据库：可读取，检索未验证（Chroma）'] != ['LLM服务：可连接，模型已安装（qwen2.5:7b）', '向量数据库：索引可读取（Chroma）']
+
+First differing element 0:
+'LLM服务：可连接，推理未验证（qwen2.5:7b）'
+'LLM服务：可连接，模型已安装（qwen2.5:7b）'
+
+- ['LLM服务：可连接，推理未验证（qwen2.5:7b）', '向量数据库：可读取，检索未验证（Chroma）']
+?             ^^^^^                         ------
+
++ ['LLM服务：可连接，模型已安装（qwen2.5:7b）', '向量数据库：索引可读取（Chroma）']
+?             ^^^^^                      ++
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.445s
+
+FAILED (failures=2, errors=1)

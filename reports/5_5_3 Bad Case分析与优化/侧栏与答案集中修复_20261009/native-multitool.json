@@ -1,0 +1,2106 @@
+{
+  "started_at": "2026-10-09T10:28:35.608011+08:00",
+  "name": "native-multitool",
+  "case": "multitool",
+  "source_revision": "afff8530c5dfe119243020e10174adff9b910407",
+  "config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://localhost:11434",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 16384,
+      "num_predict": 1024,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 9000,
+      "max_prompt_chars": 18000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "max_parallel_calls": 2,
+      "tool_timeout_seconds": 300,
+      "max_tool_retries": 1,
+      "max_repeated_calls": 2,
+      "online_search_enabled": false
+    },
+    "memory": {
+      "max_history_tokens": 2000,
+      "tokenizer_path": "data/models/qwen2.5-tokenizer/tokenizer.json",
+      "summary_trigger_turns": 10,
+      "summary_keep_recent_turns": 4,
+      "summary_max_tokens": 400
+    },
+    "paths": {
+      "raw_documents": "E:\\rag-status-20261009\\probe\\raw",
+      "vector_index": "E:\\rag-status-20261009\\probe\\index",
+      "logs": "E:\\rag-status-20261009\\case-logs",
+      "session_db": "E:\\rag-status-20261009\\case-memory.sqlite3"
+    }
+  },
+  "calls": [
+    {
+      "seconds": 4.915608299997984,
+      "actual_input_tokens": 3006,
+      "actual_output_tokens": 51,
+      "done_reason": "stop",
+      "done": true
+    },
+    {
+      "seconds": 4.529360300002736,
+      "actual_input_tokens": 2781,
+      "actual_output_tokens": 63,
+      "done_reason": "stop",
+      "done": true
+    }
+  ],
+  "resources": [
+    {
+      "at": "2026-10-09T10:28:35.677031+08:00",
+      "gpu": "7544 MiB, 8188 MiB, 8 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T10:33:31.7872422+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T10:28:37.097584+08:00",
+      "gpu": "7544 MiB, 8188 MiB, 8 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T10:33:31.7872422+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T10:28:38.179210+08:00",
+      "gpu": "7544 MiB, 8188 MiB, 31 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T10:33:31.7872422+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T10:28:39.258915+08:00",
+      "gpu": "7544 MiB, 8188 MiB, 99 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T10:33:31.7872422+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T10:28:40.349833+08:00",
+      "gpu": "7544 MiB, 8188 MiB, 97 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T10:33:31.7872422+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T10:28:41.423430+08:00",
+      "gpu": "7544 MiB, 8188 MiB, 8 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T10:33:40.9830219+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T10:28:42.498850+08:00",
+      "gpu": "7537 MiB, 8188 MiB, 8 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T10:33:40.9830219+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T10:28:43.584280+08:00",
+      "gpu": "7537 MiB, 8188 MiB, 100 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T10:33:40.9830219+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-09T10:28:44.661156+08:00",
+      "gpu": "7537 MiB, 8188 MiB, 96 %",
+      "ollama": {
+        "models": [
+          {
+            "name": "qwen2.5:7b",
+            "model": "qwen2.5:7b",
+            "size": 5465282968,
+            "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen2",
+              "families": [
+                "qwen2"
+              ],
+              "parameter_size": "7.6B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-09T10:33:40.9830219+08:00",
+            "size_vram": 5465282968,
+            "context_length": 16384,
+            "runner": "llamacpp"
+          }
+        ]
+      }
+    }
+  ],
+  "boundary": "真实 Windows 预算对照：仅替换配置中的预算和副本路径，不替换检索、模型或工具。",
+  "question": "分别计算3.14*2.56和12.5/2，然后报告这两个计算结果。",
+  "events": [
+    {
+      "type": "thought",
+      "thought": "调用calculator、calculator获取所需信息。",
+      "next_step": "tool",
+      "tool_name": "calculator",
+      "parallel_tools": [
+        "calculator",
+        "calculator"
+      ],
+      "tool_calls": [
+        {
+          "id": "call_ki9g205c",
+          "function": {
+            "index": 0,
+            "name": "calculator",
+            "arguments": {
+              "expression": "3.14*2.56"
+            }
+          }
+        },
+        {
+          "id": "call_15ap74at",
+          "function": {
+            "index": 1,
+            "name": "calculator",
+            "arguments": {
+              "expression": "12.5/2"
+            }
+          }
+        }
+      ],
+      "model": "qwen2.5:7b",
+      "usage": {
+        "prompt_eval_count": 3006,
+        "eval_count": 51
+      },
+      "elapsed_seconds": 4.916085900003964,
+      "iteration": 1,
+      "request_id": "c5782635bf664af7bf1d5e58e060fda1",
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 3006,
+            "output": 51,
+            "incomplete": false,
+            "seconds": 4.916085900003964
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "调用calculator、calculator获取所需信息。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [
+              "calculator",
+              "calculator"
+            ],
+            "elapsed_seconds": 4.916085900003964,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [],
+        "tools": {
+          "started": 0,
+          "completed": 0,
+          "successes": 0,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": null,
+          "mean_seconds": null,
+          "by_tool": []
+        },
+        "tokens": {
+          "input": 3006,
+          "output": 51,
+          "total": 3057,
+          "known_total": 3057,
+          "unknown_calls": 0
+        },
+        "response_seconds": 5.297884599996905
+      }
+    },
+    {
+      "type": "tool_call",
+      "call_id": "06feb5a9f88f457ea076a637e9b32192",
+      "name": "calculator",
+      "args": {
+        "expression": "3.14*2.56"
+      },
+      "model": null,
+      "elapsed_seconds": 0.00024330000451300293,
+      "usage": {
+        "prompt_eval_count": 0,
+        "eval_count": 0
+      },
+      "message": {
+        "type": "ai",
+        "data": {
+          "content": "",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "ai",
+          "name": null,
+          "id": null,
+          "example": false,
+          "tool_calls": [
+            {
+              "name": "calculator",
+              "args": {
+                "expression": "3.14*2.56"
+              },
+              "id": "06feb5a9f88f457ea076a637e9b32192",
+              "type": "tool_call"
+            },
+            {
+              "name": "calculator",
+              "args": {
+                "expression": "12.5/2"
+              },
+              "id": "66e4c050b6134872a7f7cfc8f8f2733a",
+              "type": "tool_call"
+            }
+          ],
+          "invalid_tool_calls": [],
+          "usage_metadata": null
+        }
+      },
+      "iteration": 1,
+      "request_id": "c5782635bf664af7bf1d5e58e060fda1",
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 3006,
+            "output": 51,
+            "incomplete": false,
+            "seconds": 4.916085900003964
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action（共享）",
+            "tool": "calculator + calculator",
+            "tool_call_ids": [
+              "06feb5a9f88f457ea076a637e9b32192",
+              "66e4c050b6134872a7f7cfc8f8f2733a"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.00024330000451300293
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "调用calculator、calculator获取所需信息。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [
+              "calculator",
+              "calculator"
+            ],
+            "elapsed_seconds": 4.916085900003964,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "06feb5a9f88f457ea076a637e9b32192",
+            "args": {
+              "expression": "3.14*2.56"
+            },
+            "elapsed_seconds": 0.00024330000451300293,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "06feb5a9f88f457ea076a637e9b32192",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "pending",
+            "seconds": null,
+            "attempts": null,
+            "execution_mode": null
+          }
+        ],
+        "tools": {
+          "started": 1,
+          "completed": 0,
+          "successes": 0,
+          "failures": 0,
+          "pending": 1,
+          "success_rate": null,
+          "mean_seconds": null,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 1,
+              "completed": 0,
+              "successes": 0,
+              "failures": 0,
+              "pending": 1,
+              "success_rate": null,
+              "mean_seconds": null
+            }
+          ]
+        },
+        "tokens": {
+          "input": 3006,
+          "output": 51,
+          "total": 3057,
+          "known_total": 3057,
+          "unknown_calls": 0
+        },
+        "response_seconds": 5.2984324999997625
+      }
+    },
+    {
+      "type": "tool_call",
+      "call_id": "66e4c050b6134872a7f7cfc8f8f2733a",
+      "name": "calculator",
+      "args": {
+        "expression": "12.5/2"
+      },
+      "model": null,
+      "elapsed_seconds": 0.00024330000451300293,
+      "usage": {
+        "prompt_eval_count": 0,
+        "eval_count": 0
+      },
+      "iteration": 1,
+      "request_id": "c5782635bf664af7bf1d5e58e060fda1",
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 3006,
+            "output": 51,
+            "incomplete": false,
+            "seconds": 4.916085900003964
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action（共享）",
+            "tool": "calculator + calculator",
+            "tool_call_ids": [
+              "06feb5a9f88f457ea076a637e9b32192",
+              "66e4c050b6134872a7f7cfc8f8f2733a"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.00024330000451300293
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "调用calculator、calculator获取所需信息。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [
+              "calculator",
+              "calculator"
+            ],
+            "elapsed_seconds": 4.916085900003964,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "06feb5a9f88f457ea076a637e9b32192",
+            "args": {
+              "expression": "3.14*2.56"
+            },
+            "elapsed_seconds": 0.00024330000451300293,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "66e4c050b6134872a7f7cfc8f8f2733a",
+            "args": {
+              "expression": "12.5/2"
+            },
+            "elapsed_seconds": 0.00024330000451300293,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "06feb5a9f88f457ea076a637e9b32192",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "pending",
+            "seconds": null,
+            "attempts": null,
+            "execution_mode": null
+          },
+          {
+            "call_id": "66e4c050b6134872a7f7cfc8f8f2733a",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "pending",
+            "seconds": null,
+            "attempts": null,
+            "execution_mode": null
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 0,
+          "successes": 0,
+          "failures": 0,
+          "pending": 2,
+          "success_rate": null,
+          "mean_seconds": null,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 2,
+              "completed": 0,
+              "successes": 0,
+              "failures": 0,
+              "pending": 2,
+              "success_rate": null,
+              "mean_seconds": null
+            }
+          ]
+        },
+        "tokens": {
+          "input": 3006,
+          "output": 51,
+          "total": 3057,
+          "known_total": 3057,
+          "unknown_calls": 0
+        },
+        "response_seconds": 5.2985807999939425
+      }
+    },
+    {
+      "type": "tool_result",
+      "call_id": "06feb5a9f88f457ea076a637e9b32192",
+      "name": "calculator",
+      "args": {
+        "expression": "3.14*2.56"
+      },
+      "status": "success",
+      "result": {
+        "expression": "3.14*2.56",
+        "result": "8.0384",
+        "usage": {
+          "prompt_eval_count": 0,
+          "eval_count": 0
+        }
+      },
+      "error": "",
+      "error_kind": null,
+      "usage": {
+        "prompt_eval_count": 0,
+        "eval_count": 0
+      },
+      "usage_incomplete": false,
+      "elapsed_seconds": 0.006182099998113699,
+      "message": {
+        "type": "tool",
+        "data": {
+          "content": "{\"expression\": \"3.14*2.56\", \"result\": \"8.0384\", \"usage\": {\"prompt_eval_count\": 0, \"eval_count\": 0}}",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "tool",
+          "name": "calculator",
+          "id": null,
+          "tool_call_id": "06feb5a9f88f457ea076a637e9b32192",
+          "artifact": null,
+          "status": "success"
+        }
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "success",
+          "error": "",
+          "error_kind": null,
+          "elapsed_seconds": 0.0061487999992095865,
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          },
+          "usage_incomplete": false
+        }
+      ],
+      "execution_mode": "parallel",
+      "iteration": 1,
+      "request_id": "c5782635bf664af7bf1d5e58e060fda1",
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 3006,
+            "output": 51,
+            "incomplete": false,
+            "seconds": 4.916085900003964
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action（共享）",
+            "tool": "calculator + calculator",
+            "tool_call_ids": [
+              "06feb5a9f88f457ea076a637e9b32192",
+              "66e4c050b6134872a7f7cfc8f8f2733a"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.00024330000451300293
+          },
+          {
+            "id": "06feb5a9f88f457ea076a637e9b32192",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "06feb5a9f88f457ea076a637e9b32192"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.006182099998113699
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "调用calculator、calculator获取所需信息。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [
+              "calculator",
+              "calculator"
+            ],
+            "elapsed_seconds": 4.916085900003964,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "06feb5a9f88f457ea076a637e9b32192",
+            "args": {
+              "expression": "3.14*2.56"
+            },
+            "elapsed_seconds": 0.00024330000451300293,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "66e4c050b6134872a7f7cfc8f8f2733a",
+            "args": {
+              "expression": "12.5/2"
+            },
+            "elapsed_seconds": 0.00024330000451300293,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "calculator",
+            "call_id": "06feb5a9f88f457ea076a637e9b32192",
+            "args": {
+              "expression": "3.14*2.56"
+            },
+            "result": {
+              "expression": "3.14*2.56",
+              "result": "8.0384",
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0061487999992095865,
+                "usage": {
+                  "prompt_eval_count": 0,
+                  "eval_count": 0
+                },
+                "usage_incomplete": false
+              }
+            ],
+            "execution_mode": "parallel",
+            "elapsed_seconds": 0.006182099998113699,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "06feb5a9f88f457ea076a637e9b32192",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 0.006182099998113699,
+            "attempts": 1,
+            "execution_mode": "parallel"
+          },
+          {
+            "call_id": "66e4c050b6134872a7f7cfc8f8f2733a",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "pending",
+            "seconds": null,
+            "attempts": null,
+            "execution_mode": null
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 1,
+          "successes": 1,
+          "failures": 0,
+          "pending": 1,
+          "success_rate": 1.0,
+          "mean_seconds": 0.006182099998113699,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 2,
+              "completed": 1,
+              "successes": 1,
+              "failures": 0,
+              "pending": 1,
+              "success_rate": 1.0,
+              "mean_seconds": 0.006182099998113699
+            }
+          ]
+        },
+        "tokens": {
+          "input": 3006,
+          "output": 51,
+          "total": 3057,
+          "known_total": 3057,
+          "unknown_calls": 0
+        },
+        "response_seconds": 5.306070099999488
+      }
+    },
+    {
+      "type": "tool_result",
+      "call_id": "66e4c050b6134872a7f7cfc8f8f2733a",
+      "name": "calculator",
+      "args": {
+        "expression": "12.5/2"
+      },
+      "status": "success",
+      "result": {
+        "expression": "12.5/2",
+        "result": "6.25",
+        "usage": {
+          "prompt_eval_count": 0,
+          "eval_count": 0
+        }
+      },
+      "error": "",
+      "error_kind": null,
+      "usage": {
+        "prompt_eval_count": 0,
+        "eval_count": 0
+      },
+      "usage_incomplete": false,
+      "elapsed_seconds": 0.005054599998402409,
+      "message": {
+        "type": "tool",
+        "data": {
+          "content": "{\"expression\": \"12.5/2\", \"result\": \"6.25\", \"usage\": {\"prompt_eval_count\": 0, \"eval_count\": 0}}",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "tool",
+          "name": "calculator",
+          "id": null,
+          "tool_call_id": "66e4c050b6134872a7f7cfc8f8f2733a",
+          "artifact": null,
+          "status": "success"
+        }
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "success",
+          "error": "",
+          "error_kind": null,
+          "elapsed_seconds": 0.0050286999976378866,
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          },
+          "usage_incomplete": false
+        }
+      ],
+      "execution_mode": "parallel",
+      "iteration": 1,
+      "request_id": "c5782635bf664af7bf1d5e58e060fda1",
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 3006,
+            "output": 51,
+            "incomplete": false,
+            "seconds": 4.916085900003964
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action（共享）",
+            "tool": "calculator + calculator",
+            "tool_call_ids": [
+              "06feb5a9f88f457ea076a637e9b32192",
+              "66e4c050b6134872a7f7cfc8f8f2733a"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.00024330000451300293
+          },
+          {
+            "id": "06feb5a9f88f457ea076a637e9b32192",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "06feb5a9f88f457ea076a637e9b32192"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.006182099998113699
+          },
+          {
+            "id": "66e4c050b6134872a7f7cfc8f8f2733a",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "66e4c050b6134872a7f7cfc8f8f2733a"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.005054599998402409
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "调用calculator、calculator获取所需信息。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [
+              "calculator",
+              "calculator"
+            ],
+            "elapsed_seconds": 4.916085900003964,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "06feb5a9f88f457ea076a637e9b32192",
+            "args": {
+              "expression": "3.14*2.56"
+            },
+            "elapsed_seconds": 0.00024330000451300293,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "66e4c050b6134872a7f7cfc8f8f2733a",
+            "args": {
+              "expression": "12.5/2"
+            },
+            "elapsed_seconds": 0.00024330000451300293,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "calculator",
+            "call_id": "06feb5a9f88f457ea076a637e9b32192",
+            "args": {
+              "expression": "3.14*2.56"
+            },
+            "result": {
+              "expression": "3.14*2.56",
+              "result": "8.0384",
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0061487999992095865,
+                "usage": {
+                  "prompt_eval_count": 0,
+                  "eval_count": 0
+                },
+                "usage_incomplete": false
+              }
+            ],
+            "execution_mode": "parallel",
+            "elapsed_seconds": 0.006182099998113699,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "calculator",
+            "call_id": "66e4c050b6134872a7f7cfc8f8f2733a",
+            "args": {
+              "expression": "12.5/2"
+            },
+            "result": {
+              "expression": "12.5/2",
+              "result": "6.25",
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0050286999976378866,
+                "usage": {
+                  "prompt_eval_count": 0,
+                  "eval_count": 0
+                },
+                "usage_incomplete": false
+              }
+            ],
+            "execution_mode": "parallel",
+            "elapsed_seconds": 0.005054599998402409,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "06feb5a9f88f457ea076a637e9b32192",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 0.006182099998113699,
+            "attempts": 1,
+            "execution_mode": "parallel"
+          },
+          {
+            "call_id": "66e4c050b6134872a7f7cfc8f8f2733a",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 0.005054599998402409,
+            "attempts": 1,
+            "execution_mode": "parallel"
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 2,
+          "successes": 2,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": 1.0,
+          "mean_seconds": 0.005618349998258054,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 2,
+              "completed": 2,
+              "successes": 2,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.005618349998258054
+            }
+          ]
+        },
+        "tokens": {
+          "input": 3006,
+          "output": 51,
+          "total": 3057,
+          "known_total": 3057,
+          "unknown_calls": 0
+        },
+        "response_seconds": 5.306400599998597
+      }
+    },
+    {
+      "type": "observation",
+      "observation": "已计算两个表达式的结果。",
+      "decision": "finish",
+      "task_complete": true,
+      "answer": "计算结果为：3.14*2.56=8.0384，12.5/2=6.25。",
+      "model": "qwen2.5:7b",
+      "usage": {
+        "prompt_eval_count": 2781,
+        "eval_count": 63
+      },
+      "elapsed_seconds": 4.529855699998734,
+      "iteration": 1,
+      "request_id": "c5782635bf664af7bf1d5e58e060fda1",
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 3006,
+            "output": 51,
+            "incomplete": false,
+            "seconds": 4.916085900003964
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action（共享）",
+            "tool": "calculator + calculator",
+            "tool_call_ids": [
+              "06feb5a9f88f457ea076a637e9b32192",
+              "66e4c050b6134872a7f7cfc8f8f2733a"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.00024330000451300293
+          },
+          {
+            "id": "06feb5a9f88f457ea076a637e9b32192",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "06feb5a9f88f457ea076a637e9b32192"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.006182099998113699
+          },
+          {
+            "id": "66e4c050b6134872a7f7cfc8f8f2733a",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "66e4c050b6134872a7f7cfc8f8f2733a"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.005054599998402409
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2781,
+            "output": 63,
+            "incomplete": false,
+            "seconds": 4.529855699998734
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "调用calculator、calculator获取所需信息。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [
+              "calculator",
+              "calculator"
+            ],
+            "elapsed_seconds": 4.916085900003964,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "06feb5a9f88f457ea076a637e9b32192",
+            "args": {
+              "expression": "3.14*2.56"
+            },
+            "elapsed_seconds": 0.00024330000451300293,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "66e4c050b6134872a7f7cfc8f8f2733a",
+            "args": {
+              "expression": "12.5/2"
+            },
+            "elapsed_seconds": 0.00024330000451300293,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "calculator",
+            "call_id": "06feb5a9f88f457ea076a637e9b32192",
+            "args": {
+              "expression": "3.14*2.56"
+            },
+            "result": {
+              "expression": "3.14*2.56",
+              "result": "8.0384",
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0061487999992095865,
+                "usage": {
+                  "prompt_eval_count": 0,
+                  "eval_count": 0
+                },
+                "usage_incomplete": false
+              }
+            ],
+            "execution_mode": "parallel",
+            "elapsed_seconds": 0.006182099998113699,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "calculator",
+            "call_id": "66e4c050b6134872a7f7cfc8f8f2733a",
+            "args": {
+              "expression": "12.5/2"
+            },
+            "result": {
+              "expression": "12.5/2",
+              "result": "6.25",
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0050286999976378866,
+                "usage": {
+                  "prompt_eval_count": 0,
+                  "eval_count": 0
+                },
+                "usage_incomplete": false
+              }
+            ],
+            "execution_mode": "parallel",
+            "elapsed_seconds": 0.005054599998402409,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 4.529855699998734,
+            "observation": "已计算两个表达式的结果。",
+            "decision": "finish",
+            "task_complete": true,
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "06feb5a9f88f457ea076a637e9b32192",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 0.006182099998113699,
+            "attempts": 1,
+            "execution_mode": "parallel"
+          },
+          {
+            "call_id": "66e4c050b6134872a7f7cfc8f8f2733a",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 0.005054599998402409,
+            "attempts": 1,
+            "execution_mode": "parallel"
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 2,
+          "successes": 2,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": 1.0,
+          "mean_seconds": 0.005618349998258054,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 2,
+              "completed": 2,
+              "successes": 2,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.005618349998258054
+            }
+          ]
+        },
+        "tokens": {
+          "input": 5787,
+          "output": 114,
+          "total": 5901,
+          "known_total": 5901,
+          "unknown_calls": 0
+        },
+        "response_seconds": 9.848269599999185
+      }
+    },
+    {
+      "type": "done",
+      "task_complete": true,
+      "stop_reason": "task_complete",
+      "full_response": "计算结果为：3.14*2.56=8.0384，12.5/2=6.25。",
+      "iterations": 1,
+      "context": {
+        "observations": [
+          {
+            "call_id": "06feb5a9f88f457ea076a637e9b32192",
+            "name": "calculator",
+            "args": {
+              "expression": "3.14*2.56"
+            },
+            "status": "success",
+            "result": {
+              "expression": "3.14*2.56",
+              "result": "8.0384",
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              }
+            },
+            "error": "",
+            "error_kind": null,
+            "usage": {
+              "prompt_eval_count": 0,
+              "eval_count": 0
+            },
+            "usage_incomplete": false,
+            "elapsed_seconds": 0.006182099998113699,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0061487999992095865,
+                "usage": {
+                  "prompt_eval_count": 0,
+                  "eval_count": 0
+                },
+                "usage_incomplete": false
+              }
+            ],
+            "execution_mode": "parallel"
+          },
+          {
+            "call_id": "66e4c050b6134872a7f7cfc8f8f2733a",
+            "name": "calculator",
+            "args": {
+              "expression": "12.5/2"
+            },
+            "status": "success",
+            "result": {
+              "expression": "12.5/2",
+              "result": "6.25",
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              }
+            },
+            "error": "",
+            "error_kind": null,
+            "usage": {
+              "prompt_eval_count": 0,
+              "eval_count": 0
+            },
+            "usage_incomplete": false,
+            "elapsed_seconds": 0.005054599998402409,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0050286999976378866,
+                "usage": {
+                  "prompt_eval_count": 0,
+                  "eval_count": 0
+                },
+                "usage_incomplete": false
+              }
+            ],
+            "execution_mode": "parallel"
+          }
+        ],
+        "last_observation": {
+          "observation": "已计算两个表达式的结果。",
+          "decision": "finish",
+          "task_complete": true
+        }
+      },
+      "request_id": "c5782635bf664af7bf1d5e58e060fda1",
+      "metrics": {
+        "calls": [
+          {
+            "id": "thought:1",
+            "iteration": 1,
+            "phase": "Thought",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 3006,
+            "output": 51,
+            "incomplete": false,
+            "seconds": 4.916085900003964
+          },
+          {
+            "id": "action:1",
+            "iteration": 1,
+            "phase": "Action（共享）",
+            "tool": "calculator + calculator",
+            "tool_call_ids": [
+              "06feb5a9f88f457ea076a637e9b32192",
+              "66e4c050b6134872a7f7cfc8f8f2733a"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.00024330000451300293
+          },
+          {
+            "id": "06feb5a9f88f457ea076a637e9b32192",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "06feb5a9f88f457ea076a637e9b32192"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.006182099998113699
+          },
+          {
+            "id": "66e4c050b6134872a7f7cfc8f8f2733a",
+            "iteration": 1,
+            "phase": "工具内部",
+            "tool": "calculator",
+            "tool_call_ids": [
+              "66e4c050b6134872a7f7cfc8f8f2733a"
+            ],
+            "input": 0,
+            "output": 0,
+            "incomplete": false,
+            "seconds": 0.005054599998402409
+          },
+          {
+            "id": "observation:1",
+            "iteration": 1,
+            "phase": "Observation",
+            "tool": "—",
+            "tool_call_ids": [],
+            "input": 2781,
+            "output": 63,
+            "incomplete": false,
+            "seconds": 4.529855699998734
+          }
+        ],
+        "trace": [
+          {
+            "type": "thought",
+            "thought": "调用calculator、calculator获取所需信息。",
+            "next_step": "tool",
+            "tool_name": "calculator",
+            "parallel_tools": [
+              "calculator",
+              "calculator"
+            ],
+            "elapsed_seconds": 4.916085900003964,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "06feb5a9f88f457ea076a637e9b32192",
+            "args": {
+              "expression": "3.14*2.56"
+            },
+            "elapsed_seconds": 0.00024330000451300293,
+            "iteration": 1
+          },
+          {
+            "type": "tool_call",
+            "name": "calculator",
+            "call_id": "66e4c050b6134872a7f7cfc8f8f2733a",
+            "args": {
+              "expression": "12.5/2"
+            },
+            "elapsed_seconds": 0.00024330000451300293,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "calculator",
+            "call_id": "06feb5a9f88f457ea076a637e9b32192",
+            "args": {
+              "expression": "3.14*2.56"
+            },
+            "result": {
+              "expression": "3.14*2.56",
+              "result": "8.0384",
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0061487999992095865,
+                "usage": {
+                  "prompt_eval_count": 0,
+                  "eval_count": 0
+                },
+                "usage_incomplete": false
+              }
+            ],
+            "execution_mode": "parallel",
+            "elapsed_seconds": 0.006182099998113699,
+            "iteration": 1
+          },
+          {
+            "type": "tool_result",
+            "name": "calculator",
+            "call_id": "66e4c050b6134872a7f7cfc8f8f2733a",
+            "args": {
+              "expression": "12.5/2"
+            },
+            "result": {
+              "expression": "12.5/2",
+              "result": "6.25",
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              }
+            },
+            "status": "success",
+            "error": "",
+            "error_kind": null,
+            "attempts": [
+              {
+                "attempt": 1,
+                "status": "success",
+                "error": "",
+                "error_kind": null,
+                "elapsed_seconds": 0.0050286999976378866,
+                "usage": {
+                  "prompt_eval_count": 0,
+                  "eval_count": 0
+                },
+                "usage_incomplete": false
+              }
+            ],
+            "execution_mode": "parallel",
+            "elapsed_seconds": 0.005054599998402409,
+            "iteration": 1
+          },
+          {
+            "type": "observation",
+            "elapsed_seconds": 4.529855699998734,
+            "observation": "已计算两个表达式的结果。",
+            "decision": "finish",
+            "task_complete": true,
+            "iteration": 1
+          },
+          {
+            "type": "done",
+            "task_complete": true,
+            "stop_reason": "task_complete",
+            "full_response": "计算结果为：3.14*2.56=8.0384，12.5/2=6.25。",
+            "iteration": 1
+          }
+        ],
+        "tool_calls": [
+          {
+            "call_id": "06feb5a9f88f457ea076a637e9b32192",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 0.006182099998113699,
+            "attempts": 1,
+            "execution_mode": "parallel"
+          },
+          {
+            "call_id": "66e4c050b6134872a7f7cfc8f8f2733a",
+            "name": "calculator",
+            "iteration": 1,
+            "status": "success",
+            "seconds": 0.005054599998402409,
+            "attempts": 1,
+            "execution_mode": "parallel"
+          }
+        ],
+        "tools": {
+          "started": 2,
+          "completed": 2,
+          "successes": 2,
+          "failures": 0,
+          "pending": 0,
+          "success_rate": 1.0,
+          "mean_seconds": 0.005618349998258054,
+          "by_tool": [
+            {
+              "name": "calculator",
+              "started": 2,
+              "completed": 2,
+              "successes": 2,
+              "failures": 0,
+              "pending": 0,
+              "success_rate": 1.0,
+              "mean_seconds": 0.005618349998258054
+            }
+          ]
+        },
+        "tokens": {
+          "input": 5787,
+          "output": 114,
+          "total": 5901,
+          "known_total": 5901,
+          "unknown_calls": 0
+        },
+        "response_seconds": 9.848904499995115
+      }
+    }
+  ],
+  "stream_tokens": 33,
+  "result": {
+    "type": "done",
+    "task_complete": true,
+    "stop_reason": "task_complete",
+    "full_response": "计算结果为：3.14*2.56=8.0384，12.5/2=6.25。",
+    "iterations": 1,
+    "context": {
+      "observations": [
+        {
+          "call_id": "06feb5a9f88f457ea076a637e9b32192",
+          "name": "calculator",
+          "args": {
+            "expression": "3.14*2.56"
+          },
+          "status": "success",
+          "result": {
+            "expression": "3.14*2.56",
+            "result": "8.0384",
+            "usage": {
+              "prompt_eval_count": 0,
+              "eval_count": 0
+            }
+          },
+          "error": "",
+          "error_kind": null,
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          },
+          "usage_incomplete": false,
+          "elapsed_seconds": 0.006182099998113699,
+          "attempts": [
+            {
+              "attempt": 1,
+              "status": "success",
+              "error": "",
+              "error_kind": null,
+              "elapsed_seconds": 0.0061487999992095865,
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              },
+              "usage_incomplete": false
+            }
+          ],
+          "execution_mode": "parallel"
+        },
+        {
+          "call_id": "66e4c050b6134872a7f7cfc8f8f2733a",
+          "name": "calculator",
+          "args": {
+            "expression": "12.5/2"
+          },
+          "status": "success",
+          "result": {
+            "expression": "12.5/2",
+            "result": "6.25",
+            "usage": {
+              "prompt_eval_count": 0,
+              "eval_count": 0
+            }
+          },
+          "error": "",
+          "error_kind": null,
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          },
+          "usage_incomplete": false,
+          "elapsed_seconds": 0.005054599998402409,
+          "attempts": [
+            {
+              "attempt": 1,
+              "status": "success",
+              "error": "",
+              "error_kind": null,
+              "elapsed_seconds": 0.0050286999976378866,
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              },
+              "usage_incomplete": false
+            }
+          ],
+          "execution_mode": "parallel"
+        }
+      ],
+      "last_observation": {
+        "observation": "已计算两个表达式的结果。",
+        "decision": "finish",
+        "task_complete": true
+      }
+    },
+    "request_id": "c5782635bf664af7bf1d5e58e060fda1",
+    "metrics": {
+      "calls": [
+        {
+          "id": "thought:1",
+          "iteration": 1,
+          "phase": "Thought",
+          "tool": "—",
+          "tool_call_ids": [],
+          "input": 3006,
+          "output": 51,
+          "incomplete": false,
+          "seconds": 4.916085900003964
+        },
+        {
+          "id": "action:1",
+          "iteration": 1,
+          "phase": "Action（共享）",
+          "tool": "calculator + calculator",
+          "tool_call_ids": [
+            "06feb5a9f88f457ea076a637e9b32192",
+            "66e4c050b6134872a7f7cfc8f8f2733a"
+          ],
+          "input": 0,
+          "output": 0,
+          "incomplete": false,
+          "seconds": 0.00024330000451300293
+        },
+        {
+          "id": "06feb5a9f88f457ea076a637e9b32192",
+          "iteration": 1,
+          "phase": "工具内部",
+          "tool": "calculator",
+          "tool_call_ids": [
+            "06feb5a9f88f457ea076a637e9b32192"
+          ],
+          "input": 0,
+          "output": 0,
+          "incomplete": false,
+          "seconds": 0.006182099998113699
+        },
+        {
+          "id": "66e4c050b6134872a7f7cfc8f8f2733a",
+          "iteration": 1,
+          "phase": "工具内部",
+          "tool": "calculator",
+          "tool_call_ids": [
+            "66e4c050b6134872a7f7cfc8f8f2733a"
+          ],
+          "input": 0,
+          "output": 0,
+          "incomplete": false,
+          "seconds": 0.005054599998402409
+        },
+        {
+          "id": "observation:1",
+          "iteration": 1,
+          "phase": "Observation",
+          "tool": "—",
+          "tool_call_ids": [],
+          "input": 2781,
+          "output": 63,
+          "incomplete": false,
+          "seconds": 4.529855699998734
+        }
+      ],
+      "trace": [
+        {
+          "type": "thought",
+          "thought": "调用calculator、calculator获取所需信息。",
+          "next_step": "tool",
+          "tool_name": "calculator",
+          "parallel_tools": [
+            "calculator",
+            "calculator"
+          ],
+          "elapsed_seconds": 4.916085900003964,
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "name": "calculator",
+          "call_id": "06feb5a9f88f457ea076a637e9b32192",
+          "args": {
+            "expression": "3.14*2.56"
+          },
+          "elapsed_seconds": 0.00024330000451300293,
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "name": "calculator",
+          "call_id": "66e4c050b6134872a7f7cfc8f8f2733a",
+          "args": {
+            "expression": "12.5/2"
+          },
+          "elapsed_seconds": 0.00024330000451300293,
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "name": "calculator",
+          "call_id": "06feb5a9f88f457ea076a637e9b32192",
+          "args": {
+            "expression": "3.14*2.56"
+          },
+          "result": {
+            "expression": "3.14*2.56",
+            "result": "8.0384",
+            "usage": {
+              "prompt_eval_count": 0,
+              "eval_count": 0
+            }
+          },
+          "status": "success",
+          "error": "",
+          "error_kind": null,
+          "attempts": [
+            {
+              "attempt": 1,
+              "status": "success",
+              "error": "",
+              "error_kind": null,
+              "elapsed_seconds": 0.0061487999992095865,
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              },
+              "usage_incomplete": false
+            }
+          ],
+          "execution_mode": "parallel",
+          "elapsed_seconds": 0.006182099998113699,
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "name": "calculator",
+          "call_id": "66e4c050b6134872a7f7cfc8f8f2733a",
+          "args": {
+            "expression": "12.5/2"
+          },
+          "result": {
+            "expression": "12.5/2",
+            "result": "6.25",
+            "usage": {
+              "prompt_eval_count": 0,
+              "eval_count": 0
+            }
+          },
+          "status": "success",
+          "error": "",
+          "error_kind": null,
+          "attempts": [
+            {
+              "attempt": 1,
+              "status": "success",
+              "error": "",
+              "error_kind": null,
+              "elapsed_seconds": 0.0050286999976378866,
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              },
+              "usage_incomplete": false
+            }
+          ],
+          "execution_mode": "parallel",
+          "elapsed_seconds": 0.005054599998402409,
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "elapsed_seconds": 4.529855699998734,
+          "observation": "已计算两个表达式的结果。",
+          "decision": "finish",
+          "task_complete": true,
+          "iteration": 1
+        },
+        {
+          "type": "done",
+          "task_complete": true,
+          "stop_reason": "task_complete",
+          "full_response": "计算结果为：3.14*2.56=8.0384，12.5/2=6.25。",
+          "iteration": 1
+        }
+      ],
+      "tool_calls": [
+        {
+          "call_id": "06feb5a9f88f457ea076a637e9b32192",
+          "name": "calculator",
+          "iteration": 1,
+          "status": "success",
+          "seconds": 0.006182099998113699,
+          "attempts": 1,
+          "execution_mode": "parallel"
+        },
+        {
+          "call_id": "66e4c050b6134872a7f7cfc8f8f2733a",
+          "name": "calculator",
+          "iteration": 1,
+          "status": "success",
+          "seconds": 0.005054599998402409,
+          "attempts": 1,
+          "execution_mode": "parallel"
+        }
+      ],
+      "tools": {
+        "started": 2,
+        "completed": 2,
+        "successes": 2,
+        "failures": 0,
+        "pending": 0,
+        "success_rate": 1.0,
+        "mean_seconds": 0.005618349998258054,
+        "by_tool": [
+          {
+            "name": "calculator",
+            "started": 2,
+            "completed": 2,
+            "successes": 2,
+            "failures": 0,
+            "pending": 0,
+            "success_rate": 1.0,
+            "mean_seconds": 0.005618349998258054
+          }
+        ]
+      },
+      "tokens": {
+        "input": 5787,
+        "output": 114,
+        "total": 5901,
+        "known_total": 5901,
+        "unknown_calls": 0
+      },
+      "response_seconds": 9.848904499995115
+    }
+  },
+  "seconds": 9.858796599997731,
+  "finished_at": "2026-10-09T10:28:45.535940+08:00"
+}

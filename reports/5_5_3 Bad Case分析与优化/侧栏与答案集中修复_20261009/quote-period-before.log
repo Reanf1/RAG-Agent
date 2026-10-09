@@ -1,0 +1,25 @@
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+<frozen importlib._bootstrap>:241: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
+
+======================================================================
+FAIL: test_terminal_chinese_period_does_not_hide_changed_source_facts (__main__.GenerationAudit) (quote='The model has 86M parameters with no external data。')
+真实F02/F11仅句末标点不同；数值、否定和句内文字仍必须相同。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/tests/5_5_3 Bad Case分析与优化/test_independent_generation.py", line 139, in test_terminal_chinese_period_does_not_hide_changed_source_facts
+    self.assertEqual(result['evidence_quote_errors'], errors)
+AssertionError: Lists differ: [[1]] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+[1]
+
+- [[1]]
++ []
+
+----------------------------------------------------------------------
+Ran 1 test in 0.321s
+
+FAILED (failures=1)
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

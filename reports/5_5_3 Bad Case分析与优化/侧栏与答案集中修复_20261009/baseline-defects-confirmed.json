@@ -1,0 +1,33 @@
+{
+  "revision": "4a9e6c3",
+  "run": 3,
+  "tests": [
+    "5_3_1 Agent核心循环.test_observation.TestObservationAndLoop.test_one_paper_result_cannot_complete_two_paper_request",
+    "5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel.test_two_paper_rule_rejects_missing_or_wrong_target_before_execution",
+    "5_4_2 可观测性与健康检查.test_health_check.TestHealthCheckPage.test_page_startup_shows_sidebar_status_and_rerun_reuses_snapshot"
+  ],
+  "failures": [
+    [
+      "5_3_1 Agent核心循环.test_observation.TestObservationAndLoop.test_one_paper_result_cannot_complete_two_paper_request",
+      "Traceback (most recent call last):\n  File \"/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-mi8r9qmf/tests/5_3_1 Agent核心循环/test_observation.py\", line 108, in test_one_paper_result_cannot_complete_two_paper_request\n    self.assertFalse(result[\"task_complete\"])\nAssertionError: True is not false\n"
+    ],
+    [
+      "5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel.test_two_paper_rule_rejects_missing_or_wrong_target_before_execution (targets=['aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'])",
+      "Traceback (most recent call last):\n  File \"/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-mi8r9qmf/tests/5_3_3 Agent决策优化/test_routing_parallel.py\", line 147, in test_two_paper_rule_rejects_missing_or_wrong_target_before_execution\n    self.assertEqual(events[-1][\"type\"], \"error\")\nAssertionError: 'tool_result' != 'error'\n- tool_result\n+ error\n\n"
+    ],
+    [
+      "5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel.test_two_paper_rule_rejects_missing_or_wrong_target_before_execution (targets=['aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc'])",
+      "Traceback (most recent call last):\n  File \"/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-mi8r9qmf/tests/5_3_3 Agent决策优化/test_routing_parallel.py\", line 147, in test_two_paper_rule_rejects_missing_or_wrong_target_before_execution\n    self.assertEqual(events[-1][\"type\"], \"error\")\nAssertionError: 'tool_result' != 'error'\n- tool_result\n+ error\n\n"
+    ],
+    [
+      "5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel.test_two_paper_rule_rejects_missing_or_wrong_target_before_execution",
+      "Traceback (most recent call last):\n  File \"/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-mi8r9qmf/tests/5_3_3 Agent决策优化/test_routing_parallel.py\", line 152, in test_two_paper_rule_rejects_missing_or_wrong_target_before_execution\n    self.assertEqual(set(seen), {a, b})\nAssertionError: Items in the first set but not the second:\n'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc'\n"
+    ],
+    [
+      "5_4_2 可观测性与健康检查.test_health_check.TestHealthCheckPage.test_page_startup_shows_sidebar_status_and_rerun_reuses_snapshot",
+      "Traceback (most recent call last):\n  File \"/private/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-status-baseline-mi8r9qmf/tests/5_4_2 可观测性与健康检查/test_health_check.py\", line 223, in test_page_startup_shows_sidebar_status_and_rerun_reuses_snapshot\n    self.assertEqual([row.value for row in app.sidebar.success],\nAssertionError: Lists differ: ['LLM服务：可连接，推理未验证（qwen2.5:7b）', '向量数据库：可读取，检索未验证（Chroma）'] != ['LLM服务：可连接，模型已安装（qwen2.5:7b）', '向量数据库：索引可读取（Chroma）']\n\nFirst differing element 0:\n'LLM服务：可连接，推理未验证（qwen2.5:7b）'\n'LLM服务：可连接，模型已安装（qwen2.5:7b）'\n\n- ['LLM服务：可连接，推理未验证（qwen2.5:7b）', '向量数据库：可读取，检索未验证（Chroma）']\n?             ^^^^^                         ------\n\n+ ['LLM服务：可连接，模型已安装（qwen2.5:7b）', '向量数据库：索引可读取（Chroma）']\n?             ^^^^^                      ++\n\n"
+    ]
+  ],
+  "errors": [],
+  "boundary": "旧提交真实源码与本轮缺陷用例，模型响应隔离；预期复现失败，不作为成功回归。"
+}
