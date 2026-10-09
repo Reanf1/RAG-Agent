@@ -95,7 +95,8 @@ class TestLocalGeneration(unittest.TestCase):
                 "We use standard learnable 1D position embeddings. "
                 "The encoder then processes the sequence.")
         document = Document(page_content=text, metadata={"chunk_id": "c", "doc_id": "d",
-                            "page_number": 3, "start_index": 100, "end_index": 100 + len(text)})
+                            "page_number": 3, "start_index": 100, "end_index": 100 + len(text),
+                            "rerank_excerpt": "The classification head is a linear layer at fine-tuning time."})
         before = deepcopy(document)
         def rank(query, candidates, k):
             return sorted([(d, 0.95 if d.page_content.startswith("Position") else 0.01)
@@ -109,6 +110,10 @@ class TestLocalGeneration(unittest.TestCase):
         self.assertEqual(focused.metadata["end_index"], 100 + start + len(focused.page_content))
         self.assertEqual(document, before)
         self.assertEqual(score, 0.95)
+        # 原精排长块的摘录不能覆盖这次新选出的连续正文。
+        context = build_context("如何使用位置编码？", [(focused, score)])
+        self.assertEqual(context["references"][0]["text"], focused.page_content)
+        self.assertNotIn("classification", context["context"])
 
     def test_broad_question_does_not_focus_away_requested_details(self):
         from src.generation.rag_pipeline import focus_answer_evidence

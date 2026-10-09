@@ -60,6 +60,15 @@ class TestLongReranker(unittest.TestCase):
         self.assertIn("末行99", found[0][0].metadata["rerank_excerpt"])
         self.assertTrue(all(len(q) + len(text) + 4 <= 160 for q, text in pairs))
 
+    def test_short_body_rerank_does_not_reuse_previous_excerpt(self):
+        """正文已聚焦后重新评分，生成输入须采用本次正文，原候选保持不变。"""
+        document = Document(page_content="本次正文末行99", metadata={"rerank_excerpt": "上次无关摘录",
+                            "retrieval_warning": "长块按模型Token窗口精排，本次引用只覆盖选中的摘录；完整内容见原页。"})
+        found = self.reranker.rerank("当前内容", [(document, 1)])
+        self.assertNotIn("rerank_excerpt", found[0][0].metadata)
+        self.assertEqual(build_context("当前内容", found)["references"][0]["text"], document.page_content)
+        self.assertEqual(document.metadata["rerank_excerpt"], "上次无关摘录")
+
     def test_oversized_single_row_is_explicit_error_before_inference(self):
         document = Document(page_content="| 字段 |\n| --- |\n| " + "长" * 200 + " |", metadata={"content_type": "table"})
         with self.assertRaisesRegex(ValueError, "单行和表头"):

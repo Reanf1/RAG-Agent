@@ -73,6 +73,20 @@ class GenerationAudit(unittest.TestCase):
                     if expected:
                         self.assertNotIn("304M", result["answer"])
 
+    def test_quoted_evidence_without_fixed_label_is_still_checked(self):
+        """复现真实回答改用Original Source或省略标签时，译文和错页仍必须被拒绝。"""
+        self.context["references"][0]["text"] = "We use no external data."
+        for prefix in ("", "Original Source: ", "**原文**："):
+            for quote, expected in (("We use no external data.", []),
+                                    ("We use external data.", [[1]]), ("我们不使用外部数据。", [[1]])):
+                with self.subTest(prefix=prefix, quote=quote):
+                    raw = f'{prefix}"{quote}" [参考文档1]'
+                    result = _finish_generation({**self.done, "message": {"content": raw}}, self.context, {})
+                    self.assertEqual(result["evidence_quote_errors"], expected)
+                    self.assertEqual(result["raw_answer"], raw)
+                    if expected:
+                        self.assertFalse(SemanticCache().put("依据", {"type": "done", **result}, "范围"))
+
     def test_cited_chinese_unit_conversion_must_match_original_amount(self):
         """复现真实303M→30.3亿，正确换算仍可展示；只核验带引用的数量。"""
         self.context["references"][0]["text"] = "ImageNet has 1.3M images. JFT has 303M images."
@@ -132,11 +146,37 @@ class GenerationAudit(unittest.TestCase):
                 result = _finish_generation({**self.done, "message": {"content": raw}}, self.context, {})
                 self.assertEqual(result["evidence_number_errors"], [])
 
+    def test_original_units_and_countless_citations_cannot_bypass_quantity_check(self):
+        """保留M单位或错引无数量的页，仍须核验同一片段；数据集名称不是数量。"""
+        self.context["references"][0]["text"] = "JFT-300M contains 303M images."
+        self.context["references"].append({**self.context["references"][0], "id": 2,
+                                            "text": "The model is evaluated on ImageNet."})
+        cases = (("JFT-300M包含303M张图像。[参考文档1]", []),
+                 ("JFT包含304M张图像。[参考文档1]", [1]),
+                 ("JFT包含303M张图像。[参考文档2]", [2]),
+                 ("JFT包含30300万张图像。[参考文档2]", [2]))
+        for raw, expected in cases:
+            with self.subTest(raw=raw):
+                result = _finish_generation({**self.done, "message": {"content": raw}}, self.context, {})
+                self.assertEqual(result["evidence_number_errors"], expected)
+                self.assertEqual(result["raw_answer"], raw)
+                if expected:
+                    self.assertFalse(SemanticCache().put("数量", {"type": "done", **result}, "范围"))
+
     def test_whitespace_in_original_quote_is_preserved_as_evidence(self):
         raw = '原文依据："实验准确率为81%。\n第二句说明数据来源。"。[参考文档1]'
         result = _finish_generation({**self.done, 'message': {'content': raw}}, self.context, {})
         self.assertEqual(result['evidence_quote_errors'], [])
         self.assertIn('81%', result['answer'])
+
+    def test_citation_on_next_bullet_does_not_change_the_original_quote(self):
+        """真实模型将编号另起列表行时，只定位引号内原句，列表标记不属于原文。"""
+        raw = '原文依据："实验准确率为81%。"\n  - [参考文档1]'
+        result = _finish_generation({**self.done, 'message': {'content': raw}}, self.context, {})
+        self.assertEqual(result['evidence_quote_errors'], [])
+        wrong = raw.replace('81%', '99%')
+        failed = _finish_generation({**self.done, 'message': {'content': wrong}}, self.context, {})
+        self.assertEqual(failed['evidence_quote_errors'], [[1]])
 
     def test_pdf_line_break_and_ligature_must_not_reject_real_quote(self):
         """只消除PDF排版差异，不能改写事实数字或匹配其他来源。"""

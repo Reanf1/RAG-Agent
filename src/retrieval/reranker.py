@@ -86,6 +86,11 @@ class Reranker:
             if not all(math.isfinite(score) for score in window_scores):
                 raise ValueError("重排模型返回非有限分数")
             best = max(range(len(windows)), key=lambda index: window_scores[index])
+            if "rerank_excerpt" in document.metadata:
+                # 上轮摘录不代表本次评分正文；复制后清除，避免短正文沿用旧摘录。
+                document = deepcopy(document)
+                document.metadata.pop("rerank_excerpt")
+                document.metadata.pop("retrieval_warning", None)
             if len(windows) > 1:
                 document = deepcopy(document)
                 # 仅作本次检索摘录；原索引、块ID和表格行来源保持不变。
