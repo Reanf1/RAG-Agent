@@ -112,7 +112,7 @@ def knowledge_base_search(question: str, doc_id: str | None = None) -> dict:
 def _knowledge_base_search(question: str, doc_id: str | None = None, *, cache=None, session_id: str | None = None,
                            pending: dict | None = None, confirmation: dict | None = None, request_question: str | None = None) -> dict:
     """真实RAG实现；缓存只由Python会话入口绑定，不向模型暴露会话或缓存参数。"""
-    from src.generation.rag_pipeline import generate_answer, prepare_rag_context
+    from src.generation.rag_pipeline import GenerationError, generate_answer, prepare_rag_context, reference_warnings
     from src.retrieval.hybrid_retriever import HybridRetriever
 
     if not question.strip():
@@ -218,9 +218,8 @@ def _knowledge_base_search(question: str, doc_id: str | None = None, *, cache=No
                             if event["type"] == "token":
                                 sink(event)
                             elif event["type"] == "error":
-                                error = RuntimeError(event["message"] + "。" + event["retry_advice"])
-                                error.usage = event.get("usage")
-                                raise error
+                                raise GenerationError(event["message"] + "。" + event["retry_advice"],
+                                                      {key: value for key, value in event.items() if key != "type"})
                             else:
                                 result = {key: value for key, value in event.items() if key != "type"}
                     finally:
@@ -242,13 +241,14 @@ def _knowledge_base_search(question: str, doc_id: str | None = None, *, cache=No
                                  "returned_chunks": returned_chunks})
         # 低相关候选尚未生成答案，也需保留向量临时恢复说明供用户审阅。
         if result["status"] == "needs_confirmation":
-            result["warnings"] = list(dict.fromkeys(ref["metadata"].get("retrieval_warning")
-                                                   for ref in context["references"] if ref["metadata"].get("retrieval_warning")))
+            result["warnings"] = reference_warnings(context["references"])
         if cache_warnings:
             result.setdefault("warnings", []).extend(cache_warnings)
         message.update(result)
         return result
     except Exception as error:
+        if isinstance(error, GenerationError):
+            message.update(error.result)
         message["error"] = f"{type(error).__name__}: {error}"
         raise  # 原始故障交给统一工具执行器，不返回假答案或自动重试。
     finally:
@@ -439,17 +439,15 @@ def _expand_paper_evidence(document, chunks, *, include_previous=True):
 
 
 def _has_quantitative_result(text):
-    """指标、数值和结果陈述须在同一句；图轴或缺少表头的数字尾块不能冒充结果。"""
-    metric = r"\b(?:BLEU|accuracy|m?AP|F1|IoU|Recall|precision|perplexity|loss)\b|准确率|精度|召回率|损失"
-    for sentence in re.split(r"[.!?](?:\s+|$)|[。！？]\s*", text):
-        if not re.search(metric, sentence, re.I) or not re.search(r"\d+\.\d+|\d+\s*%|(?:" + metric + r")\s*[:=：]?\s*\d+", sentence, re.I):
-            continue
-        narrative = re.search(r"achiev\w*|reach\w*|obtain\w*|attain\w*|score\w*|outperform\w*|达到|取得", sentence, re.I)
-        dataset = re.search(r"\bon\b|dataset|benchmark|\bWMT\b|数据集|任务", sentence, re.I)
-        fields = re.search(r"\b(?:method|model)\b|方法|模型", sentence, re.I)
-        if dataset and (narrative or fields):
-            return True
-    return False
+    """只核验原文中的指标与数值关联；模型和数据集可在相邻句，不限制结果动词。"""
+    # 覆盖常见分类、回归和文本生成指标；数据集缩写（如WMT 2014）不是指标。
+    metric = (r"\b(?:accuracy|m?AP|F1|IoU|Recall|precision|perplexity|loss|"
+              r"ROC[- ]?AUC|AUC|RMSE|MAE|MSE|BLEU|ROUGE(?:-[12L])?|METEOR)\b"
+              r"|准确率|精度|召回率|损失")
+    number = r"(?<![A-Za-z0-9_.])\d+(?:\.\d+)?[ \t]*%?(?![A-Za-z0-9_])"
+    link = r"(?:[ \t:=：|]|为|是|达到|取得|约|(?i:\b(?:of|is|was|score)\b))*"
+    return bool(re.search(r"(?:" + metric + r")" + link + number, text, re.I)
+                or re.search(number + r"[ \t]+(?:" + metric + r")", text, re.I))
 
 
 def _paper_section(document, chunks, offset=0):
@@ -483,7 +481,7 @@ def _quantitative_excerpt(document, chunks):
     if not matches:
         return None
     first, last = matches[0], matches[-1]
-    if first and re.search(r"pre.train|训练|our model", spans[first - 1].group(), re.I):
+    if first and re.search(r"pre.train|训练|our model|dataset|数据集", spans[first - 1].group(), re.I):
         first -= 1
     start, end = spans[first].start(), spans[last].end()
     doc.page_content = text[start:end]
@@ -512,7 +510,7 @@ def _paper_compare(paper_a_id: str, paper_b_id: str, *, session_id=None, pending
                    confirmation=None, request_question=None) -> dict:
     """确认状态仅由Python会话入口绑定，模型只能提交两篇论文ID。"""
     from langchain_core.documents import Document
-    from src.generation.rag_pipeline import build_context, prepare_rag_context
+    from src.generation.rag_pipeline import build_context, prepare_rag_context, reference_warnings
     from src.retrieval.hybrid_retriever import HybridRetriever
     from src.retrieval.reranker import Reranker
 
@@ -658,8 +656,7 @@ def _paper_compare(paper_a_id: str, paper_b_id: str, *, session_id=None, pending
                   "answer": "一篇论文没有可用索引证据，请先完成两篇论文入库。" if empty_paper else "检索相关性低，请用户核对候选原文。",
                   "references": _tool_references(context["references"]), "generation_mode": "empty" if empty_paper else "low",
                   "citations": [], "usage": {"prompt_eval_count": 0, "eval_count": 0},
-                  "warnings": list(dict.fromkeys(ref["metadata"]["retrieval_warning"] for ref in context["references"]
-                                                  if ref["metadata"].get("retrieval_warning"))),
+                  "warnings": reference_warnings(context["references"]),
                   "elapsed_seconds": perf_counter() - started}
         if not empty_paper and pending is not None and pending_scope == cache_scope(VectorStore()):
             identifier = uuid4().hex
@@ -741,7 +738,7 @@ def _finish_paper_compare(context, base, paths, paper_a_id, paper_b_id, started,
                         continue
                     if not _has_quantitative_result(ref["text"]):
                         missing.append(f"论文{label.upper()}：实验结果数值")
-                        cells.append(f"当前返回原文／节选未提供可核验的实验指标数值；请核对完整原文。 [参考文档{reference_id}]")
+                        cells.append(f"未能自动核验当前节选中的指标与数值关系，请核对原文；这不代表论文没有实验数字。 [参考文档{reference_id}]")
                         continue
                 # 原文中的Markdown符号作为文字；只有程序添加的编号才参与引用解析。
                 quote = re.sub(r"([\\`*_{}\[\]()<>#!|])", r"\\\1", " ".join(ref["text"].split()))
@@ -778,7 +775,7 @@ def keyword_extract(text: str | None = None, doc_id: str | None = None) -> dict:
 
     text与doc_id必须且只能提供一个；doc_id为上传SHA-256指纹。
     文档取前三页/开头字符预算，长问题取同样预算；返回input_truncated，不冒充全文分析。
-    关键词必须出现在输入原文，模型不得补充同义词；不联网。
+    只返回能在输入原文定位的关键词，过滤模型扩展的同义词；不联网。
     """
     started = perf_counter()
     if (text is None) == (doc_id is None):
@@ -823,7 +820,8 @@ def keyword_extract(text: str | None = None, doc_id: str | None = None) -> dict:
             pattern += r"(?![A-Za-z0-9_])"
         match = re.search(pattern, normalized, flags=re.I)
         if not match:
-            raise ValueError("关键词不在输入原文中，不能接受模型扩展的词语")
+            # 逐词核验；一个扩展词不能让其他有依据的词一起失效。
+            continue
         value = " ".join(match.group().split())
         if value.casefold() in seen:
             continue
@@ -831,6 +829,8 @@ def keyword_extract(text: str | None = None, doc_id: str | None = None) -> dict:
         keywords.append(value)
         evidence.append({"keyword": value, "locations": [deepcopy(row) for start, end, row in ranges
                          if start < match.end() and end > match.start()]})
+    if selection["keywords"] and not keywords:
+        raise ValueError("模型提取的关键词均无法在原文定位，请重试；这不表示文档不存在")
     return {"keywords": keywords, "evidence": evidence, "doc_id": doc_id, "source_file": filename,
             "input_truncated": truncated, "model": response["model"],
             "usage": {key: response.get(key) for key in ("prompt_eval_count", "eval_count")},

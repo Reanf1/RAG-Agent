@@ -29,6 +29,27 @@ class _LocalModelRedirectHandler(HTTPRedirectHandler):
 urlopen = build_opener(ProxyHandler({}), _LocalModelRedirectHandler()).open
 
 
+class GenerationError(RuntimeError):
+    """生成失败也携带本次结果快照，供工具、日志沿用同一份正文和实际用量。"""
+
+    def __init__(self, message: str, result: dict):
+        super().__init__(message)
+        self.result = result
+        self.usage = result.get("usage")
+
+
+def reference_warnings(references: list[dict]) -> list[str]:
+    """检索故障来自原始元数据；摘录提示由当前摘录产生，互不覆盖。"""
+    warnings = []
+    for reference in references:
+        metadata = reference.get("metadata", {})
+        if metadata.get("retrieval_warning"):
+            warnings.append(metadata["retrieval_warning"])
+        if metadata.get("rerank_excerpt"):
+            warnings.append("长块按模型Token窗口精排，本次引用只覆盖选中的摘录；完整内容见原页。")
+    return list(dict.fromkeys(warnings))
+
+
 def focus_answer_evidence(question: str, results: list[tuple[Document, float]], *, chunks=()) -> list[tuple[Document, float]]:
     """单一的使用／实现问题按连续双句精排，减少相邻对象混入；宽泛问题保留原块。"""
     if not re.search(r"(?:如何|怎样|怎么).*?(?:使用|实现|工作)|\bhow\b.*?\b(?:use|work|implement)\w*", question, re.I):
@@ -196,9 +217,13 @@ def generate_answer(question: str, context: dict, *, options: dict | None = None
         return _finish_generation(result, context, sampling)
     except (OSError, ValueError, RuntimeError) as error:
         failure = generation_error(error)
-        exception = RuntimeError(f"本地 Ollama 调用失败：{failure['message']}。{failure['retry_advice']}")
-        exception.usage = {key: result.get(key) for key in ("prompt_eval_count", "eval_count")} if isinstance(result, dict) else None
-        raise exception from error
+        response = result if isinstance(result, dict) else {}
+        message = response.get("message")
+        raw = message.get("content", "") if isinstance(message, dict) else ""
+        raw = raw if isinstance(raw, str) else ""
+        partial = _with_generation_notice(resolve_citations(raw, context), context) if raw.strip() else {"answer": ""}
+        partial.update(raw_answer=raw, usage={key: response.get(key) for key in ("prompt_eval_count", "eval_count")})
+        raise GenerationError(f"本地 Ollama 调用失败：{failure['message']}。{failure['retry_advice']}", partial) from error
 
 
 def _finish_generation(result: dict, context: dict, sampling: dict) -> dict:
@@ -422,8 +447,7 @@ def resolve_citations(answer: str, context: dict) -> dict:
     if not answer.strip():
         raise ValueError("答案不能为空")
     references = {reference["id"]: reference for reference in context["references"]}
-    warnings = list(dict.fromkeys(ref.get("metadata", {}).get("retrieval_warning")
-                                 for ref in references.values() if ref.get("metadata", {}).get("retrieval_warning")))
+    warnings = reference_warnings(list(references.values()))
     citations, invalid_ids, labels = [], [], {}
 
     def replace(match):

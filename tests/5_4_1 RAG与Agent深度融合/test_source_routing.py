@@ -160,7 +160,7 @@ class TestRAGSearchRouting(unittest.TestCase):
         with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(action).encode())) as http:
             events = list(run_react("请使用knowledge_base_search查询论文.pdf：方法是什么？", tools))
         self.assertTrue(events[-1]["task_complete"])
-        self.assertEqual(self.search_calls, [("方法是什么？", identifier)])
+        self.assertEqual(self.search_calls, [("请使用knowledge_base_search查询论文.pdf：方法是什么？", identifier)])
         self.assertEqual([e["name"] for e in events if e["type"] == "tool_result"], ["paper_list", "knowledge_base_search"])
         self.assertEqual(http.call_count, 1)
 

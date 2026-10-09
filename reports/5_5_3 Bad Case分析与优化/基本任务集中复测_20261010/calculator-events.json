@@ -1,0 +1,497 @@
+[
+  {
+    "type": "thought",
+    "thought": "调用calculator获取所需信息。",
+    "next_step": "tool",
+    "tool_name": "calculator",
+    "parallel_tools": [],
+    "tool_calls": [
+      {
+        "id": "call_gag66n0z",
+        "function": {
+          "index": 0,
+          "name": "calculator",
+          "arguments": {
+            "expression": "23*17"
+          }
+        }
+      }
+    ],
+    "model": "qwen2.5:7b",
+    "usage": {
+      "prompt_eval_count": 4507,
+      "eval_count": 23
+    },
+    "elapsed_seconds": 7.900563500006683,
+    "iteration": 1,
+    "request_id": "bc1cac7623614192bf29d65b5c5418a5",
+    "user_id": "37c7916109a947838f6b0e83291071f1",
+    "session_id": "6cce116f69dd4c51bac750ab60cdcf80"
+  },
+  {
+    "type": "tool_call",
+    "call_id": "f7ba802556494bfd94211c99b781fba9",
+    "name": "calculator",
+    "args": {
+      "expression": "23*17"
+    },
+    "model": null,
+    "elapsed_seconds": 6.595800368813798e-05,
+    "usage": {
+      "prompt_eval_count": 0,
+      "eval_count": 0
+    },
+    "iteration": 1,
+    "request_id": "bc1cac7623614192bf29d65b5c5418a5",
+    "user_id": "37c7916109a947838f6b0e83291071f1",
+    "session_id": "6cce116f69dd4c51bac750ab60cdcf80"
+  },
+  {
+    "type": "tool_result",
+    "call_id": "f7ba802556494bfd94211c99b781fba9",
+    "name": "calculator",
+    "args": {
+      "expression": "23*17"
+    },
+    "status": "success",
+    "result": {
+      "expression": "23*17",
+      "result": "391",
+      "usage": {
+        "prompt_eval_count": 0,
+        "eval_count": 0
+      }
+    },
+    "error": "",
+    "error_kind": null,
+    "usage": {
+      "prompt_eval_count": 0,
+      "eval_count": 0
+    },
+    "usage_incomplete": false,
+    "elapsed_seconds": 0.0007219170001917519,
+    "attempts": [
+      {
+        "attempt": 1,
+        "status": "success",
+        "error": "",
+        "error_kind": null,
+        "elapsed_seconds": 0.000705749996996019,
+        "usage": {
+          "prompt_eval_count": 0,
+          "eval_count": 0
+        },
+        "usage_incomplete": false
+      }
+    ],
+    "execution_mode": "serial",
+    "iteration": 1,
+    "request_id": "bc1cac7623614192bf29d65b5c5418a5",
+    "user_id": "37c7916109a947838f6b0e83291071f1",
+    "session_id": "6cce116f69dd4c51bac750ab60cdcf80"
+  },
+  {
+    "type": "observation",
+    "observation": "计算结果为391。",
+    "decision": "continue",
+    "task_complete": false,
+    "answer": "",
+    "model": "qwen2.5:7b",
+    "usage": {
+      "prompt_eval_count": 3986,
+      "eval_count": 30
+    },
+    "elapsed_seconds": 10.111685208998097,
+    "iteration": 1,
+    "request_id": "bc1cac7623614192bf29d65b5c5418a5",
+    "user_id": "37c7916109a947838f6b0e83291071f1",
+    "session_id": "6cce116f69dd4c51bac750ab60cdcf80"
+  },
+  {
+    "type": "thought",
+    "thought": "依据现有资料回答或说明不足。",
+    "next_step": "answer",
+    "tool_name": null,
+    "parallel_tools": [],
+    "tool_calls": [],
+    "model": "qwen2.5:7b",
+    "usage": {
+      "prompt_eval_count": 4779,
+      "eval_count": 20
+    },
+    "elapsed_seconds": 2.6925553749970277,
+    "iteration": 2,
+    "request_id": "bc1cac7623614192bf29d65b5c5418a5",
+    "user_id": "37c7916109a947838f6b0e83291071f1",
+    "session_id": "6cce116f69dd4c51bac750ab60cdcf80"
+  },
+  {
+    "type": "action_skipped",
+    "reason": "Thought规划直接回答，无需执行工具。",
+    "iteration": 2,
+    "request_id": "bc1cac7623614192bf29d65b5c5418a5",
+    "user_id": "37c7916109a947838f6b0e83291071f1",
+    "session_id": "6cce116f69dd4c51bac750ab60cdcf80"
+  },
+  {
+    "type": "token",
+    "answer": "2",
+    "provisional": true,
+    "iteration": 2,
+    "request_id": "bc1cac7623614192bf29d65b5c5418a5",
+    "user_id": "37c7916109a947838f6b0e83291071f1",
+    "session_id": "6cce116f69dd4c51bac750ab60cdcf80"
+  },
+  {
+    "type": "token",
+    "answer": "23",
+    "provisional": true,
+    "iteration": 2,
+    "request_id": "bc1cac7623614192bf29d65b5c5418a5",
+    "user_id": "37c7916109a947838f6b0e83291071f1",
+    "session_id": "6cce116f69dd4c51bac750ab60cdcf80"
+  },
+  {
+    "type": "token",
+    "answer": "23乘",
+    "provisional": true,
+    "iteration": 2,
+    "request_id": "bc1cac7623614192bf29d65b5c5418a5",
+    "user_id": "37c7916109a947838f6b0e83291071f1",
+    "session_id": "6cce116f69dd4c51bac750ab60cdcf80"
+  },
+  {
+    "type": "token",
+    "answer": "23乘以",
+    "provisional": true,
+    "iteration": 2,
+    "request_id": "bc1cac7623614192bf29d65b5c5418a5",
+    "user_id": "37c7916109a947838f6b0e83291071f1",
+    "session_id": "6cce116f69dd4c51bac750ab60cdcf80"
+  },
+  {
+    "type": "token",
+    "answer": "23乘以1",
+    "provisional": true,
+    "iteration": 2,
+    "request_id": "bc1cac7623614192bf29d65b5c5418a5",
+    "user_id": "37c7916109a947838f6b0e83291071f1",
+    "session_id": "6cce116f69dd4c51bac750ab60cdcf80"
+  },
+  {
+    "type": "token",
+    "answer": "23乘以17",
+    "provisional": true,
+    "iteration": 2,
+    "request_id": "bc1cac7623614192bf29d65b5c5418a5",
+    "user_id": "37c7916109a947838f6b0e83291071f1",
+    "session_id": "6cce116f69dd4c51bac750ab60cdcf80"
+  },
+  {
+    "type": "token",
+    "answer": "23乘以17的",
+    "provisional": true,
+    "iteration": 2,
+    "request_id": "bc1cac7623614192bf29d65b5c5418a5",
+    "user_id": "37c7916109a947838f6b0e83291071f1",
+    "session_id": "6cce116f69dd4c51bac750ab60cdcf80"
+  },
+  {
+    "type": "token",
+    "answer": "23乘以17的计算",
+    "provisional": true,
+    "iteration": 2,
+    "request_id": "bc1cac7623614192bf29d65b5c5418a5",
+    "user_id": "37c7916109a947838f6b0e83291071f1",
+    "session_id": "6cce116f69dd4c51bac750ab60cdcf80"
+  },
+  {
+    "type": "token",
+    "answer": "23乘以17的计算结果",
+    "provisional": true,
+    "iteration": 2,
+    "request_id": "bc1cac7623614192bf29d65b5c5418a5",
+    "user_id": "37c7916109a947838f6b0e83291071f1",
+    "session_id": "6cce116f69dd4c51bac750ab60cdcf80"
+  },
+  {
+    "type": "token",
+    "answer": "23乘以17的计算结果是",
+    "provisional": true,
+    "iteration": 2,
+    "request_id": "bc1cac7623614192bf29d65b5c5418a5",
+    "user_id": "37c7916109a947838f6b0e83291071f1",
+    "session_id": "6cce116f69dd4c51bac750ab60cdcf80"
+  },
+  {
+    "type": "token",
+    "answer": "23乘以17的计算结果是3",
+    "provisional": true,
+    "iteration": 2,
+    "request_id": "bc1cac7623614192bf29d65b5c5418a5",
+    "user_id": "37c7916109a947838f6b0e83291071f1",
+    "session_id": "6cce116f69dd4c51bac750ab60cdcf80"
+  },
+  {
+    "type": "token",
+    "answer": "23乘以17的计算结果是39",
+    "provisional": true,
+    "iteration": 2,
+    "request_id": "bc1cac7623614192bf29d65b5c5418a5",
+    "user_id": "37c7916109a947838f6b0e83291071f1",
+    "session_id": "6cce116f69dd4c51bac750ab60cdcf80"
+  },
+  {
+    "type": "token",
+    "answer": "23乘以17的计算结果是391",
+    "provisional": true,
+    "iteration": 2,
+    "request_id": "bc1cac7623614192bf29d65b5c5418a5",
+    "user_id": "37c7916109a947838f6b0e83291071f1",
+    "session_id": "6cce116f69dd4c51bac750ab60cdcf80"
+  },
+  {
+    "type": "token",
+    "answer": "23乘以17的计算结果是391。",
+    "provisional": true,
+    "iteration": 2,
+    "request_id": "bc1cac7623614192bf29d65b5c5418a5",
+    "user_id": "37c7916109a947838f6b0e83291071f1",
+    "session_id": "6cce116f69dd4c51bac750ab60cdcf80"
+  },
+  {
+    "type": "observation",
+    "observation": "计算结果为391。",
+    "decision": "finish",
+    "task_complete": true,
+    "answer": "23乘以17的计算结果是391。",
+    "model": "qwen2.5:7b",
+    "usage": {
+      "prompt_eval_count": 3966,
+      "eval_count": 44
+    },
+    "elapsed_seconds": 3.933788624999579,
+    "iteration": 2,
+    "request_id": "bc1cac7623614192bf29d65b5c5418a5",
+    "user_id": "37c7916109a947838f6b0e83291071f1",
+    "session_id": "6cce116f69dd4c51bac750ab60cdcf80"
+  },
+  {
+    "type": "done",
+    "task_complete": true,
+    "stop_reason": "task_complete",
+    "full_response": "23乘以17的计算结果是391。",
+    "iterations": 2,
+    "request_id": "bc1cac7623614192bf29d65b5c5418a5",
+    "metrics": {
+      "calls": [
+        {
+          "id": "thought:1",
+          "iteration": 1,
+          "phase": "Thought",
+          "tool": "—",
+          "tool_call_ids": [],
+          "input": 4507,
+          "output": 23,
+          "incomplete": false,
+          "seconds": 7.900563500006683
+        },
+        {
+          "id": "action:1",
+          "iteration": 1,
+          "phase": "Action",
+          "tool": "calculator",
+          "tool_call_ids": [
+            "f7ba802556494bfd94211c99b781fba9"
+          ],
+          "input": 0,
+          "output": 0,
+          "incomplete": false,
+          "seconds": 6.595800368813798e-05
+        },
+        {
+          "id": "f7ba802556494bfd94211c99b781fba9",
+          "iteration": 1,
+          "phase": "工具内部",
+          "tool": "calculator",
+          "tool_call_ids": [
+            "f7ba802556494bfd94211c99b781fba9"
+          ],
+          "input": 0,
+          "output": 0,
+          "incomplete": false,
+          "seconds": 0.0007219170001917519
+        },
+        {
+          "id": "observation:1",
+          "iteration": 1,
+          "phase": "Observation",
+          "tool": "—",
+          "tool_call_ids": [],
+          "input": 3986,
+          "output": 30,
+          "incomplete": false,
+          "seconds": 10.111685208998097
+        },
+        {
+          "id": "thought:2",
+          "iteration": 2,
+          "phase": "Thought",
+          "tool": "—",
+          "tool_call_ids": [],
+          "input": 4779,
+          "output": 20,
+          "incomplete": false,
+          "seconds": 2.6925553749970277
+        },
+        {
+          "id": "observation:2",
+          "iteration": 2,
+          "phase": "Observation",
+          "tool": "—",
+          "tool_call_ids": [],
+          "input": 3966,
+          "output": 44,
+          "incomplete": false,
+          "seconds": 3.933788624999579
+        }
+      ],
+      "trace": [
+        {
+          "type": "thought",
+          "thought": "调用calculator获取所需信息。",
+          "next_step": "tool",
+          "tool_name": "calculator",
+          "parallel_tools": [],
+          "elapsed_seconds": 7.900563500006683,
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "name": "calculator",
+          "call_id": "f7ba802556494bfd94211c99b781fba9",
+          "args": {
+            "expression": "23*17"
+          },
+          "elapsed_seconds": 6.595800368813798e-05,
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "name": "calculator",
+          "call_id": "f7ba802556494bfd94211c99b781fba9",
+          "args": {
+            "expression": "23*17"
+          },
+          "result": {
+            "expression": "23*17",
+            "result": "391",
+            "usage": {
+              "prompt_eval_count": 0,
+              "eval_count": 0
+            }
+          },
+          "status": "success",
+          "error": "",
+          "error_kind": null,
+          "attempts": [
+            {
+              "attempt": 1,
+              "status": "success",
+              "error": "",
+              "error_kind": null,
+              "elapsed_seconds": 0.000705749996996019,
+              "usage": {
+                "prompt_eval_count": 0,
+                "eval_count": 0
+              },
+              "usage_incomplete": false
+            }
+          ],
+          "execution_mode": "serial",
+          "elapsed_seconds": 0.0007219170001917519,
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "elapsed_seconds": 10.111685208998097,
+          "observation": "计算结果为391。",
+          "decision": "continue",
+          "task_complete": false,
+          "iteration": 1
+        },
+        {
+          "type": "thought",
+          "thought": "依据现有资料回答或说明不足。",
+          "next_step": "answer",
+          "tool_name": null,
+          "parallel_tools": [],
+          "elapsed_seconds": 2.6925553749970277,
+          "iteration": 2
+        },
+        {
+          "type": "action_skipped",
+          "reason": "Thought规划直接回答，无需执行工具。",
+          "iteration": 2
+        },
+        {
+          "type": "observation",
+          "elapsed_seconds": 3.933788624999579,
+          "observation": "计算结果为391。",
+          "decision": "finish",
+          "task_complete": true,
+          "iteration": 2
+        },
+        {
+          "type": "done",
+          "task_complete": true,
+          "stop_reason": "task_complete",
+          "full_response": "23乘以17的计算结果是391。",
+          "iteration": 2
+        }
+      ],
+      "tool_calls": [
+        {
+          "call_id": "f7ba802556494bfd94211c99b781fba9",
+          "name": "calculator",
+          "iteration": 1,
+          "status": "success",
+          "seconds": 0.0007219170001917519,
+          "attempts": 1,
+          "execution_mode": "serial"
+        }
+      ],
+      "tools": {
+        "started": 1,
+        "completed": 1,
+        "successes": 1,
+        "failures": 0,
+        "pending": 0,
+        "success_rate": 1.0,
+        "mean_seconds": 0.0007219170001917519,
+        "by_tool": [
+          {
+            "name": "calculator",
+            "started": 1,
+            "completed": 1,
+            "successes": 1,
+            "failures": 0,
+            "pending": 0,
+            "success_rate": 1.0,
+            "mean_seconds": 0.0007219170001917519
+          }
+        ]
+      },
+      "tokens": {
+        "input": 17238,
+        "output": 117,
+        "total": 17355,
+        "known_total": 17355,
+        "unknown_calls": 0
+      },
+      "response_seconds": 24.67940437499783
+    },
+    "user_id": "37c7916109a947838f6b0e83291071f1",
+    "session_id": "6cce116f69dd4c51bac750ab60cdcf80"
+  }
+]

@@ -232,13 +232,14 @@ class TestObservationAndLoop(unittest.TestCase):
         self.assertNotIn("未找到相关文档", result["answer"])
         http.assert_not_called()
 
-    def test_single_rag_preserves_citations_after_action_shortens_question(self):
-        """单一RAG任务的查询改写不能导致Observation再次生成和丢失引用。"""
+    def test_single_rag_preserves_citations_when_action_keeps_whole_question(self):
+        """单一RAG任务传递完整原问题，直通实际答案，不二次生成或丢失引用。"""
+        question = "请根据知识库查询代号，并引用文档名和行号"
         context = {"observations": [{"name": "knowledge_base_search", "status": "success",
-            "args": {"question": "代号？"}, "result": {"generation_mode": "grounded", "status": "answered",
+            "args": {"question": question}, "result": {"generation_mode": "grounded", "status": "answered",
                 "citations": [{"id": 1}], "answer": "代号WINCHECK[参考文档1：说明.txt；行1–3]。"}}]}
         with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(self.finished)).encode())) as http:
-            result = observe("请根据知识库查询代号，并引用文档名和行号", [knowledge_base_search], context)
+            result = observe(question, [knowledge_base_search], context)
         self.assertEqual(result["answer"], context["observations"][0]["result"]["answer"])
         self.assertTrue(result["task_complete"])
         http.assert_not_called()

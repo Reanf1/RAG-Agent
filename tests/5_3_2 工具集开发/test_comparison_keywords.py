@@ -313,7 +313,7 @@ class TestComparisonAndKeywords(unittest.TestCase):
         self.documents[1].page_content = "DETR method. COCO dataset. Comparable to Faster R-CNN in 2020."
         result, _, _ = self.compare()
         self.assertIn("论文B：实验结果数值", result["missing_dimensions"])
-        self.assertIn("未提供可核验的实验指标数值", result["answer"])
+        self.assertIn("未能自动核验当前节选中的指标与数值关系", result["answer"])
         self.assertEqual(result["status"], "insufficient_evidence")
 
     def test_truncated_result_does_not_display_isolated_model_scores(self):

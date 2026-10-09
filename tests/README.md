@@ -18,6 +18,8 @@ macOS也可使用同一JSON运行器；`--scope module4`用于模块四专项，
 
 ## 结果与边界
 
+2026-10-10集中修复：本地862项回归通过，59.047秒，无失败、错误或跳过，见[回归数据](../reports/5_5_3%20Bad%20Case分析与优化/基本任务集中复测_20261010/regression.json)。两篇合成资料的真实M3E/BGE/Chroma/Qwen问答、关键词、对比等7项流程通过，见[原答与结果](../reports/5_5_3%20Bad%20Case分析与优化/基本任务集中复测_20261010/results.json)。本轮未重新部署Windows，不将合成资料测试算作正式论文集质量通过。
+
 2026-10-09业务补丁2c0353c：macOS与Windows各853项通过，无失败/跳过；分别59.191秒、315.808秒。记录：[本地回归](../reports/5_5_3%20Bad%20Case%E5%88%86%E6%9E%90%E4%B8%8E%E4%BC%98%E5%8C%96/%E6%9C%80%E7%BB%88%E8%B4%A8%E9%87%8F%E6%94%B6%E5%B0%BE_20261009/%E6%9C%AC%E5%9C%B0%E5%85%A8%E9%87%8F%E5%9B%9E%E5%BD%92_%E4%BF%AE%E5%A4%8D%E5%90%8E.json)、[Windows回归](../reports/5_5_3%20Bad%20Case%E5%88%86%E6%9E%90%E4%B8%8E%E4%BC%98%E5%8C%96/%E6%9C%80%E7%BB%88%E8%B4%A8%E9%87%8F%E6%94%B6%E5%B0%BE_20261009/Windows%E8%A1%A5%E4%B8%81%E5%A4%8D%E6%B5%8B/regression.json)。
 
 加载/分块、Chroma、SQLite、线程与Streamlit AppTest使用真实临时资源；模型HTTP与部分向量使用mock，不能说明真实M3E/BGE/Ollama质量或性能。需项目依赖和本地Qwen计数词表；测试隔离日志和用户数据库。

@@ -1,0 +1,138 @@
+[
+  {
+    "name": "真实加载_M3E_Chroma",
+    "status": "passed",
+    "details": {
+      "documents": 2,
+      "chunks": 2
+    },
+    "seconds": 2.245
+  },
+  {
+    "name": "完整问题_混合检索_BGE_流式引用",
+    "status": "passed",
+    "details": {
+      "question": "澄禾实验.txt使用哪个数据集，测试准确率是多少？请给出来源。",
+      "answer": "原文依据：\"数据集：田畴-73数据集，共160张叶片图片。\" [参考文档1：澄禾实验.txt；行1–8]\n说明：澄禾实验使用了田畴-73数据集进行测试。[参考文档1：澄禾实验.txt；行1–8]\n\n原文依据：\"LeafGate测试准确率为91.6%，对照方法准确率87.2%。\" [参考文档1：澄禾实验.txt；行1–8]\n说明：澄禾实验的LeafGate分类器在测试中的准确率为91.6%。[参考文档1：澄禾实验.txt；行1–8]\n\n## 参考来源\n- [参考文档1] 澄禾实验.txt；行1–8",
+      "complete": true,
+      "tools": [
+        "paper_list",
+        "knowledge_base_search"
+      ],
+      "confirmation_used": false,
+      "tokens": {
+        "input": 3205,
+        "output": 209,
+        "total": 3414,
+        "known_total": 3414,
+        "unknown_calls": 0
+      },
+      "stream_events": 107
+    },
+    "seconds": 29.544,
+    "assistant_review": "助手核对：田畴-73数据集与LeafGate准确率91.6%同时回答，原句及澄禾实验.txt行1–8引用对应。",
+    "user_review": null
+  },
+  {
+    "name": "文档关键词",
+    "status": "passed",
+    "details": {
+      "question": "提取澄禾实验.txt的关键词",
+      "answer": "澄禾实验.txt的关键词包括：LeafGate分类器、水稻叶片识别、田畴-73数据集、图像分类。",
+      "complete": true,
+      "tools": [
+        "paper_list",
+        "keyword_extract"
+      ],
+      "confirmation_used": false,
+      "tokens": {
+        "input": 14052,
+        "output": 321,
+        "total": 14373,
+        "known_total": 14373,
+        "unknown_calls": 0
+      },
+      "stream_events": 29
+    },
+    "seconds": 56.528,
+    "assistant_review": "助手核对：4个关键词全部在指定文件原文出现；工具结果分别保留行4、1、5、3证据，正文给出文件名。",
+    "user_review": null
+  },
+  {
+    "name": "两文档三维对比_两组数字",
+    "status": "passed",
+    "details": {
+      "question": "比较澄禾实验.txt和雨田实验.txt两篇论文的方法、数据集、实验结果。",
+      "answer": "## 回答\n以下按三个维度并列展示两篇论文的原文证据，不改写实验数字或条件。\n| 维度 | 论文A | 论文B |\n| --- | --- | --- |\n| 方法 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n| 数据集 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n| 实验结果 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n\n不同任务、数据集和实验条件的指标不可直接比较优劣；证据选择的语义适用性仍需对照原文核验。\n\n## 参考来源\n- [参考文档1] 澄禾实验.txt；行1–8\n- [参考文档2] 雨田实验.txt；行1–8\n\n部分维度的检索相关性低，相关陈述需对照原文核验：论文A：方法、论文A：数据集、论文B：方法、论文B：数据集\n\n低相关性维度需核验：论文A：方法、论文A：数据集、论文B：方法、论文B：数据集",
+      "complete": true,
+      "tools": [
+        "paper_list",
+        "paper_compare",
+        "paper_compare"
+      ],
+      "confirmation_used": true,
+      "tokens": {
+        "input": 534,
+        "output": 38,
+        "total": 572,
+        "known_total": 572,
+        "unknown_calls": 0
+      },
+      "stream_events": 3
+    },
+    "seconds": 19.862,
+    "assistant_review": "助手核对：方法、数据集、实验结果均列出双方；91.6%与88.4%及两文件引用正确。低相关确认后续跑。整段原文重复较多，表达质量待用户审核。",
+    "user_review": null
+  },
+  {
+    "name": "真实计算器",
+    "status": "passed",
+    "details": {
+      "question": "计算23乘以17",
+      "answer": "23乘以17的计算结果是391。",
+      "complete": true,
+      "tools": [
+        "calculator"
+      ],
+      "confirmation_used": false,
+      "tokens": {
+        "input": 17238,
+        "output": 117,
+        "total": 17355,
+        "known_total": 17355,
+        "unknown_calls": 0
+      },
+      "stream_events": 14
+    },
+    "seconds": 24.685
+  },
+  {
+    "name": "多轮历史",
+    "status": "passed",
+    "details": {
+      "question": "刚才让我计算的算式和结果是什么？",
+      "answer": "计算的算式是23乘以17，结果是391。",
+      "complete": true,
+      "tools": [],
+      "confirmation_used": false,
+      "tokens": {
+        "input": 8292,
+        "output": 75,
+        "total": 8367,
+        "known_total": 8367,
+        "unknown_calls": 0
+      },
+      "stream_events": 18
+    },
+    "seconds": 5.523
+  },
+  {
+    "name": "页面提交_保存_重绘",
+    "status": "passed",
+    "details": {
+      "answer": "29乘以13的计算结果是377。",
+      "mode": "AppTest真实页面调用模型并保存会话；未覆盖实机浏览器兼容性"
+    },
+    "seconds": 5.61
+  }
+]

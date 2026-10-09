@@ -44,7 +44,7 @@ class ActionFailureUsageAudit(unittest.TestCase):
         with patch('src.generation.rag_pipeline.urlopen', return_value=BytesIO(json.dumps(response).encode())):
             event = execute_tool('keyword_extract', {'text': 'split an image into patches'}, [keyword_extract])
         self.assertEqual(event['status'], 'error')
-        self.assertIn('关键词不在输入原文', event['error'])
+        self.assertIn('关键词均无法在原文定位', event['error'])
         metrics = update_agent_metrics({}, {**event, 'iteration': 1})
         self.assertEqual(metrics['tokens']['known_total'], 142)
 

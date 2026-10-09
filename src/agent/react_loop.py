@@ -27,6 +27,14 @@ from src.utils.logger import update_agent_metrics
 from src.utils.token_budget import check_request_budget, request_tokens
 
 
+# 文档参数共用一份声明，文件名转换、目标绑定和批次覆盖采用相同范围。
+DOCUMENT_TOOL_FIELDS = {
+    "paper_metadata": ("doc_id",), "paper_summary": ("doc_id",),
+    "knowledge_base_search": ("doc_id",), "keyword_extract": ("doc_id",),
+    "paper_compare": ("paper_a_id", "paper_b_id"),
+}
+
+
 AGENT_ROLE_PROMPT = """【角色定义】
 你是智能科研助理，使用本地知识和实际注册的工具，帮助用户理解、比较和分析科研论文。
 默认用中文简洁回答；用户明确要求英语或其他语言时，最终回答必须遵从该语言。
@@ -359,7 +367,7 @@ def act(question: str, thought: dict, tools: list[BaseTool], context: dict | Non
             if not isinstance(call, dict) or call.get("name") not in names or not isinstance(call.get("arguments"), dict):
                 raise ValueError("Action工具名称或参数格式错误")
             # 模型可能在列表后仍传文件名；仅将真实列表中的唯一别名转为已上传ID。
-            fields = ("paper_a_id", "paper_b_id") if call["name"] == "paper_compare" else ("doc_id",) if call["name"] in {"paper_metadata", "paper_summary", "knowledge_base_search", "keyword_extract"} else ()
+            fields = DOCUMENT_TOOL_FIELDS.get(call["name"], ())
             aliases = _paper_aliases(context) if fields else {}
             for field in fields:
                 value = call["arguments"].get(field)
@@ -367,11 +375,18 @@ def act(question: str, thought: dict, tools: list[BaseTool], context: dict | Non
                     call["arguments"][field] = aliases[value.casefold()]
             # 文件名也只绑定本轮提到、且真实列表中唯一对应的文件，不采用旧问题目标。
             current_ids = _current_paper_ids(question, aliases)
+            text_task = (call["name"] == "keyword_extract" and re.search(
+                r"(?:给定|以下|这段|提供的)文本|\b(?:given|following) text\b", question, re.I))
             if (fields == ("doc_id",) and len(current_ids) == 1 and not batch
-                    and not (call["name"] == "keyword_extract" and call["arguments"].get("text") is not None)):
+                    and not text_task):
                 # 用户本轮明确指定的单文档ID就是工具目标，历史中的合法ID不能替代它。
-                # 关键词已提供text时不能再自动补互斥的doc_id；模型自身冲突仍由工具拒绝。
                 call["arguments"]["doc_id"] = next(iter(current_ids))
+            if call["name"] == "keyword_extract" and not text_task and call["arguments"].get("doc_id"):
+                # 文档模式只能读取原文；不能改为对模型自行生成的text做关键词提取。
+                call["arguments"].pop("text", None)
+            if thought.get("route") == "rule" and names == ["knowledge_base_search"] and not batch:
+                # 明确的单次问答以完整原问题为输入；多步规划仍允许各自的子查询。
+                call["arguments"]["question"] = question
             if fields == ("paper_a_id", "paper_b_id") and len(current_ids) == 2 and (
                     not all(isinstance(call["arguments"].get(field), str) for field in fields)
                     or {call["arguments"].get(field) for field in fields} != current_ids):
@@ -396,8 +411,7 @@ def act(question: str, thought: dict, tools: list[BaseTool], context: dict | Non
         actual_counts, expected_counts = Counter(call["name"] for call in prepared), Counter(names)
         if batch and (set(actual_counts) != set(names) or any(actual_counts[name] < count for name, count in expected_counts.items())):
             raise ValueError("Action未调用完整的独立工具批次")
-        if batch and len(current_ids) == 2 and len(set(names)) == 1 and names[0] in {
-                "paper_metadata", "paper_summary", "knowledge_base_search", "keyword_extract"}:
+        if batch and len(current_ids) == 2 and len(set(names)) == 1 and DOCUMENT_TOOL_FIELDS.get(names[0]) == ("doc_id",):
             # 同名的两次调用还必须覆盖本轮两篇目标，不能以旧论文或同篇的两个查询替代。
             if {call["args"].get("doc_id") for call in prepared} != current_ids:
                 raise ValueError("独立论文批次必须分别覆盖用户本轮指定的两篇论文")
@@ -555,6 +569,7 @@ def _structured_tool_observation(question: str, tools: list[BaseTool], observati
     if (name == "knowledge_base_search" and plan and plan.get("tool_name") == name
             and not plan.get("parallel_tools") and not re.search(r"然后|另外|\bthen\b", question, re.I)
             and isinstance(evidence, dict) and evidence.get("status") in {"answered", "incomplete", "insufficient_evidence"}
+            and (evidence["status"] != "answered" or item.get("args", {}).get("question") == question)
             and isinstance(evidence.get("answer"), str) and evidence["answer"].strip()):
         # 单个RAG结果已生成答案。保留引用校验后的原文和警告，无引用不能误述为空库。
         answer = evidence["answer"]
@@ -876,7 +891,7 @@ def _run_react(question: str, tools: list[BaseTool] | None = None, context: dict
             known_ids = _known_paper_ids(question, state)
             # 有历史时仍先核对文件名，不能绕过文档过滤或把模型猜测的ID当作真实指纹。
             needs_filename = (thought.get("route") != "confirmation" and
-                              any(name in {"knowledge_base_search", "paper_summary", "paper_metadata", "paper_compare", "keyword_extract"}
+                              any(name in DOCUMENT_TOOL_FIELDS
                                   for name in [thought.get("tool_name"), *thought.get("parallel_tools", [])])
                               and not _known_paper_ids(question, None)
                               and re.search(r"\.(?:pdf|docx|txt|md)(?=$|[^A-Za-z0-9])", question, re.I)

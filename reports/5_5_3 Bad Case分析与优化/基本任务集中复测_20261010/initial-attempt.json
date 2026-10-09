@@ -1,0 +1,472 @@
+{
+  "note": "首次真实测试：6/7通过，关键词候选中出现非原文词语导致整次失败；下面保留当时结果和关键轨迹。",
+  "results": [
+    {
+      "name": "真实加载_M3E_Chroma",
+      "status": "passed",
+      "details": {
+        "documents": 2,
+        "chunks": 2
+      },
+      "seconds": 1.822
+    },
+    {
+      "name": "完整问题_混合检索_BGE_流式引用",
+      "status": "passed",
+      "details": {
+        "question": "澄禾实验.txt使用哪个数据集，测试准确率是多少？请给出来源。",
+        "answer": "原文依据：\"数据集：田畴-73数据集，共160张叶片图片。\" [参考文档1：澄禾实验.txt；行1–8]\n说明：澄禾实验使用了田畴-73数据集进行测试。[参考文档1：澄禾实验.txt；行1–8]\n\n原文依据：\"LeafGate测试准确率为91.6%，对照方法准确率87.2%。\" [参考文档1：澄禾实验.txt；行1–8]\n说明：澄禾实验的LeafGate分类器在测试中的准确率为91.6%。[参考文档1：澄禾实验.txt；行1–8]\n\n## 参考来源\n- [参考文档1] 澄禾实验.txt；行1–8",
+        "complete": true,
+        "tools": [
+          "paper_list",
+          "knowledge_base_search"
+        ],
+        "confirmation_used": false,
+        "tokens": {
+          "input": 3205,
+          "output": 209,
+          "total": 3414,
+          "known_total": 3414,
+          "unknown_calls": 0
+        },
+        "stream_events": 107
+      },
+      "seconds": 30.603
+    },
+    {
+      "name": "文档关键词",
+      "status": "failed",
+      "error": "AssertionError: {'answer': '当前知识库中未找到相关文档，无法提取关键词。', 'complete': False, 'stop': 'incomplete'}",
+      "seconds": 61.31
+    },
+    {
+      "name": "两文档三维对比_两组数字",
+      "status": "passed",
+      "details": {
+        "question": "比较澄禾实验.txt和雨田实验.txt两篇论文的方法、数据集、实验结果。",
+        "answer": "## 回答\n以下按三个维度并列展示两篇论文的原文证据，不改写实验数字或条件。\n| 维度 | 论文A | 论文B |\n| --- | --- | --- |\n| 方法 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n| 数据集 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n| 实验结果 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n\n不同任务、数据集和实验条件的指标不可直接比较优劣；证据选择的语义适用性仍需对照原文核验。\n\n## 参考来源\n- [参考文档1] 澄禾实验.txt；行1–8\n- [参考文档2] 雨田实验.txt；行1–8\n\n部分维度的检索相关性低，相关陈述需对照原文核验：论文A：方法、论文A：数据集、论文B：方法、论文B：数据集\n\n低相关性维度需核验：论文A：方法、论文A：数据集、论文B：方法、论文B：数据集",
+        "complete": true,
+        "tools": [
+          "paper_list",
+          "paper_compare",
+          "paper_compare"
+        ],
+        "confirmation_used": true,
+        "tokens": {
+          "input": 534,
+          "output": 38,
+          "total": 572,
+          "known_total": 572,
+          "unknown_calls": 0
+        },
+        "stream_events": 3
+      },
+      "seconds": 19.537
+    },
+    {
+      "name": "真实计算器",
+      "status": "passed",
+      "details": {
+        "question": "计算23乘以17",
+        "answer": "23乘以17的计算结果是391。",
+        "complete": true,
+        "tools": [
+          "calculator"
+        ],
+        "confirmation_used": false,
+        "tokens": {
+          "input": 17163,
+          "output": 117,
+          "total": 17280,
+          "known_total": 17280,
+          "unknown_calls": 0
+        },
+        "stream_events": 14
+      },
+      "seconds": 24.374
+    },
+    {
+      "name": "多轮历史",
+      "status": "passed",
+      "details": {
+        "question": "刚才让我计算的算式和结果是什么？",
+        "answer": "23乘以17的计算结果是391。",
+        "complete": true,
+        "tools": [],
+        "confirmation_used": false,
+        "tokens": {
+          "input": 8253,
+          "output": 74,
+          "total": 8327,
+          "known_total": 8327,
+          "unknown_calls": 0
+        },
+        "stream_events": 14
+      },
+      "seconds": 5.477
+    },
+    {
+      "name": "页面提交_保存_重绘",
+      "status": "passed",
+      "details": {
+        "answer": "29乘以13的计算结果是377。",
+        "mode": "AppTest真实页面调用模型并保存会话；未覆盖实机浏览器兼容性"
+      },
+      "seconds": 5.408
+    }
+  ],
+  "keyword_events": [
+    {
+      "type": "thought",
+      "thought": "先获取已上传文献的真实ID，再执行论文工具。",
+      "next_step": "tool",
+      "tool_name": "paper_list",
+      "parallel_tools": [],
+      "route": "rule",
+      "model": null,
+      "usage": {
+        "prompt_eval_count": 0,
+        "eval_count": 0
+      },
+      "elapsed_seconds": 9.487500210525468e-05,
+      "iteration": 1,
+      "request_id": "b386143b41654c2790f7cf3094245ca9",
+      "user_id": "3da1b73b347c49638272e11d204819d8",
+      "session_id": "4dcefd2edbdf42bc9b67e7d67dc97be1"
+    },
+    {
+      "type": "tool_call",
+      "call_id": "a9f5df8cd7e94b45870188e769574225",
+      "name": "paper_list",
+      "args": {},
+      "model": null,
+      "elapsed_seconds": 0.0001760419982019812,
+      "usage": {
+        "prompt_eval_count": 0,
+        "eval_count": 0
+      },
+      "iteration": 1,
+      "request_id": "b386143b41654c2790f7cf3094245ca9",
+      "user_id": "3da1b73b347c49638272e11d204819d8",
+      "session_id": "4dcefd2edbdf42bc9b67e7d67dc97be1"
+    },
+    {
+      "type": "tool_result",
+      "call_id": "a9f5df8cd7e94b45870188e769574225",
+      "name": "paper_list",
+      "args": {},
+      "status": "success",
+      "result": {
+        "papers": [
+          {
+            "doc_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+            "source_file": "澄禾实验.txt",
+            "indexed_chunks": 1,
+            "source_available": true,
+            "index_status": "has_index"
+          },
+          {
+            "doc_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007",
+            "source_file": "雨田实验.txt",
+            "indexed_chunks": 1,
+            "source_available": true,
+            "index_status": "has_index"
+          }
+        ],
+        "total": 2,
+        "usage": {
+          "prompt_eval_count": 0,
+          "eval_count": 0
+        }
+      },
+      "error": "",
+      "error_kind": null,
+      "usage": {
+        "prompt_eval_count": 0,
+        "eval_count": 0
+      },
+      "usage_incomplete": false,
+      "elapsed_seconds": 0.004032083001220599,
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "success",
+          "error": "",
+          "error_kind": null,
+          "elapsed_seconds": 0.004017207997094374,
+          "usage": {
+            "prompt_eval_count": 0,
+            "eval_count": 0
+          },
+          "usage_incomplete": false
+        }
+      ],
+      "execution_mode": "serial",
+      "iteration": 1,
+      "request_id": "b386143b41654c2790f7cf3094245ca9",
+      "user_id": "3da1b73b347c49638272e11d204819d8",
+      "session_id": "4dcefd2edbdf42bc9b67e7d67dc97be1"
+    },
+    {
+      "type": "observation",
+      "observation": "文献列表已返回，继续执行指定的论文任务。",
+      "decision": "continue",
+      "task_complete": false,
+      "answer": "",
+      "model": null,
+      "usage": {
+        "prompt_eval_count": 0,
+        "eval_count": 0
+      },
+      "elapsed_seconds": 3.058299625990912e-05,
+      "iteration": 1,
+      "request_id": "b386143b41654c2790f7cf3094245ca9",
+      "user_id": "3da1b73b347c49638272e11d204819d8",
+      "session_id": "4dcefd2edbdf42bc9b67e7d67dc97be1"
+    },
+    {
+      "type": "thought",
+      "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+      "next_step": "tool",
+      "tool_name": "keyword_extract",
+      "parallel_tools": [],
+      "route": "rule",
+      "model": null,
+      "usage": {
+        "prompt_eval_count": 0,
+        "eval_count": 0
+      },
+      "elapsed_seconds": 2.6917005016002804e-05,
+      "iteration": 2,
+      "request_id": "b386143b41654c2790f7cf3094245ca9",
+      "user_id": "3da1b73b347c49638272e11d204819d8",
+      "session_id": "4dcefd2edbdf42bc9b67e7d67dc97be1"
+    },
+    {
+      "type": "tool_call",
+      "call_id": "a0fbaa666e314f66bc268487ef5b4b2e",
+      "name": "keyword_extract",
+      "args": {
+        "doc_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6"
+      },
+      "model": "qwen2.5:7b",
+      "elapsed_seconds": 10.889224375001504,
+      "usage": {
+        "prompt_eval_count": 2179,
+        "eval_count": 84
+      },
+      "iteration": 2,
+      "request_id": "b386143b41654c2790f7cf3094245ca9",
+      "user_id": "3da1b73b347c49638272e11d204819d8",
+      "session_id": "4dcefd2edbdf42bc9b67e7d67dc97be1"
+    },
+    {
+      "type": "tool_result",
+      "call_id": "a0fbaa666e314f66bc268487ef5b4b2e",
+      "name": "keyword_extract",
+      "args": {
+        "doc_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6"
+      },
+      "status": "error",
+      "result": null,
+      "error": "ValueError: 关键词不在输入原文中，不能接受模型扩展的词语",
+      "error_kind": "input",
+      "usage": {
+        "prompt_eval_count": 200,
+        "eval_count": 36
+      },
+      "usage_incomplete": false,
+      "elapsed_seconds": 2.6475862500010408,
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "error",
+          "error": "ValueError: 关键词不在输入原文中，不能接受模型扩展的词语",
+          "error_kind": "input",
+          "elapsed_seconds": 2.647556459000043,
+          "usage": {
+            "prompt_eval_count": 200,
+            "eval_count": 36
+          },
+          "usage_incomplete": false
+        }
+      ],
+      "execution_mode": "serial",
+      "iteration": 2,
+      "request_id": "b386143b41654c2790f7cf3094245ca9",
+      "user_id": "3da1b73b347c49638272e11d204819d8",
+      "session_id": "4dcefd2edbdf42bc9b67e7d67dc97be1"
+    },
+    {
+      "type": "observation",
+      "observation": "关键词提取失败，未在原文中找到相关关键词。",
+      "decision": "continue",
+      "task_complete": false,
+      "answer": "",
+      "model": "qwen2.5:7b",
+      "usage": {
+        "prompt_eval_count": 3344,
+        "eval_count": 35
+      },
+      "elapsed_seconds": 14.551797082996927,
+      "iteration": 2,
+      "request_id": "b386143b41654c2790f7cf3094245ca9",
+      "user_id": "3da1b73b347c49638272e11d204819d8",
+      "session_id": "4dcefd2edbdf42bc9b67e7d67dc97be1"
+    },
+    {
+      "type": "thought",
+      "thought": "调用keyword_extract获取所需信息。",
+      "next_step": "tool",
+      "tool_name": "keyword_extract",
+      "parallel_tools": [],
+      "tool_calls": [
+        {
+          "id": "call_twvkcry3",
+          "function": {
+            "index": 0,
+            "name": "keyword_extract",
+            "arguments": {
+              "doc_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6"
+            }
+          }
+        }
+      ],
+      "model": "qwen2.5:7b",
+      "usage": {
+        "prompt_eval_count": 4034,
+        "eval_count": 79
+      },
+      "elapsed_seconds": 16.07345387499663,
+      "iteration": 3,
+      "request_id": "b386143b41654c2790f7cf3094245ca9",
+      "user_id": "3da1b73b347c49638272e11d204819d8",
+      "session_id": "4dcefd2edbdf42bc9b67e7d67dc97be1"
+    },
+    {
+      "type": "tool_call",
+      "call_id": "1ee1825ab6bc4913a602ad2e7c360dc0",
+      "name": "keyword_extract",
+      "args": {
+        "doc_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6"
+      },
+      "model": null,
+      "elapsed_seconds": 0.0001462500003981404,
+      "usage": {
+        "prompt_eval_count": 0,
+        "eval_count": 0
+      },
+      "iteration": 3,
+      "request_id": "b386143b41654c2790f7cf3094245ca9",
+      "user_id": "3da1b73b347c49638272e11d204819d8",
+      "session_id": "4dcefd2edbdf42bc9b67e7d67dc97be1"
+    },
+    {
+      "type": "tool_result",
+      "call_id": "1ee1825ab6bc4913a602ad2e7c360dc0",
+      "name": "keyword_extract",
+      "args": {
+        "doc_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6"
+      },
+      "status": "error",
+      "result": null,
+      "error": "ValueError: 关键词不在输入原文中，不能接受模型扩展的词语",
+      "error_kind": "input",
+      "usage": {
+        "prompt_eval_count": 200,
+        "eval_count": 36
+      },
+      "usage_incomplete": false,
+      "elapsed_seconds": 1.773796208006388,
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "error",
+          "error": "ValueError: 关键词不在输入原文中，不能接受模型扩展的词语",
+          "error_kind": "input",
+          "elapsed_seconds": 1.7737793330015847,
+          "usage": {
+            "prompt_eval_count": 200,
+            "eval_count": 36
+          },
+          "usage_incomplete": false
+        }
+      ],
+      "execution_mode": "serial",
+      "iteration": 3,
+      "request_id": "b386143b41654c2790f7cf3094245ca9",
+      "user_id": "3da1b73b347c49638272e11d204819d8",
+      "session_id": "4dcefd2edbdf42bc9b67e7d67dc97be1"
+    },
+    {
+      "type": "observation",
+      "observation": "关键词提取再次失败，未在原文中找到相关关键词。",
+      "decision": "continue",
+      "task_complete": false,
+      "answer": "",
+      "model": "qwen2.5:7b",
+      "usage": {
+        "prompt_eval_count": 3641,
+        "eval_count": 36
+      },
+      "elapsed_seconds": 4.6371157499961555,
+      "iteration": 3,
+      "request_id": "b386143b41654c2790f7cf3094245ca9",
+      "user_id": "3da1b73b347c49638272e11d204819d8",
+      "session_id": "4dcefd2edbdf42bc9b67e7d67dc97be1"
+    },
+    {
+      "type": "thought",
+      "thought": "依据现有资料回答或说明不足。",
+      "next_step": "answer",
+      "tool_name": null,
+      "parallel_tools": [],
+      "tool_calls": [],
+      "model": "qwen2.5:7b",
+      "usage": {
+        "prompt_eval_count": 4338,
+        "eval_count": 111
+      },
+      "elapsed_seconds": 7.5061172909991,
+      "iteration": 4,
+      "request_id": "b386143b41654c2790f7cf3094245ca9",
+      "user_id": "3da1b73b347c49638272e11d204819d8",
+      "session_id": "4dcefd2edbdf42bc9b67e7d67dc97be1"
+    },
+    {
+      "type": "action_skipped",
+      "reason": "Thought规划直接回答，无需执行工具。",
+      "iteration": 4,
+      "request_id": "b386143b41654c2790f7cf3094245ca9",
+      "user_id": "3da1b73b347c49638272e11d204819d8",
+      "session_id": "4dcefd2edbdf42bc9b67e7d67dc97be1"
+    },
+    {
+      "type": "observation",
+      "observation": "关键词提取再次失败，未在原文中找到相关关键词。",
+      "decision": "finish",
+      "task_complete": false,
+      "answer": "当前知识库中未找到相关文档，无法提取关键词。",
+      "model": "qwen2.5:7b",
+      "usage": {
+        "prompt_eval_count": 3526,
+        "eval_count": 49
+      },
+      "elapsed_seconds": 3.159453416999895,
+      "iteration": 4,
+      "request_id": "b386143b41654c2790f7cf3094245ca9",
+      "user_id": "3da1b73b347c49638272e11d204819d8",
+      "session_id": "4dcefd2edbdf42bc9b67e7d67dc97be1"
+    },
+    {
+      "type": "done",
+      "task_complete": false,
+      "stop_reason": "incomplete",
+      "full_response": "当前知识库中未找到相关文档，无法提取关键词。",
+      "iterations": 4,
+      "request_id": "b386143b41654c2790f7cf3094245ca9",
+      "user_id": "3da1b73b347c49638272e11d204819d8",
+      "session_id": "4dcefd2edbdf42bc9b67e7d67dc97be1"
+    }
+  ]
+}

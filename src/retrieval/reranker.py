@@ -93,12 +93,10 @@ class Reranker:
                 # 上轮摘录不代表本次评分正文；复制后清除，避免短正文沿用旧摘录。
                 document = deepcopy(document)
                 document.metadata.pop("rerank_excerpt")
-                document.metadata.pop("retrieval_warning", None)
             if len(windows) > 1:
                 document = deepcopy(document)
                 # 仅作本次检索摘录；原索引、块ID和表格行来源保持不变。
                 document.metadata["rerank_excerpt"] = windows[best]
-                document.metadata["retrieval_warning"] = "长块按模型Token窗口精排，本次引用只覆盖选中的摘录；完整内容见原页。"
             scored.append((document, window_scores[best]))
             offset += len(windows)
         if not all(math.isfinite(score) for _, score in scored):
