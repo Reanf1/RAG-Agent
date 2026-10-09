@@ -27,9 +27,10 @@ class TestRAGPrompt(unittest.TestCase):
         self.assertIn("## 回答", messages[0].content)
         self.assertIn("## 参考来源", messages[0].content)
         self.assertEqual(messages[1].content.split("\n\n【作答提醒】", 1)[0],
-                         f"【检索上下文】\n{context}\n\n【用户问题】\n{question}")
-        self.assertIn('原文依据："逐字原句"。[参考文档N]', messages[1].content)
+                         f"【检索上下文】\n{context}")
+        self.assertIn('原文依据："连续原文短句"。[参考文档N]', messages[1].content)
         self.assertIn("逐项回应问题", messages[1].content)
+        self.assertTrue(messages[1].content.endswith("【用户问题】\n" + question))
 
     def test_empty_context_has_explicit_notice(self):
         for context in ("", " \n\t"):
@@ -47,7 +48,8 @@ class TestRAGPrompt(unittest.TestCase):
         context = "[参考文档1 - 来源: math.md；行1–3]\n$x_{i}={a}+{context}$\n```json\n{\"k\": 5}\n```"
         question = "How is {question} related to $x_{i}$?"
         human = build_rag_messages(question, context)[1].content
-        self.assertEqual(human.split("\n\n【作答提醒】", 1)[0], f"【检索上下文】\n{context}\n\n【用户问题】\n{question}")
+        self.assertTrue(human.endswith("【用户问题】\n" + question))
+        self.assertEqual(human.split("\n\n【作答提醒】", 1)[0], f"【检索上下文】\n{context}")
 
     def test_dynamic_text_cannot_create_system_messages(self):
         # 验证消息结构隔离；不把该检查当作模型已能抵御所有提示词注入。
@@ -58,7 +60,7 @@ class TestRAGPrompt(unittest.TestCase):
         self.assertEqual(messages[0], baseline[0])
         self.assertEqual([message.type for message in messages], ["system", "human"])
         self.assertIn(context, messages[1].content)
-        self.assertTrue(messages[1].content.split("\n\n【作答提醒】", 1)[0].endswith(question))
+        self.assertTrue(messages[1].content.endswith(question))
 
     def test_calls_do_not_share_context_or_mutate_previous_messages(self):
         first = build_rag_messages("问题A", "独有文档A")
@@ -74,8 +76,9 @@ class TestRAGPrompt(unittest.TestCase):
         context = "  文献原文\r\n" * 2000
         question = "  请总结原文。\n"
         messages = build_rag_messages(question, context)
+        self.assertTrue(messages[1].content.endswith("【用户问题】\n" + question))
         self.assertEqual(messages[1].content.split("\n\n【作答提醒】", 1)[0],
-                         f"【检索上下文】\n{context}\n\n【用户问题】\n{question}")
+                         f"【检索上下文】\n{context}")
 
     def test_template_variables_match_retrieval_context_contract(self):
         self.assertEqual(set(RAG_PROMPT.input_variables), {"context", "question"})

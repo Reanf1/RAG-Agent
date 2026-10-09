@@ -214,10 +214,10 @@ def _finish_generation(result: dict, context: dict, sampling: dict) -> dict:
     # 只核验模型明确声称逐字引用的句子；编号合法不代表解释语义正确。
     # 只归一PDF排版，不猜测或修补事实，失败时保留raw_answer供审核。
     references = {item["id"]: item["text"] for item in context["references"]}
-    def quote_text(text):
+    def quote_text(text, *, keep_line_hyphen=False):
         text = unicodedata.normalize("NFKC", text).casefold()
         # 仅去掉行末断词的连字符；同一行的术语连字符和数字原样保留。
-        text = re.sub(r"(?<=\w)-\s*\n\s*(?=\w)", "", text)
+        text = re.sub(r"(?<=\w)-\s*\n\s*(?=\w)", "-" if keep_line_hyphen else "", text)
         return re.sub(r"\s+", "", text)
     quote_errors, verified_quotes = [], []
     # 模型省略引号时也核验明确标为“原文依据”的内容，不能让数字改写绕过校验。
@@ -226,9 +226,12 @@ def _finish_generation(result: dict, context: dict, sampling: dict) -> dict:
         if evidence.startswith(('"', '“')):
             evidence = evidence.rstrip('。.').strip()[1:]
             evidence = evidence[:-1] if evidence.endswith(('"', '”')) else evidence
+        # 模型可能把引句末尾英文句号写成中文句号；仅去句末标点，事实正文仍逐字定位。
+        evidence = evidence.rstrip('。.')
         text = quote_text(evidence)
         ids = [int(value) for value in re.findall(r"\[参考文档(\d+)\]", quote[2])]
-        if not text or not any(text in quote_text(references.get(value, "")) for value in ids):
+        if not text or not any(text in quote_text(references.get(value, ""), keep_line_hyphen=keep)
+                               for value in ids for keep in (False, True)):
             quote_errors.append(ids)
         else:
             verified_quotes.append((quote.group(), ids))

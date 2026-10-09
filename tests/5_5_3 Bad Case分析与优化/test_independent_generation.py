@@ -127,6 +127,28 @@ class GenerationAudit(unittest.TestCase):
         result = _finish_generation({**self.done, 'message': {'content': raw}}, context, {})
         self.assertEqual(result['evidence_quote_errors'], [])
 
+    def test_pdf_line_end_compound_hyphen_is_not_a_changed_fact(self):
+        """S05原页的layer换行wise既可保留真实连字符，也可作为排版断词合并。"""
+        self.context['references'][0]['text'] = 'a layer-\nwise transformation improves efﬁciency.'
+        for quote in ('a layer-wise transformation improves efficiency.',
+                      'a layerwise transformation improves efficiency.'):
+            with self.subTest(quote=quote):
+                raw = f'原文依据："{quote}"。[参考文档1]'
+                result = _finish_generation({**self.done, 'message': {'content': raw}}, self.context, {})
+                self.assertEqual(result['evidence_quote_errors'], [])
+
+    def test_terminal_chinese_period_does_not_hide_changed_source_facts(self):
+        """真实F02/F11仅句末标点不同；数值、否定和句内文字仍必须相同。"""
+        self.context['references'][0]['text'] = 'The model has 86M parameters with no external data.'
+        for quote, errors in [('The model has 86M parameters with no external data。', []),
+                              ('The model has 88M parameters with no external data。', [[1]]),
+                              ('The model has 86M parameters with external data。', [[1]])]:
+            with self.subTest(quote=quote):
+                raw = f'原文依据："{quote}"[参考文档1]'
+                result = _finish_generation({**self.done, 'message': {'content': raw}}, self.context, {})
+                self.assertEqual(result['evidence_quote_errors'], errors)
+                self.assertEqual(result['raw_answer'], raw)
+
     def test_literal_hyphen_and_changed_number_remain_distinct(self):
         context = deepcopy(self.context)
         context['references'][0]['text'] = 'end-to-end accuracy is 81%.'

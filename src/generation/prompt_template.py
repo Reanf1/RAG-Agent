@@ -1,10 +1,13 @@
 """科研文献 RAG 专用 Prompt：固定角色规范，填入上下文与当前问题。"""
 
+from decimal import Decimal
+import re
+
 from langchain_core.messages import BaseMessage
 from langchain_core.prompts import ChatPromptTemplate
 
 
-PROMPT_VERSION = "rag-v12"  # 数量直接按原文列出；换算核对失败的回答不进入缓存。
+PROMPT_VERSION = "rag-v17"  # 单位核对与分论文证据提示；模型原答仍须通过校验。
 NO_CONTEXT_TEXT = "当前知识库中未找到相关文档。"
 
 # 沿用参考项目的角色、参考文档、Markdown 与来源要求，补充科研事实约束。
@@ -32,16 +35,25 @@ RAG_SYSTEM_PROMPT = """你是“智能科研助理”，负责依据检索到的
    缩写全称只采用原文明示的英文名称；没有全称时保留缩写，不凭字母猜测。
    不补充问题未要求的公式或性能数字；公式被截断或二维排版不明确时不转写，提示核对原页。
    某论文采用的已有模块不能写成该论文新提出的贡献。不得用其他模型的数值补齐缺项。
+8. 先核对问题限定的训练数据、模型骨干、训练／测试阶段和比较指标，再选对应原句。
+   加速倍数不等于FPS；测试时的匹配或增广不等于训练损失。限定ImageNet-only时，
+   JFT预训练的最佳成绩不能回答该限定。因果解释须有直接依据，不以相关性代替因果。
+   无法将结果绑定到题目条件时，明确写“当前片段不足以确认”，不要用其它设置补全。
+   多论文问题先按来源文件分开作答，每篇只引用自身片段，再比较；不得把A论文的
+   原句用来解释B论文的机制。逐项保留问到的条件，不用题目未问的指标代替机制。
+   问“机制／主要路径／架构贡献／why”时，直接回答方法模块及它怎样解决问题；
+   训练硬件、训练时长、参数减少或精度提升是条件／结果，不能代替方法机制。
 
 【输出格式】
 使用 Markdown，包含以下两个部分：
 ## 回答
-每项结论先给一条足以支持它的原文短句（原文语言，逐字保留），紧接引用编号，
+围绕用户问题直接作答，不逐篇罗列无关来源。每项结论给一条足以支持它的原文短句
+（优先选5～20个词的连续片段，原文语言，逐字保留），紧接引用编号，
 再用回答语言解释。例如：原文依据："no external training data"。[参考文档1]
 说明：未使用外部训练数据。证据没有该结论时写“当前片段不足以确认”，不要补猜。
 涉及实验数字，保留原句中的完整条件，或同时给出原表表头与对应的完整模型行；
 不要将不同片段、模型行或单位重新拼成一组数据。题目只问方法时不附加性能表或公式。
-数量问题在原文依据后使用“对象：原文数值＋原文单位”的逐项列表，无需将该数量再次译述。
+数量问题逐项写对象、原文数值和单位、支持该数量的编号，不将图表标签当作数据规模依据。
 比较论文时分别给各自的原文依据，will 等展望语句不能作为当前实现的依据。
 only X%先说明“只使用／保留X%”，不把X%称为减少比例。只解释题目问到的内容。
 引用依据时使用上下文已有的
@@ -61,12 +73,12 @@ only X%先说明“只使用／保留X%”，不把X%称为减少比例。只解
 # 角色与规范保持在系统消息；检索文本和问题作为动态输入，不拼进系统角色。
 RAG_PROMPT = ChatPromptTemplate.from_messages([
     ("system", RAG_SYSTEM_PROMPT),
-    ("human", "【检索上下文】\n{context}\n\n【用户问题】\n{question}\n\n"
-              "【作答提醒】逐项回应问题。每项使用“原文依据：\"逐字原句\"。[参考文档N]”后再解释；"
-              "原句必须能在该编号片段定位；数量用“对象：原文数值＋原文单位”列表，不再译述或换算万／亿。"
-              "缺少的项目写“当前片段不足以确认”，不得借其他编号补猜。"),
+    ("human", "【检索上下文】\n{context}\n\n"
+              "【作答提醒】逐项回应问题；比较须覆盖双方，机制题直接写方法模块及作用，"
+              "不以训练硬件、时长或成绩替代机制。每项先写 原文依据：\"连续原文短句\"。[参考文档N]，"
+              "再解释；引句优先5～20个词，不拼接或改写。数量用原文单位，并引用支持该数量的片段。"
+              "缺依据的项目才写当前片段不足以确认。\n\n【用户问题】\n{question}"),
 ])
-
 
 def build_rag_messages(question: str, context: str = "") -> list[BaseMessage]:
     """填入已准备的上下文，返回可传给后续本地 LLM 的 LangChain 消息。
@@ -76,7 +88,35 @@ def build_rag_messages(question: str, context: str = "") -> list[BaseMessage]:
     """
     if not question.strip():
         raise ValueError("用户问题不能为空")
-    return RAG_PROMPT.format_messages(
+    messages = RAG_PROMPT.format_messages(
         context=context if context.strip() else NO_CONTEXT_TEXT,
         question=question,
     )
+    hint_text = ""
+    # 来源分组来自本轮真实引用头，仅帮助模型区分对象，不填充论文结论或参考答案。
+    papers = {}
+    for identifier, source in re.findall(r"\[参考文档(\d+) - 来源: (.*?)；原始块位置:", context):
+        papers.setdefault(source, []).append(f"[参考文档{identifier}]")
+    if len(papers) > 1:
+        hint_text += "\n\n【来源编号对应】以下仅为文件与片段编号，不是要求逐篇回答；只选支持当前问题的片段，比较时不要串用机制。\n" + "\n".join(
+            f"- {source}：{''.join(identifiers)}" for source, identifiers in papers.items())
+    # 只做单位的十进制等值计算，不推断数量属于哪个数据集／模型，也不改写原文。
+    # 提示进入同一消息模板，字符和Token预算计算都能看到这部分真实输入。
+    quantities = dict.fromkeys(re.findall(r"(?<![\dA-Za-z.])(\d+(?:,\d{3})*(?:\.\d+)?)\s*(M\b|B\b|million\b|billion\b)", context))
+    if quantities:
+        notes = []
+        for number, unit in quantities:
+            value = Decimal(number.replace(",", "")) * (1000000 if unit in {"M", "million"} else 1000000000)
+            identifiers = []
+            chunks = re.split(r"(?=\[参考文档\d+ - 来源:)", context)
+            for chunk in chunks:
+                if re.search(rf"(?<![\dA-Za-z.]){re.escape(number)}\s*{re.escape(unit)}\b", chunk):
+                    header = re.match(r"\[参考文档(\d+) - 来源:", chunk)
+                    if header:
+                        identifiers.append(f"[参考文档{header[1]}]")
+            notes.append(f"{number}{unit} = {value:f} = {value / Decimal(10000):f}万 = {value / Decimal(100000000):f}亿 {' '.join(identifiers)}".rstrip())
+        hint_text += "\n\n【数量单位核对】程序按十进制计算的等值如下；不代表对象或条件已经核验。无需换算时保留原文单位。\n" + "\n".join(notes)
+    # 按模板的已知后缀插入提示，不解析或修改用户问题内的文字。
+    suffix = f"\n\n【用户问题】\n{question}"
+    messages[-1].content = messages[-1].content[:-len(suffix)] + hint_text + suffix
+    return messages

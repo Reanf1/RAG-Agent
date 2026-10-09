@@ -123,9 +123,34 @@ class TestRoutingAndParallel(unittest.TestCase):
     def test_explicit_tool_names_and_two_papers_use_same_tool_batch(self):
         plan = route_question("请调用paper_metadata，分别读取两篇论文：" + "a" * 64 + "和" + "b" * 64, AVAILABLE_TOOLS)
         self.assertEqual(plan["tool_name"], "paper_metadata")
-        self.assertEqual(plan["parallel_tools"], ["paper_metadata"])
+        self.assertEqual(plan["parallel_tools"], ["paper_metadata", "paper_metadata"])
         self.assertEqual(route_question("请调用keyword_extract提取问题主题", AVAILABLE_TOOLS)["tool_name"], "keyword_extract")
         self.assertIsNone(route_question("请调用paper_metadata和paper_summary", AVAILABLE_TOOLS))
+
+    def test_two_paper_rule_rejects_missing_or_wrong_target_before_execution(self):
+        """两个调用名相同也要核验数量及本轮目标，不能只读取一篇或借用历史ID。"""
+        seen = []
+        @tool
+        def paper_metadata(doc_id: str) -> dict:
+            """记录实际执行，拒绝批次时应保持为空。"""
+            seen.append(doc_id)
+            return {"doc_id": doc_id}
+        a, b, old = "a" * 64, "b" * 64, "c" * 64
+        question = f"请调用paper_metadata，分别读取两篇论文：{a} 和 {b}"
+        plan = route_question(question, [paper_metadata])
+        for targets in ([a], [a, old]):
+            with self.subTest(targets=targets):
+                response = {**self.response, "message": {"tool_calls": [
+                    {"function": {"name": "paper_metadata", "arguments": {"doc_id": value}}} for value in targets]}}
+                with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(response).encode())):
+                    events = list(act(question, plan, [paper_metadata], {"history": [{"role": "user", "content": old}]}))
+                self.assertEqual(events[-1]["type"], "error")
+                self.assertEqual(seen, [])
+        response["message"]["tool_calls"][-1]["function"]["arguments"]["doc_id"] = b
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(response).encode())):
+            events = list(act(question, plan, [paper_metadata]))
+        self.assertEqual(set(seen), {a, b})
+        self.assertEqual(sum(event["type"] == "tool_result" for event in events), 2)
 
     def test_calculator_rule_requires_actual_registered_tool(self):
         @tool("calculator")

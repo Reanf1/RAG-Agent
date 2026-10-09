@@ -395,6 +395,11 @@ def act(question: str, thought: dict, tools: list[BaseTool], context: dict | Non
         actual_counts, expected_counts = Counter(call["name"] for call in prepared), Counter(names)
         if batch and (set(actual_counts) != set(names) or any(actual_counts[name] < count for name, count in expected_counts.items())):
             raise ValueError("Action未调用完整的独立工具批次")
+        if batch and len(current_ids) == 2 and len(set(names)) == 1 and names[0] in {
+                "paper_metadata", "paper_summary", "knowledge_base_search", "keyword_extract"}:
+            # 同名的两次调用还必须覆盖本轮两篇目标，不能以旧论文或同篇的两个查询替代。
+            if {call["args"].get("doc_id") for call in prepared} != current_ids:
+                raise ValueError("独立论文批次必须分别覆盖用户本轮指定的两篇论文")
         signatures = [json.dumps({"name": call["name"], "args": call["args"]}, sort_keys=True)
                       for call in prepared]
         if call_counts is not None:
@@ -690,6 +695,17 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
         if any(isinstance(item.get("result"), dict) and item["result"].get("status") in {"needs_confirmation", "incomplete", "insufficient_evidence"} for item in latest) and decision["task_complete"]:
             raise ValueError("工具资料不足或候选尚待用户确认，不能将原任务标记为成功")
         original_plan = route_question(question, tools or [])
+        if original_plan and original_plan.get("parallel_tools") and decision["task_complete"]:
+            expected = Counter(original_plan["parallel_tools"])
+            completed = [item for item in observations if item.get("status") == "success"
+                         and not (isinstance(item.get("result"), dict) and item["result"].get("status") in {
+                             "needs_confirmation", "incomplete", "insufficient_evidence"})]
+            targets = _current_paper_ids(question, _paper_aliases(context))
+            covered = {item.get("args", {}).get("doc_id") for item in completed if item.get("name") in expected}
+            counts = Counter(item.get("name") for item in completed)
+            if any(counts[name] < count for name, count in expected.items()) or targets and not targets <= covered:
+                decision["task_complete"] = False
+                decision["answer"] += "\n\n分别处理的论文任务尚未全部完成：需要每篇目标论文的独立工具结果。"
         if original_plan and original_plan.get("tool_name") == "paper_compare" and decision["task_complete"]:
             comparisons = [item["result"] for item in observations if item.get("name") == "paper_compare"
                            and item.get("status") == "success" and isinstance(item.get("result"), dict)]

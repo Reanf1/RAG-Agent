@@ -49,6 +49,44 @@ class TestLocalGeneration(unittest.TestCase):
     def set_response(self, response):
         self.opener.return_value = BytesIO(json.dumps(response).encode())
 
+    def test_original_quantities_have_decimal_hint_without_rewriting_evidence(self):
+        """将303M误译问题转为可核对提示，提示不能更改来源或推断数量对象。"""
+        from src.generation.prompt_template import build_rag_messages
+        original = "Data A has 303M images; data B has 1.3 million images; 4.5B tokens."
+        message = build_rag_messages("数据规模？", original)[-1].content
+        self.assertIn(original, message)
+        self.assertIn("303M = 303000000 = 30300万 = 3.03亿", message)
+        self.assertIn("1.3million = 1300000.0 = 130.0万 = 0.013亿", message)
+        self.assertIn("4.5B = 4500000000.0 = 450000.0万 = 45.0亿", message)
+        self.assertNotIn("数量单位核对", build_rag_messages("方法？", "没有数量。")[1].content)
+
+    def test_quantity_hint_keeps_its_actual_reference_number(self):
+        from src.generation.prompt_template import build_rag_messages
+        context = ('[参考文档1 - 来源: A.pdf；原始块位置: 第1页]\nAccuracy 83.1%.\n'
+                   '[参考文档2 - 来源: A.pdf；原始块位置: 第4页]\nJFT has 303M images.')
+        hint = build_rag_messages('数据量？', context)[-1].content.split('【数量单位核对】')[1].split('【用户问题】')[0]
+        self.assertIn('3.03亿 [参考文档2]', hint)
+        self.assertNotIn('[参考文档1]', hint)
+
+    def test_evidence_hints_leave_user_question_last_and_unchanged(self):
+        from src.generation.prompt_template import build_rag_messages
+        question = 'Answer in English. Compare A and B; literal 【用户问题】 and {x}.'
+        message = build_rag_messages(question, 'A has 303M images.')[-1].content
+        self.assertTrue(message.endswith('【用户问题】\n' + question))
+        self.assertEqual(message.count(question), 1)
+
+    def test_multi_paper_hint_uses_only_actual_reference_headers(self):
+        from src.generation.prompt_template import build_rag_messages
+        original = ('[参考文档1 - 来源: A.pdf；原始块位置: 第1页]\nA method.\n'
+                    '[参考文档2 - 来源: B.pdf；原始块位置: 第2页]\nB method.\n'
+                    '[参考文档3 - 来源: A.pdf；原始块位置: 第3页]\nAnother A method.')
+        message = build_rag_messages('比较两篇的方法', original)[-1].content
+        self.assertIn(original, message)
+        hint = message.split('【来源编号对应】', 1)[1]
+        self.assertIn('A.pdf：[参考文档1][参考文档3]', hint)
+        self.assertIn('B.pdf：[参考文档2]', hint)
+        self.assertNotIn('参考文档4', hint)
+
     def test_narrow_question_focus_excludes_unrelated_object_and_preserves_source(self):
         """位置编码相邻的分类头语句不能一起进入聚焦证据，引用仍为真实连续原文。"""
         from src.generation.rag_pipeline import focus_answer_evidence

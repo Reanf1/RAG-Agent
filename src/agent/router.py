@@ -39,7 +39,7 @@ def route_question(question: str, tools: list[BaseTool], context: dict | None = 
     """首轮明确意图返回零模型调用的Thought；模糊、依赖或已有会话状态回退模型。
 
     只选择实际传入工具，不填参数。parallel_tools非空表示独立批次；
-    同一工具用于两篇论文时列表仅含一个名字，Action负责生成两套真实输入。
+    同一工具用于两篇论文时保留两次工具名，Action必须生成两套真实输入。
     """
     started = perf_counter()
     if not question.strip():
@@ -95,7 +95,7 @@ def route_question(question: str, tools: list[BaseTool], context: dict | None = 
                 len(set(re.findall(r"\b[0-9a-f]{64}\b", question))) > 1 or re.search(r"两篇|两份|两个|\bboth\b", question, re.I)):
             if selected not in {"paper_metadata", "paper_summary", "knowledge_base_search", "keyword_extract"} or parallel_limit() < 2:
                 return None
-            batch, reason = [selected], "分别处理两份已给定论文，Action可提出同一工具的独立调用。"
+            batch, reason = [selected, selected], "分别处理两份已给定论文，Action必须提出两次独立调用。"
     elif local or re.search(r"文献|论文|提出的|结构改进|消融实验|\b(?:papers?|proposed|ablation)\b", question, re.I):
         if "knowledge_base_search" not in names:
             return None

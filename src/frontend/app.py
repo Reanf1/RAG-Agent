@@ -24,7 +24,7 @@ if str(project_root) not in sys.path:
 
 from src.data_loader import LOADERS, create_import_tasks
 from src.frontend.components.documents import list_documents, delete_document, restore_document, read_pdf_page, read_document_content
-from src.frontend.components.trace import execution_rows, conversation_statistics
+from src.frontend.components.trace import execution_rows, conversation_statistics, record_runtime_success
 from src.agent import run_session
 from src.agent.tools import get_available_tools
 from src.generation.cache import SemanticCache
@@ -107,21 +107,30 @@ if "upload_version" not in st.session_state:
 with st.sidebar:
     st.header("系统状态")
     st.caption(f"系统时间：{datetime.fromisoformat(request_time()).strftime('%Y-%m-%d %H:%M:%S')}")
-    # 首次只检查服务和现有索引；普通页面交互复用结果，不启动模型推理。
+    runtime_owner = (config["llm"]["base_url"], config["llm"]["model"], str(index_dir), config["retrieval"]["collection_name"])
+    if st.session_state.get("runtime_owner") != runtime_owner:
+        st.session_state.pop("health_result", None)
+        st.session_state.runtime_owner = runtime_owner
+    # 首次或配置／索引改变时检查；普通交互复用快照，不启动模型推理。
     if "health_result" not in st.session_state:
         st.session_state.health_result = check_health()
+        st.session_state.runtime_checks = {}
     health = st.session_state.health_result
     for name, key, selected in (("LLM服务", "llm", config["llm"]["model"]),
                                 ("向量数据库", "vector_database", "Chroma")):
         component = health[key]
         if component["status"] == "ok":
-            st.success(f"{name}：{'可连接，推理未验证' if key == 'llm' else '可读取，检索未验证'}（{component.get('model', selected)}）")
+            st.success(f"{name}：{'可连接，模型已安装' if key == 'llm' else '索引可读取'}（{component.get('model', selected)}）")
         else:
             text = f"{name}：异常（{component['detail']}）"
             if component["status"] in {"not_initialized", "model_missing"}:
                 st.warning(text)
             else:
                 st.error(text)
+        action = "推理" if key == "llm" else "向量检索"
+        tested_at = st.session_state.runtime_checks.get(key)
+        st.caption(f"最近实际{action}成功：{tested_at}" if tested_at else f"本页尚无实际{action}记录。")
+    st.caption("连接检查与最近业务记录分别展示；成功执行不代表答案质量已通过审核。")
     if st.button("刷新状态", key="check_health"):
         st.session_state.health_result = check_health()
         st.rerun()
@@ -432,6 +441,8 @@ with chat_tab:
                                                  confirmed_rag_args=(approval["args"] if "args" in approval else
                                                                      {"question": approval["tool_question"], "doc_id": approval["doc_id"]}) if approval else None,
                                                  memory=st.session_state.agent_memory, stream=True):
+                            record_runtime_success(st.session_state.runtime_checks, event,
+                                                   config["llm"]["model"], request_time())
                             if event["type"] == "token":
                                 incoming["answer"] = event["answer"]
                                 answer_panel.markdown(incoming["answer"] + " ▌")
@@ -528,6 +539,8 @@ with retrieval_tab:
                         results = retriever.search(query, k=top_k, doc_id=selected_id, rerank=True)
                     else:
                         results = retriever.search(query, k=top_k, doc_id=selected_id)
+                    if method != "BM25 关键词":
+                        st.session_state.runtime_checks["vector_database"] = request_time()
             except Exception as error:
                 st.error(f"检索失败：{type(error).__name__}: {error}。请根据错误信息检查配置后重新检索。")
             else:

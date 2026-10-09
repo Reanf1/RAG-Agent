@@ -96,6 +96,18 @@ class TestObservationAndLoop(unittest.TestCase):
         self.assertFalse(result["task_complete"])
         self.assertIn("对比任务尚未完成", result["answer"])
 
+    def test_one_paper_result_cannot_complete_two_paper_request(self):
+        """数量校验之外，最终观察也要防止只读一篇却宣称分别处理完成。"""
+        from src.agent.tools import paper_metadata
+        a, b = "a" * 64, "b" * 64
+        question = f"请调用paper_metadata，分别读取两篇论文：{a} 和 {b}"
+        context = {"observations": [{"name": "paper_metadata", "args": {"doc_id": a},
+                                    "status": "success", "result": {"title": "甲"}}]}
+        with patch("src.agent.react_loop.urlopen", return_value=self.http_responses([self.packet(self.finished)])[0]):
+            result = observe(question, [paper_metadata], context)
+        self.assertFalse(result["task_complete"])
+        self.assertIn("尚未全部完成", result["answer"])
+
     def test_two_real_tools_feed_next_round_and_native_observation_messages(self):
         context = {"source": "原始资料", "observations": []}
         original = deepcopy(context)
