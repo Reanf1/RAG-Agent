@@ -1,0 +1,1212 @@
+[
+  {
+    "type": "thought",
+    "thought": "先获取已上传文献的真实ID，再执行论文工具。",
+    "next_step": "tool",
+    "tool_name": "paper_list",
+    "parallel_tools": [],
+    "route": "rule",
+    "model": null,
+    "usage": {
+      "prompt_eval_count": 0,
+      "eval_count": 0
+    },
+    "elapsed_seconds": 9.700000373413786e-05,
+    "iteration": 1,
+    "request_id": "598755151f1642f991227c695141f88e",
+    "user_id": "a591902c726947a98fe27f813ffe4966",
+    "session_id": "f915d0aace2b448c9f6c2670ad465156"
+  },
+  {
+    "type": "tool_call",
+    "call_id": "e64580ed094b496da92040eaca5520bc",
+    "name": "paper_list",
+    "args": {},
+    "model": null,
+    "elapsed_seconds": 0.0006036999984644353,
+    "usage": {
+      "prompt_eval_count": 0,
+      "eval_count": 0
+    },
+    "iteration": 1,
+    "request_id": "598755151f1642f991227c695141f88e",
+    "user_id": "a591902c726947a98fe27f813ffe4966",
+    "session_id": "f915d0aace2b448c9f6c2670ad465156"
+  },
+  {
+    "type": "tool_result",
+    "call_id": "e64580ed094b496da92040eaca5520bc",
+    "name": "paper_list",
+    "args": {},
+    "status": "success",
+    "result": {
+      "papers": [
+        {
+          "doc_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+          "source_file": "澄禾实验.txt",
+          "indexed_chunks": 1,
+          "source_available": true,
+          "index_status": "has_index"
+        },
+        {
+          "doc_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007",
+          "source_file": "雨田实验.txt",
+          "indexed_chunks": 1,
+          "source_available": true,
+          "index_status": "has_index"
+        }
+      ],
+      "total": 2,
+      "usage": {
+        "prompt_eval_count": 0,
+        "eval_count": 0
+      }
+    },
+    "error": "",
+    "error_kind": null,
+    "usage": {
+      "prompt_eval_count": 0,
+      "eval_count": 0
+    },
+    "usage_incomplete": false,
+    "elapsed_seconds": 0.06232909999380354,
+    "attempts": [
+      {
+        "attempt": 1,
+        "status": "success",
+        "error": "",
+        "error_kind": null,
+        "elapsed_seconds": 0.0622743000058108,
+        "usage": {
+          "prompt_eval_count": 0,
+          "eval_count": 0
+        },
+        "usage_incomplete": false
+      }
+    ],
+    "execution_mode": "serial",
+    "iteration": 1,
+    "request_id": "598755151f1642f991227c695141f88e",
+    "user_id": "a591902c726947a98fe27f813ffe4966",
+    "session_id": "f915d0aace2b448c9f6c2670ad465156"
+  },
+  {
+    "type": "token",
+    "answer": "",
+    "provisional": false,
+    "iteration": 1,
+    "request_id": "598755151f1642f991227c695141f88e",
+    "user_id": "a591902c726947a98fe27f813ffe4966",
+    "session_id": "f915d0aace2b448c9f6c2670ad465156"
+  },
+  {
+    "type": "observation",
+    "observation": "文献列表已返回，继续执行指定的论文任务。",
+    "decision": "continue",
+    "task_complete": false,
+    "answer": "",
+    "model": null,
+    "usage": {
+      "prompt_eval_count": 0,
+      "eval_count": 0
+    },
+    "elapsed_seconds": 0.00017250000382773578,
+    "iteration": 1,
+    "request_id": "598755151f1642f991227c695141f88e",
+    "user_id": "a591902c726947a98fe27f813ffe4966",
+    "session_id": "f915d0aace2b448c9f6c2670ad465156"
+  },
+  {
+    "type": "thought",
+    "thought": "明确工具意图，跳过模型规划，交由Action生成参数。",
+    "next_step": "tool",
+    "tool_name": "paper_compare",
+    "parallel_tools": [],
+    "route": "rule",
+    "model": null,
+    "usage": {
+      "prompt_eval_count": 0,
+      "eval_count": 0
+    },
+    "elapsed_seconds": 0.0002767999976640567,
+    "iteration": 2,
+    "request_id": "598755151f1642f991227c695141f88e",
+    "user_id": "a591902c726947a98fe27f813ffe4966",
+    "session_id": "f915d0aace2b448c9f6c2670ad465156"
+  },
+  {
+    "type": "tool_call",
+    "call_id": "646326c5ca9542d89e77eaff03804171",
+    "name": "paper_compare",
+    "args": {
+      "paper_a_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+      "paper_b_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007"
+    },
+    "model": "qwen2.5:7b",
+    "elapsed_seconds": 5.247304800002894,
+    "usage": {
+      "prompt_eval_count": 2273,
+      "eval_count": 141
+    },
+    "iteration": 2,
+    "request_id": "598755151f1642f991227c695141f88e",
+    "user_id": "a591902c726947a98fe27f813ffe4966",
+    "session_id": "f915d0aace2b448c9f6c2670ad465156"
+  },
+  {
+    "type": "tool_result",
+    "call_id": "646326c5ca9542d89e77eaff03804171",
+    "name": "paper_compare",
+    "args": {
+      "paper_a_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+      "paper_b_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007"
+    },
+    "status": "success",
+    "result": {
+      "papers": [
+        {
+          "label": "A",
+          "doc_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+          "source_file": "澄禾实验.txt",
+          "coverage": {
+            "方法": {
+              "generation_mode": "low",
+              "top_score": 0.00669037876650691
+            },
+            "数据集": {
+              "generation_mode": "low",
+              "top_score": 0.03958182409405708
+            },
+            "实验结果": {
+              "generation_mode": "grounded",
+              "top_score": 0.15403905510902405
+            }
+          },
+          "top_score": 0.0006048033246770501,
+          "references": [
+            {
+              "id": 1,
+              "source_file": "澄禾实验.txt",
+              "location": "行1–8",
+              "text": "澄禾实验：水稻叶片识别\n作者：李禾、王澄。年份：2025。\n背景：通过图像分类识别水稻叶片病害。\n方法：澄禾实验提出LeafGate分类器。\n数据集：田畴-73数据集，共160张叶片图片。\n实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。\n结论：在本次测试条件下，LeafGate提高识别准确率。\n声明：这是程序验收的合成资料，不是真实论文。",
+              "metadata": {
+                "chunk_id": "0e09e77ff49408e80b6e826b11076b99a0aec041a7f69140fe9f66dde46d4e7a",
+                "doc_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+                "file_type": ".txt",
+                "line_end": 8,
+                "line_start": 1,
+                "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6\\澄禾实验.txt",
+                "source_file": "澄禾实验.txt"
+              },
+              "truncated": false,
+              "score": 0.0006048033246770501
+            }
+          ],
+          "truncated": false
+        },
+        {
+          "label": "B",
+          "doc_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007",
+          "source_file": "雨田实验.txt",
+          "coverage": {
+            "方法": {
+              "generation_mode": "low",
+              "top_score": 0.0007522147498093545
+            },
+            "数据集": {
+              "generation_mode": "low",
+              "top_score": 0.013196678832173347
+            },
+            "实验结果": {
+              "generation_mode": "grounded",
+              "top_score": 0.27564263343811035
+            }
+          },
+          "top_score": 9.038918506121263e-05,
+          "references": [
+            {
+              "id": 1,
+              "source_file": "雨田实验.txt",
+              "location": "行1–8",
+              "text": "雨田实验：水稻图像分类\n作者：张雨、刘田。年份：2025。\n背景：研究水稻叶片图像分类。\n方法：雨田实验采用DenseCrop分类器。\n数据集：田畴-73数据集，共128张图片。\n实验结果：DenseCrop测试准确率为88.4%。\n结论：该方法适用于本实验样本，未验证外部泛化。\n声明：这是程序验收的合成资料，不是真实论文。",
+              "metadata": {
+                "chunk_id": "0c1d5d7532c2503f90fc0bdbf46c319232fd54a380dd1f376f225f447a32a43d",
+                "doc_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007",
+                "file_type": ".txt",
+                "line_end": 8,
+                "line_start": 1,
+                "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007\\雨田实验.txt",
+                "source_file": "雨田实验.txt"
+              },
+              "truncated": false,
+              "score": 9.038918506121263e-05
+            }
+          ],
+          "truncated": false
+        }
+      ],
+      "missing_dimensions": [],
+      "low_relevance_dimensions": [
+        "论文A：方法",
+        "论文A：数据集",
+        "论文B：方法",
+        "论文B：数据集"
+      ],
+      "low_relevance_papers": [
+        "A",
+        "B"
+      ],
+      "status": "needs_confirmation",
+      "answer": "检索相关性低，请用户核对候选原文。",
+      "references": [
+        {
+          "id": 1,
+          "source_file": "澄禾实验.txt",
+          "location": "行1–8",
+          "text": "澄禾实验：水稻叶片识别\n作者：李禾、王澄。年份：2025。\n背景：通过图像分类识别水稻叶片病害。\n方法：澄禾实验提出LeafGate分类器。\n数据集：田畴-73数据集，共160张叶片图片。\n实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。\n结论：在本次测试条件下，LeafGate提高识别准确率。\n声明：这是程序验收的合成资料，不是真实论文。",
+          "metadata": {
+            "chunk_id": "0e09e77ff49408e80b6e826b11076b99a0aec041a7f69140fe9f66dde46d4e7a",
+            "doc_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+            "file_type": ".txt",
+            "line_end": 8,
+            "line_start": 1,
+            "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6\\澄禾实验.txt",
+            "source_file": "澄禾实验.txt"
+          },
+          "truncated": false,
+          "score": 0.0006048033246770501
+        },
+        {
+          "id": 2,
+          "source_file": "雨田实验.txt",
+          "location": "行1–8",
+          "text": "雨田实验：水稻图像分类\n作者：张雨、刘田。年份：2025。\n背景：研究水稻叶片图像分类。\n方法：雨田实验采用DenseCrop分类器。\n数据集：田畴-73数据集，共128张图片。\n实验结果：DenseCrop测试准确率为88.4%。\n结论：该方法适用于本实验样本，未验证外部泛化。\n声明：这是程序验收的合成资料，不是真实论文。",
+          "metadata": {
+            "chunk_id": "0c1d5d7532c2503f90fc0bdbf46c319232fd54a380dd1f376f225f447a32a43d",
+            "doc_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007",
+            "file_type": ".txt",
+            "line_end": 8,
+            "line_start": 1,
+            "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007\\雨田实验.txt",
+            "source_file": "雨田实验.txt"
+          },
+          "truncated": false,
+          "score": 9.038918506121263e-05
+        }
+      ],
+      "generation_mode": "low",
+      "citations": [],
+      "usage": {
+        "prompt_eval_count": 0,
+        "eval_count": 0
+      },
+      "warnings": [],
+      "elapsed_seconds": 6.686391299997922,
+      "confirmation_id": "dc5d2fa5c3c94b589ec8732efedd8f21"
+    },
+    "error": "",
+    "error_kind": null,
+    "usage": {
+      "prompt_eval_count": 0,
+      "eval_count": 0
+    },
+    "usage_incomplete": false,
+    "elapsed_seconds": 6.741001499998674,
+    "attempts": [
+      {
+        "attempt": 1,
+        "status": "success",
+        "error": "",
+        "error_kind": null,
+        "elapsed_seconds": 6.74096819999977,
+        "usage": {
+          "prompt_eval_count": 0,
+          "eval_count": 0
+        },
+        "usage_incomplete": false
+      }
+    ],
+    "execution_mode": "serial",
+    "iteration": 2,
+    "request_id": "598755151f1642f991227c695141f88e",
+    "user_id": "a591902c726947a98fe27f813ffe4966",
+    "session_id": "f915d0aace2b448c9f6c2670ad465156"
+  },
+  {
+    "type": "token",
+    "answer": "检索结果相关性低，请查看候选原文后确认是否使用；尚未调用生成模型。",
+    "provisional": false,
+    "iteration": 2,
+    "request_id": "598755151f1642f991227c695141f88e",
+    "user_id": "a591902c726947a98fe27f813ffe4966",
+    "session_id": "f915d0aace2b448c9f6c2670ad465156"
+  },
+  {
+    "type": "observation",
+    "observation": "等待用户确认候选。",
+    "decision": "finish",
+    "task_complete": false,
+    "answer": "检索结果相关性低，请查看候选原文后确认是否使用；尚未调用生成模型。",
+    "model": null,
+    "usage": {
+      "prompt_eval_count": 0,
+      "eval_count": 0
+    },
+    "elapsed_seconds": 0.0010470999986864626,
+    "iteration": 2,
+    "request_id": "598755151f1642f991227c695141f88e",
+    "user_id": "a591902c726947a98fe27f813ffe4966",
+    "session_id": "f915d0aace2b448c9f6c2670ad465156"
+  },
+  {
+    "type": "done",
+    "task_complete": false,
+    "stop_reason": "incomplete",
+    "full_response": "检索结果相关性低，请查看候选原文后确认是否使用；尚未调用生成模型。",
+    "iterations": 2,
+    "request_id": "598755151f1642f991227c695141f88e",
+    "user_id": "a591902c726947a98fe27f813ffe4966",
+    "session_id": "f915d0aace2b448c9f6c2670ad465156"
+  },
+  {
+    "type": "thought",
+    "thought": "使用用户已确认的候选原文回答。",
+    "next_step": "tool",
+    "tool_name": "paper_compare",
+    "parallel_tools": [],
+    "route": "confirmation",
+    "model": null,
+    "usage": {
+      "prompt_eval_count": 0,
+      "eval_count": 0
+    },
+    "iteration": 1,
+    "request_id": "552b42a78eb444aea002dc2e5032bf9c",
+    "user_id": "a591902c726947a98fe27f813ffe4966",
+    "session_id": "f915d0aace2b448c9f6c2670ad465156"
+  },
+  {
+    "type": "tool_call",
+    "call_id": "0c68aab843514960b28f11f25db7ac8f",
+    "name": "paper_compare",
+    "args": {
+      "paper_a_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+      "paper_b_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007"
+    },
+    "model": null,
+    "elapsed_seconds": 0.0002705000006244518,
+    "usage": {
+      "prompt_eval_count": 0,
+      "eval_count": 0
+    },
+    "iteration": 1,
+    "request_id": "552b42a78eb444aea002dc2e5032bf9c",
+    "user_id": "a591902c726947a98fe27f813ffe4966",
+    "session_id": "f915d0aace2b448c9f6c2670ad465156"
+  },
+  {
+    "type": "tool_result",
+    "call_id": "0c68aab843514960b28f11f25db7ac8f",
+    "name": "paper_compare",
+    "args": {
+      "paper_a_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+      "paper_b_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007"
+    },
+    "status": "success",
+    "result": {
+      "answer": "## 回答\n以下按三个维度并列展示两篇论文的原文证据，不改写实验数字或条件。\n| 维度 | 论文A | 论文B |\n| --- | --- | --- |\n| 方法 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n| 数据集 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n| 实验结果 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n\n不同任务、数据集和实验条件的指标不可直接比较优劣；证据选择的语义适用性仍需对照原文核验。\n\n## 参考来源\n- [参考文档1] 澄禾实验.txt；行1–8\n- [参考文档2] 雨田实验.txt；行1–8",
+      "citations": [
+        {
+          "id": 1,
+          "source_file": "澄禾实验.txt",
+          "location": "行1–8",
+          "text": "澄禾实验：水稻叶片识别\n作者：李禾、王澄。年份：2025。\n背景：通过图像分类识别水稻叶片病害。\n方法：澄禾实验提出LeafGate分类器。\n数据集：田畴-73数据集，共160张叶片图片。\n实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。\n结论：在本次测试条件下，LeafGate提高识别准确率。\n声明：这是程序验收的合成资料，不是真实论文。",
+          "metadata": {
+            "chunk_id": "0e09e77ff49408e80b6e826b11076b99a0aec041a7f69140fe9f66dde46d4e7a",
+            "doc_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+            "file_type": ".txt",
+            "line_end": 8,
+            "line_start": 1,
+            "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6\\澄禾实验.txt",
+            "source_file": "澄禾实验.txt"
+          },
+          "truncated": false,
+          "score": 0.0006048033246770501
+        },
+        {
+          "id": 2,
+          "source_file": "雨田实验.txt",
+          "location": "行1–8",
+          "text": "雨田实验：水稻图像分类\n作者：张雨、刘田。年份：2025。\n背景：研究水稻叶片图像分类。\n方法：雨田实验采用DenseCrop分类器。\n数据集：田畴-73数据集，共128张图片。\n实验结果：DenseCrop测试准确率为88.4%。\n结论：该方法适用于本实验样本，未验证外部泛化。\n声明：这是程序验收的合成资料，不是真实论文。",
+          "metadata": {
+            "chunk_id": "0c1d5d7532c2503f90fc0bdbf46c319232fd54a380dd1f376f225f447a32a43d",
+            "doc_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007",
+            "file_type": ".txt",
+            "line_end": 8,
+            "line_start": 1,
+            "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007\\雨田实验.txt",
+            "source_file": "雨田实验.txt"
+          },
+          "truncated": false,
+          "score": 9.038918506121263e-05
+        }
+      ],
+      "invalid_citation_ids": [],
+      "missing_citations": false,
+      "warnings": [
+        "部分维度的检索相关性低，相关陈述需对照原文核验：论文A：方法、论文A：数据集、论文B：方法、论文B：数据集"
+      ],
+      "comparison": [
+        {
+          "dimension": "方法",
+          "a": {
+            "id": 1,
+            "source_file": "澄禾实验.txt",
+            "location": "行1–8",
+            "text": "澄禾实验：水稻叶片识别\n作者：李禾、王澄。年份：2025。\n背景：通过图像分类识别水稻叶片病害。\n方法：澄禾实验提出LeafGate分类器。\n数据集：田畴-73数据集，共160张叶片图片。\n实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。\n结论：在本次测试条件下，LeafGate提高识别准确率。\n声明：这是程序验收的合成资料，不是真实论文。",
+            "metadata": {
+              "chunk_id": "0e09e77ff49408e80b6e826b11076b99a0aec041a7f69140fe9f66dde46d4e7a",
+              "doc_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+              "file_type": ".txt",
+              "line_end": 8,
+              "line_start": 1,
+              "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6\\澄禾实验.txt",
+              "source_file": "澄禾实验.txt"
+            },
+            "truncated": false,
+            "score": 0.0006048033246770501
+          },
+          "b": {
+            "id": 2,
+            "source_file": "雨田实验.txt",
+            "location": "行1–8",
+            "text": "雨田实验：水稻图像分类\n作者：张雨、刘田。年份：2025。\n背景：研究水稻叶片图像分类。\n方法：雨田实验采用DenseCrop分类器。\n数据集：田畴-73数据集，共128张图片。\n实验结果：DenseCrop测试准确率为88.4%。\n结论：该方法适用于本实验样本，未验证外部泛化。\n声明：这是程序验收的合成资料，不是真实论文。",
+            "metadata": {
+              "chunk_id": "0c1d5d7532c2503f90fc0bdbf46c319232fd54a380dd1f376f225f447a32a43d",
+              "doc_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007",
+              "file_type": ".txt",
+              "line_end": 8,
+              "line_start": 1,
+              "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007\\雨田实验.txt",
+              "source_file": "雨田实验.txt"
+            },
+            "truncated": false,
+            "score": 9.038918506121263e-05
+          }
+        },
+        {
+          "dimension": "数据集",
+          "a": {
+            "id": 1,
+            "source_file": "澄禾实验.txt",
+            "location": "行1–8",
+            "text": "澄禾实验：水稻叶片识别\n作者：李禾、王澄。年份：2025。\n背景：通过图像分类识别水稻叶片病害。\n方法：澄禾实验提出LeafGate分类器。\n数据集：田畴-73数据集，共160张叶片图片。\n实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。\n结论：在本次测试条件下，LeafGate提高识别准确率。\n声明：这是程序验收的合成资料，不是真实论文。",
+            "metadata": {
+              "chunk_id": "0e09e77ff49408e80b6e826b11076b99a0aec041a7f69140fe9f66dde46d4e7a",
+              "doc_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+              "file_type": ".txt",
+              "line_end": 8,
+              "line_start": 1,
+              "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6\\澄禾实验.txt",
+              "source_file": "澄禾实验.txt"
+            },
+            "truncated": false,
+            "score": 0.0006048033246770501
+          },
+          "b": {
+            "id": 2,
+            "source_file": "雨田实验.txt",
+            "location": "行1–8",
+            "text": "雨田实验：水稻图像分类\n作者：张雨、刘田。年份：2025。\n背景：研究水稻叶片图像分类。\n方法：雨田实验采用DenseCrop分类器。\n数据集：田畴-73数据集，共128张图片。\n实验结果：DenseCrop测试准确率为88.4%。\n结论：该方法适用于本实验样本，未验证外部泛化。\n声明：这是程序验收的合成资料，不是真实论文。",
+            "metadata": {
+              "chunk_id": "0c1d5d7532c2503f90fc0bdbf46c319232fd54a380dd1f376f225f447a32a43d",
+              "doc_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007",
+              "file_type": ".txt",
+              "line_end": 8,
+              "line_start": 1,
+              "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007\\雨田实验.txt",
+              "source_file": "雨田实验.txt"
+            },
+            "truncated": false,
+            "score": 9.038918506121263e-05
+          }
+        },
+        {
+          "dimension": "实验结果",
+          "a": {
+            "id": 1,
+            "source_file": "澄禾实验.txt",
+            "location": "行1–8",
+            "text": "澄禾实验：水稻叶片识别\n作者：李禾、王澄。年份：2025。\n背景：通过图像分类识别水稻叶片病害。\n方法：澄禾实验提出LeafGate分类器。\n数据集：田畴-73数据集，共160张叶片图片。\n实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。\n结论：在本次测试条件下，LeafGate提高识别准确率。\n声明：这是程序验收的合成资料，不是真实论文。",
+            "metadata": {
+              "chunk_id": "0e09e77ff49408e80b6e826b11076b99a0aec041a7f69140fe9f66dde46d4e7a",
+              "doc_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+              "file_type": ".txt",
+              "line_end": 8,
+              "line_start": 1,
+              "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6\\澄禾实验.txt",
+              "source_file": "澄禾实验.txt"
+            },
+            "truncated": false,
+            "score": 0.0006048033246770501
+          },
+          "b": {
+            "id": 2,
+            "source_file": "雨田实验.txt",
+            "location": "行1–8",
+            "text": "雨田实验：水稻图像分类\n作者：张雨、刘田。年份：2025。\n背景：研究水稻叶片图像分类。\n方法：雨田实验采用DenseCrop分类器。\n数据集：田畴-73数据集，共128张图片。\n实验结果：DenseCrop测试准确率为88.4%。\n结论：该方法适用于本实验样本，未验证外部泛化。\n声明：这是程序验收的合成资料，不是真实论文。",
+            "metadata": {
+              "chunk_id": "0c1d5d7532c2503f90fc0bdbf46c319232fd54a380dd1f376f225f447a32a43d",
+              "doc_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007",
+              "file_type": ".txt",
+              "line_end": 8,
+              "line_start": 1,
+              "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007\\雨田实验.txt",
+              "source_file": "雨田实验.txt"
+            },
+            "truncated": false,
+            "score": 9.038918506121263e-05
+          }
+        }
+      ],
+      "model": "qwen2.5:7b",
+      "done_reason": "stop",
+      "model_calls": [
+        {
+          "paper": "A",
+          "model": "qwen2.5:7b",
+          "choice": {
+            "method": 1,
+            "datasets": 1,
+            "results": 1
+          },
+          "usage": {
+            "prompt_eval_count": 272,
+            "eval_count": 19
+          }
+        },
+        {
+          "paper": "B",
+          "model": "qwen2.5:7b",
+          "choice": {
+            "method": 2,
+            "datasets": 2,
+            "results": 2
+          },
+          "usage": {
+            "prompt_eval_count": 262,
+            "eval_count": 19
+          }
+        }
+      ],
+      "usage": {
+        "prompt_eval_count": 534,
+        "eval_count": 38
+      },
+      "papers": [
+        {
+          "label": "A",
+          "doc_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+          "source_file": "澄禾实验.txt",
+          "coverage": {
+            "方法": {
+              "generation_mode": "low",
+              "top_score": 0.00669037876650691
+            },
+            "数据集": {
+              "generation_mode": "low",
+              "top_score": 0.03958182409405708
+            },
+            "实验结果": {
+              "generation_mode": "grounded",
+              "top_score": 0.15403905510902405
+            }
+          },
+          "top_score": 0.0006048033246770501,
+          "references": [
+            {
+              "id": 1,
+              "source_file": "澄禾实验.txt",
+              "location": "行1–8",
+              "text": "澄禾实验：水稻叶片识别\n作者：李禾、王澄。年份：2025。\n背景：通过图像分类识别水稻叶片病害。\n方法：澄禾实验提出LeafGate分类器。\n数据集：田畴-73数据集，共160张叶片图片。\n实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。\n结论：在本次测试条件下，LeafGate提高识别准确率。\n声明：这是程序验收的合成资料，不是真实论文。",
+              "metadata": {
+                "chunk_id": "0e09e77ff49408e80b6e826b11076b99a0aec041a7f69140fe9f66dde46d4e7a",
+                "doc_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+                "file_type": ".txt",
+                "line_end": 8,
+                "line_start": 1,
+                "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6\\澄禾实验.txt",
+                "source_file": "澄禾实验.txt"
+              },
+              "truncated": false,
+              "score": 0.0006048033246770501
+            }
+          ],
+          "truncated": false
+        },
+        {
+          "label": "B",
+          "doc_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007",
+          "source_file": "雨田实验.txt",
+          "coverage": {
+            "方法": {
+              "generation_mode": "low",
+              "top_score": 0.0007522147498093545
+            },
+            "数据集": {
+              "generation_mode": "low",
+              "top_score": 0.013196678832173347
+            },
+            "实验结果": {
+              "generation_mode": "grounded",
+              "top_score": 0.27564263343811035
+            }
+          },
+          "top_score": 9.038918506121263e-05,
+          "references": [
+            {
+              "id": 1,
+              "source_file": "雨田实验.txt",
+              "location": "行1–8",
+              "text": "雨田实验：水稻图像分类\n作者：张雨、刘田。年份：2025。\n背景：研究水稻叶片图像分类。\n方法：雨田实验采用DenseCrop分类器。\n数据集：田畴-73数据集，共128张图片。\n实验结果：DenseCrop测试准确率为88.4%。\n结论：该方法适用于本实验样本，未验证外部泛化。\n声明：这是程序验收的合成资料，不是真实论文。",
+              "metadata": {
+                "chunk_id": "0c1d5d7532c2503f90fc0bdbf46c319232fd54a380dd1f376f225f447a32a43d",
+                "doc_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007",
+                "file_type": ".txt",
+                "line_end": 8,
+                "line_start": 1,
+                "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007\\雨田实验.txt",
+                "source_file": "雨田实验.txt"
+              },
+              "truncated": false,
+              "score": 9.038918506121263e-05
+            }
+          ],
+          "truncated": false
+        }
+      ],
+      "missing_dimensions": [],
+      "low_relevance_dimensions": [
+        "论文A：方法",
+        "论文A：数据集",
+        "论文B：方法",
+        "论文B：数据集"
+      ],
+      "low_relevance_papers": [
+        "A",
+        "B"
+      ],
+      "confirmed": true,
+      "status": "answered",
+      "elapsed_seconds": 1.3392921999984537
+    },
+    "error": "",
+    "error_kind": null,
+    "usage": {
+      "prompt_eval_count": 534,
+      "eval_count": 38
+    },
+    "usage_incomplete": false,
+    "elapsed_seconds": 1.3424041999969631,
+    "attempts": [
+      {
+        "attempt": 1,
+        "status": "success",
+        "error": "",
+        "error_kind": null,
+        "elapsed_seconds": 1.342366500000935,
+        "usage": {
+          "prompt_eval_count": 534,
+          "eval_count": 38
+        },
+        "usage_incomplete": false
+      }
+    ],
+    "execution_mode": "serial",
+    "iteration": 1,
+    "request_id": "552b42a78eb444aea002dc2e5032bf9c",
+    "user_id": "a591902c726947a98fe27f813ffe4966",
+    "session_id": "f915d0aace2b448c9f6c2670ad465156"
+  },
+  {
+    "type": "token",
+    "answer": "## 回答\n以下按三个维度并列展示两篇论文的原文证据，不改写实验数字或条件。\n| 维度 | 论文A | 论文B |\n| --- | --- | --- |\n| 方法 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n| 数据集 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n| 实验结果 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n\n不同任务、数据集和实验条件的指标不可直接比较优劣；证据选择的语义适用性仍需对照原文核验。\n\n## 参考来源\n- [参考文档1] 澄禾实验.txt；行1–8\n- [参考文档2] 雨田实验.txt；行1–8\n\n部分维度的检索相关性低，相关陈述需对照原文核验：论文A：方法、论文A：数据集、论文B：方法、论文B：数据集\n\n低相关性维度需核验：论文A：方法、论文A：数据集、论文B：方法、论文B：数据集",
+    "provisional": false,
+    "iteration": 1,
+    "request_id": "552b42a78eb444aea002dc2e5032bf9c",
+    "user_id": "a591902c726947a98fe27f813ffe4966",
+    "session_id": "f915d0aace2b448c9f6c2670ad465156"
+  },
+  {
+    "type": "observation",
+    "observation": "保留单一任务工具报告的栏目、原文引用和限制说明。",
+    "decision": "finish",
+    "task_complete": true,
+    "answer": "## 回答\n以下按三个维度并列展示两篇论文的原文证据，不改写实验数字或条件。\n| 维度 | 论文A | 论文B |\n| --- | --- | --- |\n| 方法 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n| 数据集 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n| 实验结果 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n\n不同任务、数据集和实验条件的指标不可直接比较优劣；证据选择的语义适用性仍需对照原文核验。\n\n## 参考来源\n- [参考文档1] 澄禾实验.txt；行1–8\n- [参考文档2] 雨田实验.txt；行1–8\n\n部分维度的检索相关性低，相关陈述需对照原文核验：论文A：方法、论文A：数据集、论文B：方法、论文B：数据集\n\n低相关性维度需核验：论文A：方法、论文A：数据集、论文B：方法、论文B：数据集",
+    "model": null,
+    "usage": {
+      "prompt_eval_count": 0,
+      "eval_count": 0
+    },
+    "elapsed_seconds": 0.00017360000492772087,
+    "iteration": 1,
+    "request_id": "552b42a78eb444aea002dc2e5032bf9c",
+    "user_id": "a591902c726947a98fe27f813ffe4966",
+    "session_id": "f915d0aace2b448c9f6c2670ad465156"
+  },
+  {
+    "type": "done",
+    "task_complete": true,
+    "stop_reason": "task_complete",
+    "full_response": "## 回答\n以下按三个维度并列展示两篇论文的原文证据，不改写实验数字或条件。\n| 维度 | 论文A | 论文B |\n| --- | --- | --- |\n| 方法 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n| 数据集 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n| 实验结果 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n\n不同任务、数据集和实验条件的指标不可直接比较优劣；证据选择的语义适用性仍需对照原文核验。\n\n## 参考来源\n- [参考文档1] 澄禾实验.txt；行1–8\n- [参考文档2] 雨田实验.txt；行1–8\n\n部分维度的检索相关性低，相关陈述需对照原文核验：论文A：方法、论文A：数据集、论文B：方法、论文B：数据集\n\n低相关性维度需核验：论文A：方法、论文A：数据集、论文B：方法、论文B：数据集",
+    "iterations": 1,
+    "request_id": "552b42a78eb444aea002dc2e5032bf9c",
+    "metrics": {
+      "calls": [
+        {
+          "id": "thought:1",
+          "iteration": 1,
+          "phase": "Thought",
+          "tool": "—",
+          "tool_call_ids": [],
+          "input": 0,
+          "output": 0,
+          "incomplete": false,
+          "seconds": null
+        },
+        {
+          "id": "action:1",
+          "iteration": 1,
+          "phase": "Action",
+          "tool": "paper_compare",
+          "tool_call_ids": [
+            "0c68aab843514960b28f11f25db7ac8f"
+          ],
+          "input": 0,
+          "output": 0,
+          "incomplete": false,
+          "seconds": 0.0002705000006244518
+        },
+        {
+          "id": "0c68aab843514960b28f11f25db7ac8f",
+          "iteration": 1,
+          "phase": "工具内部",
+          "tool": "paper_compare",
+          "tool_call_ids": [
+            "0c68aab843514960b28f11f25db7ac8f"
+          ],
+          "input": 534,
+          "output": 38,
+          "incomplete": false,
+          "seconds": 1.3424041999969631
+        },
+        {
+          "id": "observation:1",
+          "iteration": 1,
+          "phase": "Observation",
+          "tool": "—",
+          "tool_call_ids": [],
+          "input": 0,
+          "output": 0,
+          "incomplete": false,
+          "seconds": 0.00017360000492772087
+        }
+      ],
+      "trace": [
+        {
+          "type": "thought",
+          "thought": "使用用户已确认的候选原文回答。",
+          "next_step": "tool",
+          "tool_name": "paper_compare",
+          "parallel_tools": [],
+          "route": "confirmation",
+          "iteration": 1
+        },
+        {
+          "type": "tool_call",
+          "name": "paper_compare",
+          "call_id": "0c68aab843514960b28f11f25db7ac8f",
+          "args": {
+            "paper_a_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+            "paper_b_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007"
+          },
+          "elapsed_seconds": 0.0002705000006244518,
+          "iteration": 1
+        },
+        {
+          "type": "tool_result",
+          "name": "paper_compare",
+          "call_id": "0c68aab843514960b28f11f25db7ac8f",
+          "args": {
+            "paper_a_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+            "paper_b_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007"
+          },
+          "result": {
+            "answer": "## 回答\n以下按三个维度并列展示两篇论文的原文证据，不改写实验数字或条件。\n| 维度 | 论文A | 论文B |\n| --- | --- | --- |\n| 方法 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n| 数据集 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n| 实验结果 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n\n不同任务、数据集和实验条件的指标不可直接比较优劣；证据选择的语义适用性仍需对照原文核验。\n\n## 参考来源\n- [参考文档1] 澄禾实验.txt；行1–8\n- [参考文档2] 雨田实验.txt；行1–8",
+            "citations": [
+              {
+                "id": 1,
+                "source_file": "澄禾实验.txt",
+                "location": "行1–8",
+                "text": "澄禾实验：水稻叶片识别\n作者：李禾、王澄。年份：2025。\n背景：通过图像分类识别水稻叶片病害。\n方法：澄禾实验提出LeafGate分类器。\n数据集：田畴-73数据集，共160张叶片图片。\n实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。\n结论：在本次测试条件下，LeafGate提高识别准确率。\n声明：这是程序验收的合成资料，不是真实论文。",
+                "metadata": {
+                  "chunk_id": "0e09e77ff49408e80b6e826b11076b99a0aec041a7f69140fe9f66dde46d4e7a",
+                  "doc_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+                  "file_type": ".txt",
+                  "line_end": 8,
+                  "line_start": 1,
+                  "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6\\澄禾实验.txt",
+                  "source_file": "澄禾实验.txt"
+                },
+                "truncated": false,
+                "score": 0.0006048033246770501
+              },
+              {
+                "id": 2,
+                "source_file": "雨田实验.txt",
+                "location": "行1–8",
+                "text": "雨田实验：水稻图像分类\n作者：张雨、刘田。年份：2025。\n背景：研究水稻叶片图像分类。\n方法：雨田实验采用DenseCrop分类器。\n数据集：田畴-73数据集，共128张图片。\n实验结果：DenseCrop测试准确率为88.4%。\n结论：该方法适用于本实验样本，未验证外部泛化。\n声明：这是程序验收的合成资料，不是真实论文。",
+                "metadata": {
+                  "chunk_id": "0c1d5d7532c2503f90fc0bdbf46c319232fd54a380dd1f376f225f447a32a43d",
+                  "doc_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007",
+                  "file_type": ".txt",
+                  "line_end": 8,
+                  "line_start": 1,
+                  "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007\\雨田实验.txt",
+                  "source_file": "雨田实验.txt"
+                },
+                "truncated": false,
+                "score": 9.038918506121263e-05
+              }
+            ],
+            "invalid_citation_ids": [],
+            "missing_citations": false,
+            "warnings": [
+              "部分维度的检索相关性低，相关陈述需对照原文核验：论文A：方法、论文A：数据集、论文B：方法、论文B：数据集"
+            ],
+            "comparison": [
+              {
+                "dimension": "方法",
+                "a": {
+                  "id": 1,
+                  "source_file": "澄禾实验.txt",
+                  "location": "行1–8",
+                  "text": "澄禾实验：水稻叶片识别\n作者：李禾、王澄。年份：2025。\n背景：通过图像分类识别水稻叶片病害。\n方法：澄禾实验提出LeafGate分类器。\n数据集：田畴-73数据集，共160张叶片图片。\n实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。\n结论：在本次测试条件下，LeafGate提高识别准确率。\n声明：这是程序验收的合成资料，不是真实论文。",
+                  "metadata": {
+                    "chunk_id": "0e09e77ff49408e80b6e826b11076b99a0aec041a7f69140fe9f66dde46d4e7a",
+                    "doc_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+                    "file_type": ".txt",
+                    "line_end": 8,
+                    "line_start": 1,
+                    "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6\\澄禾实验.txt",
+                    "source_file": "澄禾实验.txt"
+                  },
+                  "truncated": false,
+                  "score": 0.0006048033246770501
+                },
+                "b": {
+                  "id": 2,
+                  "source_file": "雨田实验.txt",
+                  "location": "行1–8",
+                  "text": "雨田实验：水稻图像分类\n作者：张雨、刘田。年份：2025。\n背景：研究水稻叶片图像分类。\n方法：雨田实验采用DenseCrop分类器。\n数据集：田畴-73数据集，共128张图片。\n实验结果：DenseCrop测试准确率为88.4%。\n结论：该方法适用于本实验样本，未验证外部泛化。\n声明：这是程序验收的合成资料，不是真实论文。",
+                  "metadata": {
+                    "chunk_id": "0c1d5d7532c2503f90fc0bdbf46c319232fd54a380dd1f376f225f447a32a43d",
+                    "doc_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007",
+                    "file_type": ".txt",
+                    "line_end": 8,
+                    "line_start": 1,
+                    "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007\\雨田实验.txt",
+                    "source_file": "雨田实验.txt"
+                  },
+                  "truncated": false,
+                  "score": 9.038918506121263e-05
+                }
+              },
+              {
+                "dimension": "数据集",
+                "a": {
+                  "id": 1,
+                  "source_file": "澄禾实验.txt",
+                  "location": "行1–8",
+                  "text": "澄禾实验：水稻叶片识别\n作者：李禾、王澄。年份：2025。\n背景：通过图像分类识别水稻叶片病害。\n方法：澄禾实验提出LeafGate分类器。\n数据集：田畴-73数据集，共160张叶片图片。\n实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。\n结论：在本次测试条件下，LeafGate提高识别准确率。\n声明：这是程序验收的合成资料，不是真实论文。",
+                  "metadata": {
+                    "chunk_id": "0e09e77ff49408e80b6e826b11076b99a0aec041a7f69140fe9f66dde46d4e7a",
+                    "doc_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+                    "file_type": ".txt",
+                    "line_end": 8,
+                    "line_start": 1,
+                    "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6\\澄禾实验.txt",
+                    "source_file": "澄禾实验.txt"
+                  },
+                  "truncated": false,
+                  "score": 0.0006048033246770501
+                },
+                "b": {
+                  "id": 2,
+                  "source_file": "雨田实验.txt",
+                  "location": "行1–8",
+                  "text": "雨田实验：水稻图像分类\n作者：张雨、刘田。年份：2025。\n背景：研究水稻叶片图像分类。\n方法：雨田实验采用DenseCrop分类器。\n数据集：田畴-73数据集，共128张图片。\n实验结果：DenseCrop测试准确率为88.4%。\n结论：该方法适用于本实验样本，未验证外部泛化。\n声明：这是程序验收的合成资料，不是真实论文。",
+                  "metadata": {
+                    "chunk_id": "0c1d5d7532c2503f90fc0bdbf46c319232fd54a380dd1f376f225f447a32a43d",
+                    "doc_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007",
+                    "file_type": ".txt",
+                    "line_end": 8,
+                    "line_start": 1,
+                    "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007\\雨田实验.txt",
+                    "source_file": "雨田实验.txt"
+                  },
+                  "truncated": false,
+                  "score": 9.038918506121263e-05
+                }
+              },
+              {
+                "dimension": "实验结果",
+                "a": {
+                  "id": 1,
+                  "source_file": "澄禾实验.txt",
+                  "location": "行1–8",
+                  "text": "澄禾实验：水稻叶片识别\n作者：李禾、王澄。年份：2025。\n背景：通过图像分类识别水稻叶片病害。\n方法：澄禾实验提出LeafGate分类器。\n数据集：田畴-73数据集，共160张叶片图片。\n实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。\n结论：在本次测试条件下，LeafGate提高识别准确率。\n声明：这是程序验收的合成资料，不是真实论文。",
+                  "metadata": {
+                    "chunk_id": "0e09e77ff49408e80b6e826b11076b99a0aec041a7f69140fe9f66dde46d4e7a",
+                    "doc_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+                    "file_type": ".txt",
+                    "line_end": 8,
+                    "line_start": 1,
+                    "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6\\澄禾实验.txt",
+                    "source_file": "澄禾实验.txt"
+                  },
+                  "truncated": false,
+                  "score": 0.0006048033246770501
+                },
+                "b": {
+                  "id": 2,
+                  "source_file": "雨田实验.txt",
+                  "location": "行1–8",
+                  "text": "雨田实验：水稻图像分类\n作者：张雨、刘田。年份：2025。\n背景：研究水稻叶片图像分类。\n方法：雨田实验采用DenseCrop分类器。\n数据集：田畴-73数据集，共128张图片。\n实验结果：DenseCrop测试准确率为88.4%。\n结论：该方法适用于本实验样本，未验证外部泛化。\n声明：这是程序验收的合成资料，不是真实论文。",
+                  "metadata": {
+                    "chunk_id": "0c1d5d7532c2503f90fc0bdbf46c319232fd54a380dd1f376f225f447a32a43d",
+                    "doc_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007",
+                    "file_type": ".txt",
+                    "line_end": 8,
+                    "line_start": 1,
+                    "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007\\雨田实验.txt",
+                    "source_file": "雨田实验.txt"
+                  },
+                  "truncated": false,
+                  "score": 9.038918506121263e-05
+                }
+              }
+            ],
+            "model": "qwen2.5:7b",
+            "done_reason": "stop",
+            "model_calls": [
+              {
+                "paper": "A",
+                "model": "qwen2.5:7b",
+                "choice": {
+                  "method": 1,
+                  "datasets": 1,
+                  "results": 1
+                },
+                "usage": {
+                  "prompt_eval_count": 272,
+                  "eval_count": 19
+                }
+              },
+              {
+                "paper": "B",
+                "model": "qwen2.5:7b",
+                "choice": {
+                  "method": 2,
+                  "datasets": 2,
+                  "results": 2
+                },
+                "usage": {
+                  "prompt_eval_count": 262,
+                  "eval_count": 19
+                }
+              }
+            ],
+            "usage": {
+              "prompt_eval_count": 534,
+              "eval_count": 38
+            },
+            "papers": [
+              {
+                "label": "A",
+                "doc_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+                "source_file": "澄禾实验.txt",
+                "coverage": {
+                  "方法": {
+                    "generation_mode": "low",
+                    "top_score": 0.00669037876650691
+                  },
+                  "数据集": {
+                    "generation_mode": "low",
+                    "top_score": 0.03958182409405708
+                  },
+                  "实验结果": {
+                    "generation_mode": "grounded",
+                    "top_score": 0.15403905510902405
+                  }
+                },
+                "top_score": 0.0006048033246770501,
+                "references": [
+                  {
+                    "id": 1,
+                    "source_file": "澄禾实验.txt",
+                    "location": "行1–8",
+                    "text": "澄禾实验：水稻叶片识别\n作者：李禾、王澄。年份：2025。\n背景：通过图像分类识别水稻叶片病害。\n方法：澄禾实验提出LeafGate分类器。\n数据集：田畴-73数据集，共160张叶片图片。\n实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。\n结论：在本次测试条件下，LeafGate提高识别准确率。\n声明：这是程序验收的合成资料，不是真实论文。",
+                    "metadata": {
+                      "chunk_id": "0e09e77ff49408e80b6e826b11076b99a0aec041a7f69140fe9f66dde46d4e7a",
+                      "doc_id": "e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6",
+                      "file_type": ".txt",
+                      "line_end": 8,
+                      "line_start": 1,
+                      "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\e6548d13256b11fb605dd547918a819e282b11951721ea8365bc2b72cc5673e6\\澄禾实验.txt",
+                      "source_file": "澄禾实验.txt"
+                    },
+                    "truncated": false,
+                    "score": 0.0006048033246770501
+                  }
+                ],
+                "truncated": false
+              },
+              {
+                "label": "B",
+                "doc_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007",
+                "source_file": "雨田实验.txt",
+                "coverage": {
+                  "方法": {
+                    "generation_mode": "low",
+                    "top_score": 0.0007522147498093545
+                  },
+                  "数据集": {
+                    "generation_mode": "low",
+                    "top_score": 0.013196678832173347
+                  },
+                  "实验结果": {
+                    "generation_mode": "grounded",
+                    "top_score": 0.27564263343811035
+                  }
+                },
+                "top_score": 9.038918506121263e-05,
+                "references": [
+                  {
+                    "id": 1,
+                    "source_file": "雨田实验.txt",
+                    "location": "行1–8",
+                    "text": "雨田实验：水稻图像分类\n作者：张雨、刘田。年份：2025。\n背景：研究水稻叶片图像分类。\n方法：雨田实验采用DenseCrop分类器。\n数据集：田畴-73数据集，共128张图片。\n实验结果：DenseCrop测试准确率为88.4%。\n结论：该方法适用于本实验样本，未验证外部泛化。\n声明：这是程序验收的合成资料，不是真实论文。",
+                    "metadata": {
+                      "chunk_id": "0c1d5d7532c2503f90fc0bdbf46c319232fd54a380dd1f376f225f447a32a43d",
+                      "doc_id": "d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007",
+                      "file_type": ".txt",
+                      "line_end": 8,
+                      "line_start": 1,
+                      "source": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-tasks-3oxm8_xq\\raw\\d0a21aca329529bb7a461e935b95a02ff49bce122f7b8debbc6cc2a7455ef007\\雨田实验.txt",
+                      "source_file": "雨田实验.txt"
+                    },
+                    "truncated": false,
+                    "score": 9.038918506121263e-05
+                  }
+                ],
+                "truncated": false
+              }
+            ],
+            "missing_dimensions": [],
+            "low_relevance_dimensions": [
+              "论文A：方法",
+              "论文A：数据集",
+              "论文B：方法",
+              "论文B：数据集"
+            ],
+            "low_relevance_papers": [
+              "A",
+              "B"
+            ],
+            "confirmed": true,
+            "status": "answered",
+            "elapsed_seconds": 1.3392921999984537
+          },
+          "status": "success",
+          "error": "",
+          "error_kind": null,
+          "attempts": [
+            {
+              "attempt": 1,
+              "status": "success",
+              "error": "",
+              "error_kind": null,
+              "elapsed_seconds": 1.342366500000935,
+              "usage": {
+                "prompt_eval_count": 534,
+                "eval_count": 38
+              },
+              "usage_incomplete": false
+            }
+          ],
+          "execution_mode": "serial",
+          "elapsed_seconds": 1.3424041999969631,
+          "iteration": 1
+        },
+        {
+          "type": "observation",
+          "elapsed_seconds": 0.00017360000492772087,
+          "observation": "保留单一任务工具报告的栏目、原文引用和限制说明。",
+          "decision": "finish",
+          "task_complete": true,
+          "iteration": 1
+        },
+        {
+          "type": "done",
+          "task_complete": true,
+          "stop_reason": "task_complete",
+          "full_response": "## 回答\n以下按三个维度并列展示两篇论文的原文证据，不改写实验数字或条件。\n| 维度 | 论文A | 论文B |\n| --- | --- | --- |\n| 方法 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n| 数据集 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n| 实验结果 | 原文摘录：澄禾实验：水稻叶片识别 作者：李禾、王澄。年份：2025。 背景：通过图像分类识别水稻叶片病害。 方法：澄禾实验提出LeafGate分类器。 数据集：田畴-73数据集，共160张叶片图片。 实验结果：LeafGate测试准确率为91.6%，对照方法准确率87.2%。 结论：在本次测试条件下，LeafGate提高识别准确率。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档1：澄禾实验.txt；行1–8] | 原文摘录：雨田实验：水稻图像分类 作者：张雨、刘田。年份：2025。 背景：研究水稻叶片图像分类。 方法：雨田实验采用DenseCrop分类器。 数据集：田畴-73数据集，共128张图片。 实验结果：DenseCrop测试准确率为88.4%。 结论：该方法适用于本实验样本，未验证外部泛化。 声明：这是程序验收的合成资料，不是真实论文。 [参考文档2：雨田实验.txt；行1–8] |\n\n不同任务、数据集和实验条件的指标不可直接比较优劣；证据选择的语义适用性仍需对照原文核验。\n\n## 参考来源\n- [参考文档1] 澄禾实验.txt；行1–8\n- [参考文档2] 雨田实验.txt；行1–8\n\n部分维度的检索相关性低，相关陈述需对照原文核验：论文A：方法、论文A：数据集、论文B：方法、论文B：数据集\n\n低相关性维度需核验：论文A：方法、论文A：数据集、论文B：方法、论文B：数据集",
+          "iteration": 1
+        }
+      ],
+      "tool_calls": [
+        {
+          "call_id": "0c68aab843514960b28f11f25db7ac8f",
+          "name": "paper_compare",
+          "iteration": 1,
+          "status": "success",
+          "seconds": 1.3424041999969631,
+          "attempts": 1,
+          "execution_mode": "serial"
+        }
+      ],
+      "tools": {
+        "started": 1,
+        "completed": 1,
+        "successes": 1,
+        "failures": 0,
+        "pending": 0,
+        "success_rate": 1.0,
+        "mean_seconds": 1.3424041999969631,
+        "by_tool": [
+          {
+            "name": "paper_compare",
+            "started": 1,
+            "completed": 1,
+            "successes": 1,
+            "failures": 0,
+            "pending": 0,
+            "success_rate": 1.0,
+            "mean_seconds": 1.3424041999969631
+          }
+        ]
+      },
+      "tokens": {
+        "input": 534,
+        "output": 38,
+        "total": 572,
+        "known_total": 572,
+        "unknown_calls": 0
+      },
+      "response_seconds": 1.4121563999942737
+    },
+    "user_id": "a591902c726947a98fe27f813ffe4966",
+    "session_id": "f915d0aace2b448c9f6c2670ad465156"
+  }
+]

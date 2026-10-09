@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-10",
+  "code_commit": "75c2d03d2c10fe01153066ac75bf15a77ecfc76b",
+  "passed": true,
+  "scope": "课程基本功能在Windows的部署、回归、真实本地模型流程与浏览器验收。",
+  "local_regression": {
+    "scope": "all",
+    "run": 864,
+    "passed": true,
+    "elapsed_seconds": 58.8373051249946,
+    "failures": [],
+    "errors": [],
+    "skipped": []
+  },
+  "windows_regression": {
+    "scope": "all",
+    "run": 864,
+    "passed": true,
+    "elapsed_seconds": 306.44378549999965,
+    "failures": [],
+    "errors": [],
+    "skipped": []
+  },
+  "windows_real_flows": {
+    "run": 10,
+    "passed": 10,
+    "results": "results.json",
+    "fixtures": "fixtures.json",
+    "runtime": "runtime.json"
+  },
+  "browser": "browser.json",
+  "data_preservation": "preservation.json",
+  "deployment": "deployment.json",
+  "fixes_during_deployment": [
+    {
+      "commit": "0ebae06",
+      "issue": "文档问句中提到对比论文被误路由到比较工具。",
+      "change": "比较快捷路由仅识别开头的明确比较请求。"
+    },
+    {
+      "commit": "75c2d03",
+      "issue": "关键词、元信息已取得结果后继续规划，重复工具或回答历史问题。",
+      "change": "共同Observation流程让原始单一任务在工具成功后进入回答阶段，并重申当前问题；资料不足仍可返回未完成。"
+    }
+  ],
+  "answer_review": {
+    "reviewer": "Codex",
+    "status": "基本事实、原文数字、来源、关键词及元信息已核对",
+    "user_review": "待用户审核答案表达和课程交付质量"
+  },
+  "limits": [
+    "10项真实流程使用两篇合成文本，程序验收数字不是论文实验成绩。",
+    "原知识库浏览器另测两个基本请求；本轮未重跑历史120条真实论文质量评分。",
+    "论文对比保持原文证据与数字，但摘录重复、表达精炼度仍由用户审核。",
+    "本轮未重新构建Docker或执行物理断网测试；本地模型链路在禁用在线模型下载、关闭联网搜索的配置下执行。",
+    "Word和PPT按用户安排暂未改动。"
+  ]
+}
