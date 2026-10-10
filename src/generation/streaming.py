@@ -11,37 +11,22 @@ from src.generation.rag_pipeline import (
 
 
 def _visible_prefix(raw: str) -> str:
-    """只暂存末尾未完成标记，普通正文无需等待整行或整篇答案。"""
-    offset, fence = 0, None
-    for line in raw.splitlines(keepends=True):
-        marker = re.match(r" {0,3}(`{3,}|~{3,})", line)
-        if marker:
-            run = marker.group(1)
-            if fence is None:
-                fence = (run[0], len(run))
-            elif run[0] == fence[0] and len(run) >= fence[1]:
-                fence = None
-        elif fence is None and offset + len(line) == len(raw):
-            # 来源区由真实元数据构建，不先闪现模型手写的半个来源标题。
-            headings = ("## 参考来源", "## References", "## Reference Sources", "## Sources")
-            if line.strip() and any(heading.lower().startswith(line.lstrip().lower()) for heading in headings):
-                return raw[:offset]
-            opened = None
-            for ticks in re.finditer(r"(?<!\\)`+", line):
-                if opened is None:
-                    opened = ticks
-                elif ticks.group() == opened.group():
-                    opened = None
-            if opened is not None:
-                return raw[:offset + opened.start()]
-            # 不让引用后的未完成 Markdown 链接闪出模型提供的不可信 URL。
-            link = re.search(r"\[参考文档[0-9]+\][ \t]*(\([^\n)]*)$", line)
-            if link:
-                return raw[:offset + link.start(1)]
-            pending = re.search(r"(?<!\\)\[(?:参(?:考(?:文(?:档[0-9]*)?)?)?)?$", line)
-            if pending:
-                return raw[:offset + pending.start()]
-        offset += len(line)
+    """只暂存末尾未完成的引用标记与来源标题，正文按已收内容直接展示。"""
+    line = raw.splitlines(keepends=True)[-1] if raw else ""
+    offset = len(raw) - len(line)
+    if not line.strip():
+        return raw
+    # 来源区由真实元数据构建，不先闪现模型手写的半个来源标题。
+    if any(heading.startswith(line.lstrip()) for heading in
+           ("## 参考来源", "## References", "## Reference Sources", "## Sources")):
+        return raw[:offset]
+    # 不让"半个引用编号"或"引用后未完成的Markdown链接"闪出。
+    pending = re.search(r"\[(?:参(?:考(?:文(?:档[0-9]*)?)?)?)?$", line)
+    if pending:
+        return raw[:offset + pending.start()]
+    link = re.search(r"\[参考文档[0-9]+\][ \t]*\([^\n)]*$", line)
+    if link:
+        return raw[:offset + link.start()]
     return raw
 
 
