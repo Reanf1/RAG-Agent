@@ -1,0 +1,791 @@
+{
+  "status": "in_progress",
+  "reviewer": "助手按人工量表逐题评阅，非独立真人盲评",
+  "dataset_sha256": "64faefc863ea18003967fac299d4a35d4da045b7b8254388d5980cd4eaab640e",
+  "rubric_sha256": "82bb5ab4c2db91b2357b2e57631402993968c775b32b41a51fb4b11d371c946c",
+  "language_policy": "英文文献英文提问，中文文献中文提问；按问句实际要求评分",
+  "scale": {
+    "correctness": "0—4",
+    "completeness": "0—4",
+    "citation_accuracy": "0—4"
+  },
+  "rubric": "../答案评分标准.md",
+  "rows": [
+    {
+      "id": "F001",
+      "profile": "default",
+      "correctness": 4,
+      "completeness": 4,
+      "citation_accuracy": 4,
+      "checked_pages": [
+        "vit:4"
+      ],
+      "answer_sha256": "4bf1e7ff7e451e2cd3e14edebacfa1a36d9100360e3987cb2e0b16f7f0fabdb6",
+      "rationale": "完整列出ImageNet、ImageNet-21k和JFT300M；vit.pdf物理第4页4.1 Datasets确有三组数据，正文和来源位置均对应。"
+    },
+    {
+      "id": "F001",
+      "profile": "no_rules",
+      "correctness": 4,
+      "completeness": 4,
+      "citation_accuracy": 4,
+      "checked_pages": [
+        "vit:4"
+      ],
+      "answer_sha256": "4bf1e7ff7e451e2cd3e14edebacfa1a36d9100360e3987cb2e0b16f7f0fabdb6",
+      "rationale": "实际调用RAG，回答与默认组正文一致；三组数据集及物理第4页引用均由ViT原文支持。"
+    },
+    {
+      "id": "F002",
+      "profile": "no_rules",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "checked_pages": [
+        "deit:1"
+      ],
+      "answer_sha256": "283f7265361ff474d6ead1b5acafce071e750c86b672aafbd0efb67d05ef05b0",
+      "rationale": "未调用知识库工具即拒答，未给出训练集或来源；DeiT物理第1页摘要和引言明确说明ImageNet-only/no external data，此题可回答。"
+    },
+    {
+      "id": "F002",
+      "profile": "default",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "checked_pages": [
+        "deit:1"
+      ],
+      "answer_sha256": "4e99b959fef6537dcf7a11679e11b8492b3372bfa08e4f2bce1ffbfd6946a357",
+      "rationale": "同样未执行工具即宣称没有具体信息，遗漏ImageNet-only及无外部数据两个要点；原文第1页有明确依据，拒答保守但无实质回答。"
+    },
+    {
+      "id": "F003",
+      "profile": "default",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "选择文献元信息工具，工具失败后拒答；未提供可由原文核对的4×4初始patch及48维RGB特征。Swin物理第3页明确给出两项事实。",
+      "checked_pages": [
+        "swin:3"
+      ],
+      "answer_sha256": "1b5b8c9e35683db555298403a0108903709db182bc85f4927eab5f757b446c1b"
+    },
+    {
+      "id": "F003",
+      "profile": "no_rules",
+      "correctness": 4,
+      "completeness": 4,
+      "citation_accuracy": 4,
+      "rationale": "回答4×4和4×4×3=48，引用Swin物理第3页，该页方法描述直接支持两项事实。",
+      "checked_pages": [
+        "swin:3"
+      ],
+      "answer_sha256": "b8513ddcca17703fdd8f83daa6187d276f2cc60de7937a4021365e82a6be004e"
+    },
+    {
+      "id": "F004",
+      "profile": "default",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "未调用工具即拒答，遗漏四个阶段及4、8、16、32倍输出步长。PVT物理第4页图3和方法文字已有相应信息。",
+      "checked_pages": [
+        "pvt:4"
+      ],
+      "answer_sha256": "498ed9255f35d944cf69701088b9fd97a5fc0d4968cc3c1fbdf42a9119038852"
+    },
+    {
+      "id": "F004",
+      "profile": "no_rules",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "未调用工具即拒答，遗漏四个阶段及4、8、16、32倍输出步长。PVT物理第4页图3和方法文字已有相应信息。",
+      "checked_pages": [
+        "pvt:4"
+      ],
+      "answer_sha256": "498ed9255f35d944cf69701088b9fd97a5fc0d4968cc3c1fbdf42a9119038852"
+    },
+    {
+      "id": "F005",
+      "profile": "default",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "未调用工具即拒答，没有回答T2T模块与深而窄的Transformer骨干两个组成部分；T2T-ViT物理第2页贡献段直接支持。",
+      "checked_pages": [
+        "t2t_vit:2"
+      ],
+      "answer_sha256": "2f9218598c899590dcbf90e4200500e6649170425934f3edec48b65e2465ae75"
+    },
+    {
+      "id": "F005",
+      "profile": "no_rules",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "未调用工具即拒答，没有回答T2T模块与深而窄的Transformer骨干两个组成部分；T2T-ViT物理第2页贡献段直接支持。",
+      "checked_pages": [
+        "t2t_vit:2"
+      ],
+      "answer_sha256": "2f9218598c899590dcbf90e4200500e6649170425934f3edec48b65e2465ae75"
+    },
+    {
+      "id": "F006",
+      "profile": "default",
+      "correctness": 4,
+      "completeness": 4,
+      "citation_accuracy": 4,
+      "rationale": "正确回答只有class embedding被更新，已明确排除patch embedding更新；所引CaiT物理第3页的CA与FFN说明直接支持。",
+      "checked_pages": [
+        "cait:3"
+      ],
+      "answer_sha256": "f8a454b09c4df253a68aa47d2247736a6c68f53338836cf07b22824284f4853f"
+    },
+    {
+      "id": "F006",
+      "profile": "no_rules",
+      "correctness": 4,
+      "completeness": 4,
+      "citation_accuracy": 4,
+      "rationale": "正确回答只有class embedding被更新，已明确排除patch embedding更新；所引CaiT物理第3页的CA与FFN说明直接支持。",
+      "checked_pages": [
+        "cait:3"
+      ],
+      "answer_sha256": "f8a454b09c4df253a68aa47d2247736a6c68f53338836cf07b22824284f4853f"
+    },
+    {
+      "id": "F007",
+      "profile": "default",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "未调用工具便宣称知识库未找到信息；DETR物理第8页Dataset段明确为118k训练图像与5k验证图像，实际答案没有给出两项数量。",
+      "checked_pages": [
+        "detr:8"
+      ],
+      "answer_sha256": "d92cf702c11c5559e5adeb28d8679b804034531f20b58921c86de347098704c0"
+    },
+    {
+      "id": "F007",
+      "profile": "no_rules",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "未调用工具便宣称知识库未找到信息；DETR物理第8页Dataset段明确为118k训练图像与5k验证图像，实际答案没有给出两项数量。",
+      "checked_pages": [
+        "detr:8"
+      ],
+      "answer_sha256": "d92cf702c11c5559e5adeb28d8679b804034531f20b58921c86de347098704c0"
+    },
+    {
+      "id": "F008",
+      "profile": "default",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "未调用工具便拒答，未回答默认50个epoch及第40个epoch降低学习率；Deformable DETR物理第7页Implementation Details直接给出。",
+      "checked_pages": [
+        "deformable_detr:7"
+      ],
+      "answer_sha256": "719a58222c393eeabea57d07f130de67f0b2b3197cd2b137da7167af5033ad02"
+    },
+    {
+      "id": "F008",
+      "profile": "no_rules",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "未调用工具便拒答，未回答默认50个epoch及第40个epoch降低学习率；Deformable DETR物理第7页Implementation Details直接给出。",
+      "checked_pages": [
+        "deformable_detr:7"
+      ],
+      "answer_sha256": "719a58222c393eeabea57d07f130de67f0b2b3197cd2b137da7167af5033ad02"
+    },
+    {
+      "id": "F009",
+      "profile": "default",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "未调用工具便拒答，未列出AP、AP50、AP75及小中大目标AP；Conditional DETR物理第7页Evaluation段和表2直接支持。",
+      "checked_pages": [
+        "conditional_detr:7"
+      ],
+      "answer_sha256": "9102b9a185dd67a38dc47bc73401a698735ee6855206922d64991487f7d8f57d"
+    },
+    {
+      "id": "F009",
+      "profile": "no_rules",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "未调用工具便拒答，未列出AP、AP50、AP75及小中大目标AP；Conditional DETR物理第7页Evaluation段和表2直接支持。",
+      "checked_pages": [
+        "conditional_detr:7"
+      ],
+      "answer_sha256": "9102b9a185dd67a38dc47bc73401a698735ee6855206922d64991487f7d8f57d"
+    },
+    {
+      "id": "F010",
+      "profile": "default",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "未调用工具便拒答，没有解释锚框中心x/y及宽高w/h；DAB-DETR物理第6页图5和anchor公式明确表示四个框坐标。",
+      "checked_pages": [
+        "dab_detr:6"
+      ],
+      "answer_sha256": "b40182222d0ece3fd0f544769a9c201caa5e84fbf851e4b00befaaf456c442f2"
+    },
+    {
+      "id": "F010",
+      "profile": "no_rules",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "未调用工具便拒答，没有解释锚框中心x/y及宽高w/h；DAB-DETR物理第6页图5和anchor公式明确表示四个框坐标。",
+      "checked_pages": [
+        "dab_detr:6"
+      ],
+      "answer_sha256": "5d9a27c75950e4828ddf55db8b1af996b8762d642dd85c1e23f479a583b2e043"
+    },
+    {
+      "id": "F011",
+      "profile": "default",
+      "correctness": 4,
+      "completeness": 4,
+      "citation_accuracy": 4,
+      "rationale": "43.4/48.6 AP分别对应12/50个epoch，保留ResNet-50条件；DN-DETR物理第1页摘要直接支持，正文引用与事实对应。",
+      "checked_pages": [
+        "dn_detr:1"
+      ],
+      "answer_sha256": "35914622df3da9f36ff69ce6957fc3663ffaf1caf5862512c97ffaf0345e4126"
+    },
+    {
+      "id": "F011",
+      "profile": "no_rules",
+      "correctness": 4,
+      "completeness": 4,
+      "citation_accuracy": 4,
+      "rationale": "43.4/48.6 AP分别对应12/50个epoch，保留ResNet-50条件；DN-DETR物理第1页摘要直接支持，正文引用与事实对应。",
+      "checked_pages": [
+        "dn_detr:1"
+      ],
+      "answer_sha256": "35914622df3da9f36ff69ce6957fc3663ffaf1caf5862512c97ffaf0345e4126"
+    },
+    {
+      "id": "F012",
+      "profile": "default",
+      "correctness": 4,
+      "completeness": 4,
+      "citation_accuracy": 4,
+      "rationale": "列出contrastive denoising、mixed query selection、look forward twice三项；DINO物理第1页摘要和第3页方法概述都直接支持。",
+      "checked_pages": [
+        "dino:1",
+        "dino:3"
+      ],
+      "answer_sha256": "2c970ed0ac89afe7d76bfb32a86febb2eaed744ae904ddba943719565864bb5f"
+    },
+    {
+      "id": "F012",
+      "profile": "no_rules",
+      "correctness": 4,
+      "completeness": 4,
+      "citation_accuracy": 4,
+      "rationale": "列出contrastive denoising、mixed query selection、look forward twice三项；DINO物理第1页摘要和第3页方法概述都直接支持。",
+      "checked_pages": [
+        "dino:1",
+        "dino:3"
+      ],
+      "answer_sha256": "2c970ed0ac89afe7d76bfb32a86febb2eaed744ae904ddba943719565864bb5f"
+    },
+    {
+      "id": "F013",
+      "profile": "default",
+      "correctness": 4,
+      "completeness": 4,
+      "citation_accuracy": 4,
+      "rationale": "正确回答可学习的一维位置嵌入；物理第17页明确1D是默认策略，表8和第18页解释不同位置编码性能近似。非标注页仍支持相应事实。",
+      "checked_pages": [
+        "vit:3",
+        "vit:17",
+        "vit:18"
+      ],
+      "answer_sha256": "b30c7fbe438375ef3d7d448cd94ffe19178797326238946a503af3d0760aae26"
+    },
+    {
+      "id": "F013",
+      "profile": "no_rules",
+      "correctness": 3,
+      "completeness": 4,
+      "citation_accuracy": 2,
+      "rationale": "核心1D可学习位置嵌入正确；附加说法“未明确指出2D”不准确，第17页明确列举2D消融。关于patch尺度使策略同样容易的推测在第18页，实际只引第17页，存在不支持的来源对应。",
+      "checked_pages": [
+        "vit:3",
+        "vit:17",
+        "vit:18"
+      ],
+      "answer_sha256": "a0369f347c650e3bf417807109a1f2d35613a3369afb1c314f54838949841b39"
+    },
+    {
+      "id": "F014",
+      "profile": "default",
+      "correctness": 4,
+      "completeness": 3,
+      "citation_accuracy": 1,
+      "rationale": "正确说明未匹配预测归为无对象类，少述目标集以空对象补齐的训练细节；所引DETR物理第1页支持固定预测及二分图匹配，但不包含核心无对象类处理，具体在第5页，因此主要结论页码定位错误。",
+      "checked_pages": [
+        "detr:1",
+        "detr:5"
+      ],
+      "answer_sha256": "e68d182963d9e7c6da523c057beda889bd4b09d32c2ac8b277a40f1722e2f4b8"
+    },
+    {
+      "id": "F014",
+      "profile": "no_rules",
+      "correctness": 4,
+      "completeness": 3,
+      "citation_accuracy": 1,
+      "rationale": "正确说明未匹配预测归为无对象类，少述目标集以空对象补齐的训练细节；所引DETR物理第1页支持固定预测及二分图匹配，但不包含核心无对象类处理，具体在第5页，因此主要结论页码定位错误。",
+      "checked_pages": [
+        "detr:1",
+        "detr:5"
+      ],
+      "answer_sha256": "bd56dc6d2f7b2ed0852f063b972596cdfdd795ec205f6dd85cfbea797e26722e"
+    },
+    {
+      "id": "F015",
+      "profile": "default",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "未调用工具即说未找到文档，未提供49.4/51.3 AP及12/24个epoch；DINO物理第1页摘要已有ResNet-50与多尺度条件下的结果。",
+      "checked_pages": [
+        "dino:1"
+      ],
+      "answer_sha256": "283f7265361ff474d6ead1b5acafce071e750c86b672aafbd0efb67d05ef05b0"
+    },
+    {
+      "id": "F015",
+      "profile": "no_rules",
+      "correctness": 4,
+      "completeness": 4,
+      "citation_accuracy": 0,
+      "rationale": "49.4/51.3 AP、12/24个epoch及ResNet-50多尺度条件均正确；但正文使用未绑定的参考文献1，实际来源列表为空，不能定位支持，引用计0。",
+      "checked_pages": [
+        "dino:1"
+      ],
+      "answer_sha256": "9c0a62452b5709dfc7b06e5326221ebd066bf19e56c1614bfda4bfe65430e5ea"
+    },
+    {
+      "id": "C001",
+      "profile": "no_rules",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "选通用论文对比工具后返回低相关待确认，未回答题目要求的数据使用差异。ViT物理第4页给出三个数据规模，DeiT物理第1页明确只用ImageNet且不用外部数据。",
+      "checked_pages": [
+        "vit:4",
+        "deit:1"
+      ],
+      "answer_sha256": "5dc735421904e4c8f8630507b00fbf540b69dcfecd66021ff5c676bd623469d2"
+    },
+    {
+      "id": "C001",
+      "profile": "default",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "使用通用论文对比后只返回低相关待确认，未给出所问的数据使用差异；ViT物理第4页与DeiT物理第1页已有两篇的明确依据。",
+      "checked_pages": [
+        "vit:4",
+        "deit:1"
+      ],
+      "answer_sha256": "5dc735421904e4c8f8630507b00fbf540b69dcfecd66021ff5c676bd623469d2"
+    },
+    {
+      "id": "C002",
+      "profile": "default",
+      "correctness": 3,
+      "completeness": 3,
+      "citation_accuracy": 0,
+      "rationale": "正确描述ViT直接分割与T2T重叠soft split、迭代聚合、局部结构及缩短序列，少述ViT的线性投影细节；参考文献编号未绑定，实际来源列表为空，不能核对引用。",
+      "checked_pages": [
+        "vit:3",
+        "t2t_vit:2",
+        "t2t_vit:3"
+      ],
+      "answer_sha256": "81848de471a33df84d4f2b70d94aa633024725b852b96e930609a961ff78e9c0"
+    },
+    {
+      "id": "C002",
+      "profile": "no_rules",
+      "correctness": 3,
+      "completeness": 3,
+      "citation_accuracy": 0,
+      "rationale": "正确描述ViT直接分割与T2T重叠soft split、迭代聚合、局部结构及缩短序列，少述ViT的线性投影细节；参考文献编号未绑定，实际来源列表为空，不能核对引用。",
+      "checked_pages": [
+        "vit:3",
+        "t2t_vit:2",
+        "t2t_vit:3"
+      ],
+      "answer_sha256": "81848de471a33df84d4f2b70d94aa633024725b852b96e930609a961ff78e9c0"
+    },
+    {
+      "id": "C003",
+      "profile": "default",
+      "correctness": 4,
+      "completeness": 3,
+      "citation_accuracy": 4,
+      "rationale": "正确区分ViT联合处理与CaiT类注意力更新CLS、冻结patch、分离阶段；少述先处理patch再引入CLS的顺序细节。所引CaiT物理第3页和第1页明确支持ViT对照和CaiT方法，不要求再强制引用ViT原页。",
+      "checked_pages": [
+        "vit:3",
+        "cait:1",
+        "cait:3"
+      ],
+      "answer_sha256": "504ba242b30d16db84e59cab7593dabcfd1ca8e09469d48ae844fdff11bf9876"
+    },
+    {
+      "id": "C003",
+      "profile": "no_rules",
+      "correctness": 2,
+      "completeness": 2,
+      "citation_accuracy": 2,
+      "rationale": "ViT联合插入CLS与patch这一点正确，但把CaiT冻结patch误写成冻结class，并把CA处理误归ViT，关键机制混淆；CaiT第3页说明与正文相反，第6页仅部分支持类注意力阶段，引用未支持这些错误说法。",
+      "checked_pages": [
+        "vit:3",
+        "cait:3",
+        "cait:6"
+      ],
+      "answer_sha256": "f92abccc6e40c64910d60cf7e9caa99b9ce977b638cb503b6d0b2076edd36788"
+    },
+    {
+      "id": "C004",
+      "profile": "default",
+      "correctness": 3,
+      "completeness": 3,
+      "citation_accuracy": 3,
+      "rationale": "主要差异正确：ViT全局特征及二次开销，Swin窗口注意、线性开销和逐层合并层次结构；未明确交替常规/移位窗口。Swin第1、2页和第8页结论支持主要对照，第6页并不支持对应开销说明，属于次要错配。",
+      "checked_pages": [
+        "vit:3",
+        "swin:1",
+        "swin:2",
+        "swin:6",
+        "swin:8"
+      ],
+      "answer_sha256": "299403c1ab2646da1522128a56c1e7ec5f9cfbee2d0d42b57d87cfd607a458dc"
+    },
+    {
+      "id": "C004",
+      "profile": "no_rules",
+      "correctness": 2,
+      "completeness": 3,
+      "citation_accuracy": 0,
+      "rationale": "Swin窗口与层次合并基本正确，但把ViT说成sliding windows而又说全局自注意，范围结论混淆；全部参考文献编号未绑定，实际没有可定位来源。",
+      "checked_pages": [
+        "vit:3",
+        "swin:1",
+        "swin:2",
+        "swin:4"
+      ],
+      "answer_sha256": "30373b48fd329c4c3f2196550353a9ce8e9da0a30f3d504b058536924780a5bf"
+    },
+    {
+      "id": "C005",
+      "profile": "no_rules",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "未调用工具直接拒答，没有比较Swin局部窗口与PVT压缩K/V空间长度；Swin物理第4页和PVT物理第5页包含对应方法依据。",
+      "checked_pages": [
+        "swin:4",
+        "pvt:5"
+      ],
+      "answer_sha256": "a77d2b86be3022f85718c229f2cb6e3863938d4be6d0ffe29eabe16846c3cf1f"
+    },
+    {
+      "id": "C005",
+      "profile": "default",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "未调用工具直接拒答，没有比较Swin局部窗口与PVT压缩K/V空间长度；Swin物理第4页和PVT物理第5页包含对应方法依据。",
+      "checked_pages": [
+        "swin:4",
+        "pvt:5"
+      ],
+      "answer_sha256": "a77d2b86be3022f85718c229f2cb6e3863938d4be6d0ffe29eabe16846c3cf1f"
+    },
+    {
+      "id": "C006",
+      "profile": "default",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "通用对比工具返回低相关待确认，未回答DETR全图编码特征与Deformable参考点稀疏多尺度采样的差别；原文对应页面已有依据。",
+      "checked_pages": [
+        "detr:7",
+        "deformable_detr:1",
+        "deformable_detr:6"
+      ],
+      "answer_sha256": "0aa60e9955b125293e50dfc526c781c11a32306db80e961b5e5f1ad75ffb714d"
+    },
+    {
+      "id": "C006",
+      "profile": "no_rules",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "通用对比工具返回低相关待确认，未回答DETR全图编码特征与Deformable参考点稀疏多尺度采样的差别；原文对应页面已有依据。",
+      "checked_pages": [
+        "detr:7",
+        "deformable_detr:1",
+        "deformable_detr:6"
+      ],
+      "answer_sha256": "0aa60e9955b125293e50dfc526c781c11a32306db80e961b5e5f1ad75ffb714d"
+    },
+    {
+      "id": "C007",
+      "profile": "default",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "未调用工具直接拒答，没有说明来自decoder embedding的conditional spatial query、收窄各头定位范围及降低内容嵌入依赖；Conditional DETR物理第1页明确支持。",
+      "checked_pages": [
+        "detr:7",
+        "conditional_detr:1"
+      ],
+      "answer_sha256": "d2d62a53770e5066ca878eb5f6b9e6f80147ded731dafe835548759df8c8b47c"
+    },
+    {
+      "id": "C007",
+      "profile": "no_rules",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "未调用工具直接拒答，没有说明来自decoder embedding的conditional spatial query、收窄各头定位范围及降低内容嵌入依赖；Conditional DETR物理第1页明确支持。",
+      "checked_pages": [
+        "detr:7",
+        "conditional_detr:1"
+      ],
+      "answer_sha256": "d2d62a53770e5066ca878eb5f6b9e6f80147ded731dafe835548759df8c8b47c"
+    },
+    {
+      "id": "C008",
+      "profile": "default",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 1,
+      "rationale": "主要拒答而未给出对象大小的机制差异，任务却标为完成；引用DAB第8页称无对象大小细节，但该页上半明确用anchor宽高调制注意，否定性结论无法由整页支持。原始选中摘录偏向该页实验段，暴露检索覆盖与证据使用问题。",
+      "checked_pages": [
+        "conditional_detr:1",
+        "conditional_detr:3",
+        "dab_detr:5",
+        "dab_detr:6",
+        "dab_detr:8",
+        "deformable_detr:4"
+      ],
+      "answer_sha256": "565d22155f37659772af41c23a638fa36025b7e46490a7967ab847003a389f19"
+    },
+    {
+      "id": "C008",
+      "profile": "no_rules",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 1,
+      "rationale": "主要拒答而未给出对象大小的机制差异，任务却标为完成；DAB第8页既有GFLOPs也有宽高调制注意，不能用实验摘录推断原文没有对象大小信息。Conditional第3页虽有查询预测说明，仍未形成所问比较。",
+      "checked_pages": [
+        "conditional_detr:1",
+        "conditional_detr:3",
+        "dab_detr:5",
+        "dab_detr:6",
+        "dab_detr:8"
+      ],
+      "answer_sha256": "b7f9cc78dfee55c9f691a6cad4fa9ff66413fadf03ce338352550dff41302441"
+    },
+    {
+      "id": "C009",
+      "profile": "default",
+      "correctness": 3,
+      "completeness": 3,
+      "citation_accuracy": 3,
+      "rationale": "回答在DAB-DETR上新增框/标签去噪训练及label embedding，覆盖所问新增机制；少述带噪真实框重建的细节。DN物理第8页结论支持主要事实，但该页未说明所写指示符，次要说法引用定位不足。",
+      "checked_pages": [
+        "dab_detr:6",
+        "dn_detr:1",
+        "dn_detr:8"
+      ],
+      "answer_sha256": "9976a0a39b9c4faca73b10139ffe35e6aa901f6ffe36b708b3677d93fd79e9db"
+    },
+    {
+      "id": "C009",
+      "profile": "no_rules",
+      "correctness": 3,
+      "completeness": 3,
+      "citation_accuracy": 3,
+      "rationale": "回答新增框/标签去噪训练、label embedding及缓解匹配不稳定，主要结论正确；少述带噪真实框重建细节。DN物理第8页结论支持主要新增机制及不稳定根因，但未直接说明指示符这一附加细节。",
+      "checked_pages": [
+        "dab_detr:6",
+        "dn_detr:1",
+        "dn_detr:8"
+      ],
+      "answer_sha256": "df42c5e58dfdbf3e16f60831e83e13e3e20529d35126e242309f3acf23d9538d"
+    },
+    {
+      "id": "C010",
+      "profile": "default",
+      "correctness": 0,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "没有回答两种去噪监督的区别；将 Conditional DETR 的条件空间查询机制归给 DINO，实际比较工具也选中了 conditional_detr.pdf。DN-DETR 第1页说明带噪 GT 重建，DINO 第7页明确正样本重建与负样本 no object，答案均未给出。",
+      "checked_pages": [
+        "dn_detr:1",
+        "dino:7",
+        "conditional_detr:1"
+      ],
+      "answer_sha256": "a8f9494ac2902b3b2aadc858c7e6f46f7a0bae0a4e17850db1a2496c9647d66d"
+    },
+    {
+      "id": "C010",
+      "profile": "no_rules",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "只返回候选低相关确认提示，未回答去噪监督区别；所选文档也未正确绑定 DN-DETR 与 DINO。原文 DN-DETR 第1页、DINO 第7页可回答，不能按不可回答控制题计分。",
+      "checked_pages": [
+        "dn_detr:1",
+        "dino:7"
+      ],
+      "answer_sha256": "0aa60e9955b125293e50dfc526c781c11a32306db80e961b5e5f1ad75ffb714d"
+    },
+    {
+      "id": "C011",
+      "profile": "no_rules",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "只返回低相关确认提示，没有给出 DN-DETR 静态学习锚框与 DINO 从编码器特征初始化位置查询的差异。DINO 第9—10页明确比较了这两种初始化。",
+      "checked_pages": [
+        "dino:9",
+        "dino:10",
+        "dn_detr:1"
+      ],
+      "answer_sha256": "0aa60e9955b125293e50dfc526c781c11a32306db80e961b5e5f1ad75ffb714d"
+    },
+    {
+      "id": "C011",
+      "profile": "default",
+      "correctness": 2,
+      "completeness": 2,
+      "citation_accuracy": 3,
+      "rationale": "指出 DINO 的混合查询选择，但未解释编码器选择位置、保留可学习内容查询；DN-DETR 部分转而回答去噪训练，未回答静态位置初始化。所引 DINO 第6—7页支持已写出的混合选择和 DN 去噪事实，内容不足主要在问句覆盖。",
+      "checked_pages": [
+        "dino:6",
+        "dino:7",
+        "dino:9",
+        "dino:10"
+      ],
+      "answer_sha256": "19126a657e925d6fda2a50e0be68a86fd4f2db9e2c84c6976ba6c269bb724c8f"
+    },
+    {
+      "id": "C012",
+      "profile": "default",
+      "correctness": 3,
+      "completeness": 3,
+      "citation_accuracy": 0,
+      "rationale": "主要解释了 PVT 逐步缩小的金字塔、四阶段多尺度与密集预测适配，符合 PVT 第1、4页；没有直接说明 ViT 保持单尺度序列，且 dense partitions 的中文表达不够准确。正文使用未绑定的参考文献编号，来源列表为空。",
+      "checked_pages": [
+        "pvt:1",
+        "pvt:4",
+        "vit:3"
+      ],
+      "answer_sha256": "304699d6969bb3806e026511cb6e02311c421e9c33dedeaa6e8bb72ee0bd56cc"
+    },
+    {
+      "id": "C012",
+      "profile": "no_rules",
+      "correctness": 3,
+      "completeness": 3,
+      "citation_accuracy": 0,
+      "rationale": "解释了 PVT 的金字塔、四阶段与逐级降低输出分辨率，主要符合 PVT 第1、4页，漏了 ViT 的单尺度输出特征；dense partitions 的翻译不准确。参考文献编号未绑定真实来源，最终来源列表为空。",
+      "checked_pages": [
+        "pvt:1",
+        "pvt:4",
+        "vit:3"
+      ],
+      "answer_sha256": "f5c3d9e0afabced8f98ebe6e4d8483b087a4b799a9f5bacd23e11ffc0b051249"
+    },
+    {
+      "id": "C013",
+      "profile": "no_rules",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "原文 DeiT 第4页介绍教师监督的 distillation token，CaiT 第3页介绍分离 patch 处理与 class-attention；答案仅拒答。工具额外提取作者遭原文校验拒绝，随后单论文过滤也未覆盖两篇机制。",
+      "checked_pages": [
+        "deit:4",
+        "cait:3"
+      ],
+      "answer_sha256": "97d8a5e8777d0fd3eaee88840a36fdd163d9fb6b893bf1bf0dad3e8c49cb5339"
+    },
+    {
+      "id": "C013",
+      "profile": "default",
+      "correctness": 0,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "只返回对比参数与本轮两篇目标不一致的错误，无论文事实答案；校验阻止了错误文档执行，但本题任务未完成。DeiT 第4页和 CaiT 第3页有可用证据。",
+      "checked_pages": [
+        "deit:4",
+        "cait:3"
+      ],
+      "answer_sha256": "891197536237f89034ae494d1b6fbca17266033a8246b15140f5ebde9040fc86"
+    },
+    {
+      "id": "C014",
+      "profile": "default",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "只返回低相关确认提示，未解释 T2T-ViT 面向分类训练的局部结构聚合与 PVT 面向密集预测的多尺度金字塔目标。T2T-ViT 第1—2页、PVT 第4—5页可回答。",
+      "checked_pages": [
+        "t2t_vit:1",
+        "t2t_vit:2",
+        "pvt:4",
+        "pvt:5"
+      ],
+      "answer_sha256": "0aa60e9955b125293e50dfc526c781c11a32306db80e961b5e5f1ad75ffb714d"
+    },
+    {
+      "id": "C014",
+      "profile": "no_rules",
+      "correctness": 3,
+      "completeness": 2,
+      "citation_accuracy": 4,
+      "rationale": "递归聚合局部结构、深窄骨干、PVT 多尺度与降低计算成本等事实正确，所引 T2T-ViT 第1、5、8页和 PVT 第5页支持；但没有明确比较分类训练与密集预测这两个设计目标，核心任务维度仅部分覆盖。",
+      "checked_pages": [
+        "t2t_vit:1",
+        "t2t_vit:5",
+        "t2t_vit:8",
+        "pvt:5"
+      ],
+      "answer_sha256": "4eb371c7881a684e959fbc79e5d8f2cec66de9939b2a85c2dd8f2d74ea609f71"
+    },
+    {
+      "id": "C015",
+      "profile": "no_rules",
+      "correctness": 1,
+      "completeness": 0,
+      "citation_accuracy": 0,
+      "rationale": "仅给出低相关确认提示，未回答原文 DETR 的500 epoch比较设置与 Deformable DETR 默认50 epoch，也未说明 epoch 数不能推出普遍墙钟加速比。DETR 第9页与 Deformable DETR 第7页可回答。",
+      "checked_pages": [
+        "detr:9",
+        "deformable_detr:7"
+      ],
+      "answer_sha256": "0aa60e9955b125293e50dfc526c781c11a32306db80e961b5e5f1ad75ffb714d"
+    }
+  ],
+  "updated_at": "2026-10-11T01:15:29.987788+08:00"
+}

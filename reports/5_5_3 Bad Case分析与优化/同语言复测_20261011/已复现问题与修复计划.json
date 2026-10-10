@@ -1,0 +1,229 @@
+{
+  "status": "baseline_in_progress",
+  "recorded_at": "2026-10-11T01:11:26.192925+08:00",
+  "baseline_commit": "c50ab83",
+  "dataset_sha256": "3a8c042f3530f790fd18f332b662a63f36e1700cb05dfd7ccf584dd21d0b2496",
+  "policy": "英文文献英文提问，中文文献中文提问；保留实际失败，实施后再写前后对照",
+  "cases": [
+    {
+      "id": "C008",
+      "profile": "default",
+      "category": "检索失败",
+      "question": "How do Conditional DETR and DAB-DETR differ in their use of object size in spatial queries?",
+      "language": "en",
+      "symptom": "原文有宽高调制机制，所选摘录没有，回答拒答且宣布完成。",
+      "root_cause": "DAB-DETR命中第8页的GFLOPs实验摘录，未给模型同页上部的宽高机制；引用页命中不等于所选文本包含答案。完成标志仅依据工具状态与格式引用，不能证明语义已回答。",
+      "checked_evidence": [
+        "dab_detr:5",
+        "dab_detr:6",
+        "dab_detr:8",
+        "conditional_detr:3"
+      ],
+      "proposed_improvement": "先核对现有长块摘录与证据扩展输入是否保留问题相关段落；不增加每道题的固定关键词白名单。",
+      "implementation_status": "未实施，本轮基线仍在运行",
+      "before": {
+        "answer": "当前知识库未找到直接关于 Conditional DETR 和 DAB-DETR 在使用对象大小于空间查询方面的具体差异。[参考文档1：conditional\\_detr.pdf；第3页（物理页码）] 和 [参考文档3：dab\\_detr.pdf；第8页（物理页码）] 中没有提供关于对象大小在空间查询中使用的详细信息。[参考文档2：deformable\\_detr.pdf；第4页（物理页码）] 则主要讨论了 DETR 的设计优势及其局限性，未涉及具体模型的实现细节。因此，无法从现有信息中推断出两者在使用对象大小方面的具体差异。\n\n## 参考来源\n- [参考文档1] conditional\\_detr.pdf；第3页（物理页码）\n- [参考文档3] dab\\_detr.pdf；第8页（物理页码）\n- [参考文档2] deformable\\_detr.pdf；第4页（物理页码）",
+        "answer_sha256": "565d22155f37659772af41c23a638fa36025b7e46490a7967ab847003a389f19",
+        "tool_calls": [
+          {
+            "name": "knowledge_base_search",
+            "args": {
+              "question": "How do Conditional DETR and DAB-DETR differ in their use of object size in spatial queries?",
+              "doc_id": null
+            },
+            "iteration": 1
+          }
+        ],
+        "task_complete": true,
+        "stop_reason": "task_complete",
+        "seconds": 24.521184900000662,
+        "tokens": {
+          "input_known": 3188,
+          "output_known": 146,
+          "total": 3334,
+          "unknown_calls": 0,
+          "source": "actual_ollama_responses"
+        },
+        "score": {
+          "correctness": 1,
+          "completeness": 0,
+          "citation_accuracy": 1
+        }
+      },
+      "after": null
+    },
+    {
+      "id": "C003",
+      "profile": "no_rules",
+      "category": "生成错误",
+      "question": "How is class-token processing different in ViT and CaiT?",
+      "language": "en",
+      "symptom": "把CaiT冻结的patch嵌入写成冻结class嵌入，并把CA机制归给ViT。",
+      "root_cause": "模型误读CaiT第3页中冻结patch与仅更新class的对应关系。不是上下文窗口超限，扩大预算不能直接修正。",
+      "checked_evidence": [
+        "cait:3",
+        "cait:6",
+        "vit:3"
+      ],
+      "proposed_improvement": "保持问题要求的比较维度与双方身份；用已包含证据的固定上下文检查改进，不加语义正则冒充质量验收。",
+      "implementation_status": "未实施，本轮基线仍在运行",
+      "before": {
+        "answer": "在ViT中，类嵌入（CLS）与补丁嵌入一起插入，但这种方法不利，因为相同的权重用于两种不同的目的：帮助注意力过程和准备输入分类器的向量。而在CaiT中，类嵌入在插入补丁嵌入时被冻结，以节省计算资源，从而使网络的最后部分（通常为2层）完全致力于总结要输入线性分类器的信息。[参考文档2：cait.pdf；第3页（物理页码）]\n\n此外，在ViT中，类嵌入通过残差中的CA和FFN处理进行更新，而在CaiT中，类嵌入在CA和FFN处理中仅更新。[参考文档1：cait.pdf；第6页（物理页码）]\n\n综上所述，ViT和CaiT在类嵌入处理上的主要区别在于：ViT中的类嵌入与补丁嵌入一起插入，而CaiT中的类嵌入在插入补丁嵌入时被冻结，且仅在CA和FFN处理中更新。[参考文档1：cait.pdf；第6页（物理页码）][参考文档2：cait.pdf；第3页（物理页码）]\n\n## 参考来源\n- [参考文档2] cait.pdf；第3页（物理页码）\n- [参考文档1] cait.pdf；第6页（物理页码）\n\n长块按模型Token窗口精排，本次引用只覆盖选中的摘录；完整内容见原页。",
+        "answer_sha256": "f92abccc6e40c64910d60cf7e9caa99b9ce977b638cb503b6d0b2076edd36788",
+        "tool_calls": [
+          {
+            "name": "knowledge_base_search",
+            "args": {
+              "question": "How is class-token processing different in ViT and CaiT?"
+            },
+            "iteration": 1
+          }
+        ],
+        "task_complete": true,
+        "stop_reason": "task_complete",
+        "seconds": 20.187157199998182,
+        "tokens": {
+          "input_known": 4770,
+          "output_known": 246,
+          "total": 5016,
+          "unknown_calls": 0,
+          "source": "actual_ollama_responses"
+        },
+        "score": {
+          "correctness": 2,
+          "completeness": 2,
+          "citation_accuracy": 2
+        }
+      },
+      "after": null
+    },
+    {
+      "id": "F015",
+      "profile": "no_rules",
+      "category": "引用错误",
+      "question": "For DINO with ResNet-50 and multi-scale features, what COCO AP is reported after 12 and 24 epochs, respectively?",
+      "language": "en",
+      "symptom": "49.4/51.3AP等事实正确，但使用参考文献编号，最终来源列表为空。",
+      "root_cause": "Prompt系统消息只要求文献编号，用户消息示例为参考文档；程序只解析参考文档。格式契约不够统一。",
+      "checked_evidence": [
+        "dino:1"
+      ],
+      "proposed_improvement": "统一Prompt与解析器的参考文档格式，并更新Prompt缓存版本；不用宽泛匹配任意编号来掩盖问题。",
+      "implementation_status": "未实施，本轮基线仍在运行",
+      "before": {
+        "answer": "根据参考文献1，DINO使用ResNet-50和多尺度特征，在12个epoch后报告的COCO AP为49.4AP，在24个epoch后报告的COCO AP为51.3AP。[参考文献1]\n\n## 参考来源\n无可引用来源\n\n回答未提供有效文献引用，不能作为已溯源答案。\n\n工具资料不足、回答截断或候选尚待确认，原任务尚未完成。",
+        "answer_sha256": "9c0a62452b5709dfc7b06e5326221ebd066bf19e56c1614bfda4bfe65430e5ea",
+        "tool_calls": [
+          {
+            "name": "knowledge_base_search",
+            "args": {
+              "question": "For DINO with ResNet-50 and multi-scale features, what COCO AP is reported after 12 and 24 epochs, respectively?"
+            },
+            "iteration": 1
+          }
+        ],
+        "task_complete": false,
+        "stop_reason": "incomplete",
+        "seconds": 24.445399799998995,
+        "tokens": {
+          "input_known": 4955,
+          "output_known": 202,
+          "total": 5157,
+          "unknown_calls": 0,
+          "source": "actual_ollama_responses"
+        },
+        "score": {
+          "correctness": 4,
+          "completeness": 4,
+          "citation_accuracy": 0
+        }
+      },
+      "after": null
+    },
+    {
+      "id": "F004",
+      "profile": "default",
+      "category": "Agent决策错误",
+      "question": "How many stages does PVT use, and what are their output strides?",
+      "language": "en",
+      "symptom": "PVT阶段数与输出步幅题没有调用工具，直接声称知识库未找到资料。",
+      "root_cause": "英文机制问句未含paper/proposed/ablation，规则返回空；模型随后直接拒答，没有执行检索。",
+      "checked_evidence": [
+        "pvt:4"
+      ],
+      "proposed_improvement": "在现有路由中明确一般本地科研问句的检索意图，保持计算、时间、联网和一般聊天路径；不硬编码本评测12个模型名。",
+      "implementation_status": "未实施，本轮基线仍在运行",
+      "before": {
+        "answer": "当前知识库中未找到关于PVT使用多少阶段以及各阶段输出步幅的相关信息。",
+        "answer_sha256": "498ed9255f35d944cf69701088b9fd97a5fc0d4968cc3c1fbdf42a9119038852",
+        "tool_calls": [],
+        "task_complete": false,
+        "stop_reason": "incomplete",
+        "seconds": 8.026914200003375,
+        "tokens": {
+          "input_known": 4408,
+          "output_known": 114,
+          "total": 4522,
+          "unknown_calls": 0,
+          "source": "actual_ollama_responses"
+        },
+        "score": {
+          "correctness": 1,
+          "completeness": 0,
+          "citation_accuracy": 0
+        }
+      },
+      "after": null
+    },
+    {
+      "id": "C010",
+      "profile": "default",
+      "category": "Agent决策错误",
+      "question": "How does the denoising supervision in DN-DETR differ from that in DINO?",
+      "language": "en",
+      "symptom": "DN-DETR与DINO对比实际选中DN-DETR与Conditional DETR。",
+      "root_cause": "现有别名绑定不统一下划线与连字符，DN-DETR未完整绑定dn_detr；只匹配到一个目标时，双论文参数可采用其他真实但错误的ID。工具本身又丢失用户所问的去噪维度。",
+      "checked_evidence": [
+        "dn_detr:1",
+        "dino:7"
+      ],
+      "proposed_improvement": "从真实文献列表统一名称分隔符并绑定双方目标；对比保留原问题，按所问维度取证，避免额外维度低分挡住当前问题。",
+      "implementation_status": "未实施，本轮基线仍在运行",
+      "before": {
+        "answer": "DN-DETR通过改进模型架构来解决DETR收敛速度慢的问题。例如，Sun等人将慢收敛归因于低效率。DINO则引入条件空间嵌入作为条件多头交叉注意力的空间查询，同时保持与DETR架构相似。",
+        "answer_sha256": "a8f9494ac2902b3b2aadc858c7e6f46f7a0bae0a4e17850db1a2496c9647d66d",
+        "tool_calls": [
+          {
+            "name": "paper_list",
+            "args": {},
+            "iteration": 1
+          },
+          {
+            "name": "paper_compare",
+            "args": {
+              "paper_a_id": "f22b21dc2368b1738b1ac5ded9327876925f3fee9366d77b6d79c2b4a3ac4fc9",
+              "paper_b_id": "f10cfc976b61006109447b97b6336424c60ac1c1989d85932b5c6572510fbf2b"
+            },
+            "iteration": 2
+          }
+        ],
+        "task_complete": true,
+        "stop_reason": "task_complete",
+        "seconds": 111.0318769000005,
+        "tokens": {
+          "input_known": 25680,
+          "output_known": 614,
+          "total": 26294,
+          "unknown_calls": 0,
+          "source": "actual_ollama_responses"
+        },
+        "score": {
+          "correctness": 0,
+          "completeness": 0,
+          "citation_accuracy": 0
+        }
+      },
+      "after": null
+    }
+  ]
+}
