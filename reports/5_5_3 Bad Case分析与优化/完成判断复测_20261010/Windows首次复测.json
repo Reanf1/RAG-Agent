@@ -1,0 +1,140 @@
+{
+  "code": "9173cad",
+  "cases": [
+    {
+      "question": "当前知识库有哪些文件",
+      "answer": null,
+      "list_matches_actual": true,
+      "has_citation_warning": false,
+      "complete": true,
+      "stop_reason": "task_complete",
+      "tokens": {
+        "input": 0,
+        "output": 0,
+        "total": 0,
+        "known_total": 0,
+        "unknown_calls": 0
+      },
+      "seconds": 0.7019215999989683,
+      "tools": [
+        {
+          "name": "paper_list",
+          "args": {},
+          "result": {
+            "total": 7
+          },
+          "evidence_locations": []
+        }
+      ]
+    },
+    {
+      "question": "20+50*3等于多少",
+      "answer": "20+50*3等于170.",
+      "list_matches_actual": null,
+      "has_citation_warning": false,
+      "complete": true,
+      "stop_reason": "task_complete",
+      "tokens": {
+        "input": 5009,
+        "output": 66,
+        "total": 5075,
+        "known_total": 5075,
+        "unknown_calls": 0
+      },
+      "seconds": 11.28789069999948,
+      "tools": [
+        {
+          "name": "calculator",
+          "args": {
+            "expression": "20+50*3"
+          },
+          "result": {
+            "expression": "20+50*3",
+            "result": "170"
+          },
+          "evidence_locations": []
+        }
+      ]
+    },
+    {
+      "question": "论文attention的关键词是什么",
+      "answer": "attention.pdf的关键词：Transformer、attention mechanism、sequence transduction、encoder-decoder、self-attention。\n\n来源：attention.pdf · 第1页（物理页码）、第2页（物理页码）\n\n依据文档开头的可见内容提取，未分析全文。",
+      "list_matches_actual": null,
+      "has_citation_warning": false,
+      "complete": true,
+      "stop_reason": "task_complete",
+      "tokens": {
+        "input": 2049,
+        "output": 29,
+        "total": 2078,
+        "known_total": 2078,
+        "unknown_calls": 0
+      },
+      "seconds": 6.7515176000015344,
+      "tools": [
+        {
+          "name": "paper_list",
+          "args": {},
+          "result": {
+            "total": 7
+          },
+          "evidence_locations": []
+        },
+        {
+          "name": "keyword_extract",
+          "args": {
+            "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697"
+          },
+          "result": {
+            "keywords": [
+              "Transformer",
+              "attention mechanism",
+              "sequence transduction",
+              "encoder-decoder",
+              "self-attention"
+            ],
+            "source_file": "attention.pdf",
+            "doc_id": "bdfaa68d8984f0dc02beaca527b76f207d99b666d31d1da728ee0728182df697",
+            "input_truncated": true
+          },
+          "evidence_locations": [
+            "第1页（物理页码）",
+            "第2页（物理页码）"
+          ]
+        }
+      ]
+    },
+    {
+      "question": "vit的关键词是什么",
+      "answer": "Observation失败：无法连接或读取本地 Ollama 服务。启动本地 Ollama 服务并检查 config.yaml 中的地址和端口，恢复后重新提交问题。。检查本地模型服务日志与可用内存，必要时重启 Ollama 后重新提交问题。",
+      "list_matches_actual": null,
+      "has_citation_warning": false,
+      "complete": false,
+      "stop_reason": "error",
+      "tokens": {
+        "input": null,
+        "output": null,
+        "total": null,
+        "known_total": 0,
+        "unknown_calls": 2
+      },
+      "seconds": 14.883009999999558,
+      "tools": [
+        {
+          "name": "paper_list",
+          "args": {},
+          "result": {
+            "total": 7
+          },
+          "evidence_locations": []
+        }
+      ]
+    }
+  ],
+  "ollama_failure": {
+    "time": "2026-10-10 20:30",
+    "symptom": "11434无监听，关键词调用返回WinError 10061；Ollama日志最后成功请求为20:30:05。",
+    "cause": "服务停止的原因未查实。",
+    "recovery": "使用本机已有ollama.exe serve恢复独立进程，未更改全局配置或下载模型。"
+  }
+}

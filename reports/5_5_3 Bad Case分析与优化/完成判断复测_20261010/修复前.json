@@ -1,0 +1,93 @@
+{
+  "code": "61df504",
+  "cases": [
+    {
+      "question": "当前知识库有哪些文件",
+      "complete": false,
+      "stop_reason": "incomplete",
+      "tokens": {
+        "input": 1456,
+        "output": 73,
+        "total": 1529,
+        "known_total": 1529,
+        "unknown_calls": 0
+      },
+      "tools": [
+        {
+          "name": "knowledge_base_search",
+          "args": {
+            "question": "当前知识库有哪些文件"
+          },
+          "status": "success"
+        }
+      ],
+      "note": "列表误走检索并出现引用警告"
+    },
+    {
+      "question": "20+50*3等于多少",
+      "complete": true,
+      "stop_reason": "task_complete",
+      "tokens": {
+        "input": 5147,
+        "output": 65,
+        "total": 5212,
+        "known_total": 5212,
+        "unknown_calls": 0
+      },
+      "tools": [
+        {
+          "name": "calculator",
+          "args": {
+            "expression": "20+50*3"
+          },
+          "status": "success"
+        }
+      ],
+      "note": "计算器真实返回170"
+    },
+    {
+      "question": "论文attention的关键词是什么",
+      "complete": false,
+      "stop_reason": "incomplete",
+      "tokens": {
+        "input": 11019,
+        "output": 159,
+        "total": 11178,
+        "known_total": 11178,
+        "unknown_calls": 0
+      },
+      "tools": [
+        {
+          "name": "keyword_extract",
+          "args": {
+            "text": "论文attention的关键词是什么"
+          },
+          "status": "success"
+        }
+      ],
+      "note": "仅对用户问句提取关键词，doc_id为空"
+    },
+    {
+      "question": "vit的关键词是什么",
+      "complete": true,
+      "stop_reason": "task_complete",
+      "tokens": {
+        "input": 5455,
+        "output": 66,
+        "total": 5521,
+        "known_total": 5521,
+        "unknown_calls": 0
+      },
+      "tools": [
+        {
+          "name": "keyword_extract",
+          "args": {
+            "text": "vit的关键词是什么"
+          },
+          "status": "success"
+        }
+      ],
+      "note": "仅对用户问句提取关键词，doc_id为空"
+    }
+  ]
+}
