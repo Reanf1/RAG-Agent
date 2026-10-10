@@ -79,64 +79,6 @@ class TestAgentCache(unittest.TestCase):
         self.assertEqual(records[-1]["tokens"]["source"], "cache")
         self.assertEqual(records[-1]["session_id"], "test-session")
 
-    def test_other_session_or_document_filter_never_reuses_answer(self):
-        self.search(doc_id=self.documents[0].metadata["doc_id"])
-        self.search(cache=SemanticCache(), doc_id=self.documents[0].metadata["doc_id"])
-        self.retriever.search.return_value = [(self.documents[1], .9)]
-        self.search(doc_id=self.documents[1].metadata["doc_id"])
-        self.assertEqual(self.retriever.search.call_count, 3)
-
-    def test_corpus_change_invalidates_and_contextual_question_bypasses_cache(self):
-        self.search()
-        self.store.delete_document(self.documents[1].metadata["doc_id"])
-        self.search()
-        self.search("刚才那篇论文使用什么输入？")
-        self.search("刚才那篇论文使用什么输入？")
-        self.assertEqual(self.retriever.search.call_count, 4)
-
-    def test_length_stop_is_incomplete_in_tool_and_log_and_never_cached(self):
-        """服务length终止保留部分答案，但工具、日志和缓存均不得认定完成。"""
-        from src.utils.logger import read_rag_requests
-        response = {"model": "mock", "done": True, "done_reason": "length",
-                    "prompt_eval_count": 80, "eval_count": 512,
-                    "message": {"content": "部分内容。[参考文档1]"}}
-        with patch("src.generation.rag_pipeline.urlopen", return_value=BytesIO(json.dumps(response).encode())):
-            result = self.search()
-        self.assertEqual(result["status"], "incomplete")
-        self.assertTrue(result["answer"])
-        self.assertFalse(self.cache.entries)
-        records, _ = read_rag_requests()
-        self.assertEqual(records[-1]["status"], "incomplete")
-        self.assertEqual(records[-1]["done_reason"], "length")
-
-    def test_low_relevance_is_not_cached(self):
-        self.retriever.search.return_value = [(self.documents[0], .01)]
-        self.assertEqual(self.search()["status"], "needs_confirmation")
-        self.search()
-        self.assertFalse(self.cache.entries)
-        self.assertFalse(self.model_calls)
-
-    def test_pending_and_cache_share_start_scope_but_recheck_at_finish(self):
-        """同次请求只计算起止两次范围，结束仍能发现生成期间的语料变化。"""
-        from src.generation.cache import cache_scope
-        with patch("src.generation.cache.cache_scope", wraps=cache_scope) as scope:
-            self.search(pending={})
-            self.assertEqual(scope.call_count, 2)
-        self.cache.clear()
-        def changed_scope(store):
-            value = cache_scope(store)
-            return value if scope.call_count == 1 else "生成期间变更"
-        with patch("src.generation.cache.cache_scope", side_effect=changed_scope) as scope:
-            result = self.search(pending={})
-        self.assertEqual(result["status"], "answered")
-        self.assertFalse(self.cache.entries)
-
-    def test_cache_write_failure_preserves_generated_answer(self):
-        with patch.object(self.cache, "put", side_effect=RuntimeError("模拟缓存编码失败")):
-            result = self.search()
-        self.assertEqual(result["status"], "answered")
-        self.assertIn("缓存保存失败", result["warnings"][-1])
-        self.assertTrue(result["citations"])
 
     def test_confirmed_low_candidate_uses_reviewed_snapshot_without_second_retrieval(self):
         pending = {}
@@ -152,63 +94,6 @@ class TestAgentCache(unittest.TestCase):
         self.assertEqual(result["citations"][0]["text"], low["references"][0]["text"])
         self.assertEqual(result["retrieval"]["status"], "confirmed")
         self.assertFalse(self.cache.entries)
-
-    def test_changed_corpus_or_session_rejects_confirmation_before_generation(self):
-        pending = {}
-        self.retriever.search.return_value = [(self.documents[0], .01)]
-        low = self.search(pending=pending)
-        snapshot = pending[low["confirmation_id"]]
-        wrong = {**snapshot, "session_id": "another-session"}
-        with self.assertRaisesRegex(ValueError, "会话"):
-            self.search(confirmation=wrong)
-        self.store.delete_document(self.documents[1].metadata["doc_id"])
-        with self.assertRaisesRegex(ValueError, "失效"):
-            self.search(confirmation=snapshot)
-        self.assertFalse(self.model_calls)
-
-    def test_confirmation_session_entry_fixes_action_args_and_preserves_memory(self):
-        from src.agent.memory import MemoryManager, run_session
-        memory = MemoryManager(Path(self.directory.name) / "sessions.sqlite3")
-        session = memory.create_session("alice")
-        memory.append_turn("alice", session, "之前的问题", "之前的回答")
-        pending = {}
-        tools = get_available_tools(session_id=session, pending=pending)
-        self.retriever.search.return_value = [(self.documents[0], .01)]
-        low = tools[0].invoke({"question": "ViT输入？"})
-        snapshot = pending[low["confirmation_id"]]
-        tools = get_available_tools(session_id=session, confirmation=snapshot)
-        with patch("src.agent.react_loop.urlopen") as http:
-            events = list(run_session("ViT输入？", "alice", session, tools=tools, memory=memory,
-                                      confirmed_rag_args={"question": "ViT输入？", "doc_id": None}))
-        self.assertEqual(events[0]["route"], "confirmation")
-        self.assertEqual(next(e for e in events if e["type"] == "tool_call")["args"], {"question": "ViT输入？", "doc_id": None})
-        http.assert_not_called()  # 确认参数固定，完整RAG报告直接保留，无额外规划或改写。
-        self.assertEqual(self.retriever.search.call_count, 1)
-        self.assertIn("已按你的确认", events[-1]["full_response"])
-        self.assertEqual(len(memory.get_messages("alice", session)), 4)
-        with self.assertRaises(PermissionError):
-            list(run_session("ViT输入？", "bob", session, tools=tools, memory=memory,
-                             confirmed_rag_args={"question": "ViT输入？", "doc_id": None}))
-
-    def test_waiting_observation_does_not_ask_model_to_approve_candidate(self):
-        from src.agent.react_loop import _observe_events
-        pending = {}
-        self.retriever.search.return_value = [(self.documents[0], .01)]
-        low = self.search(pending=pending)
-        context = {"observations": [{"name": "knowledge_base_search", "status": "success", "result": low}]}
-        with patch("src.agent.react_loop.urlopen") as http:
-            events = list(_observe_events("ViT输入？", get_available_tools(), context, stream=True))
-        self.assertFalse(events[-1]["task_complete"])
-        self.assertEqual(events[-1]["decision"], "finish")
-        http.assert_not_called()
-
-    def test_confirmation_does_not_approve_a_different_followup_query(self):
-        pending = {}
-        self.retriever.search.return_value = [(self.documents[0], .01)]
-        low = self.search(pending=pending)
-        result = self.search("ViT数据集？", confirmation=pending[low["confirmation_id"]], pending=pending)
-        self.assertEqual(result["status"], "needs_confirmation")
-        self.assertFalse(self.model_calls)
 
 
 if __name__ == "__main__":

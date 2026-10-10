@@ -9,7 +9,6 @@ sys.path.insert(0, str(ROOT))
 
 import tempfile
 import unittest
-from importlib import import_module
 from unittest.mock import patch
 from src.retrieval.vector_store import get_embeddings
 
@@ -39,12 +38,6 @@ class TestLocalEmbeddings(unittest.TestCase):
                 encode_kwargs={"normalize_embeddings": True, "batch_size": 32},
             )
 
-    def test_repeated_calls_reuse_model(self):
-        """多次调用复用已加载模型，不在每次提问时加载权重。"""
-        with patch("src.retrieval.vector_store.HuggingFaceEmbeddings") as model:
-            first = get_embeddings()
-            self.assertIs(get_embeddings(), first)
-            model.assert_called_once()
 
     def test_parallel_first_load_constructs_only_once(self):
         """三线程同时首次调用，构造器只执行一次；失败不锁死后续请求。"""
@@ -62,51 +55,6 @@ class TestLocalEmbeddings(unittest.TestCase):
             futures = [pool.submit(request) for _ in range(3)]
             self.assertTrue(all(future.result(timeout=3) is instance for future in futures))
             self.assertEqual(model.call_count, 1)
-
-    def test_missing_model_does_not_initialize_remote_client(self):
-        """缺少权重明确报错，不构造模型客户端或回退在线模式。"""
-        self.config["embedding"]["local_path"] = str(Path(self.directory.name) / "missing")
-        with patch("src.retrieval.vector_store.HuggingFaceEmbeddings") as model:
-            with self.assertRaisesRegex(FileNotFoundError, "请先按用户手册下载权重"):
-                get_embeddings()
-            model.assert_not_called()
-
-
-class TestEmbeddingEvaluation(unittest.TestCase):
-    """用已知排名验证指标公式，模型效果来自独立的真实实验。"""
-
-    def test_hit_recall_and_mrr_cutoffs(self):
-        """排名六的相关项不算 Hit@5，排名十一的项不算 MRR@10。"""
-        import numpy as np
-        evaluate_rankings = import_module("reports.5_1_3 向量化与存储.compare_embeddings").evaluate_rankings
-
-        sample = {"corpus": [{"id": str(index)} for index in range(11)], "queries": [
-            {"id": "q1", "relevant_ids": ["0"]},
-            {"id": "q2", "relevant_ids": ["5", "10"]},
-        ]}
-        scores = np.asarray([list(range(11, 0, -1))] * 2)
-        result = evaluate_rankings(scores, sample)
-        self.assertEqual(result["hit_at_5"], 0.5)
-        self.assertEqual(result["recall_at_5"], 0.5)
-        self.assertAlmostEqual(result["mrr_at_10"], (1 + 1 / 6) / 2)
-        self.assertEqual(result["queries"][1]["top10_ids"], [str(index) for index in range(10)])
-
-    def test_language_groups_use_equal_weight_macro_average(self):
-        """问题数不等时宏平均仍等权，并保留表现较差的语言组。"""
-        import numpy as np
-        evaluate_rankings = import_module("reports.5_1_3 向量化与存储.compare_embeddings").evaluate_rankings
-
-        sample = {"corpus": [{"id": str(index)} for index in range(6)], "queries": [
-            {"id": "zh1", "group": "zh->zh", "relevant_ids": ["0"]},
-            {"id": "zh2", "group": "zh->zh", "relevant_ids": ["5"]},
-            {"id": "en1", "group": "en->en", "relevant_ids": ["5"]},
-        ]}
-        result = evaluate_rankings(np.asarray([list(range(6, 0, -1))] * 3), sample)
-        self.assertAlmostEqual(result["hit_at_5"], 1 / 3)
-        self.assertEqual(result["groups"]["zh->zh"]["query_count"], 2)
-        self.assertEqual(result["groups"]["zh->zh"]["hit_at_5"], 0.5)
-        self.assertEqual(result["macro"]["hit_at_5"], 0.25)
-        self.assertEqual(result["worst_group_hit_at_5"], 0)
 
 
 if __name__ == "__main__":

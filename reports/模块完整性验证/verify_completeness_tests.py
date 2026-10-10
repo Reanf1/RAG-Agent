@@ -17,10 +17,10 @@ sys.path.insert(0, str(ROOT))
 # 按实际职责选取模块四用例，不把全部检索或Agent算法测试算作前端测试。
 MODULE_FOUR_CLASSES = {
     "TestImportFrontend", "TestDocumentManagement", "TestHealthCheck", "TestHealthCheckPage",
-    "TestStreamingFrontend", "TestConversationHistory", "TestSessionIsolation",
+    "TestStreamingFrontend", "TestSessionIsolation",
     "TestRAGSearchRouting", "TestAgentMemoryContext", "TestAgentMetrics",
     "TestAgentTraceMetrics", "TestAgentMetricsEntryAndPage",
-    "TestAgentStreaming", "TestCitationPage", "TestContainerLocalAddress",
+    "TestCitationPage", "TestContainerLocalAddress",
 }
 
 

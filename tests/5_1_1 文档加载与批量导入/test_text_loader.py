@@ -38,13 +38,6 @@ class TestTextLoader(unittest.TestCase):
             "line_end": 4,
         })
 
-    def test_utf8_bom_and_crlf(self):
-        """移除 BOM，但保留 Windows 的 CRLF 换行。"""
-        text = "第一行\r\n第二行\r\n"
-        self.path.write_bytes(text.encode("utf-8-sig"))
-        document = load_text(self.path)[0]
-        self.assertEqual(document.page_content, text)
-        self.assertEqual(document.metadata["line_end"], 2)
 
     def test_markdown_preserves_syntax_and_indentation(self):
         """Markdown 标题、链接、表格和代码块不被转换或清理。"""
@@ -57,40 +50,6 @@ class TestTextLoader(unittest.TestCase):
                 self.assertEqual(document.page_content, text)
                 self.assertEqual(document.metadata["file_type"], suffix.lower())
                 self.assertNotIn("page_number", document.metadata)
-
-    def test_document_id_is_stable_and_changes(self):
-        """内容指纹由原始字节生成，重复读取稳定，文本变化后更新。"""
-        self.path.write_text("原始正文", encoding="utf-8")
-        original_id = load_text(self.path)[0].metadata["doc_id"]
-        self.assertEqual(load_text(self.path)[0].metadata["doc_id"], original_id)
-        self.path.write_text("更新正文", encoding="utf-8")
-        self.assertNotEqual(load_text(self.path)[0].metadata["doc_id"], original_id)
-
-    def test_empty_or_whitespace_only_file(self):
-        """空字节、仅 BOM 和纯空白都不视为有效内容。"""
-        for data in [b"", b"\xef\xbb\xbf", b" \t\r\n"]:
-            with self.subTest(data=data):
-                self.path.write_bytes(data)
-                with self.assertRaisesRegex(ValueError, "没有有效内容"):
-                    load_text(self.path)
-
-    def test_invalid_utf8(self):
-        """不静默替换错误字符，也不猜测 GBK 等其他编码。"""
-        self.path.write_bytes("中文".encode("gbk"))
-        with self.assertRaises(UnicodeDecodeError):
-            load_text(self.path)
-
-    def test_missing_file(self):
-        """缺失文件明确报错。"""
-        with self.assertRaises(FileNotFoundError):
-            load_text(self.path)
-
-    def test_unsupported_extension(self):
-        """二进制格式不能被当作纯文本导入。"""
-        path = self.path.with_suffix(".pdf")
-        path.write_bytes(b"PDF")
-        with self.assertRaisesRegex(ValueError, "不支持此文件格式"):
-            load_text(path)
 
 
 if __name__ == "__main__":

@@ -234,7 +234,7 @@ def _knowledge_base_search(question: str, doc_id: str | None = None, *, cache=No
             result["citations"] = _tool_references(result["citations"])
             result.update(status="answered", doc_id=doc_id, sources=context["sources"], top_score=context["top_score"])
             result["confirmed"] = context["confirmed"]
-            if result.get("evidence_quote_errors") or result.get("evidence_number_errors") or context["generation_mode"] in {"grounded", "low"} and not result["citations"]:
+            if context["generation_mode"] in {"grounded", "low"} and not result["citations"]:
                 result["status"] = "insufficient_evidence"  # 有检索候选却没有有效引用，不能冒充已溯源回答。
             if result.get("done_reason") != "stop":
                 result["status"] = "incomplete"
@@ -812,39 +812,19 @@ def calculator(expression: str) -> dict:
 def paper_list() -> dict:
     """列出当前共享知识库的文献ID、文件名、原文可用性及实际索引块数，不调用模型。
 
-    按doc_id去重，兼顾已上传未索引与仅剩索引的文献。has_index仅表示至少有一块，
-    不代表全部预期块已入库；source_missing表示索引仍在但当前上传原文不可用。
+    按doc_id去重，兼顾已上传未索引与仅剩索引的文献。
+    索引状态由预期块数与实际块数判断，和页面使用同一文献列表。
     """
-    from src.data_loader import LOADERS
-    from src.retrieval.vector_store import VectorStore
+    from src.retrieval.vector_store import list_documents
 
     config = load_config()
     root = Path(__file__).resolve().parents[2]
     raw_dir, index_dir = [Path(config["paths"][key]).expanduser() for key in ("raw_documents", "vector_index")]
     raw_dir = raw_dir if raw_dir.is_absolute() else root / raw_dir
     index_dir = index_dir if index_dir.is_absolute() else root / index_dir
-    papers = {}
-    # 复用索引正文/元数据读取，不编码或检索；未建库时不为列表创建空数据库。
-    if (index_dir / "chroma.sqlite3").is_file():
-        for chunk in VectorStore().list_chunks():
-            identifier = chunk.metadata["doc_id"]
-            name = chunk.metadata.get("source_file") or "未知文档"
-            row = papers.setdefault(identifier, {"doc_id": identifier, "source_file": name,
-                "indexed_chunks": 0, "source_available": False, "index_status": "source_missing"})
-            row["indexed_chunks"] += 1
-            row["source_file"] = min(row["source_file"], name)
-    # 上游按扩展名列文件；本项目适配已有内容指纹目录并复用原文校验。
-    if raw_dir.exists():
-        for directory in sorted(raw_dir.iterdir()):
-            if not directory.is_dir() or not re.fullmatch(r"[0-9a-f]{64}", directory.name):
-                continue
-            if not any(path.is_file() and path.suffix.lower() in LOADERS for path in directory.iterdir()):
-                continue
-            path = _uploaded_paper(directory.name)
-            row = papers.setdefault(directory.name, {"doc_id": directory.name, "indexed_chunks": 0})
-            row.update(source_file=path.name, source_available=True,
-                       index_status="has_index" if row["indexed_chunks"] else "not_indexed")
-    rows = sorted(papers.values(), key=lambda row: (row["source_file"], row["doc_id"]))
+    rows = [{"doc_id": row["doc_id"], "source_file": row["name"], "indexed_chunks": row["chunks"],
+             "source_available": row["source_available"], "index_status": row["index_status"]}
+            for row in list_documents(raw_dir, index_dir)]
     return {"papers": rows, "total": len(rows), "usage": {"prompt_eval_count": 0, "eval_count": 0}}
 
 

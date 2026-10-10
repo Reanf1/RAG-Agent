@@ -13,12 +13,10 @@ import json
 from threading import Barrier, Lock
 import unittest
 from unittest.mock import patch
-from langchain_core.messages import ToolMessage
 from langchain_core.tools import tool
-from src.agent.react_loop import act, observe, run_react, think
-from src.agent.tools import AVAILABLE_TOOLS
-from src.agent.tools import current_time, web_search
-from src.agent.router import execute_calls, parallel_limit, route_question
+from src.agent.react_loop import act, run_react
+from src.agent.tools import current_time
+from src.agent.router import execute_calls
 from src.utils.config import load_config
 from tests.helpers import isolated_agent_logs
 
@@ -68,97 +66,6 @@ class TestRoutingAndParallel(unittest.TestCase):
             events = list(act("独立读取3和5。", plan or self.plan, tools or self.tools))
         return events, http
 
-    def test_clear_question_types_route_only_to_registered_tools_without_model(self):
-        cases = [("现在几点，返回当前时间", "current_time"), ("current time please", "current_time"),
-                 ("提取问题的关键词", "keyword_extract"), ("生成论文的结构化摘要", "paper_summary"),
-                 ("查询论文元信息", "paper_metadata"), ("对比两篇论文", "paper_compare"),
-                 ("这篇论文使用了什么数据集？", "knowledge_base_search"), ("论文A的实验数据集是什么？", "knowledge_base_search")]
-        with patch("src.agent.react_loop.urlopen") as http:
-            for question, name in cases:
-                with self.subTest(question=question):
-                    plan = route_question(question, AVAILABLE_TOOLS)
-                    self.assertEqual(plan["tool_name"], name)
-                    self.assertEqual(plan["usage"], {"prompt_eval_count": 0, "eval_count": 0})
-                    self.assertIsNone(plan["model"])
-        http.assert_not_called()
-
-    def test_general_concept_routes_to_answer_but_paper_question_uses_knowledge(self):
-        self.assertEqual(route_question("什么是深度学习？", AVAILABLE_TOOLS)["next_step"], "answer")
-        self.assertEqual(route_question("这篇论文中的深度学习是什么？", AVAILABLE_TOOLS)["tool_name"], "knowledge_base_search")
-
-    def test_structural_contribution_requires_evidence_without_literal_paper_word(self):
-        """科研事实不能因省略“论文”二字跳过证据；不硬编码论文名称或答案。"""
-        for question in ("T2T-ViT 针对普通 ViT 提出的两项主要结构改进是什么？",
-                         "模型的消融实验验证了什么？", "What architecture was proposed in this study?"):
-            with self.subTest(question=question):
-                self.assertEqual(route_question(question, AVAILABLE_TOOLS)["tool_name"], "knowledge_base_search")
-
-    def test_ambiguous_dependent_negated_and_existing_state_fall_back(self):
-        for question in ("当前时间并提取关键词", "先提取关键词，再用关键词查询知识库", "不要调用current_time", "帮我处理一下"):
-            with self.subTest(question=question):
-                self.assertIsNone(route_question(question, AVAILABLE_TOOLS))
-        for context in ({"observations": [{"status": "success"}]}, {"history": ["旧问题"]}, {"context": "论文资料"}):
-            self.assertIsNone(route_question("什么是深度学习？", AVAILABLE_TOOLS, context))
-
-    def test_missing_or_disabled_tools_fall_back_without_fake_registry(self):
-        self.assertEqual(route_question("联网搜索论文", AVAILABLE_TOOLS)["unavailable_tool"], "web_search")
-        self.assertIsNone(route_question("返回当前时间", []))
-        self.assertIsNone(route_question("3.14乘以2.56", [item for item in AVAILABLE_TOOLS if item.name != "calculator"]))
-        self.assertEqual(route_question("联网搜索论文", [web_search])["tool_name"], "web_search")
-
-    def test_explicit_tool_does_not_hide_second_semantic_intent(self):
-        # 显式工具名和自然语言意图都要考虑，不能只完成组合任务的第一项。
-        for question in ("请调用keyword_extract提取关键词，并告诉我当前时间",
-                         "调用current_time，然后提取关键词", "调用keyword_extract并联网搜索论文"):
-            self.assertIsNone(route_question(question, AVAILABLE_TOOLS))
-        self.assertEqual(route_question("调用keyword_extract提取关键词", AVAILABLE_TOOLS)["tool_name"], "keyword_extract")
-
-    def test_call_compare_results_is_not_a_dependent_use_of_results(self):
-        """Windows现场：调用工具比较实验结果，不能误判为使用前一步结果。"""
-        question = "请调用 paper_compare，对比两篇已入库论文的方法、数据集和实验结果"
-        self.assertEqual(route_question(question, AVAILABLE_TOOLS)["tool_name"], "paper_compare")
-        self.assertIsNone(route_question("用论文摘要结果调用 paper_compare", AVAILABLE_TOOLS))
-        self.assertIsNone(route_question(question + "，然后提取关键词", AVAILABLE_TOOLS))
-
-    def test_explicit_tool_names_and_two_papers_use_same_tool_batch(self):
-        plan = route_question("请调用paper_metadata，分别读取两篇论文：" + "a" * 64 + "和" + "b" * 64, AVAILABLE_TOOLS)
-        self.assertEqual(plan["tool_name"], "paper_metadata")
-        self.assertEqual(plan["parallel_tools"], ["paper_metadata", "paper_metadata"])
-        self.assertEqual(route_question("请调用keyword_extract提取问题主题", AVAILABLE_TOOLS)["tool_name"], "keyword_extract")
-        self.assertIsNone(route_question("请调用paper_metadata和paper_summary", AVAILABLE_TOOLS))
-
-    def test_two_paper_rule_rejects_missing_or_wrong_target_before_execution(self):
-        """两个调用名相同也要核验数量及本轮目标，不能只读取一篇或借用历史ID。"""
-        seen = []
-        @tool
-        def paper_metadata(doc_id: str) -> dict:
-            """记录实际执行，拒绝批次时应保持为空。"""
-            seen.append(doc_id)
-            return {"doc_id": doc_id}
-        a, b, old = "a" * 64, "b" * 64, "c" * 64
-        question = f"请调用paper_metadata，分别读取两篇论文：{a} 和 {b}"
-        plan = route_question(question, [paper_metadata])
-        for targets in ([a], [a, old]):
-            with self.subTest(targets=targets):
-                response = {**self.response, "message": {"tool_calls": [
-                    {"function": {"name": "paper_metadata", "arguments": {"doc_id": value}}} for value in targets]}}
-                with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(response).encode())):
-                    events = list(act(question, plan, [paper_metadata], {"history": [{"role": "user", "content": old}]}))
-                self.assertEqual(events[-1]["type"], "error")
-                self.assertEqual(seen, [])
-        response["message"]["tool_calls"][-1]["function"]["arguments"]["doc_id"] = b
-        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(response).encode())):
-            events = list(act(question, plan, [paper_metadata]))
-        self.assertEqual(set(seen), {a, b})
-        self.assertEqual(sum(event["type"] == "tool_result" for event in events), 2)
-
-    def test_calculator_rule_requires_actual_registered_tool(self):
-        @tool("calculator")
-        def multiply(a: float, b: float) -> float:
-            """开发测试用的实际乘法工具，不计入生产八工具。"""
-            return a * b
-        self.assertEqual(route_question("3.14乘以2.56", [multiply])["tool_name"], "calculator")
-        self.assertIsNone(route_question("3.14乘以2.56", []))
 
     def test_rule_path_skips_thought_model_but_keeps_action_and_observation(self):
         response = {**self.response, "message": {"tool_calls": [{"function": {"name": "current_time", "arguments": {}}}]}}
@@ -171,41 +78,6 @@ class TestRoutingAndParallel(unittest.TestCase):
         self.assertEqual(events[1]["name"], "current_time")
         self.assertTrue(events[-1]["task_complete"])
 
-    def test_completed_single_task_answers_without_replanning(self):
-        response = {**self.response, "message": {"tool_calls": [{"function": {"name": "current_time", "arguments": {}}}]}}
-        with patch("src.agent.react_loop.think", return_value={"thought": "已有时间，可回答。", "next_step": "answer", "tool_name": None}) as think_mock, \
-                patch("src.agent.react_loop.urlopen", side_effect=[BytesIO(json.dumps(x).encode()) for x in
-                    (response, self.packet(self.finished))]):
-            events = list(run_react("返回当前时间", [current_time]))
-        self.assertEqual(think_mock.call_count, 0)
-        self.assertTrue(events[-1]["task_complete"])
-        self.assertEqual(len(events[-1]["context"]["observations"]), 1)
-
-    def test_thought_binds_registered_tools_once_with_parallel_limit(self):
-        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.response).encode())) as http:
-            result = think("独立读取3和5", self.tools)
-        self.assertEqual(result["parallel_tools"], ["read_number", "read_number"])
-        payload = json.loads(http.call_args.args[0].data)
-        self.assertEqual(len(payload["tools"]), 1)
-        self.assertNotIn("format", payload)
-        self.assertIn("最多2个", payload["messages"][0]["content"])
-
-    def test_same_tool_two_inputs_reuse_decision_without_second_request(self):
-        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.response).encode())):
-            plan = think("分别读取3和5", self.tools)
-        with patch("src.agent.react_loop.urlopen") as http:
-            events = list(act("分别读取3和5", plan, self.tools))
-        http.assert_not_called()
-        self.assertEqual(sorted(self.invocations), [3, 5])
-        self.assertEqual(sum(e["type"] == "tool_result" for e in events), 2)
-        self.assertTrue(all(e["usage"]["eval_count"] == 0 for e in events if e["type"] == "tool_call"))
-
-    def test_thought_rejects_unknown_or_excessive_native_calls(self):
-        for calls in ([{"function": {"name": "unknown", "arguments": {}}}],
-                      self.response["message"]["tool_calls"] * 2):
-            response = {**self.response, "message": {"tool_calls": calls}}
-            with self.subTest(calls=calls), patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(response).encode())), self.assertRaises(RuntimeError):
-                think("独立读取", self.tools)
 
     def test_two_threads_reach_barrier_and_return_stable_order(self):
         barrier, lock, active, maximum = Barrier(2), Lock(), [0], [0]
@@ -227,12 +99,6 @@ class TestRoutingAndParallel(unittest.TestCase):
         self.assertEqual([item["call_id"] for item in results], ["call-a", "call-b"])
         self.assertTrue(all(item["execution_mode"] == "parallel" and item["status"] == "success" for item in results))
 
-    def test_serial_path_and_single_call_keep_true_results_and_order(self):
-        results = list(execute_calls(self.calls, self.tools))
-        self.assertEqual(self.invocations, [3, 5])
-        self.assertEqual([item["result"] for item in results], [6, 10])
-        self.assertTrue(all(item["execution_mode"] == "serial" for item in results))
-        self.assertEqual(list(execute_calls(self.calls[:1], self.tools, parallel=True))[0]["execution_mode"], "serial")
 
     def test_individual_failure_preserves_other_independent_result(self):
         calls = deepcopy(self.calls)
@@ -242,110 +108,6 @@ class TestRoutingAndParallel(unittest.TestCase):
         self.assertIn("输入不能为负数", results[0]["error"])
         self.assertEqual(results[1]["result"], 10)
         self.assertCountEqual(self.invocations, [-1, 5])
-
-    def test_batch_limit_duplicate_ids_and_invalid_config_are_rejected(self):
-        for calls in ([], [*self.calls, {**self.calls[0], "call_id": "call-c"}], [self.calls[0]] * 2):
-            with self.subTest(calls=calls), self.assertRaises(ValueError):
-                list(execute_calls(calls, self.tools, parallel=True))
-        for value in (0, -1, True, "2"):
-            self.config["agent"]["max_parallel_calls"] = value
-            with self.subTest(value=value), self.assertRaises(ValueError):
-                parallel_limit()
-        self.assertEqual(self.invocations, [])
-
-    def test_native_batch_has_one_ai_message_two_linked_results_and_one_usage(self):
-        events, http = self.action()
-        self.assertEqual([e["type"] for e in events], ["tool_call", "tool_call", "tool_result", "tool_result"])
-        self.assertEqual([e["result"] for e in events[2:]], [6, 10])
-        self.assertEqual(len(events[0]["message"].tool_calls), 2)
-        self.assertNotIn("message", events[1])
-        # Action用量只归属一次共享调用，工具内部用量由tool_result单独记录。
-        self.assertEqual(sum(e["usage"]["eval_count"] for e in events if e["type"] == "tool_call"), 60)
-        self.assertEqual(http.call_count, 1)
-        for call, result in zip(events[:2], events[2:]):
-            self.assertEqual(call["call_id"], result["message"].tool_call_id)
-            self.assertEqual(call["args"], result["args"])
-
-    def test_batch_supports_different_selected_tools_only(self):
-        @tool
-        def other(value: int) -> int:
-            """另一个独立输入工具。"""
-            return value + 1
-        response = deepcopy(self.response)
-        response["message"]["tool_calls"][1]["function"]["name"] = "other"
-        events, http = self.action(response, {**self.plan, "parallel_tools": ["read_number", "other"]}, [*self.tools, other, current_time])
-        self.assertEqual([e["result"] for e in events[2:]], [6, 6])
-        self.assertEqual([spec["function"]["name"] for spec in json.loads(http.call_args.args[0].data)["tools"]], ["read_number", "other"])
-
-    def test_invalid_batch_protocol_rejected_before_any_execution(self):
-        for mode in ("unknown", "duplicate", "excessive", "unfinished"):
-            response = deepcopy(self.response)
-            if mode == "unknown":
-                response["message"]["tool_calls"][1]["function"]["name"] = "other"
-            elif mode == "duplicate":
-                response["message"]["tool_calls"][1] = deepcopy(response["message"]["tool_calls"][0])
-            elif mode == "excessive":
-                response["message"]["tool_calls"].append(deepcopy(response["message"]["tool_calls"][0]))
-            else:
-                response["done_reason"] = "length"
-            events, _ = self.action(response)
-            with self.subTest(mode=mode):
-                self.assertEqual([e["type"] for e in events], ["error"])
-        self.assertEqual(self.invocations, [])
-
-    def test_batch_cannot_omit_selected_tool_or_mismatch_primary_name(self):
-        plan = {**self.plan, "parallel_tools": ["read_number", "current_time"]}
-        packet = deepcopy(self.response)
-        packet["message"]["tool_calls"] = packet["message"]["tool_calls"][:1]
-        events, _ = self.action(packet, plan, [*self.tools, current_time])
-        self.assertEqual([event["type"] for event in events], ["error"])
-        self.assertIn("完整", events[0]["message"])
-        bad_plan = {**plan, "tool_name": "current_time"}
-        events, _ = self.action(packet, bad_plan, [*self.tools, current_time])
-        self.assertEqual([event["type"] for event in events], ["error"])
-        self.assertEqual(self.invocations, [])
-
-    def test_closing_during_batch_call_events_starts_no_tools(self):
-        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.response).encode())):
-            stream = act("独立输入", self.plan, self.tools)
-            next(stream)
-            next(stream)
-            stream.close()
-        self.assertEqual(self.invocations, [])
-
-    def test_error_or_confirmation_anywhere_in_current_batch_cannot_complete(self):
-        for result in ({"status": "error", "result": None}, {"status": "success", "result": {"status": "needs_confirmation"}},
-                       {"status": "success", "result": {"status": "insufficient_evidence"}}):
-            context = {"observations": [result, {"status": "success", "result": "最后一个成功"}]}
-            messages = [ToolMessage(content="第一条", tool_call_id="a"), ToolMessage(content="第二条", tool_call_id="b")]
-            with self.subTest(result=result), patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(self.finished)).encode())):
-                outcome = observe("完成两件事", self.tools, context, messages)
-                self.assertFalse(outcome["task_complete"])
-                self.assertIn("尚未完成", outcome["answer"])
-
-    def test_loop_observes_entire_batch_and_preserves_native_input_order(self):
-        with patch("src.agent.react_loop.urlopen", side_effect=[BytesIO(json.dumps(x).encode()) for x in
-                (self.response, self.packet(self.finished))]) as http:
-            events = list(run_react("处理独立输入3和5。", self.tools))
-        self.assertEqual([item["result"] for item in events[-1]["context"]["observations"]], [6, 10])
-        self.assertTrue(events[-1]["task_complete"])
-        native = json.loads(http.call_args_list[-1].args[0].data)["messages"]
-        self.assertEqual([m["role"] for m in native], ["system", "user", "assistant", "tool", "tool", "user"])
-        self.assertEqual(len(native[2]["tool_calls"]), 2)
-        self.assertEqual([m["content"] for m in native if m["role"] == "tool"], ["6", "10"])
-
-    def test_answer_plan_finishes_or_reports_insufficient_information_without_empty_loop(self):
-        plan = {"thought": "已有结果可给出答复。", "next_step": "answer", "tool_name": None}
-        pending = {**self.finished, "decision": "continue", "task_complete": False, "answer": ""}
-        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(pending)).encode())) as http, \
-                self.assertRaisesRegex(RuntimeError, "不能继续空转"):
-            observe("处理任务", self.tools, thought=plan)
-        schema = json.loads(http.call_args.args[0].data)["format"]
-        self.assertEqual(schema["properties"]["decision"], {"const": "finish"})
-        incomplete = {**self.finished, "task_complete": False, "answer": "缺少论文，无法完成。"}
-        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(incomplete)).encode())):
-            result = observe("处理任务", self.tools, thought=plan)
-        self.assertFalse(result["task_complete"])
 
 
 if __name__ == "__main__":

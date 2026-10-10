@@ -401,48 +401,6 @@ needs_confirmation等待用户确认，insufficient_evidence说明缺少原文�
 task_complete（布尔值）、answer（最终回答或空字符串）。"""
 
 
-def _partial_observation_answer(raw: str) -> str:
-    """只解析顶层answer字符串的已收前缀，不展示JSON、判断说明或半个转义字符。"""
-    decoder, position = json.JSONDecoder(), 0
-    if not raw.lstrip().startswith("{"):
-        return ""
-    position = raw.index("{") + 1
-    try:
-        while position < len(raw):
-            while position < len(raw) and raw[position] in " \r\n\t,":
-                position += 1
-            key, position = decoder.raw_decode(raw, position)
-            while position < len(raw) and raw[position].isspace():
-                position += 1
-            if raw[position:position + 1] != ":":
-                return ""
-            position += 1
-            while position < len(raw) and raw[position].isspace():
-                position += 1
-            if key == "answer":
-                if raw[position:position + 1] != '"':
-                    return ""
-                try:
-                    answer, _ = decoder.raw_decode(raw, position)
-                    return answer
-                except ValueError:
-                    fragment = raw[position:]
-                    # 最多暂存一个未闭合的反斜线或四位Unicode转义；不按字符模拟输出。
-                    for cut in range(min(7, len(fragment))):
-                        try:
-                            answer = json.loads((fragment[:-cut] if cut else fragment) + '"')
-                            if answer and 0xD800 <= ord(answer[-1]) <= 0xDBFF:
-                                answer = answer[:-1]
-                            return answer
-                        except ValueError:
-                            pass
-                    return ""
-            _, position = decoder.raw_decode(raw, position)
-    except (ValueError, IndexError):
-        pass
-    return ""
-
-
 def _local_observation(answer: str, note: str, *, complete=False, decision="finish") -> dict:
     """直接使用工具结果时的统一事件格式，不产生额外模型用量。"""
     return {"type": "observation", "observation": note, "decision": decision,
@@ -458,7 +416,7 @@ def _structured_tool_observation(question: str, plan: dict | None, observations:
     if plan and observations and not items and plan.get("tool_name") != "paper_list":
         return _local_observation("", "文献列表已返回，继续执行指定的论文任务。", decision="continue")
     name = plan.get("tool_name") if plan else "knowledge_base_search"
-    if plan and name == "knowledge_base_search" and _paper_content_pending(observations):
+    if plan and name == "knowledge_base_search" and items and items[-1].get("status") == "error":
         failed = [item for item in items if item.get("name") == name and item.get("status") == "error"]
         if failed:
             answer = "知识库工具执行失败：" + (failed[-1].get("error") or "未返回可用结果")
@@ -488,32 +446,6 @@ def _structured_tool_observation(question: str, plan: dict | None, observations:
     return _local_observation(answer, "保留工具报告、来源和限制说明。", complete=not issue)
 
 
-def _paper_content_pending(observations: list[dict]) -> bool:
-    """逐项核对失败后的正文证据，另一篇论文成功不能消除原目标的缺项。"""
-    body_tools = {"knowledge_base_search", "paper_summary", "paper_compare"}
-    for index, item in enumerate(observations):
-        result = item.get("result") or {}
-        if item.get("name") not in body_tools or not (item.get("status") == "error" or
-                isinstance(result, dict) and result.get("status") in {
-                    "needs_confirmation", "incomplete", "insufficient_evidence"}):
-            continue
-        targets = {item.get("args", {}).get(key) for key in ("doc_id", "paper_a_id", "paper_b_id")}
-        targets.discard(None)
-        covered, recovered = set(), False
-        for later in observations[index + 1:]:
-            value = later.get("result")
-            if (later.get("name") not in body_tools or later.get("status") != "success"
-                    or not isinstance(value, dict) or value.get("status") != "answered"
-                    or not value.get("answer") or value.get("invalid_citation_ids")):
-                continue
-            citations = value.get("citations", [])
-            covered.update(ref.get("metadata", {}).get("doc_id") for ref in citations)
-            recovered |= bool(citations or not targets and value.get("generation_mode") == "empty")
-        if not recovered or targets and not targets <= covered:
-            return True
-    return False
-
-
 def _completion_issue(question, plan, observations, latest, context) -> str:
     """工具状态、原任务覆盖与恢复共用一处检查；不猜测答案的语义质量。"""
     if any(item.get("status") == "error" for item in latest):
@@ -521,13 +453,6 @@ def _completion_issue(question, plan, observations, latest, context) -> str:
     if any(isinstance(item.get("result"), dict) and item["result"].get("status") in {
             "needs_confirmation", "incomplete", "insufficient_evidence"} for item in latest):
         return "工具资料不足、回答截断或候选尚待确认，原任务尚未完成。"
-    if _paper_content_pending(observations):
-        return "正文任务尚未恢复：需要失败目标论文的有效正文证据；其他工具成功不能代替。"
-    content = [item for item in observations if item.get("name") != "paper_list"]
-    if (content and all(item.get("name") == "keyword_extract" and isinstance(item.get("result"), dict)
-                       and not item["result"].get("doc_id") for item in content)
-            and not re.search(r"关键词|关键字|\bkeywords?\b|\bkey terms?\b", question, re.I)):
-        return "仅提取了问题关键词，尚未核验原论文内容，论文任务未完成。"
     completed = [item for item in observations if item.get("status") == "success"
                  and (not isinstance(item.get("result"), dict) or item["result"].get("status", "answered") == "answered")]
     if plan and plan.get("parallel_tools"):
@@ -536,11 +461,6 @@ def _completion_issue(question, plan, observations, latest, context) -> str:
         covered = {item.get("args", {}).get("doc_id") for item in completed if item.get("name") in expected}
         if any(counts[name] < count for name, count in expected.items()) or targets and not targets <= covered:
             return "分别处理的论文任务尚未全部完成：需要每篇目标论文的独立工具结果。"
-    if plan and plan.get("tool_name") == "paper_compare" and not any(
-            item.get("name") == "paper_compare" and isinstance(item.get("result"), dict)
-            and len({ref.get("metadata", {}).get("doc_id") for ref in item["result"].get("citations", [])}) == 2
-            for item in completed):
-        return "原对比任务尚未完成：需要两篇论文的方法、数据集、实验结果及对应引用。"
     if (context or {}).get("recovery", {}).get("pending"):
         return "工具异常尚未恢复，原任务未完成。"
     return ""
@@ -655,37 +575,12 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
     prompt.append(HumanMessage(content="本轮用户问题：" + question + (
         "\n请根据已返回的结果直接给出答案；若所需资料不足，请说明缺项并标记未完成。" if answering
         else "\n请只核对本轮问题是否完成；历史问答仅用于理解追问，不是待办任务。")))
-    request = _model_request(prompt, format=schema, stream=stream)
+    request = _model_request(prompt, format=schema)
     started = perf_counter()
     result = None
     try:
         with urlopen(request, timeout=300) as response:
-            if not stream:
-                result = json.load(response)
-            else:
-                raw, visible, result = "", "", None
-                for line in response:
-                    if not line.strip():
-                        continue
-                    packet = json.loads(line)
-                    if not isinstance(packet, dict) or packet.get("error"):
-                        raise ValueError("Observation流式响应错误")
-                    message = packet.get("message")
-                    if not isinstance(message, dict):
-                        raise ValueError("Observation流式响应缺少消息")
-                    content = message.get("content", "")
-                    if not isinstance(content, str):
-                        raise ValueError("Observation流式正文必须为文本")
-                    raw += content
-                    answer = _partial_observation_answer(raw)
-                    if answer != visible:
-                        visible = answer
-                        yield {"type": "token", "answer": answer, "provisional": True}
-                    if packet.get("done") is True:
-                        result = {**packet, "message": {"content": raw}}
-                        break
-                if result is None:
-                    raise ValueError("Observation流已断开，未收到完成标记")
+            result = json.load(response)
         _checked_response(result, "Observation")
         decision = json.loads(result["message"].get("content", ""))
         if not isinstance(decision, dict) or set(decision) != set(schema["required"]):
@@ -710,6 +605,8 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
                 decision["answer"] += "\n\n" + issue
         if decision["decision"] == "finish":
             decision["answer"] = _answer_notices(decision["answer"], question, latest)
+        if stream and decision["answer"]:
+            yield {"type": "token", "answer": decision["answer"], "provisional": False}
         yield {"type": "observation", **decision, "model": result["model"],
                 "usage": {key: result.get(key) for key in ("prompt_eval_count", "eval_count")},
                 "elapsed_seconds": perf_counter() - started}
@@ -852,7 +749,10 @@ def _run_react(question: str, tools: list[BaseTool] | None = None, context: dict
                                                                     (not external_only or item.name == "web_search")],
                                          "pending": True}
                 elif blocked and messages:
-                    state["recovery"]["pending"] = _paper_content_pending(state["observations"])
+                    state["recovery"]["pending"] = any(
+                        item.get("status") == "error" or isinstance(item.get("result"), dict) and
+                        item["result"].get("status") in {"incomplete", "insufficient_evidence", "needs_confirmation"}
+                        for item in state["observations"][-len(messages):])
                 # 仅当Action正常结束，才观察结果；直接回答计划也会进入此处。
                 if stream:
                     for event in _observe_events(question, tools, state, messages, thought=thought, stream=True):

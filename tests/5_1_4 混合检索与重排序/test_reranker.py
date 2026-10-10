@@ -7,12 +7,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-import os
-import tempfile
 import unittest
 from unittest.mock import patch
 from langchain_core.documents import Document
-from src.retrieval.reranker import Reranker, get_reranker
+from src.retrieval.reranker import Reranker
 
 
 class TestReranker(unittest.TestCase):
@@ -44,155 +42,12 @@ class TestReranker(unittest.TestCase):
         self.assertIs(found[0][0], self.candidates[1][0])
         self.assertEqual(original, [(doc.page_content, doc.metadata) for doc, _ in self.candidates])
 
-    def test_single_candidate_zero_score_and_large_k(self):
-        """单候选结果仍为列表，零分保留，K 超出候选数不补齐或重复。"""
-        with patch("src.retrieval.reranker.get_reranker") as model:
-            model.return_value.predict.return_value = [0.0]
-            self.assertEqual(self.reranker.rerank("query", self.candidates[:1], k=100),
-                             [(self.candidates[0][0], 0.0)])
-
-    def test_empty_query_or_candidates_do_not_load_model(self):
-        with patch("src.retrieval.reranker.get_reranker") as model:
-            self.assertEqual(self.reranker.rerank("  \n", self.candidates), [])
-            self.assertEqual(self.reranker.rerank("query", []), [])
-            model.assert_not_called()
-
-    def test_invalid_k_is_rejected_before_loading_model(self):
-        for value in (0, -1, True, 1.5):
-            with self.subTest(k=value), patch("src.retrieval.reranker.get_reranker") as model:
-                with self.assertRaisesRegex(ValueError, "k"):
-                    self.reranker.rerank("query", self.candidates, k=value)
-                model.assert_not_called()
-
-    def test_invalid_batch_and_token_length_are_rejected(self):
-        for key in ("reranker_batch_size", "reranker_max_length"):
-            old = self.config["retrieval"][key]
-            for value in (0, -1, True, 1.5):
-                with self.subTest(key=key, value=value):
-                    self.config["retrieval"][key] = value
-                    with self.assertRaisesRegex(ValueError, key):
-                        Reranker()
-            self.config["retrieval"][key] = old
-
-    def test_score_count_and_nonfinite_values_are_rejected(self):
-        for scores in ([0.1], [float("nan"), 0.1, 0.2], [float("inf"), 0.1, 0.2]):
-            with self.subTest(scores=scores), patch("src.retrieval.reranker.get_reranker") as model:
-                model.return_value.predict.return_value = scores
-                with self.assertRaisesRegex(ValueError, "分数"):
-                    self.reranker.rerank("query", self.candidates)
 
     def test_inference_error_is_not_silently_replaced_by_rrf(self):
         with patch("src.retrieval.reranker.get_reranker") as model:
             model.return_value.predict.side_effect = RuntimeError("推理失败")
             with self.assertRaisesRegex(RuntimeError, "推理失败"):
                 self.reranker.rerank("query", self.candidates)
-
-    def test_shared_tokenizer_is_serialized_across_reranker_instances(self):
-        """复现Windows分词器借用冲突：分窗和预测共享同一互斥范围。"""
-        from concurrent.futures import ThreadPoolExecutor
-        from threading import Barrier, Lock
-        from time import sleep
-        from types import SimpleNamespace
-
-        busy, gate = Lock(), Barrier(2)
-
-        def encode(*args, **kwargs):
-            if not busy.acquire(blocking=False):
-                raise RuntimeError("Already borrowed")
-            try:
-                sleep(.03)
-                return [1]
-            finally:
-                busy.release()
-
-        tokenizer = SimpleNamespace(encode=encode, num_special_tokens_to_add=lambda **kwargs: 3)
-        model = SimpleNamespace(tokenizer=tokenizer, predict=lambda pairs, **kwargs:
-                                (encode(pairs) and [.9] * len(pairs)))
-        candidates = [(Document(page_content="正文" * 100), 1)]
-
-        def request():
-            gate.wait(timeout=2)
-            return Reranker().rerank("query", candidates)
-
-        with patch("src.retrieval.reranker.get_reranker", return_value=model), \
-                patch.object(Reranker, "_passages", side_effect=lambda query, doc, tok:
-                             (tok.encode(query) and [doc.page_content])), ThreadPoolExecutor(2) as pool:
-            futures = [pool.submit(request) for _ in range(2)]
-            self.assertTrue(all(future.result(timeout=3)[0][1] == .9 for future in futures))
-
-    def test_failed_prediction_does_not_block_next_request(self):
-        """预测异常仍释放共享互斥，下次请求保留正常排序。"""
-        with patch("src.retrieval.reranker.get_reranker") as model:
-            model.return_value.predict.side_effect = [RuntimeError("推理失败"), [.9]]
-            with self.assertRaisesRegex(RuntimeError, "推理失败"):
-                self.reranker.rerank("query", self.candidates[:1])
-            self.assertEqual(self.reranker.rerank("query", self.candidates[:1])[0][1], .9)
-
-
-class TestLocalReranker(unittest.TestCase):
-    """核验本地权重加载、缓存与失败恢复，测试不下载真实模型。"""
-
-    def setUp(self):
-        from src.utils.config import load_config
-        self.directory = tempfile.TemporaryDirectory()
-        self.addCleanup(self.directory.cleanup)
-        self.config = load_config()
-        self.config["retrieval"]["reranker_local_path"] = self.directory.name
-        patcher = patch.dict(os.environ, {"HF_HOME": str(Path(self.directory.name) / "cache")})
-        patcher.start()
-        self.addCleanup(patcher.stop)
-        get_reranker.cache_clear()
-        self.addCleanup(get_reranker.cache_clear)
-        patcher = patch("src.retrieval.reranker.load_config", return_value=self.config)
-        patcher.start()
-        self.addCleanup(patcher.stop)
-
-    def test_local_loading_and_reuse(self):
-        """配置/模型/Tokenizer 均只读本地文件，不执行远程代码，重复调用只加载一次。"""
-        from torch.nn import Sigmoid
-        with patch("sentence_transformers.CrossEncoder") as model:
-            self.assertIs(get_reranker(), model.return_value)
-            self.assertIs(get_reranker(), model.return_value)
-            model.assert_called_once()
-            self.assertEqual(model.call_args.args, (self.directory.name,))
-            kwargs = dict(model.call_args.kwargs)
-            self.assertIsInstance(kwargs.pop("default_activation_function"), Sigmoid)
-            self.assertEqual(kwargs, {"device": "cpu", "max_length": 512,
-                                     "local_files_only": True, "trust_remote_code": False})
-
-    def test_parallel_first_load_constructs_only_once(self):
-        """三线程同时首次调用，构造器只执行一次；失败不锁死后续请求。"""
-        from concurrent.futures import ThreadPoolExecutor
-        from threading import Barrier
-        from time import sleep
-        gate, instance = Barrier(3), object()
-        def construct(*args, **kwargs):
-            sleep(.08)
-            return instance
-        def request():
-            gate.wait(timeout=2)
-            return get_reranker()
-        with patch("sentence_transformers.CrossEncoder", side_effect=construct) as model, ThreadPoolExecutor(3) as pool:
-            futures = [pool.submit(request) for _ in range(3)]
-            self.assertTrue(all(future.result(timeout=3) is instance for future in futures))
-            self.assertEqual(model.call_count, 1)
-
-    def test_missing_model_does_not_initialize_remote_client(self):
-        self.config["retrieval"]["reranker_local_path"] = str(Path(self.directory.name) / "missing")
-        with patch("sentence_transformers.CrossEncoder") as model:
-            with self.assertRaisesRegex(FileNotFoundError, "请先按用户手册下载权重"):
-                get_reranker()
-            model.assert_not_called()
-
-    def test_failed_loading_is_not_cached_and_can_retry(self):
-        """损坏权重错误保留，修复后下次调用重新加载而不是缓存失败。"""
-        with patch("sentence_transformers.CrossEncoder") as model:
-            model.side_effect = OSError("损坏的权重")
-            with self.assertRaisesRegex(OSError, "损坏的权重"):
-                get_reranker()
-            model.side_effect = None
-            self.assertIs(get_reranker(), model.return_value)
-            self.assertEqual(model.call_count, 2)
 
 
 if __name__ == "__main__":

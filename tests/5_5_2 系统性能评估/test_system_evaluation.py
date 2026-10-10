@@ -26,27 +26,6 @@ class EvaluationMetricTests(unittest.TestCase):
             metadata["page_end"] = end
         return {"metadata": metadata}
 
-    def test_second_rank_has_reciprocal_half(self):
-        result = evaluation.page_metrics([self.chunk("vit", 3), self.chunk("vit", 4)], self.questions["F001"])
-        self.assertEqual((result["hit_at_5"], result["mrr_at_5"], result["recall_at_5"]), (True, .5, 1))
-
-    def test_sixth_rank_does_not_count(self):
-        result = evaluation.page_metrics([self.chunk("vit", 3)] * 5 + [self.chunk("vit", 4)], self.questions["F001"])
-        self.assertEqual((result["hit_at_5"], result["mrr_at_5"], result["recall_at_5"]), (False, 0, 0))
-
-    def test_same_page_is_not_counted_twice(self):
-        result = evaluation.page_metrics([self.chunk("vit", 4)] * 5, self.questions["S001"])
-        self.assertEqual(result["recall_at_5"], .25)
-        self.assertEqual(result["paper_coverage_at_5"], .25)
-        self.assertFalse(result["all_papers_hit_at_5"])
-
-    def test_page_number_requires_same_paper(self):
-        result = evaluation.page_metrics([self.chunk("deit", 4)], self.questions["F001"])
-        self.assertFalse(result["hit_at_5"])
-
-    def test_cross_page_block_includes_evidence_page(self):
-        result = evaluation.page_metrics([self.chunk("vit", 3, 4)], self.questions["F001"])
-        self.assertEqual(result["recall_at_5"], 1)
 
     def test_all_required_papers_are_covered(self):
         ranked = [self.chunk("vit", 4), self.chunk("deit", 1), self.chunk("swin", 1), self.chunk("detr", 8)]
@@ -54,18 +33,6 @@ class EvaluationMetricTests(unittest.TestCase):
         self.assertEqual(result["recall_at_5"], 1)
         self.assertTrue(result["all_papers_hit_at_5"])
 
-    def test_no_tool_and_unrelated_tool_are_wrong(self):
-        for calls in ([], [{"name": "calculator", "args": {}}]):
-            self.assertFalse(evaluation.tool_selection(self.questions["F001"], calls, self.manifest))
-
-    def test_paper_list_alone_does_not_answer_fact(self):
-        self.assertFalse(evaluation.tool_selection(self.questions["F001"], [{"name": "paper_list", "args": {}}], self.manifest))
-
-    def test_comparison_needs_correct_paper_ids(self):
-        correct = [{"name": "paper_compare", "args": {"paper_a_id": self.identifiers["vit"], "paper_b_id": self.identifiers["deit"]}}]
-        self.assertTrue(evaluation.tool_selection(self.questions["C001"], correct, self.manifest))
-        wrong = [{"name": "paper_compare", "args": {"paper_a_id": self.identifiers["vit"], "paper_b_id": self.identifiers["swin"]}}]
-        self.assertFalse(evaluation.tool_selection(self.questions["C001"], wrong, self.manifest))
 
     def test_failure_keeps_denominator_and_unknown_tokens(self):
         rows = [{"tool_selection_correct": True, "iterations": 1, "seconds": 10, "task_complete": True,

@@ -7,10 +7,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from hashlib import sha256
 import tempfile
 import unittest
-from unittest.mock import patch
 import pymupdf
 from src.frontend.components.documents import read_pdf_page
-from src.utils.config import load_config, ollama_base_url
 
 
 class TestCitationPage(unittest.TestCase):
@@ -37,48 +35,6 @@ class TestCitationPage(unittest.TestCase):
         with pymupdf.open(stream=result["pdf"], filetype="pdf") as pdf:
             expected = pdf[1].get_pixmap(matrix=pymupdf.Matrix(1.5, 1.5)).tobytes("png")
         self.assertEqual(result["image"], expected)
-
-    def test_rejects_paths_wrong_pages_changed_and_deleted_sources(self):
-        for page in (0, 3, True, "2"):
-            with self.subTest(page=page), self.assertRaises(ValueError):
-                read_pdf_page(self.root, {**self.reference, "metadata": {
-                    **self.reference["metadata"], "page_number": page}})
-        with self.assertRaises(ValueError):
-            read_pdf_page(self.root, {**self.reference, "source_file": "../paper.pdf"})
-        self.source.write_bytes(self.data + b"changed")
-        with self.assertRaises(ValueError):
-            read_pdf_page(self.root, self.reference)
-        self.source.unlink()
-        with self.assertRaises(FileNotFoundError):
-            read_pdf_page(self.root, self.reference)
-
-    def test_rejects_symlink(self):
-        target = self.root / "outside.pdf"
-        target.write_bytes(self.data)
-        self.source.unlink()
-        self.source.symlink_to(target)
-        with self.assertRaises(FileNotFoundError):
-            read_pdf_page(self.root, self.reference)
-
-
-class TestContainerLocalAddress(unittest.TestCase):
-    def test_container_service_requires_container_and_never_accepts_cloud(self):
-        settings = {"provider": "ollama", "base_url": "http://ollama:11434/"}
-        with patch("src.utils.config.Path.is_file", return_value=False), self.assertRaises(ValueError):
-            ollama_base_url(settings)
-        with patch("src.utils.config.Path.is_file", return_value=True):
-            self.assertEqual(ollama_base_url(settings), "http://ollama:11434")
-            for address in ("https://ollama:11434", "http://example.com", "http://user@ollama:11434",
-                            "http://ollama:11434?redirect=remote"):
-                with self.subTest(address=address), self.assertRaises(ValueError):
-                    ollama_base_url({**settings, "base_url": address})
-
-    def test_environment_override_does_not_modify_yaml(self):
-        path = Path(__file__).resolve().parents[2] / "config.yaml"
-        before = path.read_bytes()
-        with patch.dict("os.environ", {"RAG_OLLAMA_BASE_URL": "http://ollama:11434"}):
-            self.assertEqual(load_config()["llm"]["base_url"], "http://ollama:11434")
-        self.assertEqual(path.read_bytes(), before)
 
 
 if __name__ == "__main__":

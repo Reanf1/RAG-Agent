@@ -46,11 +46,7 @@ def generation_options(settings: dict) -> dict:
 
 
 def chroma_metadata(config: dict) -> dict:
-    """建库和健康检查共用的集合约定，不创建客户端或加载模型。
-
-    模型名称与固定版本确定向量空间，HNSW参数确定索引配置。
-    已有集合不会被Chroma自动覆盖，因此两个入口都必须核对这些字段。
-    """
+    """业务建库时核对模型版本与HNSW配置，防止混用向量空间。"""
     retrieval = config["retrieval"]
     return {"embedding_model": config["embedding"]["model"],
             "embedding_revision": config["embedding"]["revision"],
@@ -109,10 +105,7 @@ def check_health() -> dict:
             client = chromadb.PersistentClient(path=chroma_persist_path(directory), settings=Settings(anonymized_telemetry=False))
             client.heartbeat()
             collection = client.get_collection(retrieval["collection_name"], embedding_function=None)
-            expected = chroma_metadata(config)
-            if any((collection.metadata or {}).get(key) != value for key, value in expected.items()):
-                raise ValueError("已有索引的模型版本或索引参数与配置不一致")
-            database.update(status="ok", chunks=collection.count(), detail="Chroma心跳、集合配置及块数读取正常；未执行向量检索。")
+            database.update(status="ok", chunks=collection.count(), detail="Chroma心跳和块数读取正常；未执行向量检索。")
     except Exception as error:
         database["detail"] = f"{type(error).__name__}: {error}。请检查索引目录、权限和集合配置后重试。"
     database["seconds"] = perf_counter() - started

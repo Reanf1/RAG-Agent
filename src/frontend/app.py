@@ -23,7 +23,7 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 from src.data_loader import LOADERS, create_import_tasks
-from src.frontend.components.documents import list_documents, delete_document, restore_document, read_pdf_page, read_document_content
+from src.frontend.components.documents import list_documents, delete_document, read_pdf_page, read_document_content
 from src.frontend.components.trace import execution_rows, conversation_statistics, record_runtime_success
 from src.agent import run_session
 from src.agent.tools import get_available_tools
@@ -216,16 +216,6 @@ with knowledge_tab:
     document_list, document_content = st.columns([2, 3], gap="medium")
     with document_list:
         st.subheader("知识库文档")
-        # 四字确认文字不换行，按钮保持原“删除”的54×40像素尺寸。
-        st.html("""<style>
-            [class*="st-key-delete_document-"] button,
-            .st-key-cancel_delete_document button,
-            .st-key-confirm_delete_document button {padding: 0 1px; height: 40px;}
-            [class*="st-key-delete_document-"] button p {white-space: nowrap;}
-            [class*="st-key-knowledge_document-"] button div[title],
-            [class*="st-key-knowledge_document-"] button p {white-space: normal; overflow-wrap: anywhere;}
-            .st-key-confirm_delete_document button p {font-size: 12px; white-space: nowrap;}
-        </style>""")
         if "document_notice" in st.session_state:
             st.info(st.session_state.pop("document_notice"))
         try:
@@ -245,24 +235,24 @@ with knowledge_tab:
                     st.caption("知识库暂无文档。")
                 for document in library:
                     pending = st.session_state.get("delete_pending") == document["doc_id"]
-                    # 为操作列留出空间，文件名换行显示，按钮保持54×40像素。
+                    # 为操作列留出空间，文件名和操作分列显示。
                     details, actions = st.columns([2, 1], gap="small", vertical_alignment="center")
                     with details:
                         selected = st.session_state.knowledge_document_id == document["doc_id"]
                         if st.button(document["name"], key=f"knowledge_document:{document['doc_id']}",
-                                     type="primary" if selected else "secondary", width="stretch"):
+                                     type="primary" if selected else "secondary"):
                             st.session_state.knowledge_document_id = document["doc_id"]
                             st.rerun()
                     with actions:
                         if pending:
-                            confirm_delete = st.button("确认删除", key="confirm_delete_document", width=54)
-                            cancel_delete = st.button("取消", key="cancel_delete_document", width=54)
+                            confirm_delete = st.button("确认删除", key="confirm_delete_document")
+                            cancel_delete = st.button("取消", key="cancel_delete_document")
                         elif st.button("删除", key=f"delete_document:{document['doc_id']}",
-                                     help=f"删除{document['name']}", disabled=not document["source_available"], width=54):
+                                     help=f"删除{document['name']}", disabled=not document["source_available"]):
                             st.session_state.delete_pending = document["doc_id"]
                             st.rerun()
                     st.caption(f"ID：{document['doc_id'][:8]}")
-            # 刷新放在文档列表下方、已归档知识上方。
+            # 刷新当前文档列表。
             st.button("刷新知识库状态", key="refresh_knowledge")
             if library:
                 if "delete_pending" in st.session_state:
@@ -279,31 +269,10 @@ with knowledge_tab:
                             "total": len(st.session_state.import_tasks)}
                         st.session_state.pop("delete_pending")
                         st.session_state.pop("health_result", None)
-                        st.session_state.document_notice = f"已删除 {removed} 个检索块，原文已回收，可在下方恢复。"
+                        st.session_state.document_notice = f"已删除 {removed} 个检索块，应用内原文副本已删除；如需再次使用请重新上传。"
                         st.rerun()
-            trash_dir = raw_dir / ".trash"
-            archived = sorted(folder.name for folder in trash_dir.iterdir()
-                              if folder.is_dir() and not folder.is_symlink() and len(folder.name) == 64
-                              and all(c in "0123456789abcdef" for c in folder.name)) if trash_dir.is_dir() and not trash_dir.is_symlink() else []
-            if archived:
-                archive_names = {identifier: " / ".join(f.name for f in sorted((trash_dir / identifier).iterdir())
-                                 if f.is_file() and not f.is_symlink() and f.suffix.lower() in LOADERS)
-                                 for identifier in archived}
-                # 单选框只有选择操作，名称和ID不作为可编辑文本输入。
-                restore_id = st.radio("已归档知识", archived, key="restore_doc_id", width="stretch",
-                                     format_func=lambda identifier: archive_names[identifier],
-                                     captions=[f"ID：{identifier[:8]}" for identifier in archived])
-                if st.button("恢复", key="restore_document"):
-                    st.session_state.import_tasks = restore_document(raw_dir, restore_id)
-                    for progress in batch_build_index(st.session_state.import_tasks, raw_dir, max_file_size_mb):
-                        st.session_state.import_progress = progress
-                        show_import_status()
-                    st.session_state.knowledge_document_id = restore_id
-                    st.session_state.document_notice = "原文已恢复，请查看本批导入状态；失败项可重试。"
-                    st.session_state.pop("health_result", None)
-                    st.rerun()
         except Exception as error:
-            library_error = f"文档管理失败：{type(error).__name__}: {error}。原文保留，请修正后重试。"
+            library_error = f"文档管理失败：{type(error).__name__}: {error}。请检查原文目录和索引后重试。"
             st.error(library_error)
     with document_content:
         selected_document = next((document for document in library or []
@@ -410,12 +379,7 @@ with chat_tab:
                 with st.chat_message("assistant"):
                     st.markdown(previous["answer"])
                     show_turn_footer(previous)
-    # 原生消息输入框自动清空已提交文字；将内置发送图标显示为“发送”。
-    st.html("""<style>
-        [class*="st-key-agent_question-"] [data-testid="stChatInputSubmitButton"] {width: 64px;}
-        [class*="st-key-agent_question-"] [data-testid="stChatInputSubmitButton"] svg {display: none;}
-        [class*="st-key-agent_question-"] [data-testid="stChatInputSubmitButton"]::after {content: '发送'; font-size: 14px;}
-    </style>""")
+    # 原生消息输入框自动清空已提交文字。
     agent_question = st.chat_input("输入消息…", key=f"agent_question:{st.session_state.get('agent_session_id', 'unavailable')}", disabled=not session_ready)
     approval = st.session_state.pop("agent_confirmed_rag", None) if session_ready else None
     if approval:

@@ -2,6 +2,7 @@
 
 import os
 import json
+import re
 import logging
 from hashlib import sha256
 from functools import lru_cache
@@ -192,10 +193,10 @@ class VectorStore:
 
 
 def _write_index_status(task, chunks, vector_store, *, complete):
-    """独立旁注记录预期块，不改原始资料；重开页面可核对实际块ID集合。"""
+    """记录预期块数和导入结果，页面读取实际块数判断是否全部入库。"""
     path = Path(task["path"]).parent / ".index_status.json"
     state = {"index_directory": str(vector_store.directory), "collection": vector_store._store._collection.name,
-             "expected_ids": [chunk.metadata["chunk_id"] for chunk in chunks], "complete": complete}
+             "expected_chunks": len(chunks), "complete": complete}
     temporary = path.with_suffix(".tmp")
     temporary.write_text(json.dumps(state, ensure_ascii=False), encoding="utf-8")
     temporary.replace(path)
@@ -226,7 +227,7 @@ def batch_build_index(tasks: list[dict], raw_dir: str | Path,
             with document_lock(raw_dir, sha256(task["data"]).hexdigest()):
                 # 已删除的原文不能被旧任务内存中的 Document 重新入库。
                 if not needs_loading and not Path(task["path"]).is_file():
-                    raise FileNotFoundError("原文已删除或缺失，请恢复后重新导入")
+                    raise FileNotFoundError("原文已删除或缺失，请重新上传后导入")
                 if needs_loading:
                     # 复用原有格式/大小校验和安全保存，不向页面展示短暂的加载成功。
                     for _ in batch_import([task], raw_dir, max_file_size_mb):
@@ -245,12 +246,6 @@ def batch_build_index(tasks: list[dict], raw_dir: str | Path,
                     # 第一个有效文档才初始化本地模型/数据库，一批复用同一实例。
                     if vector_store is None:
                         vector_store = VectorStore()
-                    expected_ids = {chunk.metadata["chunk_id"] for chunk in chunks}
-                    existing_ids = {chunk.metadata["chunk_id"]
-                                    for chunk in vector_store.list_chunks(chunks[0].metadata["doc_id"])}
-                    if existing_ids - expected_ids:
-                        # 参数或解析结果变化时保留旧库和旧旁注，不能混入另一套块。
-                        raise ValueError("已有文档的分块或解析结果与本次不一致，请在新索引目录重建后启用；原索引未修改")
                     _write_index_status(task, chunks, vector_store, complete=False)
                     for offset in range(0, len(chunks), 500):
                         batch = chunks[offset:offset + 500]
@@ -258,10 +253,8 @@ def batch_build_index(tasks: list[dict], raw_dir: str | Path,
                         task["processed_chunks"] = offset + len(batch)
                         task["index_total"] = vector_store.count()
                         yield {"completed": index, "total": total}
-                    actual_ids = {chunk.metadata["chunk_id"]
-                                  for chunk in vector_store.list_chunks(chunks[0].metadata["doc_id"])}
-                    if actual_ids != expected_ids:
-                        raise ValueError("实际索引块与预期集合不一致，本次入库未完成")
+                    if len(vector_store.list_chunks(chunks[0].metadata["doc_id"])) != len(chunks):
+                        raise ValueError("实际索引块数与预期不一致，本次入库未完成")
                     _write_index_status(task, chunks, vector_store, complete=True)
                     task.update(status="success", indexed=True)
         except Exception as error:
@@ -269,3 +262,39 @@ def batch_build_index(tasks: list[dict], raw_dir: str | Path,
             task.update(status="failed", error=f"{type(error).__name__}: {error}")
         task["elapsed"] = round(perf_counter() - start, 3)
         yield {"completed": index + 1, "total": total}
+
+
+def list_documents(raw_dir: Path, index_dir: Path) -> list[dict]:
+    """合并已保存原文和当前索引；有块不等同于全部预期块导入成功。"""
+    from src.data_loader import LOADERS
+
+    rows = {}
+    if (index_dir / "chroma.sqlite3").is_file():
+        for chunk in VectorStore(index_dir).list_chunks():
+            identifier = chunk.metadata["doc_id"]
+            row = rows.setdefault(identifier, {"doc_id": identifier, "name": chunk.metadata.get("source_file", "未知文档"),
+                                               "chunks": 0, "source_available": False})
+            row["chunks"] += 1
+    if raw_dir.exists():
+        for folder in sorted(raw_dir.iterdir()):
+            if folder.is_symlink() or not folder.is_dir() or not re.fullmatch(r"[0-9a-f]{64}", folder.name):
+                continue
+            files = [f for f in sorted(folder.iterdir()) if f.is_file() and not f.is_symlink() and f.suffix.lower() in LOADERS]
+            if files:
+                row = rows.setdefault(folder.name, {"doc_id": folder.name, "chunks": 0})
+                row.update(name=" / ".join(f.name for f in files), source_available=True)
+    for identifier, row in rows.items():
+        row.update(index_status="已有索引，完整性未核验" if row["chunks"] else "未向量化", expected_chunks=None)
+        manifest = raw_dir / identifier / ".index_status.json"
+        if manifest.is_file():
+            try:
+                state = json.loads(manifest.read_text(encoding="utf-8"))
+                if (state["index_directory"] == str(index_dir.resolve()) and
+                        state["collection"] == load_config()["retrieval"]["collection_name"]):
+                    expected = state.get("expected_chunks", len(state.get("expected_ids", [])))
+                    row["expected_chunks"] = expected
+                    row["index_status"] = ("已向量化" if state["complete"] and expected == row["chunks"]
+                                           else "部分入库" if row["chunks"] else "未向量化")
+            except (OSError, ValueError, KeyError, TypeError):
+                row["index_status"] = "索引状态记录异常，完整性未核验"
+    return sorted(rows.values(), key=lambda row: (row["name"], row["doc_id"]))

@@ -1,0 +1,136 @@
+{
+  "date": "2026-10-10T19:42:44.921159+08:00",
+  "baseline_commit": "e4f2c77108aaee20ce91390cb4d3360bf553650d",
+  "scope": "按本科课程基本需求集中精简；Mac验收，不部署Windows，不改Word/PPT。",
+  "changes": [
+    "删除定制CSS和按钮尺寸；采用Streamlit原生布局。",
+    "删除文档回收站/恢复；确认后删除索引与应用原文副本。",
+    "删除会话归档/恢复与旧rag_history接口；确认后删除消息、摘要和会话。",
+    "删除停机索引修复CLI。",
+    "删除Observation半截JSON解析；一次请求后解析完整JSON，RAG正文仍真实流式。",
+    "摘要每次最多压缩一批，保留Token窗口与完整消息。",
+    "流式Markdown只暂存未闭合引用，不再扫描围栏、标题和行内代码尾部。",
+    "索引状态使用预期/实际块数，不再逐块集合核对；旧状态仅读取预期数量。",
+    "健康检查只测连接与读取；模型/索引配置仍在业务初始化时检查。",
+    "Agent完成判断删除历史目标追溯与语义关键词规则，保留当前工具状态、并行结果和有限恢复。",
+    "前端与文献工具共用文献列表实现。",
+    "科研Prompt保留逐项回答、实验条件、真实引用、缺项说明和预算；删除原句定位、数量换算和重复作答提醒。",
+    "测试由853项缩减为106项，覆盖基本功能与必要失败场景；课程实验脚本及原始证据保留。"
+  ],
+  "scale": {
+    "src": {
+      "before_files": 36,
+      "after_files": 35,
+      "before_lines": 6381,
+      "after_lines": 5814
+    },
+    "tests": {
+      "before_files": 76,
+      "after_files": 61,
+      "before_lines": 13112,
+      "after_lines": 3522
+    },
+    "test_cases": {
+      "before": 853,
+      "after": 106
+    }
+  },
+  "unit_tests": {
+    "passed": true,
+    "run": 106,
+    "elapsed_seconds": 6.22,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "evidence": "regression.json"
+  },
+  "real_tasks": {
+    "passed": true,
+    "run": 10,
+    "elapsed_seconds": 134.813,
+    "model": "qwen2.5:7b / Ollama / 本地Metal",
+    "embedding": "本地M3E",
+    "reranker": "本地BGE",
+    "evidence": "results.json",
+    "fixtures": "fixtures.json",
+    "config_and_initial_source": "runtime.json"
+  },
+  "failed_attempts": [
+    {
+      "evidence": "environment-attempt.json",
+      "reason": "初次沙箱Ollama无法分配Metal资源，真实模型请求HTTP 500；只调整临时服务启动权限，未改变业务逻辑。"
+    },
+    {
+      "evidence": "citation-attempt.json",
+      "reason": "9/10通过；问答数值正确但模型照抄来源标题形成非法引用。将证据编号与来源文本分开，格式与引用映射统一，再跑10项全部通过。"
+    }
+  ],
+  "preservation": {
+    "unchanged": true,
+    "raw_files": 102,
+    "raw_manifest_sha256": "8e282c9b87410aa20086c28105d982d2e48419f065af05903bd901c899f2b233",
+    "database_logical_sha256": {
+      "data/index/chroma.sqlite3": "b76853d2f0e99a00252d23f3e18eb3827b5ff6548e8c7cd623c99976bbf6b760",
+      "data/sessions/memory.sqlite3": "05c4465eb5a60fc28fb7f1cd0698a1003b0e651b251846256b326c089ecc14cc"
+    },
+    "method": "原文逐文件SHA-256；索引和会话SQLite只读逻辑转储摘要，与本轮测试前快照一致。"
+  },
+  "source_sha256": {
+    "src/__init__.py": "4eff7d4ca3dac42df51b1c3af47dca63bd2ce497ae566c8711223c15ccfab2b4",
+    "src/agent/__init__.py": "2ce20f266dfd2f68d0c4cbcb47894436933c8029a8b01064e9c4ad9af29294d9",
+    "src/agent/memory.py": "3bc0f84cbab71956f30527a171beea96c7330860338fef1d3eebb4bff174a8b4",
+    "src/agent/react_loop.py": "509bbae2d696b0d9ad30df0e3027f865fe6d4ce4dc9ba80f40f60cbfbb950864",
+    "src/agent/router.py": "19d07fb83645ca7d50f225b89d64ed181a1f15426dda7cf0f30d359aed49446a",
+    "src/agent/tools.py": "dea4bee70d65e36f659f8dfd381cc5cbad24e6169ef32aa2a933b40ba331b2a7",
+    "src/chunking/__init__.py": "615aa2e6e9722d909e0f91cafd193b1a7d7cd6139fec3b0db56eacdb481198e4",
+    "src/chunking/fixed_chunk.py": "3eba644bd15a827731aedaa246d21146a7353fea34e4d282e5f13414d37ed85d",
+    "src/chunking/recursive_chunk.py": "102e05c0bee461b0bf897987f098ed818dbcde19fa48b30af7e66502c417a8b3",
+    "src/chunking/semantic_chunk.py": "dd58437f9a6b2d1482f794ec95e53989d87c7af39c696b5230fb54d07e2d93e4",
+    "src/data_loader/__init__.py": "b3a40abae8e3dda3e31b863ff079f3308a44fc83270d87fa24d970179828a384",
+    "src/data_loader/docx_loader.py": "a4e8c69cb289855a6b6d5a69a840fe5dbd4abf9152dfe9d203bfaa1e1febb35d",
+    "src/data_loader/pdf_loader.py": "61c751a0e1be21224ebc62cbff42864a1cb1fd27bada9079a441800373ca8e3f",
+    "src/data_loader/text_loader.py": "ee23c076850491e7ca8b6b07de2a64734e4af41c06de65b96b8f076ce9a91477",
+    "src/frontend/__init__.py": "97c19dc7c9063934076460cb7134e8adad9ae2f723ae464b0a6f5d811dbfe936",
+    "src/frontend/app.py": "ebbf5ca7d11ea0de8b3fd80ad5b888330c18dac4085ccf8c5276ed55516383a5",
+    "src/frontend/components/documents.py": "c501731895c614a278c9e2d2d5086b3dca30aef972696493c5023b9131ee1828",
+    "src/frontend/components/sessions.py": "e0394832cbe234c04c5a781aa562eb2920d276dc9d19846587b6bd4e11d709b2",
+    "src/frontend/components/trace.py": "d932b5435eef1655a57d6380e993c1ad35b44ebc5e4578994c329ddd89b63374",
+    "src/generation/__init__.py": "fa92e01f4ecaefcc243a6e741c068fd1e99a208edf122757477c052eb29e8e7e",
+    "src/generation/cache.py": "f59ddbe1433502d6ac3ece6d24c6456a63c4bdf1658c77f32713e193f3717dfe",
+    "src/generation/prompt_template.py": "b5b3b18ab112a7faa3fa1466d71f93342f9560e49ca92a1eb612c27fad58a3be",
+    "src/generation/rag_pipeline.py": "d56f441c16600e0cb12e2c773ceba4097768d5e4b6b270b5d3c274f4aa4b0c4d",
+    "src/generation/streaming.py": "598045ed47c075dbacf65e866482c237b975889ff9ec2d2022273d5fd8190f4b",
+    "src/retrieval/__init__.py": "1c06b17aa89c59f50655993328e63eb7afdb5e0f2348f663941064a977bbeb27",
+    "src/retrieval/bm25_retriever.py": "361c5200c2da282a2683f8761827ca1c59dec3367d7b383bf2f1826724d307ae",
+    "src/retrieval/hybrid_retriever.py": "6fa5ef3e8d48c63ebf5bc62e20423b3c2c492b4706ae3d1e895903f92c9fe703",
+    "src/retrieval/reranker.py": "e739562f77dcfe303e6c1d5a5af88ae18a64cb4e7190873f4229f54cd387940e",
+    "src/retrieval/vector_store.py": "e7995573e4e9cff7b0c752b44e3c4d7663db61fd72dfe518318bb525343a7c1e",
+    "src/utils/__init__.py": "5400eb325512c113952b4137673a981259a8500d6824d392c2dd6c1904ee660a",
+    "src/utils/chroma_path.py": "85026d90844e9b2a690ea49c97faca70ca36cf0f158f8389058053abafdfcf27",
+    "src/utils/config.py": "5c308ed149dd1069df4295d379e2c5e266576280d2d85db111406ef3092cfdcc",
+    "src/utils/logger.py": "eb3682cf2bb642954aa00453c9e0b80067269657eb6eb251d2268e4bb7676551",
+    "src/utils/messages.py": "ff85b1bd80fe680d4b3e1767164c80602a2d7aca18687655cb7ce799fbad0441",
+    "src/utils/token_budget.py": "0c20f118ee2de0bd80c367afe06befa8f72a2850b9990b7528585919a4745bd8"
+  },
+  "after_test_changes": {
+    "files": [
+      "src/frontend/app.py"
+    ],
+    "note": "app.py仅修正文档删除异常提示与去除CSS后的输入框注释；没有业务逻辑变更。"
+  },
+  "answer_review": {
+    "assistant": "已按两份合成原文核对数据集、91.6%/88.4%、160/128样本数、方法、摘要与行号；工具与页面基本链路通过。",
+    "user": "待审核答案表述；本轮未重评正式12篇/60题及历史120条质量分数。"
+  },
+  "boundaries": [
+    "AppTest验证页面提交、保存与重绘，未复测实机浏览器兼容性。",
+    "Windows暂不部署；旧部署、Docker与并发实验对应其冻结版本。",
+    "本次不声称科学答案质量全面通过，不宣称新的性能、Token节省或最低硬件结论。",
+    "旧版界面/部署核验脚本依赖其冻结版本；当前验收入口为106项基本回归与verify_basic_tasks.py。"
+  ],
+  "temporary_ollama_stopped": true,
+  "user_changes_preserved": [
+    "requirements.txt",
+    ".eval-tmp/"
+  ]
+}

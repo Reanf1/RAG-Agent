@@ -115,8 +115,7 @@ class MemoryManager:
             connection.executescript("""
                 CREATE TABLE IF NOT EXISTS sessions (
                     session_id TEXT PRIMARY KEY,
-                    user_id TEXT NOT NULL,
-                    archived INTEGER NOT NULL DEFAULT 0
+                    user_id TEXT NOT NULL
                 );
                 CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
                 CREATE TABLE IF NOT EXISTS messages (
@@ -132,16 +131,8 @@ class MemoryManager:
                     content TEXT NOT NULL,
                     through_message_id INTEGER NOT NULL
                 );
-                CREATE TABLE IF NOT EXISTS rag_history (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    session_id TEXT NOT NULL REFERENCES sessions(session_id),
-                    data TEXT NOT NULL
-                );
-                CREATE INDEX IF NOT EXISTS idx_rag_session ON rag_history(session_id, id);
             """)
-            # 旧课程数据库保留消息与摘要，只补本轮需要的两列。
-            if "archived" not in {r[1] for r in connection.execute("PRAGMA table_info(sessions)")}:
-                connection.execute("ALTER TABLE sessions ADD COLUMN archived INTEGER NOT NULL DEFAULT 0")
+            # 旧消息表只补充公开事件字段，不改写原有正文。
             if "details" not in {r[1] for r in connection.execute("PRAGMA table_info(messages)")}:
                 connection.execute("ALTER TABLE messages ADD COLUMN details TEXT NOT NULL DEFAULT '{}'")
             connection.commit()
@@ -152,16 +143,14 @@ class MemoryManager:
         return connection
 
     @staticmethod
-    def _check_session(connection, user_id: str, session_id: str, *, include_archived=False):
+    def _check_session(connection, user_id: str, session_id: str):
         _nonempty(user_id, "user_id")
         _nonempty(session_id, "session_id")
-        row = connection.execute("SELECT user_id, archived FROM sessions WHERE session_id=?", (session_id,)).fetchone()
+        row = connection.execute("SELECT user_id FROM sessions WHERE session_id=?", (session_id,)).fetchone()
         if row is None:
             raise LookupError("会话不存在，请先创建会话")
         if row[0] != user_id:
             raise PermissionError("不能访问其他用户的会话")
-        if row[1] and not include_archived:
-            raise LookupError("会话已删除，请先从回收区恢复")
 
     def create_session(self, user_id: str) -> str:
         """创建归属固定的独立会话，UUID只用于标识，不用作登录凭据。"""
@@ -171,12 +160,12 @@ class MemoryManager:
             connection.execute("INSERT INTO sessions(session_id, user_id) VALUES(?, ?)", (session_id, user_id))
         return session_id
 
-    def list_sessions(self, user_id: str, *, archived=False) -> list[str]:
+    def list_sessions(self, user_id: str) -> list[str]:
         """只列出本用户的会话，包括尚未产生消息的空会话。"""
         _nonempty(user_id, "user_id")
         with closing(self._connect()) as connection:
             return [row[0] for row in connection.execute(
-                "SELECT session_id FROM sessions WHERE user_id=? AND archived=? ORDER BY rowid", (user_id, int(archived)))]
+                "SELECT session_id FROM sessions WHERE user_id=? ORDER BY rowid", (user_id,))]
 
     def get_messages(self, user_id: str, session_id: str) -> list:
         """按入库顺序返回新的LangChain消息对象，修改返回值不会污染存储。"""
@@ -188,17 +177,13 @@ class MemoryManager:
         return [classes[role](content=content, additional_kwargs=json.loads(details)) for role, content, details in rows]
 
     def get_session_title(self, user_id: str, session_id: str) -> str:
-        """只读取本用户会话标题，允许归档展示，不开放归档会话的问答执行。"""
+        """读取本用户首条问题作为会话标题。"""
         with closing(self._connect()) as connection:
-            self._check_session(connection, user_id, session_id, include_archived=True)
+            self._check_session(connection, user_id, session_id)
             question = connection.execute(
                 "SELECT content FROM messages WHERE session_id=? AND role='human' ORDER BY id LIMIT 1",
                 (session_id,)).fetchone()
-            if question:
-                return question[0][:24]
-            rag = connection.execute("SELECT data FROM rag_history WHERE session_id=? ORDER BY id LIMIT 1",
-                                     (session_id,)).fetchone()
-        return (json.loads(rag[0])["question"] if rag else "新会话")[:24]
+        return question[0][:24] if question else "新会话"
 
     def append_turn(self, user_id: str, session_id: str, question: str, answer: str, *, details: dict | None = None):
         """事务内追加一整轮，避免覆盖其他线程追加的历史或只保存半轮。"""
@@ -211,39 +196,15 @@ class MemoryManager:
                                    [(session_id, "human", question, "{}"), (session_id, "ai", answer, serialized)])
 
     def delete_session(self, user_id: str, session_id: str):
-        """删除为可恢复回收；历史和摘要保留，但不能继续访问或生成。"""
+        """确认后彻底删除本用户会话及正文、摘要，不提供归档恢复。"""
         with closing(self._connect()) as connection, connection:
             self._check_session(connection, user_id, session_id)
-            connection.execute("UPDATE sessions SET archived=1 WHERE session_id=?", (session_id,))
-
-    def restore_session(self, user_id: str, session_id: str):
-        """只恢复本用户会话，不改变原ID、消息、引用和摘要。"""
-        with closing(self._connect()) as connection, connection:
-            self._check_session(connection, user_id, session_id, include_archived=True)
-            connection.execute("UPDATE sessions SET archived=0 WHERE session_id=?", (session_id,))
-
-    def append_rag_message(self, user_id: str, session_id: str, message: dict):
-        """保存RAG页面的真实回答、引用与错误状态，不送入Agent记忆。"""
-        data = json.dumps(message, ensure_ascii=False, allow_nan=False)
-        with closing(self._connect()) as connection, connection:
-            self._check_session(connection, user_id, session_id)
-            connection.execute("INSERT INTO rag_history(session_id, data) VALUES(?, ?)", (session_id, data))
-
-    def get_rag_messages(self, user_id: str, session_id: str) -> list[dict]:
-        """按原始顺序加载引用详情；不重新检索或调用模型。"""
-        with closing(self._connect()) as connection:
-            self._check_session(connection, user_id, session_id)
-            return [json.loads(row[0]) for row in connection.execute(
-                "SELECT data FROM rag_history WHERE session_id=? ORDER BY id", (session_id,))]
-
-    def clear_rag_messages(self, user_id: str, session_id: str):
-        """只清空当前会话的RAG页面记录；Agent历史与知识库不受影响。"""
-        with closing(self._connect()) as connection, connection:
-            self._check_session(connection, user_id, session_id)
-            connection.execute("DELETE FROM rag_history WHERE session_id=?", (session_id,))
+            connection.execute("DELETE FROM summaries WHERE session_id=?", (session_id,))
+            connection.execute("DELETE FROM messages WHERE session_id=?", (session_id,))
+            connection.execute("DELETE FROM sessions WHERE session_id=?", (session_id,))
 
     def _read_memory(self, user_id: str, session_id: str):
-        """同一读事务取得归档和摘要边界，避免把清空前后数据拼接。"""
+        """同一读事务取得消息和摘要边界，避免把清空前后数据拼接。"""
         with closing(self._connect()) as connection, connection:
             connection.execute("BEGIN")
             self._check_session(connection, user_id, session_id)
@@ -270,7 +231,7 @@ class MemoryManager:
     def get_context(self, user_id: str, session_id: str) -> dict:
         """返回当前会话可发送给Agent的summary/history及其预算信息。
 
-        先读取消息与已摘要边界；超阈值时将旧问答分批压缩，保留最近问答。
+        先读取消息与已摘要边界；超阈值时将预算内旧问答一次压缩，保留最近问答。
         保存摘要时核对边界，生成后再次读取数据库，防止并发更新被旧结果覆盖。
         最后按Token预算删除最早的完整问答对，只裁剪本轮Context，磁盘原文
         始终保留。摘要调用失败则保留旧摘要并退回窗口，失败用量标为未知。
@@ -294,40 +255,36 @@ class MemoryManager:
             input_budget = config["llm"]["num_ctx"] // 2
             if input_budget < maximum + 128 + 256:
                 raise ValueError("模型上下文不足以容纳摘要输出及模板")
-            # 单次上下文读取最多处理三批；超大旧归档在下一请求继续，不无限等待。
-            for _ in range(3):
-                if not older:
+            # 一次请求只生成一份摘要，剩余旧问答留给后续请求。
+            batch = []
+            for index in range(0, len(older), 2):
+                candidate = batch + older[index:index + 2]
+                source = [{"role": role, "content": text} for _, role, text in candidate]
+                if count_memory_tokens(source, summary) > input_budget - 512:
                     break
-                batch = []
-                for index in range(0, len(older), 2):
-                    candidate = batch + older[index:index + 2]
-                    source = [{"role": role, "content": text} for _, role, text in candidate]
-                    if count_memory_tokens(source, summary) > input_budget - 512:
-                        break
-                    batch = candidate
+                batch = candidate
+            try:
+                if not batch:
+                    raise ValueError("旧对话单轮超过摘要输入预算，保留原文并回退历史窗口")
+                source = [{"role": role, "content": text} for _, role, text in batch]
+                summary_started = perf_counter()
                 try:
-                    if not batch:
-                        raise ValueError("旧对话单轮超过摘要输入预算，保留原文并回退历史窗口")
-                    source = [{"role": role, "content": text} for _, role, text in batch]
-                    summary_started = perf_counter()
-                    try:
-                        result = _summarize(summary, source, maximum, input_budget)
-                    except (OSError, ValueError, RuntimeError):
-                        # 失败模型调用可能已消耗Token；不能因回退窗口而把本次用量当作零。
-                        attempts.append({"usage": {"prompt_eval_count": None, "eval_count": None},
-                                         "elapsed_seconds": perf_counter() - summary_started, "saved": False})
-                        raise
-                    attempts.append({key: value for key, value in result.items() if key != "summary"})
-                    attempts[-1]["saved"] = False
-                    self._save_summary(user_id, session_id, through_id, batch[-1][0], result["summary"])
-                    attempts[-1]["saved"] = True
-                    summary, through_id = result["summary"], batch[-1][0]
-                    del older[:len(batch)]
-                except (OSError, ValueError, RuntimeError, sqlite3.Error) as error:
-                    warning = f"摘要压缩未完成：{error}；保留已存记忆并使用Token窗口，可稍后重试。"
-                    break
+                    result = _summarize(summary, source, maximum, input_budget)
+                except (OSError, ValueError, RuntimeError):
+                    # 失败模型调用可能已消耗Token；不能因回退窗口而把本次用量当作零。
+                    attempts.append({"usage": {"prompt_eval_count": None, "eval_count": None},
+                                     "elapsed_seconds": perf_counter() - summary_started, "saved": False})
+                    raise
+                attempts.append({key: value for key, value in result.items() if key != "summary"})
+                attempts[-1]["saved"] = False
+                self._save_summary(user_id, session_id, through_id, batch[-1][0], result["summary"])
+                attempts[-1]["saved"] = True
+                summary, through_id = result["summary"], batch[-1][0]
+                del older[:len(batch)]
+            except (OSError, ValueError, RuntimeError, sqlite3.Error) as error:
+                warning = f"摘要压缩未完成：{error}；保留已存记忆并使用Token窗口，可稍后重试。"
             if older and not warning:
-                warning = "旧归档超过三批摘要预算，剩余部分在后续请求继续；当前仍受Token窗口限制。"
+                warning = "部分旧问答超过本次摘要预算，后续请求继续；当前使用Token窗口。"
         # 重新读取权威存储；并发追加/清空/摘要更新不能返回过期快照。
         rows, (summary, through_id) = self._read_memory(user_id, session_id)
         original_turns = len(rows) // 2
@@ -357,7 +314,6 @@ class MemoryManager:
         with closing(self._connect()) as connection, connection:
             self._check_session(connection, user_id, session_id)
             connection.execute("DELETE FROM summaries WHERE session_id=?", (session_id,))
-            connection.execute("DELETE FROM rag_history WHERE session_id=?", (session_id,))
             connection.execute("DELETE FROM messages WHERE session_id=?", (session_id,))
 
 

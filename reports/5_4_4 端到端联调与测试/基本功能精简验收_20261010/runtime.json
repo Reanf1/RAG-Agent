@@ -1,0 +1,119 @@
+{
+  "config": {
+    "app": {
+      "name": "智能科研助理",
+      "description": "基于 RAG + Agent 的论文知识库问答系统"
+    },
+    "importing": {
+      "max_file_size_mb": 20
+    },
+    "llm": {
+      "provider": "ollama",
+      "base_url": "http://127.0.0.1:11435",
+      "model": "qwen2.5:7b",
+      "temperature": 0.1,
+      "top_p": 0.9,
+      "top_k": 40,
+      "num_ctx": 16384,
+      "num_predict": 1024,
+      "repeat_penalty": 1.0
+    },
+    "generation": {
+      "low_relevance_threshold": 0.1,
+      "max_context_chars": 9000,
+      "max_prompt_chars": 18000,
+      "cache": {
+        "similarity_threshold": 0.97,
+        "max_entries": 100
+      }
+    },
+    "embedding": {
+      "model": "moka-ai/m3e-base",
+      "revision": "764b537a0e50e5c7d64db883f2d2e051cbe3c64c",
+      "local_path": "data/models/m3e-base",
+      "device": "cpu",
+      "batch_size": 32
+    },
+    "retrieval": {
+      "vector_store": "chroma",
+      "collection_name": "paper_chunks",
+      "search_ef": 100,
+      "index_threads": 4,
+      "top_k": 5,
+      "candidate_k": 20,
+      "rrf_k": 60,
+      "reranker_model": "BAAI/bge-reranker-base",
+      "reranker_revision": "2cfc18c9415c912f9d8155881c133215df768a70",
+      "reranker_local_path": "data/models/bge-reranker-base",
+      "reranker_device": "cpu",
+      "reranker_batch_size": 8,
+      "reranker_max_length": 512
+    },
+    "chunking": {
+      "strategy": "recursive",
+      "chunk_size": 512,
+      "chunk_overlap": 64
+    },
+    "agent": {
+      "max_iterations": 8,
+      "max_parallel_calls": 2,
+      "tool_timeout_seconds": 300,
+      "max_tool_retries": 1,
+      "max_repeated_calls": 2,
+      "online_search_enabled": false
+    },
+    "memory": {
+      "max_history_tokens": 2000,
+      "tokenizer_path": "data/models/qwen2.5-tokenizer/tokenizer.json",
+      "summary_trigger_turns": 10,
+      "summary_keep_recent_turns": 4,
+      "summary_max_tokens": 400
+    },
+    "paths": {
+      "raw_documents": "/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-basic-tasks-d60muh4z/raw",
+      "vector_index": "/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-basic-tasks-d60muh4z/index",
+      "logs": "/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-basic-tasks-d60muh4z/logs",
+      "session_db": "/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-basic-tasks-d60muh4z/memory.sqlite3"
+    }
+  },
+  "runtime": "/var/folders/bd/bqv3fs8d7lx87n0xp3p4mchr0000gn/T/rag-basic-tasks-d60muh4z",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "note": "合成文本用于验证软件基本流程，数字不是论文实验成绩；仅覆盖配置，模型、检索、工具均真实执行。",
+  "source_sha256": {
+    "src/__init__.py": "4eff7d4ca3dac42df51b1c3af47dca63bd2ce497ae566c8711223c15ccfab2b4",
+    "src/agent/__init__.py": "2ce20f266dfd2f68d0c4cbcb47894436933c8029a8b01064e9c4ad9af29294d9",
+    "src/agent/memory.py": "3bc0f84cbab71956f30527a171beea96c7330860338fef1d3eebb4bff174a8b4",
+    "src/agent/react_loop.py": "509bbae2d696b0d9ad30df0e3027f865fe6d4ce4dc9ba80f40f60cbfbb950864",
+    "src/agent/router.py": "19d07fb83645ca7d50f225b89d64ed181a1f15426dda7cf0f30d359aed49446a",
+    "src/agent/tools.py": "dea4bee70d65e36f659f8dfd381cc5cbad24e6169ef32aa2a933b40ba331b2a7",
+    "src/chunking/__init__.py": "615aa2e6e9722d909e0f91cafd193b1a7d7cd6139fec3b0db56eacdb481198e4",
+    "src/chunking/fixed_chunk.py": "3eba644bd15a827731aedaa246d21146a7353fea34e4d282e5f13414d37ed85d",
+    "src/chunking/recursive_chunk.py": "102e05c0bee461b0bf897987f098ed818dbcde19fa48b30af7e66502c417a8b3",
+    "src/chunking/semantic_chunk.py": "dd58437f9a6b2d1482f794ec95e53989d87c7af39c696b5230fb54d07e2d93e4",
+    "src/data_loader/__init__.py": "b3a40abae8e3dda3e31b863ff079f3308a44fc83270d87fa24d970179828a384",
+    "src/data_loader/docx_loader.py": "a4e8c69cb289855a6b6d5a69a840fe5dbd4abf9152dfe9d203bfaa1e1febb35d",
+    "src/data_loader/pdf_loader.py": "61c751a0e1be21224ebc62cbff42864a1cb1fd27bada9079a441800373ca8e3f",
+    "src/data_loader/text_loader.py": "ee23c076850491e7ca8b6b07de2a64734e4af41c06de65b96b8f076ce9a91477",
+    "src/frontend/__init__.py": "97c19dc7c9063934076460cb7134e8adad9ae2f723ae464b0a6f5d811dbfe936",
+    "src/frontend/app.py": "3bad281bc253e5ccae3697360606946e8fcb4dd39db1c1bf5b93df78b93a437b",
+    "src/frontend/components/documents.py": "c501731895c614a278c9e2d2d5086b3dca30aef972696493c5023b9131ee1828",
+    "src/frontend/components/sessions.py": "e0394832cbe234c04c5a781aa562eb2920d276dc9d19846587b6bd4e11d709b2",
+    "src/frontend/components/trace.py": "d932b5435eef1655a57d6380e993c1ad35b44ebc5e4578994c329ddd89b63374",
+    "src/generation/__init__.py": "fa92e01f4ecaefcc243a6e741c068fd1e99a208edf122757477c052eb29e8e7e",
+    "src/generation/cache.py": "f59ddbe1433502d6ac3ece6d24c6456a63c4bdf1658c77f32713e193f3717dfe",
+    "src/generation/prompt_template.py": "b5b3b18ab112a7faa3fa1466d71f93342f9560e49ca92a1eb612c27fad58a3be",
+    "src/generation/rag_pipeline.py": "d56f441c16600e0cb12e2c773ceba4097768d5e4b6b270b5d3c274f4aa4b0c4d",
+    "src/generation/streaming.py": "598045ed47c075dbacf65e866482c237b975889ff9ec2d2022273d5fd8190f4b",
+    "src/retrieval/__init__.py": "1c06b17aa89c59f50655993328e63eb7afdb5e0f2348f663941064a977bbeb27",
+    "src/retrieval/bm25_retriever.py": "361c5200c2da282a2683f8761827ca1c59dec3367d7b383bf2f1826724d307ae",
+    "src/retrieval/hybrid_retriever.py": "6fa5ef3e8d48c63ebf5bc62e20423b3c2c492b4706ae3d1e895903f92c9fe703",
+    "src/retrieval/reranker.py": "e739562f77dcfe303e6c1d5a5af88ae18a64cb4e7190873f4229f54cd387940e",
+    "src/retrieval/vector_store.py": "e7995573e4e9cff7b0c752b44e3c4d7663db61fd72dfe518318bb525343a7c1e",
+    "src/utils/__init__.py": "5400eb325512c113952b4137673a981259a8500d6824d392c2dd6c1904ee660a",
+    "src/utils/chroma_path.py": "85026d90844e9b2a690ea49c97faca70ca36cf0f158f8389058053abafdfcf27",
+    "src/utils/config.py": "5c308ed149dd1069df4295d379e2c5e266576280d2d85db111406ef3092cfdcc",
+    "src/utils/logger.py": "eb3682cf2bb642954aa00453c9e0b80067269657eb6eb251d2268e4bb7676551",
+    "src/utils/messages.py": "ff85b1bd80fe680d4b3e1767164c80602a2d7aca18687655cb7ce799fbad0441",
+    "src/utils/token_budget.py": "0c20f118ee2de0bd80c367afe06befa8f72a2850b9990b7528585919a4745bd8"
+  }
+}

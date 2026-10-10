@@ -1,11 +1,9 @@
 """上下文拼接、截断、本地生成共用逻辑与答案引用溯源。"""
 
 from copy import deepcopy
-from decimal import Decimal
 import math
 import re
 import json
-import unicodedata
 from urllib.error import HTTPError, URLError
 from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
 
@@ -238,62 +236,6 @@ def _finish_generation(result: dict, context: dict, sampling: dict) -> dict:
     if not isinstance(result.get("model"), str) or not result["model"]:
         raise ValueError("本地 Ollama 返回的数据格式无法解析：缺少模型名称")
     resolved = resolve_citations(raw_answer, context)
-    # 只核验模型明确声称逐字引用的句子；编号合法不代表解释语义正确。
-    # 只归一PDF排版，不猜测或修补事实，失败时保留raw_answer供审核。
-    references = {item["id"]: item["text"] for item in context["references"]}
-    def quote_text(text, *, keep_line_hyphen=False):
-        text = unicodedata.normalize("NFKC", text).casefold()
-        # 仅去掉行末断词的连字符；同一行的术语连字符和数字原样保留。
-        text = re.sub(r"(?<=\w)-\s*\n\s*(?=\w)", "-" if keep_line_hyphen else "", text)
-        return re.sub(r"\s+", "", text)
-    quote_errors, verified_quotes = [], []
-    # 直接带引用的引句不依赖固定标签；省略引号的明确原文标签也要校验。
-    quotes = list(re.finditer(r'(["“][^"”]+["”][。.]*)\s*(?:-\s*)?((?:\[参考文档\d+\])+)', raw_answer, re.S))
-    for labelled in re.finditer(r'(?:原文依据|Source evidence|Original evidence)\s*[:：]\s*([^\[]+?)\s*((?:\[参考文档\d+\])+)', raw_answer, re.I | re.S):
-        if not labelled[1].lstrip().startswith(('"', '“')):
-            quotes.append(labelled)
-    for quote in quotes:
-        evidence = quote[1].strip()
-        if evidence.startswith(('"', '“')):
-            evidence = evidence.rstrip('。.').strip()[1:]
-            evidence = evidence[:-1] if evidence.endswith(('"', '”')) else evidence
-        # 模型可能把引句末尾英文句号写成中文句号；仅去句末标点，事实正文仍逐字定位。
-        evidence = evidence.rstrip('。.')
-        text = quote_text(evidence)
-        ids = [int(value) for value in re.findall(r"\[参考文档(\d+)\]", quote[2])]
-        if not text or not any(text in quote_text(references.get(value, ""), keep_line_hyphen=keep)
-                               for value in ids for keep in (False, True)):
-            quote_errors.append(ids)
-        else:
-            verified_quotes.append((quote.group(), ids))
-    if quote_errors:
-        resolved["warnings"].append("回答声称引用的原句无法在所引片段定位，已暂停展示结论；请核对原文后重试。")
-        resolved["answer"] = "当前回答的原文引句未通过定位校验，无法据此确认科研结论。请查看引用原文或补充相关片段。"
-    resolved["evidence_quote_errors"] = quote_errors
-    # 核对带引用的数量与所引片段；保留原单位也不能绕过错误数值／错页检查。
-    # 不将JFT-300M等连字符名称当作数量，仍不能据此认定对象、条件或全部语义正确。
-    # Decimal 按十进制比较，避免 303M 与 3.03 亿出现浮点误差。
-    units = {"M": 1000000, "million": 1000000, "B": 1000000000,
-             "billion": 1000000000, "万": 10000, "亿": 100000000}
-    amount_pattern = r"(?<![\dA-Za-z.\-])(\d+(?:,\d{3})*(?:\.\d+)?)\s*(M(?![A-Za-z])|B(?![A-Za-z])|million\b|billion\b|万|亿)"
-    def amounts(text):
-        return {Decimal(number.replace(",", "")) * units[unit]
-                for number, unit in re.findall(amount_pattern, text)}
-    number_errors = []
-    for claim in re.finditer(r"([^\n\[]*)((?:\[参考文档\d+\])+)", raw_answer):
-        claimed = amounts(claim[1])
-        ids = [int(value) for value in re.findall(r"\[参考文档(\d+)\]", claim[2])]
-        source = "\n".join(references.get(value, "") for value in ids)
-        if claimed and not claimed <= amounts(source):
-            number_errors.extend(value for value in ids if value not in number_errors)
-    if number_errors:
-        resolved["warnings"].append("回答中的数量与所引原文不一致，已暂停展示结论；请核对原文数值、单位和引用来源。")
-        resolved["answer"] = "当前回答的数量与所引片段未通过一致性核对，无法据此确认科研结论。请检查数值、单位和引用来源。"
-        # 有已定位的引句时仍展示原文供核对，不改写模型的错误数量或冒充任务完成。
-        excerpts = [text for text, ids in verified_quotes if set(ids) & set(number_errors)]
-        if excerpts:
-            resolved["answer"] = resolve_citations(resolved["answer"] + "\n\n" + "\n\n".join(excerpts), context)["answer"]
-    resolved["evidence_number_errors"] = number_errors
     resolved = _with_generation_notice(resolved, context)
     if result.get("done_reason") == "length":
         resolved["warnings"].append("回答已达到生成 Token 上限，内容可能尚未完整。")
@@ -389,7 +331,7 @@ def _build_context_chars(question: str, results: list[tuple[Document, float]], *
             location = f"行{metadata['line_start']}–{metadata['line_end']}"
         else:
             location = "位置未记录"
-        header = f"[参考文档{len(parts) + 1} - 来源: {filename}；原始块位置: {location}]\n"
+        header = f"[参考文档{len(parts) + 1}] 来源: {filename}；原始块位置: {location}\n"
         join_chars = len(separator) if parts else 0
         body_budget = budget - context_chars - join_chars - len(header)
         text = metadata.get("rerank_excerpt", document.page_content)
@@ -471,7 +413,6 @@ def resolve_citations(answer: str, context: dict) -> dict:
 
     # 处理完整答案。跳过常见 Markdown 代码，避免把示例中的编号算作文献依据。
     lines = []
-    fence = None
     # 模型附在编号后的普通 Markdown 链接也不作为可信来源链接使用。
     citation_pattern = re.compile(r"(?<!\\)\[参考文档([0-9]+)\](?:[ \t]*\([^\n)]*\))?")
     # 使用CommonMark位置判断缩进代码，四空格的嵌套列表正文仍可含有效引用。
@@ -480,18 +421,6 @@ def resolve_citations(answer: str, context: dict) -> dict:
                   for index in range(*token.map)}
     for index, line in enumerate(answer.splitlines(keepends=True)):
         if index in code_lines:
-            lines.append(line)
-            continue
-        marker = re.match(r" {0,3}(`{3,}|~{3,})", line)
-        if marker:
-            run = marker.group(1)
-            if fence is None:
-                fence = (run[0], len(run))
-            elif run[0] == fence[0] and len(run) >= fence[1]:
-                fence = None
-            lines.append(line)
-            continue
-        if fence:
             lines.append(line)
             continue
         # 该标题是 Prompt 约定的末尾来源区；由真实映射重建，不解析模型的页码。

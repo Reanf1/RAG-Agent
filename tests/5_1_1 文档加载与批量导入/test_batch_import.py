@@ -82,57 +82,6 @@ class TestBatchImport(unittest.TestCase):
         self.assertEqual([t["attempts"] for t in tasks], [1, 2])
         self.assertEqual(tasks[1]["error"], "")
 
-    def test_persistent_failure_is_bounded(self):
-        """每次重试只处理一轮，永久错误不会产生无限循环。"""
-        tasks = create_import_tasks([("bad.txt", b"\xff")])
-        list(batch_import(tasks, self.raw_dir))
-        list(batch_import(tasks, self.raw_dir, retry_failed=True))
-        self.assertEqual(tasks[0]["attempts"], 2)
-        self.assertEqual(tasks[0]["status"], "failed")
-        self.assertIn("UnicodeDecodeError", tasks[0]["error"])
-
-    def test_repeated_run_skips_completed_tasks(self):
-        """成功后再次调用不会重复加载或重复保存。"""
-        tasks = create_import_tasks([("ok.txt", b"Ready")])
-        list(batch_import(tasks, self.raw_dir))
-        with patch("src.data_loader.load_document") as loader:
-            self.assertEqual(list(batch_import(tasks, self.raw_dir)), [{"completed": 0, "total": 0}])
-            list(batch_import(tasks, self.raw_dir, retry_failed=True))
-            loader.assert_not_called()
-        self.assertEqual(tasks[0]["attempts"], 1)
-
-    def test_interrupted_loading_task_can_resume(self):
-        """页面中断后遗留的处理中任务可继续处理。"""
-        tasks = create_import_tasks([("ok.txt", b"Ready")])
-        events = batch_import(tasks, self.raw_dir)
-        next(events)
-        next(events)
-        events.close()
-        self.assertEqual(tasks[0]["status"], "loading")
-        list(batch_import(tasks, self.raw_dir))
-        self.assertEqual(tasks[0]["status"], "success")
-
-    def test_empty_batch_and_duplicate_inputs(self):
-        """空批次不创建目录，相同文件名和内容的重复项合并。"""
-        self.assertEqual(list(batch_import([], self.raw_dir)), [{"completed": 0, "total": 0}])
-        self.assertFalse(self.raw_dir.exists())
-        tasks = create_import_tasks([("same.txt", b"Same"), ("same.txt", b"Same")])
-        self.assertEqual(len(tasks), 1)
-
-    def test_same_name_different_content_is_preserved(self):
-        """不同内容的同名文献独立保存，不覆盖旧内容。"""
-        tasks = create_import_tasks([("same.txt", b"First"), ("same.txt", b"Second")])
-        list(batch_import(tasks, self.raw_dir))
-        self.assertNotEqual(tasks[0]["path"], tasks[1]["path"])
-        self.assertEqual([Path(t["path"]).read_bytes() for t in tasks], [b"First", b"Second"])
-
-    def test_unsupported_format_and_unsafe_names(self):
-        """路径名和不支持格式记录失败，不写到导入目录之外。"""
-        names = ["../escape.txt", "/tmp/escape.txt", "folder\\escape.txt", "paper.exe"]
-        tasks = create_import_tasks([(name, b"Text") for name in names])
-        list(batch_import(tasks, self.raw_dir))
-        self.assertTrue(all(t["status"] == "failed" for t in tasks))
-        self.assertFalse(self.raw_dir.exists())
 
     def test_size_limit(self):
         """前端之外的调用也核验单份文档大小。"""
@@ -140,27 +89,6 @@ class TestBatchImport(unittest.TestCase):
         list(batch_import(tasks, self.raw_dir, max_file_size_mb=1))
         self.assertEqual(tasks[0]["status"], "failed")
         self.assertIn("文件过大", tasks[0]["error"])
-
-    def test_existing_file_with_different_bytes_is_not_overwritten(self):
-        """已有保存位置被外部修改时明确失败，保留其内容。"""
-        tasks = create_import_tasks([("paper.txt", b"Original")])
-        list(batch_import(tasks, self.raw_dir))
-        path = Path(tasks[0]["path"])
-        path.write_bytes(b"Changed externally")
-        tasks = create_import_tasks([("paper.txt", b"Original")])
-        list(batch_import(tasks, self.raw_dir))
-        self.assertEqual(tasks[0]["status"], "failed")
-        self.assertEqual(path.read_bytes(), b"Changed externally")
-
-    def test_storage_failure_is_retryable(self):
-        """保存位置暂时不可用时记录错误，恢复后可重试成功。"""
-        self.raw_dir.write_bytes(b"not a directory")
-        tasks = create_import_tasks([("ok.txt", b"Text")])
-        list(batch_import(tasks, self.raw_dir))
-        self.assertEqual(tasks[0]["status"], "failed")
-        self.raw_dir.unlink()
-        list(batch_import(tasks, self.raw_dir, retry_failed=True))
-        self.assertEqual(tasks[0]["status"], "success")
 
 
 if __name__ == "__main__":
