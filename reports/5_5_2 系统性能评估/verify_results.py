@@ -15,6 +15,8 @@ def main():
     parser.add_argument("--retrieval", type=Path, required=True)
     parser.add_argument("--agent", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--corpus", type=Path, default=ROOT / "data/raw/evaluation_vision_transformers/corpus.json",
+                        help="与本轮结果对应的本机冻结语料，按原始字节严格核验")
     parser.add_argument("--retrieval-preparation-only", action="store_true", help="检索阶段仅1题建库检查，Agent仍须60题两组")
     args = parser.parse_args()
     if args.output.exists():
@@ -29,7 +31,7 @@ def main():
     questions = {q["id"]: q for q in json.loads((ROOT / "reports/评测集.json").read_text(encoding="utf-8"))}
     for key, path in (("dataset_sha256", ROOT / "reports/评测集.json"),
                       ("manifest_sha256", ROOT / "reports/5_5_1 评测集构建/论文清单.json"),
-                      ("corpus_sha256", ROOT / "data/raw/evaluation_vision_transformers/corpus.json"),
+                      ("corpus_sha256", args.corpus),
                       ("config_sha256", ROOT / "config.yaml"),
                       ("evaluation_script_sha256", Path(__file__).with_name("evaluate_system.py"))):
         assert hashlib.sha256(path.read_bytes()).hexdigest() == retrieval["inputs"][key], key
@@ -101,7 +103,7 @@ def main():
               "retrieval_scope": "1题五配置仅用于建库核验" if args.retrieval_preparation_only else "60题五配置正式检索实验",
               "actual_model_calls": len(calls), "source_and_input_hashes_unchanged": True,
               "checks": "逐题页级匹配、排名倒数、跨论文覆盖、轨迹工具路径、均值、实际HTTP Token、失败分母、固定种子及源码哈希",
-              "human_quality": "独立人工评分待填写，不以结构核验通过冒充答案质量通过"}
+              "human_quality": "本文件只复算结构与性能指标，逐题质量分数见单独的助手量表评阅记录"}
     args.output.write_text(json.dumps(output, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(output, ensure_ascii=False))
 
