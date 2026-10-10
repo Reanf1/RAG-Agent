@@ -108,11 +108,9 @@ def check_health() -> dict:
             # 健康检查与业务使用相同入口；仅可能建立junction，不写入索引数据。
             client = chromadb.PersistentClient(path=chroma_persist_path(directory), settings=Settings(anonymized_telemetry=False))
             client.heartbeat()
+            # 只检查可连接与可读取；模型/参数是否与集合一致由建库入口把关。
             collection = client.get_collection(retrieval["collection_name"], embedding_function=None)
-            expected = chroma_metadata(config)
-            if any((collection.metadata or {}).get(key) != value for key, value in expected.items()):
-                raise ValueError("已有索引的模型版本或索引参数与配置不一致")
-            database.update(status="ok", chunks=collection.count(), detail="Chroma心跳、集合配置及块数读取正常；未执行向量检索。")
+            database.update(status="ok", chunks=collection.count(), detail="Chroma心跳与块数读取正常；未执行向量检索。")
     except Exception as error:
         database["detail"] = f"{type(error).__name__}: {error}。请检查索引目录、权限和集合配置后重试。"
     database["seconds"] = perf_counter() - started

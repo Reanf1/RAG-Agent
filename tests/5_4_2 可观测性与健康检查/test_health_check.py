@@ -155,14 +155,18 @@ class TestHealthCheck(unittest.TestCase):
         self.assertEqual(result["vector_database"]["status"], "error")
         self.assertEqual([c.name for c in self.store._store._client.list_collections()], ["paper_chunks"])
 
-    def test_index_version_or_parameters_mismatch_is_not_available(self):
+    def test_health_only_checks_connection_and_read(self):
+        """健康检查只报可连接与可读取；模型/参数一致性由建库入口把关。"""
         for section, key, value in (("embedding", "revision", "different"), ("retrieval", "search_ef", 101)):
             old = self.config[section][key]
             with self.subTest(key=key):
                 self.config[section][key] = value
                 result = self.check()
-                self.assertEqual(result["vector_database"]["status"], "error")
-                self.assertIn("不一致", result["vector_database"]["detail"])
+                self.assertEqual(result["vector_database"]["status"], "ok")
+                self.assertIn("块数读取正常", result["vector_database"]["detail"])
+                # 建库入口仍会拒绝与集合不一致的配置。
+                with self.assertRaises(ValueError):
+                    VectorStore(self.directory.name, SmallEmbeddings())
             self.config[section][key] = old
 
     def test_database_heartbeat_failure_keeps_independent_llm_status(self):
