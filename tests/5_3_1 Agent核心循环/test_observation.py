@@ -85,6 +85,44 @@ class TestObservationAndLoop(unittest.TestCase):
             events = list(run_react("先计算3乘4，再把乘积加5。", self.tools, context))
         return events, http
 
+    def test_final_answer_uses_one_model_request(self):
+        """模型已给出有效最终答案时，观察阶段不再请求改写。"""
+        for complete in (True, False):
+            with self.subTest(complete=complete):
+                packet = self.packet({"answer": "已有资料说明如下。", "task_complete": complete})
+                with patch("src.agent.react_loop.urlopen", side_effect=self.http_responses([packet])) as http:
+                    events = list(run_react("请解释已有资料。", []))
+                self.assertEqual(http.call_count, 1)
+                result = events[-1]
+                self.assertEqual(result["full_response"], "已有资料说明如下。")
+                self.assertEqual(result["task_complete"], complete)
+                self.assertEqual(result["metrics"]["tokens"]["input"], 100)
+                self.assertEqual(result["metrics"]["tokens"]["output"], 20)
+
+    def test_native_final_after_tool_keeps_actual_result_and_usage(self):
+        """读取工具结果后的一次最终决策直接结束，保留工具轨迹和真实用量。"""
+        responses = [self.packet(name="multiply", args={"a": 3, "b": 4}),
+                     self.packet(self.pending),
+                     self.packet({"answer": "乘积为12。", "task_complete": True})]
+        with patch("src.agent.react_loop.urlopen", side_effect=self.http_responses(responses)) as http:
+            events = list(run_react("求乘积并解释。", self.tools))
+        self.assertEqual(http.call_count, 3)
+        self.assertEqual(self.invocations, [("multiply", 3, 4)])
+        self.assertTrue(events[-1]["task_complete"])
+        self.assertEqual(events[-1]["full_response"], "乘积为12。")
+        # 自定义测试工具没有内部用量账目；三个模型请求的已知用量仍须保留。
+        self.assertEqual(events[-1]["metrics"]["tokens"]["known_total"], 360)
+
+    def test_native_final_cannot_hide_tool_failure(self):
+        """直接回答仍需如实保留实际工具失败与未完成状态。"""
+        context = {"observations": [{"name": "multiply", "status": "error", "result": None}]}
+        thought = {"next_step": "answer", "final": {"answer": "已完成。", "task_complete": True}}
+        with patch("src.agent.react_loop.urlopen") as http:
+            result = observe("求乘积。", self.tools, context, thought=thought)
+        http.assert_not_called()
+        self.assertFalse(result["task_complete"])
+        self.assertIn("尚未完成", result["answer"])
+
     def test_single_summary_after_failed_comparison_cannot_complete_original_task(self):
         """W13回归：最后一个摘要成功不代表两篇论文对比已完成。"""
         from src.agent.tools import paper_compare, paper_summary

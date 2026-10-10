@@ -23,6 +23,13 @@ from langchain_core.tools import BaseTool, tool
 from src.utils.config import load_config
 
 
+# 路由与执行共用文档参数表，不各自维护工具名单。
+DOCUMENT_TOOL_FIELDS = {
+    "paper_metadata": ("doc_id",), "paper_summary": ("doc_id",),
+    "knowledge_base_search": ("doc_id",), "keyword_extract": ("doc_id",),
+    "paper_compare": ("paper_a_id", "paper_b_id"),
+}
+
 # Python执行器绑定逐包回调，每个工作线程隔离；不进入模型工具参数Schema。
 _rag_stream_sink = ContextVar("rag_stream_sink", default=None)
 _tool_model_usage = ContextVar("tool_model_usage", default=None)
@@ -68,7 +75,7 @@ def _tool_model_response(messages: list, schema: dict, name: str) -> tuple[dict,
     因为“JSON合法”不等于“论文事实正确”。不重试，也不转云端。
     """
     # 工具注册时不加载ReAct模块，避免tools与react_loop互相导入。
-    from src.agent.react_loop import _model_request
+    from src.agent.react_loop import _checked_response, _model_request
     from src.generation.rag_pipeline import urlopen
 
     request = _model_request(messages, format=schema)
@@ -78,10 +85,7 @@ def _tool_model_response(messages: list, schema: dict, name: str) -> tuple[dict,
     with urlopen(request, timeout=300) as response:
         result = json.load(response)
     _record_tool_usage(result)
-    if not isinstance(result, dict) or result.get("error") or result.get("done") is not True or result.get("done_reason") != "stop":
-        raise ValueError(f"{name}模型未正常完成，不能使用部分结果")
-    if not isinstance(result.get("message"), dict) or not isinstance(result.get("model"), str) or not result["model"]:
-        raise ValueError(f"{name}模型响应缺少消息或模型名称")
+    _checked_response(result, name)
     selection = json.loads(result["message"].get("content", ""))
     if not isinstance(selection, dict) or set(selection) != set(schema["required"]):
         raise ValueError(f"{name}模型响应必须包含规定字段")

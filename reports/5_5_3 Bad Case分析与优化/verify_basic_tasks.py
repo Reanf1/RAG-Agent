@@ -94,11 +94,11 @@ def main():
                 confirmed_args = approval.get("args", {"question": approval.get("tool_question"), "doc_id": approval.get("doc_id")})
                 events.extend(run_session(question, user, session, tools=registry, memory=memory,
                                           stream=True, confirmed_rag_args=confirmed_args))
-            # 每个事件保留自身数据，累计账目只保存末次，避免重复复制整段轨迹。
+            # 保存决策、工具结果和末次账目；逐包正文已有最终答案，不再重复落盘。
             save(label + "-events.json", [
                 {key: value for key, value in event.items()
                  if key not in {"message", "context"} and (key != "metrics" or event is events[-1])}
-                for event in events])
+                for event in events if event["type"] != "token"])
             last = events[-1]
             results = [event for event in events if event["type"] == "tool_result"]
             assert last["type"] == "done" and predicate(last, results), {

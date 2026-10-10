@@ -71,7 +71,7 @@ class TestThought(unittest.TestCase):
         self.assertNotIn("parameters", spec)
         self.assertEqual(context, snapshot)
         self.assertNotIn("available_tools", data)
-        self.assertIn("一次同时确定工具和参数", messages[0].content)
+        self.assertIn("工具和参数一次确定", messages[0].content)
 
     def test_dynamic_instructions_do_not_change_system_message(self):
         baseline = build_thought_messages("问题", [])

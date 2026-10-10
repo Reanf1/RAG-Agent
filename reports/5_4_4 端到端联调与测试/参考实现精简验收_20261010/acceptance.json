@@ -1,0 +1,83 @@
+{
+  "date": "2026-10-10",
+  "restore_from": "1f40458",
+  "restore_commit": "d758f91",
+  "reference": {
+    "path": "/Users/rean/github/Agent-RAG",
+    "commit": "88147d23269e0d238bf6e890922784e23f3ee512"
+  },
+  "scope": "以课程基本要求为边界，恢复原版本后只精简Agent重复处理；本轮Mac验收，Windows/Word/PPT暂不更新。",
+  "changes": [
+    "简化角色和阶段提示，合并完整响应检查，路由与Action共用文档字段声明。",
+    "有效最终JSON回答直接返回；无工具时直接约束最终回答，通识与具体论文证据需求分开。",
+    "输入超窗口时仅移出旧整轮历史；不递归删除元数据或截断工具正文。",
+    "替换三个过长输入裁剪测试为基本窗口行为，新增三个最终回答/用量回归；不增加极端组合。"
+  ],
+  "source_lines": {
+    "src/agent/react_loop.py": {
+      "before": 966,
+      "after": 909
+    },
+    "src/agent/router.py": {
+      "before": 263,
+      "after": 263
+    },
+    "src/agent/tools.py": {
+      "before": 1001,
+      "after": 1005
+    }
+  },
+  "source_sha256": {
+    "src/agent/react_loop.py": "c09b568907dce6f9ae7edaf7945bfd86f509955a5cbe2bab34486ecffd72cfe5",
+    "src/agent/router.py": "19d07fb83645ca7d50f225b89d64ed181a1f15426dda7cf0f30d359aed49446a",
+    "src/agent/tools.py": "3c96b39966d9566b8f3398786f6cfac5c4feb8b1a340547195bac5d31fdd7537"
+  },
+  "regression": {
+    "run": 853,
+    "passed": true,
+    "seconds": 60.235,
+    "failures": 0,
+    "errors": 0,
+    "command": ".venv/bin/python -m unittest discover -s tests"
+  },
+  "real_basic": {
+    "passed": 10,
+    "total": 10,
+    "sum_case_seconds": 198.669,
+    "results": "real/results.json",
+    "fixtures": "real/fixtures.json",
+    "runtime": "real/runtime.json",
+    "script": "../../5_5_3 Bad Case分析与优化/verify_basic_tasks.py"
+  },
+  "direct_answer": {
+    "passed": 3,
+    "total": 3,
+    "results": "direct-answer.json",
+    "note": "空工具的通识与资料不足两题各一次模型调用；正常八工具注册的通识题没有调用工具，但模型未按最终JSON协议输出，仍由观察阶段整理。不能据此宣称整体Token下降。"
+  },
+  "preservation": {
+    "raw_files": 102,
+    "raw_unchanged": true,
+    "database_logical_content_unchanged": {
+      "data/index/chroma.sqlite3": "d5088a43cf7d037acfa983437793810ce3fd1bf201015f4c70b2ef90b496b379",
+      "data/sessions/memory.sqlite3": "a22feaedd1cd4fc4a7408d79c538ed42423dd9498fe566871444f1d621277fc5"
+    }
+  },
+  "answer_review": {
+    "reviewer": "助手对照合成原文核对",
+    "findings": [
+      "问答保留田畴-73、91.6%及行号引用。",
+      "关键词四项都在原文出现；元信息保留作者与年份。",
+      "对比包含双方方法、样本数160/128及91.6%/88.4%，没有直接宣称跨条件优劣。",
+      "摘要保留背景、方法、结果、结论与原文来源；计算结果391/377正确，历史追问正确。"
+    ],
+    "user_review": "待用户审核表达质量；不代表正式120条质量评测全部通过。"
+  },
+  "limits": [
+    "基本流程使用两份合成文本，数字是测试输入，不是论文实验成绩。",
+    "本轮未重跑正式60题/120条质量评分或历史性能对照。",
+    "页面使用AppTest，未新增实机浏览器或Windows部署验收。",
+    "生成异常与输出格式回退如实保留，不保证所有模型请求减少。",
+    "逐轮轨迹留在本地临时目录，交付保留可复核的最终答案、用量、输入、配置与源码摘要。"
+  ]
+}
