@@ -37,7 +37,7 @@ class TestCitationRetention(unittest.TestCase):
         result = self.decision()
         self.assertEqual(result["answer"], self.fixture["tool_result"]["result"]["answer"])
         self.assertIn("vit.pdf；第4页（物理页码）", result["answer"])
-        self.assertEqual(result["usage"], {"prompt_eval_count": 100, "eval_count": 20})
+        self.assertEqual(result["usage"], {"prompt_eval_count": 0, "eval_count": 0})
 
     def test_partial_or_different_question_keeps_observation_answer(self):
         for args in ({"question": "仅回答一个子问题"}, {"question": self.fixture["question"], "doc_id": "a" * 64}):
@@ -48,10 +48,10 @@ class TestCitationRetention(unittest.TestCase):
             expected = self.fixture["observation"]["answer"] if args["question"] != self.fixture["question"] else self.fixture["tool_result"]["result"]["answer"]
             self.assertEqual(result["answer"], expected)
 
-    def test_multi_tool_or_multi_step_never_substitutes_single_answer(self):
+    def test_list_preflight_preserves_complete_rag_answer(self):
         context = deepcopy(self.context)
         context["observations"].insert(0, {"name": "paper_list", "status": "success", "result": {}})
-        self.assertEqual(self.decision(context)["answer"], self.fixture["observation"]["answer"])
+        self.assertEqual(self.decision(context)["answer"], self.fixture["tool_result"]["result"]["answer"])
 
     def test_missing_citations_or_fallback_keeps_observation_answer(self):
         for updates in ({"citations": []}, {"generation_mode": "fallback"}, {"answer": ""}):
@@ -60,17 +60,17 @@ class TestCitationRetention(unittest.TestCase):
                 context["observations"][0]["result"].update(updates)
                 self.assertEqual(self.decision(context)["answer"], self.fixture["observation"]["answer"])
 
-    def test_incomplete_decision_is_not_turned_into_success(self):
-        decision = {**self.fixture["observation"], "task_complete": False}
-        result = self.decision(decision=decision)
+    def test_incomplete_tool_answer_is_not_turned_into_success(self):
+        context = deepcopy(self.context)
+        context["observations"][0]["result"]["status"] = "incomplete"
+        result = self.decision(context)
         self.assertFalse(result["task_complete"])
-        self.assertEqual(result["answer"], decision["answer"])
+        self.assertIn(self.fixture["tool_result"]["result"]["answer"], result["answer"])
 
     def test_insufficient_evidence_cannot_be_marked_complete(self):
         context = deepcopy(self.context)
         context["observations"][0]["result"]["status"] = "insufficient_evidence"
-        with self.assertRaises(RuntimeError):
-            self.decision(context)
+        self.assertFalse(self.decision(context)["task_complete"])
 
 
 class TestPaperIdentifiers(unittest.TestCase):
@@ -208,19 +208,20 @@ class TestStructuredToolRetention(unittest.TestCase):
 
     def test_confirmed_compare_call_preserves_report_without_second_generation(self):
         """调用＋实验结果曾误入模型观察，真实报告超预算；确认结果应直接保留。"""
-        self.compare.update(confirmed=True, low_relevance_dimensions=["论文A：方法"])
-        self.compare["answer"] = "方法、数据集、定量结果及对应引用。" * 1000
+        self.compare.update(confirmed=True, low_relevance_dimensions=["论文A：方法"],
+                            warnings=["部分维度的检索相关性低，相关陈述需对照原文核验：论文A：方法"])
         question = "请调用 paper_compare，对比两篇已入库论文的方法、数据集和实验结果"
         with patch("src.agent.react_loop.urlopen", return_value=packet({
                 "observation": "改写", "decision": "finish", "task_complete": True, "answer": "报告被改写"})) as http:
             event = observe(question, AVAILABLE_TOOLS, self.context("paper_compare", self.compare))
         self.assertTrue(event["task_complete"])
         self.assertIn(self.compare["answer"], event["answer"])
-        self.assertIn("低相关性维度需核验", event["answer"])
+        self.assertIn("相关陈述需对照原文核验", event["answer"])
         http.assert_not_called()
 
     def test_missing_dimension_keeps_report_but_is_incomplete(self):
-        self.compare.update(missing_dimensions=["论文B：实验结果"], status="insufficient_evidence")
+        self.compare.update(missing_dimensions=["论文B：实验结果"], status="insufficient_evidence",
+                            warnings=["缺少可用证据，不能视为完整对比：论文B：实验结果"])
         response = {"observation": "资料不足", "decision": "finish", "task_complete": False, "answer": "资料不足"}
         with patch("src.agent.react_loop.urlopen", return_value=packet(response)):
             event = observe("对比两篇论文", AVAILABLE_TOOLS, self.context("paper_compare", self.compare))

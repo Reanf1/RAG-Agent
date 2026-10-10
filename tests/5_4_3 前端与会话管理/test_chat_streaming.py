@@ -199,7 +199,9 @@ class TestStreamingFrontend(unittest.TestCase):
 
         def packet(request, timeout):
             properties = json.loads(request.data)["format"]["properties"]
-            choice = {key: value["enum"][0] for key, value in properties.items()}
+            choice = {key: {"text": "本篇的" + key.split("_")[0],
+                            "reference_id": value["properties"]["reference_id"]["enum"][0]}
+                      for key, value in properties.items()}
             return BytesIO(json.dumps({"model": "protocol-fixture", "done": True, "done_reason": "stop",
                 "prompt_eval_count": 30, "eval_count": 10, "message": {"content": json.dumps(choice)}}).encode())
 
@@ -238,7 +240,7 @@ class TestStreamingFrontend(unittest.TestCase):
             self.assertTrue(message["complete"], message)
             self.assertEqual(self.core.call_count, 1)
             self.assertEqual(self.core.call_args.args[2]["confirmed_rag_args"], args)
-            self.assertEqual(http.call_count, 2)
+            self.assertEqual(http.call_count, 1)
             retriever.assert_not_called()
             observation = message["event"]["context"]["observations"][-1]["result"]
             self.assertTrue(observation["confirmed"])
@@ -247,7 +249,7 @@ class TestStreamingFrontend(unittest.TestCase):
             self.assertEqual(approval, original)
             self.assertFalse(self.app.session_state["agent_pending_rag"])
             self.app.run()
-            self.assertEqual(http.call_count, 2)
+            self.assertEqual(http.call_count, 1)
             self.assertEqual(self.core.call_count, 1)
 
 

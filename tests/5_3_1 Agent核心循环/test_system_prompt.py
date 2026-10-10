@@ -86,8 +86,10 @@ class TestAgentSystemPrompt(unittest.TestCase):
                        json.loads(payload["messages"][-1]["content"])["references"]):
             for got, before in zip(fitted, references):
                 self.assertEqual(got["text"], before["text"])
-                redundant = {"source", "chunk_id", "file_type", "page"} if before["metadata"].get("source_file") else {"chunk_id", "file_type"}
-                self.assertEqual(got["metadata"], {k: v for k, v in before["metadata"].items() if k not in redundant})
+                # 只约束来源可追溯，不锁定预算裁剪具体删除哪些辅助字段。
+                required = ("doc_id", "source_file", "page_number") if before["metadata"].get("source_file") else ("source", "page")
+                for field in required:
+                    self.assertEqual(got["metadata"][field], before["metadata"][field])
         self.assertEqual(context, original)
         self.assertEqual(message.content, content)
 

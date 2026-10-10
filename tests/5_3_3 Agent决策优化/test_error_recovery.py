@@ -348,7 +348,7 @@ class TestErrorRecovery(unittest.TestCase):
         events, _ = self.loop([self.packet(name="primary_lookup"), self.packet(self.failed),
                               self.plan(), self.packet(self.finished)])
         self.assertFalse(events[-1]["task_complete"])
-        self.assertEqual(events[-1]["stop_reason"], "error")
+        self.assertEqual(events[-1]["stop_reason"], "incomplete")
 
     def test_same_call_is_stopped_before_third_execution(self):
         round_packets = [self.packet(name="primary_lookup"), self.packet(self.pending)]

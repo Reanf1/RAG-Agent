@@ -177,15 +177,12 @@ class TestAgentCache(unittest.TestCase):
         low = tools[0].invoke({"question": "ViT输入？"})
         snapshot = pending[low["confirmation_id"]]
         tools = get_available_tools(session_id=session, confirmation=snapshot)
-        decision = {"observation": "已有引用", "decision": "finish", "task_complete": True, "answer": "简要答复"}
-        packet = BytesIO(json.dumps({"done": True, "done_reason": "stop", "model": "mock",
-            "prompt_eval_count": 20, "eval_count": 5, "message": {"content": json.dumps(decision)}}).encode())
-        with patch("src.agent.react_loop.urlopen", return_value=packet) as http:
+        with patch("src.agent.react_loop.urlopen") as http:
             events = list(run_session("ViT输入？", "alice", session, tools=tools, memory=memory,
                                       confirmed_rag_args={"question": "ViT输入？", "doc_id": None}))
         self.assertEqual(events[0]["route"], "confirmation")
         self.assertEqual(next(e for e in events if e["type"] == "tool_call")["args"], {"question": "ViT输入？", "doc_id": None})
-        http.assert_called_once()  # 只有Observation，规划/Action不重新生成已确认参数。
+        http.assert_not_called()  # 确认参数固定，完整RAG报告直接保留，无额外规划或改写。
         self.assertEqual(self.retriever.search.call_count, 1)
         self.assertIn("已按你的确认", events[-1]["full_response"])
         self.assertEqual(len(memory.get_messages("alice", session)), 4)

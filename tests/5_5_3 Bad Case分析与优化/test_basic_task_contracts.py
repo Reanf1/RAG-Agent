@@ -118,14 +118,6 @@ class TestBasicTaskContracts(unittest.TestCase):
         self.assertFalse(result["task_complete"])
 
     def test_comparison_accepts_normal_metric_statements_and_adjacent_context(self):
-        examples = ["数据集：田畴-73。实验结果：本模型取得准确率91.6%。",
-                    "在田畴-73数据集上，LeafGate测试准确率为91.6%。",
-                    "Our model achieves ROC-AUC 0.95 on FIELD-A dataset.",
-                    "Our model achieves RMSE 0.12 on FIELD-A dataset.",
-                    "Our model achieves ROUGE 45.2 on FIELD-A dataset."]
-        for text in examples:
-            with self.subTest(text=text):
-                self.assertTrue(tools._has_quantitative_result(text))
         ids = [DOC_ID, "b" * 64]
         documents = [Document(page_content=f"方法：{model}分类器。数据集：田畴-73。实验结果：{model}测试准确率为{value}%。",
             metadata={"doc_id": identifier, "chunk_id": label, "source_file": label + ".txt", "line_start": 1, "line_end": 3})
@@ -135,7 +127,8 @@ class TestBasicTaskContracts(unittest.TestCase):
                             "truncated": False} for identifier in ids], "missing_dimensions": [], "low_relevance_dimensions": []}
 
         def select(messages, schema, name):
-            return packet(), {key: next(value for value in spec["enum"] if isinstance(value, int))
+            return packet(), {key: {"text": "准确率91.6%" if key.endswith("_a") else "准确率88.4%",
+                              "reference_id": spec["properties"]["reference_id"]["enum"][0]}
                               for key, spec in schema["properties"].items()}
 
         with patch.object(tools, "_tool_model_response", select):
@@ -145,9 +138,6 @@ class TestBasicTaskContracts(unittest.TestCase):
         self.assertIn("91.6", result["answer"])
         self.assertIn("88.4", result["answer"])
         self.assertEqual({ref["metadata"]["doc_id"] for ref in result["citations"]}, set(ids))
-
-    def test_dataset_year_is_not_an_experiment_score(self):
-        self.assertFalse(tools._has_quantitative_result("We train our model on WMT 2014 dataset."))
 
     def test_rag_failure_keeps_same_partial_answer_and_tokens_in_log(self):
         document = Document(page_content="Aurora uses FIELD-73 and reaches 94.2%.", metadata={

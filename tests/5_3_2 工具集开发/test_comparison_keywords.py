@@ -52,12 +52,14 @@ class TestComparisonAndKeywords(unittest.TestCase):
         self.ids = [document.metadata["doc_id"] for document in self.documents]
         self.response = {"model": "qwen2.5:7b", "done": True, "done_reason": "stop",
                          "prompt_eval_count": 200, "eval_count": 80,
-                         "message": {"content": json.dumps({key: 1 for key in ("method", "datasets", "results")})}}
+                         "message": {"content": json.dumps({f"{key}_{label}": {"text": "依据原文的简洁概括", "reference_id": index}
+                             for label, index in (("a", 1), ("b", 2)) for key in ("method", "datasets", "results")})}}
 
     def comparison_packet(self, request, timeout):
-        """按本篇实际Schema选择首个合法编号，仅用于协议/来源测试，不冒充模型质量。"""
+        """提供带真实编号的模拟概括，仅验证协议与引用，不冒充模型质量。"""
         properties = json.loads(request.data)["format"]["properties"]
-        choice = {key: value["enum"][0] for key, value in properties.items()}
+        choice = {key: {"text": "依据原文的简洁概括", "reference_id": value["properties"]["reference_id"]["enum"][0]}
+                  for key, value in properties.items()}
         return BytesIO(json.dumps({**self.response, "message": {"content": json.dumps(choice)}}).encode())
 
     def compare(self, scores=(0.9, 0.9), response=None):
@@ -113,114 +115,22 @@ class TestComparisonAndKeywords(unittest.TestCase):
         self.assertIn(paper_compare, AVAILABLE_TOOLS)
         self.assertIn(keyword_extract, AVAILABLE_TOOLS)
 
-    def test_numeric_result_below_chart_rank_is_recalled_without_neighbor_truncation(self):
-        """Top-2是图轴时继续检查Top-20，完整数值原文不能被扩展前缀截断。"""
-        numeric = deepcopy(self.documents[0])
-        numeric.page_content = "Model A pretrained on Dataset X achieves accuracy 88.55% on Dataset Y."
-        numeric.metadata.update(chunk_id="numeric", start_index=900, end_index=900 + len(numeric.page_content))
-        charts = []
-        for i in range(2):
-            d = deepcopy(numeric)
-            d.page_content = "Accuracy [%] 90 80 70. Figure: computational budget."
-            d.metadata.update(chunk_id=f"chart{i}", start_index=i * 400, end_index=i * 400 + len(d.page_content))
-            charts.append((d, 0.99 - i * 0.01))
-        def search(query, *, k, doc_id, rerank):
-            if doc_id == self.ids[0] and ("scores" in query or "指标数值" in query):
-                return (charts + [(numeric, 0.7)])[:k]
-            return [(self.documents[self.ids.index(doc_id)], 0.9)]
-        def packet(request, timeout):
-            payload = json.loads(request.data)
-            refs = json.loads(payload["messages"][-1]["content"])["references"]
-            selected = next((r["id"] for r in refs if "88.55% on Dataset Y" in r["text"]), refs[0]["id"])
-            choice = {"method": refs[0]["id"], "datasets": refs[0]["id"], "results": selected}
-            return BytesIO(json.dumps({**self.response, "message": {"content": json.dumps(choice)}}).encode())
-        with patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
-                patch("src.generation.rag_pipeline.urlopen", side_effect=packet):
-            retriever.return_value.search.side_effect = search
-            result = paper_compare.invoke(dict(zip(("paper_a_id", "paper_b_id"), self.ids)))
-        row = result["comparison"][2]["a"]
-        self.assertEqual(row["metadata"]["chunk_id"], "numeric")
-        self.assertFalse(row["truncated"])
-        self.assertIn("88.55%", result["answer"])
-        self.assertEqual(result["status"], "answered")
-
-    def test_table_tail_with_numbers_and_caption_is_not_complete_result(self):
-        """实测Table5尾块没有模型列，caption中的accuracy不能把孤立数字变成完整结果。"""
-        from src.agent.tools import _has_quantitative_result, _quantitative_excerpt
-        text = ("99.45\n99.68\nOxford-IIIT-Pets\n95.80\n97.56\n"
-                "Table 5: Top1 accuracy (in %) of Vision Transformer on various datasets. "
-                "Models are fine-tuned at 384 resolution. These techniques are used to achieve results in Table 2.")
-        doc = deepcopy(self.documents[0])
-        doc.page_content = text
-        self.assertFalse(_has_quantitative_result(text))
-        self.assertIsNone(_quantitative_excerpt(doc, []))
-
-    def test_numeric_excerpt_keeps_pretraining_and_dataset_metric_relation(self):
-        from src.agent.tools import _quantitative_excerpt
-        text = ("Background. ViT is pre-trained on ImageNet-21k or JFT-300M. "
-                "The best model reaches accuracy 88.55% on ImageNet and 94.55% on CIFAR-100. Related work.")
-        doc = deepcopy(self.documents[0])
-        doc.page_content = text
-        doc.metadata.update(start_index=80, end_index=80 + len(text))
-        before = deepcopy(doc)
-        result = _quantitative_excerpt(doc, [])
-        self.assertIn("pre-trained on ImageNet-21k", result.page_content)
-        self.assertIn("88.55% on ImageNet", result.page_content)
-        self.assertNotIn("Background", result.page_content)
-        offset = result.metadata["start_index"] - 80
-        self.assertEqual(text[offset:offset + len(result.page_content)], result.page_content)
-        self.assertEqual(doc, before)
-
-    def test_related_work_result_cannot_be_selected_as_this_paper_result(self):
-        """Windows复测：相关工作中的72%属于前人模型，不能用于本篇实验对比。"""
-        from src.agent.tools import _quantitative_excerpt
-        heading = deepcopy(self.documents[0])
-        heading.page_content = "2\nRELATED WORK\nChen et al. train a generative model."
-        heading.metadata.update(page_number=2, start_index=0, end_index=len(heading.page_content))
-        candidate = deepcopy(heading)
-        candidate.page_content = "The model achieves a maximal accuracy of 72% on ImageNet."
-        candidate.metadata.update(chunk_id="prior-model", start_index=300, end_index=300 + len(candidate.page_content))
-        self.assertIsNone(_quantitative_excerpt(candidate, [heading, candidate]))
-
-    def test_result_after_related_work_section_remains_available(self):
-        """按章节位置排除前人结果；同页后续实验及其他论文不受影响。"""
-        from src.agent.tools import _quantitative_excerpt
-        document = deepcopy(self.documents[0])
-        document.page_content = ("2\nRelated Work\nA previous model achieves accuracy 72% on ImageNet.\n"
-                                 "3\nExperiments\nOur model achieves accuracy 88.55% on ImageNet.")
-        document.metadata.update(page_number=2, start_index=0, end_index=len(document.page_content))
-        result = _quantitative_excerpt(document, [document])
-        self.assertIn("88.55%", result.page_content)
-        self.assertNotIn("72%", result.page_content)
-
-    def test_related_work_fallback_cannot_enter_result_selection(self):
-        """即使其他维度或定性回退召回前人结果，模型结果编号也不能选择它。"""
-        for document in self.documents:
-            document.page_content = "2\nRELATED WORK\nA previous model achieves accuracy 72% on ImageNet."
-            document.metadata.update(page_number=2, start_index=0, end_index=len(document.page_content))
-        result, _, http = self.compare()
-        for call in http.call_args_list:
-            self.assertEqual(json.loads(call.args[0].data)["format"]["properties"]["results"]["enum"], [None])
-        self.assertIsNone(result["comparison"][2]["a"])
-        self.assertIsNone(result["comparison"][2]["b"])
-        self.assertEqual(result["status"], "insufficient_evidence")
-
     def test_comparison_filters_each_paper_and_covers_three_dimensions(self):
         result, retriever, http = self.compare()
         calls = retriever.return_value.search.call_args_list
         self.assertEqual(len(calls), 12)
         self.assertEqual([call.kwargs["doc_id"] for call in calls], [self.ids[0]] * 6 + [self.ids[1]] * 6)
-        self.assertEqual([call.kwargs["k"] for call in calls], [2, 2, 2, 2, 20, 20] * 2)
         self.assertTrue(all(call.kwargs["rerank"] for call in calls))
         self.assertEqual(result["status"], "answered")
         self.assertEqual(len(result["citations"]), 2)
         self.assertEqual({r["metadata"]["doc_id"] for r in result["citations"]}, set(self.ids))
         self.assertEqual(result["papers"][0]["source_file"], "同名.md")
         payloads = [json.loads(call.args[0].data) for call in http.call_args_list]
-        self.assertEqual(payloads[0]["format"]["properties"]["method"]["enum"], [1, None])
-        self.assertEqual(payloads[1]["format"]["properties"]["method"]["enum"], [2, None])
+        self.assertEqual(len(payloads), 1)
+        self.assertEqual({row["dimension"] for row in result["comparison"]}, {"方法", "数据集", "实验结果"})
+        self.assertIn("依据原文的简洁概括", result["answer"])
         self.assertIn("不可直接比较", result["answer"])
-        self.assertEqual(result["usage"]["eval_count"], 160)
+        self.assertEqual(result["usage"]["eval_count"], 80)
 
     def test_comparison_deduplicates_chunks_without_mutating_source(self):
         before = deepcopy(self.documents)
@@ -267,156 +177,6 @@ class TestComparisonAndKeywords(unittest.TestCase):
                 if status == "needs_confirmation":
                     http.assert_not_called()
         self.assertEqual(self.documents, before)
-
-    def test_adjacent_prefix_cannot_displace_retrieved_dataset_evidence(self):
-        """前置邻块不能占满维度预算；实际模型输入须保留已命中的数据集正文。"""
-        self.config["generation"]["max_context_chars"] = 6000  # 固定紧预算，核验邻块与命中正文的取舍。
-        from langchain_core.documents import Document
-
-        prefix = "Background architecture and related work. " * 17
-        core = "\nDatasets: ImageNet-21k and JFT-300M. " + "Dataset setup details. " * 17
-        suffix = "\nEvaluation uses ImageNet and CIFAR-100. " + "Evaluation details. " * 16
-        chunks = []
-        offset = 0
-        for index, text in enumerate((prefix, core, suffix)):
-            chunks.append(Document(page_content=text, metadata={**self.documents[0].metadata,
-                "chunk_id": f"dataset-neighbor-{index}", "page": 3, "page_number": 4,
-                "start_index": offset, "end_index": offset + len(text), "line_start": index + 1,
-                "line_end": index + 1}))
-            offset += len(text)
-        method, result_doc = deepcopy(self.documents[0]), deepcopy(self.documents[0])
-        method.metadata.update(chunk_id="method-core", page=1, page_number=2)
-        result_doc.metadata.update(chunk_id="result-core", page=5, page_number=6)
-        before = deepcopy(chunks)
-        with patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
-                patch("src.retrieval.reranker.Reranker") as reranker, \
-                patch("src.generation.rag_pipeline.urlopen", side_effect=self.comparison_packet) as http:
-            reranker.return_value.rerank.side_effect = lambda query, docs, k: [(doc, .9) for doc, _ in docs]
-            retriever.return_value.search.side_effect = [[(doc, score)] for doc, score in
-                ((method, .8), (method, .8), (chunks[1], .9), (chunks[1], .9), (result_doc, .99), (result_doc, .99))
-            ] + [[(self.documents[1], .9)]] * 6
-            retriever.return_value.vector_store.list_chunks.side_effect = [chunks, [self.documents[1]]]
-            result = paper_compare.invoke(dict(zip(("paper_a_id", "paper_b_id"), self.ids)))
-        payload = json.loads(json.loads(http.call_args_list[0].args[0].data)["messages"][1]["content"])
-        self.assertTrue(any("Datasets: ImageNet-21k and JFT-300M" in ref["text"] for ref in payload["references"]))
-        sent = next(ref for ref in payload["references"] if "Datasets: ImageNet-21k and JFT-300M" in ref["text"])
-        ref = next(ref for ref in result["papers"][0]["references"] if ref["metadata"]["chunk_id"] == chunks[1].metadata["chunk_id"])
-        self.assertEqual(sent["text"], ref["text"])
-        self.assertTrue(ref["text"].startswith(core))
-        self.assertIn(ref["text"], prefix + core + suffix)
-        self.assertEqual(ref["metadata"]["line_start"], 2)
-        self.assertTrue(ref["truncated"])
-        self.assertEqual(chunks, before)
-
-    def test_qualitative_excerpt_explicitly_reports_missing_experiment_numbers(self):
-        """W04节选只有定性结果时，不把年份或页码当成实验指标数值。"""
-        self.documents[1].page_content = "DETR method. COCO dataset. Comparable to Faster R-CNN in 2020."
-        result, _, _ = self.compare()
-        self.assertIn("论文B：实验结果数值", result["missing_dimensions"])
-        self.assertIn("未能自动核验当前节选中的指标与数值关系", result["answer"])
-        self.assertEqual(result["status"], "insufficient_evidence")
-
-    def test_truncated_result_does_not_display_isolated_model_scores(self):
-        """上下文截断后不能只列半行数值，丢失模型、数据集和对应列。"""
-        self.config["generation"]["max_context_chars"] = 500
-        self.documents[0].page_content = "99.45 99.68 ImageNet accuracy " * 100
-        result, _, _ = self.compare()
-        row = next(row for row in result["comparison"] if row["dimension"] == "实验结果")
-        self.assertTrue(row["a"]["truncated"])
-        result_line = next(line for line in result["answer"].splitlines() if line.startswith("| 实验结果 |"))
-        self.assertNotIn("99.45", result_line)
-        self.assertIn("不能完整列出数值", result_line)
-
-    def test_method_evidence_keeps_adjacent_actual_architecture_text(self):
-        """孤立背景块补入同原文相邻块，避免本篇方法只剩背景概述。"""
-        from langchain_core.documents import Document
-        from src.agent.tools import _finish_paper_compare
-        current = self.documents[0]
-        current.page_content = "Abstract: Transformers were mostly used in NLP. "
-        current.metadata.update(start_index=0, end_index=len(current.page_content))
-        following_text = ("Method: Split images into patches and use a Transformer encoder. BLEU 28.4."
-                          "\n1\nINTRODUCTION\nUnrelated NLP background.")
-        following = Document(page_content=following_text,
-            metadata={**current.metadata, "chunk_id": "next-method", "start_index": len(current.page_content),
-                      "end_index": len(current.page_content) + len(following_text)})
-        with patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
-                patch("src.generation.rag_pipeline.urlopen", side_effect=self.comparison_packet), \
-                patch("src.retrieval.reranker.Reranker") as reranker, \
-                patch("src.agent.tools._finish_paper_compare", wraps=_finish_paper_compare) as finish:
-            reranker.return_value.rerank.side_effect = lambda query, docs, k: [(doc, .9) for doc, _ in docs]
-            retriever.return_value.search.side_effect = lambda query, **kw: [(self.documents[self.ids.index(kw['doc_id'])], .9)]
-            retriever.return_value.vector_store.list_chunks.side_effect = [[current, following], [self.documents[1]]]
-            result = paper_compare.invoke(dict(zip(("paper_a_id", "paper_b_id"), self.ids)))
-        row = next(row for row in result["comparison"] if row["dimension"] == "方法")
-        self.assertIn("Split images into patches", row["a"]["text"])
-        self.assertNotIn("INTRODUCTION", row["a"]["text"])
-        ref = next(ref for ref in finish.call_args.args[0]["references"] if ref["metadata"].get("comparison_method"))
-        self.assertEqual(ref["metadata"]["end_index"] - ref["metadata"]["start_index"], len(ref["text"]))
-
-    def test_cropped_abstract_replaces_stale_method_coverage_and_score(self):
-        """裁剪后摘要必须按方法重排，不能借用同块的数据集分数或旧缺失状态。"""
-        abstract = deepcopy(self.documents[0])
-        abstract.page_content = "Author email\nAbstract: We propose a Transformer. Dataset WMT. Our model achieves BLEU 28.4 on WMT.\n1\nINTRODUCTION\nBackground."
-        abstract.metadata.update(start_index=0, end_index=len(abstract.page_content))
-        before = deepcopy(abstract)
-        for method_score in (0.01, None):
-            with self.subTest(method_score=method_score), \
-                    patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
-                    patch("src.retrieval.reranker.Reranker") as reranker, \
-                    patch("src.generation.rag_pipeline.urlopen", side_effect=self.comparison_packet):
-                def search(query, *, k, doc_id, rerank):
-                    if doc_id != self.ids[0]:
-                        return [(self.documents[1], .9)]
-                    if "architecture" in query or "方法与模型" in query:
-                        return [] if method_score is None else [(abstract, method_score)]
-                    return [(abstract, .97)]
-                retriever.return_value.search.side_effect = search
-                retriever.return_value.vector_store.list_chunks.side_effect = [[abstract], []]
-                reranker.return_value.rerank.side_effect = lambda query, docs, k: [(doc, .8) for doc, _ in docs]
-                result = paper_compare.invoke(dict(zip(("paper_a_id", "paper_b_id"), self.ids)))
-                self.assertEqual(result["papers"][0]["coverage"]["方法"], {"generation_mode": "grounded", "top_score": .8})
-                self.assertEqual(result["low_relevance_dimensions"], [])
-                self.assertEqual(result["missing_dimensions"], [])
-                self.assertEqual(result["status"], "answered")
-                scored = reranker.return_value.rerank.call_args.args[1][0][0]
-                self.assertTrue(scored.page_content.startswith("Abstract"))
-                self.assertNotIn("INTRODUCTION", scored.page_content)
-                self.assertEqual(result["comparison"][0]["a"]["score"], .8)
-                self.assertEqual(abstract, before)
-
-    def test_low_method_dimension_exposes_confirmation_without_auto_generation(self):
-        """整篇高分不能绕过方法低分；复用现有候选确认入口，确认后不换证据。"""
-        from src.agent.tools import get_available_tools
-        abstract = deepcopy(self.documents[0])
-        abstract.page_content = "Abstract: We propose an attention-only Transformer."
-        abstract.metadata.update(chunk_id="abstract", start_index=0, end_index=len(abstract.page_content))
-        pending, args = {}, dict(zip(("paper_a_id", "paper_b_id"), self.ids))
-        with patch("src.generation.cache.cache_scope", return_value="scope-v1"), \
-                patch("src.retrieval.vector_store.VectorStore"), \
-                patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
-                patch("src.retrieval.reranker.Reranker") as reranker, \
-                patch("src.generation.rag_pipeline.urlopen", side_effect=self.comparison_packet) as http:
-            retriever.return_value.search.side_effect = lambda query, **kw: [(self.documents[self.ids.index(kw["doc_id"])], .9)]
-            retriever.return_value.vector_store.list_chunks.side_effect = [[abstract], []]
-            reranker.return_value.rerank.side_effect = lambda query, docs, k: [(doc, .03) for doc, _ in docs]
-            registry = get_available_tools(session_id="session", pending=pending, request_question="对比两篇论文")
-            result = next(t for t in registry if t.name == "paper_compare").invoke(args)
-            self.assertEqual(result["status"], "needs_confirmation")
-            self.assertEqual(result["low_relevance_dimensions"], ["论文A：方法"])
-            self.assertEqual(result["low_relevance_papers"], [])
-            self.assertEqual(result["papers"][0]["coverage"]["方法"]["top_score"], .03)
-            self.assertEqual(result["usage"]["eval_count"], 0)
-            http.assert_not_called()
-            approval = pending[result["confirmation_id"]]
-            retriever.reset_mock()
-            reranker.reset_mock()
-            registry = get_available_tools(session_id="session", confirmation=approval)
-            confirmed = next(t for t in registry if t.name == "paper_compare").invoke(args)
-            self.assertEqual(confirmed["status"], "answered")
-            self.assertTrue(confirmed["confirmed"])
-            self.assertEqual(confirmed["comparison"][0]["a"]["score"], .03)
-            retriever.assert_not_called()
-            reranker.assert_not_called()
 
     def test_comparison_low_relevance_cannot_generate_or_auto_confirm(self):
         result, _, http = self.compare((0.9, 0.01))
@@ -470,31 +230,17 @@ class TestComparisonAndKeywords(unittest.TestCase):
         self.assertTrue(result["warnings"])
 
     def test_comparison_missing_one_paper_citation_is_warned(self):
-        choice = {key: None for key in ("method", "datasets", "results")}
+        choice = {f"{key}_{label}": {"text": "", "reference_id": None}
+                  for label in ("a", "b") for key in ("method", "datasets", "results")}
         result, _, _ = self.compare(response={**self.response, "message": {"content": json.dumps(choice)}})
         self.assertEqual(result["status"], "insufficient_evidence")
         self.assertTrue(any("未同时引用两篇" in warning for warning in result["warnings"]))
 
-    def test_comparison_reads_and_scores_opening_chunks_with_real_reranker_contract(self):
-        from src.chunking import split_documents
-
-        opening = split_documents([self.documents[0]], strategy="fixed", chunk_size=20, chunk_overlap=0)[0]
-        with patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
-                patch("src.retrieval.reranker.get_reranker") as model, \
-                patch("src.generation.rag_pipeline.urlopen", side_effect=self.comparison_packet):
-            retriever.return_value.search.side_effect = [[(self.documents[i], 0.9)] for i in ([0] * 6 + [1] * 6)]
-            retriever.return_value.vector_store.list_chunks.side_effect = [[opening], []]
-            model.return_value.predict.return_value = [0.8]
-            result = paper_compare.invoke(dict(zip(("paper_a_id", "paper_b_id"), self.ids)))
-        self.assertEqual(result["status"], "answered")
-        self.assertEqual(model.return_value.predict.call_args.args[0][0][1], opening.page_content)
-        self.assertIn(opening.metadata["chunk_id"], [ref["metadata"]["chunk_id"] for ref in result["papers"][0]["references"]])
-
     def test_comparison_rejects_wrong_paper_ids_missing_fields_and_partial_model_choice(self):
         choice = json.loads(self.response["message"]["content"])
         for response in ({**self.response, "done_reason": "length"},
-                         {**self.response, "message": {"content": json.dumps({**choice, "method": 2})}},
-                         {**self.response, "message": {"content": json.dumps({**choice, "method": True})}},
+                         {**self.response, "message": {"content": json.dumps({**choice, "method_a": {"text": "来自错误论文", "reference_id": 2}})}},
+                         {**self.response, "message": {"content": json.dumps({**choice, "method_a": {"text": "编号必须是整数", "reference_id": True}})}},
                          {**self.response, "message": {"content": "{}"}}):
             with self.subTest(response=response), self.assertRaises(ValueError):
                 self.compare(response=response)
@@ -511,8 +257,10 @@ class TestComparisonAndKeywords(unittest.TestCase):
     def test_insufficient_comparison_cannot_be_marked_complete(self):
         response = {**self.response, "message": {"content": json.dumps({"observation": "完成", "decision": "finish",
                     "task_complete": True, "answer": "假完成"})}}
-        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(response).encode())), self.assertRaises(RuntimeError):
-            observe("对比", AVAILABLE_TOOLS, {"observations": [{"status": "success", "result": {"status": "insufficient_evidence"}}]})
+        with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(response).encode())):
+            result = observe("对比", AVAILABLE_TOOLS, {"observations": [{"status": "success", "result": {"status": "insufficient_evidence"}}]})
+        self.assertFalse(result["task_complete"])
+        self.assertIn("资料不足", result["answer"])
 
     def test_observation_schema_prevents_empty_finish_seen_in_real_keyword_call(self):
         response = {**self.response, "message": {"content": json.dumps({"observation": "已有关键词。", "decision": "finish",

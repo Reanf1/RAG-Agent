@@ -512,102 +512,49 @@ def _partial_observation_answer(raw: str) -> str:
     return ""
 
 
-def _structured_tool_observation(question: str, tools: list[BaseTool], observations: list[dict]) -> dict | None:
-    """明确单一论文任务保留工具报告，避免再次改写丢失栏目、引用或限制。
+def _local_observation(answer: str, note: str, *, complete=False, decision="finish") -> dict:
+    """直接使用工具结果时的统一事件格式，不产生额外模型用量。"""
+    return {"type": "observation", "observation": note, "decision": decision,
+            "task_complete": complete, "answer": answer, "model": None,
+            "usage": {"prompt_eval_count": 0, "eval_count": 0}, "elapsed_seconds": 0.0}
 
-    文献列表只是查ID；其他工具或后续分析属于组合任务，仍交给模型观察。
-    """
+
+def _structured_tool_observation(question: str, plan: dict | None, observations: list[dict], issue: str, report_only: bool) -> dict | None:
+    """单一报告任务直接展示工具正文；子问题与组合任务统一交给模型观察。"""
+    if plan and plan.get("parallel_tools"):
+        return None
     items = [item for item in observations if item.get("name") != "paper_list" or item.get("status") != "success"]
-    plan = route_question(question, tools)
-    if (plan and plan.get("tool_name") == "knowledge_base_search" and not plan.get("parallel_tools")
-            and not re.search(r"然后|另外|\bthen\b", question, re.I)):
-        failed = [item for item in items if item.get("name") == "knowledge_base_search" and item.get("status") == "error"]
-        recovered = any(item.get("status") == "success" and isinstance(item.get("result"), dict) and (
-            item.get("name") == "knowledge_base_search" and item["result"].get("status") in {
-                "answered", "incomplete", "insufficient_evidence", "needs_confirmation"}
-            or item.get("name") in {"paper_summary", "paper_compare"} and item["result"].get("answer")
-            and item["result"].get("citations")) for item in items)
-        if failed and not recovered:
-            # 元字段读取成功不代表正文问答已恢复；固定保留真实异常，避免模型误报空库。
-            answer = ("知识库工具执行失败：" + (failed[-1].get("error") or "工具未返回可用结果") + "。\n\n"
-                      "本次未能核验所问的文档内容；执行异常不表示文档不存在，元信息缺项也不能替代正文检索。请恢复检索后重新提问。")
+    if plan and observations and not items and plan.get("tool_name") != "paper_list":
+        return _local_observation("", "文献列表已返回，继续执行指定的论文任务。", decision="continue")
+    name = plan.get("tool_name") if plan else "knowledge_base_search"
+    if plan and name == "knowledge_base_search" and _paper_content_pending(observations):
+        failed = [item for item in items if item.get("name") == name and item.get("status") == "error"]
+        if failed:
+            answer = "知识库工具执行失败：" + (failed[-1].get("error") or "未返回可用结果")
+            answer += "。本次未能核验文档内容；执行异常不表示文档不存在，请恢复检索后重试。"
             if failed[-1].get("partial_answer"):
                 answer = failed[-1]["partial_answer"] + "\n\n回答未完成：" + answer
-            return {"type": "observation", "observation": "正文检索失败且尚无可用的替代证据。",
-                    "decision": "finish", "task_complete": False, "answer": answer, "model": None,
-                    "usage": {"prompt_eval_count": 0, "eval_count": 0}, "elapsed_seconds": 0.0}
-    if observations and not items and plan and plan.get("next_step") == "tool" and plan.get("tool_name") != "paper_list":
-        # 文献列表只是先查ID；不能将这一步当成用户要求的检索/摘要/对比已完成。
-        return {"type": "observation", "observation": "文献列表已返回，继续执行指定的论文任务。",
-                "decision": "continue", "task_complete": False, "answer": "", "model": None,
-                "usage": {"prompt_eval_count": 0, "eval_count": 0}, "elapsed_seconds": 0.0}
-    if (plan and plan.get("parallel_tools") == ["paper_metadata", "paper_metadata"]
-            and re.search(r"标题", question) and re.search(r"来源", question)
-            and not re.search(r"作者|年份|摘要|DOI|解释|贡献|方法|比较|对比|推荐|然后|再|另外|\b(?:why|then|compare)\b", question, re.I)):
-        # 明确只问两篇标题与来源时，直接展示已核验字段，避免模型无缺项仍重复读取。
-        targets = set(re.findall(r"\b[0-9a-f]{64}\b", question))
-        results = {item.get("args", {}).get("doc_id"): item.get("result") for item in items
-                   if item.get("name") == "paper_metadata" and item.get("status") == "success"}
-        if len(targets) == 2 and set(results) == targets:
-            rows = []
-            for doc_id, value in results.items():
-                if not isinstance(value, dict) or value.get("doc_id") != doc_id or not value.get("title") or not value.get("source_file"):
-                    return None
-                evidence = value.get("evidence", {}).get("title", [])
-                locations = list(dict.fromkeys(row["location"] for row in evidence
-                    if row.get("location") and row.get("source_file") == value["source_file"]))
-                if not locations:
-                    return None
-                rows.append(f"标题：{value['title']}\n\n来源：{value['source_file']}；{'、'.join(locations)}；论文ID {doc_id}")
-            return {"type": "observation", "observation": "两篇论文的标题与原文来源已齐全，保留实际工具结果。",
-                    "decision": "finish", "task_complete": True, "answer": "\n\n".join(rows), "model": None,
-                    "usage": {"prompt_eval_count": 0, "eval_count": 0}, "elapsed_seconds": 0.0}
-    if len(items) != 1 or items[0].get("status") != "success":
+            return _local_observation(answer, "正文检索尚未恢复。")
+    if len(items) != 1 or items[0].get("name") != name or items[0].get("status") != "success":
         return None
-    item = items[0]
-    name, evidence = item.get("name"), item.get("result")
-    if (name == "knowledge_base_search" and plan and plan.get("tool_name") == name
-            and not plan.get("parallel_tools") and not re.search(r"然后|另外|\bthen\b", question, re.I)
-            and isinstance(evidence, dict) and evidence.get("status") in {"answered", "incomplete", "insufficient_evidence"}
-            and (evidence["status"] != "answered" or item.get("args", {}).get("question") == question)
-            and isinstance(evidence.get("answer"), str) and evidence["answer"].strip()):
-        # 单个RAG结果已生成答案。保留引用校验后的原文和警告，无引用不能误述为空库。
-        answer = evidence["answer"]
-        for note in dict.fromkeys(evidence.get("warnings", [])):
-            if note not in answer:
-                answer += "\n\n" + note
-        complete = bool(evidence["status"] == "answered" and not evidence.get("invalid_citation_ids")
-                        and (evidence.get("generation_mode") == "empty" or evidence.get("citations"))
-                        and evidence.get("done_reason", "stop") == "stop")
-        return {"type": "observation", "observation": "保留RAG工具答案、引用及实际检索状态。",
-                "decision": "finish", "task_complete": complete, "answer": answer, "model": None,
-                "usage": {"prompt_eval_count": 0, "eval_count": 0}, "elapsed_seconds": 0.0}
-    if (name not in {"paper_summary", "paper_compare"} or not plan or plan.get("tool_name") != name
-            or plan.get("parallel_tools") or re.search(r"为什么|原因|推荐|更好|更优|优劣|然后|再|另外|\b(?:why|better|recommend|then)\b", question, re.I)
-            or not isinstance(evidence, dict) or evidence.get("status") not in {"answered", "insufficient_evidence"}
-            or not evidence.get("citations") or not isinstance(evidence.get("answer"), str) or not evidence["answer"].strip()):
+    item, result = items[0], items[0].get("result")
+    if (name not in {"knowledge_base_search", "paper_summary", "paper_compare"}
+            or not isinstance(result, dict) or not result.get("answer")
+            or result.get("status") not in {"answered", "incomplete", "insufficient_evidence"}):
         return None
-    if name == "paper_summary":
-        if set(evidence.get("sections", {})) != {"background", "method", "results", "conclusion"}:
+    if name == "knowledge_base_search":
+        if result["status"] == "answered" and item.get("args", {}).get("question") != question:
             return None
-        missing = evidence.get("missing_fields", [])
-        low = []
-    else:
-        if {row.get("dimension") for row in evidence.get("comparison", [])} != {"方法", "数据集", "实验结果"}:
+        if result["status"] == "answered" and (result.get("generation_mode") == "fallback"
+                or not result.get("citations") and result.get("generation_mode") != "empty"):
             return None
-        missing, low = evidence.get("missing_dimensions", []), evidence.get("low_relevance_dimensions", [])
-    answer = evidence["answer"]
-    notes = [*evidence.get("warnings", [])]
-    if missing:
-        notes.append("资料不足：" + "、".join(missing))
-    if low:
-        notes.append("低相关性维度需核验：" + "、".join(low))
-    for note in dict.fromkeys(notes):
-        if note not in answer:
+    elif not report_only:
+        return None
+    answer = result["answer"]
+    for note in dict.fromkeys([*result.get("warnings", []), issue]):
+        if note and note not in answer:
             answer += "\n\n" + note
-    return {"type": "observation", "observation": "保留单一任务工具报告的栏目、原文引用和限制说明。",
-            "decision": "finish", "task_complete": evidence["status"] == "answered" and not missing and (not low or evidence.get("confirmed") is True),
-            "answer": answer, "model": None, "usage": {"prompt_eval_count": 0, "eval_count": 0}, "elapsed_seconds": 0.0}
+    return _local_observation(answer, "保留工具报告、来源和限制说明。", complete=not issue)
 
 
 def _paper_content_pending(observations: list[dict]) -> bool:
@@ -636,6 +583,38 @@ def _paper_content_pending(observations: list[dict]) -> bool:
     return False
 
 
+def _completion_issue(question, plan, observations, latest, context) -> str:
+    """工具状态、原任务覆盖与恢复共用一处检查；不猜测答案的语义质量。"""
+    if any(item.get("status") == "error" for item in latest):
+        return "最后一次工具调用失败，原任务尚未完成。"
+    if any(isinstance(item.get("result"), dict) and item["result"].get("status") in {
+            "needs_confirmation", "incomplete", "insufficient_evidence"} for item in latest):
+        return "工具资料不足、回答截断或候选尚待确认，原任务尚未完成。"
+    if _paper_content_pending(observations):
+        return "正文任务尚未恢复：需要失败目标论文的有效正文证据；其他工具成功不能代替。"
+    content = [item for item in observations if item.get("name") != "paper_list"]
+    if (content and all(item.get("name") == "keyword_extract" and isinstance(item.get("result"), dict)
+                       and not item["result"].get("doc_id") for item in content)
+            and not re.search(r"关键词|关键字|\bkeywords?\b|\bkey terms?\b", question, re.I)):
+        return "仅提取了问题关键词，尚未核验原论文内容，论文任务未完成。"
+    completed = [item for item in observations if item.get("status") == "success"
+                 and (not isinstance(item.get("result"), dict) or item["result"].get("status", "answered") == "answered")]
+    if plan and plan.get("parallel_tools"):
+        expected, counts = Counter(plan["parallel_tools"]), Counter(item.get("name") for item in completed)
+        targets = _current_paper_ids(question, _paper_aliases(context))
+        covered = {item.get("args", {}).get("doc_id") for item in completed if item.get("name") in expected}
+        if any(counts[name] < count for name, count in expected.items()) or targets and not targets <= covered:
+            return "分别处理的论文任务尚未全部完成：需要每篇目标论文的独立工具结果。"
+    if plan and plan.get("tool_name") == "paper_compare" and not any(
+            item.get("name") == "paper_compare" and isinstance(item.get("result"), dict)
+            and len({ref.get("metadata", {}).get("doc_id") for ref in item["result"].get("citations", [])}) == 2
+            for item in completed):
+        return "原对比任务尚未完成：需要两篇论文的方法、数据集、实验结果及对应引用。"
+    if (context or {}).get("recovery", {}).get("pending"):
+        return "工具异常尚未恢复，原任务未完成。"
+    return ""
+
+
 def _observe_events(question: str, tools: list[BaseTool] | None = None, context: dict | None = None,
                     messages: list | None = None, *, thought: dict | None = None, stream: bool = False):
     """观察真实结果并决定继续或结束；完成标志与答案必须相互一致。"""
@@ -644,25 +623,18 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
     if not isinstance(observations, list) or any(not isinstance(item, dict) for item in observations):
         raise ValueError("observations必须为工具结果字典列表")
     started = perf_counter()
-    retained = _structured_tool_observation(question, tools or [], observations)
+    count = sum(isinstance(item, ToolMessage) for item in (messages or []))
+    latest = observations[-count:] if count else observations[-1:]
+    plan = route_question(question, tools or [])
+    issue = _completion_issue(question, plan, observations, latest, context)
+    report_only = not re.search(r"为什么|原因|解释|贡献|推荐|更好|更优|优劣|然后|再|另外|\b(?:why|better|recommend|then|explain)\b", question, re.I)
+    retained = _structured_tool_observation(question, plan, observations, issue, report_only)
     if retained:
         retained["elapsed_seconds"] = perf_counter() - started
         if stream:
             yield {"type": "token", "answer": retained["answer"], "provisional": False}
         yield retained
         return
-    recovery = (context or {}).get("recovery", {})
-    if not isinstance(recovery, dict):
-        raise ValueError("recovery必须为恢复状态字典")
-    count = sum(isinstance(item, ToolMessage) for item in (messages or []))
-    latest = observations[-count:] if count else observations[-1:]
-    body_pending = _paper_content_pending(observations)
-    content_items = [item for item in observations if item.get("name") != "paper_list"]
-    question_keywords_only = bool(content_items) and all(
-        item.get("name") == "keyword_extract" and item.get("status") == "success"
-        and isinstance(item.get("result"), dict) and not item["result"].get("doc_id")
-        and not item["result"].get("source_file") for item in content_items
-    ) and not re.search(r"关键词|关键字|\bkeywords?\b|\bkey terms?\b", question, re.I)
     waiting = [item for item in latest if item.get("status") == "success" and isinstance(item.get("result"), dict)
                and item["result"].get("status") == "needs_confirmation" and item["result"].get("references")]
     if waiting:
@@ -672,9 +644,7 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
             answer += "\n\n" + notice
         if stream:
             yield {"type": "token", "answer": answer, "provisional": False}
-        yield {"type": "observation", "observation": "等待用户确认候选。", "decision": "finish",
-               "task_complete": False, "answer": answer, "model": None,
-               "usage": {"prompt_eval_count": 0, "eval_count": 0}, "elapsed_seconds": perf_counter() - started}
+        yield _local_observation(answer, "等待用户确认候选。")
         return
     if messages:
         model_context = deepcopy(context or {})
@@ -691,30 +661,24 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
         "decision": {"enum": ["continue", "finish"]},
         "task_complete": {"type": "boolean"}, "answer": {"type": "string"}},
         "required": ["observation", "decision", "task_complete", "answer"], "additionalProperties": False}
-    if body_pending or question_keywords_only or any(item.get("status") == "error" or (isinstance(item.get("result"), dict) and
-           item["result"].get("status") in {"needs_confirmation", "incomplete", "insufficient_evidence"}) for item in latest):
+    if issue:
         schema["properties"]["task_complete"] = {"const": False}
     # 本轮Ollama实调用未将外层必填项合入anyOf分支，分支必须完整；同时禁止空答案finish。
     schema["anyOf"] = [
         {**schema, "properties": {**schema["properties"], "decision": {"const": "finish"}, "answer": {"type": "string", "minLength": 1}}},
         {**schema, "properties": {**schema["properties"], "decision": {"const": "continue"}, "answer": {"type": "string", "maxLength": 0}, "task_complete": {"const": False}}},
     ]
-    original_plan = route_question(question, tools or [])
-    # 明确单一任务的调用已经返回后，进入回答阶段；仍由模型如实说明缺项，不能继续重复调用。
-    single_result = content_items[0] if len(content_items) == 1 else None
-    answered_call = bool(original_plan and not original_plan.get("parallel_tools") and single_result
-                         and single_result.get("name") == original_plan.get("tool_name")
-                         and single_result.get("status") == "success" and not body_pending
-                         and (single_result.get("name") != "knowledge_base_search"
-                              or single_result.get("args", {}).get("question") == question))
+    content_items = [item for item in observations if item.get("name") != "paper_list"]
+    expected = Counter(plan.get("parallel_tools") or [plan.get("tool_name")]) if plan else Counter()
+    answered_call = bool(expected and not issue and (report_only or plan.get("tool_name") == "knowledge_base_search") and Counter(item.get("name") for item in content_items) == expected
+                         and all(item.get("status") == "success" and (item.get("name") != "knowledge_base_search"
+                                 or item.get("args", {}).get("question") == question) for item in content_items))
     answering = answered_call or thought is not None and thought.get("next_step") == "answer"
     if answering:
         # 规划已进入回答阶段；仍允许task_complete=false说明资料不足，不能无工具空转。
         schema.pop("anyOf")
         schema["properties"]["decision"] = {"const": "finish"}
         schema["properties"]["answer"] = {"type": "string", "minLength": 1}
-        if recovery.get("pending"):
-            schema["properties"]["task_complete"] = {"const": False}
     # 工具消息之后重申当前任务，避免模型沿用历史中已结束的问题；不重复塞入历史或工具正文。
     prompt.append(HumanMessage(content="本轮用户问题：" + question + (
         "\n请根据已返回的结果直接给出答案；若所需资料不足，请说明缺项并标记未完成。" if answering
@@ -766,58 +730,17 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
             raise ValueError("Observation决策或完成标志类型错误")
         if answering and decision["decision"] != "finish":
             raise ValueError("Observation回答计划不能继续空转")
-        if answering and recovery.get("pending") and decision["task_complete"]:
-            raise ValueError("工具异常尚未恢复，不能将直接回答标记为任务完成")
         if not isinstance(answer, str):
             raise ValueError("Observation答案必须为文本")
         if decision["decision"] == "continue" and (decision["task_complete"] or answer):
             raise ValueError("继续执行时不能标记完成或提供最终答案")
         if decision["decision"] == "finish" and not answer.strip():
             raise ValueError("结束时必须提供答案或无法完成的说明")
-        if any(item.get("status") == "error" for item in latest) and decision["task_complete"]:
-            raise ValueError("最后一次工具调用失败，不能将原任务标记为成功")
-        if any(isinstance(item.get("result"), dict) and item["result"].get("status") in {"needs_confirmation", "incomplete", "insufficient_evidence"} for item in latest) and decision["task_complete"]:
-            raise ValueError("工具资料不足或候选尚待用户确认，不能将原任务标记为成功")
-        if original_plan and original_plan.get("parallel_tools") and decision["task_complete"]:
-            expected = Counter(original_plan["parallel_tools"])
-            completed = [item for item in observations if item.get("status") == "success"
-                         and not (isinstance(item.get("result"), dict) and item["result"].get("status") in {
-                             "needs_confirmation", "incomplete", "insufficient_evidence"})]
-            targets = _current_paper_ids(question, _paper_aliases(context))
-            covered = {item.get("args", {}).get("doc_id") for item in completed if item.get("name") in expected}
-            counts = Counter(item.get("name") for item in completed)
-            if any(counts[name] < count for name, count in expected.items()) or targets and not targets <= covered:
-                decision["task_complete"] = False
-                decision["answer"] += "\n\n分别处理的论文任务尚未全部完成：需要每篇目标论文的独立工具结果。"
-        if original_plan and original_plan.get("tool_name") == "paper_compare" and decision["task_complete"]:
-            comparisons = [item["result"] for item in observations if item.get("name") == "paper_compare"
-                           and item.get("status") == "success" and isinstance(item.get("result"), dict)]
-            complete_comparison = any(result.get("status") == "answered" and not result.get("missing_dimensions")
-                                      and (not result.get("low_relevance_dimensions") or result.get("confirmed") is True)
-                                      and {row.get("dimension") for row in result.get("comparison", [])} == {"方法", "数据集", "实验结果"}
-                                      and len({ref["metadata"]["doc_id"] for ref in result.get("citations", [])}) == 2
-                                      for result in comparisons)
-            if not complete_comparison:
-                decision["task_complete"] = False
-                decision["answer"] += "\n\n原对比任务尚未完成：需要两篇论文的方法、数据集、实验结果及对应引用。"
-        if body_pending or question_keywords_only:
+        # 模型不能覆盖已知的失败/缺项；同一规则同时约束请求Schema与最终事件。
+        if issue:
             decision["task_complete"] = False
-            if decision["decision"] == "finish":
-                notice = ("正文任务尚未恢复：需要失败目标论文的有效正文证据；其他工具成功不能代替。"
-                          "检索异常或证据不足不表示论文不存在。"
-                          if body_pending else "仅提取了问题关键词，尚未核验原论文内容，论文任务未完成。")
-                decision["answer"] += "\n\n" + notice
-        if decision["decision"] == "finish" and decision["task_complete"] and len(observations) == 1:
-            item = observations[0]
-            evidence = item.get("result", {})
-            # 仅单次RAG完整回答原问题时直通已溯源文本，避免二次改写丢失引用。
-            # 多工具、子问题、降级和资料不足仍使用Observation，不自动补造引用。
-            if (item.get("name") == "knowledge_base_search" and item.get("status") == "success"
-                    and item.get("args", {}).get("question") == question and isinstance(evidence, dict)
-                    and evidence.get("status") == "answered" and (evidence.get("generation_mode") == "grounded"
-                    or evidence.get("generation_mode") == "low" and evidence.get("confirmed") is True)
-                    and evidence.get("citations") and isinstance(evidence.get("answer"), str) and evidence["answer"].strip()):
-                decision["answer"] = evidence["answer"]
+            if decision["decision"] == "finish" and issue not in decision["answer"]:
+                decision["answer"] += "\n\n" + issue
         if decision["decision"] == "finish":
             for item in latest:
                 evidence = item.get("result")

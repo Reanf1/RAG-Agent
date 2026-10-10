@@ -419,8 +419,10 @@ class TestResearchTools(unittest.TestCase):
         context = {"observations": [{"status": "success", "result": {"status": "needs_confirmation"}}]}
         decision = {"observation": "等待确认。", "decision": "finish", "task_complete": True, "answer": "假称完成"}
         with patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps({
-            **self.response, "message": {"content": json.dumps(decision)}}).encode())), self.assertRaisesRegex(RuntimeError, "尚待用户确认"):
-            observe("问题", AVAILABLE_TOOLS, context)
+            **self.response, "message": {"content": json.dumps(decision)}}).encode())):
+            result = observe("问题", AVAILABLE_TOOLS, context)
+        self.assertFalse(result["task_complete"])
+        self.assertIn("候选尚待确认", result["answer"])
 
 
 if __name__ == "__main__":

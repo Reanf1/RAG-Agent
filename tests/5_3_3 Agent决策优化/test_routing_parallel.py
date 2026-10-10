@@ -318,9 +318,10 @@ class TestRoutingAndParallel(unittest.TestCase):
                        {"status": "success", "result": {"status": "insufficient_evidence"}}):
             context = {"observations": [result, {"status": "success", "result": "最后一个成功"}]}
             messages = [ToolMessage(content="第一条", tool_call_id="a"), ToolMessage(content="第二条", tool_call_id="b")]
-            with self.subTest(result=result), patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(self.finished)).encode())), \
-                    self.assertRaises(RuntimeError):
-                observe("完成两件事", self.tools, context, messages)
+            with self.subTest(result=result), patch("src.agent.react_loop.urlopen", return_value=BytesIO(json.dumps(self.packet(self.finished)).encode())):
+                outcome = observe("完成两件事", self.tools, context, messages)
+                self.assertFalse(outcome["task_complete"])
+                self.assertIn("尚未完成", outcome["answer"])
 
     def test_loop_observes_entire_batch_and_preserves_native_input_order(self):
         with patch("src.agent.react_loop.urlopen", side_effect=[BytesIO(json.dumps(x).encode()) for x in

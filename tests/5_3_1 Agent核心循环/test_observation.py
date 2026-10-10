@@ -94,7 +94,7 @@ class TestObservationAndLoop(unittest.TestCase):
         with patch("src.agent.react_loop.urlopen", return_value=self.http_responses([self.packet(self.finished)])[0]):
             result = observe("对比两篇论文的方法、数据集和实验结果", [paper_compare, paper_summary], context)
         self.assertFalse(result["task_complete"])
-        self.assertIn("对比任务尚未完成", result["answer"])
+        self.assertIn("尚未恢复", result["answer"])
 
     def test_one_paper_result_cannot_complete_two_paper_request(self):
         """数量校验之外，最终观察也要防止只读一篇却宣称分别处理完成。"""
@@ -108,7 +108,7 @@ class TestObservationAndLoop(unittest.TestCase):
         self.assertFalse(result["task_complete"])
         self.assertIn("尚未全部完成", result["answer"])
 
-    def test_two_verified_titles_and_sources_finish_without_repeat_generation(self):
+    def test_two_verified_titles_and_sources_enter_shared_answer_stage(self):
         """Windows实测：两篇标题与来源齐全后不再生成continue并重复调用。"""
         from src.agent.tools import paper_metadata
         a, b = "a" * 64, "b" * 64
@@ -117,39 +117,31 @@ class TestObservationAndLoop(unittest.TestCase):
             "result": {"doc_id": doc_id, "title": title, "source_file": file, "doi": None,
                        "evidence": {"title": [{"text": title, "source_file": file, "location": "第1页（物理页码）"}]}}}
             for doc_id, title, file in ((a, "论文甲", "甲.pdf"), (b, "论文乙", "乙.pdf"))]
-        with patch("src.agent.react_loop.urlopen", return_value=self.http_responses([self.packet(self.pending)])[0]) as http:
+        decision = {**self.finished, "answer": "\n".join(f"{title}：{file}，第1页，{doc_id}"
+                    for doc_id, title, file in ((a, "论文甲", "甲.pdf"), (b, "论文乙", "乙.pdf")))}
+        with patch("src.agent.react_loop.urlopen", return_value=self.http_responses([self.packet(decision)])[0]) as http:
             result = observe(question, [paper_metadata], {"observations": observations})
-        http.assert_not_called()
+        self.assertEqual(http.call_count, 1)
+        self.assertEqual(json.loads(http.call_args.args[0].data)["format"]["properties"]["decision"], {"const": "finish"})
         self.assertTrue(result["task_complete"])
         self.assertEqual(result["decision"], "finish")
         for title, file, doc_id in (("论文甲", "甲.pdf", a), ("论文乙", "乙.pdf", b)):
             self.assertIn(title, result["answer"])
             self.assertIn(file, result["answer"])
             self.assertIn(doc_id, result["answer"])
-        self.assertIn("第1页（物理页码）", result["answer"])
+        self.assertIn("第1页", result["answer"])
 
-    def test_metadata_fast_finish_requires_both_sources_and_no_followup_analysis(self):
-        """缺少来源证据、目标错配或另需分析时，保留模型观察流程。"""
+    def test_metadata_with_followup_analysis_still_allows_next_step(self):
+        """先读元数据再解释方法，不能只凭两次工具成功强制完成整题。"""
         from src.agent.tools import paper_metadata
         a, b = "a" * 64, "b" * 64
-        question = f"分别读取论文ID {a} 和 {b} 的元信息，分别给出标题与来源。"
+        question = f"分别读取论文ID {a} 和 {b} 的元信息，并解释各自研究方法。"
         observations = [{"name": "paper_metadata", "args": {"doc_id": doc_id}, "status": "success",
-            "result": {"doc_id": doc_id, "title": "标题", "source_file": "论文.pdf",
-                       "evidence": {"title": [{"source_file": "论文.pdf", "location": "第1页"}]}}}
-            for doc_id in (a, b)]
-        variants = [(question + "然后比较研究方法。", observations),
-                    (question + "并解释各自研究贡献。", observations),
-                    (question + "并给出作者。", observations)]
-        for key, value in (("evidence", {}), ("doc_id", a)):
-            changed = deepcopy(observations)
-            changed[1]["result"][key] = value
-            variants.append((question, changed))
-        for text, items in variants:
-            with self.subTest(question=text, result=items[1]["result"]):
-                with patch("src.agent.react_loop.urlopen", return_value=self.http_responses([self.packet(self.pending)])[0]) as http:
-                    result = observe(text, [paper_metadata], {"observations": items})
-                self.assertEqual(http.call_count, 1)
-                self.assertFalse(result["task_complete"])
+                         "result": {"title": "标题", "source_file": "论文.pdf"}} for doc_id in (a, b)]
+        with patch("src.agent.react_loop.urlopen", return_value=self.http_responses([self.packet(self.pending)])[0]):
+            result = observe(question, [paper_metadata], {"observations": observations})
+        self.assertFalse(result["task_complete"])
+        self.assertEqual(result["decision"], "continue")
 
     def test_two_real_tools_feed_next_round_and_native_observation_messages(self):
         context = {"source": "原始资料", "observations": []}
@@ -362,9 +354,9 @@ class TestObservationAndLoop(unittest.TestCase):
     def test_failed_tool_cannot_be_marked_successful(self):
         events, _ = self.run_loop([self.packet(name="divide", args={"a": 1, "b": 0}),
                                    self.packet(self.finished)])
-        self.assertEqual([e["type"] for e in events[-2:]], ["error", "done"])
+        self.assertEqual(events[-1]["stop_reason"], "incomplete")
         self.assertFalse(events[-1]["task_complete"])
-        self.assertEqual(events[-1]["stop_reason"], "error")
+        self.assertIn("调用失败", events[-1]["full_response"])
         self.assertEqual(len(events[-1]["context"]["observations"]), 1)
 
     def test_tool_error_can_continue_to_a_real_alternative(self):
