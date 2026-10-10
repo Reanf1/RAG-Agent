@@ -542,6 +542,47 @@ def _completion_issue(question, plan, observations, latest, context) -> str:
     return ""
 
 
+def _observation_schema(*, issue: bool, answering: bool) -> dict:
+    """Observation的JSON Schema：四字段必填，并禁止"继续却带答案"或"结束却空答案"。"""
+    properties = {"observation": {"type": "string", "minLength": 1, "maxLength": 200},
+                  "decision": {"enum": ["continue", "finish"]},
+                  "task_complete": {"type": "boolean"}, "answer": {"type": "string"}}
+    if issue:
+        properties["task_complete"] = {"const": False}
+    if answering:
+        # 规划已进入回答阶段；仍允许task_complete=false说明资料不足，不能无工具空转。
+        properties["decision"] = {"const": "finish"}
+        properties["answer"] = {"type": "string", "minLength": 1}
+        return {"type": "object", "properties": properties, "required": list(properties), "additionalProperties": False}
+    schema = {"type": "object", "properties": properties, "required": list(properties), "additionalProperties": False}
+    # 本轮Ollama实调用未将外层必填项合入anyOf分支，分支必须完整。
+    return {**schema, "anyOf": [
+        {**schema, "properties": {**properties, "decision": {"const": "finish"}, "answer": {"type": "string", "minLength": 1}}},
+        {**schema, "properties": {**properties, "decision": {"const": "continue"},
+                                  "answer": {"type": "string", "maxLength": 0}, "task_complete": {"const": False}}}]}
+
+
+def _validated_observation(result: dict, *, answering: bool) -> dict:
+    """校验Observation四字段及其相互一致性；不一致直接报错，不接受部分判断。"""
+    decision = json.loads(result["message"].get("content", ""))
+    if not isinstance(decision, dict) or set(decision) != {"observation", "decision", "task_complete", "answer"}:
+        raise ValueError("Observation必须包含规定的四个字段")
+    note, answer = decision["observation"], decision["answer"]
+    if not isinstance(note, str) or not note.strip() or len(note) > 200:
+        raise ValueError("Observation说明必须为1～200字符的非空文本")
+    if decision["decision"] not in ("continue", "finish") or type(decision["task_complete"]) is not bool:
+        raise ValueError("Observation决策或完成标志类型错误")
+    if answering and decision["decision"] != "finish":
+        raise ValueError("Observation回答计划不能继续空转")
+    if not isinstance(answer, str):
+        raise ValueError("Observation答案必须为文本")
+    if decision["decision"] == "continue" and (decision["task_complete"] or answer):
+        raise ValueError("继续执行时不能标记完成或提供最终答案")
+    if decision["decision"] == "finish" and not answer.strip():
+        raise ValueError("结束时必须提供答案或无法完成的说明")
+    return decision
+
+
 def _observe_events(question: str, tools: list[BaseTool] | None = None, context: dict | None = None,
                     messages: list | None = None, *, thought: dict | None = None, stream: bool = False):
     """观察真实结果并决定继续或结束；完成标志与答案必须相互一致。"""
@@ -583,29 +624,13 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
                                          for item in observations]
         prompt = build_agent_messages(question, tools or [], model_context, stage="observation", thought=thought)
     prompt.extend(messages if messages is not None else [])
-    schema = {"type": "object", "properties": {
-        "observation": {"type": "string", "minLength": 1, "maxLength": 200},
-        "decision": {"enum": ["continue", "finish"]},
-        "task_complete": {"type": "boolean"}, "answer": {"type": "string"}},
-        "required": ["observation", "decision", "task_complete", "answer"], "additionalProperties": False}
-    if issue:
-        schema["properties"]["task_complete"] = {"const": False}
-    # 本轮Ollama实调用未将外层必填项合入anyOf分支，分支必须完整；同时禁止空答案finish。
-    schema["anyOf"] = [
-        {**schema, "properties": {**schema["properties"], "decision": {"const": "finish"}, "answer": {"type": "string", "minLength": 1}}},
-        {**schema, "properties": {**schema["properties"], "decision": {"const": "continue"}, "answer": {"type": "string", "maxLength": 0}, "task_complete": {"const": False}}},
-    ]
     content_items = [item for item in observations if item.get("name") != "paper_list"]
     expected = Counter(plan.get("parallel_tools") or [plan.get("tool_name")]) if plan else Counter()
     answered_call = bool(expected and not issue and (report_only or plan.get("tool_name") == "knowledge_base_search") and Counter(item.get("name") for item in content_items) == expected
                          and all(item.get("status") == "success" and (item.get("name") != "knowledge_base_search"
                                  or item.get("args", {}).get("question") == question) for item in content_items))
     answering = answered_call or thought is not None and thought.get("next_step") == "answer"
-    if answering:
-        # 规划已进入回答阶段；仍允许task_complete=false说明资料不足，不能无工具空转。
-        schema.pop("anyOf")
-        schema["properties"]["decision"] = {"const": "finish"}
-        schema["properties"]["answer"] = {"type": "string", "minLength": 1}
+    schema = _observation_schema(issue=bool(issue), answering=answering)
     # 工具消息之后重申当前任务，避免模型沿用历史中已结束的问题；不重复塞入历史或工具正文。
     prompt.append(HumanMessage(content="本轮用户问题：" + question + (
         "\n请根据已返回的结果直接给出答案；若所需资料不足，请说明缺项并标记未完成。" if answering
@@ -641,28 +666,8 @@ def _observe_events(question: str, tools: list[BaseTool] | None = None, context:
                         break
                 if result is None:
                     raise ValueError("Observation流已断开，未收到完成标记")
-        if not isinstance(result, dict) or result.get("error"):
-            raise ValueError(f"Observation响应错误：{result}")
-        if result.get("done") is not True or result.get("done_reason") != "stop":
-            raise ValueError("Observation未正常完成，不能使用部分判断")
-        if not isinstance(result.get("model"), str) or not result["model"] or not isinstance(result.get("message"), dict):
-            raise ValueError("Observation响应缺少消息或模型名称")
-        decision = json.loads(result["message"].get("content", ""))
-        if not isinstance(decision, dict) or set(decision) != set(schema["required"]):
-            raise ValueError("Observation必须包含规定的四个字段")
-        note, answer = decision["observation"], decision["answer"]
-        if not isinstance(note, str) or not note.strip() or len(note) > 200:
-            raise ValueError("Observation说明必须为1～200字符的非空文本")
-        if decision["decision"] not in ("continue", "finish") or type(decision["task_complete"]) is not bool:
-            raise ValueError("Observation决策或完成标志类型错误")
-        if answering and decision["decision"] != "finish":
-            raise ValueError("Observation回答计划不能继续空转")
-        if not isinstance(answer, str):
-            raise ValueError("Observation答案必须为文本")
-        if decision["decision"] == "continue" and (decision["task_complete"] or answer):
-            raise ValueError("继续执行时不能标记完成或提供最终答案")
-        if decision["decision"] == "finish" and not answer.strip():
-            raise ValueError("结束时必须提供答案或无法完成的说明")
+        result = _checked_response(result, "Observation")
+        decision = _validated_observation(result, answering=answering)
         # 模型不能覆盖已知的失败/缺项；同一规则同时约束请求Schema与最终事件。
         if issue:
             decision["task_complete"] = False
