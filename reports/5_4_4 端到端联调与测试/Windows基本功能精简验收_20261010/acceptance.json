@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-10",
+  "scope": "本科课程基本功能；不新增容量、压力或正式论文集重评",
+  "code_commit": "08e6012cf9e1f2a33e671c4f080a05712749aafd",
+  "prompt_version": "rag-v24",
+  "deployed_source_matches_mac": true,
+  "regression": {
+    "commit": "4d0421e3f6d7bbf0e109e5c8384b9a7b4cb9e3e6",
+    "run": 106,
+    "passed": true,
+    "seconds": 36.64320469999984,
+    "evidence": "regression.json"
+  },
+  "real_basic_tasks": {
+    "commit": "9351a73942471202f849e89001b5d5b09ca9451e",
+    "run": 10,
+    "passed": 10,
+    "seconds": 80.711,
+    "evidence": "results.json",
+    "note": "真实Ollama/M3E/BGE/Chroma，临时合成资料；AppTest启动警告导致执行器中断，单独补跑原第10项通过"
+  },
+  "final_changes_verified": {
+    "prompt_tests_windows": 2,
+    "prompt_tests_mac": 2,
+    "prompt_tests_passed": true,
+    "browser_case_passed": true,
+    "evidence": "browser.json",
+    "note": "10项集中测试后仅修改引用Prompt；最终版本针对失败问题实机复测，不把前一提交的整套结果标成最终提交重跑"
+  },
+  "issues": [
+    {
+      "problem": "SSH远程shell退出时服务进程被清理",
+      "resolution": "通过WMI创建独立启动进程，服务保持可访问",
+      "status": "resolved"
+    },
+    {
+      "problem": "旧rag_history外键阻止删除已有会话",
+      "resolution": "备份后将旧表外键改为级联；副本删除通过，原行全部保留",
+      "status": "resolved"
+    },
+    {
+      "problem": "基本问答遗漏文献编号；格式示例被复述为答案",
+      "resolution": "引用要求放在问题后，去掉答案占位措辞；最终事实和引用实机核对通过",
+      "status": "resolved_in_tested_case"
+    }
+  ],
+  "preservation_verified": true,
+  "browser_history_reload_verified": true,
+  "pending": "正式论文答案质量及成员资料仍待用户审核，Word/PPT暂不更新。"
+}

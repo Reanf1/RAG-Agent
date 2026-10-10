@@ -13,10 +13,10 @@
 ```
 
 ```powershell
-# Windows运行入口；本次版本仅完成Mac验收。
+# Windows运行入口；按进程退出码判断，正常警告不作为失败。
 .\.venv\Scripts\python.exe reports\模块完整性验证\verify_completeness_tests.py --scope all --output "$env:TEMP\rag-basic-new.json"
 ```
 
 Mac 106项回归（6.22秒）与10项真实流程（约135秒）全部通过，结果、原答及失败处理见[验收记录](../reports/5_4_4%20端到端联调与测试/基本功能精简验收_20261010/acceptance.json)。单元测试使用临时Chroma/SQLite/AppTest，模型调用部分为mock；真实流程使用本地Qwen、M3E和BGE。合成资料用于确认功能，不能代替论文答案质量审核。
 
-正式12篇/60题评测、课程性能对照与三个研究问题按[课程实验记录](../reports/课程实验记录.md)单独复现，历史JSON/日志保留；旧版界面核验脚本按其记录的Git版本运行，当前基本验收使用上述入口。当前Windows和实机浏览器尚未复测，Word/PPT暂不更新。
+正式12篇/60题评测、课程性能对照与三个研究问题按[课程实验记录](../reports/课程实验记录.md)单独复现，历史JSON/日志保留；旧版界面核验脚本按其记录的Git版本运行，当前基本验收使用上述入口。Windows 106项回归与10项真实流程通过；最终引用Prompt另跑原有2项测试及实机失败问答，来源和刷新恢复通过。提交版本与发现的问题见[Windows验收](../reports/5_4_4%20端到端联调与测试/Windows基本功能精简验收_20261010/本轮部署验收报告.md)。Word/PPT暂不更新。

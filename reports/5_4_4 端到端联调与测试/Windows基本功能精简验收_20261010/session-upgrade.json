@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "reason": "旧rag_history外键阻止真删除；本次部署只调整历史表为级联删除，不恢复业务兼容接口",
+  "copy_delete_verified": true,
+  "all_existing_rows_preserved": true,
+  "backup": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-basic-simplify-20261010\\memory-before-upgrade.sqlite3",
+  "foreign_keys": [
+    [
+      0,
+      0,
+      "sessions",
+      "session_id",
+      "session_id",
+      "NO ACTION",
+      "CASCADE",
+      "NONE"
+    ]
+  ]
+}
