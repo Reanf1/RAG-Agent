@@ -116,36 +116,6 @@ def knowledge_base_search(question: str, doc_id: str | None = None) -> dict:
     return _knowledge_base_search(question, doc_id)
 
 
-def _cache_scope() -> str:
-    """当前知识库与生成配置的缓存作用域；查询与写入必须用同一份。"""
-    from src.generation.cache import cache_scope
-    from src.retrieval.vector_store import VectorStore
-
-    return cache_scope(VectorStore())
-
-
-def _lookup_cached_answer(cache, question: str, scope: str) -> tuple[dict | None, list[str]]:
-    """依赖前文的短追问不复用答案；命中返回独立快照与降级提示。"""
-    if cache is None or re.search(r"刚才|之前|上一|前面|上述|它|这(?:篇|份|个|些)|本文|该(?:论文|文档)|\b(?:it|this|that|previous|above)\b", question, re.I):
-        return None, []
-    with cache.lock:
-        try:
-            return cache.lookup(question, scope), []
-        except (OSError, ValueError, RuntimeError) as error:
-            return None, [f"缓存查询失败，本次重新检索：{error}"]
-
-
-def _save_cached_answer(cache, question: str, result: dict, scope: str) -> list[str]:
-    """生成期间知识库变化时不保存跨版本答案；失败只提示，不影响已生成答案。"""
-    try:
-        if scope == _cache_scope() and cache is not None:
-            with cache.lock:
-                cache.put(question, {"type": "done", **result}, scope)
-    except (OSError, ValueError, RuntimeError) as error:
-        return [f"答案已生成，但缓存保存失败：{error}"]
-    return []
-
-
 def _knowledge_base_search(question: str, doc_id: str | None = None, *, cache=None, session_id: str | None = None,
                            pending: dict | None = None, confirmation: dict | None = None, request_question: str | None = None) -> dict:
     """真实RAG实现；缓存只由Python会话入口绑定，不向模型暴露会话或缓存参数。"""
@@ -166,15 +136,25 @@ def _knowledge_base_search(question: str, doc_id: str | None = None, *, cache=No
                "started_at": request_time(), "request_info": {"llm": config["llm"], "retrieval": config["retrieval"],
                "prompt_version": PROMPT_VERSION, "entrypoint": "knowledge_base_search"}, "generation_attempted": False}
     result, status = None, "error"
-    scope = None
+    scope, cache_store = None, None
     cache_warnings = []
     try:
-        # 缓存作用域一次算好；确认与写入都复用同一份，避免各处重复读取知识库。
-        current_scope = _cache_scope()
-        pending_scope = current_scope if pending is not None else None
-        if confirmation is None:
-            scope = (pending_scope if pending_scope is not None else current_scope) + ":" + str(doc_id)
-            result, cache_warnings = _lookup_cached_answer(cache, question, scope)
+        pending_scope = None
+        if pending is not None:
+            from src.generation.cache import cache_scope
+            from src.retrieval.vector_store import VectorStore
+            pending_scope = cache_scope(VectorStore())
+        # 依赖前文的短追问不复用答案；先由Agent补全问题或明确指定论文再检索。
+        if confirmation is None and cache is not None and not re.search(r"刚才|之前|上一|前面|上述|它|这(?:篇|份|个|些)|本文|该(?:论文|文档)|\b(?:it|this|that|previous|above)\b", question, re.I):
+            from src.generation.cache import cache_scope
+            from src.retrieval.vector_store import VectorStore
+            cache_store = VectorStore()
+            scope = (pending_scope if pending_scope is not None else cache_scope(cache_store)) + ":" + str(doc_id)
+            with cache.lock:
+                try:
+                    result = cache.lookup(question, scope)
+                except (OSError, ValueError, RuntimeError) as error:
+                    cache_warnings.append(f"缓存查询失败，本次重新检索：{error}")
             if result is not None:
                 status = "completed"
                 result.update(retrieval_seconds=0.0, elapsed_seconds=perf_counter() - started,
@@ -183,11 +163,13 @@ def _knowledge_base_search(question: str, doc_id: str | None = None, *, cache=No
                 return result
         message["retrieval_status"] = "error"
         if confirmation is not None:
+            from src.generation.cache import cache_scope
+            from src.retrieval.vector_store import VectorStore
             if confirmation["session_id"] != session_id:
                 raise ValueError("候选确认不属于当前会话")
             if confirmation["tool_question"] != question or confirmation["doc_id"] != doc_id:
                 raise ValueError("候选确认只适用于已展示的原查询与文档")
-            if confirmation["scope"] != current_scope:
+            if confirmation["scope"] != cache_scope(VectorStore()):
                 raise ValueError("候选内容或配置已变化，确认已失效，请重新提问")
             context = deepcopy(confirmation["context"])
             context["confirmed"] = True
@@ -212,7 +194,7 @@ def _knowledge_base_search(question: str, doc_id: str | None = None, *, cache=No
                       "generation_mode": "low", "references": _tool_references(context["references"]), "citations": [],
                       "top_score": context["top_score"], "threshold": context["threshold"],
                       "usage": {"prompt_eval_count": 0, "eval_count": 0}}
-            if pending is not None and pending_scope == current_scope:
+            if pending is not None and pending_scope == cache_scope(VectorStore()):
                 # 完整生成Context只留在当前页面会话，不重复塞入模型工具结果。
                 pending[request_id] = {"question": request_question or question, "tool_question": question, "doc_id": doc_id,
                                        "session_id": session_id, "scope": pending_scope, "context": deepcopy(context),
@@ -276,7 +258,13 @@ def _knowledge_base_search(question: str, doc_id: str | None = None, *, cache=No
             if result is not None:
                 result.setdefault("warnings", []).append(f"RAG日志保存失败：{type(error).__name__}: {error}")
         if scope is not None and status == "completed" and not result.get("cache", {}).get("hit"):
-            result.setdefault("warnings", []).extend(_save_cached_answer(cache, question, result, scope))
+            # 生成期间知识库发生变化时不保存跨版本答案；引用/结束/警告检查复用模块二。
+            try:
+                if scope == cache_scope(cache_store) + ":" + str(doc_id):
+                    with cache.lock:
+                        cache.put(question, {"type": "done", **result}, scope)
+            except (OSError, ValueError, RuntimeError) as error:
+                result.setdefault("warnings", []).append(f"答案已生成，但缓存保存失败：{error}")
 
 
 METADATA_SYSTEM_PROMPT = """你是科研论文元信息提取器。只依据提供的原文提取本篇论文的四个字段。
