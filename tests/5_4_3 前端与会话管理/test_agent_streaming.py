@@ -1,4 +1,4 @@
-"""Agent真实分包协议测试：增量正文、校验、断流和实际用量。"""
+"""Agent真实分包协议测试：流式请求、校验、断流和实际用量。"""
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
@@ -6,7 +6,7 @@ from io import BytesIO
 import json
 import unittest
 from unittest.mock import patch
-from src.agent.react_loop import _partial_observation_answer, _observe_events, run_react
+from src.agent.react_loop import _observe_events, run_react
 from tests.helpers import StreamingResponse
 
 
@@ -19,31 +19,26 @@ class TestAgentStreaming(unittest.TestCase):
             {"message": {"content": ""}, "done": True, "done_reason": "stop", "model": "qwen2.5:7b",
              "prompt_eval_count": 123, "eval_count": 45}]
 
-    def test_partial_parser_does_not_leak_json_or_observation(self):
-        self.assertEqual(_partial_observation_answer('{"observation":"answer:私有说明'), "")
-        self.assertEqual(_partial_observation_answer('{"answer":"中文\\n下行\\'), "中文\n下行")
-        self.assertEqual(_partial_observation_answer('{"answer":"\\u4e2'), "")
-        self.assertEqual(_partial_observation_answer('{"answer":"\\u4e2d'), "中")
-        self.assertEqual(_partial_observation_answer('{"answer":"\\ud83d'), "")
-        self.assertEqual(_partial_observation_answer('{"answer":"\\ud83d\\ude00'), "😀")
+    def test_observation_emits_single_final_event(self):
+        """Observation只在解析校验后产出一条结论，不再逐字暴露JSON片段。"""
+        with patch("src.agent.react_loop.urlopen", return_value=StreamingResponse(self.packets())):
+            events = list(_observe_events("解释概念", [], stream=True))
+        self.assertEqual([event["type"] for event in events], ["observation"])
+        self.assertEqual(events[0]["answer"], '中文回答\n含引号"与路径\\。')
 
-    def test_tokens_arrive_before_last_packet_and_response_closes(self):
+    def test_response_closes_and_reports_real_usage(self):
         response = StreamingResponse(self.packets())
         with patch("src.agent.react_loop.urlopen", return_value=response) as http:
-            events = _observe_events("解释概念", [], stream=True)
-            first = next(events)
-            self.assertEqual(first["type"], "token")
-            self.assertLess(response.read_packets, len(self.packets()))
-            rest = list(events)
+            events = list(_observe_events("解释概念", [], stream=True))
         self.assertTrue(response.closed)
-        self.assertEqual(rest[-1]["answer"], '中文回答\n含引号"与路径\\。')
-        self.assertEqual(rest[-1]["usage"], {"prompt_eval_count": 123, "eval_count": 45})
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0]["answer"], '中文回答\n含引号"与路径\\。')
+        self.assertEqual(events[0]["usage"], {"prompt_eval_count": 123, "eval_count": 45})
         self.assertTrue(json.loads(http.call_args.args[0].data)["stream"])
 
     def test_disconnect_keeps_partial_but_does_not_complete(self):
         with patch("src.agent.react_loop.urlopen", return_value=StreamingResponse(self.packets()[:-1])):
             events = list(run_react("什么是深度学习？", [], stream=True))
-        self.assertTrue(any(e["type"] == "token" for e in events))
         self.assertFalse(events[-1]["task_complete"])
         self.assertIn("中文回答", events[-1]["full_response"])
         self.assertIn("回答未完成", events[-1]["full_response"])
@@ -57,7 +52,6 @@ class TestAgentStreaming(unittest.TestCase):
             with self.subTest(final=final), patch("src.agent.react_loop.urlopen", return_value=response):
                 events = list(run_react("什么是深度学习？", [], stream=True))
             self.assertTrue(response.closed)
-            self.assertTrue(any(e["type"] == "token" for e in events))
             self.assertFalse(events[-1]["task_complete"])
             self.assertIn("回答未完成", events[-1]["full_response"])
 
@@ -85,7 +79,7 @@ class TestAgentStreaming(unittest.TestCase):
         response = StreamingResponse(self.packets())
         with patch("src.agent.react_loop.urlopen", return_value=response):
             events = _observe_events("概念", [], stream=True)
-            self.assertEqual(next(events)["type"], "token")
+            next(events)  # 触发生成器启动与网络请求。
             events.close()
         self.assertTrue(response.closed)
 
