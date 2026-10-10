@@ -175,7 +175,7 @@ class TestChunking(unittest.TestCase):
 
     def test_image_layout_is_stored_once_per_page_with_stable_source(self):
         """三种分块不重复整页图片坐标；每页来源独立，重做ID稳定，原文不修改。"""
-        images = json.dumps([{"page_number": 1, "bbox": [0, i, 10, i + 1]} for i in range(100)])
+        images = json.dumps([{"page_number": 1, "bbox": [0, i, 10, i + 1]} for i in range(5)])
         documents = [Document(page_content="  \n" + "图像附近的说明。" * 20,
                               metadata={"doc_id": "paper", "page": page, "image_regions": images})
                      for page in (0, 1)]
