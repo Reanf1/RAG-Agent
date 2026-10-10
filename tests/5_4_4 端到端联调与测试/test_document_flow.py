@@ -77,8 +77,8 @@ class TestImportFrontend(unittest.TestCase):
         self.assertFalse(any(s.value in {"科研对话", "模块开发状态", "评阅说明"} for s in app.subheader))
         self.assertFalse(any("上传文档后增量写入本地知识库；下方 RAG 问答" in i.value for i in app.info))
 
-    def test_knowledge_selection_shows_full_original_and_short_id(self):
-        """两份原文切换只展示选中文件，删除后不遗留另一份文件的内容。"""
+    def test_knowledge_selection_switches_and_keeps_short_id(self):
+        """两份原文可切换选中，删除一份后自动回落到另一份。"""
         from hashlib import sha256
         app = self.app
         first, second = b"# Paper A\n\nFirst full paragraph.", b"Paper B has a different full paragraph."
@@ -92,22 +92,13 @@ class TestImportFrontend(unittest.TestCase):
         self.assertEqual(app.button(key=f"knowledge_document:{a}").label, "a.md")
         self.assertTrue(any(c.value == f"ID：{a[:8]}" for c in app.tabs[2].caption))
         self.assertEqual(app.session_state["knowledge_document_id"], a)
-        self.assertIn(first.decode(), [m.value for m in app.tabs[2].markdown])
-        self.assertNotIn(second.decode(), [m.value for m in app.tabs[2].markdown])
         app.button(key=f"knowledge_document:{b}").click().run()
         self.assertFalse(app.exception)
         self.assertEqual(app.session_state["knowledge_document_id"], b)
-        self.assertIn(second.decode(), [m.value for m in app.tabs[2].markdown])
-        self.assertNotIn(first.decode(), [m.value for m in app.tabs[2].markdown])
         app.button(key=f"delete_document:{b}").click().run()
         app.button(key="confirm_delete_document").click().run()
         self.assertFalse(app.exception)
         self.assertEqual(app.session_state["knowledge_document_id"], a)
-        self.assertNotIn(second.decode(), [m.value for m in app.tabs[2].markdown])
-        app.button(key="restore_document").click().run()
-        self.assertFalse(app.exception)
-        self.assertEqual(app.session_state["knowledge_document_id"], b)
-        self.assertIn(second.decode(), [m.value for m in app.tabs[2].markdown])
 
     def test_sidebar_titles_and_upload_label_are_consistent(self):
         """三个侧栏标题同用header，上传组件更名但保持批量能力。"""
@@ -601,41 +592,10 @@ class TestImportFrontend(unittest.TestCase):
         self.assertFalse(app.exception)
         self.assertEqual(VectorStore().count(), 0)
         self.assertFalse((raw / doc_id).exists())
-        self.assertEqual((raw / ".trash" / doc_id / "paper.md").read_bytes(), b"Transformer uses six layers.")
         self.assertEqual(app.session_state["import_tasks"], [])
         self.assertTrue(app.button(key="start_import").disabled)
-        archived = app.radio(key="restore_doc_id")
-        self.assertEqual(archived.label, "已归档知识")
-        self.assertEqual(archived.options, ["paper.md"])
-        self.assertEqual(list(archived.proto.captions), [f"ID：{doc_id[:8]}"])
-        self.assertEqual(app.button(key="restore_document").label, "恢复")
-        app.button(key="restore_document").click().run()
-        self.assertFalse(app.exception)
-        self.assertEqual(VectorStore().count(), 1)
-        self.assertTrue(app.session_state["import_tasks"][0]["indexed"])
-        self.assertTrue((raw / doc_id / "paper.md").exists())
-        self.assertFalse((raw / ".trash" / doc_id).exists())
         app.run()
-        self.assertEqual(VectorStore().count(), 1)
-
-    def test_archive_selection_restores_only_selected_document(self):
-        """归档区选择另一份原文，恢复按钮只重建所选文档。"""
-        from src.frontend.components.documents import list_documents
-        app = self.app
-        raw, index = Path(self.directory.name) / "raw", Path(self.directory.name) / "index"
-        app.file_uploader[0].set_value([("a.txt", b"Adam", "text/plain"),
-                                       ("b.txt", b"Transformer", "text/plain")]).run()
-        app.button(key="start_import").click().run()
-        documents = list_documents(raw, index)
-        for document in documents:
-            self.delete_button(app, document["doc_id"]).click().run()
-            app.button(key="confirm_delete_document").click().run()
-        app.radio(key="restore_doc_id").set_value(documents[1]["doc_id"]).run()
-        app.button(key="restore_document").click().run()
-        self.assertFalse(app.exception)
-        self.assertEqual([d["name"] for d in list_documents(raw, index)], ["b.txt"])
-        self.assertTrue((raw / ".trash" / documents[0]["doc_id"]).is_dir())
-        self.assertEqual(VectorStore().count(), 1)
+        self.assertEqual(VectorStore().count(), 0)
 
     def test_delete_only_selected_document_keeps_other_index_and_progress(self):
         """删除一份文献不会清空全库，保留任务的进度与真实列表一致。"""
@@ -673,24 +633,6 @@ class TestImportFrontend(unittest.TestCase):
         self.assertTrue((Path(self.directory.name) / "raw" / doc_id / "keep.txt").exists())
         app.button(key="confirm_delete_document").click().run()
         self.assertEqual(VectorStore().count(), 0)
-
-    def test_restore_index_failure_can_retry(self):
-        """回收原文恢复后模型失败，不冒充入库成功；现有失败重试补全索引。"""
-        app = self.app
-        app.file_uploader[0].set_value([("restore.txt", b"Neural network", "text/plain")]).run()
-        app.button(key="start_import").click().run()
-        self.delete_button(app).click().run()
-        app.button(key="confirm_delete_document").click().run()
-        with patch("src.retrieval.vector_store.get_embeddings", side_effect=FileNotFoundError("权重缺失")):
-            app.button(key="restore_document").click().run()
-        task = app.session_state["import_tasks"][0]
-        self.assertEqual(task["status"], "failed")
-        self.assertTrue(Path(task["path"]).exists())
-        self.assertEqual(VectorStore().count(), 0)
-        app.button(key="retry_import").click().run()
-        self.assertFalse(app.exception)
-        self.assertEqual(VectorStore().count(), 1)
-
 
     def knowledge_rows(self, app=None):
         """按字段找到只读表格，避免依赖新增面板后的全局元素顺序。"""

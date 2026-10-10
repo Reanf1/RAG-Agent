@@ -23,7 +23,7 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 from src.data_loader import LOADERS, create_import_tasks
-from src.frontend.components.documents import list_documents, delete_document, restore_document, read_document_content
+from src.frontend.components.documents import list_documents, delete_document, read_document_content
 from src.frontend.components.trace import execution_rows, conversation_statistics, record_runtime_success
 from src.agent import run_session
 from src.agent.tools import get_available_tools
@@ -243,29 +243,8 @@ with knowledge_tab:
                             "total": len(st.session_state.import_tasks)}
                         st.session_state.pop("delete_pending")
                         st.session_state.pop("health_result", None)
-                        st.session_state.document_notice = f"已删除 {removed} 个检索块，原文已回收，可在下方恢复。"
+                        st.session_state.document_notice = f"已删除 {removed} 个检索块并移除原文；如需重新入库请再次上传。"
                         st.rerun()
-            trash_dir = raw_dir / ".trash"
-            archived = sorted(folder.name for folder in trash_dir.iterdir()
-                              if folder.is_dir() and not folder.is_symlink() and len(folder.name) == 64
-                              and all(c in "0123456789abcdef" for c in folder.name)) if trash_dir.is_dir() and not trash_dir.is_symlink() else []
-            if archived:
-                archive_names = {identifier: " / ".join(f.name for f in sorted((trash_dir / identifier).iterdir())
-                                 if f.is_file() and not f.is_symlink() and f.suffix.lower() in LOADERS)
-                                 for identifier in archived}
-                # 单选框只有选择操作，名称和ID不作为可编辑文本输入。
-                restore_id = st.radio("已归档知识", archived, key="restore_doc_id", width="stretch",
-                                     format_func=lambda identifier: archive_names[identifier],
-                                     captions=[f"ID：{identifier[:8]}" for identifier in archived])
-                if st.button("恢复", key="restore_document"):
-                    st.session_state.import_tasks = restore_document(raw_dir, restore_id)
-                    for progress in batch_build_index(st.session_state.import_tasks, raw_dir, max_file_size_mb):
-                        st.session_state.import_progress = progress
-                        show_import_status()
-                    st.session_state.knowledge_document_id = restore_id
-                    st.session_state.document_notice = "原文已恢复，请查看本批导入状态；失败项可重试。"
-                    st.session_state.pop("health_result", None)
-                    st.rerun()
         except Exception as error:
             library_error = f"文档管理失败：{type(error).__name__}: {error}。原文保留，请修正后重试。"
             st.error(library_error)
