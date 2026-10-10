@@ -20,6 +20,12 @@ def _visible_prefix(raw: str) -> str:
     if any(heading.startswith(line.lstrip()) for heading in
            ("## 参考来源", "## References", "## Reference Sources", "## Sources")):
         return raw[:offset]
+    # 行内代码里的内容原样展示，不按引用标记截断。
+    opened = None
+    for ticks in re.finditer(r"(?<!\\)`+", line):
+        opened = None if opened is not None and ticks.group() == opened.group() else (opened or ticks)
+    if opened is not None:
+        return raw[:offset + opened.start()]
     # 不让"半个引用编号"或"引用后未完成的Markdown链接"闪出。
     pending = re.search(r"\[(?:参(?:考(?:文(?:档[0-9]*)?)?)?)?$", line)
     if pending:
