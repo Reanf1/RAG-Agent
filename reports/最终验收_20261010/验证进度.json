@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-10-11T00:20:06.430999+08:00",
+  "updated_at": "2026-10-11T00:27:18.325479+08:00",
   "baseline_commit": "04544ab",
-  "status": "same_language_inputs_verified_rerun_preparing",
+  "status": "same_language_experiments_running",
   "regression": {
     "tests": 107,
     "seconds": 6.02,
@@ -84,17 +84,9 @@
     "resolution": "用户确认后Windows本机重建独立语料，严格哈希与43处证据核验通过"
   },
   "chunking": {
-    "status": "superseded_language_policy",
-    "completed_rankings": 300,
-    "completed_profiles": [
-      "fixed256",
-      "fixed512",
-      "fixed1024",
-      "recursive",
-      "semantic"
-    ],
-    "output": "reports/5_1_2 文本分块策略/最终验收_20261010/分块检索结果.json",
-    "reason": "英文原文对应的中文题已翻译；旧汇总不作为当前验收结果"
+    "status": "running",
+    "output": "reports/5_1_2 文本分块策略/最终验收_20261011/分块检索结果.json",
+    "local_root": "/private/tmp/rag-delivery-chunking-20261011"
   },
   "remaining": [
     "生成参数与Prompt新版本实验",
@@ -113,22 +105,22 @@
     "papers": 12,
     "questions": 60,
     "corpus_chunks": 1692,
-    "manifest_sha256": "00c231f7bdd9a571a0880d7b25b64beb95eae47f8c696fa70efe8ac72f19230f",
-    "corpus_sha256": "7a310092fef82efc4d61ce9ffae46f63662b916d41db99100010b2ae287c4c5b",
-    "status": "superseded_language_policy",
-    "reason": "英文原文对应的中文题已翻译；旧汇总不作为当前验收结果"
+    "languages": {
+      "en": 60
+    },
+    "dataset_sha256": "3a8c042f3530f790fd18f332b662a63f36e1700cb05dfd7ccf584dd21d0b2496",
+    "manifest_sha256": "d8deb8da1fe5d50124d42928731940dfad157e01385613ecfba2296e73a628b8",
+    "corpus_sha256": "3d3f8c762bd0917e141b1ed850c2ee7067e1b80a55685f805b1075ff6937d6c3",
+    "status": "completed"
   },
   "windows_retrieval": {
-    "status": "superseded_language_policy",
-    "rankings": 300,
-    "independent_recalculation_passed": true,
-    "output": "reports/5_5_2 系统性能评估/最终验收_20261010/retrieval.json",
-    "reason": "英文原文对应的中文题已翻译；旧汇总不作为当前验收结果"
+    "status": "running",
+    "experiment_commit": "c50ab83",
+    "root": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-final-system-windows-20261011"
   },
   "windows_agent": {
-    "status": "superseded_language_policy",
-    "original_completed_answers": 120,
-    "reason": "旧60题中有30题语言不符合当前要求，重新运行两组评测"
+    "status": "waiting_for_retrieval",
+    "planned_answers": 120
   },
   "language_revision": {
     "date": "2026-10-11",
@@ -138,5 +130,13 @@
     "generation_cases": 10,
     "unchanged": "原始PDF、题号、考点、证据页、评分要点、业务源码和配置",
     "verification": "reports/5_5_1 评测集构建/同语言问题核验.json"
+  },
+  "windows_queues": {
+    "input_root": "C:\\Users\\asus\\AppData\\Local\\Temp\\rag-final-evaluation-20261011",
+    "system_pid": 300,
+    "generation_pid": 30504,
+    "basic_pid": 13032,
+    "generation_status": "waiting_for_system",
+    "basic_status": "waiting_for_generation"
   }
 }

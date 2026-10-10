@@ -1,4 +1,4 @@
-"""在同一固定检索样本上实测两种 Embedding；支持论文双语基准与历史中文子集。"""
+"""在同一固定检索样本上实测两种 Embedding；论文问题与原文语言一致。"""
 
 import argparse
 import gc
@@ -135,7 +135,7 @@ def benchmark_model(model_info, sample, runs=3):
     embeddings.embed_documents(texts[:8])
     embeddings.embed_query(queries[0])
     document_times, query_times = [], []
-    # 双语基准分别计量两种正文语言，仍然使用完整混合候选库计算排名。
+    # 分别计量两种正文语言，仍然使用完整混合候选库计算排名。
     languages = sorted({row.get("language", "all") for row in sample["corpus"]})
     language_indices = {language: [i for i, row in enumerate(sample["corpus"])
                                   if row.get("language", "all") == language] for language in languages}
