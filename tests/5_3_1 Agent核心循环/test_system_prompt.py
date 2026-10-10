@@ -40,10 +40,61 @@ class TestAgentSystemPrompt(unittest.TestCase):
 
         self.tools = [format_keyword]
 
+    def test_large_observation_request_fits_without_mutating_original(self):
+        """超窗口工具证据只裁剪发送副本，当前问题、真实ID和原始结果保留。"""
+        from src.agent.react_loop import _model_request
+        from src.utils.token_budget import request_tokens
+        context = {"observations": [{"name": "paper_compare", "status": "success",
+                    "args": {"doc_id": "a" * 64}, "result": {"answer": "🧬" * 14000,
+                    "references": [{"text": "🧪" * 10000, "metadata": {"doc_id": "a" * 64}}]}}]}
+        original = deepcopy(context)
+        payload = json.loads(_model_request(build_agent_messages("比较两篇论文？", [], context)).data)
+        self.assertLessEqual(request_tokens(payload) + payload["options"]["num_predict"], payload["options"]["num_ctx"])
+        state = json.loads(payload["messages"][1]["content"])
+        self.assertEqual(state["question"], "比较两篇论文？")
+        self.assertEqual(state["context"]["observations"][0]["args"]["doc_id"], "a" * 64)
+        self.assertEqual(context, original)
+        self.assertIn("模型上下文已截断", payload["messages"][1]["content"])
 
+    def test_long_windows_metadata_preserves_text_positions_and_parameters(self):
+        """长Windows路径超预算时精简辅助字段，正文、定位和原始日志不改写。"""
+        from langchain_core.messages import ToolMessage
+        from src.agent.react_loop import _model_request
+        from src.utils.token_budget import request_tokens
+        references = [{"text": f"第{i+1}页的完整证据。", "metadata": {
+            "doc_id": "a" * 64, "source_file": "论文.pdf", "page": i, "page_number": i+1,
+            "page_end": i+1, "paragraph_index": i, "table_index": 2, "line_start": 1,
+            "line_end": 5, "retrieval_warning": "来源待确认", "chunk_id": "b" * 64,
+            "file_type": ".pdf", "source": "E:\\工作\\" + "长目录\\" * 180 + "论文.pdf"}} for i in range(19)]
+        # 旧来源若没有文件名或有效物理页，不能删除唯一的路径与页索引。
+        references.append({"text": "旧资料证据", "metadata": {"source": "E:\\工作\\旧论文.pdf",
+            "page": 3, "page_number": None, "chunk_id": "c" * 64, "file_type": ".pdf"}})
+        context = {"observations": [{"name": "paper_summary", "status": "success",
+            "args": {"doc_id": "a" * 64, "metadata": {"source": "参数中的路径必须保留"}},
+            "result": {"references": references}}]}
+        original = deepcopy(context)
+        message = ToolMessage(content=json.dumps({"references": references}, ensure_ascii=False),
+                              tool_call_id="真实调用ID", name="paper_summary")
+        content = message.content
+        payload = json.loads(_model_request([
+            *build_agent_messages("请根据指定论文回答。", [], context, stage="observation"), message]).data)
+        self.assertLessEqual(request_tokens(payload) + payload["options"]["num_predict"], payload["options"]["num_ctx"])
+        state = json.loads(payload["messages"][1]["content"])
+        self.assertEqual(state["question"], "请根据指定论文回答。")
+        self.assertEqual(state["context"]["observations"][0]["args"], original["observations"][0]["args"])
+        for fitted in (state["context"]["observations"][0]["result"]["references"],
+                       json.loads(payload["messages"][-1]["content"])["references"]):
+            for got, before in zip(fitted, references):
+                self.assertEqual(got["text"], before["text"])
+                # 只约束来源可追溯，不锁定预算裁剪具体删除哪些辅助字段。
+                required = ("doc_id", "source_file", "page_number") if before["metadata"].get("source_file") else ("source", "page")
+                for field in required:
+                    self.assertEqual(got["metadata"][field], before["metadata"][field])
+        self.assertEqual(context, original)
+        self.assertEqual(message.content, content)
 
-    def test_normal_request_sends_original_source_fields(self):
-        """未超预算时按原样发送来源字段，不做任何裁剪改写。"""
+    def test_small_request_keeps_all_metadata(self):
+        """未超预算时不改变任何来源字段。"""
         from src.agent.react_loop import _model_request
         context = {"observations": [{"result": {"references": [{"text": "完整证据", "metadata": {
             "source": "E:\\工作\\论文.pdf", "chunk_id": "b" * 64, "file_type": ".pdf", "page": 0, "page_number": 1}}]}}]}
@@ -57,15 +108,22 @@ class TestAgentSystemPrompt(unittest.TestCase):
         with self.assertRaises(ValueError):
             _model_request(build_agent_messages("🧬" * 15000, []))
 
-    def test_oversized_tool_evidence_is_rejected_not_silently_trimmed(self):
-        """超出输入预算的工具证据明确报错，交由调用方缩小范围。"""
+    def test_native_tool_message_is_json_and_can_fit_full_request_budget(self):
+        """执行器返回的原生ToolMessage也必须可裁剪，不能只处理Human Context。"""
+        from src.agent.tools import execute_tool
         from src.agent.react_loop import _model_request
-        context = {"observations": [{"name": "paper_summary", "status": "success",
-                                     "result": {"answer": "🧬" * 14000}}]}
-        messages = build_agent_messages("总结这篇论文？", [], context)
-        with self.assertRaises(ValueError):
-            _model_request(messages)
-
+        from src.utils.token_budget import request_tokens
+        @tool
+        def large_evidence() -> dict:
+            """返回可复现超预算的受控证据。"""
+            return {"answer": "🧬" * 14000, "references": [{"text": "🧪" * 10000,
+                    "metadata": {"doc_id": "a" * 64}}]}
+        event = execute_tool("large_evidence", {}, [large_evidence])
+        self.assertEqual(json.loads(event["message"].content), event["result"])
+        original = event["message"].content
+        payload = json.loads(_model_request([*build_agent_messages("比较？", []), event["message"]]).data)
+        self.assertLessEqual(request_tokens(payload) + payload["options"]["num_predict"], payload["options"]["num_ctx"])
+        self.assertEqual(event["message"].content, original)
 
     def test_all_stages_preserve_actual_tool_description_without_duplicate_schema(self):
         for stage in ("thought", "action", "observation"):

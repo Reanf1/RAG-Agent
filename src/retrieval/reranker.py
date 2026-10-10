@@ -89,14 +89,18 @@ class Reranker:
             if not all(math.isfinite(score) for score in window_scores):
                 raise ValueError("重排模型返回非有限分数")
             best = max(range(len(windows)), key=lambda index: window_scores[index])
-            if "rerank_excerpt" in document.metadata or len(windows) > 1:
-                # 本次摘录单独保存；清除旧摘录，不修改原文、ID或其他检索提示。
+            if "rerank_excerpt" in document.metadata:
+                # 上轮摘录不代表本次评分正文；复制后清除，避免短正文沿用旧摘录。
                 document = deepcopy(document)
-                document.metadata.pop("rerank_excerpt", None)
+                document.metadata.pop("rerank_excerpt")
             if len(windows) > 1:
+                document = deepcopy(document)
+                # 仅作本次检索摘录；原索引、块ID和表格行来源保持不变。
                 document.metadata["rerank_excerpt"] = windows[best]
             scored.append((document, window_scores[best]))
             offset += len(windows)
+        if not all(math.isfinite(score) for _, score in scored):
+            raise ValueError("重排模型返回非有限分数")
         # sigmoid 只将分数映射到 0~1，不代表已经校准的命中概率。
         return sorted(scored, key=lambda item: item[1], reverse=True)[:k]
 

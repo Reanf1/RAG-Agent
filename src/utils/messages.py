@@ -6,21 +6,6 @@ import json
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
 
 
-def document_location(metadata: dict) -> str:
-    """生成统一来源标签：PDF用物理页，Word用正文块，纯文本用行号。"""
-    if "page_number" in metadata:
-        start = metadata["page_number"]
-        end = metadata.get("page_end", start)
-        pages = str(start) if end == start else f"{start}–{end}"
-        return f"第{pages}页（物理页码）"
-    for key, label in (("paragraph_index", "段落"), ("table_index", "表格")):
-        if key in metadata:
-            return f"{label}{metadata[key]}"
-    if "line_start" in metadata:
-        return f"行{metadata['line_start']}–{metadata['line_end']}"
-    return "位置未记录"
-
-
 def messages_to_ollama(messages: list) -> list[dict]:
     """RAG、Agent和摘要共用同一原生消息转换；不把工具ID当作论文引用编号。"""
     result = []

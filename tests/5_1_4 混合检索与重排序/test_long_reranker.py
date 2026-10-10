@@ -30,7 +30,7 @@ class TestLongReranker(unittest.TestCase):
         self.reranker = Reranker()
         self.reranker.max_length = 160
         self.model = Mock(tokenizer=CharacterTokenizer())
-        self.model.predict.side_effect = lambda pairs, **kwargs: [0.9 if "末行11" in text or "末行99" in text else 0.1 for _, text in pairs]
+        self.model.predict.side_effect = lambda pairs, **kwargs: [0.9 if "末行99" in text else 0.1 for _, text in pairs]
         patcher = patch("src.retrieval.reranker.get_reranker", return_value=self.model)
         patcher.start()
         self.addCleanup(patcher.stop)
@@ -38,9 +38,9 @@ class TestLongReranker(unittest.TestCase):
     def test_tail_row_scored_with_header_and_actual_excerpt_sent_to_prompt(self):
         """所有行进入窗口；末行最高分的摘录与引用正文一致，原索引文档不变。"""
         header = "Table 1\n| 模型 | 精度 |\n| --- | --- |\n"
-        rows = [f"| 末行{i} | {i}.7 |\n" for i in range(12)]
+        rows = [f"| 末行{i} | {i}.7 |\n" for i in range(100)]
         document = Document(page_content=header + "".join(rows), metadata={"content_type": "table", "chunk_id": "table", "source_file": "长表.pdf", "page_number": 3})
-        found = self.reranker.rerank("末行11是多少？", [(document, 1)])
+        found = self.reranker.rerank("末行99是多少？", [(document, 1)])
         pairs = self.model.predict.call_args.args[0]
         self.assertGreater(len(pairs), 1)
         for row in rows:
@@ -48,8 +48,8 @@ class TestLongReranker(unittest.TestCase):
         self.assertTrue(all(text.startswith(header) for _, text in pairs))
         self.assertTrue(all(len(q) + len(text) + 4 <= 160 for q, text in pairs))
         self.assertNotIn("rerank_excerpt", document.metadata)
-        context = build_context("末行11是多少？", found)
-        self.assertIn("末行11", context["context"])
+        context = build_context("末行99是多少？", found)
+        self.assertIn("末行99", context["context"])
         self.assertEqual(context["references"][0]["text"], found[0][0].metadata["rerank_excerpt"])
         self.assertEqual(found[0][0].metadata["chunk_id"], "table")
 

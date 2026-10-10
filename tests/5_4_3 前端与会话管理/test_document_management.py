@@ -27,13 +27,15 @@ class TestDocumentManagement(unittest.TestCase):
         self.folder.mkdir(parents=True)
         (self.folder / "paper.txt").write_bytes(self.data)
 
-    def test_unindexed_list_and_delete_without_creating_database(self):
-        from src.frontend.components.documents import list_documents, delete_document
+    def test_unindexed_list_delete_restore_without_creating_database(self):
+        from src.frontend.components.documents import list_documents, delete_document, restore_document
         with patch("src.retrieval.vector_store.get_embeddings", side_effect=AssertionError("不可加载模型")):
             self.assertEqual(list_documents(self.raw, self.index)[0]["chunks"], 0)
             self.assertEqual(delete_document(self.raw, self.index, self.doc_id), 0)
             self.assertEqual(list_documents(self.raw, self.index), [])
-        self.assertFalse(self.folder.exists())
+            tasks = restore_document(self.raw, self.doc_id)
+        self.assertEqual(tasks[0]["data"], self.data)
+        self.assertEqual(tasks[0]["status"], "pending")
         self.assertFalse(self.index.exists())
 
     def test_reject_path_and_symlink(self):
@@ -47,21 +49,33 @@ class TestDocumentManagement(unittest.TestCase):
         self.assertEqual(len(list_documents(self.raw, self.index)), 1)
         self.assertTrue((self.folder / "paper.txt").exists())
 
-    def test_delete_removes_source_and_blocks_reserved_name(self):
+    def test_archive_conflict_preserves_source(self):
         from src.frontend.components.documents import delete_document
+        (self.raw / ".trash" / self.doc_id).mkdir(parents=True)
         with self.assertRaises(ValueError):
-            delete_document(self.raw, self.index, "../outside")
+            delete_document(self.raw, self.index, self.doc_id)
         self.assertEqual((self.folder / "paper.txt").read_bytes(), self.data)
 
-    def test_missing_source_still_removes_index_chunks(self):
-        """原文缺失时删除仍清理检索块，不留下无法追溯的索引。"""
+    def test_restore_rejects_changed_content_and_no_overwrite(self):
+        from src.frontend.components.documents import delete_document, restore_document
+        delete_document(self.raw, self.index, self.doc_id)
+        archived = self.raw / ".trash" / self.doc_id / "paper.txt"
+        archived.write_bytes(b"Changed")
+        with self.assertRaises(ValueError):
+            restore_document(self.raw, self.doc_id)
+        self.assertTrue(archived.exists())
+        archived.write_bytes(self.data)
+        self.folder.mkdir()
+        with self.assertRaises(FileExistsError):
+            restore_document(self.raw, self.doc_id)
+        self.assertTrue(archived.exists())
+
+    def test_missing_source_never_deletes_index(self):
         from src.frontend.components.documents import delete_document
-        self.index.mkdir(parents=True, exist_ok=True)
-        (self.index / "chroma.sqlite3").write_bytes(b"")
         with patch("src.frontend.components.documents.VectorStore") as store:
-            store.return_value.delete_document.return_value = 3
-            self.assertEqual(delete_document(self.raw, self.index, "b" * 64), 3)
-            store.return_value.delete_document.assert_called_once_with("b" * 64)
+            with self.assertRaises(FileNotFoundError):
+                delete_document(self.raw, self.index, "b" * 64)
+            store.assert_not_called()
 
     def test_read_complete_text_and_markdown_without_index(self):
         from src.frontend.components.documents import read_document_content

@@ -14,7 +14,10 @@ def activate_session(memory: MemoryManager, user_id: str, session_id: str):
     messages = memory.get_messages(user_id, session_id)
     st.session_state.pop("agent_last_event", None)
     st.session_state.pop("delete_session_pending", None)
-    history = []
+    # 旧RAG记录先回放，不虚构当时未记录的Agent轨迹或完成状态。
+    history = [{"question": item["question"], "answer": item.get("answer", "") or item.get("error", "历史回答未保存"),
+                "complete": None, "stop_reason": "legacy_rag", "event": {}, "legacy_rag": item}
+               for item in memory.get_rag_messages(user_id, session_id)]
     for question, answer in zip(messages[::2], messages[1::2]):
         details = answer.additional_kwargs
         history.append({"question": question.content, "answer": answer.content,
@@ -52,6 +55,16 @@ def render_sessions(db_path: Path) -> bool:
                 st.rerun()
             sessions = memory.list_sessions(user_id)
             labels = {identifier: memory.get_session_title(user_id, identifier) for identifier in sessions}
+            # 纯样式通过html写入，不在“最近”和会话之间留下空白块。
+            st.html("""<style>
+                .st-key-conversation_history {gap: 0.5rem;}
+                .st-key-conversation_history button {border: 0; text-align: left;}
+                .st-key-conversation_history button > div {width: 100%; justify-content: flex-start;}
+                .st-key-conversation_history button[kind="secondary"] {background-color: transparent;}
+                .st-key-conversation_history button[kind="primary"] {
+                    background-color: rgba(128, 128, 128, 0.25); color: inherit;
+                }
+            </style>""")
             # 直接点击会话标题切换；当前会话使用主按钮高亮，ID只用于稳定key。
             with st.container(key="conversation_history"):
                 st.caption("最近")
@@ -74,6 +87,16 @@ def render_sessions(db_path: Path) -> bool:
             elif st.button("删除当前会话", key="delete_conversation"):
                 st.session_state.delete_session_pending = current
                 st.rerun()
+            archived = memory.list_sessions(user_id, archived=True)
+            if archived:
+                archive_titles = {identifier: memory.get_session_title(user_id, identifier) for identifier in archived}
+                restore_id = st.radio("恢复会话", archived, key="restore_conversation_select", width="stretch",
+                                      format_func=lambda identifier: archive_titles[identifier],
+                                      captions=[f"ID：{identifier[:8]}" for identifier in archived])
+                if st.button("恢复", key="restore_conversation"):
+                    memory.restore_session(user_id, restore_id)
+                    activate_session(memory, user_id, restore_id)
+                    st.rerun()
             return True
         except Exception as error:
             st.error(f"会话管理失败：{type(error).__name__}: {error}。请检查本地会话数据库后重试。")

@@ -66,16 +66,22 @@ class HybridRetriever:
                        r"(?:简述|简要回答|回答|说明)(?:并(?:注明|标注)(?:原文)?(?:页码|来源))?"
                        r"|(?:注明|标注)(?:原文)?(?:页码|来源))[。.!！\s]*$", "", query).strip()
         candidate_k = max(self.candidate_k, k)
+        vector_results = self.vector_store.search(query, k=candidate_k, doc_id=doc_id)
         # 每次读取当前正文，新增/删除后无需维护第二套语料或缓存失效规则。
         bm25 = BM25Retriever(self.vector_store)
-        # 首次召回与占位过滤后的补取共用流程；最多扩至四倍，BGE仍只精排Top-20。
-        for requested in (candidate_k, candidate_k * 2, candidate_k * 4):
+        bm25_results = bm25.search(query, k=candidate_k, doc_id=doc_id)
+        fused = rrf_fusion(vector_results, bm25_results, self.rrf_k)
+        # 加载时保留图片位置供原文查看，检索时不让占位文字挤占Top-20正文候选。
+        filtered = [(document, score) for document, score in fused if not is_image_placeholder(document.page_content)]
+        # 仅占位过滤造成候选不足时扩取，两路各最多四倍候选；不无限扫描或重排全库。
+        requested = candidate_k
+        while len(filtered) < candidate_k and len(filtered) < len(fused) and requested < candidate_k * 4:
+            requested *= 2
             vector_results = self.vector_store.search(query, k=requested, doc_id=doc_id)
             bm25_results = bm25.search(query, k=requested, doc_id=doc_id)
             fused = rrf_fusion(vector_results, bm25_results, self.rrf_k)
             filtered = [(document, score) for document, score in fused if not is_image_placeholder(document.page_content)]
-            if len(filtered) >= candidate_k or len(filtered) == len(fused):
-                break
+        fused = filtered
         if rerank:
-            return Reranker().rerank(expand_academic_query(query), filtered[:candidate_k], k=k)
-        return filtered[:k]
+            return Reranker().rerank(expand_academic_query(query), fused[:candidate_k], k=k)
+        return fused[:k]

@@ -23,8 +23,8 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 from src.data_loader import LOADERS, create_import_tasks
-from src.frontend.components.documents import list_documents, delete_document, read_document_content
-from src.frontend.components.trace import execution_rows, conversation_statistics
+from src.frontend.components.documents import list_documents, delete_document, restore_document, read_pdf_page, read_document_content
+from src.frontend.components.trace import execution_rows, conversation_statistics, record_runtime_success
 from src.agent import run_session
 from src.agent.tools import get_available_tools
 from src.generation.cache import SemanticCache
@@ -32,7 +32,6 @@ from src.frontend.components.sessions import render_sessions
 from src.retrieval.bm25_retriever import BM25Retriever
 from src.retrieval.hybrid_retriever import HybridRetriever
 from src.utils.logger import request_time, retrieval_score_distribution
-from src.utils.messages import document_location
 from src.retrieval.vector_store import VectorStore, batch_build_index
 from src.utils.config import check_health, load_config
 
@@ -40,17 +39,44 @@ config = load_config()
 app_config = config["app"]
 
 
+@st.dialog("引用原文页", width="large")
+def show_original_page(reference):
+    """直接打开引用对应的真实PDF页，并提供原文下载；不新增HTTP服务。"""
+    try:
+        page = read_pdf_page(project_root / config["paths"]["raw_documents"], reference)
+        st.caption(f"{page['filename']} · 第{page['page_number']}页（物理页码）")
+        st.image(page["image"], width="stretch")
+        st.download_button("下载原始PDF", page["pdf"], file_name=page["filename"], mime="application/pdf")
+    except (OSError, ValueError, KeyError) as error:
+        st.error(f"无法打开引用原文：{error}")
+
+
 def show_agent_sources(event):
-    """展示引用来源文字标签，并提供低相关候选的确认入口。"""
+    """本轮和持久化历史共用引用入口，各工具调用分别标识。"""
+    shown_pages = set()
     for item in event.get("context", {}).get("observations", []):
         result = item.get("result")
         for reference in result.get("citations", []) if isinstance(result, dict) else []:
-            st.caption(f"{reference['source_file']} · {reference['location']}")
+            if Path(reference["source_file"]).suffix.lower() == ".pdf" and "page_number" in reference["metadata"]:
+                # 不合并引用正文，只将同一内容ID、物理页的原文入口展示一次。
+                metadata = reference["metadata"]
+                identity = metadata.get("doc_id") or (item.get("call_id"), reference["source_file"])
+                page_key = (identity, metadata["page_number"])
+                if page_key in shown_pages:
+                    continue
+                shown_pages.add(page_key)
+                key = f"agent-citation:{event['request_id']}:{item.get('call_id')}:{reference['id']}"
+                if st.button(f"查看{reference['source_file']} · {reference['location']}", key=key):
+                    show_original_page(reference)
         if isinstance(result, dict) and result.get("status") == "needs_confirmation":
             with st.expander("低相关候选：请核对原文", expanded=True):
                 for reference in result.get("references", []):
                     st.caption(f"{reference['source_file']} · {reference['location']} · 重排分数 {reference['score']:.4f}")
                     st.markdown(reference["text"])
+                    if Path(reference["source_file"]).suffix.lower() == ".pdf" and "page_number" in reference["metadata"]:
+                        if st.button(f"查看{reference['source_file']} · {reference['location']}",
+                                     key=f"agent-candidate:{event['request_id']}:{item.get('call_id')}:{reference['id']}"):
+                            show_original_page(reference)
                 identifier = result.get("confirmation_id")
                 if identifier in st.session_state.agent_pending_rag:
                     confirm, cancel = st.columns(2)
@@ -88,7 +114,9 @@ with st.sidebar:
     # 首次或配置／索引改变时检查；普通交互复用快照，不启动模型推理。
     if "health_result" not in st.session_state:
         st.session_state.health_result = check_health()
+        st.session_state.runtime_checks = {}
     health = st.session_state.health_result
+    runtime_captions = {}
     for name, key, selected in (("LLM服务", "llm", config["llm"]["model"]),
                                 ("向量数据库", "vector_database", "Chroma")):
         component = health[key]
@@ -100,7 +128,11 @@ with st.sidebar:
                 st.warning(text)
             else:
                 st.error(text)
-    st.caption("连接与读取检查不代表推理或检索质量。")
+        action = "推理" if key == "llm" else "向量检索"
+        tested_at = st.session_state.runtime_checks.get(key)
+        runtime_captions[key] = st.empty()
+        runtime_captions[key].caption(f"最近实际{action}成功：{tested_at}" if tested_at else f"本页尚无实际{action}记录。")
+    st.caption("连接检查与最近业务记录分别展示；成功执行不代表答案质量已通过审核。")
     if st.button("刷新状态", key="check_health"):
         st.session_state.health_result = check_health()
         st.rerun()
@@ -184,6 +216,16 @@ with knowledge_tab:
     document_list, document_content = st.columns([2, 3], gap="medium")
     with document_list:
         st.subheader("知识库文档")
+        # 四字确认文字不换行，按钮保持原“删除”的54×40像素尺寸。
+        st.html("""<style>
+            [class*="st-key-delete_document-"] button,
+            .st-key-cancel_delete_document button,
+            .st-key-confirm_delete_document button {padding: 0 1px; height: 40px;}
+            [class*="st-key-delete_document-"] button p {white-space: nowrap;}
+            [class*="st-key-knowledge_document-"] button div[title],
+            [class*="st-key-knowledge_document-"] button p {white-space: normal; overflow-wrap: anywhere;}
+            .st-key-confirm_delete_document button p {font-size: 12px; white-space: nowrap;}
+        </style>""")
         if "document_notice" in st.session_state:
             st.info(st.session_state.pop("document_notice"))
         try:
@@ -237,8 +279,29 @@ with knowledge_tab:
                             "total": len(st.session_state.import_tasks)}
                         st.session_state.pop("delete_pending")
                         st.session_state.pop("health_result", None)
-                        st.session_state.document_notice = f"已删除 {removed} 个检索块并移除原文；如需重新入库请再次上传。"
+                        st.session_state.document_notice = f"已删除 {removed} 个检索块，原文已回收，可在下方恢复。"
                         st.rerun()
+            trash_dir = raw_dir / ".trash"
+            archived = sorted(folder.name for folder in trash_dir.iterdir()
+                              if folder.is_dir() and not folder.is_symlink() and len(folder.name) == 64
+                              and all(c in "0123456789abcdef" for c in folder.name)) if trash_dir.is_dir() and not trash_dir.is_symlink() else []
+            if archived:
+                archive_names = {identifier: " / ".join(f.name for f in sorted((trash_dir / identifier).iterdir())
+                                 if f.is_file() and not f.is_symlink() and f.suffix.lower() in LOADERS)
+                                 for identifier in archived}
+                # 单选框只有选择操作，名称和ID不作为可编辑文本输入。
+                restore_id = st.radio("已归档知识", archived, key="restore_doc_id", width="stretch",
+                                     format_func=lambda identifier: archive_names[identifier],
+                                     captions=[f"ID：{identifier[:8]}" for identifier in archived])
+                if st.button("恢复", key="restore_document"):
+                    st.session_state.import_tasks = restore_document(raw_dir, restore_id)
+                    for progress in batch_build_index(st.session_state.import_tasks, raw_dir, max_file_size_mb):
+                        st.session_state.import_progress = progress
+                        show_import_status()
+                    st.session_state.knowledge_document_id = restore_id
+                    st.session_state.document_notice = "原文已恢复，请查看本批导入状态；失败项可重试。"
+                    st.session_state.pop("health_result", None)
+                    st.rerun()
         except Exception as error:
             library_error = f"文档管理失败：{type(error).__name__}: {error}。原文保留，请修正后重试。"
             st.error(library_error)
@@ -264,25 +327,6 @@ with knowledge_tab:
                 st.error(f"无法读取原文：{type(error).__name__}: {error}")
         elif library is not None:
             st.info("请在左侧上传文档，导入后在此选择文件查看内容。")
-
-
-    st.subheader("知识库管理面板")
-    if library is None:
-        st.error(library_error or "知识库状态读取失败，请修正后刷新。")
-    else:
-        summary = st.columns(3)
-        summary[0].metric("知识库文档数", len(library))
-        summary[1].metric("已向量化文档数", sum(document["index_status"] == "已向量化" for document in library))
-        summary[2].metric("知识库索引块数", sum(document["chunks"] for document in library))
-        if not library:
-            st.info("知识库暂无文档，请在左侧上传并开始导入。")
-        else:
-            # 表格仅显示磁盘与Chroma的当前状态，批次失败仍在左侧导入区查看。
-            rows = [{"文件名": document["name"], "文档 ID": document["doc_id"][:8],
-                     "原文状态": "已保存" if document["source_available"] else "缺失",
-                     "向量化状态": document["index_status"],
-                     "索引块数": document["chunks"]} for document in library]
-            st.dataframe(rows, hide_index=True, width="stretch")
 
 
 def show_turn_footer(message):
@@ -366,6 +410,12 @@ with chat_tab:
                 with st.chat_message("assistant"):
                     st.markdown(previous["answer"])
                     show_turn_footer(previous)
+    # 原生消息输入框自动清空已提交文字；将内置发送图标显示为“发送”。
+    st.html("""<style>
+        [class*="st-key-agent_question-"] [data-testid="stChatInputSubmitButton"] {width: 64px;}
+        [class*="st-key-agent_question-"] [data-testid="stChatInputSubmitButton"] svg {display: none;}
+        [class*="st-key-agent_question-"] [data-testid="stChatInputSubmitButton"]::after {content: '发送'; font-size: 14px;}
+    </style>""")
     agent_question = st.chat_input("输入消息…", key=f"agent_question:{st.session_state.get('agent_session_id', 'unavailable')}", disabled=not session_ready)
     approval = st.session_state.pop("agent_confirmed_rag", None) if session_ready else None
     if approval:
@@ -393,6 +443,8 @@ with chat_tab:
                                                  confirmed_rag_args=(approval["args"] if "args" in approval else
                                                                      {"question": approval["tool_question"], "doc_id": approval["doc_id"]}) if approval else None,
                                                  memory=st.session_state.agent_memory, stream=True):
+                            record_runtime_success(st.session_state.runtime_checks, event,
+                                                   config["llm"]["model"], request_time())
                             if event["type"] == "token":
                                 incoming["answer"] = event["answer"]
                                 answer_panel.markdown(incoming["answer"] + " ▌")
@@ -432,6 +484,25 @@ with chat_tab:
     with statistics_panel.container():
         show_statistics()
 
+with knowledge_tab:
+    st.subheader("知识库管理面板")
+    if library is None:
+        st.error(library_error or "知识库状态读取失败，请修正后刷新。")
+    else:
+        summary = st.columns(3)
+        summary[0].metric("知识库文档数", len(library))
+        summary[1].metric("已向量化文档数", sum(document["index_status"] == "已向量化" for document in library))
+        summary[2].metric("知识库索引块数", sum(document["chunks"] for document in library))
+        if not library:
+            st.info("知识库暂无文档，请在左侧上传并开始导入。")
+        else:
+            # 表格仅显示磁盘与Chroma的当前状态，批次失败仍在左侧导入区查看。
+            rows = [{"文件名": document["name"], "文档 ID": document["doc_id"][:8],
+                     "原文状态": "已保存" if document["source_available"] else "缺失",
+                     "向量化状态": document["index_status"],
+                     "索引块数": document["chunks"]} for document in library]
+            st.dataframe(rows, hide_index=True, width="stretch")
+
 with retrieval_tab:
     st.subheader("文档 Top-K 检索")
     with st.form("vector_search_form"):
@@ -470,6 +541,11 @@ with retrieval_tab:
                         results = retriever.search(query, k=top_k, doc_id=selected_id, rerank=True)
                     else:
                         results = retriever.search(query, k=top_k, doc_id=selected_id)
+                    if method != "BM25 关键词":
+                        st.session_state.runtime_checks["vector_database"] = request_time()
+                        # 侧栏先于检索表单绘制，原位更新才能在本次提交立即显示成功时间。
+                        runtime_captions["vector_database"].caption(
+                            f"最近实际向量检索成功：{st.session_state.runtime_checks['vector_database']}")
             except Exception as error:
                 st.error(f"检索失败：{type(error).__name__}: {error}。请根据错误信息检查配置后重新检索。")
             else:
@@ -485,7 +561,20 @@ with retrieval_tab:
                     score_label = {"向量相似度": "余弦相似度", "BM25 关键词": "BM25 分数",
                                    "RRF 混合检索": "RRF 分数", "RRF + 模型重排": "模型相关性分数"}[method]
                     with st.expander(f"{rank}. {filename} · {score_label} {score:.4f}", expanded=True):
-                        st.caption(f"来源：{filename}；{document_location(metadata)}")
+                        # PDF 使用物理页码；Word/文本使用各自位置，不能伪造页码。
+                        if "page_number" in metadata:
+                            location = f"物理页码：{metadata['page_number']}"
+                            if metadata.get("page_end", metadata["page_number"]) != metadata["page_number"]:
+                                location += f"–{metadata['page_end']}"
+                        elif "paragraph_index" in metadata:
+                            location = f"段落：{metadata['paragraph_index']}"
+                        elif "table_index" in metadata:
+                            location = f"表格：{metadata['table_index']}"
+                        elif "line_start" in metadata:
+                            location = f"行范围：{metadata['line_start']}–{metadata['line_end']}"
+                        else:
+                            location = "位置未记录"
+                        st.caption(f"来源：{filename}；{location}")
                         st.caption(f"文档 ID：{metadata.get('doc_id', '')[:8]}；块 ID：{metadata.get('chunk_id', '')[:8]}")
                         st.text(document.page_content)
 

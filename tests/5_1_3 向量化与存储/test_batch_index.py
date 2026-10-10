@@ -211,9 +211,9 @@ class TestBatchIndex(unittest.TestCase):
             self.assertEqual(self.store.count(), 500)
             from src.frontend.components.documents import list_documents
             row = list_documents(Path(self.raw_dir), Path(self.directory.name) / "index")[0]
-            # 预期块数标记与实际块数不符时按部分入库显示。
             self.assertEqual(row["index_status"], "部分入库")
             self.assertEqual(row["chunks"], 500)
+            self.assertGreater(row["expected_chunks"], 500)
             self.run_batch(tasks, retry_failed=True)
         count = tasks[0]["chunk_count"]
         self.assertGreater(count, 500)
@@ -223,7 +223,7 @@ class TestBatchIndex(unittest.TestCase):
         self.assertEqual(sum(len(call) for call in self.embeddings.document_calls), count)
         row = list_documents(Path(self.raw_dir), Path(self.directory.name) / "index")[0]
         self.assertEqual(row["index_status"], "已向量化")
-        self.assertEqual(row["chunks"], count)
+        self.assertEqual(row["expected_chunks"], count)
 
     def test_stage_progress_and_interrupted_index_resume(self):
         """观察分块/索引阶段；进度中断后可恢复，不误标为成功。"""

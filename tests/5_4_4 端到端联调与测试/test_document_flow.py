@@ -29,8 +29,6 @@ class TestImportFrontend(unittest.TestCase):
         config["paths"]["session_db"] = str(Path(self.directory.name) / "memory.sqlite3")
         config["paths"]["vector_index"] = str(Path(self.directory.name) / "index")
         config["paths"]["logs"] = str(Path(self.directory.name) / "logs")
-        # 页面在导入时读取该值；测试用 1MiB 边界，避免真的分配 20MiB 数据。
-        config["importing"]["max_file_size_mb"] = 1
         self.embeddings = SmallEmbeddings()
         for target, value in (("src.utils.config.load_config", config),
                               ("src.utils.config.check_health", {"llm": {"status": "ok"},
@@ -79,8 +77,8 @@ class TestImportFrontend(unittest.TestCase):
         self.assertFalse(any(s.value in {"科研对话", "模块开发状态", "评阅说明"} for s in app.subheader))
         self.assertFalse(any("上传文档后增量写入本地知识库；下方 RAG 问答" in i.value for i in app.info))
 
-    def test_knowledge_selection_switches_and_keeps_short_id(self):
-        """两份原文可切换选中，删除一份后自动回落到另一份。"""
+    def test_knowledge_selection_shows_full_original_and_short_id(self):
+        """两份原文切换只展示选中文件，删除后不遗留另一份文件的内容。"""
         from hashlib import sha256
         app = self.app
         first, second = b"# Paper A\n\nFirst full paragraph.", b"Paper B has a different full paragraph."
@@ -94,13 +92,22 @@ class TestImportFrontend(unittest.TestCase):
         self.assertEqual(app.button(key=f"knowledge_document:{a}").label, "a.md")
         self.assertTrue(any(c.value == f"ID：{a[:8]}" for c in app.tabs[2].caption))
         self.assertEqual(app.session_state["knowledge_document_id"], a)
+        self.assertIn(first.decode(), [m.value for m in app.tabs[2].markdown])
+        self.assertNotIn(second.decode(), [m.value for m in app.tabs[2].markdown])
         app.button(key=f"knowledge_document:{b}").click().run()
         self.assertFalse(app.exception)
         self.assertEqual(app.session_state["knowledge_document_id"], b)
+        self.assertIn(second.decode(), [m.value for m in app.tabs[2].markdown])
+        self.assertNotIn(first.decode(), [m.value for m in app.tabs[2].markdown])
         app.button(key=f"delete_document:{b}").click().run()
         app.button(key="confirm_delete_document").click().run()
         self.assertFalse(app.exception)
         self.assertEqual(app.session_state["knowledge_document_id"], a)
+        self.assertNotIn(second.decode(), [m.value for m in app.tabs[2].markdown])
+        app.button(key="restore_document").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(app.session_state["knowledge_document_id"], b)
+        self.assertIn(second.decode(), [m.value for m in app.tabs[2].markdown])
 
     def test_sidebar_titles_and_upload_label_are_consistent(self):
         """三个侧栏标题同用header，上传组件更名但保持批量能力。"""
@@ -189,10 +196,9 @@ class TestImportFrontend(unittest.TestCase):
         self.assertEqual(len(app.sidebar.dataframe[0].value), 6)
 
     def test_oversized_upload_shows_failure_and_valid_file_still_indexes(self):
-        """AppTest绕过浏览器大小限制，验证后端单份大小保护与页面失败/重试状态。"""
+        """AppTest绕过浏览器大小限制，验证20MiB后端保护与页面失败/重试状态。"""
         app = self.app
-        # setUp 已把单份上限设为 1MiB；这里只超出 1 字节。
-        app.file_uploader[0].set_value([("oversized.pdf", b"x" * (1024 * 1024 + 1), "application/pdf"),
+        app.file_uploader[0].set_value([("oversized.pdf", b"x" * (20 * 1024 * 1024 + 1), "application/pdf"),
                                        ("valid.txt", b"Neural network", "text/plain")]).run()
         with patch("src.data_loader.load_document", wraps=load_document) as loader:
             app.button(key="start_import").click().run()
@@ -289,10 +295,10 @@ class TestImportFrontend(unittest.TestCase):
         app.number_input(key="vector_top_k").set_value(2)
         app.button(key="vector_search").click().run()
         self.assertFalse(app.exception)
-        self.assertFalse(any(c.value.startswith("最近实际") for c in app.sidebar.caption))
+        self.assertTrue(any(c.value.startswith("最近实际向量检索成功：") for c in app.sidebar.caption))
         self.assertEqual([element.value for element in app.text], ["神经网络实验", "农业实验"])
         self.assertTrue(any("1. 论文A.pdf · 余弦相似度 1.0000" in panel.label for panel in app.expander))
-        self.assertIn("来源：论文A.pdf；第2–3页（物理页码）", [element.value for element in app.caption])
+        self.assertIn("来源：论文A.pdf；物理页码：2–3", [element.value for element in app.caption])
         app.number_input(key="vector_top_k").set_value(10)
         app.button(key="vector_search").click().run()
         self.assertEqual(len(app.text), 3)
@@ -318,19 +324,43 @@ class TestImportFrontend(unittest.TestCase):
         self.assertFalse(app.exception)
         self.assertEqual([element.value for element in app.text], ["Word 神经网络正文", "反向表格"])
         captions = [element.value for element in app.caption]
-        self.assertIn("来源：论文.docx；段落3", captions)
-        self.assertIn("来源：论文.docx；表格2", captions)
+        self.assertIn("来源：论文.docx；段落：3", captions)
+        self.assertIn("来源：论文.docx；表格：2", captions)
         self.assertFalse(any("物理页码" in value for value in captions))
         app.text_input(key="vector_query").set_value("农业")
         app.text_input(key="vector_doc_id").set_value("text")
         app.button(key="vector_search").click().run()
         self.assertEqual([element.value for element in app.text], ["农业文本"])
-        self.assertIn("来源：论文.txt；行4–8", [element.value for element in app.caption])
+        self.assertIn("来源：论文.txt；行范围：4–8", [element.value for element in app.caption])
         app.text_input(key="vector_doc_id").set_value("missing")
         app.button(key="vector_search").click().run()
         self.assertFalse(app.text)
         self.assertTrue(any("没有可检索的文档块" in element.value for element in app.info))
         self.assertEqual(self.embeddings.query_calls, ["神经网络", "农业"])
+
+    def test_filtered_vector_label_recovery_displays_warning_and_real_source(self):
+        """页面实际经Chroma读取Label异常恢复，提示限制并展示原文行号。"""
+        tasks = create_import_tasks([("复测.txt", "农业复测资料\n复测第二行\n复测第三行".encode())])
+        list(batch_import(tasks, Path(self.directory.name) / "raw"))
+        chunks = split_documents(tasks[0]["documents"])
+        store = VectorStore()
+        store.add_chunks(chunks)
+        original_get = type(store._store).get
+        def broken_vectors(instance, **kwargs):
+            if "embeddings" in kwargs.get("include", []):
+                raise RuntimeError("Label not found")
+            return original_get(instance, **kwargs)
+        app = self.app
+        app.text_input(key="vector_query").set_value("农业")
+        app.text_input(key="vector_doc_id").set_value(chunks[0].metadata["doc_id"])
+        with patch.object(type(store._store), "get", new=broken_vectors):
+            app.button(key="vector_search").click().run()
+        self.assertFalse(app.exception)
+        self.assertFalse(app.error)
+        self.assertIn(chunks[0].page_content, [element.value for element in app.text])
+        self.assertIn("来源：复测.txt；行范围：1–3", [element.value for element in app.caption])
+        self.assertTrue(any("未修改原索引" in element.value for element in app.warning))
+        self.assertNotIn("retrieval_warning", store.list_chunks()[0].metadata)
 
     def test_vector_search_blank_input_and_empty_index(self):
         """启动/空问题不初始化模型，空库明确提示且不计算查询向量。"""
@@ -380,7 +410,7 @@ class TestImportFrontend(unittest.TestCase):
         self.assertFalse(app.exception)
         self.assertEqual([element.value for element in app.text], ["BatchNormalization"])
         self.assertTrue(any("BM25 分数 -" in panel.label for panel in app.expander))
-        self.assertIn("来源：论文.pdf；第2页（物理页码）", [element.value for element in app.caption])
+        self.assertIn("来源：论文.pdf；物理页码：2", [element.value for element in app.caption])
         self.assertEqual(self.embeddings.query_calls, [])
         app.text_input(key="vector_query").set_value("Normalization")
         app.button(key="vector_search").click().run()
@@ -446,7 +476,7 @@ class TestImportFrontend(unittest.TestCase):
         self.assertFalse(app.exception)
         self.assertEqual([element.value for element in app.text], ["BatchNormalization"])
         self.assertTrue(any("1. 论文B.docx · RRF 分数" in panel.label for panel in app.expander))
-        self.assertIn("来源：论文B.docx；段落3", [element.value for element in app.caption])
+        self.assertIn("来源：论文B.docx；段落：3", [element.value for element in app.caption])
         self.assertEqual(self.embeddings.query_calls, ["BatchNormalization"])
 
     def test_rrf_empty_input_empty_store_and_model_error(self):
@@ -519,8 +549,8 @@ class TestImportFrontend(unittest.TestCase):
         self.assertFalse(app.exception)
         self.assertEqual([element.value for element in app.text], ["农业 BatchNormalization", "BatchNormalization"])
         self.assertTrue(any("论文C.txt · 模型相关性分数 0.9000" in panel.label for panel in app.expander))
-        self.assertIn("来源：论文C.txt；行2–3", [element.value for element in app.caption])
-        self.assertIn("来源：论文B.docx；段落3", [element.value for element in app.caption])
+        self.assertIn("来源：论文C.txt；行范围：2–3", [element.value for element in app.caption])
+        self.assertIn("来源：论文B.docx；段落：3", [element.value for element in app.caption])
 
     def test_model_reranking_empty_cases_and_error_recovery(self):
         """空问题/空库无需模型，模型缺失或推理失败有错误提示，修复后可重新提交。"""
@@ -595,10 +625,41 @@ class TestImportFrontend(unittest.TestCase):
         self.assertFalse(app.exception)
         self.assertEqual(VectorStore().count(), 0)
         self.assertFalse((raw / doc_id).exists())
+        self.assertEqual((raw / ".trash" / doc_id / "paper.md").read_bytes(), b"Transformer uses six layers.")
         self.assertEqual(app.session_state["import_tasks"], [])
         self.assertTrue(app.button(key="start_import").disabled)
+        archived = app.radio(key="restore_doc_id")
+        self.assertEqual(archived.label, "已归档知识")
+        self.assertEqual(archived.options, ["paper.md"])
+        self.assertEqual(list(archived.proto.captions), [f"ID：{doc_id[:8]}"])
+        self.assertEqual(app.button(key="restore_document").label, "恢复")
+        app.button(key="restore_document").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(VectorStore().count(), 1)
+        self.assertTrue(app.session_state["import_tasks"][0]["indexed"])
+        self.assertTrue((raw / doc_id / "paper.md").exists())
+        self.assertFalse((raw / ".trash" / doc_id).exists())
         app.run()
-        self.assertEqual(VectorStore().count(), 0)
+        self.assertEqual(VectorStore().count(), 1)
+
+    def test_archive_selection_restores_only_selected_document(self):
+        """归档区选择另一份原文，恢复按钮只重建所选文档。"""
+        from src.frontend.components.documents import list_documents
+        app = self.app
+        raw, index = Path(self.directory.name) / "raw", Path(self.directory.name) / "index"
+        app.file_uploader[0].set_value([("a.txt", b"Adam", "text/plain"),
+                                       ("b.txt", b"Transformer", "text/plain")]).run()
+        app.button(key="start_import").click().run()
+        documents = list_documents(raw, index)
+        for document in documents:
+            self.delete_button(app, document["doc_id"]).click().run()
+            app.button(key="confirm_delete_document").click().run()
+        app.radio(key="restore_doc_id").set_value(documents[1]["doc_id"]).run()
+        app.button(key="restore_document").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual([d["name"] for d in list_documents(raw, index)], ["b.txt"])
+        self.assertTrue((raw / ".trash" / documents[0]["doc_id"]).is_dir())
+        self.assertEqual(VectorStore().count(), 1)
 
     def test_delete_only_selected_document_keeps_other_index_and_progress(self):
         """删除一份文献不会清空全库，保留任务的进度与真实列表一致。"""
@@ -636,6 +697,24 @@ class TestImportFrontend(unittest.TestCase):
         self.assertTrue((Path(self.directory.name) / "raw" / doc_id / "keep.txt").exists())
         app.button(key="confirm_delete_document").click().run()
         self.assertEqual(VectorStore().count(), 0)
+
+    def test_restore_index_failure_can_retry(self):
+        """回收原文恢复后模型失败，不冒充入库成功；现有失败重试补全索引。"""
+        app = self.app
+        app.file_uploader[0].set_value([("restore.txt", b"Neural network", "text/plain")]).run()
+        app.button(key="start_import").click().run()
+        self.delete_button(app).click().run()
+        app.button(key="confirm_delete_document").click().run()
+        with patch("src.retrieval.vector_store.get_embeddings", side_effect=FileNotFoundError("权重缺失")):
+            app.button(key="restore_document").click().run()
+        task = app.session_state["import_tasks"][0]
+        self.assertEqual(task["status"], "failed")
+        self.assertTrue(Path(task["path"]).exists())
+        self.assertEqual(VectorStore().count(), 0)
+        app.button(key="retry_import").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(VectorStore().count(), 1)
+
 
     def knowledge_rows(self, app=None):
         """按字段找到只读表格，避免依赖新增面板后的全局元素顺序。"""

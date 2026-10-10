@@ -5,14 +5,26 @@ from copy import deepcopy
 import math
 import re
 from queue import Empty, Full, Queue
-from threading import Event, Lock
+from threading import Condition, Event, Lock
 from time import perf_counter
 
 from langchain_core.messages import ToolMessage
 from langchain_core.tools import BaseTool
 
-from src.agent.tools import DOCUMENT_TOOL_FIELDS, execute_tool
+from src.agent.tools import execute_tool
 from src.utils.config import load_config
+
+
+# 整个Streamlit进程共用额度，超时的函数真正退出后才释放。
+_execution_condition = Condition()
+_active_executions = 0
+
+
+def _release_execution(_future):
+    global _active_executions
+    with _execution_condition:
+        _active_executions -= 1
+        _execution_condition.notify_all()
 
 
 def parallel_limit() -> int:
@@ -82,7 +94,7 @@ def route_question(question: str, tools: list[BaseTool], context: dict | None = 
         selected, reason = hits[0], "明确工具意图，跳过模型规划，交由Action生成参数。"
         if re.search(r"分别|同时|各自|\beach\b|\bboth\b", question, re.I) and (
                 len(set(re.findall(r"\b[0-9a-f]{64}\b", question))) > 1 or re.search(r"两篇|两份|两个|\bboth\b", question, re.I)):
-            if DOCUMENT_TOOL_FIELDS.get(selected) != ("doc_id",) or parallel_limit() < 2:
+            if selected not in {"paper_metadata", "paper_summary", "knowledge_base_search", "keyword_extract"} or parallel_limit() < 2:
                 return None
             batch, reason = [selected, selected], "分别处理两份已给定论文，Action必须提出两次独立调用。"
     elif local or re.search(r"文献|论文|提出的|结构改进|消融实验|\b(?:papers?|proposed|ablation)\b", question, re.I):
@@ -190,15 +202,36 @@ def execute_calls(calls: list[dict], tools: list[BaseTool], *, parallel: bool = 
                 except Empty:
                     return
     def submit(call):
+        global _active_executions
         started, attempts = perf_counter(), []
         deadline = started + timeout
-        future = pool.submit(_execute_attempts, call, tools, retries, deadline, stopped, attempts,
-                             (lambda event: publish(call, event)) if stream else None)
+        with _execution_condition:
+            available = _execution_condition.wait_for(lambda: _active_executions < limit,
+                                                       timeout=max(0, deadline - perf_counter()))
+            if not available:
+                return call, None, started, deadline, attempts
+            _active_executions += 1
+        try:
+            future = pool.submit(_execute_attempts, call, tools, retries, deadline, stopped, attempts,
+                                 (lambda event: publish(call, event)) if stream else None)
+        except BaseException:
+            _release_execution(None)
+            raise
+        future.add_done_callback(_release_execution)
         return call, future, started, deadline, attempts
     try:
         pending = [submit(call) for call in calls] if mode == "parallel" else []
         for index, call in enumerate(calls):
             call, future, started, deadline, attempts = pending[index] if pending else submit(call)
+            if future is None:
+                error = "工具执行额度已占满（含尚未退出的超时函数），本次工具未启动；请稍后重试。"
+                yield {"type": "tool_result", **call, "status": "error", "result": None, "error": error,
+                       "error_kind": "capacity", "pending": False, "attempts": [], "execution_mode": mode,
+                       "elapsed_seconds": perf_counter() - started,
+                       "message": ToolMessage(content=error, tool_call_id=call["call_id"], name=call["name"], status="error")}
+                if mode == "serial":
+                    break
+                continue
             try:
                 while True:
                     yield from drain()

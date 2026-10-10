@@ -150,6 +150,21 @@ class TestErrorRecovery(unittest.TestCase):
                 finished.set()
         return blocked_lookup, started, released, finished
 
+    def test_deadline_workers_remain_bounded_across_requests(self):
+        """连续请求的迟到线程仍占共享执行额度，不能每次超时再开一条线程。"""
+        self.config["agent"].update(max_parallel_calls=1, tool_timeout_seconds=.03)
+        blocking, _, released, finished = self.blocked_tool()
+        try:
+            outcomes = [list(execute_calls([{**self.call, "name": blocking.name, "call_id": str(i)}], [blocking]))[0]
+                        for i in range(3)]
+            self.assertEqual(len(self.invocations), 1)
+            self.assertEqual([item["error_kind"] for item in outcomes], ["deadline", "capacity", "capacity"])
+            self.assertTrue(all(not item["pending"] for item in outcomes[1:]))
+        finally:
+            released.set()
+            self.assertTrue(finished.wait(timeout=3))
+        self.assertEqual(list(execute_calls([self.call], self.tools))[0]["status"], "success")
+
     def test_deadline_returns_before_worker_exits_and_ignores_late_result(self):
         self.config["agent"]["tool_timeout_seconds"] = .05
         blocking, started, released, finished = self.blocked_tool()

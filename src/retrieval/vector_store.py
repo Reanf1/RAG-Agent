@@ -2,6 +2,7 @@
 
 import os
 import json
+import logging
 from hashlib import sha256
 from functools import lru_cache
 from threading import Lock
@@ -77,6 +78,9 @@ class VectorStore:
         actual = self._store._collection.metadata or {}
         if any(actual.get(key) != value for key, value in expected.items()):
             raise ValueError("已有索引的模型版本或索引参数与配置不一致，请使用新索引目录重建")
+        # 同一请求的多维度检索只保留最近一篇临时向量；不跨实例或写入原索引。
+        self._recovered_vectors = None
+
     def _ensure_embeddings(self):
         """只有向量写入/查询才加载模型，BM25 读取正文无需准备权重。"""
         if self._store.embeddings is None:
@@ -135,11 +139,31 @@ class VectorStore:
             return []
         where = {"doc_id": doc_id} if doc_id is not None else None
         if where:
-            # 限定一篇论文采用已有向量的精确余弦排名；索引损坏时由上层明确报错。
-            stored = self._store.get(where=where, include=["documents", "metadatas", "embeddings"])
+            # 限定一篇论文采用已有向量的精确余弦排名，避开小过滤集的HNSW图异常。
+            recovery_notice = ""
+            try:
+                stored = self._store.get(where=where, include=["documents", "metadatas", "embeddings"])
+            except RuntimeError as error:
+                if str(error).strip() != "Label not found":
+                    raise
+                # 已复现：正文仍可读但HNSW标签缺失。仅临时重算本篇，不改写原库或扩大范围。
+                stored = self._store.get(where=where, include=["documents", "metadatas"])
+                recovery_notice = ("持久化向量读取失败（Label not found）；本次使用同版本本地模型临时计算指定文档向量，"
+                                   "未修改原索引；原索引完整性仍待核验。")
             if not stored["ids"]:
                 return []
             self._ensure_embeddings()
+            if recovery_notice:
+                # 每次仍读当前正文和来源；同数量替换或块ID变化时不能复用旧向量。
+                signature = (doc_id, tuple(zip(stored["ids"], stored["documents"])))
+                cached = self._recovered_vectors
+                if cached is None or cached[0] != signature:
+                    cached = (signature, self._store.embeddings.embed_documents(stored["documents"]))
+                    self._recovered_vectors = cached
+                stored["embeddings"] = cached[1]
+                stored["metadatas"] = [{**metadata, "retrieval_warning": recovery_notice}
+                                       for metadata in stored["metadatas"]]
+                logging.getLogger(__name__).warning(recovery_notice)
             vectors = np.asarray(stored["embeddings"], dtype=float)
             query_vector = np.asarray(self._store.embeddings.embed_query(query), dtype=float)
             norms = np.linalg.norm(vectors, axis=1) * np.linalg.norm(query_vector)
@@ -167,11 +191,14 @@ class VectorStore:
         return count
 
 
-def _write_expected_count(task, count):
-    """把本次预期块数写到原文目录的轻量标记，用于页面判断"部分入库"。"""
-    path = Path(task["path"]).parent / ".index_count"
-    path.write_text(str(count), encoding="utf-8")
-    return count
+def _write_index_status(task, chunks, vector_store, *, complete):
+    """独立旁注记录预期块，不改原始资料；重开页面可核对实际块ID集合。"""
+    path = Path(task["path"]).parent / ".index_status.json"
+    state = {"index_directory": str(vector_store.directory), "collection": vector_store._store._collection.name,
+             "expected_ids": [chunk.metadata["chunk_id"] for chunk in chunks], "complete": complete}
+    temporary = path.with_suffix(".tmp")
+    temporary.write_text(json.dumps(state, ensure_ascii=False), encoding="utf-8")
+    temporary.replace(path)
 
 
 def batch_build_index(tasks: list[dict], raw_dir: str | Path,
@@ -222,10 +249,9 @@ def batch_build_index(tasks: list[dict], raw_dir: str | Path,
                     existing_ids = {chunk.metadata["chunk_id"]
                                     for chunk in vector_store.list_chunks(chunks[0].metadata["doc_id"])}
                     if existing_ids - expected_ids:
-                        # 参数或解析结果变化时保留旧库，不能把另一套块混入同一文档。
+                        # 参数或解析结果变化时保留旧库和旧旁注，不能混入另一套块。
                         raise ValueError("已有文档的分块或解析结果与本次不一致，请在新索引目录重建后启用；原索引未修改")
-                    # 只记本次预期块数，供页面区分"已向量化/部分入库"；不记路径与ID清单。
-                    _write_expected_count(task, len(chunks))
+                    _write_index_status(task, chunks, vector_store, complete=False)
                     for offset in range(0, len(chunks), 500):
                         batch = chunks[offset:offset + 500]
                         task["added_chunks"] += vector_store.add_chunks(batch)
@@ -236,6 +262,7 @@ def batch_build_index(tasks: list[dict], raw_dir: str | Path,
                                   for chunk in vector_store.list_chunks(chunks[0].metadata["doc_id"])}
                     if actual_ids != expected_ids:
                         raise ValueError("实际索引块与预期集合不一致，本次入库未完成")
+                    _write_index_status(task, chunks, vector_store, complete=True)
                     task.update(status="success", indexed=True)
         except Exception as error:
             # 失败只影响当前文档；保留已落盘块，供下一次查重恢复。
