@@ -14,6 +14,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--project', type=Path, required=True)
     parser.add_argument('--root', type=Path, required=True)
+    parser.add_argument('--corpus', type=Path, help='本机核验通过的独立评测语料')
     args = parser.parse_args()
     import psutil
     args.root.mkdir(parents=True, exist_ok=False)
@@ -60,6 +61,8 @@ def main():
                        '--root', str(runtime), '--output', str(args.root / (stage+'.json'))]
             if script == 'evaluate_research.py':
                 command.extend(['--frozen-root', str(frozen)])
+            elif args.corpus:
+                command.extend(['--corpus', str(args.corpus)])
             row = {'stage': stage, 'started_at': datetime.now().astimezone().isoformat(), 'command': command}
             report['stages'].append(row); save()
             print(f'开始正式阶段：{stage}', flush=True)

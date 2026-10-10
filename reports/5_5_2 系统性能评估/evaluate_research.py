@@ -70,7 +70,8 @@ def main():
     torch.set_num_threads(4)
     import src.utils.config as config_module
     config = config_module.load_config()
-    config["paths"].update(vector_index=str(args.root / "index"), raw_documents=str(args.root / "raw"), logs=str(args.root / "logs"))
+    config["paths"].update(vector_index=str(args.root / "index"), raw_documents=str(args.root / "raw"),
+                           logs=str(args.root / "logs"), session_db=str(args.root / "sessions.sqlite3"))
     config_module.load_config = lambda: deepcopy(config)
     from src.agent import react_loop
     from src.agent.tools import get_available_tools
