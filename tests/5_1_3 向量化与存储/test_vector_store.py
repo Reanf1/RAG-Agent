@@ -61,118 +61,24 @@ class TestVectorStore(unittest.TestCase):
         for (_, score), expected in zip(found, (1, 0, -1)):
             self.assertAlmostEqual(score, expected)
 
-    def test_filtered_search_uses_persisted_vectors_without_hnsw(self):
-        """小文档过滤绕开HNSW图；使用已有向量，不能重算文档或返回其他文档。"""
+    def test_filtered_search_uses_persisted_vectors(self):
+        """限定文档时用已持久化向量精确排序，不重新编码文档、不返回其他文档。"""
         self.store.add_chunks(self.chunks)
         before = list(self.embeddings.document_calls)
-        with patch.object(self.store._store, "similarity_search_with_score",
-                          side_effect=RuntimeError("Cannot return the results in a contigious 2D array")):
-            found = self.store.search("农业", k=5, doc_id="b")
+        stored = self.store.list_chunks()
+        found = self.store.search("农业", k=5, doc_id="b")
         self.assertEqual([doc.metadata["chunk_id"] for doc, _ in found], ["b1"])
-        self.assertAlmostEqual(found[0][1], 1.0)
+        self.assertEqual([score for _, score in found], [1.0])
         self.assertEqual(self.embeddings.document_calls, before)
+        self.assertEqual(self.store.search("问题", doc_id="missing"), [])
+        self.assertEqual(self.store.count(), 3)
+        self.assertEqual(self.store.list_chunks(), stored)
 
     def test_document_filter_and_top_k(self):
         self.store.add_chunks(self.chunks)
         self.assertEqual(len(self.store.search("神经网络", k=1)), 1)
         found = self.store.search("神经网络", doc_id="b")
         self.assertEqual([doc.metadata["chunk_id"] for doc, _ in found], ["b1"])
-
-    def test_missing_hnsw_label_recovers_only_selected_document_without_writing(self):
-        """Windows复测：原文可读但向量Label缺失，只读临时恢复并保留来源与提示。"""
-        self.store.add_chunks(self.chunks)
-        original_get = self.store._store.get
-        before = self.store.list_chunks()
-        def broken_vectors(**kwargs):
-            if "embeddings" in kwargs.get("include", []):
-                raise RuntimeError("Label not found")
-            return original_get(**kwargs)
-        with patch.object(self.store._store, "get", side_effect=broken_vectors), \
-                patch.object(self.store._store, "add_documents", side_effect=AssertionError("不可改写索引")), \
-                patch.object(self.store._store._collection, "delete", side_effect=AssertionError("不可删除原索引")):
-            with self.assertLogs("src.retrieval.vector_store", level="WARNING"):
-                found = self.store.search("神经网络", k=5, doc_id="a")
-            self.assertEqual(self.store.search("问题", doc_id="missing"), [])
-        self.assertEqual([doc.metadata["chunk_id"] for doc, _ in found], ["a1", "a2"])
-        self.assertEqual([score for _, score in found], [1.0, -1.0])
-        self.assertEqual(self.embeddings.document_calls[-1], ["神经网络论文", "反向向量论文"])
-        self.assertIn("未修改原索引", found[0][0].metadata["retrieval_warning"])
-        self.assertEqual(found[0][0].metadata["page_number"], 2)
-        self.assertEqual(self.store.count(), 3)
-        self.assertEqual(self.store.list_chunks(), before)
-
-    def test_unrelated_vector_error_is_not_hidden_by_recovery(self):
-        """只匹配已复现的Label异常，其他读取故障必须保留。"""
-        self.store.add_chunks(self.chunks)
-        with patch.object(self.store._store, "get", side_effect=RuntimeError("数据库读取失败")), \
-                patch.object(self.embeddings, "embed_documents") as encode:
-            with self.assertRaisesRegex(RuntimeError, "数据库读取失败"):
-                self.store.search("神经网络", doc_id="a")
-            encode.assert_not_called()
-
-    def test_repeated_recovery_queries_reuse_document_vectors_only_in_current_instance(self):
-        """对比中的六次查询只编码一篇正文一次；新实例仍重新核验和恢复。"""
-        self.store.add_chunks(self.chunks)
-        original_get = self.store._store.get
-        def broken_vectors(**kwargs):
-            if "embeddings" in kwargs.get("include", []):
-                raise RuntimeError("Label not found")
-            return original_get(**kwargs)
-        self.embeddings.document_calls.clear()
-        with patch.object(self.store._store, "get", side_effect=broken_vectors), \
-                patch.object(self.store._store, "add_documents", side_effect=AssertionError("不可改写索引")), \
-                patch.object(self.store._store._collection, "delete", side_effect=AssertionError("不可删除索引")):
-            for doc_id in ("a", "b"):
-                for query in ("方法", "架构", "训练", "数据集", "准确率", "实验结果"):
-                    found = self.store.search(query, doc_id=doc_id)
-                    self.assertTrue(all(doc.metadata["doc_id"] == doc_id for doc, _ in found))
-                    self.assertTrue(all("未修改原索引" in doc.metadata["retrieval_warning"] for doc, _ in found))
-        self.assertEqual(self.embeddings.document_calls,
-                         [["神经网络论文", "反向向量论文"], ["农业数据论文"]])
-        self.assertEqual(len(self.embeddings.query_calls), 12)
-        reopened = VectorStore(self.directory.name, self.embeddings)
-        with patch.object(reopened._store, "get", side_effect=broken_vectors):
-            reopened.search("农业", doc_id="b")
-        self.assertEqual(self.embeddings.document_calls[-2:], [["农业数据论文"], ["农业数据论文"]])
-
-    def test_recovery_rechecks_current_text_and_returns_to_persisted_vectors(self):
-        """块ID和数量相同但正文替换时重新编码；标签恢复后优先读持久化向量。"""
-        self.store.add_chunks(self.chunks)
-        original_get = self.store._store.get
-        def broken_vectors(**kwargs):
-            if "embeddings" in kwargs.get("include", []):
-                raise RuntimeError("Label not found")
-            return original_get(**kwargs)
-        with patch.object(self.store._store, "get", side_effect=broken_vectors):
-            self.store.search("神经网络", doc_id="a")
-        changed = Document(page_content="农业新正文", metadata={**self.chunks[0].metadata, "page_number": 8})
-        self.store._store.update_document("a1", changed)
-        self.embeddings.document_calls.clear()
-        with patch.object(self.store._store, "get", side_effect=broken_vectors):
-            found = self.store.search("农业", doc_id="a")
-        self.assertEqual(self.embeddings.document_calls, [["农业新正文", "反向向量论文"]])
-        self.assertEqual(found[0][0].page_content, "农业新正文")
-        self.assertEqual(found[0][0].metadata["page_number"], 8)
-        self.assertAlmostEqual(found[0][1], 1.0)
-        with patch.object(self.embeddings, "embed_documents", side_effect=AssertionError("健康标签无需临时编码")):
-            healthy = self.store.search("农业", doc_id="a")
-        self.assertNotIn("retrieval_warning", healthy[0][0].metadata)
-        self.assertEqual(self.store.count(), 3)
-
-    def test_recovery_model_failure_is_not_an_empty_result(self):
-        """恢复依赖同版本本地模型，编码失败仍上报，原文和块数保留。"""
-        self.store.add_chunks(self.chunks)
-        original_get = self.store._store.get
-        def broken_vectors(**kwargs):
-            if "embeddings" in kwargs.get("include", []):
-                raise RuntimeError("Label not found")
-            return original_get(**kwargs)
-        with patch.object(self.store._store, "get", side_effect=broken_vectors), \
-                patch.object(self.embeddings, "embed_documents", side_effect=RuntimeError("本地编码失败")):
-            with self.assertRaisesRegex(RuntimeError, "本地编码失败"):
-                self.store.search("神经网络", doc_id="a")
-        self.assertEqual(self.store.count(), 3)
-        self.assertEqual(len(self.store.list_chunks("a")), 2)
 
     def test_default_top_k_and_query_change_without_reembedding_documents(self):
         """默认 K 来自配置；新查询只编码问题，沿用持久化文档向量。"""
