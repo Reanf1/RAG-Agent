@@ -204,7 +204,7 @@ parallel_tools为空时单次调用，否则按本轮上限提交全部独立调
 
 
 def _paper_aliases(context: dict | None) -> dict:
-    """只从成功的文献列表解析唯一文件名/文件干名，不做模糊匹配或推测指纹。"""
+    """从真实列表解析唯一文件名、文件干名及英文词，如Windows验收_ViT中的ViT。"""
     candidates = {}
     for item in (context or {}).get("observations", []):
         if item.get("name") != "paper_list" or item.get("status") != "success":
@@ -214,7 +214,8 @@ def _paper_aliases(context: dict | None) -> dict:
             identifier, filename = paper.get("doc_id"), paper.get("source_file")
             if not isinstance(identifier, str) or not re.fullmatch(r"[0-9a-f]{64}", identifier) or not isinstance(filename, str):
                 continue
-            for alias in (filename.casefold(), filename.rsplit(".", 1)[0].casefold()):
+            stem = filename.rsplit(".", 1)[0].casefold()
+            for alias in (filename.casefold(), stem, *re.findall(r"[a-z][a-z0-9]{2,}", stem)):
                 candidates.setdefault(alias, set()).add(identifier)
     return {alias: next(iter(ids)) for alias, ids in candidates.items() if len(ids) == 1}
 
@@ -230,16 +231,20 @@ def _known_paper_ids(question: str, context: dict | None) -> set[str]:
 
 
 def _current_paper_ids(question: str, aliases: dict) -> set[str]:
-    """绑定本轮完整文件名；嵌在更长文件名中的后缀不能成为第二个目标。"""
+    """绑定本轮明确的唯一别名，重叠时优先完整文件名。"""
     matches = [(match.start(), match.end(), identifier)
                for alias, identifier in aliases.items()
-               if re.search(r"\.(?:pdf|docx|txt|md)$", alias)
                for match in re.finditer(r"(?<![A-Za-z0-9_.-])" + re.escape(alias)
                                         + r"(?![A-Za-z0-9_.-])", question.casefold())]
     return _known_paper_ids(question, None) | {
         identifier for start, end, identifier in matches
         if not any(left <= start and end <= right and right - left > end - start
                    for left, right, _ in matches)}
+
+
+def _keyword_text_task(question: str) -> bool:
+    """只有明确要求分析给定文本时使用text，论文关键词默认读取上传文档。"""
+    return bool(re.search(r"(?:给定|以下|这段|提供的|问题)文本|(?:问题|问句)的?关键词|\b(?:given|following) text\b", question, re.I))
 
 
 def act(question: str, thought: dict, tools: list[BaseTool], context: dict | None = None,
@@ -294,6 +299,11 @@ def act(question: str, thought: dict, tools: list[BaseTool], context: dict | Non
             # 仍走相同执行器、工具事件与Observation；此Action未调用模型，真实Token为0。
             result = {"model": None, "prompt_eval_count": 0, "eval_count": 0,
                       "message": {"tool_calls": [{"function": {"name": names[0], "arguments": {"question": question}}}]}}
+        elif names == ["keyword_extract"] and not batch and not _keyword_text_task(question) and len(
+                targets := _current_paper_ids(question, _paper_aliases(context))) == 1:
+            # 目标已由真实列表唯一确定，直接读取文档，无需模型再猜输入文本。
+            result = {"model": None, "prompt_eval_count": 0, "eval_count": 0,
+                      "message": {"tool_calls": [{"function": {"name": names[0], "arguments": {"doc_id": next(iter(targets))}}}]}}
         else:
             messages = build_agent_messages(question, selected_tools, context, stage="action", thought=thought)
             messages[0].content += f"\n本轮最多{limit}个调用。"
@@ -318,14 +328,15 @@ def act(question: str, thought: dict, tools: list[BaseTool], context: dict | Non
                     call["arguments"][field] = aliases[value.casefold()]
             # 文件名也只绑定本轮提到、且真实列表中唯一对应的文件，不采用旧问题目标。
             current_ids = _current_paper_ids(question, aliases)
-            text_task = (call["name"] == "keyword_extract" and re.search(
-                r"(?:给定|以下|这段|提供的)文本|\b(?:given|following) text\b", question, re.I))
+            text_task = call["name"] == "keyword_extract" and _keyword_text_task(question)
             if (fields == ("doc_id",) and len(current_ids) == 1 and not batch
                     and not text_task):
                 # 用户本轮明确指定的单文档ID就是工具目标，历史中的合法ID不能替代它。
                 call["arguments"]["doc_id"] = next(iter(current_ids))
-            if call["name"] == "keyword_extract" and not text_task and call["arguments"].get("doc_id"):
+            if call["name"] == "keyword_extract" and not text_task:
                 # 文档模式只能读取原文；不能改为对模型自行生成的text做关键词提取。
+                if call["arguments"].get("doc_id") not in known_ids:
+                    raise ValueError("论文关键词需要文献列表中的真实文档ID，请提供准确文件名")
                 call["arguments"].pop("text", None)
             if thought.get("route") == "rule" and names == ["knowledge_base_search"] and not batch:
                 # 明确的单次问答以完整原问题为输入；多步规划仍允许各自的子查询。
@@ -412,6 +423,16 @@ def _structured_tool_observation(question: str, plan: dict | None, observations:
     """单一报告任务直接展示工具正文；子问题与组合任务统一交给模型观察。"""
     if plan and plan.get("parallel_tools"):
         return None
+    if plan and plan.get("tool_name") == "paper_list" and observations:
+        item = observations[-1]
+        result = item.get("result")
+        if item.get("name") == "paper_list" and item.get("status") == "success" and isinstance(result, dict):
+            papers = result.get("papers", [])
+            answer = "当前知识库没有文件。"
+            if papers:
+                answer = f"当前知识库共有{len(papers)}份文件：\n\n" + "\n".join(
+                    f"{index}. {paper['source_file']}" for index, paper in enumerate(papers, 1))
+            return _local_observation(answer, "已读取完整文献列表。", complete=not issue)
     items = [item for item in observations if item.get("name") != "paper_list" or item.get("status") != "success"]
     if plan and observations and not items and plan.get("tool_name") != "paper_list":
         return _local_observation("", "文献列表已返回，继续执行指定的论文任务。", decision="continue")
@@ -427,6 +448,16 @@ def _structured_tool_observation(question: str, plan: dict | None, observations:
     if len(items) != 1 or items[0].get("name") != name or items[0].get("status") != "success":
         return None
     item, result = items[0], items[0].get("result")
+    if name == "keyword_extract" and isinstance(result, dict) and "keywords" in result and report_only:
+        source = result.get("source_file") or "给定文本"
+        answer = f"{source}的关键词：" + ("、".join(result["keywords"]) or "未提取到实质关键词") + "。"
+        locations = list(dict.fromkeys(row["location"] for evidence in result.get("evidence", [])
+                                      for row in evidence.get("locations", [])))
+        if locations:
+            answer += "\n\n来源：" + source + " · " + "、".join(locations)
+        if result.get("input_truncated"):
+            answer += "\n\n依据文档开头的可见内容提取，未分析全文。"
+        return _local_observation(answer, "已依据实际输入提取关键词。", complete=not issue)
     if (name not in {"knowledge_base_search", "paper_summary", "paper_compare"}
             or not isinstance(result, dict) or not result.get("answer")
             or result.get("status") not in {"answered", "incomplete", "insufficient_evidence"}):
@@ -661,20 +692,21 @@ def _run_react(question: str, tools: list[BaseTool] | None = None, context: dict
                           "parallel_tools": [], "route": "confirmation",
                           "model": None, "usage": {"prompt_eval_count": 0, "eval_count": 0}}
             thought = routed if routed is not None else think(question, available, state)
-            required_ids = 2 if thought.get("tool_name") == "paper_compare" else 1 if thought.get("tool_name") in {"paper_metadata", "paper_summary"} else 0
+            keyword_document = thought.get("tool_name") == "keyword_extract" and not _keyword_text_task(question)
+            required_ids = 2 if thought.get("tool_name") == "paper_compare" else 1 if thought.get("tool_name") in {"paper_metadata", "paper_summary"} or keyword_document else 0
             known_ids = _known_paper_ids(question, state)
             # 有历史时仍先核对文件名，不能绕过文档过滤或把模型猜测的ID当作真实指纹。
             needs_filename = (thought.get("route") != "confirmation" and
                               any(name in DOCUMENT_TOOL_FIELDS
                                   for name in [thought.get("tool_name"), *thought.get("parallel_tools", [])])
                               and not _known_paper_ids(question, None)
-                              and re.search(r"\.(?:pdf|docx|txt|md)(?=$|[^A-Za-z0-9])", question, re.I)
+                              and (keyword_document or re.search(r"\.(?:pdf|docx|txt|md)(?=$|[^A-Za-z0-9])", question, re.I))
                               and not any(item.get("name") == "paper_list" and item.get("status") == "success"
                                           for item in state["observations"]))
             checked_list = any(item.get("name") == "paper_list" and item.get("status") == "success"
                                for item in state["observations"])
             if (checked_list and not _known_paper_ids(question, None) and
-                    re.search(r"\.(?:pdf|docx|txt|md)(?=$|[^A-Za-z0-9])", question, re.I)):
+                    (keyword_document or re.search(r"\.(?:pdf|docx|txt|md)(?=$|[^A-Za-z0-9])", question, re.I))):
                 matched = _current_paper_ids(question, _paper_aliases(state))
                 if len(matched) < max(1, required_ids):
                     answer = "无法从文献列表唯一匹配问题中的文件名；请提供准确文件名或知识库中的完整文档ID。"

@@ -39,6 +39,13 @@ class TestBasicTaskContracts(unittest.TestCase):
                 self.assertEqual(plan["tool_name"], "keyword_extract")
         plan = router.route_question("Extract experiment-notes.txt keywords", tools.AVAILABLE_TOOLS)
         self.assertEqual(plan["tool_name"], "keyword_extract")
+        for question, expected in (("当前知识库有哪些文件", "paper_list"),
+                                   ("论文attention的关键词是什么", "keyword_extract"),
+                                   ("vit的关键词是什么", "keyword_extract")):
+            with self.subTest(question=question):
+                plan = router.route_question(question, tools.AVAILABLE_TOOLS,
+                                             {"history": [{"role": "human", "content": "上一轮问题"}]})
+                self.assertEqual(plan["tool_name"], expected)
 
     def test_document_keywords_read_document_instead_of_model_written_text(self):
         seen = []
@@ -57,6 +64,43 @@ class TestBasicTaskContracts(unittest.TestCase):
                                     {"observations": [listing]}))
         self.assertEqual(events[-1]["status"], "success")
         self.assertEqual(seen, [(None, DOC_ID)])
+
+    def test_list_and_paper_keywords_finish_from_actual_document_results(self):
+        """复现用户普通问句；只隔离关键词模型，保留路由、目标绑定和循环。"""
+        seen = []
+        papers = [{"doc_id": DOC_ID, "source_file": "attention.pdf"},
+                  {"doc_id": "b" * 64, "source_file": "Windows验收_ViT.pdf"}]
+
+        @tool
+        def paper_list() -> dict:
+            """返回两份已上传文档。"""
+            return {"papers": papers, "total": len(papers)}
+
+        @tool
+        def keyword_extract(text: str | None = None, doc_id: str | None = None) -> dict:
+            """记录实际读取的文档，不允许把问句当作原文。"""
+            seen.append((text, doc_id))
+            filename = next(row["source_file"] for row in papers if row["doc_id"] == doc_id)
+            return {"doc_id": doc_id, "source_file": filename, "keywords": ["self-attention"]}
+
+        registry = [paper_list, keyword_extract]
+        for question, identifier in (("当前知识库有哪些文件", None),
+                                     ("论文attention的关键词是什么", DOC_ID),
+                                     ("vit的关键词是什么", "b" * 64),
+                                     ("不存在的论文的关键词是什么", "missing")):
+            with self.subTest(question=question), patch.object(react_loop, "urlopen") as model:
+                events = list(react_loop.run_react(question, registry, {"history": [
+                    {"role": "ai", "content": "上一轮回答"}]}))
+                model.assert_not_called()
+                self.assertEqual(events[-1]["task_complete"], identifier != "missing")
+                if identifier is None:
+                    self.assertTrue(all(paper["source_file"] in events[-1]["full_response"] for paper in papers))
+                    self.assertNotIn("参考来源", events[-1]["full_response"])
+                elif identifier != "missing":
+                    self.assertEqual(seen[-1], (None, identifier))
+                    self.assertIn("self-attention", events[-1]["full_response"])
+                else:
+                    self.assertIn("准确文件名", events[-1]["full_response"])
 
 
     def test_subquestion_result_still_needs_observation_of_whole_task(self):

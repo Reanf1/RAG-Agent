@@ -36,7 +36,7 @@ def parallel_limit() -> int:
 
 
 def route_question(question: str, tools: list[BaseTool], context: dict | None = None) -> dict | None:
-    """首轮明确意图返回零模型调用的Thought；模糊、依赖或已有会话状态回退模型。
+    """首轮明确意图返回零模型调用的Thought；模糊、依赖或本轮已有执行结果时回退模型。
 
     只选择实际传入工具，不填参数。parallel_tools非空表示独立批次；
     同一工具用于两篇论文时保留两次工具名，Action必须生成两套真实输入。
@@ -51,9 +51,9 @@ def route_question(question: str, tools: list[BaseTool], context: dict | None = 
     names = {item.name for item in tools}
     explicit = sorted([name for name in names if re.search(r"(?<![A-Za-z0-9_])" + re.escape(name) + r"(?![A-Za-z0-9_])", question)], key=question.index)
     patterns = {
-        "paper_list": r"(?:文献|论文|文档)列表|(?:列出|列举).{0,12}(?:论文|文献|文档)[？?。]?$|(?:上传|入库)了哪些(?:论文|文献|文档)[？?。]?$|有哪些(?:论文|文献|文档)[？?。]?$|\blist (?:uploaded )?(?:papers?|documents?)\b",
+        "paper_list": r"(?:文献|论文|文档|文件)列表|(?:列出|列举).{0,12}(?:论文|文献|文档|文件)[？?。]?$|(?:上传|入库)了哪些(?:论文|文献|文档|文件)[？?。]?$|有哪些(?:论文|文献|文档|文件)[？?。]?$|\blist (?:uploaded )?(?:papers?|documents?|files?)\b",
         "current_time": r"(?:当前|现在|系统|今天).{0,6}(?:时间|日期|几点)|\bcurrent (?:time|date)\b|\btime now\b",
-        "keyword_extract": r"提取[^。！？;；\n]*(?:关键词|关键字)|\bextract[^!?;\n]*keywords?\b",
+        "keyword_extract": r"提取[^。！？;；\n]*(?:关键词|关键字)|(?:关键词|关键字)(?:是|有)什么|(?:关键词|关键字)有哪些|\bextract[^!?;\n]*keywords?\b",
         "paper_summary": r"(?:生成|结构化).{0,8}摘要|(?:总结|概括).{0,15}(?:论文|文献)|\bsummari[sz]e.{0,25}(?:paper|document)",
         "paper_metadata": r"元信息|元数据|论文.{0,8}(?:标题|作者|年份|DOI)|\bpaper metadata\b",
         # 快捷路由只接受直接的对比请求，文档问句中提到“比较论文”仍按原题检索。
@@ -82,7 +82,7 @@ def route_question(question: str, tools: list[BaseTool], context: dict | None = 
     # 旧对话只用于补全追问，不能覆盖最新问题中明确的工具/文档目标。
     # 本轮已经执行过工具时仍由模型判断后续步骤，避免重复路由已完成任务。
     has_execution = context and any(context.get(key) for key in ("observations", "last_observation", "context"))
-    current_target = bool(explicit or re.search(r"(?<![A-Za-z0-9])[0-9a-f]{64}(?![A-Za-z0-9])|\.(?:pdf|docx|txt|md)(?=$|[^A-Za-z0-9])", question, re.I))
+    current_target = bool(hits or re.search(r"(?<![A-Za-z0-9])[0-9a-f]{64}(?![A-Za-z0-9])|\.(?:pdf|docx|txt|md)(?=$|[^A-Za-z0-9])", question, re.I))
     if has_state and (has_execution or not current_target):
         return None
     if len(hits) > 1:
