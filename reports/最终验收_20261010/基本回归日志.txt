@@ -1,0 +1,241 @@
+test_all_formats_saved_with_correct_sources (5_1_1 文档加载与批量导入.test_batch_import.TestBatchImport)
+四类文档均实际解析和保存，来源指向持久文件而非临时文件。 ... ok
+test_failure_does_not_stop_later_files_or_leave_failed_file (5_1_1 文档加载与批量导入.test_batch_import.TestBatchImport)
+中间文件损坏也继续导入后续文件，完成进度包含失败项。 ... 文档导入失败：bad.pdf
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/pymupdf/__init__.py", line 2981, in __init__
+    doc = mupdf.fz_open_document_with_stream_and_dir(filetype if filetype else '', fz_stream, archive.this)
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/pymupdf/mupdf.py", line 53426, in fz_open_document_with_stream_and_dir
+    return _mupdf.fz_open_document_with_stream_and_dir(magic, stream, dir)
+pymupdf.mupdf.FzErrorFormat: code=7: no objects found
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/pdf_loader.py", line 265, in load_pdf
+    pdf = pymupdf.open(stream=data, filetype="pdf")
+  File "/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/pymupdf/__init__.py", line 2984, in __init__
+    raise FileDataError('Failed to open stream') from e
+pymupdf.FileDataError: Failed to open stream
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/pdf_loader.py", line 267, in load_pdf
+    raise pymupdf.FileDataError(f"PDF 文件损坏或不是有效的 PDF：{path.name}") from error
+pymupdf.FileDataError: PDF 文件损坏或不是有效的 PDF：bad.pdf
+ok
+test_retry_failed_recovers_without_reloading_success (5_1_1 文档加载与批量导入.test_batch_import.TestBatchImport)
+模拟一次临时错误，手动重试仅失败项，成功项尝试次数不增加。 ... 文档导入失败：retry.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1114, in __call__
+    return self._mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1118, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/unittest/mock.py", line 1179, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "/Users/rean/github/RAG+Agent/tests/5_1_1 文档加载与批量导入/test_batch_import.py", line 73, in fail_once
+    raise OSError("临时读取失败")
+OSError: 临时读取失败
+ok
+test_size_limit (5_1_1 文档加载与批量导入.test_batch_import.TestBatchImport)
+前端之外的调用也核验单份文档大小。 ... 文档导入失败：large.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 80, in batch_import
+    raise ValueError(f"文件过大，单份最大支持 {max_file_size_mb} MB")
+ValueError: 文件过大，单份最大支持 1 MB
+ok
+test_paragraph_table_order_and_metadata (5_1_1 文档加载与批量导入.test_docx_loader.TestDOCXLoader)
+表格保留在正文原位置，中文段落与单元格内容均可读取。 ... ok
+test_chinese_text_and_page_metadata (5_1_1 文档加载与批量导入.test_pdf_loader.TestPDFLoader)
+每页正文与来源完整，页码同时提供索引和展示值。 ... ok
+test_damaged_pdf (5_1_1 文档加载与批量导入.test_pdf_loader.TestPDFLoader)
+损坏文件的解析错误向上传递，不返回空列表掩盖失败。 ... ok
+test_markdown_preserves_syntax_and_indentation (5_1_1 文档加载与批量导入.test_text_loader.TestTextLoader)
+Markdown 标题、链接、表格和代码块不被转换或清理。 ... ok
+test_utf8_text_and_line_metadata (5_1_1 文档加载与批量导入.test_text_loader.TestTextLoader)
+中文正文保留首尾空白与空行，来源和行号完整。 ... ok
+test_cross_page_table_merges_rows_and_keeps_row_sources (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+相邻页同一续表合并，重复表头去重，每行记录真实来源页。 ... ok
+test_formula_symbols_and_scripts_are_preserved (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+公式符号与上下标保持，不能把 x 的平方压成普通 x2。 ... ok
+test_two_columns_with_full_width_heading (5_1_2 文本分块策略.test_academic_pdf.TestAcademicPDF)
+先通栏标题，再完整左栏、完整右栏，最后页脚。 ... ok
+test_fixed_exact_overlap (5_1_2 文本分块策略.test_chunking.TestChunking)
+固定窗口按字符数切分，相邻正文块精确重叠。 ... ok
+test_pdf_and_word_tables_remain_whole (5_1_2 文本分块策略.test_chunking.TestChunking)
+独立表格不拆，即使超长也保留跨页行信息和保护标记。 ... ok
+test_ranges_cover_original_content (5_1_2 文本分块策略.test_chunking.TestChunking)
+不同大小和重叠下，区间准确、向前推进，所有非空白字符均被覆盖。 ... ok
+test_recursive_paragraph_boundaries (5_1_2 文本分块策略.test_chunking.TestChunking)
+优先按段落分隔符切分，并保留分隔符原文。 ... ok
+test_semantic_keeps_paragraphs (5_1_2 文本分块策略.test_chunking.TestChunking)
+短段落整体保留，空行跟随原段落。 ... ok
+test_stable_distinct_chunk_ids (5_1_2 文本分块策略.test_chunking.TestChunking)
+重复执行 ID 不变，重复正文在不同页/段落及不同配置中不会混淆。 ... ok
+test_all_formats_complete_index_and_keep_sources (5_1_3 向量化与存储.test_batch_index.TestBatchIndex)
+四类真实文件完成整个流程，只有写入索引后才标记成功。 ... /Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_index_error_keeps_loaded_file_and_retry_skips_loading (5_1_3 向量化与存储.test_batch_index.TestBatchIndex)
+一个索引错误不阻断下一文档，重试保留加载结果并跳过成功任务。 ... ok
+test_new_document_keeps_old_index_and_only_encodes_new (5_1_3 向量化与存储.test_batch_index.TestBatchIndex)
+新增一篇文献保留旧块，重新构造客户端不重算旧向量。 ... ok
+test_unicode_alias_is_same_index_and_reused (5_1_3 向量化与存储.test_chroma_path.TestChromaPath) ... ok
+test_windows_ascii_path_needs_no_alias (5_1_3 向量化与存储.test_chroma_path.TestChromaPath) ... ok
+test_local_loading_and_normalization_arguments (5_1_3 向量化与存储.test_embeddings.TestLocalEmbeddings)
+只从本地目录加载，关闭远程代码，文档编码开启归一化。 ... ok
+test_parallel_first_load_constructs_only_once (5_1_3 向量化与存储.test_embeddings.TestLocalEmbeddings)
+三线程同时首次调用，构造器只执行一次；失败不锁死后续请求。 ... ok
+test_delete_document_and_repeat_delete (5_1_3 向量化与存储.test_vector_store.TestVectorStore) ... ok
+test_document_filter_and_top_k (5_1_3 向量化与存储.test_vector_store.TestVectorStore) ... ok
+test_duplicate_import_does_not_encode_again (5_1_3 向量化与存储.test_vector_store.TestVectorStore) ... ok
+test_reopen_preserves_content_without_reembedding (5_1_3 向量化与存储.test_vector_store.TestVectorStore) ... ok
+test_text_and_source_roundtrip (5_1_3 向量化与存储.test_vector_store.TestVectorStore) ... ok
+test_rebuild_after_add_delete_and_reopen (5_1_4 混合检索与重排序.test_bm25.TestBM25Retriever)
+新增/删除后从当前正文重建，重开自动恢复，不重新编码文档。 ... ok
+test_scores_follow_term_frequency_and_length_normalization (5_1_4 混合检索与重排序.test_bm25.TestBM25Retriever)
+用已知词频、文档频次和长度独立计算 BM25 分数，核验排序。 ... ok
+test_tokenize_chinese_english_and_numbers (5_1_4 混合检索与重排序.test_bm25.TestBM25Retriever)
+沿用上游分词，保留完整英文术语，忽略标点，文档/问题统一小写。 ... ok
+test_both_routes_take_candidates_before_final_top_k (5_1_4 混合检索与重排序.test_hybrid_retriever.TestHybridRetriever)
+最终只取 1 个也先各召回 20 个候选，不提前把两路截为 Top-1。 ... ok
+test_model_reranks_fused_candidates_before_final_top_k (5_1_4 混合检索与重排序.test_hybrid_retriever.TestHybridRetriever)
+模型先看到融合 Top-20；候选末项也能经模型升到最终 Top-1。 ... ok
+test_one_based_rank_formula_and_shared_chunk_bonus (5_1_4 混合检索与重排序.test_hybrid_retriever.TestRRFFusion)
+两路共同命中的块分数累加，第一名贡献为 1/61。 ... ok
+test_inference_error_is_not_silently_replaced_by_rrf (5_1_4 混合检索与重排序.test_reranker.TestReranker) ... ok
+test_pairs_model_scores_order_and_sources (5_1_4 混合检索与重排序.test_reranker.TestReranker)
+只用模型分数精排，同分保持原候选顺序，正文和来源不修改。 ... ok
+test_inline_pdf_location_and_authoritative_footer (5_2_1 Prompt工程与生成策略.test_citations.TestCitations) ... ok
+test_unknown_ids_are_marked_and_never_assigned_sources (5_2_1 Prompt工程与生成策略.test_citations.TestCitations) ... ok
+test_word_and_text_do_not_get_invented_pdf_pages (5_2_1 Prompt工程与生成策略.test_citations.TestCitations) ... ok
+test_full_text_and_sources_are_preserved (5_2_1 Prompt工程与生成策略.test_context.TestContextBuilding) ... ok
+test_truncation_prefers_late_sentence_or_paragraph_boundary (5_2_1 Prompt工程与生成策略.test_context.TestContextBuilding) ... ok
+test_config_reaches_native_ollama_and_citations (5_2_1 Prompt工程与生成策略.test_generation.TestLocalGeneration) ... ok
+test_network_failure_is_explicit_without_fallback (5_2_1 Prompt工程与生成策略.test_generation.TestLocalGeneration) ... ok
+test_token_overflow_is_rejected_before_network (5_2_1 Prompt工程与生成策略.test_generation.TestLocalGeneration)
+稀有Unicode字符的Token数远大于字符数，最终请求不能照常放行。 ... ok
+test_braces_formula_and_markdown_are_not_reformatted (5_2_1 Prompt工程与生成策略.test_prompt.TestRAGPrompt) ... ok
+test_empty_context_has_explicit_notice (5_2_1 Prompt工程与生成策略.test_prompt.TestRAGPrompt) ... ok
+test_eof_without_done_keeps_partial_text_and_never_returns_done (5_2_2 流式输出与引用.test_streaming.TestStreaming) ... ok
+test_first_token_precedes_later_packets_and_uses_streaming_config (5_2_2 流式输出与引用.test_streaming.TestStreaming) ... ok
+test_confirmed_low_candidate_uses_reviewed_snapshot_without_second_retrieval (5_2_3 缓存与降级策略.test_agent_cache.TestAgentCache) ... ok
+test_exact_and_semantic_hits_skip_retrieval_generation_and_current_tokens (5_2_3 缓存与降级策略.test_agent_cache.TestAgentCache) ... /Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_exact_hit_skips_embedding_preserves_answer_and_uses_zero_current_tokens (5_2_3 缓存与降级策略.test_cache.TestSemanticCache) ... ok
+test_scope_change_and_session_instances_are_isolated (5_2_3 缓存与降级策略.test_cache.TestSemanticCache) ... ok
+test_semantic_matching_normalizes_vectors_and_selects_highest_score (5_2_3 缓存与降级策略.test_cache.TestSemanticCache) ... ok
+test_empty_and_blank_documents_use_pure_model_mode (5_2_3 缓存与降级策略.test_degradation.TestDegradationContext) ... ok
+test_unconfirmed_low_context_cannot_call_either_model_interface (5_2_3 缓存与降级策略.test_degradation.TestDegradationContext) ... ok
+test_full_utf8_record_preserves_original_text_metadata_and_actual_usage (5_2_4 日志与可观测性.test_rag_logging.TestRAGLogging) ... ok
+test_answer_plan_skips_model_and_tool_execution (5_3_1 Agent核心循环.test_action.TestAction) ... ok
+test_native_call_executes_selected_tool_and_correlates_messages (5_3_1 Agent核心循环.test_action.TestAction) ... ok
+test_tool_exception_is_preserved_and_not_retried (5_3_1 Agent核心循环.test_action.TestAction) ... ok
+test_continue_stops_at_limit_without_extra_model_or_tool_calls (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop) ... ok
+test_final_answer_uses_one_model_request (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop)
+模型已给出有效最终答案时，观察阶段不再请求改写。 ... ok
+test_native_final_cannot_hide_tool_failure (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop)
+直接回答仍需如实保留实际工具失败与未完成状态。 ... ok
+test_single_rag_preserves_citations_when_action_keeps_whole_question (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop)
+单一RAG任务传递完整原问题，直通实际答案，不二次生成或丢失引用。 ... ok
+test_two_real_tools_feed_next_round_and_native_observation_messages (5_3_1 Agent核心循环.test_observation.TestObservationAndLoop) ... ok
+test_direct_answer_without_tools_has_no_tool_calls (5_3_1 Agent核心循环.test_thought.TestThought) ... ok
+test_plan_only_selects_registered_tool_and_uses_llm_config (5_3_1 Agent核心循环.test_thought.TestThought) ... ok
+test_completed_timeout_retries_once_and_preserves_both_attempts (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_exhausted_timeout_returns_real_error_without_third_attempt (5_3_3 Agent决策优化.test_error_recovery.TestErrorRecovery) ... ok
+test_individual_failure_preserves_other_independent_result (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_rule_path_skips_thought_model_but_keeps_action_and_observation (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_two_threads_reach_barrier_and_return_stable_order (5_3_3 Agent决策优化.test_routing_parallel.TestRoutingAndParallel) ... ok
+test_model_timeout_preserves_previous_summary_and_retries_next_request (5_3_4 多轮对话记忆管理.test_conversation_summary.TestConversationSummary) ... ok
+test_threshold_replaces_only_old_pairs_and_keeps_full_archive (5_3_4 多轮对话记忆管理.test_conversation_summary.TestConversationSummary) ... ok
+test_over_limit_keeps_contiguous_recent_pairs_and_recounts_exact_suffix (5_3_4 多轮对话记忆管理.test_history_window.TestHistoryTokenWindow) ... ok
+test_token_count_matches_real_qwen_json_not_character_count (5_3_4 多轮对话记忆管理.test_history_window.TestHistoryTokenWindow) ... ok
+test_foreign_session_read_append_and_clear_are_rejected_without_changes (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_reopening_manager_restores_both_users_without_shared_message_cache (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_same_user_different_sessions_have_independent_history (5_3_4 多轮对话记忆管理.test_session_isolation.TestSessionIsolation) ... ok
+test_two_round_public_entry_uses_memory_for_calculator_action (5_4_1 RAG与Agent深度融合.test_memory_context.TestAgentMemoryContext) ... ok
+test_disabled_latest_request_finishes_incomplete_without_tools (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting) ... ok
+test_named_local_file_content_routes_to_search_with_or_without_history (5_4_1 RAG与Agent深度融合.test_source_routing.TestRAGSearchRouting)
+复现Windows代号问题：TXT文件名本身就是本地资料目标。 ... ok
+test_parallel_action_only_once_and_tool_usage_separate (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetrics) ... ok
+test_last_deleted_session_is_replaced_and_foreign_url_is_not_loaded (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentMetricsEntryAndPage) ... 2026-10-10 22:30:28.056 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-10 22:30:29.057 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_trace_keeps_all_parallel_actions_and_public_fields_only (5_4_2 可观测性与健康检查.test_agent_metrics.TestAgentTraceMetrics) ... ok
+test_connection_failure_does_not_skip_database_check (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheck) ... /Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_nonempty_database_keeps_chunks_metadata_and_no_embedding_calls (5_4_2 可观测性与健康检查.test_health_check.TestHealthCheck) ... ok
+test_stream_exception_preserves_partial_answer_and_failed_round (5_4_3 前端与会话管理.test_chat_streaming.TestStreamingFrontend) ... 2026-10-10 22:30:29.450 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_two_turns_clear_input_keep_history_and_accumulate_once (5_4_3 前端与会话管理.test_chat_streaming.TestStreamingFrontend) ... 2026-10-10 22:30:29.849 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_returns_actual_second_page_and_unchanged_pdf (5_4_3 前端与会话管理.test_citation_page.TestCitationPage) ... ok
+test_read_complete_text_and_markdown_without_index (5_4_3 前端与会话管理.test_document_management.TestDocumentManagement) ... ok
+test_batch_upload_progress_state_and_rerun (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+实际操作上传/按钮，核验混合结果、完整进度和重跑不重复执行。 ... 2026-10-10 22:30:30.248 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-10-10 22:30:30.411 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+文档导入失败：bad.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+文档导入失败：bad.txt
+Traceback (most recent call last):
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 86, in batch_import
+    documents = load_document(temporary_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/__init__.py", line 36, in load_document
+    return LOADERS[suffix](file_path)
+  File "/Users/rean/github/RAG+Agent/src/data_loader/text_loader.py", line 24, in load_text
+    text = data.decode("utf-8-sig")
+  File "/Users/rean/.pyenv/versions/3.10.10/lib/python3.10/encodings/utf_8_sig.py", line 23, in decode
+    (output, consumed) = codecs.utf_8_decode(input, errors, True)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+ok
+test_model_error_keeps_file_and_retry_completes_index (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+缺失本地模型时不误报成功，恢复模型后仅重试索引。 ... 2026-10-10 22:30:30.766 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+/Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_new_upload_is_incremental_and_repeat_upload_skips_encoding (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+改变文件选择新增文献，重新选原文也不重算已有向量。 ... 2026-10-10 22:30:31.170 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_vector_search_uses_persisted_index_and_top_k (5_4_4 端到端联调与测试.test_document_flow.TestImportFrontend)
+页面没有上传任务也能查旧库，展示排序、跨页来源与负相似度。 ... 2026-10-10 22:30:31.804 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_all_required_papers_are_covered (5_5_2 系统性能评估.test_system_evaluation.EvaluationMetricTests) ... ok
+test_failure_keeps_denominator_and_unknown_tokens (5_5_2 系统性能评估.test_system_evaluation.EvaluationMetricTests) ... ok
+test_document_keywords_read_document_instead_of_model_written_text (5_5_3 Bad Case分析与优化.test_basic_task_contracts.TestBasicTaskContracts) ... ok
+test_keyword_route_does_not_depend_on_filename_length (5_5_3 Bad Case分析与优化.test_basic_task_contracts.TestBasicTaskContracts) ... ok
+test_list_and_paper_keywords_finish_from_actual_document_results (5_5_3 Bad Case分析与优化.test_basic_task_contracts.TestBasicTaskContracts)
+复现用户普通问句；只隔离关键词模型，保留路由、目标绑定和循环。 ... ok
+test_rag_failure_keeps_same_partial_answer_and_tokens_in_log (5_5_3 Bad Case分析与优化.test_basic_task_contracts.TestBasicTaskContracts) ... ok
+test_subquestion_result_still_needs_observation_of_whole_task (5_5_3 Bad Case分析与优化.test_basic_task_contracts.TestBasicTaskContracts) ... ok
+test_document_delete_removes_copy_and_index (test_basic_simplification.TestBasicSimplification) ... /Users/rean/github/RAG+Agent/.venv/lib/python3.10/site-packages/chromadb/types.py:144: PydanticDeprecatedSince211: Accessing the 'model_fields' attribute on the instance is deprecated. Instead, you should access this attribute from the model class. Deprecated in Pydantic V2.11 to be removed in V3.0.
+  return self.model_fields  # pydantic 2.x
+ok
+test_document_list_and_tool_share_status (test_basic_simplification.TestBasicSimplification) ... ok
+test_session_delete_removes_messages_and_summary (test_basic_simplification.TestBasicSimplification) ... ok
+test_summary_uses_one_batch_and_keeps_recent_pairs (test_basic_simplification.TestBasicSimplification) ... ok
+
+----------------------------------------------------------------------
+Ran 107 tests in 6.020s
+
+OK
+Consider using the pymupdf_layout package for a greatly improved page layout analysis.

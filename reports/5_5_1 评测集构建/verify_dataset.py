@@ -131,7 +131,7 @@ def prepare_and_verify(download=False):
             "paper_checks": paper_checks, "corpus_chunks": len(corpus),
             "dataset_sha256": hashlib.sha256(DATASET.read_bytes()).hexdigest(),
             "manifest_sha256": payload["manifest_sha256"],
-            "corpus_path": str(CORPUS.relative_to(ROOT)),
+            "corpus_path": str(CORPUS.relative_to(ROOT)) if CORPUS.is_relative_to(ROOT) else str(CORPUS),
             "corpus_sha256": hashlib.sha256(serialized).hexdigest(),
             "libraries": {name: version(name) for name in ("PyMuPDF", "langchain-text-splitters")},
             "boundary": "核验覆盖结构、原文哈希和锚点定位；参考答案已按原文编写，未经独立人工复核。没有运行模型评分或系统性能评测；锚点所在块只作定位，不等同于完整chunk相关性标注。"}
@@ -141,7 +141,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--download", action="store_true", help="显式下载尚未准备的固定论文并校验哈希")
     parser.add_argument("--output", type=Path, required=True, help="不存在的新核验报告路径")
+    parser.add_argument("--corpus", type=Path, default=CORPUS, help="新版本语料输出路径，不覆盖旧实验语料")
     args = parser.parse_args()
+    CORPUS = args.corpus.resolve()
     if args.output.exists():
         raise FileExistsError("核验报告已存在，请使用新的输出路径")
     result = prepare_and_verify(args.download)

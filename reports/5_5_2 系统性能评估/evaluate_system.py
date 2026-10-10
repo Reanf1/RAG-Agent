@@ -110,6 +110,7 @@ def main():
     parser.add_argument("--stage", choices=("retrieval", "agent"), required=True)
     parser.add_argument("--root", type=Path, required=True, help="本轮隔离工作目录；检索阶段须不存在")
     parser.add_argument("--output", type=Path, required=True, help="本阶段新结果JSON路径")
+    parser.add_argument("--corpus", type=Path, default=CORPUS, help="当前版本加载和分块后核验通过的论文语料")
     parser.add_argument("--limit", type=int, default=60, help="只供先行验证；正式运行为60题")
     args = parser.parse_args()
     if args.output.exists() or not 1 <= args.limit <= 60:
@@ -132,13 +133,13 @@ def main():
     from src.generation import rag_pipeline
     questions = json.loads(DATASET.read_text(encoding="utf-8"))[:args.limit]
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
-    corpus = json.loads(CORPUS.read_text(encoding="utf-8"))
+    corpus = json.loads(args.corpus.read_text(encoding="utf-8"))
     assert corpus["manifest_sha256"] == digest(MANIFEST)
     # 片段数量由冻结加载器实际生成，不能把历史1694块当作当前版本的固定数量。
     assert corpus["corpus"] and len({row["id"] for row in corpus["corpus"]}) == len(corpus["corpus"])
     assert {row["paper_id"] for row in corpus["corpus"]} == {paper["id"] for paper in manifest["papers"]}
     fingerprint = {"dataset_sha256": digest(DATASET), "manifest_sha256": digest(MANIFEST),
-                   "corpus_sha256": digest(CORPUS), "config_sha256": digest(ROOT / "config.yaml")}
+                   "corpus_sha256": digest(args.corpus), "config_sha256": digest(ROOT / "config.yaml")}
     fingerprint["evaluation_script_sha256"] = digest(Path(__file__))
     fingerprint["source_sha256"] = {str(p.relative_to(ROOT)): digest(p) for p in sorted((ROOT / "src").rglob("*.py"))}
     report = {"started_at": datetime.now().astimezone().isoformat(), "status": "running",
