@@ -286,7 +286,7 @@ class TestImportFrontend(unittest.TestCase):
         app.number_input(key="vector_top_k").set_value(2)
         app.button(key="vector_search").click().run()
         self.assertFalse(app.exception)
-        self.assertTrue(any(c.value.startswith("最近实际向量检索成功：") for c in app.sidebar.caption))
+        self.assertFalse(any(c.value.startswith("最近实际") for c in app.sidebar.caption))
         self.assertEqual([element.value for element in app.text], ["神经网络实验", "农业实验"])
         self.assertTrue(any("1. 论文A.pdf · 余弦相似度 1.0000" in panel.label for panel in app.expander))
         self.assertIn("来源：论文A.pdf；第2–3页（物理页码）", [element.value for element in app.caption])

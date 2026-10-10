@@ -24,7 +24,7 @@ if str(project_root) not in sys.path:
 
 from src.data_loader import LOADERS, create_import_tasks
 from src.frontend.components.documents import list_documents, delete_document, read_document_content
-from src.frontend.components.trace import execution_rows, conversation_statistics, record_runtime_success
+from src.frontend.components.trace import execution_rows, conversation_statistics
 from src.agent import run_session
 from src.agent.tools import get_available_tools
 from src.generation.cache import SemanticCache
@@ -88,9 +88,7 @@ with st.sidebar:
     # 首次或配置／索引改变时检查；普通交互复用快照，不启动模型推理。
     if "health_result" not in st.session_state:
         st.session_state.health_result = check_health()
-        st.session_state.runtime_checks = {}
     health = st.session_state.health_result
-    runtime_captions = {}
     for name, key, selected in (("LLM服务", "llm", config["llm"]["model"]),
                                 ("向量数据库", "vector_database", "Chroma")):
         component = health[key]
@@ -102,11 +100,7 @@ with st.sidebar:
                 st.warning(text)
             else:
                 st.error(text)
-        action = "推理" if key == "llm" else "向量检索"
-        tested_at = st.session_state.runtime_checks.get(key)
-        runtime_captions[key] = st.empty()
-        runtime_captions[key].caption(f"最近实际{action}成功：{tested_at}" if tested_at else f"本页尚无实际{action}记录。")
-    st.caption("连接检查与最近业务记录分别展示；成功执行不代表答案质量已通过审核。")
+    st.caption("连接与读取检查不代表推理或检索质量。")
     if st.button("刷新状态", key="check_health"):
         st.session_state.health_result = check_health()
         st.rerun()
@@ -399,8 +393,6 @@ with chat_tab:
                                                  confirmed_rag_args=(approval["args"] if "args" in approval else
                                                                      {"question": approval["tool_question"], "doc_id": approval["doc_id"]}) if approval else None,
                                                  memory=st.session_state.agent_memory, stream=True):
-                            record_runtime_success(st.session_state.runtime_checks, event,
-                                                   config["llm"]["model"], request_time())
                             if event["type"] == "token":
                                 incoming["answer"] = event["answer"]
                                 answer_panel.markdown(incoming["answer"] + " ▌")
@@ -478,11 +470,6 @@ with retrieval_tab:
                         results = retriever.search(query, k=top_k, doc_id=selected_id, rerank=True)
                     else:
                         results = retriever.search(query, k=top_k, doc_id=selected_id)
-                    if method != "BM25 关键词":
-                        st.session_state.runtime_checks["vector_database"] = request_time()
-                        # 侧栏先于检索表单绘制，原位更新才能在本次提交立即显示成功时间。
-                        runtime_captions["vector_database"].caption(
-                            f"最近实际向量检索成功：{st.session_state.runtime_checks['vector_database']}")
             except Exception as error:
                 st.error(f"检索失败：{type(error).__name__}: {error}。请根据错误信息检查配置后重新检索。")
             else:

@@ -222,7 +222,7 @@ class TestHealthCheckPage(unittest.TestCase):
         self.assertTrue(app.sidebar.caption[0].value.startswith("系统时间："))
         self.assertEqual([row.value for row in app.sidebar.success],
                          ["LLM服务：可连接，模型已安装（qwen2.5:7b）", "向量数据库：索引可读取（Chroma）"])
-        self.assertTrue(any("本页尚无实际推理记录" in row.value for row in app.sidebar.caption))
+        self.assertTrue(any("连接与读取检查不代表推理或检索质量" in row.value for row in app.sidebar.caption))
         self.assertFalse(any("系统健康检查" in row.value for row in app.markdown))
         app.run()
         self.checker.assert_called_once()
@@ -237,36 +237,13 @@ class TestHealthCheckPage(unittest.TestCase):
         app.button(key="check_health").click().run()
         self.assertEqual(self.checker.call_count, 3)
 
-    def test_business_success_is_retained_on_health_refresh_but_not_on_index_change(self):
+    def test_model_or_index_change_refreshes_connection_snapshot(self):
+        """LLM 地址、模型或索引变化后重新检查连接，不沿用旧快照。"""
         app = self.page()
-        app.session_state["runtime_checks"] = {"llm": "2026-10-09T12:00:00+08:00", "vector_database": "2026-10-09T12:00:01+08:00"}
-        app.button(key="check_health").click().run()
-        self.assertTrue(any("最近实际推理成功：2026-10-09" in row.value for row in app.sidebar.caption))
-        del app.session_state["health_result"]
-        app.run()
-        self.assertTrue(any("本页尚无实际推理记录" in row.value for row in app.sidebar.caption))
-
-    def test_runtime_records_exclude_cache_failed_calls_and_bm25_only(self):
-        from src.frontend.components.trace import record_runtime_success
-        checks = {}
-        result = {"model": "qwen2.5:7b", "usage": {"eval_count": 20}, "retrieval": {"status": "success"}}
-        event = {"type": "tool_result", "name": "knowledge_base_search", "status": "success", "result": result}
-        record_runtime_success(checks, {**event, "result": {**result, "cache": {"hit": True}}}, "qwen2.5:7b", "缓存")
-        record_runtime_success(checks, {**event, "status": "error"}, "qwen2.5:7b", "失败")
-        self.assertEqual(checks, {})
-        record_runtime_success(checks, event, "qwen2.5:7b", "实际响应")
-        self.assertEqual(checks, {"llm": "实际响应", "vector_database": "实际响应"})
-        record_runtime_success(checks, {"type": "observation", "model": "other", "usage": {"eval_count": 30}}, "qwen2.5:7b", "其他模型")
-        self.assertEqual(checks["llm"], "实际响应")
-
-    def test_model_change_refreshes_connection_snapshot_and_clears_old_inference(self):
-        app = self.page()
-        app.session_state["runtime_checks"] = {"llm": "旧模型时间"}
         app.session_state["runtime_owner"] = ("http://localhost:11434", "old-model", "old-index", "old-collection")
         app.run()
         self.assertFalse(app.exception)
         self.assertEqual(self.checker.call_count, 2)
-        self.assertEqual(app.session_state["runtime_checks"], {})
 
     def test_failed_llm_and_missing_index_are_visible_independently(self):
         self.result["status"] = "degraded"

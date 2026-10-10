@@ -1,22 +1,5 @@
 """整理公开 Agent 事件的展示与统计，不增加模型请求。"""
 
-def record_runtime_success(checks: dict, event: dict, model: str, checked_at: str) -> None:
-    """侧栏只记录本页实际收到的模型响应与检索，不把缓存或任务完成标志当作验证。"""
-    payload = event.get("result") if event.get("type") == "tool_result" else event
-    if not isinstance(payload, dict) or (payload.get("cache") or {}).get("hit"):
-        return
-    if event.get("type") not in {"thought", "tool_call", "observation", "tool_result"}:
-        return
-    usage = payload.get("usage") or {}
-    if (payload.get("model") == model and type(usage.get("eval_count")) is int
-            and usage["eval_count"] > 0 and event.get("status", "success") == "success"):
-        checks["llm"] = checked_at
-    retrieval = payload.get("retrieval") or {}
-    if (event.get("type") == "tool_result" and event.get("name") == "knowledge_base_search"
-            and event.get("status") == "success" and retrieval.get("status") in {"success", "empty"}):
-        checks["vector_database"] = checked_at
-
-
 def execution_rows(event: dict) -> list[dict]:
     """将已有阶段指标与工具状态按call_id关联，返回前端七列表格。
 
