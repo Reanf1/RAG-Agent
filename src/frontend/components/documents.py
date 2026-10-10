@@ -5,23 +5,20 @@ from copy import deepcopy
 from functools import lru_cache
 from pathlib import Path
 import re
-import json
 
 from src.data_loader import LOADERS, create_import_tasks, document_lock, load_document
 from src.retrieval.vector_store import VectorStore
-from src.utils.config import load_config
 
 
 def list_documents(raw_dir: Path, index_dir: Path) -> list[dict]:
-    """合并已保存原文和当前索引；有块不等同于全部预期块导入成功。"""
-    rows, actual_ids = {}, {}
+    """合并已保存原文和当前索引，按实际块数给出向量化状态。"""
+    rows = {}
     if (index_dir / "chroma.sqlite3").is_file():
         for chunk in VectorStore(index_dir).list_chunks():
             identifier = chunk.metadata["doc_id"]
             row = rows.setdefault(identifier, {"doc_id": identifier, "name": chunk.metadata.get("source_file", "未知文档"),
                                                "chunks": 0, "source_available": False})
             row["chunks"] += 1
-            actual_ids.setdefault(identifier, set()).add(chunk.metadata["chunk_id"])
     if raw_dir.exists():
         for folder in sorted(raw_dir.iterdir()):
             if folder.is_symlink() or not folder.is_dir() or not re.fullmatch(r"[0-9a-f]{64}", folder.name):
@@ -31,19 +28,16 @@ def list_documents(raw_dir: Path, index_dir: Path) -> list[dict]:
                 row = rows.setdefault(folder.name, {"doc_id": folder.name, "chunks": 0})
                 row.update(name=" / ".join(f.name for f in files), source_available=True)
     for identifier, row in rows.items():
-        row.update(index_status="已有索引，完整性未核验" if row["chunks"] else "未向量化", expected_chunks=None)
-        manifest = raw_dir / identifier / ".index_status.json"
-        if manifest.is_file():
-            try:
-                state = json.loads(manifest.read_text(encoding="utf-8"))
-                if (state["index_directory"] == str(index_dir.resolve()) and
-                        state["collection"] == load_config()["retrieval"]["collection_name"]):
-                    expected = set(state["expected_ids"])
-                    row["expected_chunks"] = len(expected)
-                    row["index_status"] = ("已向量化" if state["complete"] and expected == actual_ids.get(identifier, set())
-                                           else "部分入库" if row["chunks"] else "未向量化")
-            except (OSError, ValueError, KeyError, TypeError):
-                row["index_status"] = "索引状态记录异常，完整性未核验"
+        if not row["chunks"]:
+            row["index_status"] = "未向量化"
+            continue
+        # 原文目录的轻量标记记录本次预期块数；缺标记或数量不符时按部分入库提示。
+        marker = raw_dir / identifier / ".index_count"
+        try:
+            expected = int(marker.read_text(encoding="utf-8").strip())
+        except (OSError, ValueError):
+            expected = 0
+        row["index_status"] = "已向量化" if expected == row["chunks"] else "部分入库"
     return sorted(rows.values(), key=lambda row: (row["name"], row["doc_id"]))
 
 

@@ -191,14 +191,11 @@ class VectorStore:
         return count
 
 
-def _write_index_status(task, chunks, vector_store, *, complete):
-    """独立旁注记录预期块，不改原始资料；重开页面可核对实际块ID集合。"""
-    path = Path(task["path"]).parent / ".index_status.json"
-    state = {"index_directory": str(vector_store.directory), "collection": vector_store._store._collection.name,
-             "expected_ids": [chunk.metadata["chunk_id"] for chunk in chunks], "complete": complete}
-    temporary = path.with_suffix(".tmp")
-    temporary.write_text(json.dumps(state, ensure_ascii=False), encoding="utf-8")
-    temporary.replace(path)
+def _write_expected_count(task, count):
+    """把本次预期块数写到原文目录的轻量标记，用于页面判断"部分入库"。"""
+    path = Path(task["path"]).parent / ".index_count"
+    path.write_text(str(count), encoding="utf-8")
+    return count
 
 
 def batch_build_index(tasks: list[dict], raw_dir: str | Path,
@@ -249,9 +246,10 @@ def batch_build_index(tasks: list[dict], raw_dir: str | Path,
                     existing_ids = {chunk.metadata["chunk_id"]
                                     for chunk in vector_store.list_chunks(chunks[0].metadata["doc_id"])}
                     if existing_ids - expected_ids:
-                        # 参数或解析结果变化时保留旧库和旧旁注，不能混入另一套块。
+                        # 参数或解析结果变化时保留旧库，不能把另一套块混入同一文档。
                         raise ValueError("已有文档的分块或解析结果与本次不一致，请在新索引目录重建后启用；原索引未修改")
-                    _write_index_status(task, chunks, vector_store, complete=False)
+                    # 只记本次预期块数，供页面区分"已向量化/部分入库"；不记路径与ID清单。
+                    _write_expected_count(task, len(chunks))
                     for offset in range(0, len(chunks), 500):
                         batch = chunks[offset:offset + 500]
                         task["added_chunks"] += vector_store.add_chunks(batch)
@@ -262,7 +260,6 @@ def batch_build_index(tasks: list[dict], raw_dir: str | Path,
                                   for chunk in vector_store.list_chunks(chunks[0].metadata["doc_id"])}
                     if actual_ids != expected_ids:
                         raise ValueError("实际索引块与预期集合不一致，本次入库未完成")
-                    _write_index_status(task, chunks, vector_store, complete=True)
                     task.update(status="success", indexed=True)
         except Exception as error:
             # 失败只影响当前文档；保留已落盘块，供下一次查重恢复。

@@ -50,7 +50,7 @@ class RetrievalAudit(unittest.TestCase):
             list(batch_build_index(first, raw, vector_store=store))
         self.assertEqual(first[0]['status'], 'success')
         original_count = store.count()
-        manifest = next(raw.glob('*/.index_status.json'))
+        manifest = next(raw.glob('*/.index_count'))
         original_manifest = manifest.read_bytes()
         config['chunking']['strategy'] = 'semantic'
         second = create_import_tasks([('论文.txt', data)])
@@ -62,7 +62,7 @@ class RetrievalAudit(unittest.TestCase):
         with patch('src.chunking.load_config', return_value=config):
             list(batch_build_index(third, raw, vector_store=store))
         row = list_documents(raw, self.root / 'index')[0]
-        observed = {'first_chunk_count': first[0]['chunk_count'], 'second_chunk_count': second[0]['chunk_count'], 'second_task_status': second[0]['status'], 'third_task_status': third[0]['status'], 'third_added_chunks': third[0]['added_chunks'], 'actual_chunks': store.count(), 'list_status': row['index_status'], 'expected_chunks': row['expected_chunks'], 'strategies': sorted({chunk.metadata['chunk_strategy'] for chunk in store.list_chunks()})}
+        observed = {'first_chunk_count': first[0]['chunk_count'], 'second_chunk_count': second[0]['chunk_count'], 'second_task_status': second[0]['status'], 'third_task_status': third[0]['status'], 'third_added_chunks': third[0]['added_chunks'], 'actual_chunks': store.count(), 'list_status': row['index_status'], 'strategies': sorted({chunk.metadata['chunk_strategy'] for chunk in store.list_chunks()})}
         self.assertEqual(row['index_status'], '已向量化', json.dumps(observed, ensure_ascii=False))
         self.assertEqual(third[0]['status'], 'failed')
         self.assertEqual(store.count(), original_count)

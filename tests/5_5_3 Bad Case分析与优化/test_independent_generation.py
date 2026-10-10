@@ -27,7 +27,7 @@ class GenerationAudit(unittest.TestCase):
 
     def setUp(self):
         self.config = deepcopy(load_config())
-        for module in ('src.generation.rag_pipeline', 'src.generation.cache', 'src.frontend.components.documents'):
+        for module in ('src.generation.rag_pipeline', 'src.generation.cache'):
             mock = patch(module + '.load_config', return_value=self.config)
             mock.start()
             self.addCleanup(mock.stop)
