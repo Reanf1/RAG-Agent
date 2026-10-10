@@ -32,6 +32,7 @@ from src.frontend.components.sessions import render_sessions
 from src.retrieval.bm25_retriever import BM25Retriever
 from src.retrieval.hybrid_retriever import HybridRetriever
 from src.utils.logger import request_time, retrieval_score_distribution
+from src.utils.messages import document_location
 from src.retrieval.vector_store import VectorStore, batch_build_index
 from src.utils.config import check_health, load_config
 
@@ -410,12 +411,6 @@ with chat_tab:
                 with st.chat_message("assistant"):
                     st.markdown(previous["answer"])
                     show_turn_footer(previous)
-    # 原生消息输入框自动清空已提交文字；将内置发送图标显示为“发送”。
-    st.html("""<style>
-        [class*="st-key-agent_question-"] [data-testid="stChatInputSubmitButton"] {width: 64px;}
-        [class*="st-key-agent_question-"] [data-testid="stChatInputSubmitButton"] svg {display: none;}
-        [class*="st-key-agent_question-"] [data-testid="stChatInputSubmitButton"]::after {content: '发送'; font-size: 14px;}
-    </style>""")
     agent_question = st.chat_input("输入消息…", key=f"agent_question:{st.session_state.get('agent_session_id', 'unavailable')}", disabled=not session_ready)
     approval = st.session_state.pop("agent_confirmed_rag", None) if session_ready else None
     if approval:
@@ -561,20 +556,7 @@ with retrieval_tab:
                     score_label = {"向量相似度": "余弦相似度", "BM25 关键词": "BM25 分数",
                                    "RRF 混合检索": "RRF 分数", "RRF + 模型重排": "模型相关性分数"}[method]
                     with st.expander(f"{rank}. {filename} · {score_label} {score:.4f}", expanded=True):
-                        # PDF 使用物理页码；Word/文本使用各自位置，不能伪造页码。
-                        if "page_number" in metadata:
-                            location = f"物理页码：{metadata['page_number']}"
-                            if metadata.get("page_end", metadata["page_number"]) != metadata["page_number"]:
-                                location += f"–{metadata['page_end']}"
-                        elif "paragraph_index" in metadata:
-                            location = f"段落：{metadata['paragraph_index']}"
-                        elif "table_index" in metadata:
-                            location = f"表格：{metadata['table_index']}"
-                        elif "line_start" in metadata:
-                            location = f"行范围：{metadata['line_start']}–{metadata['line_end']}"
-                        else:
-                            location = "位置未记录"
-                        st.caption(f"来源：{filename}；{location}")
+                        st.caption(f"来源：{filename}；{document_location(metadata)}")
                         st.caption(f"文档 ID：{metadata.get('doc_id', '')[:8]}；块 ID：{metadata.get('chunk_id', '')[:8]}")
                         st.text(document.page_content)
 

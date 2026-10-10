@@ -55,16 +55,6 @@ def render_sessions(db_path: Path) -> bool:
                 st.rerun()
             sessions = memory.list_sessions(user_id)
             labels = {identifier: memory.get_session_title(user_id, identifier) for identifier in sessions}
-            # 纯样式通过html写入，不在“最近”和会话之间留下空白块。
-            st.html("""<style>
-                .st-key-conversation_history {gap: 0.5rem;}
-                .st-key-conversation_history button {border: 0; text-align: left;}
-                .st-key-conversation_history button > div {width: 100%; justify-content: flex-start;}
-                .st-key-conversation_history button[kind="secondary"] {background-color: transparent;}
-                .st-key-conversation_history button[kind="primary"] {
-                    background-color: rgba(128, 128, 128, 0.25); color: inherit;
-                }
-            </style>""")
             # 直接点击会话标题切换；当前会话使用主按钮高亮，ID只用于稳定key。
             with st.container(key="conversation_history"):
                 st.caption("最近")

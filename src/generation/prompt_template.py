@@ -7,7 +7,7 @@ from langchain_core.messages import BaseMessage
 from langchain_core.prompts import ChatPromptTemplate
 
 
-PROMPT_VERSION = "rag-v20"  # 短原句放在正文，固定编号不随回答语言翻译。
+PROMPT_VERSION = "rag-v21"  # 固定规范仅放系统消息；动态消息只包含证据、提示和问题。
 NO_CONTEXT_TEXT = "当前知识库中未找到相关文档。"
 
 # 沿用参考项目的角色、参考文档、Markdown与来源要求，按科研任务补齐条件。
@@ -52,16 +52,7 @@ RAG_SYSTEM_PROMPT = """你是“智能科研助理”，依据检索到的学术
 # 角色与规范保持在系统消息；检索文本和问题作为动态输入，不拼进系统角色。
 RAG_PROMPT = ChatPromptTemplate.from_messages([
     ("system", RAG_SYSTEM_PROMPT),
-    ("human", "【检索上下文】\n{context}\n\n"
-              "【作答提醒】逐项回应问题。格式为 原文依据：\"连续原文短句\"。[参考文档N]，再说明。\n"
-              "For EACH requested item, put these two lines in the Answer body:\n"
-              "Source evidence: \"copy 5–20 consecutive source words, unchanged\" [参考文档N]\n"
-              "Explanation: answer the item with its conditions [参考文档N]\n"
-              "Use the actual N from the source header. NEVER translate [参考文档N] into English.\n"
-              "Do not translate quotes, join distant phrases, or move evidence to a References footer.\n"
-              "Compare BOTH mechanisms. Preserve original numeric units. Explain supported relationships; "
-              "label inference. A missing fact remains unknown. No extra introduction or conclusion.\n\n"
-              "【用户问题】\n{question}"),
+    ("human", "【检索上下文】\n{context}\n\n【用户问题】\n{question}"),
 ])
 
 def build_rag_messages(question: str, context: str = "") -> list[BaseMessage]:

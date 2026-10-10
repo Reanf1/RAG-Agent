@@ -11,7 +11,7 @@ from time import perf_counter
 from langchain_core.messages import ToolMessage
 from langchain_core.tools import BaseTool
 
-from src.agent.tools import execute_tool
+from src.agent.tools import DOCUMENT_TOOL_FIELDS, execute_tool
 from src.utils.config import load_config
 
 
@@ -94,7 +94,7 @@ def route_question(question: str, tools: list[BaseTool], context: dict | None = 
         selected, reason = hits[0], "明确工具意图，跳过模型规划，交由Action生成参数。"
         if re.search(r"分别|同时|各自|\beach\b|\bboth\b", question, re.I) and (
                 len(set(re.findall(r"\b[0-9a-f]{64}\b", question))) > 1 or re.search(r"两篇|两份|两个|\bboth\b", question, re.I)):
-            if selected not in {"paper_metadata", "paper_summary", "knowledge_base_search", "keyword_extract"} or parallel_limit() < 2:
+            if DOCUMENT_TOOL_FIELDS.get(selected) != ("doc_id",) or parallel_limit() < 2:
                 return None
             batch, reason = [selected, selected], "分别处理两份已给定论文，Action必须提出两次独立调用。"
     elif local or re.search(r"文献|论文|提出的|结构改进|消融实验|\b(?:papers?|proposed|ablation)\b", question, re.I):

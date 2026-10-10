@@ -18,21 +18,13 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, Tool
 from langchain_core.tools import BaseTool
 from langchain_core.utils.function_calling import convert_to_openai_tool
 
-from src.agent.tools import get_available_tools
+from src.agent.tools import DOCUMENT_TOOL_FIELDS, get_available_tools
 from src.agent.router import execute_calls, parallel_limit, recovery_limits, route_question
 from src.generation.rag_pipeline import generation_error, urlopen
 from src.utils.config import generation_options, load_config, ollama_base_url
 from src.utils.messages import messages_to_ollama, normalize_context
 from src.utils.logger import update_agent_metrics
 from src.utils.token_budget import check_request_budget, request_tokens
-
-
-# 文档参数共用一份声明，文件名转换、目标绑定和批次覆盖采用相同范围。
-DOCUMENT_TOOL_FIELDS = {
-    "paper_metadata": ("doc_id",), "paper_summary": ("doc_id",),
-    "knowledge_base_search": ("doc_id",), "keyword_extract": ("doc_id",),
-    "paper_compare": ("paper_a_id", "paper_b_id"),
-}
 
 
 AGENT_ROLE_PROMPT = """【角色定义】
@@ -326,24 +318,18 @@ def act(question: str, thought: dict, tools: list[BaseTool], context: dict | Non
         selected_tools = [registry[name] for name in dict.fromkeys(names)]
         known_ids = _known_paper_ids(question, context)
         started = perf_counter()
-        if thought.get("tool_calls"):
-            # 模型用量已记入Thought；Action只执行同一次决策的调用，不能重复计费。
-            result = {"model": None, "prompt_eval_count": 0, "eval_count": 0,
-                      "message": {"tool_calls": deepcopy(thought["tool_calls"])}}
-        elif thought.get("route") == "confirmation" and names in (["knowledge_base_search"], ["paper_compare"]) and not batch:
-            # 参数来自界面已确认的候选，固定本次调用，不能让模型改写已审阅的查询。
-            result = {"model": None, "prompt_eval_count": 0, "eval_count": 0,
-                      "message": {"tool_calls": [{"function": {"name": names[0], "arguments": deepcopy(context["confirmed_rag_args"])}}]}}
+        local_args = None
+        if thought.get("route") == "confirmation" and names in (["knowledge_base_search"], ["paper_compare"]) and not batch:
+            local_args = context["confirmed_rag_args"]
         elif names == ["paper_list"] and not batch and not selected_tools[0].args:
-            # 文献列表没有参数；由Schema确定空输入，避免模型生成不存在的query字段。
-            # 文件名匹配留给真实列表返回之后，不能给工具偷偷增加查询能力。
-            result = {"model": None, "prompt_eval_count": 0, "eval_count": 0,
-                      "message": {"tool_calls": [{"function": {"name": names[0], "arguments": {}}}]}}
+            local_args = {}
         elif thought.get("route") == "rule" and names == ["knowledge_base_search"] and not batch and not known_ids:
-            # 明确单工具意图的唯一必填参数就是原问题，直接传递，避免模型编造可选论文ID。
-            # 仍走相同执行器、工具事件与Observation；此Action未调用模型，真实Token为0。
+            local_args = {"question": question}
+        if thought.get("tool_calls") or local_args is not None:
+            # 已有决策／确定参数共用零模型调用结果，Action只校验执行，不重复计费。
+            calls = thought.get("tool_calls") or [{"function": {"name": names[0], "arguments": local_args}}]
             result = {"model": None, "prompt_eval_count": 0, "eval_count": 0,
-                      "message": {"tool_calls": [{"function": {"name": names[0], "arguments": {"question": question}}}]}}
+                      "message": {"tool_calls": deepcopy(calls)}}
         else:
             messages = build_agent_messages(question, selected_tools, context, stage="action", thought=thought)
             messages[0].content += f"\n本轮最多{limit}个调用。"
@@ -823,18 +809,15 @@ def _run_react(question: str, tools: list[BaseTool] | None = None, context: dict
             thought = routed if routed is not None else think(question, available, state)
             required_ids = 2 if thought.get("tool_name") == "paper_compare" else 1 if thought.get("tool_name") in {"paper_metadata", "paper_summary"} else 0
             known_ids = _known_paper_ids(question, state)
-            # 有历史时仍先核对文件名，不能绕过文档过滤或把模型猜测的ID当作真实指纹。
-            needs_filename = (thought.get("route") != "confirmation" and
-                              any(name in DOCUMENT_TOOL_FIELDS
-                                  for name in [thought.get("tool_name"), *thought.get("parallel_tools", [])])
-                              and not _known_paper_ids(question, None)
-                              and re.search(r"\.(?:pdf|docx|txt|md)(?=$|[^A-Za-z0-9])", question, re.I)
-                              and not any(item.get("name") == "paper_list" and item.get("status") == "success"
-                                          for item in state["observations"]))
+            # 文件名只匹配本轮真实列表；一次计算供预检与匹配共用。
             checked_list = any(item.get("name") == "paper_list" and item.get("status") == "success"
                                for item in state["observations"])
-            if (checked_list and not _known_paper_ids(question, None) and
-                    re.search(r"\.(?:pdf|docx|txt|md)(?=$|[^A-Za-z0-9])", question, re.I)):
+            named_document = (not _known_paper_ids(question, None) and
+                              re.search(r"\.(?:pdf|docx|txt|md)(?=$|[^A-Za-z0-9])", question, re.I))
+            needs_filename = (named_document and not checked_list and thought.get("route") != "confirmation"
+                              and any(name in DOCUMENT_TOOL_FIELDS
+                                      for name in [thought.get("tool_name"), *thought.get("parallel_tools", [])]))
+            if checked_list and named_document:
                 matched = _current_paper_ids(question, _paper_aliases(state))
                 if len(matched) < max(1, required_ids):
                     answer = "无法从文献列表唯一匹配问题中的文件名；请提供准确文件名或知识库中的完整文档ID。"

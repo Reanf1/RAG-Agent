@@ -23,6 +23,14 @@ from langchain_core.tools import BaseTool, tool
 from src.utils.config import load_config
 
 
+# 文档参数共用一份声明，文件名转换、目标绑定和批次覆盖采用相同范围。
+DOCUMENT_TOOL_FIELDS = {
+    "paper_metadata": ("doc_id",), "paper_summary": ("doc_id",),
+    "knowledge_base_search": ("doc_id",), "keyword_extract": ("doc_id",),
+    "paper_compare": ("paper_a_id", "paper_b_id"),
+}
+
+
 # Python执行器绑定逐包回调，每个工作线程隔离；不进入模型工具参数Schema。
 _rag_stream_sink = ContextVar("rag_stream_sink", default=None)
 _tool_model_usage = ContextVar("tool_model_usage", default=None)
@@ -176,16 +184,7 @@ def _knowledge_base_search(question: str, doc_id: str | None = None, *, cache=No
                                               "metadata": deepcopy(document.metadata), "score": score}
                                              for rank, (document, score) in enumerate(results, 1)]
             message["retrieval_status"] = "success" if results else "empty"
-            from src.generation.rag_pipeline import focus_answer_evidence
-            chunks = retriever.vector_store.list_chunks(doc_id=doc_id)
-            expanded = [(_expand_paper_evidence(doc, chunks), score) for doc, score in results]
-            if re.search(r"(?:如何|怎样|怎么).*?(?:使用|实现|工作)|\bhow\b.*?\b(?:use|work|implement)\w*", question, re.I):
-                results = focus_answer_evidence(question, expanded, chunks=chunks)
-            elif any(doc.page_content != original.page_content for (doc, _), (original, _) in zip(expanded, results)):
-                # 数量或条件可能跨分块；只补同一页／段落的连续邻块，并对实际正文重新精排。
-                from src.retrieval.bm25_retriever import expand_academic_query
-                from src.retrieval.reranker import Reranker
-                results = Reranker().rerank(expand_academic_query(question), expanded, k=len(expanded))
+            # 直接使用混合检索的BGE结果；问法不再触发额外截句或全库邻块扫描。
             context = prepare_rag_context(question, results)
         message.update(context=context, generation_mode=context["generation_mode"],
                        retrieval_seconds=0.0 if confirmation is not None else perf_counter() - started)
@@ -412,29 +411,6 @@ def paper_metadata(doc_id: str) -> dict:
             "input_truncated": truncated, "warnings": ["摘要结束边界未出现，当前摘要可能不完整。"]
             if abstract_rows and not boundary_found and truncated else [], "model": response["model"],
             "usage": {key: response.get(key) for key in ("prompt_eval_count", "eval_count")}}
-
-
-def _expand_paper_evidence(document, chunks):
-    """为普通RAG补同原文相邻块，保留连续来源。"""
-    metadata = document.metadata
-    start, end = metadata.get("start_index"), metadata.get("end_index")
-    if type(start) is not int or type(end) is not int:
-        return deepcopy(document)
-    parent = ("doc_id", "page", "page_number", "block_index", "paragraph_index", "table_index", "table_id", "content_type")
-    neighbors = [chunk for chunk in chunks if all(chunk.metadata.get(key) == metadata.get(key) for key in parent)
-                 and type(chunk.metadata.get("start_index")) is int and type(chunk.metadata.get("end_index")) is int]
-    before = [chunk for chunk in neighbors if chunk.metadata["start_index"] < start <= chunk.metadata["end_index"] <= end]
-    after = [chunk for chunk in neighbors if start <= chunk.metadata["start_index"] <= end < chunk.metadata["end_index"]]
-    left = max(before, key=lambda chunk: chunk.metadata["start_index"], default=document)
-    right = min(after, key=lambda chunk: chunk.metadata["start_index"], default=document)
-    result = deepcopy(document)
-    prefix = left.page_content[:start - left.metadata["start_index"]] if left is not document else ""
-    suffix = right.page_content[end - right.metadata["start_index"]:] if right is not document else ""
-    result.page_content = prefix + document.page_content + suffix
-    result.metadata.update(start_index=left.metadata["start_index"], end_index=right.metadata["end_index"])
-    if "line_start" in metadata:
-        result.metadata.update(line_start=left.metadata["line_start"], line_end=right.metadata["line_end"])
-    return result
 
 
 @tool

@@ -74,6 +74,29 @@ class TestResearchTools(unittest.TestCase):
             result = knowledge_base_search.invoke({"question": "模型比较结果是什么？", "doc_id": doc_id})
         return result, retriever, http
 
+    def test_rag_preserves_ranked_evidence_without_question_specific_rescoring(self):
+        """同一论文的多段依据均进入生成，不按问法只留两句或扫描全部邻块。"""
+        from langchain_core.documents import Document
+        documents = [Document(page_content=text, metadata={"doc_id": self.doc_id,
+                     "source_file": "研究.pdf", "page_number": page, "start_index": 0})
+                     for page, text in ((3, "We use position embeddings. Accuracy is 91.6%."),
+                                        (9, "APPENDIX\nThe dataset contains 160 images."))]
+        response = {**self.response, "message": {"content": "结果见[参考文档1][参考文档2]。"}}
+        for question in ("如何使用位置编码？", "使用哪个数据集，准确率是多少？"):
+            with self.subTest(question=question), \
+                    patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
+                    patch("src.retrieval.reranker.Reranker.rerank") as extra_rank, \
+                    patch("src.generation.rag_pipeline.urlopen", return_value=BytesIO(json.dumps(response).encode())) as http:
+                retriever.return_value.search.return_value = list(zip(documents, (.9, .8)))
+                result = knowledge_base_search.invoke({"question": question})
+            retriever.return_value.search.assert_called_once_with(question, doc_id=None, rerank=True)
+            retriever.return_value.vector_store.list_chunks.assert_not_called()
+            extra_rank.assert_not_called()
+            prompt = json.loads(http.call_args.args[0].data)["messages"][-1]["content"]
+            for document in documents:
+                self.assertIn(document.page_content, prompt)
+            self.assertEqual(len(result["citations"]), 2)
+
     def test_rag_stream_emits_before_tool_finishes_and_saves_only_final_answer(self):
         """核心RAG真实读取NDJSON，首包在末包之前进入会话事件，最终才保存整轮。"""
         from threading import Event
@@ -204,8 +227,8 @@ class TestResearchTools(unittest.TestCase):
         self.assertEqual(result["citations"], [])
         self.assertEqual(http.call_count, 1)
 
-    def test_rag_completes_same_page_dataset_sentence_and_rescores_actual_text(self):
-        """复现Windows中JFT数量跨块缺失；补连续正文、重排，仍不改原索引。"""
+    def test_rag_keeps_dataset_counts_from_multiple_retrieved_chunks(self):
+        """数量分布在多个召回块时保留原文和各自引用，不再拼接后重新评分。"""
         from langchain_core.documents import Document
         first = "Datasets: ImageNet has 1.3M images, ImageNet-21k has 14M images, and JFT has "
         tail = "and JFT has 303M high-resolution images."
@@ -213,23 +236,19 @@ class TestResearchTools(unittest.TestCase):
         a = Document(page_content=first, metadata={**metadata, "chunk_id": "a"})
         b = Document(page_content=tail, metadata={**metadata, "chunk_id": "b", "start_index": len(first)-12,
                                                  "end_index": len(first)-12+len(tail)})
-        other = Document(page_content="另一页不能拼接。", metadata={**b.metadata, "page": 4, "page_number": 5})
-        before = deepcopy([a, b, other])
-        response = {**self.response, "message": {"content": '原文依据："JFT has 303M high-resolution images."。[参考文档1]'}}
+        before = deepcopy([a, b])
+        response = {**self.response, "message": {"content": '原文依据："JFT has 303M high-resolution images."。[参考文档2]'}}
         with patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever, \
-                patch("src.retrieval.reranker.Reranker") as reranker, \
                 patch("src.generation.rag_pipeline.urlopen", return_value=BytesIO(json.dumps(response).encode())) as http:
-            retriever.return_value.search.return_value = [(a, .01)]
-            retriever.return_value.vector_store.list_chunks.return_value = [a, b, other]
-            reranker.return_value.rerank.side_effect = lambda query, docs, k: [(doc, .9) for doc, _ in docs]
+            retriever.return_value.search.return_value = [(a, .9), (b, .8)]
             result = knowledge_base_search.invoke({"question": "What dataset image counts are used?", "doc_id": self.doc_id})
         sent = json.loads(http.call_args.args[0].data)["messages"][1]["content"]
+        self.assertIn(first, sent)
         self.assertIn("JFT has 303M high-resolution images.", sent)
-        self.assertNotIn("另一页不能拼接", sent)
         self.assertEqual(result["top_score"], .9)
         self.assertEqual(result["citations"][0]["metadata"]["page_number"], 4)
         self.assertEqual(result["evidence_quote_errors"], [])
-        self.assertEqual([a, b, other], before)
+        self.assertEqual([a, b], before)
 
     def test_rag_validates_question_and_uploaded_document_before_retrieval(self):
         with patch("src.retrieval.hybrid_retriever.HybridRetriever") as retriever:

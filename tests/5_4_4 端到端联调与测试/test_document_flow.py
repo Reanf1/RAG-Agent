@@ -298,7 +298,7 @@ class TestImportFrontend(unittest.TestCase):
         self.assertTrue(any(c.value.startswith("最近实际向量检索成功：") for c in app.sidebar.caption))
         self.assertEqual([element.value for element in app.text], ["神经网络实验", "农业实验"])
         self.assertTrue(any("1. 论文A.pdf · 余弦相似度 1.0000" in panel.label for panel in app.expander))
-        self.assertIn("来源：论文A.pdf；物理页码：2–3", [element.value for element in app.caption])
+        self.assertIn("来源：论文A.pdf；第2–3页（物理页码）", [element.value for element in app.caption])
         app.number_input(key="vector_top_k").set_value(10)
         app.button(key="vector_search").click().run()
         self.assertEqual(len(app.text), 3)
@@ -324,14 +324,14 @@ class TestImportFrontend(unittest.TestCase):
         self.assertFalse(app.exception)
         self.assertEqual([element.value for element in app.text], ["Word 神经网络正文", "反向表格"])
         captions = [element.value for element in app.caption]
-        self.assertIn("来源：论文.docx；段落：3", captions)
-        self.assertIn("来源：论文.docx；表格：2", captions)
+        self.assertIn("来源：论文.docx；段落3", captions)
+        self.assertIn("来源：论文.docx；表格2", captions)
         self.assertFalse(any("物理页码" in value for value in captions))
         app.text_input(key="vector_query").set_value("农业")
         app.text_input(key="vector_doc_id").set_value("text")
         app.button(key="vector_search").click().run()
         self.assertEqual([element.value for element in app.text], ["农业文本"])
-        self.assertIn("来源：论文.txt；行范围：4–8", [element.value for element in app.caption])
+        self.assertIn("来源：论文.txt；行4–8", [element.value for element in app.caption])
         app.text_input(key="vector_doc_id").set_value("missing")
         app.button(key="vector_search").click().run()
         self.assertFalse(app.text)
@@ -358,7 +358,7 @@ class TestImportFrontend(unittest.TestCase):
         self.assertFalse(app.exception)
         self.assertFalse(app.error)
         self.assertIn(chunks[0].page_content, [element.value for element in app.text])
-        self.assertIn("来源：复测.txt；行范围：1–3", [element.value for element in app.caption])
+        self.assertIn("来源：复测.txt；行1–3", [element.value for element in app.caption])
         self.assertTrue(any("未修改原索引" in element.value for element in app.warning))
         self.assertNotIn("retrieval_warning", store.list_chunks()[0].metadata)
 
@@ -410,7 +410,7 @@ class TestImportFrontend(unittest.TestCase):
         self.assertFalse(app.exception)
         self.assertEqual([element.value for element in app.text], ["BatchNormalization"])
         self.assertTrue(any("BM25 分数 -" in panel.label for panel in app.expander))
-        self.assertIn("来源：论文.pdf；物理页码：2", [element.value for element in app.caption])
+        self.assertIn("来源：论文.pdf；第2页（物理页码）", [element.value for element in app.caption])
         self.assertEqual(self.embeddings.query_calls, [])
         app.text_input(key="vector_query").set_value("Normalization")
         app.button(key="vector_search").click().run()
@@ -476,7 +476,7 @@ class TestImportFrontend(unittest.TestCase):
         self.assertFalse(app.exception)
         self.assertEqual([element.value for element in app.text], ["BatchNormalization"])
         self.assertTrue(any("1. 论文B.docx · RRF 分数" in panel.label for panel in app.expander))
-        self.assertIn("来源：论文B.docx；段落：3", [element.value for element in app.caption])
+        self.assertIn("来源：论文B.docx；段落3", [element.value for element in app.caption])
         self.assertEqual(self.embeddings.query_calls, ["BatchNormalization"])
 
     def test_rrf_empty_input_empty_store_and_model_error(self):
@@ -549,8 +549,8 @@ class TestImportFrontend(unittest.TestCase):
         self.assertFalse(app.exception)
         self.assertEqual([element.value for element in app.text], ["农业 BatchNormalization", "BatchNormalization"])
         self.assertTrue(any("论文C.txt · 模型相关性分数 0.9000" in panel.label for panel in app.expander))
-        self.assertIn("来源：论文C.txt；行范围：2–3", [element.value for element in app.caption])
-        self.assertIn("来源：论文B.docx；段落：3", [element.value for element in app.caption])
+        self.assertIn("来源：论文C.txt；行2–3", [element.value for element in app.caption])
+        self.assertIn("来源：论文B.docx；段落3", [element.value for element in app.caption])
 
     def test_model_reranking_empty_cases_and_error_recovery(self):
         """空问题/空库无需模型，模型缺失或推理失败有错误提示，修复后可重新提交。"""
