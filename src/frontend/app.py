@@ -23,7 +23,7 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 from src.data_loader import LOADERS, create_import_tasks
-from src.frontend.components.documents import list_documents, delete_document, restore_document, read_pdf_page, read_document_content
+from src.frontend.components.documents import list_documents, delete_document, restore_document, read_document_content
 from src.frontend.components.trace import execution_rows, conversation_statistics, record_runtime_success
 from src.agent import run_session
 from src.agent.tools import get_available_tools
@@ -40,44 +40,17 @@ config = load_config()
 app_config = config["app"]
 
 
-@st.dialog("引用原文页", width="large")
-def show_original_page(reference):
-    """直接打开引用对应的真实PDF页，并提供原文下载；不新增HTTP服务。"""
-    try:
-        page = read_pdf_page(project_root / config["paths"]["raw_documents"], reference)
-        st.caption(f"{page['filename']} · 第{page['page_number']}页（物理页码）")
-        st.image(page["image"], width="stretch")
-        st.download_button("下载原始PDF", page["pdf"], file_name=page["filename"], mime="application/pdf")
-    except (OSError, ValueError, KeyError) as error:
-        st.error(f"无法打开引用原文：{error}")
-
-
 def show_agent_sources(event):
-    """本轮和持久化历史共用引用入口，各工具调用分别标识。"""
-    shown_pages = set()
+    """展示引用来源文字标签，并提供低相关候选的确认入口。"""
     for item in event.get("context", {}).get("observations", []):
         result = item.get("result")
         for reference in result.get("citations", []) if isinstance(result, dict) else []:
-            if Path(reference["source_file"]).suffix.lower() == ".pdf" and "page_number" in reference["metadata"]:
-                # 不合并引用正文，只将同一内容ID、物理页的原文入口展示一次。
-                metadata = reference["metadata"]
-                identity = metadata.get("doc_id") or (item.get("call_id"), reference["source_file"])
-                page_key = (identity, metadata["page_number"])
-                if page_key in shown_pages:
-                    continue
-                shown_pages.add(page_key)
-                key = f"agent-citation:{event['request_id']}:{item.get('call_id')}:{reference['id']}"
-                if st.button(f"查看{reference['source_file']} · {reference['location']}", key=key):
-                    show_original_page(reference)
+            st.caption(f"{reference['source_file']} · {reference['location']}")
         if isinstance(result, dict) and result.get("status") == "needs_confirmation":
             with st.expander("低相关候选：请核对原文", expanded=True):
                 for reference in result.get("references", []):
                     st.caption(f"{reference['source_file']} · {reference['location']} · 重排分数 {reference['score']:.4f}")
                     st.markdown(reference["text"])
-                    if Path(reference["source_file"]).suffix.lower() == ".pdf" and "page_number" in reference["metadata"]:
-                        if st.button(f"查看{reference['source_file']} · {reference['location']}",
-                                     key=f"agent-candidate:{event['request_id']}:{item.get('call_id')}:{reference['id']}"):
-                            show_original_page(reference)
                 identifier = result.get("confirmation_id")
                 if identifier in st.session_state.agent_pending_rag:
                     confirm, cancel = st.columns(2)
@@ -217,16 +190,6 @@ with knowledge_tab:
     document_list, document_content = st.columns([2, 3], gap="medium")
     with document_list:
         st.subheader("知识库文档")
-        # 四字确认文字不换行，按钮保持原“删除”的54×40像素尺寸。
-        st.html("""<style>
-            [class*="st-key-delete_document-"] button,
-            .st-key-cancel_delete_document button,
-            .st-key-confirm_delete_document button {padding: 0 1px; height: 40px;}
-            [class*="st-key-delete_document-"] button p {white-space: nowrap;}
-            [class*="st-key-knowledge_document-"] button div[title],
-            [class*="st-key-knowledge_document-"] button p {white-space: normal; overflow-wrap: anywhere;}
-            .st-key-confirm_delete_document button p {font-size: 12px; white-space: nowrap;}
-        </style>""")
         if "document_notice" in st.session_state:
             st.info(st.session_state.pop("document_notice"))
         try:

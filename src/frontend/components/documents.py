@@ -110,25 +110,3 @@ def restore_document(raw_dir: Path, doc_id: str) -> list[dict]:
         tasks = create_import_tasks(files)
         trash.rename(destination)
         return tasks
-
-
-def read_pdf_page(raw_dir: Path, reference: dict) -> dict:
-    """按已上传指纹与物理页读取原文，不采用引用中的任意文件路径。"""
-    import pymupdf
-    metadata = reference["metadata"]
-    directory = _document_directory(raw_dir, metadata["doc_id"])
-    filename = reference["source_file"]
-    if Path(filename).name != filename:
-        raise ValueError("引用文件名不能包含路径")
-    path = directory / filename
-    if path.is_symlink() or path.suffix.lower() != ".pdf" or not path.is_file():
-        raise FileNotFoundError("引用PDF原文不可用；删除的文档需先恢复")
-    data = path.read_bytes()
-    if sha256(data).hexdigest() != metadata["doc_id"]:
-        raise ValueError("引用原文已改变，不能用旧引用定位新文件")
-    page = metadata["page_number"]
-    with pymupdf.open(stream=data, filetype="pdf") as pdf:
-        if type(page) is not int or not 1 <= page <= len(pdf):
-            raise ValueError("引用物理页超出原文范围")
-        image = pdf[page - 1].get_pixmap(matrix=pymupdf.Matrix(1.5, 1.5)).tobytes("png")
-    return {"image": image, "pdf": data, "filename": filename, "page_number": page}
