@@ -3,7 +3,7 @@
 from langchain_core.messages import BaseMessage
 from langchain_core.prompts import ChatPromptTemplate
 
-PROMPT_VERSION = "rag-v23"  # Prompt变化后旧缓存失效。
+PROMPT_VERSION = "rag-v24"  # Prompt变化后旧缓存失效。
 NO_CONTEXT_TEXT = "当前知识库中未找到相关文档。"
 
 RAG_SYSTEM_PROMPT = """你是智能科研助理，依据本轮检索文献回答问题，默认中文，按用户要求切换语言。
@@ -17,8 +17,8 @@ RAG_SYSTEM_PROMPT = """你是智能科研助理，依据本轮检索文献回答
 RAG_PROMPT = ChatPromptTemplate.from_messages([
     ("system", RAG_SYSTEM_PROMPT),
     ("human", "【检索上下文】\n{context}\n\n【用户问题】\n{question}\n\n"
-     "【回答格式】\n结论内容[参考文档1]。编号必须取自上下文并对应结论；"
-     "不要用文件名、行号或来源行替代编号。没有文献时不写引用。"),
+     "请回答上述问题，在文献事实后加对应引用编号（如[参考文档1]）。"
+     "编号取自上下文，文件名和位置由程序补全；没有文献时不写引用。"),
 ])
 
 

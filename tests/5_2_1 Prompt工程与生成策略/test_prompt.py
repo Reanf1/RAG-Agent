@@ -28,7 +28,7 @@ class TestRAGPrompt(unittest.TestCase):
         question = "How is {question} related to $x_{i}$?"
         human = build_rag_messages(question, context)[1].content
         self.assertIn(f"【检索上下文】\n{context}\n\n【用户问题】\n{question}", human)
-        self.assertIn("【回答格式】", human)
+        self.assertIn("对应引用编号（如[参考文档1]）", human)
 
 
 if __name__ == "__main__":
