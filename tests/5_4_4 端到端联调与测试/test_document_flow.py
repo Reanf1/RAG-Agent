@@ -29,6 +29,8 @@ class TestImportFrontend(unittest.TestCase):
         config["paths"]["session_db"] = str(Path(self.directory.name) / "memory.sqlite3")
         config["paths"]["vector_index"] = str(Path(self.directory.name) / "index")
         config["paths"]["logs"] = str(Path(self.directory.name) / "logs")
+        # 页面在导入时读取该值；测试用 1MiB 边界，避免真的分配 20MiB 数据。
+        config["importing"]["max_file_size_mb"] = 1
         self.embeddings = SmallEmbeddings()
         for target, value in (("src.utils.config.load_config", config),
                               ("src.utils.config.check_health", {"llm": {"status": "ok"},
@@ -187,9 +189,10 @@ class TestImportFrontend(unittest.TestCase):
         self.assertEqual(len(app.sidebar.dataframe[0].value), 6)
 
     def test_oversized_upload_shows_failure_and_valid_file_still_indexes(self):
-        """AppTest绕过浏览器大小限制，验证20MiB后端保护与页面失败/重试状态。"""
+        """AppTest绕过浏览器大小限制，验证后端单份大小保护与页面失败/重试状态。"""
         app = self.app
-        app.file_uploader[0].set_value([("oversized.pdf", b"x" * (20 * 1024 * 1024 + 1), "application/pdf"),
+        # setUp 已把单份上限设为 1MiB；这里只超出 1 字节。
+        app.file_uploader[0].set_value([("oversized.pdf", b"x" * (1024 * 1024 + 1), "application/pdf"),
                                        ("valid.txt", b"Neural network", "text/plain")]).run()
         with patch("src.data_loader.load_document", wraps=load_document) as loader:
             app.button(key="start_import").click().run()
