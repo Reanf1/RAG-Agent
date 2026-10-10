@@ -14,10 +14,7 @@ def activate_session(memory: MemoryManager, user_id: str, session_id: str):
     messages = memory.get_messages(user_id, session_id)
     st.session_state.pop("agent_last_event", None)
     st.session_state.pop("delete_session_pending", None)
-    # 旧RAG记录先回放，不虚构当时未记录的Agent轨迹或完成状态。
-    history = [{"question": item["question"], "answer": item.get("answer", "") or item.get("error", "历史回答未保存"),
-                "complete": None, "stop_reason": "legacy_rag", "event": {}, "legacy_rag": item}
-               for item in memory.get_rag_messages(user_id, session_id)]
+    history = []
     for question, answer in zip(messages[::2], messages[1::2]):
         details = answer.additional_kwargs
         history.append({"question": question.content, "answer": answer.content,

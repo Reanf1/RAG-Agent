@@ -131,14 +131,7 @@ class MemoryManager:
                     session_id TEXT PRIMARY KEY REFERENCES sessions(session_id),
                     content TEXT NOT NULL,
                     through_message_id INTEGER NOT NULL
-                );
-                CREATE TABLE IF NOT EXISTS rag_history (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    session_id TEXT NOT NULL REFERENCES sessions(session_id),
-                    data TEXT NOT NULL
-                );
-                CREATE INDEX IF NOT EXISTS idx_rag_session ON rag_history(session_id, id);
-            """)
+                );            """)
             # 旧课程数据库保留消息与摘要，只补本轮需要的两列。
             if "archived" not in {r[1] for r in connection.execute("PRAGMA table_info(sessions)")}:
                 connection.execute("ALTER TABLE sessions ADD COLUMN archived INTEGER NOT NULL DEFAULT 0")
@@ -194,11 +187,7 @@ class MemoryManager:
             question = connection.execute(
                 "SELECT content FROM messages WHERE session_id=? AND role='human' ORDER BY id LIMIT 1",
                 (session_id,)).fetchone()
-            if question:
-                return question[0][:24]
-            rag = connection.execute("SELECT data FROM rag_history WHERE session_id=? ORDER BY id LIMIT 1",
-                                     (session_id,)).fetchone()
-        return (json.loads(rag[0])["question"] if rag else "新会话")[:24]
+            return question[0][:24] if question else "新会话"
 
     def append_turn(self, user_id: str, session_id: str, question: str, answer: str, *, details: dict | None = None):
         """事务内追加一整轮，避免覆盖其他线程追加的历史或只保存半轮。"""
@@ -221,26 +210,6 @@ class MemoryManager:
         with closing(self._connect()) as connection, connection:
             self._check_session(connection, user_id, session_id, include_archived=True)
             connection.execute("UPDATE sessions SET archived=0 WHERE session_id=?", (session_id,))
-
-    def append_rag_message(self, user_id: str, session_id: str, message: dict):
-        """保存RAG页面的真实回答、引用与错误状态，不送入Agent记忆。"""
-        data = json.dumps(message, ensure_ascii=False, allow_nan=False)
-        with closing(self._connect()) as connection, connection:
-            self._check_session(connection, user_id, session_id)
-            connection.execute("INSERT INTO rag_history(session_id, data) VALUES(?, ?)", (session_id, data))
-
-    def get_rag_messages(self, user_id: str, session_id: str) -> list[dict]:
-        """按原始顺序加载引用详情；不重新检索或调用模型。"""
-        with closing(self._connect()) as connection:
-            self._check_session(connection, user_id, session_id)
-            return [json.loads(row[0]) for row in connection.execute(
-                "SELECT data FROM rag_history WHERE session_id=? ORDER BY id", (session_id,))]
-
-    def clear_rag_messages(self, user_id: str, session_id: str):
-        """只清空当前会话的RAG页面记录；Agent历史与知识库不受影响。"""
-        with closing(self._connect()) as connection, connection:
-            self._check_session(connection, user_id, session_id)
-            connection.execute("DELETE FROM rag_history WHERE session_id=?", (session_id,))
 
     def _read_memory(self, user_id: str, session_id: str):
         """同一读事务取得归档和摘要边界，避免把清空前后数据拼接。"""
@@ -357,7 +326,6 @@ class MemoryManager:
         with closing(self._connect()) as connection, connection:
             self._check_session(connection, user_id, session_id)
             connection.execute("DELETE FROM summaries WHERE session_id=?", (session_id,))
-            connection.execute("DELETE FROM rag_history WHERE session_id=?", (session_id,))
             connection.execute("DELETE FROM messages WHERE session_id=?", (session_id,))
 
 
