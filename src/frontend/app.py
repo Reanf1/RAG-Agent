@@ -330,6 +330,25 @@ with knowledge_tab:
             st.info("请在左侧上传文档，导入后在此选择文件查看内容。")
 
 
+    st.subheader("知识库管理面板")
+    if library is None:
+        st.error(library_error or "知识库状态读取失败，请修正后刷新。")
+    else:
+        summary = st.columns(3)
+        summary[0].metric("知识库文档数", len(library))
+        summary[1].metric("已向量化文档数", sum(document["index_status"] == "已向量化" for document in library))
+        summary[2].metric("知识库索引块数", sum(document["chunks"] for document in library))
+        if not library:
+            st.info("知识库暂无文档，请在左侧上传并开始导入。")
+        else:
+            # 表格仅显示磁盘与Chroma的当前状态，批次失败仍在左侧导入区查看。
+            rows = [{"文件名": document["name"], "文档 ID": document["doc_id"][:8],
+                     "原文状态": "已保存" if document["source_available"] else "缺失",
+                     "向量化状态": document["index_status"],
+                     "索引块数": document["chunks"]} for document in library]
+            st.dataframe(rows, hide_index=True, width="stretch")
+
+
 def show_turn_footer(message):
     """每轮消息附真实最终用量与耗时，旧历史缺失指标时明确显示未知。"""
     metrics = message.get("event", {}).get("metrics", {})
@@ -478,25 +497,6 @@ with chat_tab:
                                  expanded=index == len(st.session_state.agent_messages) - 1)
     with statistics_panel.container():
         show_statistics()
-
-with knowledge_tab:
-    st.subheader("知识库管理面板")
-    if library is None:
-        st.error(library_error or "知识库状态读取失败，请修正后刷新。")
-    else:
-        summary = st.columns(3)
-        summary[0].metric("知识库文档数", len(library))
-        summary[1].metric("已向量化文档数", sum(document["index_status"] == "已向量化" for document in library))
-        summary[2].metric("知识库索引块数", sum(document["chunks"] for document in library))
-        if not library:
-            st.info("知识库暂无文档，请在左侧上传并开始导入。")
-        else:
-            # 表格仅显示磁盘与Chroma的当前状态，批次失败仍在左侧导入区查看。
-            rows = [{"文件名": document["name"], "文档 ID": document["doc_id"][:8],
-                     "原文状态": "已保存" if document["source_available"] else "缺失",
-                     "向量化状态": document["index_status"],
-                     "索引块数": document["chunks"]} for document in library]
-            st.dataframe(rows, hide_index=True, width="stretch")
 
 with retrieval_tab:
     st.subheader("文档 Top-K 检索")
