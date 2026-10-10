@@ -38,22 +38,6 @@ class TestConversationHistory(unittest.TestCase):
         self.a = self.memory.create_session("alice")
         self.b = self.memory.create_session("bob")
 
-    def test_archive_restore_keeps_turn_citations_and_summary(self):
-        details = {"task_complete": False, "stop_reason": "incomplete", "event": {"type": "done"}}
-        self.memory.append_turn("alice", self.a, "问题", "部分答案", details=details)
-        with sqlite3.connect(self.path) as connection:
-            last = connection.execute("SELECT MAX(id) FROM messages WHERE session_id=?", (self.a,)).fetchone()[0]
-            connection.execute("INSERT INTO summaries VALUES(?, ?, ?)", (self.a, "已压缩历史", last))
-        self.memory.delete_session("alice", self.a)
-        self.assertEqual(self.memory.list_sessions("alice"), [])
-        self.assertEqual(self.memory.list_sessions("alice", archived=True), [self.a])
-        self.assertEqual(self.memory.list_sessions("bob"), [self.b])
-        self.memory = MemoryManager(self.path)
-        self.memory.restore_session("alice", self.a)
-        self.assertEqual(self.memory.get_messages("alice", self.a)[1].additional_kwargs, details)
-        with sqlite3.connect(self.path) as connection:
-            self.assertEqual(connection.execute("SELECT content FROM summaries WHERE session_id=?", (self.a,)).fetchone()[0], "已压缩历史")
-
     def test_deleted_session_rejects_reads_writes_and_generation(self):
         self.memory.delete_session("alice", self.a)
         for operation in (lambda: self.memory.get_messages("alice", self.a),
@@ -63,21 +47,10 @@ class TestConversationHistory(unittest.TestCase):
                 with self.assertRaises(LookupError):
                     operation()
                 model.assert_not_called()
-        for operation in (self.memory.delete_session, self.memory.restore_session):
-            with self.assertRaises(PermissionError):
-                operation("bob", self.a)
-        self.assertEqual(self.memory.list_sessions("alice", archived=True), [self.a])
-
-    def test_archive_title_keeps_owner_check(self):
-        """归档仅开放本用户标题；完整历史和执行仍要求先恢复。"""
-        self.assertEqual(self.memory.get_session_title("alice", self.a), "新会话")
-        self.memory.append_turn("alice", self.a, "Agent论文问题", "答案")
-        self.memory.delete_session("alice", self.a)
-        self.assertEqual(self.memory.get_session_title("alice", self.a), "Agent论文问题")
-        with self.assertRaises(PermissionError):
-            self.memory.get_session_title("bob", self.a)
+        # 会话已删除，其他用户再删除时按"不存在"拒绝。
         with self.assertRaises(LookupError):
-            self.memory.get_messages("alice", self.a)
+            self.memory.delete_session("bob", self.a)
+        self.assertEqual(self.memory.list_sessions("alice"), [])
 
     def test_old_database_migration_keeps_ids_messages_and_summary(self):
         old = Path(self.directory.name) / "old.sqlite3"

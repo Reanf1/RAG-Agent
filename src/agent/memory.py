@@ -132,7 +132,8 @@ class MemoryManager:
                     content TEXT NOT NULL,
                     through_message_id INTEGER NOT NULL
                 );            """)
-            # 旧课程数据库保留消息与摘要，只补本轮需要的两列。
+            # archived 为历史列（旧库曾有回收站），保留以兼容既有数据库，不再读写。
+            # 旧课程数据库保留消息与摘要，只补本轮需要的列。
             if "archived" not in {r[1] for r in connection.execute("PRAGMA table_info(sessions)")}:
                 connection.execute("ALTER TABLE sessions ADD COLUMN archived INTEGER NOT NULL DEFAULT 0")
             if "details" not in {r[1] for r in connection.execute("PRAGMA table_info(messages)")}:
@@ -145,16 +146,14 @@ class MemoryManager:
         return connection
 
     @staticmethod
-    def _check_session(connection, user_id: str, session_id: str, *, include_archived=False):
+    def _check_session(connection, user_id: str, session_id: str):
         _nonempty(user_id, "user_id")
         _nonempty(session_id, "session_id")
-        row = connection.execute("SELECT user_id, archived FROM sessions WHERE session_id=?", (session_id,)).fetchone()
+        row = connection.execute("SELECT user_id FROM sessions WHERE session_id=?", (session_id,)).fetchone()
         if row is None:
             raise LookupError("会话不存在，请先创建会话")
         if row[0] != user_id:
             raise PermissionError("不能访问其他用户的会话")
-        if row[1] and not include_archived:
-            raise LookupError("会话已删除，请先从回收区恢复")
 
     def create_session(self, user_id: str) -> str:
         """创建归属固定的独立会话，UUID只用于标识，不用作登录凭据。"""
@@ -164,12 +163,12 @@ class MemoryManager:
             connection.execute("INSERT INTO sessions(session_id, user_id) VALUES(?, ?)", (session_id, user_id))
         return session_id
 
-    def list_sessions(self, user_id: str, *, archived=False) -> list[str]:
+    def list_sessions(self, user_id: str) -> list[str]:
         """只列出本用户的会话，包括尚未产生消息的空会话。"""
         _nonempty(user_id, "user_id")
         with closing(self._connect()) as connection:
             return [row[0] for row in connection.execute(
-                "SELECT session_id FROM sessions WHERE user_id=? AND archived=? ORDER BY rowid", (user_id, int(archived)))]
+                "SELECT session_id FROM sessions WHERE user_id=? ORDER BY rowid", (user_id,))]
 
     def get_messages(self, user_id: str, session_id: str) -> list:
         """按入库顺序返回新的LangChain消息对象，修改返回值不会污染存储。"""
@@ -183,7 +182,7 @@ class MemoryManager:
     def get_session_title(self, user_id: str, session_id: str) -> str:
         """只读取本用户会话标题，允许归档展示，不开放归档会话的问答执行。"""
         with closing(self._connect()) as connection:
-            self._check_session(connection, user_id, session_id, include_archived=True)
+            self._check_session(connection, user_id, session_id)
             question = connection.execute(
                 "SELECT content FROM messages WHERE session_id=? AND role='human' ORDER BY id LIMIT 1",
                 (session_id,)).fetchone()
@@ -200,16 +199,12 @@ class MemoryManager:
                                    [(session_id, "human", question, "{}"), (session_id, "ai", answer, serialized)])
 
     def delete_session(self, user_id: str, session_id: str):
-        """删除为可恢复回收；历史和摘要保留，但不能继续访问或生成。"""
+        """删除本用户会话及其消息、摘要；其他会话不受影响。"""
         with closing(self._connect()) as connection, connection:
             self._check_session(connection, user_id, session_id)
-            connection.execute("UPDATE sessions SET archived=1 WHERE session_id=?", (session_id,))
-
-    def restore_session(self, user_id: str, session_id: str):
-        """只恢复本用户会话，不改变原ID、消息、引用和摘要。"""
-        with closing(self._connect()) as connection, connection:
-            self._check_session(connection, user_id, session_id, include_archived=True)
-            connection.execute("UPDATE sessions SET archived=0 WHERE session_id=?", (session_id,))
+            connection.execute("DELETE FROM summaries WHERE session_id=?", (session_id,))
+            connection.execute("DELETE FROM messages WHERE session_id=?", (session_id,))
+            connection.execute("DELETE FROM sessions WHERE session_id=?", (session_id,))
 
     def _read_memory(self, user_id: str, session_id: str):
         """同一读事务取得归档和摘要边界，避免把清空前后数据拼接。"""

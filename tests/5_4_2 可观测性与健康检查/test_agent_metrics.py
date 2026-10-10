@@ -528,7 +528,7 @@ class TestAgentMetricsEntryAndPage(unittest.TestCase):
         self.assertFalse(refreshed.get("graphviz_chart"))
         self.core.assert_called_once()
 
-    def test_cancel_delete_archive_restore_preserve_history(self):
+    def test_cancel_and_confirm_delete_preserve_other_history(self):
         app = self.page()
         a = app.session_state["agent_session_id"]
         app.chat_input[0].set_value("待回收历史").run()
@@ -550,16 +550,7 @@ class TestAgentMetricsEntryAndPage(unittest.TestCase):
         self.assertEqual(sum((button.key or "").startswith("conversation:") for button in app.sidebar.button), 1)
         self.assertEqual(app.button(key=f"conversation:{b}").proto.type, "primary")
         memory, user = app.session_state["agent_memory"], app.session_state["agent_user_id"]
-        self.assertEqual(memory.list_sessions(user, archived=True), [a])
-        archived = app.radio(key="restore_conversation_select")
-        self.assertEqual(archived.label, "恢复会话")
-        self.assertEqual(archived.options, ["待回收历史"])
-        self.assertEqual(list(archived.proto.captions), [f"ID：{a[:8]}"])
-        self.assertEqual(app.button(key="restore_conversation").label, "恢复")
-        app.button(key="restore_conversation").click().run()
-        self.assertFalse(app.exception)
-        self.assertEqual(app.session_state["agent_session_id"], a)
-        self.assertEqual(len(app.chat_message), 2)
+        self.assertEqual(memory.list_sessions(user), [b])
         self.core.assert_called_once()
 
     def test_switch_and_new_session_reset_delete_confirmation(self):
@@ -576,12 +567,10 @@ class TestAgentMetricsEntryAndPage(unittest.TestCase):
         self.assertFalse(any(b.key in {"confirm_delete_conversation", "cancel_delete_conversation"}
                              for b in app.sidebar.button))
         memory, user = app.session_state["agent_memory"], app.session_state["agent_user_id"]
-        self.assertEqual(memory.list_sessions(user, archived=True), [])
         self.assertEqual(memory.list_sessions(user), [a, b])
         app.button(key="delete_conversation").click().run()
         app.button(key="new_conversation").click().run()
         self.assertEqual(app.button(key="delete_conversation").label, "删除当前会话")
-        self.assertEqual(memory.list_sessions(user, archived=True), [])
 
     def test_last_deleted_session_is_replaced_and_foreign_url_is_not_loaded(self):
         from streamlit.testing.v1 import AppTest

@@ -74,16 +74,6 @@ def render_sessions(db_path: Path) -> bool:
             elif st.button("删除当前会话", key="delete_conversation"):
                 st.session_state.delete_session_pending = current
                 st.rerun()
-            archived = memory.list_sessions(user_id, archived=True)
-            if archived:
-                archive_titles = {identifier: memory.get_session_title(user_id, identifier) for identifier in archived}
-                restore_id = st.radio("恢复会话", archived, key="restore_conversation_select", width="stretch",
-                                      format_func=lambda identifier: archive_titles[identifier],
-                                      captions=[f"ID：{identifier[:8]}" for identifier in archived])
-                if st.button("恢复", key="restore_conversation"):
-                    memory.restore_session(user_id, restore_id)
-                    activate_session(memory, user_id, restore_id)
-                    st.rerun()
             return True
         except Exception as error:
             st.error(f"会话管理失败：{type(error).__name__}: {error}。请检查本地会话数据库后重试。")
