@@ -103,6 +103,20 @@ def build_thought_messages(question: str, tools: list[BaseTool], context: dict |
     return build_agent_messages(question, tools, context)
 
 
+def _checked_response(result, stage: str) -> dict:
+    """三个阶段共用：只接受正常结束、带消息和模型名的完整响应。
+
+    不重试、不使用部分结果；调用方据此继续解析各自的字段。
+    """
+    if not isinstance(result, dict) or result.get("error"):
+        raise ValueError(f"{stage}响应错误：{result}")
+    if result.get("done") is not True or result.get("done_reason") != "stop":
+        raise ValueError(f"{stage}未正常完成，不能使用部分结果")
+    if not isinstance(result.get("model"), str) or not result["model"] or not isinstance(result.get("message"), dict):
+        raise ValueError(f"{stage}响应缺少消息或模型名称")
+    return result
+
+
 def _model_request(messages: list, **fields) -> Request:
     """三个阶段共用本机配置；把关联消息转换为Ollama原生工具消息。
 
@@ -130,14 +144,7 @@ def think(question: str, tools: list[BaseTool] | None = None, context: dict | No
     try:
         with urlopen(request, timeout=300) as response:
             result = json.load(response)
-        if not isinstance(result, dict) or not isinstance(result.get("message"), dict):
-            raise ValueError("Thought 响应格式错误")
-        if result.get("error"):
-            raise RuntimeError(f"本地 Ollama 返回错误：{result['error']}")
-        if result.get("done") is not True or result.get("done_reason") != "stop":
-            raise ValueError("Thought 未正常完成，不能使用部分调用")
-        if not isinstance(result.get("model"), str) or not result["model"]:
-            raise ValueError("Thought 响应缺少模型名称")
+        result = _checked_response(result, "Thought")
         calls = result["message"].get("tool_calls", [])
         if not isinstance(calls, list) or len(calls) > parallel_limit():
             raise ValueError("Thought调用数量错误或超过独立调用上限")
@@ -219,6 +226,45 @@ def _current_paper_ids(question: str, aliases: dict) -> set[str]:
                    for left, right, _ in matches)}
 
 
+def _bind_document_args(question: str, call: dict, aliases: dict, *, route: str | None, batch: bool,
+                        names: list, known_ids: set, current_ids: set) -> None:
+    """把模型给出的文档参数绑定到真实已上传ID；编造或不一致的参数直接拒绝。
+
+    别名只在本轮真实文献列表中唯一对应时才替换；本轮明确指定的单文档与
+    两文档目标不能被历史ID替代。回答语言要求进入真实工具参数。
+    """
+    fields = DOCUMENT_TOOL_FIELDS.get(call["name"], ())
+    for field in fields:
+        value = call["arguments"].get(field)
+        if isinstance(value, str) and value.casefold() in aliases:
+            call["arguments"][field] = aliases[value.casefold()]
+    text_task = (call["name"] == "keyword_extract" and re.search(
+        r"(?:给定|以下|这段|提供的)文本|\b(?:given|following) text\b", question, re.I))
+    if fields == ("doc_id",) and len(current_ids) == 1 and not batch and not text_task:
+        call["arguments"]["doc_id"] = next(iter(current_ids))
+    if call["name"] == "keyword_extract" and not text_task and call["arguments"].get("doc_id"):
+        # 文档模式只能读取原文，不能改为对模型自行生成的text做关键词提取。
+        call["arguments"].pop("text", None)
+    if route == "rule" and names == ["knowledge_base_search"] and not batch and call["arguments"].get("question") is not None:
+        # 规则直达的单次问答以完整原问题为输入；多步规划仍允许各自的子查询。
+        call["arguments"]["question"] = question
+    if fields == ("paper_a_id", "paper_b_id") and len(current_ids) == 2 and (
+            not all(isinstance(call["arguments"].get(field), str) for field in fields)
+            or {call["arguments"].get(field) for field in fields} != current_ids):
+        raise ValueError("论文对比参数必须对应用户本轮指定的两篇论文")
+    identifier = call["arguments"].get("doc_id")
+    if call["name"] == "knowledge_base_search" and identifier is not None and (
+            not isinstance(identifier, str) or identifier not in known_ids):
+        raise ValueError("知识库doc_id必须来自用户问题或已有Context，不能编造论文指纹")
+    # 子问题可以改写检索内容，但不能丢掉用户明确指定的回答语言。
+    if call["name"] in {"knowledge_base_search", "paper_compare"} and isinstance(call["arguments"].get("question"), str):
+        requirements = re.findall(r"\b(?:answer|respond|reply)\s+in\s+(?:English|Chinese)\b|"
+                                  r"(?:请)?(?:用|使用|以)(?:中文|英文|英语|汉语)(?:回答|作答|回复)", question, re.I)
+        for requirement in requirements:
+            if requirement.casefold() not in call["arguments"]["question"].casefold():
+                call["arguments"]["question"] += "。" + requirement + "。"
+
+
 def act(question: str, thought: dict, tools: list[BaseTool], context: dict | None = None,
         *, call_counts: dict | None = None, stream: bool = False):
     """一次Function Calling→单调用或独立批次；执行器负责有界超时重试。
@@ -271,59 +317,19 @@ def act(question: str, thought: dict, tools: list[BaseTool], context: dict | Non
             request = _model_request(messages, tools=[convert_to_openai_tool(item) for item in selected_tools])
             with urlopen(request, timeout=300) as response:
                 result = json.load(response)
-            if not isinstance(result, dict):
-                raise ValueError("Action响应格式错误")
-            if result.get("error"):
-                raise RuntimeError(f"本地 Ollama 返回错误：{result['error']}")
-            if result.get("done") is not True or result.get("done_reason") != "stop":
-                raise ValueError("Action未正常完成，不能执行部分调用")
-            if not isinstance(result.get("message"), dict) or not isinstance(result.get("model"), str) or not result["model"]:
-                raise ValueError("Action响应缺少消息或模型名称")
+            result = _checked_response(result, "Action")
         calls = result["message"].get("tool_calls")
         if not isinstance(calls, list) or not 1 <= len(calls) <= limit:
             raise ValueError("Action调用数量错误；请检查工具支持情况或补充必要参数")
         prepared, seen = [], set()
+        aliases = _paper_aliases(context)
+        current_ids = _current_paper_ids(question, aliases)
         for call in calls:
             call = call.get("function") if isinstance(call, dict) else None
             if not isinstance(call, dict) or call.get("name") not in names or not isinstance(call.get("arguments"), dict):
                 raise ValueError("Action工具名称或参数格式错误")
-            # 模型可能在列表后仍传文件名；仅将真实列表中的唯一别名转为已上传ID。
-            fields = DOCUMENT_TOOL_FIELDS.get(call["name"], ())
-            aliases = _paper_aliases(context) if fields else {}
-            for field in fields:
-                value = call["arguments"].get(field)
-                if isinstance(value, str) and value.casefold() in aliases:
-                    call["arguments"][field] = aliases[value.casefold()]
-            # 文件名也只绑定本轮提到、且真实列表中唯一对应的文件，不采用旧问题目标。
-            current_ids = _current_paper_ids(question, aliases)
-            text_task = (call["name"] == "keyword_extract" and re.search(
-                r"(?:给定|以下|这段|提供的)文本|\b(?:given|following) text\b", question, re.I))
-            if (fields == ("doc_id",) and len(current_ids) == 1 and not batch
-                    and not text_task):
-                # 用户本轮明确指定的单文档ID就是工具目标，历史中的合法ID不能替代它。
-                call["arguments"]["doc_id"] = next(iter(current_ids))
-            if call["name"] == "keyword_extract" and not text_task and call["arguments"].get("doc_id"):
-                # 文档模式只能读取原文；不能改为对模型自行生成的text做关键词提取。
-                call["arguments"].pop("text", None)
-            if thought.get("route") == "rule" and names == ["knowledge_base_search"] and not batch:
-                # 明确的单次问答以完整原问题为输入；多步规划仍允许各自的子查询。
-                call["arguments"]["question"] = question
-            if fields == ("paper_a_id", "paper_b_id") and len(current_ids) == 2 and (
-                    not all(isinstance(call["arguments"].get(field), str) for field in fields)
-                    or {call["arguments"].get(field) for field in fields} != current_ids):
-                raise ValueError("论文对比参数必须对应用户本轮指定的两篇论文")
-            identifier = call["arguments"].get("doc_id")
-            if call["name"] == "knowledge_base_search" and identifier is not None and (
-                    not isinstance(identifier, str) or identifier not in known_ids):
-                raise ValueError("知识库doc_id必须来自用户问题或已有Context，不能编造论文指纹")
-            # 子问题可以改写检索内容，但不能丢掉用户明确指定的回答语言。
-            # 要求进入真实工具参数及缓存键；不覆盖多论文查询的不同研究对象。
-            if call["name"] in {"knowledge_base_search", "paper_compare"} and isinstance(call["arguments"].get("question"), str):
-                requirements = re.findall(r"\b(?:answer|respond|reply)\s+in\s+(?:English|Chinese)\b|"
-                                          r"(?:请)?(?:用|使用|以)(?:中文|英文|英语|汉语)(?:回答|作答|回复)", question, re.I)
-                for requirement in requirements:
-                    if requirement.casefold() not in call["arguments"]["question"].casefold():
-                        call["arguments"]["question"] += "。" + requirement + "。"
+            _bind_document_args(question, call, aliases, route=thought.get("route"), batch=batch,
+                                names=names, known_ids=known_ids, current_ids=current_ids)
             signature = json.dumps(call, sort_keys=True)
             if signature in seen:
                 raise ValueError("Action不能重复同一工具和参数")
