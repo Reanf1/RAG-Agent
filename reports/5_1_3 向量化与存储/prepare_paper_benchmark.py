@@ -1,4 +1,4 @@
-"""按已锁定的原文、问题和相关段落，准备 AI 论文双语检索基准。"""
+"""按已锁定的原文、同语言问题和相关段落，准备 AI 论文检索基准。"""
 
 import argparse
 import hashlib
@@ -47,13 +47,13 @@ def prepare_sample(download=False):
             metadata = chunks[location["ordinal"]].metadata
             for key in ("chunk_id", "page_number", "start_index", "end_index"):
                 assert metadata[key] == location[key], "相关段落定位发生变化"
-        for language in ("zh", "en"):
-            queries.append({"id": question["id"] + "-" + language,
-                            "pair_id": question["id"], "text": question[language],
-                            "paper_id": paper["id"], "query_language": language,
-                            "document_language": paper["language"],
-                            "group": language + "->" + paper["language"],
-                            "relevant_ids": [row["chunk_id"] for row in question["relevant_chunks"]]})
+        language = paper["language"]
+        assert question["language"] == language, question["id"]
+        queries.append({"id": question["id"] + "-" + language,
+                        "pair_id": question["id"], "text": question["question"],
+                        "paper_id": paper["id"], "query_language": language,
+                        "document_language": language, "group": language + "->" + language,
+                        "relevant_ids": [row["chunk_id"] for row in question["relevant_chunks"]]})
     sample = {"name": manifest["name"], "manifest_sha256": hashlib.sha256(MANIFEST.read_bytes()).hexdigest(),
               "papers": manifest["papers"], "chunking": manifest["chunking"],
               "selection_rule": manifest["selection_rule"], "corpus": corpus, "queries": queries}

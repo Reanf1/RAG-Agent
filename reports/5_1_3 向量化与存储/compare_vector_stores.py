@@ -188,7 +188,7 @@ def main():
 
         torch.set_num_threads(4)
         torch.set_num_interop_threads(4)
-        print("正在从本地 M3E 编码 821 个分块与 96 条双语查询……", flush=True)
+        print(f"正在从本地 M3E 编码 {len(records)} 个分块与 {len(sample['queries'])} 条同语言查询……", flush=True)
         started = perf_counter()
         embeddings = get_embeddings()
         documents = np.asarray(embeddings.embed_documents([row["text"] for row in records]), dtype="float32")
@@ -209,7 +209,7 @@ def main():
     arrays = np.load(WORK_DIR / "vectors.npz")
     documents, queries = arrays["documents"], arrays["queries"]
     encode_seconds = encoding["seconds"]
-    assert documents.shape == (821, 768) and queries.shape == (96, 768)
+    assert documents.shape == (len(records), 768) and queries.shape == (len(sample["queries"]), 768)
     assert np.isfinite(documents).all() and np.isfinite(queries).all()
     assert np.allclose(np.linalg.norm(documents, axis=1), 1, atol=1e-5)
     assert np.allclose(np.linalg.norm(queries, axis=1), 1, atol=1e-5)

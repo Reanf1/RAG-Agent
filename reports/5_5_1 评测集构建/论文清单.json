@@ -1,5 +1,5 @@
 {
-  "name": "视觉Transformer四类问答评测集 v1",
+  "name": "视觉Transformer四类问答评测集 v2（同语言）",
   "research_direction": "Transformer在图像分类与目标检测中的应用",
   "created_date": "2026-10-03",
   "papers": [
@@ -579,7 +579,6 @@
       "en"
     ],
     "query_languages": [
-      "zh",
       "en"
     ],
     "retrieval_annotation_level": "paper+physical_page",
@@ -587,7 +586,9 @@
     "source_overlap_with_development_set": [
       "vit"
     ],
-    "split_note": "本次60题作为锁定评测集，不按待测系统排名调题；ViT来源曾用于开发，故不能声称独立来源的盲测。"
+    "split_note": "本次60题作为锁定评测集，不按待测系统排名调题；ViT来源曾用于开发，故不能声称独立来源的盲测。 2026-10-11按用户要求将30道中文题等义翻译为英文；题号、考点、证据页和评分要点不变，旧跨语言实验不计入当前验收。",
+    "question_language_matches_document": true
   },
-  "annotation_method": "助手阅读固定PDF的相关原文页面并整理问答；程序复核页码/短锚点；未经独立人工复核，未使用待评测本地Qwen生成参考答案。"
+  "annotation_method": "助手阅读固定PDF的相关原文页面并整理问答；程序复核页码/短锚点；未经独立人工复核，未使用待评测本地Qwen生成参考答案。",
+  "updated_date": "2026-10-11"
 }

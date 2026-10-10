@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-10-10T23:27:17.375955+08:00",
+  "updated_at": "2026-10-11T00:20:06.430999+08:00",
   "baseline_commit": "04544ab",
-  "status": "experiments_in_progress",
+  "status": "same_language_inputs_verified_rerun_preparing",
   "regression": {
     "tests": 107,
     "seconds": 6.02,
@@ -18,14 +18,13 @@
       "reasoning": 15
     },
     "languages": {
-      "zh": 30,
-      "en": 30
+      "en": 60
     },
     "evidence_locations": 43,
     "corpus_chunks": 1692,
-    "dataset_sha256": "51e282a8edb0f1e20e636b3a7c749fa3c4b0a9bb90572b353e6420d935d1acf6",
-    "manifest_sha256": "70bd8d162d8ca61b8da47d078e954c2aee8917a48c1d999408f37a83d9cc661f",
-    "corpus_sha256": "ede5fcd33644f8ab519f2293496822c1cba28068e0d8836bb395e6dd14d88f22"
+    "dataset_sha256": "64faefc863ea18003967fac299d4a35d4da045b7b8254388d5980cd4eaab640e",
+    "manifest_sha256": "9c73979c51e31775d92639dfa6946c338ac7f803b7706fdb36eca53a4f0fd9d2",
+    "corpus_sha256": "3b2f35c9f0a461045581a167c9a4199ead37960969f0b122c9ab9a17699278d9"
   },
   "cross_platform_input_issue": {
     "manifest_raw_sha256": "00c231f7bdd9a571a0880d7b25b64beb95eae47f8c696fa70efe8ac72f19230f",
@@ -85,7 +84,7 @@
     "resolution": "用户确认后Windows本机重建独立语料，严格哈希与43处证据核验通过"
   },
   "chunking": {
-    "status": "completed",
+    "status": "superseded_language_policy",
     "completed_rankings": 300,
     "completed_profiles": [
       "fixed256",
@@ -94,7 +93,8 @@
       "recursive",
       "semantic"
     ],
-    "output": "reports/5_1_2 文本分块策略/最终验收_20261010/分块检索结果.json"
+    "output": "reports/5_1_2 文本分块策略/最终验收_20261010/分块检索结果.json",
+    "reason": "英文原文对应的中文题已翻译；旧汇总不作为当前验收结果"
   },
   "remaining": [
     "生成参数与Prompt新版本实验",
@@ -114,12 +114,29 @@
     "questions": 60,
     "corpus_chunks": 1692,
     "manifest_sha256": "00c231f7bdd9a571a0880d7b25b64beb95eae47f8c696fa70efe8ac72f19230f",
-    "corpus_sha256": "7a310092fef82efc4d61ce9ffae46f63662b916d41db99100010b2ae287c4c5b"
+    "corpus_sha256": "7a310092fef82efc4d61ce9ffae46f63662b916d41db99100010b2ae287c4c5b",
+    "status": "superseded_language_policy",
+    "reason": "英文原文对应的中文题已翻译；旧汇总不作为当前验收结果"
   },
   "windows_retrieval": {
-    "status": "completed",
+    "status": "superseded_language_policy",
     "rankings": 300,
     "independent_recalculation_passed": true,
-    "output": "reports/5_5_2 系统性能评估/最终验收_20261010/retrieval.json"
+    "output": "reports/5_5_2 系统性能评估/最终验收_20261010/retrieval.json",
+    "reason": "英文原文对应的中文题已翻译；旧汇总不作为当前验收结果"
+  },
+  "windows_agent": {
+    "status": "superseded_language_policy",
+    "original_completed_answers": 120,
+    "reason": "旧60题中有30题语言不符合当前要求，重新运行两组评测"
+  },
+  "language_revision": {
+    "date": "2026-10-11",
+    "policy": "题目语言与目标文献原文一致",
+    "questions": 60,
+    "embedding_queries": 48,
+    "generation_cases": 10,
+    "unchanged": "原始PDF、题号、考点、证据页、评分要点、业务源码和配置",
+    "verification": "reports/5_5_1 评测集构建/同语言问题核验.json"
   }
 }

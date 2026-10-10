@@ -1,10 +1,10 @@
 {
-  "name": "AI论文生成参数开发集 v1",
+  "name": "AI论文同语言生成参数开发集 v2",
   "created_at": "2026-09-29",
   "prompt_version": "rag-v24",
   "annotation_note": "保留原10题、参考片段和事实规则，使用当前rag-v24重新冻结消息；正文不再要求额外栏目，规则覆盖仅作辅助。",
-  "source_sample_sha256": "63c22eddcf08f05b809dd888b4794993ea0364edf7d43d0c442e16ae76342707",
-  "source_manifest_sha256": "7a3cd90f5700601448feb2e42cfaeea296164fd9674e4962d66ba6bd84af218f",
+  "source_sample_sha256": "47692237ff95a2293874de60bc86a2e8f3b809bc761c2d1f9cd735ecd2f5366b",
+  "source_manifest_sha256": "06d1da98722e712b1ea87c2f1d466c45a93c113291ac9892ce2d8519999a72b7",
   "papers": [
     {
       "id": "attention",
@@ -70,7 +70,7 @@
   "cases": [
     {
       "id": "heads",
-      "question": "原始Transformer用了多少个注意力头，每个头的键和值维度是多少？请简洁回答。",
+      "question": "How many attention heads does the original Transformer use, and what are the key and value dimensions per head? Answer concisely.",
       "intent_ids": [
         "attention-02",
         "bert-01"
@@ -128,7 +128,12 @@
         "truncated": false,
         "dropped_count": 0
       },
-      "messages_sha256": "7313ce0e2a53bc20b06a536c5ceb27502abe571f0c99e1576f687ee74ded4b2b"
+      "messages_sha256": "61ab97cdf6a0f245ffcd440dafad20f6d242bca4ee8b7400c6e206a2804ec1b6",
+      "language": "en",
+      "paper_ids": [
+        "attention",
+        "bert"
+      ]
     },
     {
       "id": "bert-sizes",
@@ -176,11 +181,15 @@
         "truncated": false,
         "dropped_count": 0
       },
-      "messages_sha256": "7f26a6d8aa2f758e31c30a4fed2d1969d3e052fdfcf486b4b9fae9ac18f80f66"
+      "messages_sha256": "7f26a6d8aa2f758e31c30a4fed2d1969d3e052fdfcf486b4b9fae9ac18f80f66",
+      "language": "en",
+      "paper_ids": [
+        "bert"
+      ]
     },
     {
       "id": "bert-mask",
-      "question": "BERT被选中的词元分别如何替换，三种情况比例是多少？请简洁回答。",
+      "question": "How are the selected tokens replaced during BERT masked language modeling, and what are the proportions of the three cases? Answer concisely.",
       "intent_ids": [
         "bert-04"
       ],
@@ -224,7 +233,11 @@
         "truncated": false,
         "dropped_count": 0
       },
-      "messages_sha256": "85059cde953f88229aa128c08b7134440c1c68616b18d8ce1e604bfd5a63a2a9"
+      "messages_sha256": "41ad62971cd544cd9fa583978472566d78991b2ad278be568cc8614b3d000c80",
+      "language": "en",
+      "paper_ids": [
+        "bert"
+      ]
     },
     {
       "id": "vit-position",
@@ -271,7 +284,11 @@
         "truncated": false,
         "dropped_count": 0
       },
-      "messages_sha256": "80a8012a374927fadf609160fad2644702226894d7ccf084078413b147aacbd1"
+      "messages_sha256": "80a8012a374927fadf609160fad2644702226894d7ccf084078413b147aacbd1",
+      "language": "en",
+      "paper_ids": [
+        "vit"
+      ]
     },
     {
       "id": "stn-components",
@@ -317,7 +334,11 @@
         "truncated": false,
         "dropped_count": 0
       },
-      "messages_sha256": "958a161c2cc1ecbef47cf5bdb2197be468598988c891a24cddbc44d07a4dcfeb"
+      "messages_sha256": "958a161c2cc1ecbef47cf5bdb2197be468598988c891a24cddbc44d07a4dcfeb",
+      "language": "zh",
+      "paper_ids": [
+        "cnn_survey"
+      ]
     },
     {
       "id": "binary-sgd",
@@ -363,7 +384,11 @@
         "truncated": false,
         "dropped_count": 0
       },
-      "messages_sha256": "679f06eead424ba31b0bf5d72eaecec846977fd183dac7081052ff5bb64f0f11"
+      "messages_sha256": "679f06eead424ba31b0bf5d72eaecec846977fd183dac7081052ff5bb64f0f11",
+      "language": "zh",
+      "paper_ids": [
+        "compression"
+      ]
     },
     {
       "id": "vit-limitations",
@@ -410,11 +435,15 @@
         "truncated": false,
         "dropped_count": 0
       },
-      "messages_sha256": "e4cdb93e541cb99cab1c23b79bed6224e33fb3419bc234c5ce20106d96f2adfa"
+      "messages_sha256": "e4cdb93e541cb99cab1c23b79bed6224e33fb3419bc234c5ce20106d96f2adfa",
+      "language": "zh",
+      "paper_ids": [
+        "vision_survey"
+      ]
     },
     {
       "id": "encoder-comparison",
-      "question": "仅按给定片段，对比原始Transformer与BERT-base、BERT-large的编码器层数，并说明BERT两种尺寸的隐藏维度。请简洁回答。",
+      "question": "Using only the provided excerpts, compare the number of encoder layers in the original Transformer, BERT-base and BERT-large, and state the hidden dimensions of the two BERT sizes. Answer concisely.",
       "intent_ids": [
         "attention-01",
         "bert-01"
@@ -476,11 +505,16 @@
         "truncated": false,
         "dropped_count": 0
       },
-      "messages_sha256": "6d3841143653ecaab6a3274616092589a8fdf30bcc71d705804e286cf1036d87"
+      "messages_sha256": "d7ead79dcd77a9728c5250ac78875d0b8f7ce99e7b93d8ce9bd76f2e70b38d22",
+      "language": "en",
+      "paper_ids": [
+        "attention",
+        "bert"
+      ]
     },
     {
       "id": "insufficient",
-      "question": "仅根据给定片段，原始Transformer训练用了多少块V100 GPU、耗时多少小时？若片段未说明，请明确指出，不得凭记忆补全。",
+      "question": "Based only on the provided excerpt, how many V100 GPUs were used to train the original Transformer, and how many hours did training take? If the excerpt does not state this, say so explicitly without filling in details from memory.",
       "intent_ids": [
         "attention-01"
       ],
@@ -518,11 +552,15 @@
         "truncated": false,
         "dropped_count": 0
       },
-      "messages_sha256": "703c5930bf62a982ccdc0e97843b04701e95f2f9bbc68f63fb013b6ffea3d62d"
+      "messages_sha256": "ebf6211509ec296d3fd902b88ab7d754e6d847b1aad1bb939ed8076acda57932",
+      "language": "en",
+      "paper_ids": [
+        "attention"
+      ]
     },
     {
       "id": "empty",
-      "question": "知识库中的那篇论文DOI是什么？请简洁回答；没有依据时不要猜测。",
+      "question": "What is the DOI of the paper in the knowledge base? Answer concisely and do not guess without evidence.",
       "intent_ids": [],
       "expected_note": "知识库为空，明确提示无文档，不能生成 DOI。",
       "fact_patterns": [
@@ -541,9 +579,13 @@
         "truncated": false,
         "dropped_count": 0
       },
-      "messages_sha256": "1a97709cd66ac76b57685b518abddfb833857fa58adf6b520eae7ed5f0398731"
+      "messages_sha256": "0ae65673e8f0caf1ce4f74c5df53eac19cf7eba008d77e9dc590cbad5ac6f7d4",
+      "language": "en",
+      "paper_ids": []
     }
   ],
   "prepared_at": "2026-10-10T22:54:39.946437+08:00",
-  "original_fixture_sha256": "d46fb56f5f41064faf223ff2d80c2cc8cc6dd329ef7792891b4b413c22cea099"
+  "original_fixture_sha256": "d46fb56f5f41064faf223ff2d80c2cc8cc6dd329ef7792891b4b413c22cea099",
+  "updated_date": "2026-10-11",
+  "language_policy": "英文原文用英文题，中文原文用中文题；空库拒答题用英文，不涉及跨语言检索。"
 }

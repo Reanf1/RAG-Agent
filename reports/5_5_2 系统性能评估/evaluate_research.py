@@ -131,8 +131,8 @@ def main():
     else:
         ids = {p["id"]: p["doc_id"] for p in manifest["papers"]}
         tasks = [("time_keywords", "同时返回当前时间并用keyword_extract提取文本关键词：Transformer用于机器翻译，ViT用于图像分类。", ["current_time", "keyword_extract"]),
-                 ("two_knowledge", f"用knowledge_base_search同时分别回答两项独立问题：论文ViT的图像分类输入是什么（doc_id={ids['vit']}）；论文DeiT的训练数据是什么（doc_id={ids['deit']}）。", ["knowledge_base_search"])]
-        cases = [({"id": name, "category": name, "language": "zh", "question": text, "expected_tools": expected}, mode, repeat)
+                 ("two_knowledge", f"Use knowledge_base_search to answer two independent questions in parallel: What is the image-classification input in the ViT paper (doc_id={ids['vit']})? What training dataset does the DeiT paper use (doc_id={ids['deit']})?", ["knowledge_base_search"])]
+        cases = [({"id": name, "category": name, "language": "en" if name == "two_knowledge" else "zh", "question": text, "expected_tools": expected}, mode, repeat)
                  for repeat in (1, 2, 3) for name, text, expected in tasks
                  for mode in (("serial", "parallel") if repeat % 2 else ("parallel", "serial"))]
     for index, (q, profile, repeat) in enumerate(cases, 1):

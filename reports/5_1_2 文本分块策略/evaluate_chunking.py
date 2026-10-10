@@ -44,7 +44,8 @@ def summarize(rows):
             "at_k": {str(k): {key: statistics.mean(r["at_k"][str(k)][key] for r in rows)
                                for key in ("hit", "mrr", "recall")} for k in (3, 5, 10)},
             "by_language": {lang: {key: statistics.mean(r["at_k"]["5"][key] for r in rows if r["language"] == lang)
-                                    for key in ("hit", "mrr", "recall")} for lang in ("zh", "en")}}
+                                    for key in ("hit", "mrr", "recall")}
+                            for lang in sorted({r["language"] for r in rows})}}
 
 
 def main():
@@ -69,8 +70,8 @@ def main():
     from src.retrieval.hybrid_retriever import HybridRetriever
     dataset = ROOT / "reports/评测集.json"
     manifest_path = ROOT / "reports/5_5_1 评测集构建/论文清单.json"
-    questions = json.loads(dataset.read_text())
-    papers = json.loads(manifest_path.read_text())["papers"]
+    questions = json.loads(dataset.read_text(encoding="utf-8"))
+    papers = json.loads(manifest_path.read_text(encoding="utf-8"))["papers"]
     ids = {p["id"]: p["doc_id"] for p in papers}
     documents = []
     for paper in papers:

@@ -43,7 +43,7 @@ def prepare_and_verify(download=False):
     assert len({q["id"] for q in questions}) == len(questions)
     assert len({normalize(q["question"]) for q in questions}) == len(questions)
     assert set(q["category"] for q in questions) == CATEGORIES
-    assert set(q["language"] for q in questions) == {"zh", "en"}
+    assert {q["language"] for q in questions} <= {"zh", "en"}
     assert len(evidence) == len(manifest["evidence"])
     used_papers, used_evidence = set(), set()
     for question in questions:
@@ -52,6 +52,9 @@ def prepare_and_verify(download=False):
         assert question["answer_basis"].strip() and question["evidence"]
         assert len(question["paper_ids"]) == len(set(question["paper_ids"]))
         assert set(question["paper_ids"]) <= papers.keys()
+        # 题目语言必须与每篇目标文献一致，不再进行交叉语言查询。
+        assert all(question["language"] == papers[pid]["language"]
+                   for pid in question["paper_ids"]), question["id"]
         assert set(question["paper_ids"]) == {row["paper_id"] for row in question["evidence"]}
         if question["category"] in {"comparison", "synthesis"}:
             assert len(question["paper_ids"]) >= 2

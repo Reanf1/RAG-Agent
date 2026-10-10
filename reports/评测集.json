@@ -2,9 +2,9 @@
   {
     "id": "F001",
     "category": "fact",
-    "language": "zh",
-    "question": "ViT论文在模型规模实验中使用了哪三个训练数据集？",
-    "reference_answer": "ImageNet（ILSVRC-2012）、ImageNet-21k和JFT。",
+    "language": "en",
+    "question": "Which three training datasets does the ViT paper use in its model-scaling experiments?",
+    "reference_answer": "ImageNet (ILSVRC-2012), ImageNet-21k and JFT.",
     "answer_points": [
       "ImageNet/ILSVRC-2012",
       "ImageNet-21k",
@@ -49,9 +49,9 @@
   {
     "id": "F003",
     "category": "fact",
-    "language": "zh",
-    "question": "Swin Transformer初始输入patch的大小和原始RGB特征维度分别是多少？",
-    "reference_answer": "patch为4×4像素，拼接RGB值后为4×4×3=48维。",
+    "language": "en",
+    "question": "What are the initial patch size and the raw RGB feature dimension in Swin Transformer?",
+    "reference_answer": "Each patch is 4×4 pixels; concatenating its RGB values produces a 4×4×3=48-dimensional feature.",
     "answer_points": [
       "4×4 pixels",
       "48-dimensional RGB feature"
@@ -95,9 +95,9 @@
   {
     "id": "F005",
     "category": "fact",
-    "language": "zh",
-    "question": "T2T-ViT的两个主要架构组成是什么？",
-    "reference_answer": "逐步聚合局部结构的Tokens-to-Token模块，以及深窄Transformer骨干。",
+    "language": "en",
+    "question": "What are the two main architectural components of T2T-ViT?",
+    "reference_answer": "A Tokens-to-Token module that progressively aggregates local structure, and a deep-narrow Transformer backbone.",
     "answer_points": [
       "Tokens-to-Token module",
       "Deep-narrow backbone"
@@ -147,9 +147,9 @@
   {
     "id": "F007",
     "category": "fact",
-    "language": "zh",
-    "question": "DETR的COCO 2017实验训练集和验证集分别约有多少张图像？",
-    "reference_answer": "约11.8万张训练图像和5000张验证图像。",
+    "language": "en",
+    "question": "Approximately how many training and validation images are used in DETR’s COCO 2017 experiments?",
+    "reference_answer": "Approximately 118,000 training images and 5,000 validation images.",
     "answer_points": [
       "118k training images",
       "5k validation images"
@@ -193,9 +193,9 @@
   {
     "id": "F009",
     "category": "fact",
-    "language": "zh",
-    "question": "Conditional DETR报告了哪些标准COCO检测指标？",
-    "reference_answer": "AP、AP50、AP75，以及小、中、大目标的AP（APS/APM/APL）。",
+    "language": "en",
+    "question": "Which standard COCO object-detection metrics does Conditional DETR report?",
+    "reference_answer": "AP, AP50, AP75, and AP for small, medium and large objects (APS, APM and APL).",
     "answer_points": [
       "AP/AP50/AP75",
       "APS/APM/APL"
@@ -240,9 +240,9 @@
   {
     "id": "F011",
     "category": "fact",
-    "language": "zh",
-    "question": "DN-DETR摘要中，ResNet-50骨干训练12轮和50轮分别取得多少AP？",
-    "reference_answer": "12轮43.4 AP，50轮48.6 AP；这两项结果均明确限定为论文的ResNet-50设置。",
+    "language": "en",
+    "question": "In the DN-DETR abstract, what AP does the ResNet-50 backbone achieve after 12 and 50 training epochs, respectively?",
+    "reference_answer": "43.4 AP after 12 epochs and 48.6 AP after 50 epochs; both results refer specifically to the paper’s ResNet-50 setting.",
     "answer_points": [
       "12 epochs:43.4 AP",
       "50 epochs:48.6 AP",
@@ -288,9 +288,9 @@
   {
     "id": "F013",
     "category": "fact",
-    "language": "zh",
-    "question": "ViT采用什么位置编码来保留patch位置信息？",
-    "reference_answer": "添加标准可学习的一维位置编码。",
+    "language": "en",
+    "question": "What positional encoding does ViT use to retain patch-position information?",
+    "reference_answer": "ViT adds standard learnable one-dimensional position embeddings.",
     "answer_points": [
       "Learnable",
       "One-dimensional position embeddings"
@@ -334,9 +334,9 @@
   {
     "id": "F015",
     "category": "fact",
-    "language": "zh",
-    "question": "DINO使用ResNet-50、多尺度特征时，12轮和24轮的COCO AP分别是多少？",
-    "reference_answer": "分别为49.4 AP和51.3 AP，不能混同于Swin-L加Objects365预训练的结果。",
+    "language": "en",
+    "question": "For DINO with ResNet-50 and multi-scale features, what COCO AP is reported after 12 and 24 epochs, respectively?",
+    "reference_answer": "49.4 AP and 51.3 AP, respectively. These results must not be confused with those using Swin-L and Objects365 pretraining.",
     "answer_points": [
       "12 epochs:49.4 AP",
       "24 epochs:51.3 AP",
@@ -388,9 +388,9 @@
   {
     "id": "C002",
     "category": "comparison",
-    "language": "zh",
-    "question": "ViT和T2T-ViT的图像token化方式有什么区别？",
-    "reference_answer": "ViT将固定patch线性映射；T2T-ViT通过重叠soft split反复聚合邻近token，建模局部结构并缩短序列。",
+    "language": "en",
+    "question": "How do ViT and T2T-ViT differ in image tokenization?",
+    "reference_answer": "ViT linearly projects fixed patches. T2T-ViT repeatedly aggregates neighboring tokens through overlapping soft splits, modeling local structure and shortening the sequence.",
     "answer_points": [
       "ViT fixed patch projection",
       "T2T overlapping iterative aggregation",
@@ -450,9 +450,9 @@
   {
     "id": "C004",
     "category": "comparison",
-    "language": "zh",
-    "question": "ViT与Swin Transformer在注意力范围和层级结构上有什么区别？",
-    "reference_answer": "ViT主要采用全局patch自注意力；Swin采用交替窗口/移动窗口，并用patch merging构成层级特征。",
+    "language": "en",
+    "question": "How do ViT and Swin Transformer differ in attention scope and hierarchical structure?",
+    "reference_answer": "ViT mainly uses global self-attention over patches. Swin alternates regular and shifted windows and builds hierarchical features through patch merging.",
     "answer_points": [
       "ViT global attention",
       "Swin window/shifted-window attention",
@@ -517,9 +517,9 @@
   {
     "id": "C006",
     "category": "comparison",
-    "language": "zh",
-    "question": "DETR和Deformable DETR的交叉注意力读取图像特征的方式有何不同？",
-    "reference_answer": "DETR关注编码器的全局特征；Deformable DETR围绕参考点采样少量位置，且支持多尺度特征。",
+    "language": "en",
+    "question": "How do DETR and Deformable DETR differ in how cross-attention reads image features?",
+    "reference_answer": "DETR attends to global encoder features. Deformable DETR samples a small number of locations around reference points and supports multi-scale features.",
     "answer_points": [
       "DETR global encoder-feature attention",
       "Sparse points around references",
@@ -585,9 +585,9 @@
   {
     "id": "C008",
     "category": "comparison",
-    "language": "zh",
-    "question": "Conditional DETR与DAB-DETR在空间查询中利用目标尺寸的方式有什么差异？",
-    "reference_answer": "Conditional DETR以条件空间查询限定定位范围；DAB-DETR进一步把中心和宽高写成4D框，并用宽高调节注意力范围。",
+    "language": "en",
+    "question": "How do Conditional DETR and DAB-DETR differ in their use of object size in spatial queries?",
+    "reference_answer": "Conditional DETR constrains localization through conditional spatial queries. DAB-DETR explicitly encodes the center, width and height in a 4D box query and uses width and height to modulate attention.",
     "answer_points": [
       "Conditional spatial localization",
       "DAB 4D box query",
@@ -653,9 +653,9 @@
   {
     "id": "C010",
     "category": "comparison",
-    "language": "zh",
-    "question": "DN-DETR与DINO的去噪监督有什么区别？",
-    "reference_answer": "DN-DETR重建加噪真值；DINO增加对比去噪：正查询重建真值，负查询预测无目标。",
+    "language": "en",
+    "question": "How does the denoising supervision in DN-DETR differ from that in DINO?",
+    "reference_answer": "DN-DETR reconstructs noisy ground truth. DINO adds contrastive denoising: positive queries reconstruct ground truth, whereas negative queries predict no object.",
     "answer_points": [
       "DN reconstructs noisy GT",
       "DINO positive reconstruction",
@@ -721,9 +721,9 @@
   {
     "id": "C012",
     "category": "comparison",
-    "language": "zh",
-    "question": "ViT与PVT为什么对密集预测的输出适配性不同？",
-    "reference_answer": "ViT保留单尺度token序列；PVT以逐级缩小的四阶段输出多尺度特征，更便于接入密集预测模型。",
+    "language": "en",
+    "question": "Why do ViT and PVT differ in how readily their outputs support dense prediction?",
+    "reference_answer": "ViT retains a single-scale token sequence. PVT progressively reduces resolution across four stages to output multi-scale features that integrate more readily with dense-prediction models.",
     "answer_points": [
       "ViT single-scale output",
       "PVT pyramid multi-scale output",
@@ -788,9 +788,9 @@
   {
     "id": "C014",
     "category": "comparison",
-    "language": "zh",
-    "question": "T2T-ViT和PVT都缩短token序列，但两者设计目标有何侧重差异？",
-    "reference_answer": "T2T-ViT聚合局部结构以提高分类训练效率；PVT通过金字塔形成多尺度特征，服务检测等密集预测。",
+    "language": "en",
+    "question": "Both T2T-ViT and PVT shorten token sequences; how do their design objectives differ?",
+    "reference_answer": "T2T-ViT aggregates local structure to improve classification training. PVT forms a feature pyramid to support dense prediction, including object detection.",
     "answer_points": [
       "T2T local aggregation for classification",
       "PVT pyramid for dense prediction"
@@ -861,9 +861,9 @@
   {
     "id": "S001",
     "category": "synthesis",
-    "language": "zh",
-    "question": "综合ViT、DeiT、Swin与DETR，列举分类与检测实验的数据集，并区分用途。",
-    "reference_answer": "ViT用ImageNet/21k/JFT研究分类训练规模；DeiT只用ImageNet；Swin与DETR在COCO上做检测。",
+    "language": "en",
+    "question": "Across ViT, DeiT, Swin and DETR, list the datasets used for classification and detection experiments and distinguish their purposes.",
+    "reference_answer": "ViT studies classification training scale using ImageNet, ImageNet-21k and JFT. DeiT uses only ImageNet. Swin and DETR conduct object-detection experiments on COCO.",
     "answer_points": [
       "ViT classification data regimes",
       "DeiT ImageNet only",
@@ -944,9 +944,9 @@
   {
     "id": "S003",
     "category": "synthesis",
-    "language": "zh",
-    "question": "综合Swin、PVT和Deformable DETR，多尺度特征分别通过什么方式进入视觉任务？",
-    "reference_answer": "Swin通过patch merging形成层级；PVT通过四阶段金字塔输出；Deformable DETR在多个尺度特征上稀疏采样。",
+    "language": "en",
+    "question": "Across Swin, PVT and Deformable DETR, how are multi-scale features incorporated into visual tasks?",
+    "reference_answer": "Swin creates a hierarchy through patch merging. PVT outputs a four-stage feature pyramid. Deformable DETR sparsely samples features at multiple scales.",
     "answer_points": [
       "Swin hierarchical merging",
       "PVT four-stage pyramid",
@@ -1020,9 +1020,9 @@
   {
     "id": "S005",
     "category": "synthesis",
-    "language": "zh",
-    "question": "按Conditional DETR、DAB-DETR、DINO归纳空间查询逐渐增强的设计信息。",
-    "reference_answer": "Conditional使用条件空间查询；DAB加入框中心与宽高并逐层更新；DINO再用encoder选中的位置初始化anchor。",
+    "language": "en",
+    "question": "Summarize the progressively richer information encoded in spatial queries by Conditional DETR, DAB-DETR and DINO.",
+    "reference_answer": "Conditional DETR uses conditional spatial queries. DAB-DETR adds box centers, width and height with layer-by-layer updates. DINO initializes anchors with encoder-selected positions.",
     "answer_points": [
       "Conditional spatial query",
       "DAB center/size and iterative updates",
@@ -1108,9 +1108,9 @@
   {
     "id": "S007",
     "category": "synthesis",
-    "language": "zh",
-    "question": "结合ViT、Swin、PVT，归纳控制注意力计算量的主要设计方向。",
-    "reference_answer": "ViT的全局序列作为参照；Swin限制窗口大小；PVT压缩K/V空间长度并采用金字塔。复杂度结论需注明输入和固定参数。",
+    "language": "en",
+    "question": "Using ViT, Swin and PVT, summarize the main design approaches for controlling attention computation.",
+    "reference_answer": "ViT provides a global-sequence baseline. Swin limits attention to fixed-size local windows. PVT reduces the spatial length of keys and values and uses a pyramid. Complexity claims must state their input and fixed-parameter assumptions.",
     "answer_points": [
       "Global sequence baseline",
       "Fixed local windows",
@@ -1185,9 +1185,9 @@
   {
     "id": "S009",
     "category": "synthesis",
-    "language": "zh",
-    "question": "综合ViT、DINO与Conditional DETR，比较论文实验结果时至少要核对哪些设置？",
-    "reference_answer": "核对任务/数据与划分、预训练数据、骨干、输入或多尺度、训练轮数及参数/计算量；不直接跨设置比较AP或accuracy。",
+    "language": "en",
+    "question": "Based on ViT, DINO and Conditional DETR, which experimental settings should be checked before comparing reported results?",
+    "reference_answer": "Check the task, dataset and split, pretraining data, backbone, input resolution or multi-scale setting, training epochs, parameters and computation. Do not directly compare AP or accuracy under mismatched settings.",
     "answer_points": [
       "Task/data/split",
       "Pretraining and backbone",
@@ -1256,9 +1256,9 @@
   {
     "id": "S011",
     "category": "synthesis",
-    "language": "zh",
-    "question": "综合Swin、PVT和Deformable DETR，归纳支持不同目标尺度的设计。",
-    "reference_answer": "Swin/PVT输出分层多尺度特征；Deformable DETR从多尺度特征采样，并针对DETR的小目标和高分辨率瓶颈改进。",
+    "language": "en",
+    "question": "Across Swin, PVT and Deformable DETR, summarize the designs that support objects at different scales.",
+    "reference_answer": "Swin and PVT output hierarchical multi-scale features. Deformable DETR samples multi-scale features to address DETR’s small-object and high-resolution bottlenecks.",
     "answer_points": [
       "Hierarchical/pyramid scales",
       "Multi-scale sparse sampling",
@@ -1331,9 +1331,9 @@
   {
     "id": "S013",
     "category": "synthesis",
-    "language": "zh",
-    "question": "综合DAB-DETR、DN-DETR和DINO，归纳DINO沿用的基础设计及三个新增方向。",
-    "reference_answer": "基础包括动态anchor与去噪训练；DINO新增对比去噪、混合查询选择和利用相邻层梯度信息的两次前瞻。",
+    "language": "en",
+    "question": "Using DAB-DETR, DN-DETR and DINO, summarize the baseline designs retained by DINO and its three new improvements.",
+    "reference_answer": "The baseline includes dynamic anchors and denoising training. DINO introduces contrastive denoising, mixed query selection, and look forward twice, which uses gradient information across adjacent layers.",
     "answer_points": [
       "Dynamic anchors",
       "Denoising baseline",
@@ -1440,9 +1440,9 @@
   {
     "id": "S015",
     "category": "synthesis",
-    "language": "zh",
-    "question": "从ViT、DETR及Conditional DETR中归纳三种不能忽略的实验或适用性限制。",
-    "reference_answer": "ViT小数据训练受弱归纳偏置影响；DETR有小目标与长训练问题；Conditional的某些对比因参数和计算量不同并非完全公平。",
+    "language": "en",
+    "question": "From ViT, DETR and Conditional DETR, summarize three experimental or applicability limitations that should not be overlooked.",
+    "reference_answer": "ViT’s weak inductive biases affect training on small datasets. DETR has small-object and long-training limitations. Some Conditional DETR comparisons are not fully fair because parameter counts and computation differ.",
     "answer_points": [
       "ViT data/bias limitation",
       "DETR small-object/long-training limitation",
@@ -1514,9 +1514,9 @@
   {
     "id": "R002",
     "category": "reasoning",
-    "language": "zh",
-    "question": "DeiT的卷积教师优势能否直接证明归纳偏置已被传入学生？为什么？",
-    "reference_answer": "不能。论文观察到卷积教师更好及预测更相关，但明确表示难以正式回答归纳偏置是否继承，不能把相关性当作机制证明。",
+    "language": "en",
+    "question": "Does DeiT’s advantage with a convolutional teacher directly prove that inductive biases are transferred to the student? Why or why not?",
+    "reference_answer": "No. The paper observes that convolutional teachers perform better and their predictions are more correlated with the student’s, but explicitly says that formally explaining whether inductive biases are inherited is difficult. Correlation does not prove a transfer mechanism.",
     "answer_points": [
       "Convnet-teacher empirical advantage",
       "Prediction agreement is observed",
@@ -1563,9 +1563,9 @@
   {
     "id": "R004",
     "category": "reasoning",
-    "language": "zh",
-    "question": "为什么PVT同时采用金字塔和SRA，而不是直接沿用ViT做高分辨率检测骨干？",
-    "reference_answer": "检测需高分辨率及多尺度；金字塔产生不同尺度，SRA缩短K/V以减少注意力资源开销，缓解ViT单尺度和长序列瓶颈。",
+    "language": "en",
+    "question": "Why does PVT combine a pyramid with spatial-reduction attention rather than directly reuse ViT as a high-resolution detection backbone?",
+    "reference_answer": "Dense tasks require high resolution and multiple scales. The pyramid supplies different scales, while SRA shortens keys and values to reduce attention cost, addressing ViT’s single-scale and long-sequence bottlenecks.",
     "answer_points": [
       "Dense tasks require resolution/scales",
       "Pyramid supplies scales",
@@ -1630,9 +1630,9 @@
   {
     "id": "R006",
     "category": "reasoning",
-    "language": "zh",
-    "question": "LayerScale为什么用小初值的逐通道可学习缩放来帮助训练更深的CaiT？",
-    "reference_answer": "小初值让残差路径初期贡献较小、模型接近恒等映射；逐通道权重可逐渐调节，比单个缩放标量提供更多优化自由度。",
+    "language": "en",
+    "question": "Why does LayerScale use learnable per-channel scaling with small initial values to help train deeper CaiT models?",
+    "reference_answer": "Small initial values keep the residual contribution small and the starting model close to an identity mapping. Learnable per-channel weights can gradually adjust that contribution and offer more optimization freedom than a single scaling scalar.",
     "answer_points": [
       "Small initial residual contribution",
       "Near-identity starting point",
@@ -1684,9 +1684,9 @@
   {
     "id": "R008",
     "category": "reasoning",
-    "language": "zh",
-    "question": "为什么Deformable DETR的稀疏采样更适合高分辨率和小目标，而不是全局密集注意力？",
-    "reference_answer": "高分辨率使全局注意力代价高；参考点附近少量采样降低开销，允许多尺度高分辨率特征，改善小目标信息利用。",
+    "language": "en",
+    "question": "Why is Deformable DETR’s sparse sampling better suited to high resolution and small objects than dense global attention?",
+    "reference_answer": "High resolution makes dense global attention expensive. Sampling a few locations around reference points reduces cost and makes high-resolution, multi-scale features practical, improving the use of small-object information.",
     "answer_points": [
       "Dense global attention cost",
       "Few samples around references",
@@ -1739,9 +1739,9 @@
   {
     "id": "R010",
     "category": "reasoning",
-    "language": "zh",
-    "question": "为什么DAB-DETR在空间查询中使用宽高，而不只使用中心坐标？",
-    "reference_answer": "中心只给出位置；宽高还表达目标尺度和形状，能调节注意力范围，使查询更适应不同大小目标并形成soft ROI聚合。",
+    "language": "en",
+    "question": "Why does DAB-DETR include width and height in spatial queries rather than use only center coordinates?",
+    "reference_answer": "The center encodes location, while width and height also encode object scale and shape. They modulate attention to suit different object sizes and enable a soft-ROI aggregation interpretation.",
     "answer_points": [
       "Center encodes location",
       "Width/height encode scale/shape",
@@ -1794,9 +1794,9 @@
   {
     "id": "R012",
     "category": "reasoning",
-    "language": "zh",
-    "question": "DN-DETR为什么必须屏蔽匹配查询对去噪查询的访问以及去噪组之间的访问？",
-    "reference_answer": "否则匹配查询可能看到含真值的去噪输入，或不同噪声组相互泄漏答案，产生训练捷径，损害没有去噪输入的推理。",
+    "language": "en",
+    "question": "Why must DN-DETR block matching queries from accessing denoising queries and block access across denoising groups?",
+    "reference_answer": "Otherwise, matching queries could see ground-truth information in denoising inputs, or different noise groups could leak answers to one another. This creates training shortcuts that harm inference, where denoising inputs are absent.",
     "answer_points": [
       "GT leakage into matching part",
       "Leakage across denoising groups",
@@ -1849,9 +1849,9 @@
   {
     "id": "R014",
     "category": "reasoning",
-    "language": "zh",
-    "question": "DINO为什么增加预测无目标的负去噪查询，而不只重建正样本？",
-    "reference_answer": "只重建附近真值不足以学会拒绝无目标anchor；负查询提供拒绝监督，帮助减少相邻anchor混淆及重复预测。",
+    "language": "en",
+    "question": "Why does DINO add negative denoising queries that predict no object instead of reconstructing only positive samples?",
+    "reference_answer": "Reconstructing nearby ground truth alone does not teach the model to reject no-object anchors. Negative queries provide rejection supervision and help reduce confusion between neighboring anchors and duplicate predictions, without guaranteeing elimination of all duplicates.",
     "answer_points": [
       "Positive-only reconstruction limitation",
       "Negative no-object supervision",
