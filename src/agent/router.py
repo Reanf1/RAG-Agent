@@ -5,7 +5,7 @@ from copy import deepcopy
 import math
 import re
 from queue import Empty, Full, Queue
-from threading import Condition, Event, Lock
+from threading import Event, Lock
 from time import perf_counter
 
 from langchain_core.messages import ToolMessage
@@ -13,18 +13,6 @@ from langchain_core.tools import BaseTool
 
 from src.agent.tools import DOCUMENT_TOOL_FIELDS, execute_tool
 from src.utils.config import load_config
-
-
-# 整个Streamlit进程共用额度，超时的函数真正退出后才释放。
-_execution_condition = Condition()
-_active_executions = 0
-
-
-def _release_execution(_future):
-    global _active_executions
-    with _execution_condition:
-        _active_executions -= 1
-        _execution_condition.notify_all()
 
 
 def parallel_limit() -> int:
@@ -202,36 +190,15 @@ def execute_calls(calls: list[dict], tools: list[BaseTool], *, parallel: bool = 
                 except Empty:
                     return
     def submit(call):
-        global _active_executions
         started, attempts = perf_counter(), []
         deadline = started + timeout
-        with _execution_condition:
-            available = _execution_condition.wait_for(lambda: _active_executions < limit,
-                                                       timeout=max(0, deadline - perf_counter()))
-            if not available:
-                return call, None, started, deadline, attempts
-            _active_executions += 1
-        try:
-            future = pool.submit(_execute_attempts, call, tools, retries, deadline, stopped, attempts,
-                                 (lambda event: publish(call, event)) if stream else None)
-        except BaseException:
-            _release_execution(None)
-            raise
-        future.add_done_callback(_release_execution)
+        future = pool.submit(_execute_attempts, call, tools, retries, deadline, stopped, attempts,
+                             (lambda event: publish(call, event)) if stream else None)
         return call, future, started, deadline, attempts
     try:
         pending = [submit(call) for call in calls] if mode == "parallel" else []
         for index, call in enumerate(calls):
             call, future, started, deadline, attempts = pending[index] if pending else submit(call)
-            if future is None:
-                error = "工具执行额度已占满（含尚未退出的超时函数），本次工具未启动；请稍后重试。"
-                yield {"type": "tool_result", **call, "status": "error", "result": None, "error": error,
-                       "error_kind": "capacity", "pending": False, "attempts": [], "execution_mode": mode,
-                       "elapsed_seconds": perf_counter() - started,
-                       "message": ToolMessage(content=error, tool_call_id=call["call_id"], name=call["name"], status="error")}
-                if mode == "serial":
-                    break
-                continue
             try:
                 while True:
                     yield from drain()

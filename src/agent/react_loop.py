@@ -24,7 +24,7 @@ from src.generation.rag_pipeline import generation_error, urlopen
 from src.utils.config import generation_options, load_config, ollama_base_url
 from src.utils.messages import messages_to_ollama, normalize_context
 from src.utils.logger import update_agent_metrics
-from src.utils.token_budget import check_request_budget, request_tokens
+from src.utils.token_budget import check_request_budget
 
 
 AGENT_ROLE_PROMPT = """【角色定义】
@@ -103,82 +103,17 @@ def build_thought_messages(question: str, tools: list[BaseTool], context: dict |
     return build_agent_messages(question, tools, context)
 
 
-def _fit_agent_payload(payload: dict):
-    """仅精简发送副本的旧历史、辅助来源字段和正文；原始Context与引用位置保留。"""
-    budget = payload["options"]["num_ctx"] - payload["options"]["num_predict"]
-    editable = []
-    for message in payload["messages"]:
-        if message["role"] not in {"user", "tool"}:
-            continue
-        try:
-            value = json.loads(message["content"])
-        except ValueError:
-            continue
-        if isinstance(value, dict) and (message["role"] == "tool" or "context" in value):
-            editable.append((message, value))
-    while request_tokens(payload) > budget:
-        changed = False
-        for message, value in editable:
-            history = value.get("context", {}).get("history", [])
-            if history:
-                # 历史由完整问答组成，一次移除最旧整轮，SQLite原文保留。
-                del history[:2]
-                value["context"]["model_context_truncated"] = True
-                message["content"] = json.dumps(value, ensure_ascii=False, allow_nan=False)
-                changed = True
-                break
-        if changed:
-            continue
-        candidates = []
-        def collect(value):
-            nonlocal changed
-            if isinstance(value, list):
-                for item in value:
-                    collect(item)
-            elif isinstance(value, dict):
-                for key, item in value.items():
-                    if key in {"args", "question", "thought", "tool_question"}:
-                        continue
-                    if key == "metadata":
-                        if isinstance(item, dict):
-                            # 超预算时去掉重复的绝对路径和内部标识，稳定ID及来源定位仍保留。
-                            redundant = {"chunk_id", "file_type"}
-                            if isinstance(item.get("source_file"), str) and item["source_file"].strip():
-                                redundant.add("source")
-                            if type(item.get("page_number")) is int and item["page_number"] > 0:
-                                redundant.add("page")
-                            for field in redundant & item.keys():
-                                del item[field]
-                                changed = True
-                        continue
-                    if key in {"text", "answer", "raw_answer", "abstract", "summary", "context"} and isinstance(item, str) and len(item) > 128:
-                        candidates.append((len(item), value, key))
-                    else:
-                        collect(item)
-        for _, value in editable:
-            collect(value.get("context", value))
-        if changed:
-            for message, value in editable:
-                message["content"] = json.dumps(value, ensure_ascii=False, allow_nan=False)
-            continue
-        if not candidates:
-            break  # 固定提示／问题／参数超限交给最终检查明确拒绝，不静默裁掉任务。
-        _, parent, key = max(candidates, key=lambda item: item[0])
-        parent[key] = parent[key][:len(parent[key]) // 2] + "\n[模型上下文已截断，仅据可见证据回答]"
-        if key == "text":
-            parent["truncated"] = True
-        for message, value in editable:
-            message["content"] = json.dumps(value, ensure_ascii=False, allow_nan=False)
-
-
 def _model_request(messages: list, **fields) -> Request:
-    """三个阶段共用本机配置；把关联消息转换为Ollama原生工具消息。"""
+    """三个阶段共用本机配置；把关联消息转换为Ollama原生工具消息。
+
+    完整请求（含工具Schema与全部消息）超过输入预算时直接报错，
+    由调用方提示缩小范围；不静默裁剪工具结果或来源字段。
+    """
     config = load_config()["llm"]
     base_url = ollama_base_url(config)
     sampling = generation_options(config)
     payload = {"model": config["model"], "stream": False, "options": sampling, **fields,
                "messages": messages_to_ollama(messages)}
-    _fit_agent_payload(payload)
     check_request_budget(payload)
     return Request(base_url + "/api/chat",
                       data=json.dumps(payload, ensure_ascii=False, allow_nan=False).encode("utf-8"),
@@ -844,7 +779,7 @@ def _run_react(question: str, tools: list[BaseTool] | None = None, context: dict
             if routed and routed["tool_name"] == "web_search":
                 external_only = True  # 明确的单一外部任务不能在搜索失败后用本地旧资料冒充恢复。
                 available = [item for item in available if item.name == "web_search"]
-            messages, failures, pending, capacity_blocked = [], [], False, False
+            messages, failures, pending = [], [], False
             tool_partials = {}
             for event in act(question, thought, available, state, call_counts=call_counts, stream=stream):
                 if event["type"] == "token":
@@ -867,17 +802,10 @@ def _run_react(question: str, tools: list[BaseTool] | None = None, context: dict
                         # 按调用ID保留断流前的实际正文，失败说明不能覆盖已收到的部分答案。
                         state["observations"][-1]["partial_answer"] = tool_partials[event["call_id"]]
                     pending |= event.get("pending", False)
-                    capacity_blocked |= event.get("error_kind") == "capacity"
                     if event["status"] == "error" and event.get("error_kind") in {"timeout", "execution"}:
                         failures.append(event["name"])
                 yield {**deepcopy(event), "iteration": iteration}
             else:
-                if capacity_blocked:
-                    reason, answer = "resource_busy", "工具执行额度已占满，本次未能启动全部工具；已成功结果已保留，请稍后重试。"
-                    state["last_observation"] = {"observation": answer, "decision": "finish", "task_complete": False}
-                    yield {"type": "observation", **state["last_observation"], "answer": answer,
-                           "model": None, "usage": {"prompt_eval_count": 0, "eval_count": 0}, "iteration": iteration}
-                    break
                 if pending:
                     reason, answer = "tool_timeout", "工具调用超过等待上限，已跳过并结束本次请求；已成功的结果已保留。后台函数可能仍在运行，请稍后重试。"
                     state["last_observation"] = {"observation": answer, "decision": "finish", "task_complete": False}
