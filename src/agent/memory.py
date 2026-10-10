@@ -258,40 +258,36 @@ class MemoryManager:
             input_budget = config["llm"]["num_ctx"] // 2
             if input_budget < maximum + 128 + 256:
                 raise ValueError("模型上下文不足以容纳摘要输出及模板")
-            # 单次上下文读取最多处理三批；超大旧归档在下一请求继续，不无限等待。
-            for _ in range(3):
-                if not older:
+            # 一次请求只压缩一批：按输入预算装填完整问答对，装不下的留到下次。
+            batch = []
+            for index in range(0, len(older), 2):
+                candidate = batch + older[index:index + 2]
+                source = [{"role": role, "content": text} for _, role, text in candidate]
+                if count_memory_tokens(source, summary) > input_budget - 512:
                     break
-                batch = []
-                for index in range(0, len(older), 2):
-                    candidate = batch + older[index:index + 2]
-                    source = [{"role": role, "content": text} for _, role, text in candidate]
-                    if count_memory_tokens(source, summary) > input_budget - 512:
-                        break
-                    batch = candidate
+                batch = candidate
+            try:
+                if not batch:
+                    raise ValueError("旧对话单轮超过摘要输入预算，保留原文并回退历史窗口")
+                source = [{"role": role, "content": text} for _, role, text in batch]
+                summary_started = perf_counter()
                 try:
-                    if not batch:
-                        raise ValueError("旧对话单轮超过摘要输入预算，保留原文并回退历史窗口")
-                    source = [{"role": role, "content": text} for _, role, text in batch]
-                    summary_started = perf_counter()
-                    try:
-                        result = _summarize(summary, source, maximum, input_budget)
-                    except (OSError, ValueError, RuntimeError):
-                        # 失败模型调用可能已消耗Token；不能因回退窗口而把本次用量当作零。
-                        attempts.append({"usage": {"prompt_eval_count": None, "eval_count": None},
-                                         "elapsed_seconds": perf_counter() - summary_started, "saved": False})
-                        raise
-                    attempts.append({key: value for key, value in result.items() if key != "summary"})
-                    attempts[-1]["saved"] = False
-                    self._save_summary(user_id, session_id, through_id, batch[-1][0], result["summary"])
-                    attempts[-1]["saved"] = True
-                    summary, through_id = result["summary"], batch[-1][0]
-                    del older[:len(batch)]
-                except (OSError, ValueError, RuntimeError, sqlite3.Error) as error:
-                    warning = f"摘要压缩未完成：{error}；保留已存记忆并使用Token窗口，可稍后重试。"
-                    break
+                    result = _summarize(summary, source, maximum, input_budget)
+                except (OSError, ValueError, RuntimeError):
+                    # 失败模型调用可能已消耗Token；不能因回退窗口而把本次用量当作零。
+                    attempts.append({"usage": {"prompt_eval_count": None, "eval_count": None},
+                                     "elapsed_seconds": perf_counter() - summary_started, "saved": False})
+                    raise
+                attempts.append({key: value for key, value in result.items() if key != "summary"})
+                attempts[-1]["saved"] = False
+                self._save_summary(user_id, session_id, through_id, batch[-1][0], result["summary"])
+                attempts[-1]["saved"] = True
+                summary, through_id = result["summary"], batch[-1][0]
+                del older[:len(batch)]
+            except (OSError, ValueError, RuntimeError, sqlite3.Error) as error:
+                warning = f"摘要压缩未完成：{error}；保留已存记忆并使用Token窗口，可稍后重试。"
             if older and not warning:
-                warning = "旧归档超过三批摘要预算，剩余部分在后续请求继续；当前仍受Token窗口限制。"
+                warning = "旧归档超过单批摘要预算，剩余部分在后续请求继续；当前仍受Token窗口限制。"
         # 重新读取权威存储；并发追加/清空/摘要更新不能返回过期快照。
         rows, (summary, through_id) = self._read_memory(user_id, session_id)
         original_turns = len(rows) // 2

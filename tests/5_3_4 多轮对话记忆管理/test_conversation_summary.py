@@ -240,7 +240,7 @@ class TestConversationSummary(unittest.TestCase):
         self.assertIn("单轮超过", context["memory_summary"]["warning"])
         self.assertEqual(len(self.memory.get_messages("alice", self.session)), 8)
 
-    def test_large_archive_uses_bounded_complete_pairs_and_three_call_limit(self):
+    def test_large_archive_uses_bounded_complete_pairs_in_one_call(self):
         from src.agent.memory import count_memory_tokens
         # 明确复现8K下单批只能容纳一轮的边界，不能依赖运行默认窗口。
         self.config["llm"]["num_ctx"] = 8192
@@ -248,9 +248,10 @@ class TestConversationSummary(unittest.TestCase):
             self.memory.append_turn("alice", self.session, f"问题{index}" + "word " * 1800, "答案")
         with patch("src.agent.react_loop.urlopen", side_effect=lambda *a, **k: self.packet()) as http:
             context = self.memory.get_context("alice", self.session)
-        self.assertEqual(http.call_count, 3)
-        self.assertEqual(context["memory_summary"]["summarized_turns"], 3)
-        self.assertIn("三批", context["memory_summary"]["warning"])
+        # 单批只装一轮完整问答；剩余旧归档留到后续请求，不在本次无限等待。
+        self.assertEqual(http.call_count, 1)
+        self.assertEqual(context["memory_summary"]["summarized_turns"], 1)
+        self.assertIn("单批", context["memory_summary"]["warning"])
         for call in http.call_args_list:
             messages = json.loads(call.args[0].data)["messages"]
             self.assertLessEqual(count_history_tokens(messages), self.config["llm"]["num_ctx"] // 2)
