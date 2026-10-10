@@ -29,7 +29,7 @@ GROUPS = {
     "top_k_80": {"temperature": 0.1, "top_p": 0.9, "top_k": 80},
 }
 SEEDS = (17, 29)
-RULE_VERSION = "facts-and-body-citations-v2"
+RULE_VERSION = "facts-and-body-citations-v3"
 
 
 def evaluate_answer(case: dict, result: dict) -> dict:
@@ -49,7 +49,8 @@ def evaluate_answer(case: dict, result: dict) -> dict:
     # 无依据题不应补引用；只说明原文未包含信息时可以引已有片段。
     if case["id"] == "empty":
         citations_ok = citations_ok and not actual
-    format_ok = all(heading in result["raw_answer"] for heading in ("## 回答", "## 参考来源"))
+    # 当前模板不强制栏目标题；只核对正文存在，内容质量另外逐题审阅。
+    format_ok = bool(body.strip())
     stopped = result["done_reason"] == "stop"
     return {"fact_hits": hits, "fact_coverage": sum(hits) / len(hits), "citation_required": bool(expected),
             "expected_citations_ok": citations_ok, "format_ok": format_ok,
@@ -82,8 +83,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=PROJECT_ROOT / "reports/5_2_1 Prompt工程与生成策略/生成参数对比结果.json")
     parser.add_argument("--rescore", action="store_true", help="只重算已有原始答案的规则分数，不调用模型")
+    parser.add_argument("--sample", type=Path, default=PROJECT_ROOT / "reports/5_2_1 Prompt工程与生成策略/生成参数评测集.json",
+                        help="与当前模板匹配、已冻结消息哈希的评测输入")
     args = parser.parse_args()
-    sample_path = PROJECT_ROOT / "reports/5_2_1 Prompt工程与生成策略/生成参数评测集.json"
+    sample_path = args.sample
     output = args.output
     sample = json.loads(sample_path.read_text(encoding="utf-8"))
     if args.rescore:
